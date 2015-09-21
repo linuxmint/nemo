@@ -208,11 +208,11 @@ refresh_widget (NemoActionConfigWidget *widget)
 
     gchar *path = NULL;
 
-    path = g_build_filename ("/", "usr", "share", "nemo", "actions", NULL);
+    path = nemo_action_manager_get_sys_directory_path ();
     populate_from_directory (widget, path);
     g_clear_pointer (&path, g_free);
 
-    path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
+    path = nemo_action_manager_get_user_directory_path ();
     populate_from_directory (widget, path);
     g_clear_pointer (&path, g_free);
 

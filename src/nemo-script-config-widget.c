@@ -10,6 +10,7 @@
 #include "nemo-view.h"
 #include "nemo-file.h"
 #include "nemo-global-preferences.h"
+#include <libnemo-private/nemo-file-utilities.h>
 
 #include <glib.h>
 
@@ -136,11 +137,7 @@ refresh_widget (NemoScriptConfigWidget *widget)
 
     gchar *path = NULL;
 
-    path = g_build_filename ("/", "usr", "share", "nemo", "scripts", NULL);
-    populate_from_directory (widget, path);
-    g_clear_pointer (&path, g_free);
-
-    path = g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
+    path = nemo_get_scripts_directory_path ();
     populate_from_directory (widget, path);
     g_clear_pointer (&path, g_free);
 
@@ -243,7 +240,7 @@ static void
 on_open_folder_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
 {
     gchar *path = NULL;
-    path = g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
+    path = nemo_get_scripts_directory_path ();
     GFile *location = g_file_new_for_path (path);
 
     nemo_application_open_location (nemo_application_get_singleton (),

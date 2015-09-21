@@ -71,7 +71,7 @@ call_consume_changes_idle_cb (gpointer not_used)
 	return FALSE;
 }
 
-
+static void
 schedule_call_consume_changes (void)
 {
   if (call_consume_changes_idle_id == 0) {
