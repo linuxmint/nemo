@@ -192,6 +192,8 @@ search_bar_activate_callback (NemoSearchBar *bar,
 	NemoQuery *query;
 	GFile *location;
 
+	remember_focus_widget (pane);//remember the focus in the search bar
+	
 	uri = nemo_search_directory_generate_new_uri ();
 	location = g_file_new_for_uri (uri);
 
@@ -216,6 +218,8 @@ search_bar_activate_callback (NemoSearchBar *bar,
 	nemo_directory_unref (directory);
 	g_object_unref (location);
 	g_free (uri);
+	
+	restore_focus_widget (pane);//restore the focus in the search bar
 }
 
 static void

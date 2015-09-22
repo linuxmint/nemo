@@ -115,6 +115,15 @@ entry_has_text (NemoSearchBar *bar)
 }
 
 static void
+entry_changed_cb (GtkEntry *entry,
+                       GtkEntryIconPosition position,
+                       GdkEvent *event,
+                       NemoSearchBar *bar)
+{
+        g_signal_emit_by_name (entry, "activate", 0);
+}
+
+static void
 entry_icon_release_cb (GtkEntry *entry,
 		       GtkEntryIconPosition position,
 		       GdkEvent *event,
@@ -170,6 +179,8 @@ nemo_search_bar_init (NemoSearchBar *bar)
 			  G_CALLBACK (entry_activate_cb), bar);
 	g_signal_connect (bar->details->entry, "icon-release",
 			  G_CALLBACK (entry_icon_release_cb), bar);
+	g_signal_connect (bar->details->entry, "changed",
+			  G_CALLBACK (entry_changed_cb), bar);
 
 	gtk_widget_show (bar->details->entry);
 }
