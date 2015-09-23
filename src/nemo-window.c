@@ -38,7 +38,6 @@
 #include "nemo-mime-actions.h"
 #include "nemo-notebook.h"
 #include "nemo-places-sidebar.h"
-#include "nemo-search-bar.h"
 #include "nemo-tree-sidebar.h"
 #include "nemo-view-factory.h"
 #include "nemo-window-manage-views.h"
@@ -116,6 +115,8 @@ enum {
 	PROMPT_FOR_LOCATION,
 	LOADING_URI,
 	HIDDEN_FILES_MODE_CHANGED,
+	SLOT_ADDED,
+	SLOT_REMOVED,
 	LAST_SIGNAL
 };
 
@@ -171,21 +172,12 @@ nemo_window_push_status (NemoWindow *window,
 }
 
 void
-nemo_window_sync_status (NemoWindow *window)
-{
-	NemoWindowSlot *slot;
-
-	slot = nemo_window_get_active_slot (window);
-	nemo_window_push_status (window, slot->status_text);
-}
-
-void
 nemo_window_go_to (NemoWindow *window, GFile *location)
 {
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
-	nemo_window_slot_go_to (nemo_window_get_active_slot (window),
-				    location, FALSE);
+	nemo_window_slot_open_location (nemo_window_get_active_slot (window),
+					    location, 0);
 }
 
 void
@@ -196,17 +188,26 @@ nemo_window_go_to_full (NemoWindow *window,
 {
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
-	nemo_window_slot_go_to_full (nemo_window_get_active_slot (window),
-					 location, FALSE, callback, user_data);
+	nemo_window_slot_open_location_full (nemo_window_get_active_slot (window),
+						 location, 0, NULL, callback, user_data);
 }
 
-static gboolean
-nemo_window_go_up_signal (NemoWindow *window, gboolean close_behind)
+static void
+nemo_window_go_up_signal (NemoWindow *window)
 {
-	nemo_window_slot_go_up (nemo_window_get_active_slot (window),
-				    close_behind, FALSE);
+	nemo_window_slot_go_up (nemo_window_get_active_slot (window), 0);
+}
 
-	return TRUE;
+void 
+nemo_window_slot_removed (NemoWindow *window,  NemoWindowSlot *slot)
+{
+	g_signal_emit (window, signals[SLOT_REMOVED], 0, slot);
+}
+
+void 
+nemo_window_slot_added (NemoWindow *window,  NemoWindowSlot *slot)
+{
+    g_signal_emit (window, signals[SLOT_ADDED], 0, slot);
 }
 
 void
@@ -239,7 +240,7 @@ nemo_window_new_tab (NemoWindow *window)
 
 		new_slot = nemo_window_pane_open_slot (current_slot->pane, flags);
 		nemo_window_set_active_slot (window, new_slot);
-		nemo_window_slot_go_to (new_slot, location, FALSE);
+		nemo_window_slot_open_location (new_slot, location, 0);
 		g_object_unref (location);
 	}
 }
@@ -265,20 +266,24 @@ void
 nemo_window_sync_allow_stop (NemoWindow *window,
 				 NemoWindowSlot *slot)
 {
-	GtkAction *action;
+	GtkAction *stop_action;
+	GtkAction *reload_action;
 	gboolean allow_stop, slot_is_active;
 	NemoNotebook *notebook;
 
-	action = gtk_action_group_get_action (nemo_window_get_main_action_group (window),
-					      NEMO_ACTION_STOP);
-	allow_stop = gtk_action_get_sensitive (action);
+	stop_action = gtk_action_group_get_action (nemo_window_get_main_action_group (window),
+						   NEMO_ACTION_STOP);
+	reload_action = gtk_action_group_get_action (nemo_window_get_main_action_group (window),
+						     NEMO_ACTION_RELOAD);
+	allow_stop = gtk_action_get_sensitive (stop_action);
 
 	slot_is_active = (slot == nemo_window_get_active_slot (window));
 
 	if (!slot_is_active ||
 	    allow_stop != slot->allow_stop) {
 		if (slot_is_active) {
-			gtk_action_set_sensitive (action, slot->allow_stop);
+			gtk_action_set_visible (stop_action, slot->allow_stop);
+			gtk_action_set_visible (reload_action, !slot->allow_stop);
 		}
 
 		if (gtk_widget_get_realized (GTK_WIDGET (window))) {
@@ -552,6 +557,7 @@ nemo_window_constructed (GObject *self)
 	application = nemo_application_get_singleton ();
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
+
 
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
@@ -1097,6 +1103,7 @@ nemo_window_key_press_event (GtkWidget *widget,
 	NemoWindow *window;
 	NemoWindowSlot *active_slot;
 	NemoView *view;
+    GtkWidget *focus_widget;
 	int i;
 
 	window = NEMO_WINDOW (widget);
@@ -1109,6 +1116,17 @@ nemo_window_key_press_event (GtkWidget *widget,
 		 * focused widget and return. We don't want to process the window
 		 * accelerator bindings, as they might conflict with the 
 		 * editable widget bindings.
+		 */
+		if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
+			return TRUE;
+		}
+	}
+
+	focus_widget = gtk_window_get_focus (GTK_WINDOW (window));
+	if (view != NULL && focus_widget != NULL &&
+	    GTK_IS_EDITABLE (focus_widget)) {
+		/* if we have input focus on a GtkEditable (e.g. a GtkEntry), forward
+		 * the event to it before activating accelerator bindings too.
 		 */
 		if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
 			return TRUE;
@@ -1886,6 +1904,14 @@ nemo_window_get_extra_slot (NemoWindow *window)
 	return extra_pane->active_slot;
 }
 
+GList *
+nemo_window_get_panes (NemoWindow *window)
+{
+	g_assert (NEMO_IS_WINDOW (window));
+
+	return window->details->panes;
+}
+
 static void
 window_set_search_action_text (NemoWindow *window,
 			       gboolean setting)
@@ -1963,16 +1989,12 @@ nemo_window_state_event (GtkWidget *widget,
 	return FALSE;
 }
 
-static void
-nemo_window_go_back (NemoWindow *window)
+static gboolean
+nemo_window_delete_event (GtkWidget *widget,
+			      GdkEventAny *event)
 {
-	nemo_window_back_or_forward (window, TRUE, 0, FALSE);
-}
-
-static void
-nemo_window_go_forward (NemoWindow *window)
-{
-	nemo_window_back_or_forward (window, FALSE, 0, FALSE);
+	nemo_window_close (NEMO_WINDOW (widget));
+	return FALSE;
 }
 
 static gboolean
@@ -1985,10 +2007,10 @@ nemo_window_button_press_event (GtkWidget *widget,
 	window = NEMO_WINDOW (widget);
 
 	if (mouse_extra_buttons && (event->button == mouse_back_button)) {
-		nemo_window_go_back (window);
+		nemo_window_back_or_forward (window, TRUE, 0, 0);
 		handled = TRUE; 
 	} else if (mouse_extra_buttons && (event->button == mouse_forward_button)) {
-		nemo_window_go_forward (window);
+		nemo_window_back_or_forward (window, FALSE, 0, 0);
 		handled = TRUE;
 	} else if (GTK_WIDGET_CLASS (nemo_window_parent_class)->button_press_event) {
 		handled = GTK_WIDGET_CLASS (nemo_window_parent_class)->button_press_event (widget, event);
@@ -2040,6 +2062,8 @@ use_extra_mouse_buttons_changed (gpointer callback_data)
 static void
 nemo_window_init (NemoWindow *window)
 {
+    GtkWindowGroup *window_group;
+
 	window->details = G_TYPE_INSTANCE_GET_PRIVATE (window, NEMO_TYPE_WINDOW, NemoWindowDetails);
 
 	window->details->panes = NULL;
@@ -2060,6 +2084,10 @@ nemo_window_init (NemoWindow *window)
     window->details->ignore_meta_sort_column = NULL;
     window->details->ignore_meta_sort_direction = SORT_NULL;
     window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
+
+	window_group = gtk_window_group_new ();
+	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
+	g_object_unref (window_group);
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
@@ -2106,6 +2134,7 @@ nemo_window_class_init (NemoWindowClass *class)
     wclass->key_release_event = nemo_window_key_release_event;
 	wclass->window_state_event = nemo_window_state_event;
 	wclass->button_press_event = nemo_window_button_press_event;
+	wclass->delete_event = nemo_window_delete_event;
 
 	class->get_icon = real_get_icon;
 	class->close = real_window_close;
@@ -2133,13 +2162,13 @@ nemo_window_class_init (NemoWindowClass *class)
                               G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	signals[GO_UP] =
-		g_signal_new ("go_up",
+		g_signal_new ("go-up",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 			      G_STRUCT_OFFSET (NemoWindowClass, go_up),
-			      g_signal_accumulator_true_handled, NULL,
+			      NULL, NULL,
 			      g_cclosure_marshal_generic,
-			      G_TYPE_BOOLEAN, 1, G_TYPE_BOOLEAN);
+			      G_TYPE_NONE, 0);
 	signals[RELOAD] =
 		g_signal_new ("reload",
 			      G_TYPE_FROM_CLASS (class),
@@ -2173,11 +2202,26 @@ nemo_window_class_init (NemoWindowClass *class)
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
+	signals[SLOT_ADDED] =
+		g_signal_new ("slot-added",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, NEMO_TYPE_WINDOW_SLOT);
+	signals[SLOT_REMOVED] =
+		g_signal_new ("slot-removed",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, NEMO_TYPE_WINDOW_SLOT);
 
 	binding_set = gtk_binding_set_by_class (class);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
-				      "go_up", 1,
-				      G_TYPE_BOOLEAN, FALSE);
+				      "go-up", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
 				      "reload", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
@@ -2213,6 +2257,14 @@ nemo_window_class_init (NemoWindowClass *class)
 	g_type_class_add_private (oclass, sizeof (NemoWindowDetails));
 }
 
+NemoWindow *
+nemo_window_new (GdkScreen *screen)
+{
+	return g_object_new (NEMO_TYPE_WINDOW,
+			     "screen", screen,
+			     NULL);
+}
+
 void
 nemo_window_split_view_on (NemoWindow *window)
 {
@@ -2236,7 +2288,7 @@ nemo_window_split_view_on (NemoWindow *window)
 		location = g_file_new_for_path (g_get_home_dir ());
 	}
 
-	nemo_window_slot_go_to (slot, location, FALSE);
+	nemo_window_slot_open_location (slot, location, 0);
 	g_object_unref (location);
 
 	window_set_search_action_text (window, FALSE);
@@ -2455,4 +2507,26 @@ void
 nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter)
 {
     window->details->ignore_meta_tighter_layout = tighter;
+}
+
+NemoWindowOpenFlags
+nemo_event_get_window_open_flags (void)
+{
+	NemoWindowOpenFlags flags = 0;
+	GdkEvent *event;
+
+	event = gtk_get_current_event ();
+
+	if (event == NULL) {
+		return flags;
+	}
+
+	if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
+	    (event->button.button == 2)) {
+		flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
+	}
+
+	gdk_event_free (event);
+
+	return flags;
 }

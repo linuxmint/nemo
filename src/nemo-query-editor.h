@@ -28,8 +28,6 @@
 
 #include <libnemo-private/nemo-query.h>
 
-#include "nemo-search-bar.h"
-
 #define NEMO_TYPE_QUERY_EDITOR nemo_query_editor_get_type()
 #define NEMO_QUERY_EDITOR(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_QUERY_EDITOR, NemoQueryEditor))
@@ -61,11 +59,7 @@ typedef struct {
 #include "nemo-window-slot.h"
 
 GType      nemo_query_editor_get_type     	   (void);
-GtkWidget* nemo_query_editor_new          	   (gboolean start_hidden);
-GtkWidget* nemo_query_editor_new_with_bar      (gboolean start_hidden,
-						    gboolean start_attached,
-						    NemoSearchBar *bar,
-						    NemoWindowSlot *slot);
+GtkWidget* nemo_query_editor_new          	   (void);
 void       nemo_query_editor_set_default_query (NemoQueryEditor *editor);
 
 void	   nemo_query_editor_grab_focus (NemoQueryEditor *editor);
@@ -74,6 +68,7 @@ void       nemo_query_editor_clear_query (NemoQueryEditor *editor);
 NemoQuery *nemo_query_editor_get_query   (NemoQueryEditor *editor);
 void           nemo_query_editor_set_query   (NemoQueryEditor *editor,
 						  NemoQuery       *query);
+GFile *        nemo_query_editor_get_location (NemoQueryEditor *editor);
 void           nemo_query_editor_set_visible (NemoQueryEditor *editor,
 						  gboolean             visible);
 
