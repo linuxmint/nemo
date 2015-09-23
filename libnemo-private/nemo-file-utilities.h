@@ -91,6 +91,8 @@ nemo_find_file_insensitive (GFile *parent, const gchar *name);
 
 char * nemo_get_accel_map_file (void);
 
+char * nemo_get_scripts_directory_path (void);
+
 GHashTable * nemo_trashed_files_get_original_directories (GList *files,
 							      GList **unhandled_files);
 void nemo_restore_files_from_trash (GList *files,
