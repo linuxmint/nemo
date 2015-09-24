@@ -803,7 +803,7 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	row->hbox = hbox;
 	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->search_bar_revealer), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
 
 	combo = gtk_combo_box_text_new ();
 	row->combo = combo;
