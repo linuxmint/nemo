@@ -67,6 +67,7 @@ struct NemoQueryEditorDetails {
 	guint typing_timeout_id;
 	gboolean is_visible;
 	GtkWidget *vbox;
+    GtkWidget *search_bar_revealer;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
@@ -802,7 +803,7 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	row->hbox = hbox;
 	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX (editor->details->vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (editor->details->search_bar_revealer), hbox, FALSE, FALSE, 0);
 
 	combo = gtk_combo_box_text_new ();
 	row->combo = combo;
@@ -852,6 +853,7 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NEMO_TYPE_QUERY_EDITOR,
 						       NemoQueryEditorDetails);
 	editor->details->is_visible = FALSE;
+    editor->details->search_bar_revealer = gtk_revealer_new ();
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
 				     GTK_STYLE_CLASS_TOOLBAR);
@@ -861,9 +863,11 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
 	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+    gtk_container_add (GTK_CONTAINER (editor->details->search_bar_revealer), GTK_BOX (editor->details->vbox));
+    gtk_widget_show_all (editor->details->search_bar_revealer);
 	gtk_widget_set_no_show_all (editor->details->vbox, TRUE);
 	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
-	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
+	gtk_box_pack_start (GTK_BOX (editor), editor->details->search_bar_revealer,
 			    FALSE, FALSE, 0);
 }
 
@@ -964,9 +968,9 @@ nemo_query_editor_set_visible (NemoQueryEditor *editor,
 {
 	editor->details->is_visible = visible;
 	if (visible) {
-		gtk_widget_show (editor->details->vbox);
+		gtk_revealer_set_reveal_child (editor->details->search_bar_revealer, TRUE);
 	} else {
-		gtk_widget_hide (editor->details->vbox);
+		gtk_revealer_set_reveal_child (editor->details->search_bar_revealer, FALSE);
 	}
 }
 
