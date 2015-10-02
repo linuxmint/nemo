@@ -310,7 +310,7 @@ nemo_widget_menu_item_set_related_action (NemoWidgetMenuItem *widget_menu_item,
       }
     gtk_activatable_do_set_related_action (GTK_ACTIVATABLE (widget_menu_item), action);
 
-    nemo_widget_menu_item_sync_action_properties (widget_menu_item, action);
+    nemo_widget_menu_item_sync_action_properties (GTK_ACTIVATABLE (widget_menu_item), action);
 
     widget_menu_item->related_action = action;
 }

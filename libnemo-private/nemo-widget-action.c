@@ -79,7 +79,7 @@ nemo_widget_action_class_init (NemoWidgetActionClass *klass)
     action_class->create_tool_item  = create_tool_item;
 
     action_class->menu_item_type = NEMO_TYPE_WIDGET_MENU_ITEM;
-    action_class->toolbar_item_type = NULL;
+    action_class->toolbar_item_type = G_TYPE_NONE;
 
     g_object_class_install_property (object_class,
                                      PROP_WIDGET_A,

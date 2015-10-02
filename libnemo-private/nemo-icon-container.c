@@ -8379,10 +8379,10 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 		end_offset = -1;
 	} else {
 		/* if it is a directory it should select all of the text regardless of select_all option */
-		if (nemo_file_is_directory (icon->data)){
+		if (nemo_file_is_directory (NEMO_FILE (icon->data))) {
 			start_offset = 0;
 			end_offset = -1;
-		}else{
+		} else {
 			eel_filename_get_rename_region (editable_text, &start_offset, &end_offset);
 		}
 	}
