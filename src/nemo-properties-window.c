@@ -227,7 +227,8 @@ static void name_field_activate                   (NemoEntry *name_field,
 						   gpointer callback_data);
 static GtkLabel *attach_ellipsizing_value_label   (GtkGrid *grid,
 						   GtkWidget *sibling,
-						   const char *initial_text);
+						   const char *initial_text, 
+						   PangoEllipsizeMode ellipsize_mode);
 						   
 static GtkWidget* create_pie_widget 		  (NemoPropertiesWindow *window);
 
@@ -581,7 +582,8 @@ set_name_field (NemoPropertiesWindow *window,
 			window->details->name_field = GTK_WIDGET 
 				(attach_ellipsizing_value_label (window->details->basic_grid,
 								 GTK_WIDGET (window->details->name_label),
-								 name));
+								 name, 
+								 PANGO_ELLIPSIZE_END));
 		} else {
 			window->details->name_field = nemo_entry_new ();
 			gtk_entry_set_text (GTK_ENTRY (window->details->name_field), name);
@@ -1172,6 +1174,8 @@ value_field_update_internal (GtkLabel *label,
 	}
 
 	gtk_label_set_text (label, attribute_value);
+	gtk_widget_set_tooltip_text (GTK_WIDGET (label),
+				     attribute_value);
 	g_free (attribute_value);
 }
 
@@ -1192,19 +1196,16 @@ static GtkLabel *
 attach_label (GtkGrid *grid,
 	      GtkWidget *sibling,
 	      const char *initial_text,
-	      gboolean right_aligned,
-	      gboolean bold,
-	      gboolean ellipsize_text,
+	      PangoEllipsizeMode ellipsize_mode,
 	      gboolean selectable,
 	      gboolean mnemonic)
 {
 	GtkWidget *label_field;
 
-	if (ellipsize_text) {
+	if (ellipsize_mode != PANGO_ELLIPSIZE_NONE) {
 		label_field = gtk_label_new (initial_text);
                 gtk_label_set_ellipsize (GTK_LABEL (label_field),
-                                         right_aligned ? PANGO_ELLIPSIZE_START :
-                                                         PANGO_ELLIPSIZE_END);
+					 ellipsize_mode);
 	} else if (mnemonic) {
 		label_field = gtk_label_new_with_mnemonic (initial_text);
 	} else {
@@ -1214,14 +1215,11 @@ attach_label (GtkGrid *grid,
 	if (selectable) {
 		gtk_label_set_selectable (GTK_LABEL (label_field), TRUE);
 	}
-	
-	if (bold) {
-		eel_gtk_label_make_bold (GTK_LABEL (label_field));
-	}
-	gtk_misc_set_alignment (GTK_MISC (label_field), right_aligned ? 1 : 0, 0.5);
+
+	gtk_misc_set_alignment (GTK_MISC (label_field), 0, 0.5);
 	gtk_widget_show (label_field);
 
-	if (ellipsize_text) {
+	if (ellipsize_mode != PANGO_ELLIPSIZE_NONE) {
 		gtk_widget_set_hexpand (label_field, TRUE);
 	}
 
@@ -1240,33 +1238,30 @@ attach_value_label (GtkGrid *grid,
 		    GtkWidget *sibling,
 		    const char *initial_text)
 {
-	return attach_label (grid, sibling, initial_text, FALSE, FALSE, FALSE, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, PANGO_ELLIPSIZE_NONE, TRUE, FALSE);
 }
 
 static GtkLabel *
 attach_ellipsizing_value_label (GtkGrid *grid,
 				GtkWidget *sibling,
-				const char *initial_text)
+				const char *initial_text, 
+				PangoEllipsizeMode ellipsize_mode)
 {
-	return attach_label (grid, sibling, initial_text, FALSE, FALSE, TRUE, TRUE, FALSE);
+	return attach_label (grid, sibling, initial_text, ellipsize_mode, TRUE, FALSE);
 }
 
 static GtkWidget*
-attach_value_field_internal (NemoPropertiesWindow *window,
-			     GtkGrid *grid,
-			     GtkWidget *sibling,
-			     const char *file_attribute_name,
-			     const char *inconsistent_string,
-			     gboolean show_original,
-			     gboolean ellipsize_text)
+attach_value_field_ellipsizing (NemoPropertiesWindow *window,
+				GtkGrid *grid,
+				GtkWidget *sibling,
+				const char *file_attribute_name,
+				const char *inconsistent_string,
+				gboolean show_original,
+				PangoEllipsizeMode ellipsize_mode)
 {
 	GtkLabel *value_field;
 
-	if (ellipsize_text) {
-		value_field = attach_ellipsizing_value_label (grid, sibling, "");
-	} else {
-		value_field = attach_value_label (grid, sibling, "");
-	}
+	value_field = attach_ellipsizing_value_label (grid, sibling, "", ellipsize_mode);
 
   	/* Stash a copy of the file attribute name in this field for the callback's sake. */
 	g_object_set_data_full (G_OBJECT (value_field), "file_attribute",
@@ -1290,28 +1285,12 @@ attach_value_field (NemoPropertiesWindow *window,
 		    const char *inconsistent_string,
 		    gboolean show_original)
 {
-	return attach_value_field_internal (window, 
-					    grid, sibling,
-					    file_attribute_name, 
-					    inconsistent_string,
-					    show_original,
-					    FALSE);
-}
-
-static GtkWidget*
-attach_ellipsizing_value_field (NemoPropertiesWindow *window,
-				GtkGrid *grid,
-				GtkWidget *sibling,
-		    		const char *file_attribute_name,
-				const char *inconsistent_string,
-				gboolean show_original)
-{
-	return attach_value_field_internal (window,
-					    grid, sibling, 
-					    file_attribute_name, 
-					    inconsistent_string, 
-					    show_original,
-					    TRUE);
+	return attach_value_field_ellipsizing (window, 
+					       grid, sibling,
+					       file_attribute_name, 
+					       inconsistent_string,
+					       show_original,
+					       PANGO_ELLIPSIZE_NONE);
 }
 
 static void
@@ -2062,7 +2041,6 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
 	status = NEMO_REQUEST_DONE;
-	file_status = NEMO_REQUEST_NOT_STARTED;
 	total_count = window->details->total_count;
 	total_size = window->details->total_size;
     total_hidden = window->details->hidden_count;
@@ -2239,7 +2217,7 @@ static GtkLabel *
 attach_title_field (GtkGrid *grid,
 		    const char *title)
 {
-	return attach_label (grid, NULL, title, FALSE, FALSE, FALSE, FALSE, TRUE);
+	return attach_label (grid, NULL, title, PANGO_ELLIPSIZE_NONE, FALSE, TRUE);
 }		      
 
 #define INCONSISTENT_STATE_STRING \
@@ -2270,17 +2248,19 @@ append_title_and_ellipsizing_value (NemoPropertiesWindow *window,
 				    const char *title,
 				    const char *file_attribute_name,
 				    const char *inconsistent_state,
-				    gboolean show_original)
+				    gboolean show_original, 
+				    PangoEllipsizeMode ellipsize_mode)
 {
 	GtkLabel *title_label;
 	GtkWidget *value;
 
 	title_label = attach_title_field (grid, title);
-	value = attach_ellipsizing_value_field (window, grid,
+	value = attach_value_field_ellipsizing (window, grid,
 						GTK_WIDGET (title_label),
 						file_attribute_name,
 						inconsistent_state,
-						show_original);
+						show_original,
+						ellipsize_mode);
 	gtk_label_set_mnemonic_widget (title_label, value);
 }
 
@@ -3130,7 +3110,8 @@ create_basic_page (NemoPropertiesWindow *window)
 						    _("Type:"), 
 						    "type",
 						    INCONSISTENT_STATE_STRING,
-						    FALSE);
+						    FALSE,
+						    PANGO_ELLIPSIZE_END);
 	}
 
 	if (should_show_link_target (window)) {
@@ -3138,7 +3119,8 @@ create_basic_page (NemoPropertiesWindow *window)
 						    _("Link target:"), 
 						    "link_target",
 						    INCONSISTENT_STATE_STRING,
-						    FALSE);
+						    FALSE,
+						    PANGO_ELLIPSIZE_MIDDLE);
 	}
 
 	if (is_multi_file_window (window) ||
@@ -3157,13 +3139,15 @@ create_basic_page (NemoPropertiesWindow *window)
 		append_title_and_ellipsizing_value (window, grid, _("Location:"), 
 						    "where",
 						    INCONSISTENT_STATE_STRING,
-                            location_show_original (window));
-		
-		append_title_and_ellipsizing_value (window, grid, 
-						    _("Volume:"), 
+						    location_show_original (window), 
+						    PANGO_ELLIPSIZE_MIDDLE);
+
+		append_title_and_ellipsizing_value (window, grid,
+						    _("Volume:"),
 						    "volume",
 						    INCONSISTENT_STATE_STRING,
-						    FALSE);
+						    FALSE,
+						    PANGO_ELLIPSIZE_END);
 	}
 
 	if (should_show_accessed_date (window)) {
@@ -4186,9 +4170,7 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 					   !has_directory);
 	}
 
-	append_blank_slim_row (page_grid);
-
-	group_label = attach_title_field (page_grid, _("Others"));
+	append_blank_slim_row (page_grid);;
 	
 	if (has_directory) {
 		add_permissions_combo_box (window, page_grid,
@@ -4813,7 +4795,7 @@ create_open_with_page (NemoPropertiesWindow *window)
 		}
 	}
 
-	vbox = nemo_mime_application_chooser_new (uri, uris, mime_type);
+	vbox = nemo_mime_application_chooser_new (uri, uris, mime_type, NULL);
 
 	gtk_widget_show (vbox);
 	g_free (mime_type);

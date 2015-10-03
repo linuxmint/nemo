@@ -907,6 +907,11 @@ update_places (NemoPlacesSidebar *sidebar)
         if (!g_file_is_native (root)) {
             gboolean really_network = TRUE;
             gchar *path = g_file_get_path (root);
+            if (!path) {
+                network_mounts = g_list_prepend (network_mounts, mount);
+                g_object_unref (root);
+                continue;
+            }
             gchar *escaped1 = g_uri_unescape_string (path, "");
             gchar *escaped2 = g_uri_unescape_string (escaped1, "");
             gchar *ptr = g_strrstr (escaped2, "file://");
@@ -1500,7 +1505,7 @@ compute_drop_position (GtkTreeView *tree_view,
 	GtkTreeIter iter;
 	PlaceType place_type;
 	SectionType section_type;
-    gchar *drop_target_uri;
+    gchar *drop_target_uri = NULL;
 
 	if (!gtk_tree_view_get_dest_row_at_pos (tree_view,
 						x, y,
@@ -1517,9 +1522,7 @@ compute_drop_position (GtkTreeView *tree_view,
 			    -1);
 	if (!cat_is_expanded (sidebar, section_type) && place_type == PLACES_HEADING) {
         if (sidebar->expand_timeout_source > 0) {
-            gtk_tree_path_free (*path);
-            *path = NULL;
-            return FALSE;
+            goto fail;
         }
         CategoryExpandPayload *payload;
         GtkTreeViewColumn *col;
@@ -1536,37 +1539,30 @@ compute_drop_position (GtkTreeView *tree_view,
                                                              (GSourceFunc) maybe_expand_category,
                                                              payload,
                                                              (GDestroyNotify) g_free);
-		gtk_tree_path_free (*path);
-		*path = NULL;
-		return FALSE;
+        goto fail;
 	} else if (place_type == PLACES_HEADING) {
         if (section_type == SECTION_BOOKMARKS &&
             nemo_bookmark_list_length (sidebar->bookmarks) == sidebar->bookmark_breakpoint) {
             *pos = GTK_TREE_VIEW_DROP_AFTER;
+            g_free (drop_target_uri);
             return TRUE;
         } else {
-            gtk_tree_path_free (*path);
-            *path = NULL;
-            return FALSE;
+            goto fail;
         }
     }
 
 	if (section_type != SECTION_XDG_BOOKMARKS &&
         section_type != SECTION_BOOKMARKS &&
 	    sidebar->drag_data_received &&
-	    sidebar->drag_data_info == GTK_TREE_MODEL_ROW) {
+	    sidebar->drag_data_info == GTK_TREE_MODEL_ROW &&
+        g_strcmp0 (drop_target_uri, sidebar->top_bookend_uri) != 0) {
 		/* don't allow dropping bookmarks into non-bookmark areas */
 
-		gtk_tree_path_free (*path);
-		*path = NULL;
-
-		return FALSE;
+        goto fail;
 	}
 
     if (g_strcmp0 (drop_target_uri, "recent:///") == 0) {
-        gtk_tree_path_free (*path);
-        *path = NULL;
-        return FALSE;
+        goto fail;
     }
 
     GdkRectangle rect;
@@ -1587,6 +1583,12 @@ compute_drop_position (GtkTreeView *tree_view,
 	}
 
 	return TRUE;
+
+fail:
+    g_free (drop_target_uri);
+    gtk_tree_path_free (*path);
+    *path = NULL;
+    return FALSE;
 }
 
 static gboolean
@@ -1749,7 +1751,8 @@ drag_leave_callback (GtkTreeView *tree_view,
 static void
 bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
                      GtkSelectionData  *selection_data,
-                                  int   position)
+                                  int   position,
+                          SectionType   section_type)
 {
 	NemoBookmark *bookmark;
 	NemoFile *file;
@@ -1778,8 +1781,11 @@ bookmarks_drop_uris (NemoPlacesSidebar *sidebar,
 		bookmark = nemo_bookmark_new (location, NULL, NULL);
 
 		if (!nemo_bookmark_list_contains (sidebar->bookmarks, bookmark)) {
-            if (position < sidebar->bookmark_breakpoint)
+            if (position < sidebar->bookmark_breakpoint ||
+                (position == sidebar->bookmark_breakpoint && (section_type == SECTION_XDG_BOOKMARKS ||
+                                                              section_type == SECTION_COMPUTER))) {
                 increment_bookmark_breakpoint (sidebar);
+            }
 			nemo_bookmark_list_insert_item (sidebar->bookmarks, bookmark, position++);
 		}
 
@@ -1849,10 +1855,10 @@ update_bookmark_breakpoint (NemoPlacesSidebar *sidebar,
                                   SectionType  new_type)
 {
     if (old_type != new_type) {
-        if (new_type == SECTION_XDG_BOOKMARKS)
-            increment_bookmark_breakpoint (sidebar);
-        else if (new_type == SECTION_BOOKMARKS)
+        if (old_type == SECTION_XDG_BOOKMARKS && new_type != SECTION_COMPUTER)
             decrement_bookmark_breakpoint (sidebar);
+        else if (old_type == SECTION_BOOKMARKS)
+            increment_bookmark_breakpoint (sidebar);
     }
 }
 
@@ -1982,7 +1988,7 @@ drag_data_received_callback (GtkWidget *widget,
 
 		switch (info) {
 		case TEXT_URI_LIST:
-			bookmarks_drop_uris (sidebar, selection_data, position);
+			bookmarks_drop_uris (sidebar, selection_data, position, section_type);
 			success = TRUE;
 			break;
 		case GTK_TREE_MODEL_ROW:
@@ -2330,7 +2336,7 @@ volume_mounted_cb (GVolume *volume,
 		if (sidebar->go_to_after_mount_slot != NULL) {
 			if ((sidebar->go_to_after_mount_flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
 				nemo_window_slot_open_location (sidebar->go_to_after_mount_slot, location,
-								    sidebar->go_to_after_mount_flags, NULL);
+								    sidebar->go_to_after_mount_flags);
 			} else {
 				NemoWindow *new, *cur;
 
@@ -2345,8 +2351,10 @@ volume_mounted_cb (GVolume *volume,
 		g_object_unref (G_OBJECT (mount));
 	}
 
-	
-	eel_remove_weak_pointer (&(sidebar->go_to_after_mount_slot));
+	if (sidebar->go_to_after_mount_slot) {
+		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+					      (gpointer *) &sidebar->go_to_after_mount_slot);
+	}
 }
 
 static void
@@ -2396,8 +2404,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 		/* Navigate to the clicked location */
 		if ((flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
 			slot = nemo_window_get_active_slot (sidebar->window);
-			nemo_window_slot_open_location (slot, location,
-							    flags, NULL);
+			nemo_window_slot_open_location (slot, location, flags);
 		} else {
 			NemoWindow *cur, *new;
 			
@@ -2426,7 +2433,8 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 
 			slot = nemo_window_get_active_slot (sidebar->window);
 			sidebar->go_to_after_mount_slot = slot;
-			eel_add_weak_pointer (&(sidebar->go_to_after_mount_slot));
+			g_object_add_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+						   (gpointer *) &sidebar->go_to_after_mount_slot);
 
 			sidebar->go_to_after_mount_flags = flags;
 
@@ -4238,7 +4246,11 @@ nemo_places_sidebar_dispose (GObject *object)
 
     g_clear_object (&sidebar->action_manager);
 
-	eel_remove_weak_pointer (&(sidebar->go_to_after_mount_slot));
+	if (sidebar->go_to_after_mount_slot) {
+		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
+					      (gpointer *) &sidebar->go_to_after_mount_slot);
+		sidebar->go_to_after_mount_slot = NULL;
+	}
 
     g_signal_handlers_disconnect_by_func (nemo_window_state,
                                           breakpoint_changed_cb,

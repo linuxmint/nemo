@@ -334,14 +334,9 @@ int
 eel_g_str_list_index (GList *str_list,
 		      const char *str)
 {
-	int i;
-	GList *l;
-	for (i = 0, l = str_list; l != NULL; l = l->next, i++) {
-		if (!strcmp (str, (const char*)l->data)) {
-			return i;
-		}
-	}
-	return -1;
+/* FIXME: replaced the code here with the glib equivalent
+   when sure ok then replace each instance of the call with this code */
+    return(g_list_index(str_list, (gconstpointer *)str));
 }
 
 /**

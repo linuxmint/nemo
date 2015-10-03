@@ -61,6 +61,7 @@
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-undo-manager.h>
+#include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-extension/nemo-menu-provider.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_APPLICATION
@@ -68,7 +69,9 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <pwd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
@@ -80,6 +83,14 @@
 
 #ifdef HAVE_UNITY
 #include "src/unity-bookmarks-handler.h"
+#endif
+
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else
+#include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
 #endif
 
 /* Keep window from shrinking down ridiculously small; numbers are somewhat arbitrary */
@@ -111,9 +122,14 @@ G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 struct _NemoApplicationPriv {
 	GVolumeMonitor *volume_monitor;
 	NemoProgressUIHandler *progress_handler;
+	NemoDBusManager *dbus_manager;
+	NemoFreedesktopDBus *fdb_manager;
 
 	gboolean no_desktop;
 	gchar *geometry;
+
+    gboolean cache_problem;
+    gboolean ignore_cache_problem;
 
     NotifyNotification *unmount_notify;
 };
@@ -275,14 +291,14 @@ selection_get_cb (GtkWidget          *widget,
 }
 
 static GtkWidget *
-get_desktop_manager_selection (GdkDisplay *display, int screen)
+get_desktop_manager_selection (GdkDisplay *display)
 {
 	char selection_name[32];
 	GdkAtom selection_atom;
 	Window selection_owner;
 	GtkWidget *selection_widget;
 
-	g_snprintf (selection_name, sizeof (selection_name), "_NET_DESKTOP_MANAGER_S%d", screen);
+	g_snprintf (selection_name, sizeof (selection_name), "_NET_DESKTOP_MANAGER_S0");
 	selection_atom = gdk_atom_intern (selection_name, FALSE);
 
 	selection_owner = XGetSelectionOwner (GDK_DISPLAY_XDISPLAY (display),
@@ -292,7 +308,7 @@ get_desktop_manager_selection (GdkDisplay *display, int screen)
 		return NULL;
 	}
 	
-	selection_widget = gtk_invisible_new_for_screen (gdk_display_get_screen (display, screen));
+	selection_widget = gtk_invisible_new_for_screen (gdk_display_get_default_screen (display));
 	/* We need this for gdk_x11_get_server_time() */
 	gtk_widget_add_events (selection_widget, GDK_PROPERTY_CHANGE_MASK);
 
@@ -337,37 +353,32 @@ nemo_application_create_desktop_windows (NemoApplication *application)
 	GdkDisplay *display;
 	NemoDesktopWindow *window;
 	GtkWidget *selection_widget;
-	int screens, i;
 
 	display = gdk_display_get_default ();
-	screens = gdk_display_get_n_screens (display);
 
-	for (i = 0; i < screens; i++) {
-
-		DEBUG ("Creating a desktop window for screen %d", i);
+	DEBUG ("Creating a desktop window for screen");
 		
-		selection_widget = get_desktop_manager_selection (display, i);
-		if (selection_widget != NULL) {
-			window = nemo_desktop_window_new (gdk_display_get_screen (display, i));
+	selection_widget = get_desktop_manager_selection (display);
+	if (selection_widget != NULL) {
+		window = nemo_desktop_window_new (gdk_display_get_default_screen (display));
 
-			g_signal_connect (selection_widget, "selection_clear_event",
-					  G_CALLBACK (selection_clear_event_cb), window);
+		g_signal_connect (selection_widget, "selection_clear_event",
+				  G_CALLBACK (selection_clear_event_cb), window);
 			
-			g_signal_connect (window, "unrealize",
-					  G_CALLBACK (desktop_unrealize_cb), selection_widget);
+		g_signal_connect (window, "unrealize",
+				  G_CALLBACK (desktop_unrealize_cb), selection_widget);
 			
 			/* We realize it immediately so that the NEMO_DESKTOP_WINDOW_ID
 			   property is set so gnome-settings-daemon doesn't try to set the
 			   background. And we do a gdk_flush() to be sure X gets it. */
-			gtk_widget_realize (GTK_WIDGET (window));
-			gdk_flush ();
+		gtk_widget_realize (GTK_WIDGET (window));
+		gdk_flush ();
 
-			nemo_application_desktop_windows =
-				g_list_prepend (nemo_application_desktop_windows, window);
+		nemo_application_desktop_windows =
+			g_list_prepend (nemo_application_desktop_windows, window);
 
-			gtk_application_add_window (GTK_APPLICATION (application),
-						    GTK_WINDOW (window));
-		}
+		gtk_application_add_window (GTK_APPLICATION (application),
+					    GTK_WINDOW (window));
 	}
 }
 
@@ -406,63 +417,6 @@ nemo_application_close_all_windows (NemoApplication *self)
 	g_list_free (list_copy);
 }
 
-static gboolean
-nemo_window_delete_event_callback (GtkWidget *widget,
-				       GdkEvent *event,
-				       gpointer user_data)
-{
-	NemoWindow *window;
-
-	window = NEMO_WINDOW (widget);
-	nemo_window_close (window);
-
-	return TRUE;
-}				       
-
-
-static NemoWindow *
-create_window (NemoApplication *application,
-	       GdkScreen *screen)
-{
-	NemoWindow *window;
-	
-	g_return_val_if_fail (NEMO_IS_APPLICATION (application), NULL);
-	
-	window = g_object_new (NEMO_TYPE_WINDOW,
-			       "screen", screen,
-			       NULL);
-
-	g_signal_connect_data (window, "delete_event",
-			       G_CALLBACK (nemo_window_delete_event_callback), NULL, NULL,
-			       G_CONNECT_AFTER);
-
-	gtk_application_add_window (GTK_APPLICATION (application),
-				    GTK_WINDOW (window));
-
-	/* Do not yet show the window. It will be shown later on if it can
-	 * successfully display its initial URI. Otherwise it will be destroyed
-	 * without ever having seen the light of day.
-	 */
-
-	return window;
-}
-
-static gboolean
-another_navigation_window_already_showing (NemoApplication *application,
-					   NemoWindow *the_window)
-{
-	GList *list, *item;
-	
-	list = gtk_application_get_windows (GTK_APPLICATION (application));
-	for (item = list; item != NULL; item = item->next) {
-		if (item->data != the_window) {
-			return TRUE;
-		}
-	}
-	
-	return FALSE;
-}
-
 NemoWindow *
 nemo_application_create_window (NemoApplication *application,
 				    GdkScreen           *screen)
@@ -473,7 +427,9 @@ nemo_application_create_window (NemoApplication *application,
 
 	g_return_val_if_fail (NEMO_IS_APPLICATION (application), NULL);
 
-	window = create_window (application, screen);
+	window = nemo_window_new (screen);
+	gtk_application_add_window (GTK_APPLICATION (application),
+				    GTK_WINDOW (window));
 
 	maximized = g_settings_get_boolean
 		(nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED);
@@ -496,7 +452,7 @@ nemo_application_create_window (NemoApplication *application,
 			 geometry_string,
 			 NEMO_WINDOW_MIN_WIDTH,
 			 NEMO_WINDOW_MIN_HEIGHT,
-			 another_navigation_window_already_showing (application, window));
+			 TRUE);
 	}
 	g_free (geometry_string);
 
@@ -632,7 +588,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
                 nemo_window_slot_go_home (slot, FALSE);
 		} else {
 			computer = g_file_new_for_path (g_get_home_dir ());
-			nemo_window_slot_go_to (slot, computer, FALSE);
+			nemo_window_slot_open_location (slot, computer, 0);
 			g_object_unref(computer);
 		}
 	}
@@ -705,10 +661,8 @@ nemo_application_open_location (NemoApplication *application,
 		sel_list = g_list_prepend (sel_list, nemo_file_get (selection));
 	}
 
-	nemo_window_slot_open_location (nemo_window_get_active_slot (window),
-					    location,
-					    0,
-					    sel_list);
+	nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), location,
+						 0, sel_list, NULL, NULL);
 
 	if (sel_list != NULL) {
 		nemo_file_list_free (sel_list);
@@ -784,8 +738,9 @@ nemo_application_finalize (GObject *object)
 
 	g_free (application->priv->geometry);
 
-	nemo_dbus_manager_stop ();
-	nemo_freedesktop_dbus_stop ();
+	g_clear_object (&application->priv->dbus_manager);
+	g_clear_object (&application->priv->fdb_manager);
+
 	notify_uninit ();
 
         G_OBJECT_CLASS (nemo_application_parent_class)->finalize (object);
@@ -851,6 +806,9 @@ nemo_application_quit (NemoApplication *self)
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+
+    /* we have been asked to force quit */
+    g_application_quit (G_APPLICATION (self));
 }
 
 static gboolean
@@ -863,6 +821,7 @@ nemo_application_local_command_line (GApplication *application,
 	gboolean browser = FALSE;
 	gboolean kill_shell = FALSE;
 	gboolean no_default_window = FALSE;
+    gboolean fix_cache = FALSE;
 	gchar **remaining = NULL;
 	NemoApplication *self = NEMO_APPLICATION (application);
 
@@ -882,6 +841,8 @@ nemo_application_local_command_line (GApplication *application,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
 		{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->no_desktop,
 		  N_("Do not manage the desktop (ignore the preference set in the preferences dialog)."), NULL },
+        { "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
+          N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
@@ -925,6 +886,19 @@ nemo_application_local_command_line (GApplication *application,
 		do_perform_self_checks (exit_status);
 		goto out;
 	}
+
+#ifndef GNOME_BUILD
+    if (fix_cache) {
+        if (geteuid () != 0) {
+            g_printerr ("The --fix-cache option must be run with sudo or as the root user.\n");
+        } else {
+            gnome_desktop_thumbnail_cache_fix_permissions ();
+            g_print ("User thumbnail cache successfully repaired.\n");
+        }
+
+        goto out;
+    }
+#endif
 
 	DEBUG ("Parsing local command line, no_default_window %d, quit %d, "
 	       "self checks %d, no_desktop %d",
@@ -1034,13 +1008,32 @@ nemo_application_add_app_css_provider (void)
       goto out_a;
     }
 
-    screen = gdk_screen_get_default ();
+  screen = gdk_screen_get_default ();
 
   gtk_style_context_add_provider_for_screen (screen,
-      GTK_STYLE_PROVIDER (provider),
-      GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
+                                             GTK_STYLE_PROVIDER (provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
 
 out_a:
+  g_object_unref (provider);
+
+  provider = gtk_css_provider_new ();
+
+  if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-application.css", &error))
+    {
+      g_warning ("Failed to load application css file: %s", error->message);
+      if (error->message != NULL)
+        g_error_free (error);
+      goto out_b;
+    }
+
+  screen = gdk_screen_get_default ();
+
+  gtk_style_context_add_provider_for_screen (screen,
+                                             GTK_STYLE_PROVIDER (provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+out_b:
   g_object_unref (provider);
 }
 
@@ -1062,7 +1055,7 @@ static void
 init_desktop (NemoApplication *self)
 {
 	GdkScreen *screen;
-	screen = gdk_display_get_screen (gdk_display_get_default (), 0);
+	screen = gdk_display_get_default_screen (gdk_display_get_default ());
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
 
@@ -1176,19 +1169,6 @@ menu_state_changed_callback (NemoApplication *self)
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 static void
 nemo_application_startup (GApplication *app)
 {
@@ -1205,8 +1185,8 @@ nemo_application_startup (GApplication *app)
 	self->undo_manager = nemo_undo_manager_new ();
 
 	/* create DBus manager */
-	nemo_dbus_manager_start (app);
-	nemo_freedesktop_dbus_start (self);
+	self->priv->dbus_manager = nemo_dbus_manager_new ();
+	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
 
 	/* initialize preferences and create the global GSettings objects */
 	nemo_global_preferences_init ();
@@ -1252,6 +1232,22 @@ nemo_application_startup (GApplication *app)
 	 * if there are problems.
 	 */
 	check_required_directories (self);
+
+    self->priv->cache_problem = FALSE;
+    self->priv->ignore_cache_problem = FALSE;
+
+#ifndef GNOME_BUILD
+    /* silently do a full check of the cache and fix if running as root.
+     * If running as a normal user, do a quick check, and we'll notify the
+     * user later if there's a problem via an infobar */
+    if (geteuid () == 0) {
+        if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, FALSE))
+            gnome_desktop_thumbnail_cache_fix_permissions ();
+    } else {
+        if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, TRUE))
+            self->priv->cache_problem = TRUE;
+    }
+#endif
 
     if (geteuid() != 0)
         init_desktop (self);
@@ -1317,7 +1313,45 @@ NemoApplication *
 nemo_application_get_singleton (void)
 {
 	return g_object_new (NEMO_TYPE_APPLICATION,
-			     "application-id", "org.NemoApplication",
-			     "flags", G_APPLICATION_HANDLES_OPEN,
-			     NULL);
+                         "application-id", "org.Nemo",
+                         "flags", G_APPLICATION_HANDLES_OPEN,
+                         "inactivity-timeout", 12000,
+                         "register-session", TRUE,
+                         NULL);
+}
+
+void
+nemo_application_check_thumbnail_cache (NemoApplication *application)
+{
+    application->priv->cache_problem = !nemo_thumbnail_factory_check_status ();
+}
+
+gboolean
+nemo_application_get_cache_bad (NemoApplication *application)
+{
+    return application->priv->cache_problem;
+}
+
+void
+nemo_application_clear_cache_flag (NemoApplication *application)
+{
+    application->priv->cache_problem = FALSE;
+}
+
+void
+nemo_application_set_cache_flag (NemoApplication *application)
+{
+    application->priv->cache_problem = TRUE;
+}
+
+void
+nemo_application_ignore_cache_problem (NemoApplication *application)
+{
+    application->priv->ignore_cache_problem = TRUE;
+}
+
+gboolean
+nemo_application_get_cache_problem_ignored (NemoApplication *application)
+{
+    return application->priv->ignore_cache_problem;
 }

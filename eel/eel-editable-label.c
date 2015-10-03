@@ -2575,7 +2575,7 @@ eel_editable_label_move_line (EelEditableLabel *label,
 			      gint      count)
 {
   int n_lines, i;
-  int x;
+  int x=0;
   PangoLayoutLine *line;
   int index;
   
@@ -4063,14 +4063,13 @@ eel_editable_label_accessible_delete_text_cb (EelEditableLabel *label,
 					      gint             arg2)
 {
   AtkObject *accessible;
-
-  accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
-
   /*
    * Zero length text deleted so ignore
    */
   if (arg2 - arg1 == 0)
     return;
+
+  accessible = gtk_widget_get_accessible (GTK_WIDGET (label));
 
   g_signal_emit_by_name (accessible, "text_changed::delete", arg1, arg2 - arg1);
 }

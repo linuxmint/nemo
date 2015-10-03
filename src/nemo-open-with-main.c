@@ -84,6 +84,8 @@ int
 main (int argc, char *argv[])
 {
 	GtkWidget *dialog;
+    GtkWidget *ok_button;
+
 	GOptionContext *context;
 	GError *error;
 	const GOptionEntry options[] = {
@@ -144,11 +146,14 @@ main (int argc, char *argv[])
                                           GTK_DIALOG_DESTROY_WITH_PARENT,
                                           GTK_STOCK_CANCEL,
                                           GTK_RESPONSE_CANCEL,
-                                          GTK_STOCK_OK,
-                                          GTK_RESPONSE_OK,
                                           NULL);
+    ok_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
+                                       GTK_STOCK_OK,
+                                       GTK_RESPONSE_OK);
 
-    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, NULL, mime_type);
+    gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+
+    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, NULL, mime_type, ok_button);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 

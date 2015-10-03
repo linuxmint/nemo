@@ -458,7 +458,6 @@ nemo_icon_canvas_item_get_drag_surface (NemoIconCanvasItem *item)
 {
 	cairo_surface_t *surface;
 	EelCanvas *canvas;
-	GdkScreen *screen;
 	int width, height;
     int pix_width, pix_height;
 	int item_offset_x, item_offset_y;
@@ -471,7 +470,6 @@ nemo_icon_canvas_item_get_drag_surface (NemoIconCanvasItem *item)
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), NULL);
 
 	canvas = EEL_CANVAS_ITEM (item)->canvas;
-	screen = gtk_widget_get_screen (GTK_WIDGET (canvas));
 	context = gtk_widget_get_style_context (GTK_WIDGET (canvas));
 
 	gtk_style_context_save (context);

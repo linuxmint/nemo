@@ -9,3 +9,5 @@ nemo_column_provider_get_type
 nemo_menu_provider_get_type
 nemo_menu_get_type
 nemo_menu_item_get_type
+nemo_name_and_desc_provider_get_type
+

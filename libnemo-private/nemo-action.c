@@ -48,23 +48,6 @@ static void     nemo_action_finalize (GObject *gobject);
 
 static gpointer parent_class;
 
-#define ACTION_FILE_GROUP "Nemo Action"
-
-#define KEY_ACTIVE "Active"
-#define KEY_NAME "Name"
-#define KEY_COMMENT "Comment"
-#define KEY_EXEC "Exec"
-#define KEY_ICON_NAME "Icon-Name"
-#define KEY_STOCK_ID "Stock-Id"
-#define KEY_SELECTION "Selection"
-#define KEY_EXTENSIONS "Extensions"
-#define KEY_MIME_TYPES "Mimetypes"
-#define KEY_SEPARATOR "Separator"
-#define KEY_QUOTE_TYPE "Quote"
-#define KEY_DEPENDENCIES "Dependencies"
-#define KEY_CONDITIONS "Conditions"
-#define KEY_WHITESPACE "EscapeSpaces"
-
 enum 
 {
   PROP_0,
@@ -253,7 +236,7 @@ recalc_dbus_conditions (NemoAction *action)
     gboolean cumul_found = TRUE;
 
     for (l = action->dbus; l != NULL; l = l->next) {
-        c = l->data;
+        c = (DBusCondition *) l->data;
         if (!c->exists) {
             cumul_found = FALSE;
             break;
@@ -624,6 +607,7 @@ nemo_action_finalize (GObject *object)
 
     if (action->dbus) {
         g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
+        action->dbus = NULL;
     }
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -1240,6 +1224,7 @@ try_vector (const gchar *op, gint vector)
     } else if (g_strcmp0 (op, GREATER_THAN) == 0) {
         return (vector > 0);
     }
+    return FALSE;
 }
 
 static gboolean
@@ -1342,8 +1327,6 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
     gboolean selection_type_show = FALSE;
     gboolean extension_type_show = TRUE;
     gboolean condition_type_show = TRUE;
-
-    recalc_dbus_conditions (action);
 
     if (!nemo_action_get_dbus_satisfied (action))
         goto out;

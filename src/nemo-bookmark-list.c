@@ -32,6 +32,12 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-names.h>
 
+#ifndef GNOME_BUILD
+	#define GNOME_DESKTOP_USE_UNSTABLE_API
+    #include <libcinnamon-desktop/gnome-desktop-utils.h>
+#endif
+
+
 #include <gio/gio.h>
 #include <string.h>
 
@@ -371,6 +377,36 @@ nemo_bookmark_list_move_item (NemoBookmarkList *bookmarks,
 	nemo_bookmark_list_save_file (bookmarks);
 }
 
+static gint
+nemo_bookmark_list_compare_func (gconstpointer a, gconstpointer b)
+{
+    g_assert (NEMO_IS_BOOKMARK (a));
+    g_assert (NEMO_IS_BOOKMARK (b));
+
+    return g_utf8_collate (nemo_bookmark_get_name (NEMO_BOOKMARK (a)),
+                           nemo_bookmark_get_name (NEMO_BOOKMARK (b)));
+}
+
+/**
+ * nemo_bookmark_list_sort_ascending:
+ *
+ * Sort bookmarks in ascending order.
+ * @bookmarks: the list of bookmarks.
+ **/
+void
+nemo_bookmark_list_sort_ascending (NemoBookmarkList *bookmarks)
+{
+    g_assert (NEMO_IS_BOOKMARK_LIST (bookmarks));
+
+    bookmarks->list = g_list_sort (
+        bookmarks->list, (GCompareFunc)nemo_bookmark_list_compare_func);
+
+    /* Save bookmarks to file. This will also inform widgets about the changes
+     * we just made to the list.
+     */
+    nemo_bookmark_list_save_file (bookmarks);
+}
+
 /**
  * nemo_bookmark_list_delete_items_with_uri:
  * 
@@ -588,6 +624,21 @@ save_file_finish (NemoBookmarkList *bookmarks,
 			   error->message);
 		g_error_free (error);
 	}
+
+#ifndef GNOME_BUILD
+    if (geteuid () == 0) {
+        struct passwd *pwent;
+        pwent = gnome_desktop_get_session_user_pwent ();
+
+        gchar *bookmarks_path = g_file_get_path (G_FILE (source));
+
+        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
+            G_GNUC_UNUSED int res;
+
+            res = chown (bookmarks_path, pwent->pw_uid, pwent->pw_gid);
+        }
+    }
+#endif
 
 	file = nemo_bookmark_list_get_file ();
 

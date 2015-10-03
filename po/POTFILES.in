@@ -57,6 +57,7 @@ src/nemo-desktop-icon-view-ui.xml
 src/nemo-desktop-item-properties.c
 src/nemo-desktop-window.c
 src/nemo-directory-view-ui.xml
+src/nemo-directory-view-ui-light.xml
 src/nemo-error-reporting.c
 src/nemo-file-management-properties.c
 [type: gettext/glade]src/nemo-file-management-properties.glade

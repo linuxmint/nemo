@@ -176,6 +176,8 @@ gboolean                nemo_file_contains_text                     (NemoFile   
 char *                  nemo_file_get_display_name                  (NemoFile                   *file);
 char *                  nemo_file_get_edit_name                     (NemoFile                   *file);
 char *                  nemo_file_get_name                          (NemoFile                   *file);
+const char *            nemo_file_peek_name                         (NemoFile                   *file);
+
 GFile *                 nemo_file_get_location                      (NemoFile                   *file);
 char *			 nemo_file_get_description			 (NemoFile			 *file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);
@@ -499,6 +501,8 @@ char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
 char *   nemo_file_get_date_as_string             (NemoFile *file, NemoDateType date_type);
 
 gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags);
+
+gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
 
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);

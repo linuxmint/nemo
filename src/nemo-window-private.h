@@ -184,5 +184,6 @@ void               nemo_window_update_show_hide_menu_items           (NemoWindow
 /* window toolbar */
 void               nemo_window_close_pane                            (NemoWindow    *window,
                                                                           NemoWindowPane *pane);
+void               nemo_window_show_location_entry                   (NemoWindow    *window);
 
 #endif /* NEMO_WINDOW_PRIVATE_H */

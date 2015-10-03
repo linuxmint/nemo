@@ -32,13 +32,14 @@
 #include "nemo-application.h"
 #include "nemo-floating-bar.h"
 #include "nemo-location-bar.h"
-#include "nemo-search-bar.h"
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-trash-bar.h"
 #include "nemo-view-factory.h"
 #include "nemo-x-content-bar.h"
+#include "nemo-interesting-folder-bar.h"
+#include "nemo-thumbnail-problem-bar.h"
 #include <eel/eel-accessibility.h>
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
@@ -323,7 +324,7 @@ viewed_file_changed_callback (NemoFile *file,
 					nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
 				}
 				
-				nemo_window_slot_go_to (slot, go_to_file, FALSE);
+				nemo_window_slot_open_location (slot, go_to_file, 0);
 				g_object_unref (go_to_file);
 			} else {
 				nemo_window_slot_go_home (slot, FALSE);
@@ -916,7 +917,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 						root = g_file_new_for_path ("/");
 						/* the last fallback is to go to a known place that can't be deleted! */
-						nemo_window_slot_go_to (slot, location, FALSE);
+						nemo_window_slot_open_location (slot, location, 0);
 						g_object_unref (root);
 					}
 				} else {
@@ -1102,6 +1103,23 @@ nemo_window_emit_location_change (NemoWindow *window,
 	uri = g_file_get_uri (location);
 	g_signal_emit_by_name (window, "loading_uri", uri);
 	g_free (uri);
+}
+
+static void
+nemo_window_slot_emit_location_change (NemoWindowSlot *slot,
+					   GFile *from,
+					   GFile *to)
+{
+	char *from_uri = NULL;
+	char *to_uri = NULL;
+
+	if (from != NULL)
+		from_uri = g_file_get_uri (from);
+	if (to != NULL)
+		to_uri = g_file_get_uri (to);
+	g_signal_emit_by_name (slot, "location-changed", from_uri, to_uri);
+	g_free (to_uri);
+	g_free (from_uri);
 }
 
 /* reports location change to window's "loading-uri" clients, i.e.
@@ -1302,6 +1320,18 @@ nemo_window_slot_show_trash_bar (NemoWindowSlot *slot)
 	nemo_window_slot_add_extra_location_widget (slot, bar);
 }
 
+static void
+maybe_show_interesting_folder_bar (NemoWindowSlot *slot)
+{
+    GtkWidget *bar = nemo_interesting_folder_bar_new_for_location (nemo_window_slot_get_current_view(slot),
+                                                                   slot->location);
+
+    if (bar) {
+        gtk_widget_show (bar);
+        nemo_window_slot_add_extra_location_widget (slot, bar);
+    }
+}
+
 typedef struct {
 	NemoWindowSlot *slot;
 	GCancellable *cancellable;
@@ -1401,7 +1431,9 @@ update_for_new_location (NemoWindowSlot *slot)
 	location_really_changed =
 		slot->location == NULL ||
 		!g_file_equal (slot->location, new_location);
-		
+
+	nemo_window_slot_emit_location_change (slot, slot->location, new_location);
+
         /* Set the new location. */
 	g_clear_object (&slot->location);
 	slot->location = new_location;
@@ -1436,11 +1468,13 @@ update_for_new_location (NemoWindowSlot *slot)
 		
 		directory = nemo_directory_get (slot->location);
 
-		nemo_window_slot_update_query_editor (slot);
-
 		if (nemo_directory_is_in_trash (directory)) {
 			nemo_window_slot_show_trash_bar (slot);
 		}
+
+        maybe_show_interesting_folder_bar (slot);
+
+        nemo_window_slot_check_bad_cache_bar (slot);
 
 		/* need the mount to determine if we should put up the x-content cluebar */
 		if (slot->find_mount_cancellable != NULL) {
@@ -1787,7 +1821,7 @@ void
 nemo_window_back_or_forward (NemoWindow *window, 
 				 gboolean back,
 				 guint distance,
-				 gboolean new_tab)
+				 NemoWindowOpenFlags flags)
 {
 	NemoWindowSlot *slot;
 	GList *list;
@@ -1813,10 +1847,8 @@ nemo_window_back_or_forward (NemoWindow *window,
         bookmark = g_list_nth_data (list, distance);
 	location = nemo_bookmark_get_location (bookmark);
 
-	if (new_tab) {
-		nemo_window_slot_open_location_full (slot, location,
-							 NEMO_WINDOW_OPEN_FLAG_NEW_TAB,
-							 NULL, NULL, NULL);
+	if (flags != 0) {
+		nemo_window_slot_open_location (slot, location, flags);
 	} else {
 		char *scroll_pos;
 
@@ -1868,4 +1900,29 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
         g_free (current_pos);
 	g_object_unref (location);
 	g_list_free_full (selection, g_object_unref);
+}
+
+void
+nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
+{
+    if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
+        return;
+
+    if (nemo_application_get_cache_bad (nemo_application_get_singleton ()) &&
+        !nemo_application_get_cache_problem_ignored (nemo_application_get_singleton ())) {
+        if (slot->cache_bar != NULL) {
+            gtk_widget_show (slot->cache_bar);
+        } else {
+            GtkWidget *bad_bar = nemo_thumbnail_problem_bar_new (nemo_window_slot_get_current_view (slot));
+            if (bad_bar) {
+                gtk_widget_show (bad_bar);
+                nemo_window_slot_add_extra_location_widget (slot, bad_bar);
+                slot->cache_bar = bad_bar;
+            }
+        }
+    } else {
+        if (slot->cache_bar != NULL) {
+            gtk_widget_hide (slot->cache_bar);
+        }
+    }
 }

@@ -72,6 +72,19 @@ NEMO_COLUMN_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
+<FILE>nemo-name-and-desc-provider</FILE>
+NemoNameAndDescProvider
+NemoNameAndDescProviderIface
+nemo_name_and_desc_provider_get_name_and_desc
+<SUBSECTION Standard>
+NEMO_NAME_AND_DESC_PROVIDER
+NEMO_IS_NAME_AND_DESC_PROVIDER
+NEMO_TYPE_NAME_AND_DESC_PROVIDER
+nemo_name_and_desc_provider_get_type
+NEMO_NAME_AND_DESC_PROVIDER_GET_IFACE
+</SECTION>
+
+<SECTION>
 <FILE>nemo-property-page-provider</FILE>
 NemoPropertyPageProvider
 NemoPropertyPageProviderIface

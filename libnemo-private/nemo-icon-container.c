@@ -1416,9 +1416,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 			}
 		
 		lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
-		
-		/* Advance to next line. */
-		y += max_height_below + ICON_PAD_BOTTOM;
 	}
 
 	g_array_free (positions, TRUE);
@@ -5499,7 +5496,9 @@ key_press_event (GtkWidget *widget,
 	 * start the typeahead find capabilities.
 	 * Copied from NemoIconContainer */
 	if (!handled &&
-	    event->keyval != GDK_KEY_slash /* don't steal slash key event, used for "go to" */ &&
+		event->keyval != GDK_KEY_asciitilde &&
+		event->keyval != GDK_KEY_KP_Divide &&
+	    event->keyval != GDK_KEY_slash /* don't steal slash key events, used for "go to" */ &&
 	    event->keyval != GDK_KEY_BackSpace &&
 	    event->keyval != GDK_KEY_Delete) {
 		GdkEvent *new_event;

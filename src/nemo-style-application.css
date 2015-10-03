@@ -1,0 +1,17 @@
+/* Desktop text stuff */
+
+.nemo-canvas-item {
+    border-radius: 3px;
+}
+
+.nemo-desktop.nemo-canvas-item {
+    color: #eeeeee;
+    text-shadow: 1px 1px alpha(black, 0.8);
+}
+
+.nemo-desktop.nemo-canvas-item:selected {
+    background-color: alpha(@theme_selected_bg_color, 0.8);
+    background-image: none;
+    color: #f5f5f5;
+    text-shadow: none;
+}

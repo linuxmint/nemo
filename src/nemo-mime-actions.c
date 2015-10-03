@@ -1143,6 +1143,7 @@ static void
 run_open_with_dialog (ActivateParametersSpecial *params)
 {
     GtkWidget *dialog;
+    GtkWidget *ok_button;
 
     char *mime_type;
     char *uri = NULL;
@@ -1156,11 +1157,15 @@ run_open_with_dialog (ActivateParametersSpecial *params)
                                           GTK_DIALOG_DESTROY_WITH_PARENT,
                                           GTK_STOCK_CANCEL,
                                           GTK_RESPONSE_CANCEL,
-                                          GTK_STOCK_OK,
-                                          GTK_RESPONSE_OK,
                                           NULL);
 
-    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type);
+    ok_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
+                                       GTK_STOCK_OK,
+                                       GTK_RESPONSE_OK);
+
+    gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+
+    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type, ok_button);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -1531,8 +1536,7 @@ activate_files (ActivateParameters *parameters)
 
 			uri = nemo_file_get_activation_uri (file);
 			f = g_file_new_for_uri (uri);
-			nemo_window_slot_open_location (parameters->slot,
-							    f, flags, NULL);
+			nemo_window_slot_open_location (parameters->slot, f, flags);
 			g_object_unref (f);
 			g_free (uri);
 		}
