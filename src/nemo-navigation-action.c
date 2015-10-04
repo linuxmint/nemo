@@ -281,14 +281,10 @@ static void
 connect_proxy (GtkAction *action,
                GtkWidget *proxy)
 {
-    GtkButton *button;
-
-	if (GTK_IS_BUTTON (proxy)) {
-        button = GTK_BUTTON (proxy);
-
-        g_signal_connect (button, "button-press-event",
+    if (GTK_IS_BUTTON (proxy)) {
+        g_signal_connect (proxy, "button-press-event",
                           G_CALLBACK (tool_button_press_cb), action);
-        g_signal_connect (button, "button-release-event",
+        g_signal_connect (proxy, "button-release-event",
                           G_CALLBACK (tool_button_release_cb), action);
     }
 
@@ -299,17 +295,13 @@ static void
 disconnect_proxy (GtkAction *action,
                   GtkWidget *proxy)
 {
-    GtkButton *button;
-
 	if (GTK_IS_BUTTON (proxy)) {
-        button = GTK_BUTTON (proxy);
-
         /* remove any possible timeout going on */
         unschedule_menu_popup_timeout (NEMO_NAVIGATION_ACTION (action));
 
-		g_signal_handlers_disconnect_by_func (button,
+		g_signal_handlers_disconnect_by_func (proxy,
                                               G_CALLBACK (tool_button_press_cb), action);
-		g_signal_handlers_disconnect_by_func (button,
+		g_signal_handlers_disconnect_by_func (proxy,
                                               G_CALLBACK (tool_button_release_cb), action);
 	}
 
