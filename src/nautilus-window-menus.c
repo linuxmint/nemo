@@ -685,6 +685,8 @@ add_extension_menu_items (NautilusWindow *window,
 			nautilus_menu_item_list_free (children);
 			g_free (subdir);
 		}			
+
+                g_object_unref (action);
 	}
 }
 
