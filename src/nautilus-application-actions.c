@@ -180,12 +180,19 @@ action_quit (GSimpleAction *action,
 {
 	GtkApplication *application = user_data;
 	GList *l;
+        GList *windows;
 
 	/* nautilus_window_close() doesn't do anything for desktop windows */
-	for (l = gtk_application_get_windows (GTK_APPLICATION (application)); l; l = l->next) {
+        windows = gtk_application_get_windows (GTK_APPLICATION (application));
+        /* make a copy, since the original list will be modified when destroying
+         * a window, making this list invalid */
+        windows = g_list_copy (windows);
+	for (l = windows; l != NULL; l = l->next) {
 		if (NAUTILUS_IS_WINDOW (l->data))
 			nautilus_window_close (NAUTILUS_WINDOW (l->data));
 	}
+
+        g_list_free (windows);
 }
 
 static void
