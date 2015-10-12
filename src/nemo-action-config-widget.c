@@ -17,11 +17,11 @@
 G_DEFINE_TYPE (NemoActionConfigWidget, nemo_action_config_widget, NEMO_TYPE_CONFIG_BASE_WIDGET);
 
 
-
 typedef struct {
     NemoActionConfigWidget *widget;
 
     gchar *name;
+    gchar *comment;
     gchar *stock_id;
     gchar *icon_name;
     gchar *filename;
@@ -31,6 +31,7 @@ static void
 action_proxy_free (ActionProxy *proxy)
 {
     g_clear_pointer (&proxy->name, g_free);
+    g_clear_pointer (&proxy->comment, g_free);
     g_clear_pointer (&proxy->stock_id, g_free);
     g_clear_pointer (&proxy->icon_name, g_free);
     g_clear_pointer (&proxy->filename, g_free);
@@ -119,15 +120,21 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
                                                 KEY_NAME,
                                                 NULL,
                                                 NULL);
-
     if (name != NULL)
         proxy->name = g_strdup (name);
+
+    gchar *comment = g_key_file_get_string (key_file,
+                                            ACTION_FILE_GROUP,
+                                            KEY_COMMENT,
+                                            NULL);
+    if (comment != NULL)
+        proxy->comment = g_strdup (comment);
+
 
     gchar *icon_name = g_key_file_get_string (key_file,
                                               ACTION_FILE_GROUP,
                                               KEY_ICON_NAME,
                                               NULL);
-
     if (icon_name != NULL)
         proxy->icon_name = g_strdup (icon_name);
 
@@ -268,6 +275,8 @@ refresh_widget (NemoActionConfigWidget *widget)
             gchar *display_name = strip_accel (proxy->name);
             w = gtk_label_new (display_name);
             g_free (display_name);
+
+            gtk_widget_set_tooltip_text(w, proxy->comment);
 
             gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 2);
 
