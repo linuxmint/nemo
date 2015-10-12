@@ -123,9 +123,10 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
     if (name != NULL)
         proxy->name = g_strdup (name);
 
-    gchar *comment = g_key_file_get_string (key_file,
+    gchar *comment = g_key_file_get_locale_string (key_file,
                                             ACTION_FILE_GROUP,
                                             KEY_COMMENT,
+                                            NULL,
                                             NULL);
     if (comment != NULL)
         proxy->comment = g_strdup (comment);
