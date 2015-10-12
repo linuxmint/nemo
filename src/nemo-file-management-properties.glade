@@ -1032,7 +1032,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="quick_renames_with_pause_in_between">
-                                            <property name="label" translatable="yes">Quick renames by two clicks with pause in-between</property>
+                                            <property name="label" translatable="yes">Click twice with a pause in between to rename items</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
