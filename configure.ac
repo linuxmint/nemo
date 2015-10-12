@@ -2,13 +2,13 @@ AC_PREREQ(2.54)
 
 dnl ===========================================================================
 
-m4_define(glib_minver,                 2.31.9)
+m4_define(glib_minver,                 2.37.3)
 m4_define(cinnamon_desktop_minver,     2.6.1)
 m4_define(pango_minver,                1.28.3)
-m4_define(gtk_minver,                  3.3.17)
+m4_define(gtk_minver,                  3.9.10)
 m4_define(xml_minver,                  2.7.8)
 m4_define(exif_minver,                 0.6.20)
-m4_define(exempi_minver,               2.1.0)
+m4_define(exempi_minver,               2.2.0)
 m4_define(notify_minver,               0.7.0)
 m4_define(glib_mime_ver,               2.34.0)
 
