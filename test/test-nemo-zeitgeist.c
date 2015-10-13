@@ -233,7 +233,7 @@ test_new_folder (Fixture *fix, gconstpointer data)
     nemo_file_operations_new_folder (
             NULL, NULL,
             TEST_URI,
-            (NemoCopyCallback) zeitgeist_test_start,
+            (NemoCreateCallback) zeitgeist_test_start,
             fix);
 
     g_main_loop_run (fix->mainloop);
@@ -255,7 +255,7 @@ test_new_file (Fixture *fix, gconstpointer data)
             TEST_URI,
             "new_file_test.txt",
             content, strlen (content),
-            (NemoCopyCallback) zeitgeist_test_start,
+            (NemoCreateCallback) zeitgeist_test_start,
             fix);
 
     g_main_loop_run (fix->mainloop);
@@ -276,7 +276,7 @@ test_new_file_from_template (Fixture *fix, gconstpointer data)
             TEST_URI,
             "new_tpl_file_test.py",
             TEST_URI "/a.py",
-            (NemoCopyCallback) zeitgeist_test_start,
+            (NemoCreateCallback) zeitgeist_test_start,
             fix);
 
     g_main_loop_run (fix->mainloop);
