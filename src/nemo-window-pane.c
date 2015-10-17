@@ -234,12 +234,12 @@ navigation_bar_location_changed_callback (GtkWidget *widget,
 {
     GFile *location;
 
-	nemo_window_pane_hide_temporary_bars (pane);
+    nemo_window_pane_hide_temporary_bars (pane);
 
-	restore_focus_widget (pane);
+    restore_focus_widget (pane);
 
     location = g_file_new_for_uri (uri);
-	nemo_window_slot_open_location (pane->active_slot, location, 0);
+    nemo_window_slot_open_location (pane->active_slot, location, 0);
     g_object_unref (location);
 }
 
