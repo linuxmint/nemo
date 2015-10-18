@@ -82,7 +82,7 @@ static void
 layout_changed (NemoDesktopManager *manager)
 {
     gint n_monitors = 0;
-    gint primary = 0;
+    gint x_primary = 0;
     gboolean show_desktop_on_primary = FALSE;
     gboolean show_desktop_on_remaining = FALSE;
 
@@ -106,18 +106,23 @@ layout_changed (NemoDesktopManager *manager)
     }
 
     n_monitors = gdk_screen_get_n_monitors (manager->screen);
-    primary = gdk_screen_get_primary_monitor (manager->screen);
+    x_primary = gdk_screen_get_primary_monitor (manager->screen);
 
     show_desktop_on_primary = g_strcmp0 (pref_split[0], "true") == 0;
     show_desktop_on_remaining = g_strcmp0 (pref_split[1], "true") == 0;
 
     gint i = 0;
+    gboolean primary_set = FALSE;
 
     for (i = 0; i < n_monitors; i++) {
-        if (i == primary)
-            create_new_desktop_window (manager, i, TRUE, show_desktop_on_primary);
-        else
-            create_new_desktop_window (manager, i, FALSE, show_desktop_on_remaining);
+        if (i == x_primary) {
+            create_new_desktop_window (manager, i, show_desktop_on_primary, show_desktop_on_primary);
+            primary_set = primary_set || show_desktop_on_primary;
+        } else {
+            gboolean set_layout_primary = !primary_set && !show_desktop_on_primary && show_desktop_on_remaining;
+            create_new_desktop_window (manager, i, set_layout_primary, show_desktop_on_remaining);
+            primary_set = primary_set || set_layout_primary;
+        }
     }
 
     g_free (pref);
