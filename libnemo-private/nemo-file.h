@@ -506,6 +506,9 @@ gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
 
 gint     nemo_file_get_monitor_number             (NemoFile *file);
 
+gboolean nemo_file_get_is_desktop_orphan          (NemoFile *file);
+void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_desktop_orphan);
+
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

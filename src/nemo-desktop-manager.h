@@ -56,8 +56,12 @@ typedef struct {
 
 GType nemo_desktop_manager_get_type (void);
 
-NemoDesktopManager* nemo_desktop_manager_new (void);
+NemoDesktopManager* nemo_desktop_manager_get (void);
 gboolean nemo_desktop_manager_has_desktop_windows (NemoDesktopManager *manager);
+gboolean nemo_desktop_manager_get_monitor_is_active (NemoDesktopManager *manager,
+                                                                   gint  monitor);
+gboolean nemo_desktop_manager_get_monitor_is_primary (NemoDesktopManager *manager,
+                                                                   gint  monitor);
 
 G_END_DECLS
 

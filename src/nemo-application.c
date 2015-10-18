@@ -905,7 +905,7 @@ init_desktop (NemoApplication *self)
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
 
-    self->priv->desktop_manager = nemo_desktop_manager_new ();
+    self->priv->desktop_manager = nemo_desktop_manager_get ();
 }
 
 static gboolean 

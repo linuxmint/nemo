@@ -270,7 +270,7 @@ nemo_desktop_manager_init (NemoDesktopManager *self)
 }
 
 NemoDesktopManager*
-nemo_desktop_manager_new (void)
+nemo_desktop_manager_get (void)
 {
     if (_manager == NULL) {
         _manager = g_object_new (NEMO_TYPE_DESKTOP_MANAGER, NULL);
@@ -292,6 +292,48 @@ nemo_desktop_manager_has_desktop_windows (NemoDesktopManager *manager)
 
         if (info->shows_desktop) {
             ret = TRUE;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+gboolean
+nemo_desktop_manager_get_monitor_is_active (NemoDesktopManager *manager,
+                                                          gint  monitor)
+{
+    GList *iter;
+    gboolean ret = FALSE;
+
+    g_return_val_if_fail (manager != NULL, FALSE);
+
+    for (iter = manager->desktops; iter != NULL; iter = iter->next) {
+        DesktopInfo *info = iter->data;
+
+        if (info->monitor_num == monitor) {
+            ret = info->shows_desktop;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+gboolean
+nemo_desktop_manager_get_monitor_is_primary (NemoDesktopManager *manager,
+                                                           gint  monitor)
+{
+    GList *iter;
+    gboolean ret = FALSE;
+
+    g_return_val_if_fail (manager != NULL, FALSE);
+
+    for (iter = manager->desktops; iter != NULL; iter = iter->next) {
+        DesktopInfo *info = iter->data;
+
+        if (info->monitor_num == monitor) {
+            ret = info->is_primary;
             break;
         }
     }
