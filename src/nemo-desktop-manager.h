@@ -43,6 +43,7 @@ typedef struct {
   gulong setting_changed_id;
   gulong home_dir_changed_id;
   gulong cinnamon_panel_layout_changed_id;
+  gulong orphaned_icon_handling_id;
 
   NemoActionManager *action_manager;
 
