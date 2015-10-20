@@ -1,3 +1,52 @@
+nemo (2.8.0) rosa; urgency=medium
+
+  [ Daniel Schürmann ]
+  * pathbar: use a private struct and use use nemo_is_[home/root/desktop]_directory()
+  * Fix compile errors
+  * Don't use hardcoded script and action paths, remove unused sys script path
+  * Used definitions from nemo-global-preferences
+  * Moved action key definition to nemo-action.h to be external usable
+  * Show comment as tooltips for actions in action config, and improve comments for some actions.
+  * all: remove nemo_window_slot_go_to()
+  * Combine the search bar and query editor
+  * Added search_is_not_empty, to fixe a segfault in treelist
+
+  [ Jonathan DePrizio ]
+  * Only include the domain if the method is SMB
+
+  [ Monsta ]
+  * bumped some deps and build-deps
+
+  [ AlirezaNaghizadeh ]
+  * quick rename
+  * quick rename
+
+  [ pyecs ]
+  * Fix default sort order bug in list view
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Fix a couple of drag-and-drop issues when there are no bookmarks, or when the xdg-bookmark area is empty.
+  * nemo-places-sidebar.c: Fix a memory leak.
+  * connect-to-server: remember the last connection type.
+  * nemo-list-view.c: Fix column sorting when default sort type is "Detailed type"
+  * nemo-connect-server-dialog.c: Fix previous commit.
+  * fix build warning, missing prototype.
+  * Fix some build warnings
+  * nemo-window-pane.c: Fix crash during location entry.
+  * fix indentation
+
+  [ Clement Lefebvre ]
+  * Don't assign the position of the last closed window to the first opened window (it would be really confusing if it worked.. and it didn't really work since gtk_application_get_windows() seemed to also count the desktop window)
+  * Prefs: Rephrase quickrename option
+  * nemo-action-config-widget.c: Localize non-localized comment string
+  * Updated pot file
+
+  [ Corbin ]
+  * Re-add revealer animation on search bar
+  * Fix Query Editor Row not displaying
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 20 Oct 2015 10:32:51 +0100
+
 nemo (2.6.7) rafaela; urgency=medium
 
   [ Michael Webster ]
