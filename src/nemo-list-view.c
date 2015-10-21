@@ -1364,8 +1364,7 @@ editable_focus_out_cb (GtkWidget *widget,
 		       gpointer user_data)
 {
 	NemoListView *view = user_data;
-
-	view->details->editable_widget = NULL;
+    g_clear_object (&view->details->editable_widget);
 
 	nemo_view_set_is_renaming (NEMO_VIEW (view), FALSE);
 	nemo_view_unfreeze_updates (NEMO_VIEW (view));
@@ -1400,7 +1399,7 @@ static void
 cell_renderer_editing_canceled (GtkCellRendererText *cell,
 				NemoListView    *view)
 {
-	view->details->editable_widget = NULL;
+    g_clear_object (&view->details->editable_widget);
 
 	nemo_view_set_is_renaming (NEMO_VIEW (view), FALSE);
 	nemo_view_unfreeze_updates (NEMO_VIEW (view));
