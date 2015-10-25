@@ -201,6 +201,7 @@ refresh_widget (NemoExtensionConfigWidget *widget)
 
         gtk_widget_show_all (empty_row);
         gtk_container_add (GTK_CONTAINER (NEMO_CONFIG_BASE_WIDGET (widget)->listbox), empty_row);
+        gtk_widget_set_sensitive (GTK_WIDGET (NEMO_CONFIG_BASE_WIDGET (widget)->listbox), FALSE);
     } else {
         GList *l;
         gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
