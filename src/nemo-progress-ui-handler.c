@@ -359,6 +359,8 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 	} else {
 		progress_ui_handler_add_to_window (self, info);
 		progress_ui_handler_update_status_icon (self);
+        if (gtk_widget_get_visible (GTK_WIDGET (self->priv->progress_window)))
+            gtk_window_present (GTK_WINDOW (self->priv->progress_window));
 	}
 }
 
