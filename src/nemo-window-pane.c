@@ -855,7 +855,9 @@ nemo_window_pane_constructed (GObject *obj)
 
 	pane->action_group = action_group;
 
-	setup_search_action (pane);
+    if (!NEMO_IS_DESKTOP_WINDOW (window))
+        setup_search_action (pane);
+
 	g_signal_connect (pane->action_group, "pre-activate",
 			  G_CALLBACK (toolbar_action_group_activated_callback), pane);
 
