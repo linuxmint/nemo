@@ -154,17 +154,6 @@ typedef struct {
 	guint32 dir_mask;
 } SetPermissionsJob;
 
-typedef enum {
-	OP_KIND_COPY,
-	OP_KIND_MOVE,
-	OP_KIND_DELETE,
-	OP_KIND_TRASH,
-    OP_KIND_EMPTY_TRASH,
-    OP_KIND_DUPE,
-    OP_KIND_PERMISSIONS,
-    OP_KIND_LINK
-} OpKind;
-
 typedef struct {
 	int num_files;
 	goffset num_bytes;
@@ -6342,7 +6331,7 @@ nemo_file_operations_new_folder (GtkWidget *parent_view,
 	}
 
     NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, TRUE);
+    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
 }
 
 void 
@@ -6381,7 +6370,7 @@ nemo_file_operations_new_file_from_template (GtkWidget *parent_view,
 	}
 
     NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, TRUE);
+    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
 }
 
 void 
@@ -6419,7 +6408,7 @@ nemo_file_operations_new_file (GtkWidget *parent_view,
 	}
 
     NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, TRUE);
+    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
 }
 
 static void
