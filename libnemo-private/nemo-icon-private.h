@@ -213,6 +213,7 @@ struct NemoIconContainerDetails {
 	gboolean single_click_mode;
 	gboolean auto_layout;
 	gboolean tighter_layout;
+    gboolean click_to_rename;
 
 	/* Whether for the vertical layout, all columns are supposed to
 	 * have the same width. */

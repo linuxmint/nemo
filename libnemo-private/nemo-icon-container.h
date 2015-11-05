@@ -318,6 +318,8 @@ void              nemo_icon_container_set_zoom_level                (NemoIconCon
 									 int                     new_zoom_level);
 void              nemo_icon_container_set_single_click_mode         (NemoIconContainer  *container,
 									 gboolean                single_click_mode);
+void              nemo_icon_container_set_click_to_rename_enabled (NemoIconContainer *container,
+                                                                             gboolean enabled);
 void              nemo_icon_container_enable_linger_selection       (NemoIconContainer  *view,
 									 gboolean                enable);
 gboolean          nemo_icon_container_get_is_fixed_size             (NemoIconContainer  *container);

@@ -834,7 +834,7 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 	bind_builder_bool(builder, nemo_preferences,
 			    NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN,
-			    NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN);
+			    NEMO_PREFERENCES_CLICK_TO_RENAME);
 	bind_builder_bool_inverted (builder, nemo_preferences,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);

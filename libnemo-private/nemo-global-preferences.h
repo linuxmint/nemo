@@ -69,7 +69,7 @@ typedef enum
 #define NEMO_PREFERENCES_CLICK_POLICY			"click-policy"
 
 /* Quick renames with two single clicks and pause in-between*/
-#define NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN "quick-renames-with-pause-in-between"
+#define NEMO_PREFERENCES_CLICK_TO_RENAME "quick-renames-with-pause-in-between"
 
 /* Activating executable text files */
 #define NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION		"executable-text-activation"

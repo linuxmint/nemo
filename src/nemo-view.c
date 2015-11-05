@@ -2245,6 +2245,16 @@ click_policy_changed_callback (gpointer callback_data)
 }
 
 static void
+click_to_rename_changed_callback (gpointer callback_data)
+{
+    NemoView *view;
+
+    view = NEMO_VIEW (callback_data);
+
+    NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->click_to_rename_mode_changed (view);
+}
+
+static void
 nemo_to_menu_preferences_changed_callback (NemoView *view)
 {
     view->details->showing_bookmarks_in_to_menus = g_settings_get_boolean (nemo_preferences,
@@ -2732,6 +2742,10 @@ nemo_view_init (NemoView *view)
 				  "changed::" NEMO_PREFERENCES_CLICK_POLICY,
 				  G_CALLBACK(click_policy_changed_callback),
 				  view);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_CLICK_TO_RENAME,
+                  G_CALLBACK(click_to_rename_changed_callback),
+                  view);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST, 
 				  G_CALLBACK(sort_directories_first_changed_callback), view);
@@ -2926,6 +2940,8 @@ nemo_view_finalize (GObject *object)
 					      schedule_update_menus_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      click_policy_changed_callback, view);
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                          click_to_rename_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      sort_directories_first_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_window_state,
