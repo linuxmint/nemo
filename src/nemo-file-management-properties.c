@@ -753,7 +753,7 @@ setup_quick_renames (GtkBuilder *builder)
 {
 	gboolean enabled = FALSE;
 	enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (click_behavior_components[1])));
-	if(enabled==FALSE){
+	if (enabled == FALSE) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), FALSE);
 	}
 	gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), enabled);
@@ -763,10 +763,10 @@ static void
 connect_quick_renames (GtkBuilder *builder)
 {
 	GtkRadioButton *w;
-	w=GTK_RADIO_BUTTON(W(click_behavior_components[0]));
+	w = GTK_RADIO_BUTTON (W (click_behavior_components[0]));
  		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
 
-	w=GTK_RADIO_BUTTON(W(click_behavior_components[1]));
+	w = GTK_RADIO_BUTTON (W (click_behavior_components[1]));
 		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
 }
 

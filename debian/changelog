@@ -1,10 +1,15 @@
+nemo (2.8.1.14-daschuer) trusty; urgency=low
+  
+  * Merged with nemo 2.6.7 
+ 
+ -- Daniel Schürmann <daschuer@gmx.de>  Mon, 26 Oct 2015 20:15:00 +0100
+
 nemo (2.6.7.13-daschuer) trusty; urgency=low
   
   * remove double special location bar 
   * Improve Plug-In configuartion
  
  -- Daniel Schürmann <daschuer@gmx.de>  Wed, 16 Sep 2015 20:15:00 +0100
-
 
 nemo (2.6.7.12-daschuer) trusty; urgency=low
   
