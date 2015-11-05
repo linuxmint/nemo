@@ -80,6 +80,11 @@
       <_summary>Where to position newly open tabs in browser windows.</_summary>
       <_description>If set to "after-current-tab", then new tabs are inserted after the current tab. If set to "end", then new tabs are appended to the end of the tab list.</_description>
     </key>
+    <key name="quick-renames-with-pause-in-between" type="b">
+      <default>false</default>
+      <_summary>Enables renaming of icons by two times clicking with pause between clicks</_summary>
+      <_description>If set to true, then icons in all Nemo windows will be able to get renamed quickly. Users should click two times on icons with a pause time more than double-click time of their system.</_description>
+    </key>
     <key name="show-location-entry" type="b">
       <default>false</default>
       <_summary>Show the location entry by default</_summary>
