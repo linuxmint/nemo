@@ -2480,6 +2480,7 @@ create_icon_container (NemoIconView *icon_view)
 			   GTK_WIDGET (icon_container));
 
 	nemo_icon_view_update_click_mode (icon_view);
+    nemo_icon_view_update_click_to_rename_mode (icon_view);
 
 	gtk_widget_show (GTK_WIDGET (icon_container));
 

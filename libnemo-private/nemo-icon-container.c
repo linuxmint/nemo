@@ -6355,6 +6355,11 @@ handle_icon_slow_two_click (NemoIconContainer *container,
 {
     NemoIconContainerDetails *details;
 
+    NemoFile *file = NEMO_FILE (icon->data);
+
+    if (!nemo_file_can_rename (file))
+        return FALSE;
+
     if (event->button != DRAG_BUTTON) {
         return FALSE;
     }
