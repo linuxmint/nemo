@@ -4296,6 +4296,44 @@ button_press_event (GtkWidget *widget,
 		if (eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1 && icon == get_icon_being_renamed (container)){
 			end_renaming_mode (container,TRUE);
 		}
+
+		/* Olny if the preferences is selected and clicks are for left button do a quick renames with pause in-between */
+        if(event -> button == 1 && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)){
+			static NemoIcon *last_icon_clicked = NULL;//this will show if icon was selected before 
+			EelDRect text_rect;//stores dimentions of the text part
+			static int clicked_on_icon_text_before=0;//this is different from last_icon_clicked, here we have to make sure if it was clicked on text part
+			static gint64 last_time_clicked_on_icon_text_before=0;//it should be static to keep the last time it was clicked on icon
+			int double_click_time;//default double click time on the system
+
+
+			g_object_get (G_OBJECT (gtk_widget_get_settings (widget)),
+					 "gtk-double-click-time", &double_click_time,
+					 NULL);//this will get the default double click time for user's system
+
+			icon = get_first_selected_icon (container);//this function gets the clicked icon
+			
+			/*This gets the dimentions of the text part*/
+			text_rect = nemo_icon_canvas_item_get_text_rectangle (icon -> item, FALSE);
+
+			/* the events get trapded into another coordinate system, this will fix it */
+			eel_canvas_window_to_world(EEL_CANVAS (container), event -> x, event -> y, &eventX, &eventY);
+
+			//users should click only into the text area
+			if((eventX > text_rect.x0 && eventX < text_rect.x1 && eventY > text_rect.y0 && eventY < text_rect.y1) ||
+				(eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1)){
+				if(clicked_on_icon_text_before == 0 || last_icon_clicked != icon){//if it was not clicked before then do not rename, just mark it as being clicked
+					last_time_clicked_on_icon_text_before = eel_get_system_time ();
+					clicked_on_icon_text_before = 1;
+					last_icon_clicked = icon;//we need to be sure that the last icon which was clicked is the current we are clicking
+				}
+			else{//if it was clicked before then change the name, but not bafore double click time, this prevents annoying effects
+				if(eel_get_system_time() > last_time_clicked_on_icon_text_before+(double_click_time * 1250))
+					nemo_icon_container_start_renaming_selected_item(container,FALSE);//we send a FALSE so it will be smart enough to not take extentions
+					last_time_clicked_on_icon_text_before = 0;
+					clicked_on_icon_text_before = 0;
+				}
+			}
+        }
 		return TRUE;
 	}
 
@@ -8379,10 +8417,10 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 		end_offset = -1;
 	} else {
 		/* if it is a directory it should select all of the text regardless of select_all option */
-		if (nemo_file_is_directory (icon->data)){
+		if (nemo_file_is_directory (NEMO_FILE (icon->data))) {
 			start_offset = 0;
 			end_offset = -1;
-		}else{
+		} else {
 			eel_filename_get_rename_region (editable_text, &start_offset, &end_offset);
 		}
 	}

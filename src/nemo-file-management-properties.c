@@ -53,6 +53,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET "size_prefixes_combobox"
 
 /* bool preferences */
+#define NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN "quick_renames_with_pause_in_between"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET "sort_folders_first_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET "compact_layout_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET "labels_beside_icons_checkbutton"
@@ -737,6 +738,29 @@ connect_tooltip_items (GtkBuilder *builder)
 
 }
 
+/* When single click radio button is selected, checkbox for quick renames should get unselected and disable to avoid annoying features */
+static void
+setup_quick_renames (GtkBuilder *builder)
+{
+	gboolean enabled = FALSE;
+	enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (click_behavior_components[1])));
+	if(enabled==FALSE){
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), FALSE);
+	}
+	gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), enabled);
+}
+
+static void
+connect_quick_renames (GtkBuilder *builder)
+{
+	GtkRadioButton *w;
+	w=GTK_RADIO_BUTTON(W(click_behavior_components[0]));
+ 		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
+
+	w=GTK_RADIO_BUTTON(W(click_behavior_components[1]));
+		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
+}
+
 static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *window)
 {
@@ -808,6 +832,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+	bind_builder_bool(builder, nemo_preferences,
+			    NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN,
+			    NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN);
 	bind_builder_bool_inverted (builder, nemo_preferences,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
@@ -957,6 +984,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);
+
+    /* to make checkbox for quickrenames get disabled when single click is selected */ 
+    setup_quick_renames(builder);
+    connect_quick_renames(builder);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);

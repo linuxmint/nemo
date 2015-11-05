@@ -621,6 +621,16 @@ search_are_all_files_seen (NemoDirectory *directory)
 }
 
 static gboolean
+search_is_not_empty (NemoDirectory *directory)
+{
+	NemoSearchDirectory *search;
+
+	search = NEMO_SEARCH_DIRECTORY (directory);
+
+	return search->details->files != NULL;
+}
+
+static gboolean
 search_contains_file (NemoDirectory *directory,
 		      NemoFile *file)
 {
@@ -732,6 +742,7 @@ nemo_search_directory_class_init (NemoSearchDirectoryClass *class)
 	directory_class = NEMO_DIRECTORY_CLASS (class);
 
  	directory_class->are_all_files_seen = search_are_all_files_seen;
+	directory_class->is_not_empty = search_is_not_empty;
 	directory_class->contains_file = search_contains_file;
 	directory_class->force_reload = search_force_reload;
 	directory_class->call_when_ready = search_call_when_ready;

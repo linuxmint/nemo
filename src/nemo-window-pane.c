@@ -229,14 +229,18 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 
 static void
 navigation_bar_location_changed_callback (GtkWidget *widget,
-					  GFile *location,
-					  NemoWindowPane *pane)
+                                        const gchar *uri,
+                                     NemoWindowPane *pane)
 {
-	nemo_window_pane_hide_temporary_bars (pane);
+    GFile *location;
 
-	restore_focus_widget (pane);
+    nemo_window_pane_hide_temporary_bars (pane);
 
-	nemo_window_slot_open_location (pane->active_slot, location, 0);
+    restore_focus_widget (pane);
+
+    location = g_file_new_for_uri (uri);
+    nemo_window_slot_open_location (pane->active_slot, location, 0);
+    g_object_unref (location);
 }
 
 static gboolean
@@ -851,7 +855,9 @@ nemo_window_pane_constructed (GObject *obj)
 
 	pane->action_group = action_group;
 
-	setup_search_action (pane);
+    if (!NEMO_IS_DESKTOP_WINDOW (window))
+        setup_search_action (pane);
+
 	g_signal_connect (pane->action_group, "pre-activate",
 			  G_CALLBACK (toolbar_action_group_activated_callback), pane);
 
