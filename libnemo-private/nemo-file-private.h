@@ -104,6 +104,8 @@ struct NemoFileDetails
     eel_boolean_bit thumbnail_access_problem : 1;
 	GdkPixbuf *thumbnail;
 	time_t thumbnail_mtime;
+    gint thumbnail_throttle_count;
+    time_t last_thumbnail_try_mtime;
 
     GdkPixbuf *scaled_thumbnail;
     double thumbnail_scale;

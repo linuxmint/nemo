@@ -56,9 +56,6 @@
 /* Should never be a reasonable actual mtime */
 #define INVALID_MTIME 0
 
-/* Cool-off period between last file modification time and thumbnail creation */
-#define THUMBNAIL_CREATION_DELAY_SECS 3
-
 static gpointer thumbnail_thread_start (gpointer data);
 
 /* structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
@@ -67,6 +64,7 @@ typedef struct {
 	char *image_uri;
 	char *mime_type;
 	time_t original_file_mtime;
+    gint throttle_count;
 } NemoThumbnailInfo;
 
 /*
@@ -545,7 +543,7 @@ nemo_can_thumbnail (NemoFile *file)
 }
 
 void
-nemo_create_thumbnail (NemoFile *file)
+nemo_create_thumbnail (NemoFile *file, gint throttle_count)
 {
 	time_t file_mtime = 0;
 	NemoThumbnailInfo *info;
@@ -557,6 +555,7 @@ nemo_create_thumbnail (NemoFile *file)
 	info = g_new0 (NemoThumbnailInfo, 1);
 	info->image_uri = nemo_file_get_uri (file);
 	info->mime_type = nemo_file_get_mime_type (file);
+    info->throttle_count = MIN (10, throttle_count);
 	
 	/* Hopefully the NemoFile will already have the image file mtime,
 	   so we can just use that. Otherwise we have to get it ourselves. */
@@ -698,14 +697,15 @@ thumbnail_thread_start (gpointer data)
 
 		/* Don't try to create a thumbnail if the file was modified recently.
 		   This prevents constant re-thumbnailing of changing files. */ 
-		if (current_time < current_orig_mtime + THUMBNAIL_CREATION_DELAY_SECS &&
+		if (current_time < current_orig_mtime + (THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count) &&
 		    current_time >= current_orig_mtime) {
 #ifdef DEBUG_THUMBNAILS
-			g_message ("(Thumbnail Thread) Skipping: %s\n",
-				   info->image_uri);
+			g_message ("(Thumbnail Thread) Skipping for %d seconds: %s\n",
+                       THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count,
+                       info->image_uri);
 #endif
 			/* Reschedule thumbnailing via a change notification */
-			g_timeout_add_seconds (1, thumbnail_thread_notify_file_changed,
+			g_timeout_add_seconds (THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count, thumbnail_thread_notify_file_changed,
 				       g_strdup (info->image_uri));
  			continue;
 		}
@@ -731,6 +731,7 @@ thumbnail_thread_start (gpointer data)
 										 info->image_uri,
 										 current_orig_mtime);
 		}
+
 		/* We need to call nemo_file_changed(), but I don't think that is
 		   thread safe. So add an idle handler and do it from the main loop. */
 		g_idle_add_full (G_PRIORITY_HIGH_IDLE,
