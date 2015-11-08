@@ -863,7 +863,7 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
 	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-    gtk_container_add (GTK_CONTAINER (editor->details->search_bar_revealer), GTK_BOX (editor->details->vbox));
+    gtk_container_add (GTK_CONTAINER (editor->details->search_bar_revealer), editor->details->vbox);
     gtk_widget_show_all (editor->details->search_bar_revealer);
 	gtk_widget_set_no_show_all (editor->details->vbox, TRUE);
 	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
@@ -968,9 +968,9 @@ nemo_query_editor_set_visible (NemoQueryEditor *editor,
 {
 	editor->details->is_visible = visible;
 	if (visible) {
-		gtk_revealer_set_reveal_child (editor->details->search_bar_revealer, TRUE);
+		gtk_revealer_set_reveal_child (GTK_REVEALER (editor->details->search_bar_revealer), TRUE);
 	} else {
-		gtk_revealer_set_reveal_child (editor->details->search_bar_revealer, FALSE);
+		gtk_revealer_set_reveal_child (GTK_REVEALER (editor->details->search_bar_revealer), FALSE);
 	}
 }
 
