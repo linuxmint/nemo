@@ -360,6 +360,10 @@
       <default>2</default>
       <_summary>Last server connect method used</_summary>
     </key>
+    <key name="never-queue-file-ops" type="b">
+      <default>false</default>
+      <_summary>If true, all file operations will start immediately</_summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">
