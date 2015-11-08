@@ -6759,64 +6759,52 @@ nemo_file_mark_desktop_file_trusted (GFile *file,
     add_job_to_job_queue (mark_trusted_job, job, job->common.cancellable, job->common.progress, OP_KIND_PERMISSIONS);
 }
 
+#if 0
+#define DEBUG_FILE_OP_QUEUE
+#endif
+
 static gboolean
-delete_job_is_local (DeleteJob *job)
+job_is_local (GList *files, GFile *destination)
 {
     gboolean ret = FALSE;
 
-    NemoFile *source = nemo_file_get_existing (G_FILE (job->files->data));
+    NemoFile *source = nemo_file_get_existing (G_FILE (files->data));
+    NemoFile *dest = destination != NULL ? nemo_file_get_existing (destination) : NULL;
 
-    ret = nemo_file_is_local (source);
+    if (dest) {
+        ret = nemo_file_is_local (source) &&
+              nemo_file_is_local (dest);
+        nemo_file_unref (dest);
+    } else {
+        ret = nemo_file_is_local (source);
+    }
 
     nemo_file_unref (source);
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job is local: %s\n", ret ? "TRUE" : "FALSE");
+#endif
 
     return ret;
 }
 
 static gboolean
-dupe_job_is_local (CopyMoveJob *job)
+job_is_same_fs (GList *files, GFile *destination)
 {
     gboolean ret = FALSE;
 
-    NemoFile *source = nemo_file_get_existing (G_FILE (job->files->data));
-
-    ret = nemo_file_is_local (source);
-
-    nemo_file_unref (source);
-
-    return ret;
-}
-
-static gboolean
-copy_move_job_is_local (CopyMoveJob *job)
-{
-    gboolean ret = FALSE;
-
-    NemoFile *source = nemo_file_get_existing (G_FILE (job->files->data));
-    NemoFile *dest = nemo_file_get_existing (job->destination);
-
-    ret = nemo_file_is_local (source) &&
-          nemo_file_is_local (dest);
-
-    nemo_file_unref (source);
-    nemo_file_unref (dest);
-
-    return ret;
-}
-
-static gboolean
-copy_move_job_is_same_fs (CopyMoveJob *job)
-{
-    gboolean ret = FALSE;
-
-    NemoFile *source = nemo_file_get_existing (G_FILE (job->files->data));
-    NemoFile *dest = nemo_file_get_existing (job->destination);
+    NemoFile *source = nemo_file_get_existing (G_FILE (files->data));
+    NemoFile *dest = nemo_file_get_existing (destination);
 
     gchar *src_fs_id = nemo_file_get_filesystem_id (source);
     gchar *dst_fs_id = nemo_file_get_filesystem_id (dest);
 
     if (g_strcmp0 (src_fs_id, dst_fs_id) == 0)
         ret = TRUE;
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job is same filesystem (src: %s, dst: %s): %s\n", src_fs_id, dst_fs_id, ret ? "TRUE" : "FALSE");
+#endif
 
     g_free (src_fs_id);
     g_free (dst_fs_id);
@@ -6828,12 +6816,12 @@ copy_move_job_is_same_fs (CopyMoveJob *job)
 }
 
 static gboolean
-copy_move_job_has_no_folders (CopyMoveJob *job)
+job_has_no_folders (GList *files)
 {
     GList *l;
     gboolean ret = TRUE;
 
-    for (l = job->files; l != NULL; l = l->next) {
+    for (l = files; l != NULL; l = l->next) {
         GFile *location = G_FILE (l->data);
         NemoFile *file = nemo_file_get_existing (location);
 
@@ -6846,16 +6834,21 @@ copy_move_job_has_no_folders (CopyMoveJob *job)
         nemo_file_unref (file);
     }
 
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job has no folders: %s\n", ret ? "TRUE" : "FALSE");
+#endif
+
     return ret;
 }
 
 static gboolean
-copy_move_job_is_small (CopyMoveJob *job)
+job_is_small (GList *files)
 {
+    gboolean ret = FALSE;
     GList *l;
     goffset size = 0;
 
-    for (l = job->files; l != NULL; l = l->next) {
+    for (l = files; l != NULL; l = l->next) {
         GFile *location = G_FILE (l->data);
         NemoFile *file = nemo_file_get_existing (location);
 
@@ -6864,7 +6857,13 @@ copy_move_job_is_small (CopyMoveJob *job)
         nemo_file_unref (file);
     }
 
-    return size < 104857600; /* 100 mb */
+    ret = size < 104857600; /* 100 mb */
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job is small: %s\n", ret ? "TRUE" : "FALSE");
+#endif
+
+    return ret;
 }
 
 static gboolean
@@ -6883,33 +6882,40 @@ should_start_immediately (OpKind kind, gpointer op_data)
         case OP_KIND_MOVE:
             ;
             CopyMoveJob *mjob = (CopyMoveJob *) op_data;
-            ret = copy_move_job_is_local (mjob) &&
-                  copy_move_job_is_same_fs (mjob);
+            ret = job_is_same_fs (mjob->files, mjob->destination) &&
+                  job_is_local (mjob->files, mjob->destination);
             break;
         case OP_KIND_COPY:
             ;
             CopyMoveJob *cjob = (CopyMoveJob *) op_data;
-            ret = copy_move_job_is_local (cjob) &&
-                  copy_move_job_has_no_folders (cjob) &&
-                  copy_move_job_is_small (cjob);
+            ret = job_is_same_fs (cjob->files, cjob->destination) &&
+                  job_is_local (cjob->files, cjob->destination) &&
+                  job_has_no_folders (cjob->files) &&
+                  job_is_small (cjob->files);
             break;
         case OP_KIND_DUPE:
             ;
             CopyMoveJob *dupejob = (CopyMoveJob *) op_data;
-            ret = dupe_job_is_local (dupejob) &&
-                  copy_move_job_has_no_folders (dupejob) &&
-                  copy_move_job_is_small (dupejob);
+            ret = job_is_local (dupejob->files, dupejob->destination) &&
+                  job_has_no_folders (dupejob->files) &&
+                  job_is_small (dupejob->files);
             break;
         case OP_KIND_DELETE:
         case OP_KIND_TRASH:
             ;
             DeleteJob *deljob = (DeleteJob *) op_data;
-            ret = delete_job_is_local (deljob);
+            ret = job_is_local (deljob->files, NULL) ||
+                      (job_has_no_folders (deljob->files) &&
+                       job_is_small (deljob->files));
             break;
         default:
             ret = FALSE;
             break;
     }
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job STARTING IMMEDIATELY: %s\n", ret ? "TRUE" : "FALSE");
+#endif
 
     return ret;
 }
