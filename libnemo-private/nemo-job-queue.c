@@ -155,30 +155,13 @@ nemo_job_queue_get (void)
     return g_object_new (NEMO_TYPE_JOB_QUEUE, NULL);
 }
 
-static gboolean
-should_start_immediately (NemoJobQueue *self, Job *job, OpKind kind)
-{
-    /* Take care of easy decisions first */
-    switch (kind) {
-        case OP_KIND_CREATE:
-            return TRUE;
-            break;
-
-        default:
-            return FALSE;
-            break;
-    }
-
-    return FALSE;
-}
-
 void
-nemo_job_queue_add_new_job (NemoJobQueue *self,
-                            GIOSchedulerJobFunc job_func,
-                            gpointer user_data,
-                            GCancellable *cancellable,
-                            NemoProgressInfo *info,
-                            OpKind kind)
+nemo_job_queue_add_new_job (NemoJobQueue         *self,
+                            GIOSchedulerJobFunc   job_func,
+                            gpointer              user_data,
+                            GCancellable         *cancellable,
+                            NemoProgressInfo     *info,
+                            gboolean              start_immediately)
 {
 	if (g_list_find_custom (self->priv->queued_jobs, user_data, (GCompareFunc) compare_job_data_func) != NULL) {
 		g_warning ("Adding the same file job object to the job queue");
@@ -199,7 +182,7 @@ nemo_job_queue_add_new_job (NemoJobQueue *self,
 	g_signal_connect_swapped (info, "finished",
                               G_CALLBACK (job_finished_cb), self);
 
-    if (should_start_immediately (self, new_job, kind))
+    if (start_immediately)
         start_job (self, new_job);
     else
         nemo_job_queue_start_next_job (self);
