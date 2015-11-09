@@ -1,3 +1,9 @@
+nemo (2.5.1-daschuer3) trusty; urgency=low
+  
+  * Version 3, based on nemo 2.5.1
+ 
+ -- Daniel Schürmann <daschuer@gmx.de> Mon, 19 Jan 2015 20:56:00 +0100
+
 nemo (2.4.3-daschuer2) trusty; urgency=low
   
   * Initial version, based on nemo 2.4.2
