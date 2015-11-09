@@ -1399,8 +1399,7 @@ static void
 cell_renderer_editing_canceled (GtkCellRendererText *cell,
 				NemoListView    *view)
 {
-    g_clear_object (&view->details->editable_widget);
-
+    view->details->editable_widget = NULL;
 	nemo_view_set_is_renaming (NEMO_VIEW (view), FALSE);
 	nemo_view_unfreeze_updates (NEMO_VIEW (view));
 }
