@@ -1,3 +1,26 @@
+nemo (2.8.2) rosa; urgency=medium
+
+  [ Michael Webster ]
+  * file operations queue: refactor slightly to make it easier to manage what gets queued and what gets started immediately.
+  * nemo-window-pane.c: prevent search from appearing on desktop
+  * preferences: move context menu toggle to the top of the Display page
+  * file operations window: raise the window when another operation is added, if the window is visible (not status-iconed).
+  * click-to-rename: move logic to earlier in the click event, in a way similar to how double-clicks are handled.  Also, handle the preference change in nemo-view - this way it can be re-used later to handle list views as well.  Also, this keeps us from interacting with GSettings so much.
+  * icon view: fetch click-to-rename preference when the view is loaded, don't allow click-to-rename on read-only files.
+  * thumbnails: detect and throttle back thumbnail generation for files that are being actively updated on disk.
+  * file queue: Add some additional checks for determining whether or not to start a file operation immediately.
+  * Add option to disable queueing
+  * job queue: Refactor to reduce duplication, add debugging info, add filesystem comparison to detect false "local" paths (local paths to non-local or non-native filesystems and mounts).
+  * nemo-query-editor: fix some casts to prevent build warnings.
+  * click-to-rename: Fix accidental rename triggering with multiple selection in icon view
+  * click-to-rename: Fix previous commit (broke double-click upon initial selection.)
+  * list view: Don't clear the rename widget twice
+
+  [ Clement Lefebvre ]
+  * Fixed nemo crashing when quickly clicking on two unmounted volumes in the sidebar
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 09 Nov 2015 09:55:12 +0000
+
 nemo (2.8.1) rosa; urgency=medium
 
   [ Michael Webster ]
