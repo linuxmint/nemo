@@ -6422,7 +6422,12 @@ handle_icon_button_press (NemoIconContainer *container,
 		details->double_click_button[0] = event->button;
 	}
 
-	if (handle_icon_double_click (container, icon, event) ||
+    GList *selection = nemo_icon_container_get_selection (container);
+    gint selected_count = g_list_length (selection);
+    g_list_free (selection);
+
+    if (selected_count == 1 &&
+        handle_icon_double_click (container, icon, event) ||
         handle_icon_slow_two_click (container, icon, event)) {
 		/* Double clicking does not trigger a D&D action. */
 		details->drag_button = 0;
