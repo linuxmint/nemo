@@ -285,6 +285,50 @@ tooltip_prefs_changed_callback (NemoIconContainer *container)
 
 /* Functions dealing with NemoIcons.  */
 
+static gboolean
+clicked_on_text (NemoIconContainer *container,
+                          NemoIcon *icon,
+                    GdkEventButton *event)
+{
+    if (icon == NULL)
+        return FALSE;
+
+    double eventX, eventY;
+    EelDRect icon_rect;
+
+    icon_rect = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
+    eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
+
+    gboolean ret =  (eventX > icon_rect.x0) &&
+           (eventX < icon_rect.x1) &&
+           (eventY > icon_rect.y0) &&
+           (eventY < icon_rect.y1);
+
+    return ret;
+}
+
+static gboolean
+clicked_on_icon (NemoIconContainer *container,
+                          NemoIcon *icon,
+                    GdkEventButton *event)
+{
+    if (icon == NULL)
+        return FALSE;
+
+    double eventX, eventY;
+    EelDRect icon_rect;
+
+    icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+    eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
+
+    gboolean ret =  (eventX > icon_rect.x0) &&
+           (eventX < icon_rect.x1) &&
+           (eventY > icon_rect.y0) &&
+           (eventY < icon_rect.y1);
+
+    return ret;
+}
+
 static void
 icon_free (NemoIcon *icon)
 {
@@ -4260,7 +4304,7 @@ button_press_event (GtkWidget *widget,
 	NemoIconContainer *container;
 	gboolean selection_changed;
 	gboolean return_value;
-	gboolean clicked_on_icon;
+	gboolean clicked_on_item;
 
 	container = NEMO_ICON_CONTAINER (widget);
         container->details->button_down_time = event->time;
@@ -4275,7 +4319,7 @@ button_press_event (GtkWidget *widget,
 	}
 
 	/* Invoke the canvas event handler and see if an item picks up the event. */
-	clicked_on_icon = GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->button_press_event (widget, event);
+	clicked_on_item = GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->button_press_event (widget, event);
 	
 	/* Move focus to icon container, unless we're still renaming (to avoid exiting
 	 * renaming mode)
@@ -4284,56 +4328,17 @@ button_press_event (GtkWidget *widget,
     		gtk_widget_grab_focus (widget);
     	}
 
-	if (clicked_on_icon) {
-		NemoIcon *icon;//current icon which was clicked on
-		EelDRect icon_rect;//stores dimensions of the icon part
-		double eventX;//where did click event happened for x
-		double eventY;//where did click event happened for y
-		/* when icon is in renaming mode and user clicks on the image part of icon renaming should get closed */
-		icon = get_first_selected_icon (container);//this function gets the clicked icon
-		icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
-		eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y, &eventX, &eventY);
-		if (eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1 && icon == get_icon_being_renamed (container)){
-			end_renaming_mode (container,TRUE);
-		}
+    if (clicked_on_item) {
+        NemoIcon *icon; // current icon which was clicked on
 
-		/* Olny if the preferences is selected and clicks are for left button do a quick renames with pause in-between */
-        if(event -> button == 1 && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)){
-			static NemoIcon *last_icon_clicked = NULL;//this will show if icon was selected before 
-			EelDRect text_rect;//stores dimentions of the text part
-			static int clicked_on_icon_text_before=0;//this is different from last_icon_clicked, here we have to make sure if it was clicked on text part
-			static gint64 last_time_clicked_on_icon_text_before=0;//it should be static to keep the last time it was clicked on icon
-			int double_click_time;//default double click time on the system
+        /* when icon is in renaming mode and user clicks on the image part of icon renaming should get closed */
+        icon = get_first_selected_icon (container); // this function gets the clicked icon
 
-
-			g_object_get (G_OBJECT (gtk_widget_get_settings (widget)),
-					 "gtk-double-click-time", &double_click_time,
-					 NULL);//this will get the default double click time for user's system
-
-			icon = get_first_selected_icon (container);//this function gets the clicked icon
-			
-			/*This gets the dimentions of the text part*/
-			text_rect = nemo_icon_canvas_item_get_text_rectangle (icon -> item, FALSE);
-
-			/* the events get trapded into another coordinate system, this will fix it */
-			eel_canvas_window_to_world(EEL_CANVAS (container), event -> x, event -> y, &eventX, &eventY);
-
-			//users should click only into the text area
-			if((eventX > text_rect.x0 && eventX < text_rect.x1 && eventY > text_rect.y0 && eventY < text_rect.y1) ||
-				(eventX > icon_rect.x0 && eventX < icon_rect.x1 && eventY > icon_rect.y0 && eventY < icon_rect.y1)){
-				if(clicked_on_icon_text_before == 0 || last_icon_clicked != icon){//if it was not clicked before then do not rename, just mark it as being clicked
-					last_time_clicked_on_icon_text_before = eel_get_system_time ();
-					clicked_on_icon_text_before = 1;
-					last_icon_clicked = icon;//we need to be sure that the last icon which was clicked is the current we are clicking
-				}
-			else{//if it was clicked before then change the name, but not bafore double click time, this prevents annoying effects
-				if(eel_get_system_time() > last_time_clicked_on_icon_text_before+(double_click_time * 1250))
-					nemo_icon_container_start_renaming_selected_item(container,FALSE);//we send a FALSE so it will be smart enough to not take extentions
-					last_time_clicked_on_icon_text_before = 0;
-					clicked_on_icon_text_before = 0;
-				}
-			}
+        if (clicked_on_icon (container, icon, event) &&
+            icon == get_icon_being_renamed (container)) {
+            end_renaming_mode (container, TRUE);
         }
+
 		return TRUE;
 	}
 
@@ -4423,7 +4428,7 @@ nemo_icon_container_did_not_drag (NemoIconContainer *container,
 			}
 		}
 	} 
-	
+
 	if (details->drag_icon != NULL &&
 	    (details->single_click_mode ||
 	     event->button == MIDDLE_BUTTON)) {
@@ -4472,15 +4477,16 @@ clicked_within_double_click_interval (NemoIconContainer *container)
 {
 	static gint64 last_click_time = 0;
 	static gint click_count = 0;
-	gint double_click_time;
 	gint64 current_time;
+    gint interval;
 
-	/* Determine click count */
-	g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (container))), 
-		      "gtk-double-click-time", &double_click_time,
-		      NULL);
+    /* fetch system double-click time */
+    g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (container))), 
+              "gtk-double-click-time", &interval,
+              NULL);
+
 	current_time = eel_get_system_time ();
-	if (current_time - last_click_time < double_click_time * 1000) {
+	if (current_time - last_click_time < interval * 1000) {
 		click_count++;
 	} else {
 		click_count = 0;
@@ -4496,6 +4502,46 @@ clicked_within_double_click_interval (NemoIconContainer *container)
 	} else {
 		return FALSE;
 	}
+}
+
+static gboolean
+clicked_within_slow_click_interval_on_text (NemoIconContainer *container, NemoIcon *icon, GdkEventButton *event)
+{
+    static gint64 last_slow_click_time = 0;
+    static gint slow_click_count = 0;
+    gint64 current_time;
+    gint interval;
+    gint double_click_interval;
+
+    /* fetch system double-click time */
+    g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (container))), 
+                  "gtk-double-click-time", &double_click_interval,
+                  NULL);
+
+    /* slow click interval is always 2 seconds longer than the system
+     * double-click interval. */
+
+    interval = double_click_interval + 2000;
+
+    current_time = eel_get_system_time ();
+    if (current_time - last_slow_click_time < interval * 1000) {
+        slow_click_count = 1;
+    } else {
+        slow_click_count = 0;
+    }
+
+    /* Stash time for next compare */
+    last_slow_click_time = current_time;
+
+    /* Only allow second click on text to trigger this */
+    if (slow_click_count == 1 &&
+        icon == get_first_selected_icon (container) &&
+        clicked_on_text (container, icon, event)) {
+        slow_click_count = 0;
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 static void
@@ -6302,6 +6348,47 @@ handle_icon_double_click (NemoIconContainer *container,
 	return FALSE;
 }
 
+static gboolean
+handle_icon_slow_two_click (NemoIconContainer *container,
+                                     NemoIcon *icon,
+                               GdkEventButton *event)
+{
+    NemoIconContainerDetails *details;
+
+    NemoFile *file = NEMO_FILE (icon->data);
+
+    if (!nemo_file_can_rename (file))
+        return FALSE;
+
+    if (event->button != DRAG_BUTTON) {
+        return FALSE;
+    }
+
+    details = container->details;
+
+    if (!details->click_to_rename)
+        return FALSE;
+
+    GList *selection = nemo_icon_container_get_selection (container);
+    gint selected_count = g_list_length (selection);
+    g_list_free (selection);
+
+    if (selected_count != 1)
+        return FALSE;
+
+    if (!details->single_click_mode &&
+        clicked_within_slow_click_interval_on_text (container, icon, event) &&
+        details->double_click_icon[0] == details->double_click_icon[1] &&
+        details->double_click_button[0] == details->double_click_button[1]) {
+        if (!button_event_modifies_selection (event)) {
+            nemo_icon_container_start_renaming_selected_item (container, FALSE);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 /* NemoIcon event handling.  */
 
 /* Conceptually, pressing button 1 together with CTRL or SHIFT toggles
@@ -6342,7 +6429,8 @@ handle_icon_button_press (NemoIconContainer *container,
 		details->double_click_button[0] = event->button;
 	}
 
-	if (handle_icon_double_click (container, icon, event)) {
+    if (handle_icon_double_click (container, icon, event) ||
+        handle_icon_slow_two_click (container, icon, event)) {
 		/* Double clicking does not trigger a D&D action. */
 		details->drag_button = 0;
 		details->drag_icon = NULL;
@@ -8516,6 +8604,15 @@ nemo_icon_container_set_single_click_mode (NemoIconContainer *container,
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
 	container->details->single_click_mode = single_click_mode;
+}
+
+void
+nemo_icon_container_set_click_to_rename_enabled (NemoIconContainer *container,
+                                                           gboolean enabled)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    container->details->click_to_rename = enabled;
 }
 
 /* Return if the icon container is a fixed size */

@@ -284,7 +284,8 @@ struct NemoViewClass {
 	 * Icon and list views respond by synchronizing to the new preference
 	 * values and forcing an update if appropriate.
 	 */
-	void	(* click_policy_changed)	   (NemoView *view);
+    void    (* click_policy_changed)       (NemoView *view);
+	void	(* click_to_rename_mode_changed)   (NemoView *view);
 	void	(* sort_directories_first_changed) (NemoView *view);
 
 	/* Get the id string for this view. Its a constant string, not memory managed */

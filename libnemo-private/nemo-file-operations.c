@@ -73,6 +73,19 @@
 
 /* TODO: TESTING!!! */
 
+typedef enum {
+    OP_KIND_COPY,
+    OP_KIND_MOVE,
+    OP_KIND_DELETE,
+    OP_KIND_TRASH,
+    OP_KIND_EMPTY_TRASH,
+    OP_KIND_DUPE,
+    OP_KIND_PERMISSIONS,
+    OP_KIND_LINK,
+    OP_KIND_CREATE,
+    OP_KIND_TRUST
+} OpKind;
+
 typedef struct {
 	GIOSchedulerJob *io_job;	
 	GTimer *time;
@@ -189,6 +202,12 @@ typedef struct {
 #define MERGE _("_Merge")
 #define MERGE_ALL _("Merge _All")
 #define COPY_FORCE _("Copy _Anyway")
+;
+static void add_job_to_job_queue (GIOSchedulerJobFunc job_func,
+                                             gpointer user_data,
+                                        GCancellable *cancellable,
+                                    NemoProgressInfo *info,
+                                              OpKind  kind);
 
 #ifdef BUILD_ZEITGEIST
 #define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
@@ -2240,8 +2259,8 @@ trash_or_delete_internal (GList                  *files,
 
     generate_initial_job_details (job->common.progress, try_trash ? OP_KIND_TRASH : OP_KIND_DELETE, job->files, NULL);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, delete_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (delete_job, job, job->common.cancellable, job->common.progress,
+                                try_trash ? OP_KIND_TRASH : OP_KIND_DELETE);
 }
 
 void
@@ -2553,8 +2572,8 @@ nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_
 
             generate_initial_job_details (job->common.progress, OP_KIND_EMPTY_TRASH, NULL, NULL);
 
-            NemoJobQueue *job_queue = nemo_job_queue_get ();
-            nemo_job_queue_add_new_job (job_queue, empty_trash_job, job, job->common.cancellable, job->common.progress, FALSE);
+            add_job_to_job_queue (empty_trash_job, job, job->common.cancellable, job->common.progress,
+                                        OP_KIND_EMPTY_TRASH);
 			return;
 		} else if (response == GTK_RESPONSE_CANCEL) {
 			if (callback) {
@@ -4892,8 +4911,7 @@ nemo_file_operations_copy_file (GFile *source_file,
 
     generate_initial_job_details (job->common.progress, OP_KIND_COPY, job->files, job->destination);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, copy_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (copy_job, job, job->common.cancellable, job->common.progress, OP_KIND_COPY);
 }
 
 void
@@ -4936,8 +4954,7 @@ nemo_file_operations_copy (GList *files,
 
     generate_initial_job_details (job->common.progress, OP_KIND_COPY, job->files, job->destination);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, copy_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (copy_job, job, job->common.cancellable, job->common.progress, OP_KIND_COPY);
 }
 
 static void
@@ -5492,8 +5509,7 @@ nemo_file_operations_move (GList *files,
 
     generate_initial_job_details (job->common.progress, OP_KIND_MOVE, job->files, job->destination);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, move_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (move_job, job, job->common.cancellable, job->common.progress, OP_KIND_MOVE);
 }
 
 static void
@@ -5825,8 +5841,7 @@ nemo_file_operations_link (GList *files,
 
     generate_initial_job_details (job->common.progress, OP_KIND_LINK, job->files, job->destination);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, link_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (link_job, job, job->common.cancellable, job->common.progress, OP_KIND_LINK);
 }
 
 
@@ -5868,8 +5883,7 @@ nemo_file_operations_duplicate (GList *files,
     generate_initial_job_details (job->common.progress, OP_KIND_DUPE, job->files, src_dir);
     g_object_unref (src_dir);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, copy_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (copy_job, job, job->common.cancellable, job->common.progress, OP_KIND_DUPE);
 }
 
 static gboolean
@@ -6042,8 +6056,7 @@ nemo_file_set_permissions_recursive (const char *directory,
 
     generate_initial_job_details (job->common.progress, OP_KIND_PERMISSIONS, NULL, job->file);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, set_permissions_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (set_permissions_job, job, job->common.cancellable, job->common.progress, OP_KIND_PERMISSIONS);
 }
 
 static GList *
@@ -6521,8 +6534,7 @@ nemo_file_operations_new_folder (GtkWidget *parent_view,
 		job->common.undo_info = nemo_file_undo_info_create_new (NEMO_FILE_UNDO_OP_CREATE_FOLDER);
 	}
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
+    add_job_to_job_queue (create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
 }
 
 void 
@@ -6560,8 +6572,7 @@ nemo_file_operations_new_file_from_template (GtkWidget *parent_view,
 		job->common.undo_info = nemo_file_undo_info_create_new (NEMO_FILE_UNDO_OP_CREATE_FILE_FROM_TEMPLATE);
 	}
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
+    add_job_to_job_queue (create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
 }
 
 void 
@@ -6598,8 +6609,7 @@ nemo_file_operations_new_file (GtkWidget *parent_view,
 		job->common.undo_info = nemo_file_undo_info_create_new (NEMO_FILE_UNDO_OP_CREATE_EMPTY_FILE);
 	}
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
+    add_job_to_job_queue (create_job, job, job->common.cancellable, job->common.progress, OP_KIND_CREATE);
 }
 
 static void
@@ -6717,8 +6727,7 @@ nemo_file_operations_empty_trash (GtkWidget *parent_view)
 
     generate_initial_job_details (job->common.progress, OP_KIND_EMPTY_TRASH, NULL, NULL);
 
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, empty_trash_job, job, job->common.cancellable, job->common.progress, FALSE);
+    add_job_to_job_queue (empty_trash_job, job, job->common.cancellable, job->common.progress, OP_KIND_EMPTY_TRASH);
 }
 
 static gboolean
@@ -6938,9 +6947,191 @@ nemo_file_mark_desktop_file_trusted (GFile *file,
 	job->done_callback = done_callback;
 	job->done_callback_data = done_callback_data;
 	
-    NemoJobQueue *job_queue = nemo_job_queue_get ();
-    nemo_job_queue_add_new_job (job_queue, mark_trusted_job, job, job->common.cancellable, job->common.progress, TRUE);
+    add_job_to_job_queue (mark_trusted_job, job, job->common.cancellable, job->common.progress, OP_KIND_PERMISSIONS);
 }
+
+#if 0
+#define DEBUG_FILE_OP_QUEUE
+#endif
+
+static gboolean
+job_is_local (GList *files, GFile *destination)
+{
+    gboolean ret = FALSE;
+
+    NemoFile *source = nemo_file_get_existing (G_FILE (files->data));
+    NemoFile *dest = destination != NULL ? nemo_file_get_existing (destination) : NULL;
+
+    if (dest) {
+        ret = nemo_file_is_local (source) &&
+              nemo_file_is_local (dest);
+        nemo_file_unref (dest);
+    } else {
+        ret = nemo_file_is_local (source);
+    }
+
+    nemo_file_unref (source);
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job is local: %s\n", ret ? "TRUE" : "FALSE");
+#endif
+
+    return ret;
+}
+
+static gboolean
+job_is_same_fs (GList *files, GFile *destination)
+{
+    gboolean ret = FALSE;
+
+    NemoFile *source = nemo_file_get_existing (G_FILE (files->data));
+    NemoFile *dest = nemo_file_get_existing (destination);
+
+    gchar *src_fs_id = nemo_file_get_filesystem_id (source);
+    gchar *dst_fs_id = nemo_file_get_filesystem_id (dest);
+
+    if (g_strcmp0 (src_fs_id, dst_fs_id) == 0)
+        ret = TRUE;
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job is same filesystem (src: %s, dst: %s): %s\n", src_fs_id, dst_fs_id, ret ? "TRUE" : "FALSE");
+#endif
+
+    g_free (src_fs_id);
+    g_free (dst_fs_id);
+
+    nemo_file_unref (source);
+    nemo_file_unref (dest);
+
+    return ret;
+}
+
+static gboolean
+job_has_no_folders (GList *files)
+{
+    GList *l;
+    gboolean ret = TRUE;
+
+    for (l = files; l != NULL; l = l->next) {
+        GFile *location = G_FILE (l->data);
+        NemoFile *file = nemo_file_get_existing (location);
+
+        if (nemo_file_is_directory (file)) {
+            ret = FALSE;
+            nemo_file_unref (file);
+            break;
+        }
+
+        nemo_file_unref (file);
+    }
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job has no folders: %s\n", ret ? "TRUE" : "FALSE");
+#endif
+
+    return ret;
+}
+
+static gboolean
+job_is_small (GList *files)
+{
+    gboolean ret = FALSE;
+    GList *l;
+    goffset size = 0;
+
+    for (l = files; l != NULL; l = l->next) {
+        GFile *location = G_FILE (l->data);
+        NemoFile *file = nemo_file_get_existing (location);
+
+        size = size + nemo_file_get_size (file);
+
+        nemo_file_unref (file);
+    }
+
+    ret = size < 104857600; /* 100 mb */
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job is small: %s\n", ret ? "TRUE" : "FALSE");
+#endif
+
+    return ret;
+}
+
+static gboolean
+should_start_immediately (OpKind kind, gpointer op_data)
+{
+    gboolean ret = FALSE;
+
+    switch (kind) {
+        case OP_KIND_CREATE:
+        case OP_KIND_TRUST:
+        case OP_KIND_EMPTY_TRASH:
+        case OP_KIND_PERMISSIONS:
+        case OP_KIND_LINK:
+            ret = TRUE;
+            break;
+        case OP_KIND_MOVE:
+            ;
+            CopyMoveJob *mjob = (CopyMoveJob *) op_data;
+            ret = job_is_same_fs (mjob->files, mjob->destination) &&
+                  job_is_local (mjob->files, mjob->destination);
+            break;
+        case OP_KIND_COPY:
+            ;
+            CopyMoveJob *cjob = (CopyMoveJob *) op_data;
+            ret = job_is_same_fs (cjob->files, cjob->destination) &&
+                  job_is_local (cjob->files, cjob->destination) &&
+                  job_has_no_folders (cjob->files) &&
+                  job_is_small (cjob->files);
+            break;
+        case OP_KIND_DUPE:
+            ;
+            CopyMoveJob *dupejob = (CopyMoveJob *) op_data;
+            ret = job_is_local (dupejob->files, dupejob->destination) &&
+                  job_has_no_folders (dupejob->files) &&
+                  job_is_small (dupejob->files);
+            break;
+        case OP_KIND_DELETE:
+        case OP_KIND_TRASH:
+            ;
+            DeleteJob *deljob = (DeleteJob *) op_data;
+            ret = job_is_local (deljob->files, NULL) ||
+                      (job_has_no_folders (deljob->files) &&
+                       job_is_small (deljob->files));
+            break;
+        default:
+            ret = FALSE;
+            break;
+    }
+
+#ifdef DEBUG_FILE_OP_QUEUE
+    g_message ("File op job STARTING IMMEDIATELY: %s\n", ret ? "TRUE" : "FALSE");
+#endif
+
+    return ret;
+}
+
+void
+add_job_to_job_queue (GIOSchedulerJobFunc job_func,
+                                 gpointer user_data,
+                            GCancellable *cancellable,
+                        NemoProgressInfo *info,
+                                  OpKind  kind)
+{
+    gboolean start_immediately;
+
+    NemoJobQueue *job_queue = nemo_job_queue_get ();
+
+    start_immediately = should_start_immediately (kind, user_data);
+
+    nemo_job_queue_add_new_job (job_queue,
+                                job_func,
+                                user_data,
+                                cancellable,
+                                info,
+                                start_immediately);
+}
+
 
 #if !defined (NEMO_OMIT_SELF_CHECK)
 

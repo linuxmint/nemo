@@ -3782,10 +3782,12 @@ thumbnail_done (NemoDirectory *directory,
 		    thumb_mtime == file->details->mtime) {
 			file->details->thumbnail = g_object_ref (pixbuf);
 			file->details->thumbnail_mtime = thumb_mtime;
+            file->details->thumbnail_throttle_count = 1;
 		} else {
 			g_free (file->details->thumbnail_path);
 			file->details->thumbnail_path = NULL;
 		}
+
 	}
 	
 	nemo_directory_async_state_changed (directory);

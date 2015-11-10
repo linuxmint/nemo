@@ -177,6 +177,7 @@ static void                 nemo_icon_view_set_zoom_level               (NemoIco
 									     NemoZoomLevel     new_level,
 									     gboolean              always_emit);
 static void                 nemo_icon_view_update_click_mode            (NemoIconView           *icon_view);
+static void                 nemo_icon_view_update_click_to_rename_mode  (NemoIconView           *icon_view);
 static void                 nemo_icon_view_set_directory_tighter_layout (NemoIconView           *icon_view,
                                         NemoFile         *file,
                                         gboolean              tighter_layout);
@@ -2097,9 +2098,17 @@ get_icon_drop_target_uri_callback (NemoIconContainer *container,
 static void
 nemo_icon_view_click_policy_changed (NemoView *directory_view)
 {
-	g_assert (NEMO_IS_ICON_VIEW (directory_view));
+    g_assert (NEMO_IS_ICON_VIEW (directory_view));
 
-	nemo_icon_view_update_click_mode (NEMO_ICON_VIEW (directory_view));
+    nemo_icon_view_update_click_mode (NEMO_ICON_VIEW (directory_view));
+}
+
+static void
+nemo_icon_view_click_to_rename_mode_changed (NemoView *directory_view)
+{
+    g_assert (NEMO_IS_ICON_VIEW (directory_view));
+
+    nemo_icon_view_update_click_to_rename_mode (NEMO_ICON_VIEW (directory_view));
 }
 
 static void
@@ -2302,6 +2311,22 @@ nemo_icon_view_update_click_mode (NemoIconView *icon_view)
 						       click_mode == NEMO_CLICK_POLICY_SINGLE);
 }
 
+static void
+nemo_icon_view_update_click_to_rename_mode (NemoIconView *icon_view)
+{
+    NemoIconContainer   *icon_container;
+    gboolean enabled;
+
+    icon_container = get_icon_container (icon_view);
+    g_assert (icon_container != NULL);
+
+    enabled = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLICK_TO_RENAME);
+
+    nemo_icon_container_set_click_to_rename_enabled (icon_container,
+                                                     enabled);
+}
+
+
 static gboolean
 get_stored_layout_timestamp (NemoIconContainer *container,
 			     NemoIconData *icon_data,
@@ -2455,6 +2480,7 @@ create_icon_container (NemoIconView *icon_view)
 			   GTK_WIDGET (icon_container));
 
 	nemo_icon_view_update_click_mode (icon_view);
+    nemo_icon_view_update_click_to_rename_mode (icon_view);
 
 	gtk_widget_show (GTK_WIDGET (icon_container));
 
@@ -2671,6 +2697,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 	nemo_view_class->zoom_to_level = nemo_icon_view_zoom_to_level;
 	nemo_view_class->get_zoom_level = nemo_icon_view_get_zoom_level;
         nemo_view_class->click_policy_changed = nemo_icon_view_click_policy_changed;
+        nemo_view_class->click_to_rename_mode_changed = nemo_icon_view_click_to_rename_mode_changed;
         nemo_view_class->merge_menus = nemo_icon_view_merge_menus;
         nemo_view_class->unmerge_menus = nemo_icon_view_unmerge_menus;
         nemo_view_class->sort_directories_first_changed = nemo_icon_view_sort_directories_first_changed;
