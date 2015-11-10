@@ -2334,6 +2334,7 @@ create_canvas_container (NemoCanvasView *canvas_view)
 			   GTK_WIDGET (canvas_container));
 
 	nemo_canvas_view_update_click_mode (canvas_view);
+    nemo_canvas_view_update_click_to_rename_mode (canvas_view);
 
 	gtk_widget_show (GTK_WIDGET (canvas_container));
 

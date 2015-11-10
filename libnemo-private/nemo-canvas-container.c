@@ -6401,6 +6401,11 @@ handle_canvas_slow_two_click (NemoCanvasContainer *container,
 {
     NemoCanvasContainerDetails *details;
 
+    NemoFile *file = NEMO_FILE (icon->data);
+
+    if (!nemo_file_can_rename (file))
+        return FALSE;
+
     if (event->button != DRAG_BUTTON) {
         return FALSE;
     }
