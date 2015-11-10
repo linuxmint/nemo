@@ -58,9 +58,6 @@
 /* Should never be a reasonable actual mtime */
 #define INVALID_MTIME 0
 
-/* Cool-off period between last file modification time and thumbnail creation */
-#define THUMBNAIL_CREATION_DELAY_SECS 3
-
 static gpointer thumbnail_thread_start (gpointer data);
 
 /* structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
