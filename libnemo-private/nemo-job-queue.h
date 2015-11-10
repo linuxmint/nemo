@@ -53,18 +53,6 @@ struct _NemoJobQueueClass {
   GObjectClass parent_class;
 };
 
-typedef enum {
-    OP_KIND_COPY,
-    OP_KIND_MOVE,
-    OP_KIND_DELETE,
-    OP_KIND_TRASH,
-    OP_KIND_EMPTY_TRASH,
-    OP_KIND_DUPE,
-    OP_KIND_PERMISSIONS,
-    OP_KIND_LINK,
-    OP_KIND_CREATE
-} OpKind;
-
 GType nemo_job_queue_get_type (void);
 
 NemoJobQueue *nemo_job_queue_get (void);
@@ -74,7 +62,7 @@ void nemo_job_queue_add_new_job (NemoJobQueue *self,
                                  gpointer user_data,
                                  GCancellable *cancellable,
                                  NemoProgressInfo *info,
-                                 OpKind kind);
+                                 gboolean start_immediately);
 
 void nemo_job_queue_start_next_job (NemoJobQueue *self);
 

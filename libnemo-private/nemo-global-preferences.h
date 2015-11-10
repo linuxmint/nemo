@@ -240,6 +240,8 @@ typedef enum
 /* Connect-to server dialog last-used method */
 #define NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD "last-server-connect-method"
 
+/* File operations queue */
+#define NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS          "never-queue-file-ops"
 
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);

@@ -26,8 +26,11 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libnemo-private/nemo-file.h>
 
+/* Cool-off period between last file modification time and thumbnail creation */
+#define THUMBNAIL_CREATION_DELAY_SECS 3
+
 /* Returns NULL if there's no thumbnail yet. */
-void       nemo_create_thumbnail                (NemoFile *file);
+void       nemo_create_thumbnail                (NemoFile *file, gint throttle_count);
 gboolean   nemo_can_thumbnail                   (NemoFile *file);
 gboolean   nemo_can_thumbnail_internally        (NemoFile *file);
 gboolean   nemo_thumbnail_is_mimetype_limited_by_size
