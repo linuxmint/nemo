@@ -6415,6 +6415,13 @@ handle_canvas_slow_two_click (NemoCanvasContainer *container,
     if (!details->click_to_rename)
         return FALSE;
 
+    GList *selection = nemo_canvas_container_get_selection (container);
+    gint selected_count = g_list_length (selection);
+    g_list_free (selection);
+
+    if (selected_count != 1)
+        return FALSE;
+
     if (!details->single_click_mode &&
         clicked_within_slow_click_interval_on_text (container, icon, event) &&
         details->double_click_icon[0] == details->double_click_icon[1] &&
