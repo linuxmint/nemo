@@ -170,6 +170,7 @@ static void                 nemo_canvas_view_set_zoom_level               (NemoC
 									     NemoZoomLevel     new_level,
 									     gboolean              always_emit);
 static void                 nemo_canvas_view_update_click_mode            (NemoCanvasView           *canvas_view);
+static void                 nemo_canvas_view_update_click_to_rename_mode  (NemoCanvasView           *canvas_view);
 static void                 nemo_canvas_view_set_directory_tighter_layout (NemoCanvasView           *canvas_view,
                                         NemoFile         *file,
                                         gboolean              tighter_layout);
@@ -1955,6 +1956,14 @@ nemo_canvas_view_click_policy_changed (NemoView *directory_view)
 }
 
 static void
+nemo_canvas_view_click_to_rename_mode_changed (NemoView *directory_view)
+{
+    g_assert (NEMO_IS_CANVAS_VIEW (directory_view));
+
+    nemo_canvas_view_update_click_to_rename_mode (NEMO_CANVAS_VIEW (directory_view));
+}
+
+static void
 image_display_policy_changed_callback (gpointer callback_data)
 {
 	NemoCanvasView *canvas_view;
@@ -2153,6 +2162,22 @@ nemo_canvas_view_update_click_mode (NemoCanvasView *canvas_view)
 	nemo_canvas_container_set_single_click_mode (canvas_container,
 						       click_mode == NEMO_CLICK_POLICY_SINGLE);
 }
+
+static void
+nemo_canvas_view_update_click_to_rename_mode (NemoCanvasView *canvas_view)
+{
+    NemoCanvasContainer   *canvas_container;
+    gboolean enabled;
+
+    canvas_container = get_canvas_container (canvas_view);
+    g_assert (canvas_container != NULL);
+
+    enabled = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLICK_TO_RENAME);
+
+    nemo_canvas_container_set_click_to_rename_enabled (canvas_container,
+                                                     enabled);
+}
+
 
 static gboolean
 get_stored_layout_timestamp (NemoCanvasContainer *container,
@@ -2536,7 +2561,8 @@ nemo_canvas_view_class_init (NemoCanvasViewClass *klass)
 	nemo_view_class->zoom_to_level = nemo_canvas_view_zoom_to_level;
 	nemo_view_class->get_zoom_level = nemo_canvas_view_get_zoom_level;
         nemo_view_class->click_policy_changed = nemo_canvas_view_click_policy_changed;
-        nemo_view_class->merge_menus = nemo_canvas_view_merge_menus;
+        nemo_view_class->click_to_rename_mode_changed = nemo_canvas_view_click_to_rename_mode_changed;      
+		nemo_view_class->merge_menus = nemo_canvas_view_merge_menus;
         nemo_view_class->unmerge_menus = nemo_canvas_view_unmerge_menus;
         nemo_view_class->sort_directories_first_changed = nemo_canvas_view_sort_directories_first_changed;
         nemo_view_class->start_renaming_file = nemo_canvas_view_start_renaming_file;
