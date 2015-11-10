@@ -118,6 +118,8 @@ struct NemoListViewDetails {
 	gboolean tooltip_flags;
 	gboolean show_tooltips;
 
+	gboolean click_to_rename;
+
 	NemoListViewDndInfo drag_info;
 };
 
@@ -155,6 +157,10 @@ static void   nemo_list_view_rename_callback                 (NemoFile      *fil
 								  GFile             *result_location,
 								  GError            *error,
 								  gpointer           callback_data);
+
+static void nemo_list_view_start_renaming_file               (NemoView *view,
+                                                              NemoFile *file,
+                                                              gboolean  select_all);
 
 static void   apply_columns_settings                             (NemoListView *list_view,
                                                                   char **column_order,
@@ -780,20 +786,195 @@ columns_reordered_callback (AtkObject *atk,
 }
 
 static gboolean
+clicked_on_text_in_name_cell (NemoListView *view, GtkTreePath *path, GdkEventButton *event)
+{
+    gboolean ret = FALSE;
+
+    NemoListViewDetails *details = view->details;
+    int x_col_offset, x_cell_offset, width, expander_size, horizontal_separator, expansion_offset;
+
+    x_col_offset = gtk_tree_view_column_get_x_offset (details->file_name_column);
+
+    gtk_tree_view_column_cell_get_position (details->file_name_column,
+                                            GTK_CELL_RENDERER (details->file_name_cell),
+                                            &x_cell_offset, &width);
+
+    gtk_widget_style_get (GTK_WIDGET (details->tree_view),
+                                      "expander-size", &expander_size,
+                                      "horizontal-separator", &horizontal_separator,
+                                      NULL);
+
+    expander_size += 4;
+    expansion_offset = ((horizontal_separator / 2) + gtk_tree_path_get_depth (path) * expander_size);
+
+    ret = (event->x > (expansion_offset + x_col_offset + x_cell_offset) &&
+           event->x < (x_col_offset + x_cell_offset + width)) &&
+           !gtk_tree_view_is_blank_at_pos (GTK_TREE_VIEW (view->details->tree_view),
+                                                          event->x, event->y,
+                                                          NULL, NULL, NULL, NULL);
+
+    return ret;
+}
+
+static gboolean
+clicked_within_double_click_interval (NemoListView *view)
+{
+    static gint64 last_click_time = 0;
+    static int click_count = 0;
+
+    gint64 current_time;
+    gint interval;
+
+    /* fetch system double-click time */
+    g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (view))), 
+              "gtk-double-click-time", &interval,
+              NULL);
+
+    current_time = g_get_monotonic_time ();
+    if (current_time - last_click_time < interval * 1000) {
+        click_count++;
+    } else {
+        click_count = 0;
+    }
+
+    /* Stash time for next compare */
+    last_click_time = current_time;
+
+    /* Only allow double click */
+    if (click_count == 1) {
+        click_count = 0;
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static gboolean
+clicked_within_slow_click_interval_on_text (NemoListView *view, GtkTreePath *path, GdkEventButton *event)
+{
+    static gint64 last_slow_click_time = 0;
+    static gint slow_click_count = 0;
+    gint64 current_time;
+    gint interval;
+    gint double_click_interval;
+
+    /* fetch system double-click time */
+    g_object_get (G_OBJECT (gtk_widget_get_settings (GTK_WIDGET (view))), 
+                  "gtk-double-click-time", &double_click_interval,
+                  NULL);
+
+    /* slow click interval is always 2 seconds longer than the system
+     * double-click interval. */
+
+    interval = double_click_interval + 2000;
+
+    current_time = g_get_monotonic_time ();
+    if (current_time - last_slow_click_time < interval * 1000) {
+        slow_click_count = 1;
+    } else {
+        slow_click_count = 0;
+    }
+
+    /* Stash time for next compare */
+    last_slow_click_time = current_time;
+
+    GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view->details->tree_view));
+
+    GList *selected = gtk_tree_selection_get_selected_rows (selection, NULL);
+    gint selected_count = g_list_length (selected);
+    g_list_free (selected);
+
+    if (selected_count != 1)
+        return FALSE;
+
+    /* Only allow second click on text to trigger this */
+    if (slow_click_count == 1 &&
+        gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0 &&
+        clicked_on_text_in_name_cell (view, path, event)) {
+        slow_click_count = 0;
+
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static gboolean
+handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton *event, gboolean on_expander)
+{
+    /* Ignore double click if we are in single click mode */
+    if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+        return FALSE;
+    }
+
+    if (clicked_within_double_click_interval (view) && 
+        view->details->double_click_path[1] &&
+        gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0 &&
+        !on_expander) {
+        /* NOTE: Activation can actually destroy the view if we're switching */
+        if (!button_event_modifies_selection (event)) {
+            if ((event->button == 1 || event->button == 3)) {
+                activate_selected_items (view);
+            } else if (event->button == 2) {
+                activate_selected_items_alternate (view, NULL, TRUE);
+            }
+
+            return TRUE;
+        } else if (event->button == 1 &&
+               (event->state & GDK_SHIFT_MASK) != 0) {
+            NemoFile *file;
+            file = nemo_list_model_file_for_path (view->details->model, path);
+            if (file != NULL) {
+                activate_selected_items_alternate (view, file, TRUE);
+                nemo_file_unref (file);
+            }
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static gboolean
+handle_icon_slow_two_click (NemoListView *view, GtkTreePath *path, GdkEventButton *event)
+{
+    NemoListViewDetails *details;
+    NemoFile *file;
+
+    details = view->details;
+
+    if (!details->click_to_rename)
+        return FALSE;
+
+    file = nemo_list_model_file_for_path (view->details->model, path);
+
+    if (!nemo_file_can_rename (file))
+        return FALSE;
+
+    if (clicked_within_slow_click_interval_on_text (view, path, event) && view->details->double_click_path[1] &&
+        gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0) {
+        if (!button_event_modifies_selection (event)) {
+            nemo_list_view_start_renaming_file (NEMO_VIEW (view), file, FALSE);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static gboolean
 button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callback_data)
 {
 	NemoListView *view;
 	GtkTreeView *tree_view;
 	GtkTreePath *path;
+	gboolean call_parent;
 	GtkTreeSelection *selection;
 	GtkWidgetClass *tree_view_class;
-	gint64 current_time;
-	static gint64 last_click_time = 0;
-	static int click_count = 0;
-	int double_click_time;
+
 	int expander_size, horizontal_separator;
-	gboolean call_parent, on_expander;
-	gboolean is_simple_click, path_selected;
+	gboolean on_expander;
 	gboolean blank_click;
 
 	view = NEMO_LIST_VIEW (callback_data);
@@ -806,6 +987,10 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	if (event->button > 5) {
 		return FALSE;
 	}
+
+    if (event->type == GDK_2BUTTON_PRESS) {
+        return TRUE;
+    }
 
 	if (event->window != gtk_tree_view_get_bin_window (tree_view)) {
 		return FALSE;
@@ -822,44 +1007,139 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		 tree_view,
 		 event->x, event->y);
 
-	g_object_get (G_OBJECT (gtk_widget_get_settings (widget)),
-		      "gtk-double-click-time", &double_click_time,
-		      NULL);
-
-	/* Determine click count */
-	current_time = g_get_monotonic_time ();
-	if (current_time - last_click_time < double_click_time * 1000) {
-		click_count++;
-	} else {
-		click_count = 0;
-	}
-
-	/* Stash time for next compare */
-	last_click_time = current_time;
-
-	/* Ignore double click if we are in single click mode */
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE && click_count >= 2) {
-		return TRUE;
-	}
-
 	view->details->ignore_button_release = FALSE;
-	is_simple_click = ((event->button == 1 || event->button == 2) && (event->type == GDK_BUTTON_PRESS));
 
-	/* No item at this position */
-	if (!gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
-					    &path, NULL, NULL, NULL)) {
-		if (is_simple_click) {
-#if GLIB_CHECK_VERSION (2, 34, 0)
-			g_clear_pointer (&view->details->double_click_path[1], gtk_tree_path_free);
-#else
+	call_parent = TRUE;
+	if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
+					   &path, NULL, NULL, NULL)) {
+		gtk_widget_style_get (widget,
+				      "expander-size", &expander_size,
+				      "horizontal-separator", &horizontal_separator,
+				      NULL);
+		/* TODO we should not hardcode this extra padding. It is
+		 * EXPANDER_EXTRA_PADDING from GtkTreeView.
+		 */
+		expander_size += 4;
+		on_expander = (event->x <= horizontal_separator / 2 +
+			       gtk_tree_path_get_depth (path) * expander_size);
+
+		/* Keep track of path of last click so double clicks only happen
+		 * on the same item */
+		if ((event->button == 1 || event->button == 2)  && 
+		    event->type == GDK_BUTTON_PRESS) {
 			if (view->details->double_click_path[1]) {
 				gtk_tree_path_free (view->details->double_click_path[1]);
 			}
-#endif
+			view->details->double_click_path[1] = view->details->double_click_path[0];
+			view->details->double_click_path[0] = gtk_tree_path_copy (path);
+		}
+
+		if (handle_icon_double_click (view, path, event, on_expander) ||
+            handle_icon_slow_two_click (view, path, event)) {
+			/* Double clicking does not trigger a D&D action. */
+			view->details->drag_button = 0;
+			
+		} else {
+	
+			/* We're going to filter out some situations where
+			 * we can't let the default code run because all
+			 * but one row would be would be deselected. We don't
+			 * want that; we want the right click menu or single
+			 * click to apply to everything that's currently selected. */
+			
+			if (event->button == 3) {
+				blank_click = 
+					(!gtk_tree_selection_path_is_selected (selection, path) &&
+					 gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL));
+			}
+
+			if (event->button == 3 && 
+			    (blank_click || gtk_tree_selection_path_is_selected (selection, path))) {
+				call_parent = FALSE;
+			} 
+			
+			if ((event->button == 1 || event->button == 2) &&
+			    ((event->state & GDK_CONTROL_MASK) != 0 ||
+			     (event->state & GDK_SHIFT_MASK) == 0)) {			
+				view->details->row_selected_on_button_down = gtk_tree_selection_path_is_selected (selection, path);
+				if (view->details->row_selected_on_button_down) {
+					call_parent = on_expander;
+					view->details->ignore_button_release = call_parent;
+				} else if ((event->state & GDK_CONTROL_MASK) != 0) {
+					GList *selected_rows;
+					GList *l;
+
+					call_parent = FALSE;
+					if ((event->state & GDK_SHIFT_MASK) != 0) {
+						GtkTreePath *cursor;
+						gtk_tree_view_get_cursor (tree_view, &cursor, NULL);
+						if (cursor != NULL) {
+							gtk_tree_selection_select_range (selection, cursor, path);
+						} else {
+							gtk_tree_selection_select_path (selection, path);
+						}
+					} else {
+						gtk_tree_selection_select_path (selection, path);
+					}
+					selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
+
+					/* This unselects everything */
+					gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
+
+					/* So select it again */
+					l = selected_rows;
+					while (l != NULL) {
+						GtkTreePath *p = l->data;
+						l = l->next;
+						gtk_tree_selection_select_path (selection, p);
+						gtk_tree_path_free (p);
+					}
+					g_list_free (selected_rows);
+				} else {
+					view->details->ignore_button_release = on_expander;
+				}
+			}
+		
+			if (call_parent) {
+				g_signal_handlers_block_by_func (tree_view,
+								 row_activated_callback,
+								 view);
+
+				tree_view_class->button_press_event (widget, event);
+
+				g_signal_handlers_unblock_by_func (tree_view,
+								   row_activated_callback,
+								   view);
+			} else if (gtk_tree_selection_path_is_selected (selection, path)) {
+				gtk_widget_grab_focus (widget);
+			}
+			
+			if ((event->button == 1 || event->button == 2) &&
+			    event->type == GDK_BUTTON_PRESS) {
+				view->details->drag_started = FALSE;
+				view->details->drag_button = event->button;
+				view->details->drag_x = event->x;
+				view->details->drag_y = event->y;
+			}
+			
+			if (event->button == 3) {
+				if (blank_click) {
+					gtk_tree_selection_unselect_all (selection);
+				}
+				do_popup_menu (widget, view, event);
+			}
+		}
+
+		gtk_tree_path_free (path);
+	} else {
+		if ((event->button == 1 || event->button == 2)  && 
+		    event->type == GDK_BUTTON_PRESS) {
+			if (view->details->double_click_path[1]) {
+				gtk_tree_path_free (view->details->double_click_path[1]);
+			}
 			view->details->double_click_path[1] = view->details->double_click_path[0];
 			view->details->double_click_path[0] = NULL;
 		}
-
 		/* Deselect if people click outside any row. It's OK to
 		   let default code run; it won't reselect anything. */
 		gtk_tree_selection_unselect_all (gtk_tree_view_get_selection (tree_view));
@@ -868,158 +1148,8 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		if (event->button == 3) {
 			do_popup_menu (widget, view, event);
 		}
-
-		return TRUE;
 	}
-
-	call_parent = TRUE;
-	path_selected = gtk_tree_selection_path_is_selected (selection, path);
-
-	gtk_widget_style_get (widget,
-			      "expander-size", &expander_size,
-			      "horizontal-separator", &horizontal_separator,
-			      NULL);
-	/* TODO we should not hardcode this extra padding. It is
-	 * EXPANDER_EXTRA_PADDING from GtkTreeView.
-	 */
-	expander_size += 4;
-	on_expander = (event->x <= horizontal_separator / 2 +
-		       gtk_tree_path_get_depth (path) * expander_size);
-
-	/* Keep track of path of last click so double clicks only happen
-	 * on the same item */
-	if (is_simple_click) {
-#if GLIB_CHECK_VERSION (2, 34, 0)
-		g_clear_pointer (&view->details->double_click_path[1], gtk_tree_path_free);
-#else
-		if (view->details->double_click_path[1]) {
-			gtk_tree_path_free (view->details->double_click_path[1]);
-		}
-#endif
-		view->details->double_click_path[1] = view->details->double_click_path[0];
-		view->details->double_click_path[0] = NULL;
-	}
-
-	if (event->type == GDK_2BUTTON_PRESS) {
-		/* Double clicking does not trigger a D&D action. */
-		view->details->drag_button = 0;
-
-		/* NOTE: Activation can actually destroy the view if we're switching */
-		if (!on_expander &&
-		    view->details->double_click_path[1] &&
-		    gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0) {
-			if (!button_event_modifies_selection (event)) {
-				if ((event->button == 1 || event->button == 3)) {
-					activate_selected_items (view);
-				} else if (event->button == 2) {
-					activate_selected_items_alternate (view, NULL, TRUE);
-				}
-			} else if (event->button == 1 &&
-				   (event->state & GDK_SHIFT_MASK) != 0) {
-				NemoFile *file;
-				file = nemo_list_model_file_for_path (view->details->model, path);
-				if (file != NULL) {
-					activate_selected_items_alternate (view, file, TRUE);
-					nemo_file_unref (file);
-				}
-			}
-		} else {
-			if ((event->button == 1 || event->button == 3)) {
-				activate_selected_items (view);
-			} else if (event->button == 2) {
-				activate_selected_items_alternate (view, NULL, TRUE);
-			}
-		}
-	} else {
-		/* We're going to filter out some situations where
-		 * we can't let the default code run because all
-		 * but one row would be would be deselected. We don't
-		 * want that; we want the right click menu or single
-		 * click to apply to everything that's currently selected.
-		 */
-		if (event->button == 3) {
-			blank_click = 
-				(!path_selected &&
-				 gtk_tree_view_is_blank_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL));
-
-		        if (blank_click || gtk_tree_selection_path_is_selected (selection, path)) {
-			        call_parent = FALSE;
-		        }
-                }
-
-		if ((event->button == 1 || event->button == 2) &&
-		    ((event->state & GDK_CONTROL_MASK) != 0 ||
-		     (event->state & GDK_SHIFT_MASK) == 0)) {
-			view->details->row_selected_on_button_down = path_selected;
-
-			if (view->details->row_selected_on_button_down) {
-				call_parent = on_expander;
-				view->details->ignore_button_release = call_parent;
-			} else if ((event->state & GDK_CONTROL_MASK) != 0) {
-				GList *selected_rows;
-				GList *l;
-
-				call_parent = FALSE;
-				if ((event->state & GDK_SHIFT_MASK) != 0) {
-					GtkTreePath *cursor;
-					gtk_tree_view_get_cursor (tree_view, &cursor, NULL);
-					if (cursor != NULL) {
-						gtk_tree_selection_select_range (selection, cursor, path);
-					} else {
-						gtk_tree_selection_select_path (selection, path);
-					}
-				} else {
-					gtk_tree_selection_select_path (selection, path);
-				}
-				selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
-
-				/* This unselects everything */
-				gtk_tree_view_set_cursor (tree_view, path, NULL, FALSE);
-
-				/* So select it again */
-				l = selected_rows;
-				while (l != NULL) {
-					GtkTreePath *p = l->data;
-					l = l->next;
-					gtk_tree_selection_select_path (selection, p);
-					gtk_tree_path_free (p);
-				}
-				g_list_free (selected_rows);
-			} else {
-				view->details->ignore_button_release = on_expander;
-			}
-		}
 	
-		if (call_parent) {
-			g_signal_handlers_block_by_func (tree_view,
-							 row_activated_callback,
-							 view);
-			tree_view_class->button_press_event (widget, event);
-			g_signal_handlers_unblock_by_func (tree_view,
-							   row_activated_callback,
-							   view);
-		} else if (path_selected) {
-			gtk_widget_grab_focus (widget);
-		}
-
-		if ((event->button == 1 || event->button == 2) &&
-		    event->type == GDK_BUTTON_PRESS && !on_expander) {
-			view->details->drag_started = FALSE;
-			view->details->drag_button = event->button;
-			view->details->drag_x = event->x;
-			view->details->drag_y = event->y;
-		}
-
-		if (event->button == 3) {
-			if (blank_click) {
-				gtk_tree_selection_unselect_all (selection);
-			}
-			do_popup_menu (widget, view, event);
-		}
-	}
-
-	gtk_tree_path_free (path);
-
 	/* We chained to the default handler in this method, so never
 	 * let the default handler run */ 
 	return TRUE;
@@ -3348,6 +3478,19 @@ nemo_list_view_start_renaming_file (NemoView *view,
 }
 
 static void
+nemo_list_view_click_to_rename_mode_changed (NemoView *directory_view)
+{
+    NemoListView *view;
+
+    g_assert (NEMO_IS_LIST_VIEW (directory_view));
+
+    view = NEMO_LIST_VIEW (directory_view);
+
+    view->details->click_to_rename = g_settings_get_boolean (nemo_preferences,
+                                                                  NEMO_PREFERENCES_CLICK_TO_RENAME);
+}
+
+static void
 nemo_list_view_click_policy_changed (NemoView *directory_view)
 {
 	GdkWindow *win;
@@ -3700,6 +3843,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->get_view_id = nemo_list_view_get_id;
 	nemo_view_class->get_first_visible_file = nemo_list_view_get_first_visible_file;
 	nemo_view_class->scroll_to_file = list_view_scroll_to_file;
+    nemo_view_class->click_to_rename_mode_changed = nemo_list_view_click_to_rename_mode_changed;
 }
 
 static void
@@ -3761,6 +3905,7 @@ nemo_list_view_init (NemoListView *list_view)
     tooltip_prefs_changed_callback (list_view);
 
 	nemo_list_view_click_policy_changed (NEMO_VIEW (list_view));
+    nemo_list_view_click_to_rename_mode_changed (NEMO_VIEW (list_view));
 
 	nemo_list_view_sort_directories_first_changed (NEMO_VIEW (list_view));
 
