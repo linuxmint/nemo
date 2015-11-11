@@ -1,3 +1,15 @@
+nemo (2.8.3) rosa; urgency=medium
+
+  [ Michael Webster ]
+  * Add control to context menu to toggle simple/complex menu
+  * nemo-list-view: Implement click-to-rename
+  * remove nemo-directory-view-ui-light.xml (no longer needed)
+
+  [ Clement Lefebvre ]
+  * Updated pot file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 11 Nov 2015 18:55:34 +0000
+
 nemo (2.8.2) rosa; urgency=medium
 
   [ Michael Webster ]
