@@ -6769,17 +6769,21 @@ job_is_local (GList *files, GFile *destination)
     gboolean ret = FALSE;
 
     NemoFile *source = nemo_file_get_existing (G_FILE (files->data));
+
+    if (source == NULL)
+        return FALSE;
+
     NemoFile *dest = destination != NULL ? nemo_file_get_existing (destination) : NULL;
 
-    if (dest) {
+    if (dest != NULL) {
         ret = nemo_file_is_local (source) &&
               nemo_file_is_local (dest);
-        nemo_file_unref (dest);
     } else {
         ret = nemo_file_is_local (source);
     }
 
     nemo_file_unref (source);
+    nemo_file_unref (dest);
 
 #ifdef DEBUG_FILE_OP_QUEUE
     g_message ("File op job is local: %s\n", ret ? "TRUE" : "FALSE");
@@ -6794,20 +6798,26 @@ job_is_same_fs (GList *files, GFile *destination)
     gboolean ret = FALSE;
 
     NemoFile *source = nemo_file_get_existing (G_FILE (files->data));
+
+    if (source == NULL)
+        return FALSE;
+
     NemoFile *dest = nemo_file_get_existing (destination);
 
-    gchar *src_fs_id = nemo_file_get_filesystem_id (source);
-    gchar *dst_fs_id = nemo_file_get_filesystem_id (dest);
+    if (dest != NULL) {
+        gchar *src_fs_id = nemo_file_get_filesystem_id (source);
+        gchar *dst_fs_id = nemo_file_get_filesystem_id (dest);
 
-    if (g_strcmp0 (src_fs_id, dst_fs_id) == 0)
-        ret = TRUE;
+        if (g_strcmp0 (src_fs_id, dst_fs_id) == 0)
+            ret = TRUE;
 
 #ifdef DEBUG_FILE_OP_QUEUE
-    g_message ("File op job is same filesystem (src: %s, dst: %s): %s\n", src_fs_id, dst_fs_id, ret ? "TRUE" : "FALSE");
+        g_message ("File op job is same filesystem (src: %s, dst: %s): %s\n", src_fs_id, dst_fs_id, ret ? "TRUE" : "FALSE");
 #endif
 
-    g_free (src_fs_id);
-    g_free (dst_fs_id);
+        g_free (src_fs_id);
+        g_free (dst_fs_id);
+    }
 
     nemo_file_unref (source);
     nemo_file_unref (dest);
@@ -6824,6 +6834,11 @@ job_has_no_folders (GList *files)
     for (l = files; l != NULL; l = l->next) {
         GFile *location = G_FILE (l->data);
         NemoFile *file = nemo_file_get_existing (location);
+
+        if (file == NULL) {
+            ret = FALSE;
+            break;
+        }
 
         if (nemo_file_is_directory (file)) {
             ret = FALSE;
@@ -6851,6 +6866,11 @@ job_is_small (GList *files)
     for (l = files; l != NULL; l = l->next) {
         GFile *location = G_FILE (l->data);
         NemoFile *file = nemo_file_get_existing (location);
+
+        if (file == NULL) {
+            size = G_MAXOFFSET;
+            break;
+        }
 
         size = size + nemo_file_get_size (file);
 
