@@ -1,3 +1,13 @@
+nemo (2.8.4) rosa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: Handle NULL NemoFiles when deciding queue - this happens in both directions when dragging/copying files to and from a Virtualbox guest or host.
+
+  [ Clement Lefebvre ]
+  * Removed context menu option from preferences
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 12 Nov 2015 09:38:15 +0000
+
 nemo (2.8.3) rosa; urgency=medium
 
   [ Michael Webster ]
