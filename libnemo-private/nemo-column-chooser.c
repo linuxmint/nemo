@@ -47,6 +47,7 @@ enum {
 	COLUMN_VISIBLE,
 	COLUMN_LABEL,
 	COLUMN_NAME,
+    COLUMN_TOGGLE_SENSITIVE,
 	NUM_COLUMNS
 };
 
@@ -232,7 +233,8 @@ add_tree_view (NemoColumnChooser *chooser)
 	store = gtk_list_store_new (NUM_COLUMNS,
 				    G_TYPE_BOOLEAN,
 				    G_TYPE_STRING,
-				    G_TYPE_STRING);
+				    G_TYPE_STRING,
+                    G_TYPE_BOOLEAN);
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (view), 
 				 GTK_TREE_MODEL (store));
@@ -253,6 +255,7 @@ add_tree_view (NemoColumnChooser *chooser)
 						     -1, NULL,
 						     cell, 
 						     "active", COLUMN_VISIBLE,
+                             "sensitive", COLUMN_TOGGLE_SENSITIVE,
 						     NULL);
 
 	cell = gtk_cell_renderer_text_new ();
@@ -425,6 +428,7 @@ populate_tree (NemoColumnChooser *chooser)
 				    COLUMN_VISIBLE, FALSE,
 				    COLUMN_LABEL, label,
 				    COLUMN_NAME, name,
+                    COLUMN_TOGGLE_SENSITIVE, g_strcmp0 (name, "name") != 0,
 				    -1);
 
 		g_free (name);
