@@ -2008,6 +2008,7 @@ apply_columns_settings (NemoListView *list_view,
 		gtk_tree_view_move_column_after (list_view->details->tree_view, l->data, prev_view_column);
 		prev_view_column = l->data;
 	}
+
 	g_list_free (view_columns);
 }
 
@@ -2083,8 +2084,6 @@ create_and_set_up_tree_view (NemoListView *view)
 							g_str_equal,
 							(GDestroyNotify) g_free,
 							(GDestroyNotify) g_object_unref);
-
-    gtk_scrollable_set_hscroll_policy (GTK_SCROLLABLE (view->details->tree_view), GTK_SCROLL_NATURAL);
 
 	gtk_tree_view_set_enable_search (view->details->tree_view, TRUE);
 
@@ -2208,10 +2207,9 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_sort_column_id (view->details->file_name_column, column_num);
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
-            gtk_tree_view_column_set_min_width (view->details->file_name_column, 125);
+            gtk_tree_view_column_set_min_width (view->details->file_name_column, 100);
             gtk_tree_view_column_set_sizing (view->details->file_name_column, GTK_TREE_VIEW_COLUMN_FIXED);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
-
             gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
 
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
@@ -2246,8 +2244,7 @@ create_and_set_up_tree_view (NemoListView *view)
 									   cell,
 									   "text", column_num,
 									   NULL);
-            gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
-            gtk_tree_view_column_set_min_width (column, 10);
+            gtk_tree_view_column_set_min_width (column, 30);
             g_object_ref_sink (column);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
 			g_hash_table_insert (view->details->columns, 
@@ -2257,7 +2254,6 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_resizable (column, TRUE);
             gtk_tree_view_column_set_visible (column, TRUE);
             gtk_tree_view_column_set_reorderable (column, TRUE);
-            gtk_tree_view_column_set_expand (column, TRUE);
 		}
 		g_free (name);
 		g_free (label);
