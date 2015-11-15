@@ -206,6 +206,10 @@ static int compare_icons_vertical (NemoIconContainer *container,
 static void store_layout_timestamps_now (NemoIconContainer *container);
 static void remove_search_entry_timeout (NemoIconContainer *container);
 
+static gboolean handle_icon_slow_two_click (NemoIconContainer *container,
+                                            NemoIcon *icon,
+                                            GdkEventButton *event);
+
 static gpointer accessible_parent_class;
 
 static GQuark accessible_private_data_quark = 0;
@@ -4427,7 +4431,7 @@ nemo_icon_container_did_not_drag (NemoIconContainer *container,
 					       signals[SELECTION_CHANGED], 0);
 			}
 		}
-	} 
+    }
 
 	if (details->drag_icon != NULL &&
 	    (details->single_click_mode ||
@@ -4471,9 +4475,10 @@ nemo_icon_container_did_not_drag (NemoIconContainer *container,
 		}
 	}
 
-    if (details->drag_icon != NULL && details->rename_on_release) {
-        nemo_icon_container_start_renaming_selected_item (container, FALSE);
-        details->rename_on_release = FALSE;
+    if (details->drag_icon != NULL &&
+        handle_icon_slow_two_click (container, details->drag_icon, event)) {
+        if (!details->skip_rename_on_release)
+            nemo_icon_container_start_renaming_selected_item (container, FALSE);
     }
 }
 
@@ -6301,7 +6306,7 @@ nemo_icon_container_init (NemoIconContainer *container)
 
     tooltip_prefs_changed_callback (container);
 
-    details->rename_on_release = FALSE;
+    details->skip_rename_on_release = FALSE;
 
 	if (!setup_prefs) {
 		g_signal_connect_swapped (nemo_icon_view_preferences,
@@ -6415,6 +6420,8 @@ handle_icon_button_press (NemoIconContainer *container,
 
 	details = container->details;
 
+    details->skip_rename_on_release = FALSE;
+
 	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
 		return TRUE;
 	}
@@ -6442,8 +6449,6 @@ handle_icon_button_press (NemoIconContainer *container,
 		return TRUE;
 	}
 
-    details->rename_on_release = handle_icon_slow_two_click (container, icon, event);
-
 	if (event->button == DRAG_BUTTON
 	    || event->button == DRAG_MENU_BUTTON) {
 			details->drag_button = event->button;
@@ -6467,7 +6472,11 @@ handle_icon_button_press (NemoIconContainer *container,
 	 * the same way for contextual menu as it would be without. 
 	 */
 	details->icon_selected_on_button_down = icon->is_selected;
-	
+
+    GList *sel = nemo_icon_container_get_selected_icons (container);
+    details->skip_rename_on_release = g_list_length (sel) > 1;
+    g_list_free (sel);
+
 	if ((event->button == DRAG_BUTTON || event->button == MIDDLE_BUTTON) &&
 	    (event->state & GDK_SHIFT_MASK) != 0) {
 		NemoIcon *start_icon;
