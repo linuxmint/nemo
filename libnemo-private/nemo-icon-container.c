@@ -4470,6 +4470,11 @@ nemo_icon_container_did_not_drag (NemoIconContainer *container,
 			}
 		}
 	}
+
+    if (details->drag_icon != NULL && details->rename_on_release) {
+        nemo_icon_container_start_renaming_selected_item (container, FALSE);
+        details->rename_on_release = FALSE;
+    }
 }
 
 static gboolean
@@ -6296,6 +6301,8 @@ nemo_icon_container_init (NemoIconContainer *container)
 
     tooltip_prefs_changed_callback (container);
 
+    details->rename_on_release = FALSE;
+
 	if (!setup_prefs) {
 		g_signal_connect_swapped (nemo_icon_view_preferences,
 					  "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
@@ -6381,7 +6388,6 @@ handle_icon_slow_two_click (NemoIconContainer *container,
         details->double_click_icon[0] == details->double_click_icon[1] &&
         details->double_click_button[0] == details->double_click_button[1]) {
         if (!button_event_modifies_selection (event)) {
-            nemo_icon_container_start_renaming_selected_item (container, FALSE);
             return TRUE;
         }
     }
@@ -6429,13 +6435,14 @@ handle_icon_button_press (NemoIconContainer *container,
 		details->double_click_button[0] = event->button;
 	}
 
-    if (handle_icon_double_click (container, icon, event) ||
-        handle_icon_slow_two_click (container, icon, event)) {
+    if (handle_icon_double_click (container, icon, event)) {
 		/* Double clicking does not trigger a D&D action. */
 		details->drag_button = 0;
 		details->drag_icon = NULL;
 		return TRUE;
 	}
+
+    details->rename_on_release = handle_icon_slow_two_click (container, icon, event);
 
 	if (event->button == DRAG_BUTTON
 	    || event->button == DRAG_MENU_BUTTON) {
