@@ -6766,7 +6766,7 @@ get_expander_widget_and_tooltip (NemoView *view, gchar **tooltip)
     GtkWidget *widget = gtk_image_new_from_icon_name (complex_mode ? "collapse-menu-symbolic" : "expand-menu-symbolic",
                                                       GTK_ICON_SIZE_MENU);
 
-    *tooltip = complex_mode ? _("Show less") : _("Show more");
+    *tooltip = complex_mode ? _("Show less actions") : _("Show more actions");
 
     g_signal_connect (widget, "destroy", G_CALLBACK (on_expander_destroyed), view);
 
