@@ -206,6 +206,10 @@ static int compare_icons_vertical (NemoCanvasContainer *container,
 static void store_layout_timestamps_now (NemoCanvasContainer *container);
 static void remove_search_entry_timeout (NemoCanvasContainer *container);
 
+static gboolean handle_canvas_slow_two_click (NemoCanvasContainer *container,
+                                            NemoCanvasIcon *icon,
+                                            GdkEventButton *event);
+
 static const char *nemo_canvas_container_accessible_action_names[] = {
 	"activate",
 	"menu",
@@ -4477,7 +4481,7 @@ nemo_canvas_container_did_not_drag (NemoCanvasContainer *container,
 					       signals[SELECTION_CHANGED], 0);
 			}
 		}
-	} 
+    }
 
 	if (details->drag_icon != NULL &&
 	    (details->single_click_mode ||
@@ -4520,6 +4524,12 @@ nemo_canvas_container_did_not_drag (NemoCanvasContainer *container,
 			}
 		}
 	}
+
+    if (details->drag_icon != NULL &&
+        handle_canvas_slow_two_click (container, details->drag_icon, event)) {
+        if (!details->skip_rename_on_release)
+            nemo_canvas_container_start_renaming_selected_item (container, FALSE);
+    }
 }
 
 static gboolean
@@ -6342,6 +6352,8 @@ nemo_canvas_container_init (NemoCanvasContainer *container)
 
     tooltip_prefs_changed_callback (container);
 
+    details->skip_rename_on_release = FALSE;
+
 	if (!setup_prefs) {
 		g_signal_connect_swapped (nemo_canvas_view_preferences,
 					  "changed::" NEMO_PREFERENCES_CANVAS_VIEW_TEXT_ELLIPSIS_LIMIT,
@@ -6427,7 +6439,6 @@ handle_canvas_slow_two_click (NemoCanvasContainer *container,
         details->double_click_icon[0] == details->double_click_icon[1] &&
         details->double_click_button[0] == details->double_click_button[1]) {
         if (!button_event_modifies_selection (event)) {
-            nemo_canvas_container_start_renaming_selected_item (container, FALSE);
             return TRUE;
         }
     }
@@ -6455,6 +6466,8 @@ handle_canvas_button_press (NemoCanvasContainer *container,
 
 	details = container->details;
 
+    details->skip_rename_on_release = FALSE;
+
 	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
 		return TRUE;
 	}
@@ -6475,8 +6488,7 @@ handle_canvas_button_press (NemoCanvasContainer *container,
 		details->double_click_button[0] = event->button;
 	}
 
-	if (handle_canvas_double_click (container, icon, event) ||
-        handle_canvas_slow_two_click (container, icon, event)) {
+    if (handle_canvas_double_click (container, icon, event)) {
 		/* Double clicking does not trigger a D&D action. */
 		details->drag_button = 0;
 		details->drag_icon = NULL;
@@ -6506,7 +6518,11 @@ handle_canvas_button_press (NemoCanvasContainer *container,
 	 * the same way for contextual menu as it would be without. 
 	 */
 	details->icon_selected_on_button_down = icon->is_selected;
-	
+
+    GList *sel = nemo_canvas_container_get_selected_icons (container);
+    details->skip_rename_on_release = g_list_length (sel) > 1;
+    g_list_free (sel);
+
 	if ((event->button == DRAG_BUTTON || event->button == MIDDLE_BUTTON) &&
 	    (event->state & GDK_SHIFT_MASK) != 0) {
 		NemoCanvasIcon *start_icon;
