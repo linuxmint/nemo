@@ -100,7 +100,6 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_ACCESS_DATE_WIDGET "tt_show_created_date_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET "tt_show_full_path_checkbutton"
 
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS_WIDGET "context_menus_show_all_actions_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_SKIP_FILE_OP_QUEUE_WIDGET "skip_file_op_queue_checkbutton"
 
 /* int enums */
@@ -839,9 +838,6 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	bind_builder_bool_inverted (builder, nemo_preferences,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
-	bind_builder_bool (builder, nemo_preferences,
-				    NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS_WIDGET,
-				    NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
 			   NEMO_PREFERENCES_CONFIRM_TRASH);

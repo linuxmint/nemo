@@ -175,6 +175,8 @@ struct NemoIconContainerDetails {
 	NemoIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
 	guint double_click_button[2];
 
+    gboolean skip_rename_on_release;
+
 	NemoIcon *range_selection_base_icon;
 	
 	/* Renaming Details */

@@ -91,6 +91,7 @@ struct NemoListViewDetails {
 	int drag_x;
 	int drag_y;
 
+    gboolean rename_on_release;
 	gboolean drag_started;
 	gboolean ignore_button_release;
 	gboolean row_selected_on_button_down;
@@ -398,9 +399,17 @@ nemo_list_view_did_not_drag (NemoListView *view,
 				activate_selected_items_alternate (view, NULL, TRUE);
 			}
 		}
+
+        if (view->details->rename_on_release) {
+            NemoFile *file = nemo_list_model_file_for_path (view->details->model, path);
+            nemo_list_view_start_renaming_file (NEMO_VIEW (view), file, FALSE);
+            nemo_file_unref (file);
+            view->details->rename_on_release = FALSE;
+        }
+
 		gtk_tree_path_free (path);
 	}
-	
+
 }
 
 static void 
@@ -867,7 +876,7 @@ clicked_within_slow_click_interval_on_text (NemoListView *view, GtkTreePath *pat
         return FALSE;
 
     /* Only allow second click on text to trigger this */
-    if (slow_click_count == 1 &&
+    if (slow_click_count == 1 && view->details->double_click_path[1] &&
         gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0 &&
         clicked_on_text_in_name_cell (view, path, event)) {
         slow_click_count = 0;
@@ -923,6 +932,7 @@ handle_icon_slow_two_click (NemoListView *view, GtkTreePath *path, GdkEventButto
 {
     NemoListViewDetails *details;
     NemoFile *file;
+    gboolean can_rename;
 
     details = view->details;
 
@@ -930,16 +940,14 @@ handle_icon_slow_two_click (NemoListView *view, GtkTreePath *path, GdkEventButto
         return FALSE;
 
     file = nemo_list_model_file_for_path (view->details->model, path);
+    can_rename = nemo_file_can_rename (file);
+    nemo_file_unref (file);
 
-    if (!nemo_file_can_rename (file))
+    if (!can_rename)
         return FALSE;
 
-    if (clicked_within_slow_click_interval_on_text (view, path, event) && view->details->double_click_path[1] &&
-        gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0) {
-        if (!button_event_modifies_selection (event)) {
-            nemo_list_view_start_renaming_file (NEMO_VIEW (view), file, FALSE);
-            return TRUE;
-        }
+    if (clicked_within_slow_click_interval_on_text (view, path, event) && !button_event_modifies_selection (event)) {
+        return TRUE;
     }
 
     return FALSE;
@@ -1016,13 +1024,16 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 			view->details->double_click_path[0] = gtk_tree_path_copy (path);
 		}
 
-		if (handle_icon_double_click (view, path, event, on_expander) ||
-            handle_icon_slow_two_click (view, path, event)) {
+		if (handle_icon_double_click (view, path, event, on_expander)) {
 			/* Double clicking does not trigger a D&D action. */
 			view->details->drag_button = 0;
 			
 		} else {
-	
+            /* queue up renaming if we've clicked within the slow-click timeframe.  Don't actually
+               do it, however, until there's a button release (this allows dragging to occur on
+               single items, without triggering rename) */
+            view->details->rename_on_release = handle_icon_slow_two_click (view, path, event);
+
 			/* We're going to filter out some situations where
 			 * we can't let the default code run because all
 			 * but one row would be would be deselected. We don't
