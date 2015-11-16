@@ -43,7 +43,7 @@
 gboolean
 eel_uri_is_trash (const char *uri)
 {
-	return eel_istr_has_prefix (uri, "trash:");
+	return g_str_has_prefix (uri, "trash:");
 }
 
 gboolean
@@ -55,13 +55,13 @@ eel_uri_is_recent (const char *uri)
 gboolean
 eel_uri_is_search (const char *uri)
 {
-	return eel_istr_has_prefix (uri, EEL_SEARCH_URI);
+	return g_str_has_prefix (uri, EEL_SEARCH_URI);
 }
 
 gboolean
 eel_uri_is_desktop (const char *uri)
 {
-	return eel_istr_has_prefix (uri, EEL_DESKTOP_URI);
+	return g_str_has_prefix (uri, EEL_DESKTOP_URI);
 }
 
 char *
