@@ -317,57 +317,6 @@ eel_gtk_menu_insert_separator (GtkMenu *menu, int index)
 	return GTK_MENU_ITEM (menu_item);
 }
 
-static gboolean 
-tree_view_button_press_callback (GtkWidget *tree_view,
-				 GdkEventButton *event,
-				 gpointer data)
-{
-	GtkTreePath *path;
-	GtkTreeViewColumn *column;
-
-	if (event->button == 1 && event->type == GDK_BUTTON_PRESS) {
-		if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (tree_view),
-						   event->x, event->y,
-						   &path,
-						   &column,
-						   NULL, 
-						   NULL)) {
-			gtk_tree_view_row_activated
-				(GTK_TREE_VIEW (tree_view), path, column);
-			gtk_tree_path_free (path);
-		}
-	}
-
-	return FALSE;
-}
-
-void
-eel_gtk_tree_view_set_activate_on_single_click (GtkTreeView *tree_view,
-						gboolean should_activate)
-{
-	guint button_press_id;
-
-	button_press_id = GPOINTER_TO_UINT 
-		(g_object_get_data (G_OBJECT (tree_view), 
-				    "eel-tree-view-activate"));
-
-	if (button_press_id && !should_activate) {
-		g_signal_handler_disconnect (tree_view, button_press_id);
-		g_object_set_data (G_OBJECT (tree_view), 
-				   "eel-tree-view-activate", 
-				   NULL);
-	} else if (!button_press_id && should_activate) {
-		button_press_id = g_signal_connect 
-			(tree_view,
-			 "button_press_event",
-			 G_CALLBACK  (tree_view_button_press_callback),
-			 NULL);
-		g_object_set_data (G_OBJECT (tree_view), 
-				   "eel-tree-view-activate", 
-				   GUINT_TO_POINTER (button_press_id));
-	}
-}
-
 void
 eel_gtk_message_dialog_set_details_label (GtkMessageDialog *dialog,
 				  const gchar *details_text)
