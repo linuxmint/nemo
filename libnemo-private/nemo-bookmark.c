@@ -42,6 +42,7 @@
 
 enum {
 	CONTENTS_CHANGED,
+    LOCATION_MOUNTED,
 	LAST_SIGNAL
 };
 
@@ -65,7 +66,6 @@ struct NemoBookmarkDetails
 	GFile *location;
 	GIcon *icon;
 	NemoFile *file;
-    gboolean visited;
 
 	char *scroll_file;
 };
@@ -95,7 +95,7 @@ nemo_bookmark_update_icon (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (!nemo_file_is_local (bookmark->details->file) && !bookmark->details->visited) {
+	if (!nemo_file_is_local (bookmark->details->file)) {
 		/* never update icons for remote bookmarks */
 		return;
 	}
@@ -127,9 +127,9 @@ bookmark_set_name_from_ready_file (NemoBookmark *self,
 	display_name = nemo_file_get_display_name (self->details->file);
 
 	if (nemo_file_is_home (self->details->file)) {
-		nemo_bookmark_set_name_internal (self, _("Home"));
+		nemo_bookmark_set_custom_name (self, _("Home"));
 	} else if (g_strcmp0 (self->details->name, display_name) != 0) {
-		nemo_bookmark_set_name_internal (self, display_name);
+		nemo_bookmark_set_custom_name (self, display_name);
 		DEBUG ("%s: name changed to %s", nemo_bookmark_get_name (self), display_name);
 	}
 
@@ -222,7 +222,6 @@ bookmark_file_changed_callback (NemoFile *file,
 		DEBUG ("%s: trashed", nemo_bookmark_get_name (bookmark));
 		nemo_bookmark_disconnect_file (bookmark);
         nemo_bookmark_set_icon_to_default (bookmark);
-        bookmark->details->visited = FALSE;
 	} else {
 		nemo_bookmark_update_icon (bookmark);
 		bookmark_set_name_from_ready_file (bookmark, file);
@@ -236,9 +235,10 @@ nemo_bookmark_disconnect_file (NemoBookmark *bookmark)
 		DEBUG ("%s: disconnecting file",
 		       nemo_bookmark_get_name (bookmark));
 
-		g_signal_handlers_disconnect_by_func (bookmark->details->file,
-						      G_CALLBACK (bookmark_file_changed_callback),
-						      bookmark);
+        g_signal_handlers_disconnect_by_func (bookmark->details->file,
+                                              G_CALLBACK (bookmark_file_changed_callback),
+                                              bookmark);
+
 		g_clear_object (&bookmark->details->file);
 	}
 }
@@ -252,7 +252,7 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (nemo_bookmark_uri_get_exists (bookmark) || bookmark->details->visited) {
+	if (nemo_bookmark_uri_get_exists (bookmark)) {
         DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nemo_file_get (bookmark->details->location);
@@ -260,7 +260,8 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
         g_assert (!nemo_file_is_gone (bookmark->details->file));
 
         g_signal_connect_object (bookmark->details->file, "changed",
-                                 G_CALLBACK (bookmark_file_changed_callback), bookmark, 0);
+                                 G_CALLBACK (bookmark_file_changed_callback),
+                                 bookmark, 0);
 	}
 
 	/* Set icon based on available information. */
@@ -364,14 +365,6 @@ nemo_bookmark_finalize (GObject *object)
 }
 
 static void
-nemo_bookmark_constructed (GObject *obj)
-{
-	NemoBookmark *self = NEMO_BOOKMARK (obj);
-
-	nemo_bookmark_connect_file (self);
-}
-
-static void
 nemo_bookmark_class_init (NemoBookmarkClass *class)
 {
 	GObjectClass *oclass = G_OBJECT_CLASS (class);
@@ -379,7 +372,6 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 	oclass->finalize = nemo_bookmark_finalize;
 	oclass->get_property = nemo_bookmark_get_property;
 	oclass->set_property = nemo_bookmark_set_property;
-	oclass->constructed = nemo_bookmark_constructed;
 
 	signals[CONTENTS_CHANGED] =
 		g_signal_new ("contents-changed",
@@ -389,6 +381,16 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 		              NULL, NULL,
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
+
+    signals[LOCATION_MOUNTED] =
+        g_signal_new ("location-mounted",
+                      G_TYPE_FROM_CLASS (class),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (NemoBookmarkClass, location_mounted),
+                      NULL, NULL,
+                      g_cclosure_marshal_generic,
+                      G_TYPE_BOOLEAN, 1,
+                      G_TYPE_FILE);
 
 	properties[PROP_NAME] =
 		g_param_spec_string ("name",
@@ -428,8 +430,6 @@ nemo_bookmark_init (NemoBookmark *bookmark)
 {
 	bookmark->details = G_TYPE_INSTANCE_GET_PRIVATE (bookmark, NEMO_TYPE_BOOKMARK,
 							 NemoBookmarkDetails);
-
-    bookmark->details->visited = FALSE;
 }
 
 const gchar *
@@ -585,16 +585,6 @@ nemo_bookmark_get_uri (NemoBookmark *bookmark)
 	return uri;
 }
 
-void
-nemo_bookmark_set_visited (NemoBookmark *bookmark, gboolean visited)
-{
-    g_return_if_fail (NEMO_IS_BOOKMARK (bookmark));
-
-    bookmark->details->visited = visited;
-
-    nemo_bookmark_connect_file (bookmark);
-}
-
 NemoBookmark *
 nemo_bookmark_new (GFile *location,
 		       const gchar *custom_name,
@@ -668,16 +658,16 @@ gboolean
 nemo_bookmark_uri_get_exists (NemoBookmark *bookmark)
 {
 	char *path_name;
-	gboolean exists;
+	gboolean exists = FALSE;
 
-	/* Convert to a path, returning FALSE if not local. */
-	if (!g_file_is_native (bookmark->details->location)) {
-		return FALSE;
-	}
-	path_name = g_file_get_path (bookmark->details->location);
+    path_name = g_file_get_path (bookmark->details->location);
 
-	/* Now check if the file exists (sync. call OK because it is local). */
-	exists = g_file_test (path_name, G_FILE_TEST_EXISTS);
+	if (g_file_is_native (bookmark->details->location) && g_file_test (path_name, G_FILE_TEST_EXISTS)) {
+		exists = TRUE;
+	} else {
+        g_signal_emit_by_name (bookmark, "location-mounted", bookmark->details->location, &exists);
+    }
+
 	g_free (path_name);
 
 	return exists;
@@ -695,4 +685,10 @@ char *
 nemo_bookmark_get_scroll_pos (NemoBookmark      *bookmark)
 {
 	return g_strdup (bookmark->details->scroll_file);
+}
+
+void
+nemo_bookmark_connect (NemoBookmark *bookmark)
+{
+    nemo_bookmark_connect_file (bookmark);
 }

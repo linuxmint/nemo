@@ -144,6 +144,8 @@ typedef struct {
 
     guint popup_menu_action_index;
 
+    guint update_places_on_idle_id;
+
 } NemoPlacesSidebar;
 
 typedef struct {
@@ -228,6 +230,8 @@ static void bookmarks_check_popup_sensitivity          (NemoPlacesSidebar *sideb
 static void add_action_popup_items                     (NemoPlacesSidebar *sidebar);
 
 static void update_places                              (NemoPlacesSidebar *sidebar);
+
+static void update_places_on_idle                      (NemoPlacesSidebar *sidebar);
 
 /* Identifiers for target types */
 enum {
@@ -711,7 +715,6 @@ update_places (NemoPlacesSidebar *sidebar)
 	char *tooltip;
     gchar *tooltip_info;
 	GList *network_mounts, *network_volumes;
-	NemoFile *file;
     gint full;
 
 	DEBUG ("Updating places sidebar");
@@ -781,20 +784,21 @@ update_places (NemoPlacesSidebar *sidebar)
     /* add bookmarks */
     bookmark_count = nemo_bookmark_list_length (sidebar->bookmarks);
     /* in certain situations (i.e. removed a bookmark), the breakpoint is smaller than
-     * the number of bookmarks - make sure to fix this before iterating through a list of them
+     * the number of bookmarks - make sure to fix this before iterating through a list of them.
+     * We don't overwrite the stored breakpoint because the bookmark list could simply be reloading,
+     * and we want the original number still when we update places again.
      */
-    if (sidebar->bookmark_breakpoint < 0 ||
-        sidebar->bookmark_breakpoint > bookmark_count) {
-        sidebar->bookmark_breakpoint = bookmark_count;
+    gint temp_breakpoint = sidebar->bookmark_breakpoint;
+
+    if (temp_breakpoint < 0 ||
+        temp_breakpoint > bookmark_count) {
+        temp_breakpoint = bookmark_count;
     }
 
-    for (bookmark_index = 0; bookmark_index < sidebar->bookmark_breakpoint; ++bookmark_index) {
+    for (bookmark_index = 0; bookmark_index < temp_breakpoint; ++bookmark_index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
         root = nemo_bookmark_get_location (bookmark);
-        file = nemo_file_get (root);
-
-        nemo_file_unref (file);
 
         bookmark_name = nemo_bookmark_get_name (bookmark);
         icon = nemo_bookmark_get_icon (bookmark);
@@ -862,9 +866,6 @@ update_places (NemoPlacesSidebar *sidebar)
             bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
             root = nemo_bookmark_get_location (bookmark);
-            file = nemo_file_get (root);
-
-            nemo_file_unref (file);
 
             bookmark_name = nemo_bookmark_get_name (bookmark);
             icon = nemo_bookmark_get_icon (bookmark);
@@ -1184,7 +1185,7 @@ mount_added_callback (GVolumeMonitor *volume_monitor,
 		      GMount *mount,
 		      NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1192,7 +1193,7 @@ mount_removed_callback (GVolumeMonitor *volume_monitor,
 			GMount *mount,
 			NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1200,7 +1201,7 @@ mount_changed_callback (GVolumeMonitor *volume_monitor,
 			GMount *mount,
 			NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1208,7 +1209,7 @@ volume_added_callback (GVolumeMonitor *volume_monitor,
 		       GVolume *volume,
 		       NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1216,7 +1217,7 @@ volume_removed_callback (GVolumeMonitor *volume_monitor,
 			 GVolume *volume,
 			 NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1224,7 +1225,7 @@ volume_changed_callback (GVolumeMonitor *volume_monitor,
 			 GVolume *volume,
 			 NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1232,7 +1233,7 @@ drive_disconnected_callback (GVolumeMonitor *volume_monitor,
 			     GDrive         *drive,
 			     NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1240,7 +1241,7 @@ drive_connected_callback (GVolumeMonitor *volume_monitor,
 			  GDrive         *drive,
 			  NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static void
@@ -1248,7 +1249,7 @@ drive_changed_callback (GVolumeMonitor *volume_monitor,
 			GDrive         *drive,
 			NemoPlacesSidebar *sidebar)
 {
-	update_places (sidebar);
+	update_places_on_idle (sidebar);
 }
 
 static gboolean
@@ -3979,6 +3980,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	sidebar->volume_monitor = g_volume_monitor_get ();
 
+    sidebar->update_places_on_idle_id = 0;
+
     sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
                                                             NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED);
     sidebar->bookmarks_expanded = g_settings_get_boolean (nemo_window_state,
@@ -4242,6 +4245,11 @@ nemo_places_sidebar_dispose (GObject *object)
 		sidebar->bookmarks_changed_id = 0;
 	}
 
+    if (sidebar->update_places_on_idle_id != 0) {
+        g_source_remove (sidebar->update_places_on_idle_id);
+        sidebar->update_places_on_idle_id = 0;
+    }
+
 	g_clear_object (&sidebar->store);
 
     g_clear_object (&sidebar->action_manager);
@@ -4310,6 +4318,29 @@ nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 	widget_class->focus = nemo_places_sidebar_focus;
 }
 
+static gboolean
+update_places_on_idle_callback (NemoPlacesSidebar *sidebar)
+{
+    sidebar->update_places_on_idle_id = 0;
+
+    update_places (sidebar);
+
+    return FALSE;
+}
+
+static void
+update_places_on_idle (NemoPlacesSidebar *sidebar)
+{
+    if (sidebar->update_places_on_idle_id != 0) {
+        g_source_remove (sidebar->update_places_on_idle_id);
+        sidebar->update_places_on_idle_id = 0;
+    }
+
+    sidebar->update_places_on_idle_id = g_idle_add_full (G_PRIORITY_LOW,
+                                                         (GSourceFunc) update_places_on_idle_callback,
+                                                         sidebar, NULL);
+}
+
 static void
 nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					   NemoWindow *window)
@@ -4337,7 +4368,7 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 
 	sidebar->bookmarks_changed_id =
 		g_signal_connect_swapped (sidebar->bookmarks, "changed",
-					  G_CALLBACK (update_places),
+					  G_CALLBACK (update_places_on_idle),
 					  sidebar);
 
 	g_signal_connect_object (window, "loading_uri",
