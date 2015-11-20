@@ -5589,7 +5589,7 @@ key_press_event (GtkWidget *widget,
 	/* We pass the event to the search_entry.  If its text changes, then we
 	 * start the typeahead find capabilities.
 	 * Copied from NemoIconContainer */
-	if (!handled &&
+	if (!handled && !nemo_icon_container_get_is_desktop (container) &&
 		event->keyval != GDK_KEY_asciitilde &&
 		event->keyval != GDK_KEY_KP_Divide &&
 	    event->keyval != GDK_KEY_slash /* don't steal slash key events, used for "go to" */ &&
