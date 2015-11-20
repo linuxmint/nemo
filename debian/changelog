@@ -1,3 +1,13 @@
+nemo (2.8.5) rosa; urgency=medium
+
+  [ Michael Webster ]
+  * list view, icon view: Don't trigger click-on-rename until button release, in order to preserve the possibility of dragging an already-selected single item.
+  * icon-view/container: fix click-to-rename issue where selection count was not up-to-date, requiring an extra click to trigger a rename after selecting a single icon from having no selection previously.
+  * bookmarks: Fix crashing and inconsistent behavior when working with remote bookmarks.
+  * nemo-icon-container: prevent interactive search on the desktop.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 20 Nov 2015 17:27:57 +0000
+
 nemo (2.8.4) rosa; urgency=medium
 
   [ Michael Webster ]
