@@ -58,6 +58,8 @@ struct NemoBookmarkClass {
 	 * (custom name or URI) changed.
 	 */
 	void	(* contents_changed) (NemoBookmark *bookmark);
+
+    gboolean (* location_mounted)         (GFile *location);
 };
 
 typedef struct NemoBookmarkClass NemoBookmarkClass;
@@ -87,5 +89,7 @@ char *                nemo_bookmark_get_scroll_pos         (NemoBookmark      *b
 
 /* Helper functions for displaying bookmarks */
 GtkWidget *           nemo_bookmark_menu_item_new          (NemoBookmark      *bookmark);
+
+void                  nemo_bookmark_connect                (NemoBookmark *bookmark);
 
 #endif /* NEMO_BOOKMARK_H */

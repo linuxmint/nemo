@@ -51,6 +51,7 @@ struct NemoBookmarkList {
 	GList *list; 
 	GFileMonitor *monitor;
 	GQueue *pending_ops;
+    GVolumeMonitor *volume_monitor;
 };
 
 struct NemoBookmarkListClass {

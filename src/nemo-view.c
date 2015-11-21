@@ -5198,6 +5198,9 @@ reset_move_copy_to_menu (NemoView *view)
         for (index = 0; index < bookmark_count; ++index) {
             bookmark = nemo_bookmark_list_item_at (view->details->bookmarks, index);
 
+            /* Unlike the sidebar or the bookmarks menu, we are using bookmarks as
+               file operation targets, not locations to open.  As such, we should
+               never show unmounted/invalid locations in the move-to/copy-to menu */
             if (!nemo_bookmark_get_exists (bookmark)) {
                 continue;
             }

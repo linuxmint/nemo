@@ -201,15 +201,10 @@ activate_bookmark_in_menu_item (GtkAction *action, gpointer user_data)
 
 	holder = (BookmarkHolder *)user_data;
 
-	if (!nemo_bookmark_get_exists (holder->bookmark)) {
-		holder->failed_callback (holder->window, holder->bookmark);
-	} else {
-		location = nemo_bookmark_get_location (holder->bookmark);
-		slot = nemo_window_get_active_slot (holder->window);
-		nemo_window_slot_open_location (slot, location, 
-						    nemo_event_get_window_open_flags ());
-		g_object_unref (location);
-	}
+	location = nemo_bookmark_get_location (holder->bookmark);
+	slot = nemo_window_get_active_slot (holder->window);
+	nemo_window_slot_open_location (slot, location, nemo_event_get_window_open_flags ());
+	g_object_unref (location);
 }
 
 static void
@@ -314,10 +309,6 @@ update_bookmarks (NemoWindow *window)
 	bookmark_count = nemo_bookmark_list_length (bookmarks);
 	for (index = 0; index < bookmark_count; ++index) {
 		bookmark = nemo_bookmark_list_item_at (bookmarks, index);
-
-		if (!nemo_bookmark_get_exists (bookmark)) {
-			continue;
-		}
 
 		nemo_menus_append_bookmark_to_menu
 			(NEMO_WINDOW (window),

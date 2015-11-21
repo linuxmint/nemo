@@ -42,6 +42,7 @@
 
 enum {
 	CONTENTS_CHANGED,
+    LOCATION_MOUNTED,
 	LAST_SIGNAL
 };
 
@@ -132,9 +133,9 @@ bookmark_set_name_from_ready_file (NemoBookmark *self,
 	display_name = nemo_file_get_display_name (self->details->file);
 
 	if (nemo_file_is_home (self->details->file)) {
-		nemo_bookmark_set_name_internal (self, _("Home"));
+		nemo_bookmark_set_custom_name (self, _("Home"));
 	} else if (g_strcmp0 (self->details->name, display_name) != 0) {
-		nemo_bookmark_set_name_internal (self, display_name);
+		nemo_bookmark_set_custom_name (self, display_name);
 		DEBUG ("%s: name changed to %s", nemo_bookmark_get_name (self), display_name);
 	}
 
@@ -344,9 +345,10 @@ nemo_bookmark_disconnect_file (NemoBookmark *bookmark)
 		DEBUG ("%s: disconnecting file",
 		       nemo_bookmark_get_name (bookmark));
 
-		g_signal_handlers_disconnect_by_func (bookmark->details->file,
-						      G_CALLBACK (bookmark_file_changed_callback),
-						      bookmark);
+        g_signal_handlers_disconnect_by_func (bookmark->details->file,
+                                              G_CALLBACK (bookmark_file_changed_callback),
+                                              bookmark);
+
 		g_clear_object (&bookmark->details->file);
 	}
 
@@ -576,8 +578,6 @@ static void
 nemo_bookmark_constructed (GObject *obj)
 {
 	NemoBookmark *self = NEMO_BOOKMARK (obj);
-
-	nemo_bookmark_connect_file (self);
 	nemo_bookmark_update_exists (self);
 }
 
@@ -599,6 +599,16 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 		              NULL, NULL,
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
+
+    signals[LOCATION_MOUNTED] =
+        g_signal_new ("location-mounted",
+                      G_TYPE_FROM_CLASS (class),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (NemoBookmarkClass, location_mounted),
+                      NULL, NULL,
+                      g_cclosure_marshal_generic,
+                      G_TYPE_BOOLEAN, 1,
+                      G_TYPE_FILE);
 
 	properties[PROP_NAME] =
 		g_param_spec_string ("name",
@@ -863,4 +873,10 @@ gboolean
 nemo_bookmark_get_exists (NemoBookmark *bookmark)
 {
 	return bookmark->details->exists;
+}
+
+void
+nemo_bookmark_connect (NemoBookmark *bookmark)
+{
+    nemo_bookmark_connect_file (bookmark);
 }
