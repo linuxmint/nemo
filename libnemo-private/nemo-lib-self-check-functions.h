@@ -16,9 +16,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Darin Adler <darin@bentspoon.com>
 */
@@ -43,7 +41,7 @@ void nemo_run_lib_self_checks (void);
 	macro (nemo_self_check_file_operations) \
 	macro (nemo_self_check_directory) \
 	macro (nemo_self_check_file) \
-	macro (nemo_self_check_icon_container) \
+	macro (nemo_self_check_canvas_container) \
 /* Add new self-check functions to the list above this line. */
 
 /* Generate prototypes for all the functions. */

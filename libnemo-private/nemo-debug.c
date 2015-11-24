@@ -16,14 +16,14 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Based on Empathy's empathy-debug.
  */
 
-#include <stdarg.h>
+#include "config.h"
 
+#include <stdarg.h>
 #include <glib.h>
 
 #include "nemo-debug.h"
@@ -41,12 +41,14 @@ static GDebugKey keys[] = {
   { "DBus", NEMO_DEBUG_DBUS },
   { "DirectoryView", NEMO_DEBUG_DIRECTORY_VIEW },
   { "File", NEMO_DEBUG_FILE },
-  { "IconContainer", NEMO_DEBUG_ICON_CONTAINER },
-  { "IconView", NEMO_DEBUG_ICON_VIEW },
+  { "CanvasContainer", NEMO_DEBUG_CANVAS_CONTAINER },
+  { "CanvasView", NEMO_DEBUG_CANVAS_VIEW },
   { "ListView", NEMO_DEBUG_LIST_VIEW },
   { "Mime", NEMO_DEBUG_MIME },
   { "Places", NEMO_DEBUG_PLACES },
   { "Previewer", NEMO_DEBUG_PREVIEWER },
+  { "Search", NEMO_DEBUG_SEARCH },
+  { "SearchHit", NEMO_DEBUG_SEARCH_HIT },
   { "Smclient", NEMO_DEBUG_SMCLIENT },
   { "Window", NEMO_DEBUG_WINDOW },
   { "Undo", NEMO_DEBUG_UNDO },

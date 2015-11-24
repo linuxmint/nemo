@@ -14,8 +14,7 @@
  *  Library General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public
- *  License along with this library; if not, write to the Free
- *  Software Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ *  License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  *  Authors: James Willcox <jwillcox@gnome.org>
  *
@@ -166,7 +165,7 @@ nemo_desktop_item_properties_url_drag_data_received (GtkWidget *widget, GdkDragC
 	gboolean exactly_one;
 	char *path;
 	
-	uris = g_strsplit (gtk_selection_data_get_data (selection_data), "\r\n", 0);
+	uris = g_strsplit ((gchar *) gtk_selection_data_get_data (selection_data), "\r\n", 0);
         exactly_one = uris[0] != NULL && (uris[1] == NULL || uris[1][0] == '\0');
 
 	if (!exactly_one) {
@@ -198,7 +197,7 @@ nemo_desktop_item_properties_exec_drag_data_received (GtkWidget *widget, GdkDrag
 	GKeyFile *key_file;
 	char *uri, *type, *exec;
 	
-	uris = g_strsplit (gtk_selection_data_get_data (selection_data), "\r\n", 0);
+	uris = g_strsplit ((gchar *) gtk_selection_data_get_data (selection_data), "\r\n", 0);
         exactly_one = uris[0] != NULL && (uris[1] == NULL || uris[1][0] == '\0');
 
 	if (!exactly_one) {
@@ -353,7 +352,7 @@ build_grid (GtkWidget *container,
 		g_signal_connect (entry, "activate",
 				  G_CALLBACK (entry_activate_cb),
 				  container);
-		g_signal_connect (entry, "focus_out_event",
+		g_signal_connect (entry, "focus-out-event",
 				  G_CALLBACK (entry_focus_out_cb),
 				  container);
 		
@@ -366,7 +365,7 @@ build_grid (GtkWidget *container,
 					   target_table, G_N_ELEMENTS (target_table),
 					   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 			
-			g_signal_connect (entry, "drag_data_received",
+			g_signal_connect (entry, "drag-data-received",
 					  G_CALLBACK (nemo_desktop_item_properties_url_drag_data_received),
 					  entry);
 		} else if (strcmp (item_entry->field, "Exec") == 0) {
@@ -375,7 +374,7 @@ build_grid (GtkWidget *container,
 					   target_table, G_N_ELEMENTS (target_table),
 					   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 			
-			g_signal_connect (entry, "drag_data_received",
+			g_signal_connect (entry, "drag-data-received",
 					  G_CALLBACK (nemo_desktop_item_properties_exec_drag_data_received),
 					  entry);
 		}

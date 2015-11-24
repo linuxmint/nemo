@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Darin Adler <darin@bentspoon.com>
 */
@@ -33,10 +31,12 @@
 #include "nemo-global-preferences.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-metadata.h"
+#include "nemo-profile.h"
 #include "nemo-desktop-directory.h"
 #include "nemo-vfs-directory.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-string.h>
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 enum {
@@ -47,7 +47,13 @@ enum {
 	LAST_SIGNAL
 };
 
+enum {
+	PROP_LOCATION = 1,
+	NUM_PROPERTIES
+};
+
 static guint signals[LAST_SIGNAL] = { 0 };
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 static GHashTable *directories;
 
@@ -61,6 +67,42 @@ static void               set_directory_location              (NemoDirectory    
 G_DEFINE_TYPE (NemoDirectory, nemo_directory, G_TYPE_OBJECT);
 
 static void
+nemo_directory_set_property (GObject *object,
+				 guint property_id,
+				 const GValue *value,
+				 GParamSpec *pspec)
+{
+	NemoDirectory *directory = NEMO_DIRECTORY (object);
+
+	switch (property_id) {
+	case PROP_LOCATION:
+		set_directory_location (directory, g_value_get_object (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
+nemo_directory_get_property (GObject *object,
+				 guint property_id,
+				 GValue *value,
+				 GParamSpec *pspec)
+{
+	NemoDirectory *directory = NEMO_DIRECTORY (object);
+
+	switch (property_id) {
+	case PROP_LOCATION:
+		g_value_set_object (value, directory->details->location);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		break;
+	}
+}
+
+static void
 nemo_directory_class_init (NemoDirectoryClass *klass)
 {
 	GObjectClass *object_class;
@@ -68,9 +110,11 @@ nemo_directory_class_init (NemoDirectoryClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 	
 	object_class->finalize = nemo_directory_finalize;
+	object_class->set_property = nemo_directory_set_property;
+	object_class->get_property = nemo_directory_get_property;
 
 	signals[FILES_ADDED] =
-		g_signal_new ("files_added",
+		g_signal_new ("files-added",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoDirectoryClass, files_added),
@@ -78,7 +122,7 @@ nemo_directory_class_init (NemoDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__POINTER,
 		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[FILES_CHANGED] =
-		g_signal_new ("files_changed",
+		g_signal_new ("files-changed",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoDirectoryClass, files_changed),
@@ -86,7 +130,7 @@ nemo_directory_class_init (NemoDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__POINTER,
 		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[DONE_LOADING] =
-		g_signal_new ("done_loading",
+		g_signal_new ("done-loading",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoDirectoryClass, done_loading),
@@ -94,7 +138,7 @@ nemo_directory_class_init (NemoDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[LOAD_ERROR] =
-		g_signal_new ("load_error",
+		g_signal_new ("load-error",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoDirectoryClass, load_error),
@@ -102,10 +146,18 @@ nemo_directory_class_init (NemoDirectoryClass *klass)
 		              g_cclosure_marshal_VOID__POINTER,
 		              G_TYPE_NONE, 1, G_TYPE_POINTER);
 
+	properties[PROP_LOCATION] =
+		g_param_spec_object ("location",
+				     "The location",
+				     "The location of this directory",
+				     G_TYPE_FILE,
+				     G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+
 	klass->get_file_list = real_get_file_list;
 	klass->is_editable = real_is_editable;
 
 	g_type_class_add_private (klass, sizeof (NemoDirectoryDetails));
+	g_object_class_install_properties (object_class, NUM_PROPERTIES, properties);
 }
 
 static void
@@ -180,10 +232,6 @@ nemo_directory_finalize (GObject *object)
 	g_assert (directory->details->file_list == NULL);
 	g_hash_table_destroy (directory->details->file_hash);
 
-	if (directory->details->hidden_file_hash) {
-		g_hash_table_destroy (directory->details->hidden_file_hash);
-	}
-	
 	nemo_file_queue_destroy (directory->details->high_priority_queue);
 	nemo_file_queue_destroy (directory->details->low_priority_queue);
 	nemo_file_queue_destroy (directory->details->extension_queue);
@@ -196,28 +244,37 @@ nemo_directory_finalize (GObject *object)
 }
 
 static void
-invalidate_one_count (gpointer key, gpointer value, gpointer user_data)
+collect_all_directories (gpointer key, gpointer value, gpointer callback_data)
 {
 	NemoDirectory *directory;
-
-	g_assert (key != NULL);
-	g_assert (NEMO_IS_DIRECTORY (value));
-	g_assert (user_data == NULL);
+	GList **dirs;
 
 	directory = NEMO_DIRECTORY (value);
-	
-	nemo_directory_invalidate_count_and_mime_list (directory);
+	dirs = callback_data;
+
+	*dirs = g_list_prepend (*dirs, nemo_directory_ref (directory));
 }
 
 static void
 filtering_changed_callback (gpointer callback_data)
 {
+	GList *dirs, *l;
+	NemoDirectory *directory;
+
 	g_assert (callback_data == NULL);
+
+	dirs = NULL;
+	g_hash_table_foreach (directories, collect_all_directories, &dirs);
 
 	/* Preference about which items to show has changed, so we
 	 * can't trust any of our precomputed directory counts.
 	 */
-	g_hash_table_foreach (directories, invalidate_one_count, NULL);
+	for (l = dirs; l != NULL; l = l->next) {
+		directory = NEMO_DIRECTORY (l->data);
+		nemo_directory_invalidate_count_and_mime_list (directory);
+	}
+
+	nemo_directory_list_unref (dirs);
 }
 
 void
@@ -234,18 +291,6 @@ emit_change_signals_for_all_files (NemoDirectory *directory)
 	nemo_directory_emit_change_signals (directory, files);
 
 	nemo_file_list_free (files);
-}
-
-static void
-collect_all_directories (gpointer key, gpointer value, gpointer callback_data)
-{
-	NemoDirectory *directory;
-	GList **dirs;
-
-	directory = NEMO_DIRECTORY (value);
-	dirs = callback_data;
-
-	*dirs = g_list_prepend (*dirs, nemo_directory_ref (directory));
 }
 
 void
@@ -300,13 +345,9 @@ add_preferences_callbacks (void)
 {
 	nemo_global_preferences_init ();
 
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
+	g_signal_connect_swapped (gtk_filechooser_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN,
 				  G_CALLBACK(filtering_changed_callback),
-				  NULL);
-	g_signal_connect_swapped (nemo_preferences,
-				  "changed::" NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS,
-				  G_CALLBACK (async_data_preference_changed_callback),
 				  NULL);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS,
@@ -460,19 +501,31 @@ nemo_directory_get_existing_corresponding_file (NemoDirectory *directory)
 char *
 nemo_directory_get_name_for_self_as_new_file (NemoDirectory *directory)
 {
+	GFile *file;
 	char *directory_uri;
-	char *name, *colon;
-	
-	directory_uri = nemo_directory_get_uri (directory);
+	char *scheme;
+	char *name;
+	char *hostname = NULL;
 
-	colon = strchr (directory_uri, ':');
-	if (colon == NULL || colon == directory_uri) {
+	directory_uri = nemo_directory_get_uri (directory);
+	file = g_file_new_for_uri (directory_uri);
+	scheme = g_file_get_uri_scheme (file);
+	g_object_unref (file);
+
+	nemo_uri_parse (directory_uri, &hostname, NULL, NULL);
+	if (hostname == NULL || (strlen (hostname) == 0)) {
 		name = g_strdup (directory_uri);
+	} else if (scheme == NULL) {
+		name = g_strdup (hostname);
 	} else {
-		name = g_strndup (directory_uri, colon - directory_uri);
+		/* Translators: this is of the format "hostname (uri-scheme)" */
+		name = g_strdup_printf (_("%s (%s)"), hostname, scheme);
 	}
+
 	g_free (directory_uri);
-	
+	g_free (scheme);
+	g_free (hostname);
+
 	return name;
 }
 
@@ -496,24 +549,28 @@ static NemoDirectory *
 nemo_directory_new (GFile *location)
 {
 	NemoDirectory *directory;
+	GType type;
 	char *uri;
+	gboolean is_saved_search;
 
 	uri = g_file_get_uri (location);
-	
+	is_saved_search = g_str_has_suffix (uri, NEMO_SAVED_SEARCH_EXTENSION);
+
 	if (eel_uri_is_desktop (uri)) {
-		directory = NEMO_DIRECTORY (g_object_new (NEMO_TYPE_DESKTOP_DIRECTORY, NULL));
-	} else if (eel_uri_is_search (uri)) {
-		directory = NEMO_DIRECTORY (g_object_new (NEMO_TYPE_SEARCH_DIRECTORY, NULL));
-	} else if (g_str_has_suffix (uri, NEMO_SAVED_SEARCH_EXTENSION)) {
-		directory = NEMO_DIRECTORY (nemo_search_directory_new_from_saved_search (uri));
+		type = NEMO_TYPE_DESKTOP_DIRECTORY;
+	} else if (eel_uri_is_search (uri) || is_saved_search) {
+		type = NEMO_TYPE_SEARCH_DIRECTORY;
 	} else {
-		directory = NEMO_DIRECTORY (g_object_new (NEMO_TYPE_VFS_DIRECTORY, NULL));
+		type = NEMO_TYPE_VFS_DIRECTORY;
 	}
 
-	set_directory_location (directory, location);
-
 	g_free (uri);
-	
+
+	directory = g_object_new (type, "location", location, NULL);
+	if (is_saved_search) {
+		nemo_search_directory_set_saved_search (NEMO_SEARCH_DIRECTORY (directory), location);
+	}
+
 	return directory;
 }
 
@@ -545,13 +602,26 @@ nemo_directory_is_in_trash (NemoDirectory *directory)
 gboolean
 nemo_directory_is_in_recent (NemoDirectory *directory)
 {
-   g_assert (NEMO_IS_DIRECTORY (directory));
+	g_assert (NEMO_IS_DIRECTORY (directory));
 
-   if (directory->details->location == NULL) {
-       return FALSE;
-   }
+	if (directory->details->location == NULL) {
+		return FALSE;
+	}
 
-   return g_file_has_uri_scheme (directory->details->location, "recent");
+	return g_file_has_uri_scheme (directory->details->location, "recent");
+}
+
+gboolean
+nemo_directory_is_in_network (NemoDirectory *directory)
+{
+	g_assert (NEMO_IS_DIRECTORY (directory));
+
+	if (directory->details->location == NULL) {
+		return FALSE;
+	}
+
+	return g_file_has_uri_scheme (directory->details->location, "network") ||
+		g_file_has_uri_scheme (directory->details->location, "dns-sd");
 }
 
 gboolean
@@ -716,22 +786,26 @@ void
 nemo_directory_emit_files_added (NemoDirectory *directory,
 				     GList *added_files)
 {
+	nemo_profile_start (NULL);
 	if (added_files != NULL) {
 		g_signal_emit (directory,
 				 signals[FILES_ADDED], 0,
 				 added_files);
 	}
+	nemo_profile_end (NULL);
 }
 
 void
 nemo_directory_emit_files_changed (NemoDirectory *directory,
 				       GList *changed_files)
 {
+	nemo_profile_start (NULL);
 	if (changed_files != NULL) {
 		g_signal_emit (directory,
 				 signals[FILES_CHANGED], 0,
 				 changed_files);
 	}
+	nemo_profile_end (NULL);
 }
 
 void
@@ -740,10 +814,12 @@ nemo_directory_emit_change_signals (NemoDirectory *directory,
 {
 	GList *p;
 
+	nemo_profile_start (NULL);
 	for (p = changed_files; p != NULL; p = p->next) {
 		nemo_file_emit_changed (p->data);
 	}
 	nemo_directory_emit_files_changed (directory, changed_files);
+	nemo_profile_end (NULL);
 }
 
 void
@@ -907,6 +983,8 @@ nemo_directory_notify_files_added (GList *files)
 	NemoFile *file;
 	GFile *location, *parent;
 
+	nemo_profile_start (NULL);
+
 	/* Make a list of added files in each directory. */
 	added_lists = g_hash_table_new (NULL, NULL);
 
@@ -976,6 +1054,8 @@ nemo_directory_notify_files_added (GList *files)
 	/* Invalidate count for each parent directory. */
 	g_hash_table_foreach (parent_directories, invalidate_count_and_unref, NULL);
 	g_hash_table_destroy (parent_directories);
+
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -1129,7 +1209,8 @@ set_directory_location (NemoDirectory *directory,
 		g_object_unref (directory->details->location);
 	}
 	directory->details->location = g_object_ref (location);
-	
+
+	g_object_notify_by_pspec (G_OBJECT (directory), properties[PROP_LOCATION]);
 }
 
 static void

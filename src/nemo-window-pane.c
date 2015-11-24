@@ -30,14 +30,12 @@
 
 #include "nemo-actions.h"
 #include "nemo-application.h"
-#include "nemo-location-bar.h"
+#include "nemo-location-entry.h"
 #include "nemo-notebook.h"
 #include "nemo-pathbar.h"
 #include "nemo-toolbar.h"
-#include "nemo-window-manage-views.h"
 #include "nemo-window-private.h"
 #include "nemo-window-menus.h"
-#include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 
 #include <glib/gi18n.h>
@@ -68,7 +66,7 @@ widget_is_in_temporary_bars (GtkWidget *widget,
 {
 	gboolean res = FALSE;
 
-	if (gtk_widget_get_ancestor (widget, NEMO_TYPE_LOCATION_BAR) != NULL &&
+	if (gtk_widget_get_ancestor (widget, NEMO_TYPE_LOCATION_ENTRY) != NULL &&
 	     pane->temporary_navigation_bar)
 		res = TRUE;
 
@@ -189,7 +187,7 @@ nemo_window_pane_hide_temporary_bars (NemoWindowPane *pane)
 	slot = pane->active_slot;
 
 	if (pane->temporary_navigation_bar) {
-		directory = nemo_directory_get (slot->location);
+		directory = nemo_directory_get (nemo_window_slot_get_location(slot));
 
 		pane->temporary_navigation_bar = FALSE;
 
@@ -210,11 +208,11 @@ static void
 location_entry_changed_cb (NemoToolbar *toolbar, gboolean val, gpointer data)
 {
     NemoWindowPane *pane = NEMO_WINDOW_PANE (data);
-    nemo_window_pane_ensure_location_bar (pane);
+    nemo_window_pane_ensure_location_entry (pane);
 }
 
 static void
-navigation_bar_cancel_callback (GtkWidget *widget,
+location_entry_cancel_callback (GtkWidget *widget,
 				NemoWindowPane *pane)
 {
 	GtkAction *location;
@@ -228,19 +226,15 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 }
 
 static void
-navigation_bar_location_changed_callback (GtkWidget *widget,
-                                        const gchar *uri,
-                                     NemoWindowPane *pane)
+location_entry_location_changed_callback (GtkWidget *widget,
+					  GFile *location,
+					  NemoWindowPane *pane)
 {
-    GFile *location;
+	nemo_window_pane_hide_temporary_bars (pane);
 
-    nemo_window_pane_hide_temporary_bars (pane);
+	restore_focus_widget (pane);
 
-    restore_focus_widget (pane);
-
-    location = g_file_new_for_uri (uri);
-    nemo_window_slot_open_location (pane->active_slot, location, 0);
-    g_object_unref (location);
+	nemo_window_slot_open_location (pane->active_slot, location, 0);
 }
 
 static gboolean
@@ -266,7 +260,7 @@ path_bar_location_changed_callback (GtkWidget *widget,
 	nemo_window_set_active_pane (pane->window, pane);
 
 	/* check whether we already visited the target location */
-	i = bookmark_list_get_uri_index (slot->back_list, location);
+	i = bookmark_list_get_uri_index (nemo_window_slot_get_back_history (slot), location);
 	if (i >= 0) {
 		nemo_window_back_or_forward (pane->window, TRUE, i, 0);
 	} else {
@@ -275,60 +269,20 @@ path_bar_location_changed_callback (GtkWidget *widget,
 }
 
 static gboolean
-path_bar_button_pressed_callback (GtkWidget *widget,
-				  GdkEventButton *event,
-				  NemoWindowPane *pane)
-{
-	NemoWindowSlot *slot;
-	NemoView *view;
-	GFile *location;
-	char *uri;
-
-	g_object_set_data (G_OBJECT (widget), "handle-button-release",
-			   GINT_TO_POINTER (TRUE));
-
-	if (event->button == 3) {
-		slot = nemo_window_get_active_slot (pane->window);
-		view = slot->content_view;
-		if (view != NULL) {
-			location = nemo_path_bar_get_path_for_button (
-				NEMO_PATH_BAR (pane->path_bar), widget);
-			if (location != NULL) {
-				uri = g_file_get_uri (location);
-				nemo_view_pop_up_location_context_menu (
-					view, event, uri);
-				g_object_unref (location);
-				g_free (uri);
-				return TRUE;
-			}
-		}
-	}
-
-    if (event->button == 2)
-        return TRUE;
-
-	return FALSE;
-}
-
-static gboolean
-path_bar_button_released_callback (GtkWidget *widget,
-				   GdkEventButton *event,
-				   NemoWindowPane *pane)
+path_bar_path_event_callback (NemoPathBar *path_bar,
+			      GFile *location,
+			      GdkEventButton *event,
+			      NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot;
 	NemoWindowOpenFlags flags;
-	GFile *location;
 	int mask;
-	gboolean handle_button_release;
+	NemoView *view;
+	char *uri;
 
-	mask = event->state & gtk_accelerator_get_default_mod_mask ();
-	flags = 0;
-
-	handle_button_release = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (widget),
-						  "handle-button-release"));
-
-	if (event->type == GDK_BUTTON_RELEASE && handle_button_release) {
-		location = nemo_path_bar_get_path_for_button (NEMO_PATH_BAR (pane->path_bar), widget);
+	if (event->type == GDK_BUTTON_RELEASE) {
+		mask = event->state & gtk_accelerator_get_default_mod_mask ();
+		flags = 0;
 
 		if (event->button == 2 && mask == 0) {
 			flags = NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
@@ -339,23 +293,23 @@ path_bar_button_released_callback (GtkWidget *widget,
 		if (flags != 0) {
 			slot = nemo_window_get_active_slot (pane->window);
 			nemo_window_slot_open_location (slot, location, flags);
-			g_object_unref (location);
-			return TRUE;
 		}
-
-		g_object_unref (location);
+		return FALSE;
 	}
 
+	if (event->button == 3) {
+		slot = nemo_window_get_active_slot (pane->window);
+		view = nemo_window_slot_get_view(slot);
+		if (view != NULL) {
+			uri = g_file_get_uri (location);
+			nemo_view_pop_up_location_context_menu (view, event, uri);
+			g_free (uri);
+		}
+		return TRUE;
+	} else if (event->button == 2) {
+		return TRUE;
+	}
 	return FALSE;
-}
-
-static void
-path_bar_button_drag_begin_callback (GtkWidget *widget,
-				     GdkEventButton *event,
-				     gpointer user_data)
-{
-	g_object_set_data (G_OBJECT (widget), "handle-button-release",
-			   GINT_TO_POINTER (FALSE));
 }
 
 static void
@@ -366,43 +320,6 @@ notebook_popup_menu_new_tab_cb (GtkMenuItem *menuitem,
 
 	pane = user_data;
 	nemo_window_new_tab (pane->window);
-}
-
-static void
-path_bar_path_set_callback (GtkWidget *widget,
-			    GFile *location,
-			    NemoWindowPane *pane)
-{
-	GList *children, *l;
-	GtkWidget *child;
-
-	children = gtk_container_get_children (GTK_CONTAINER (widget));
-
-	for (l = children; l != NULL; l = l->next) {
-		child = GTK_WIDGET (l->data);
-
-		if (!GTK_IS_TOGGLE_BUTTON (child)) {
-			continue;
-		}
-
-		if (!g_signal_handler_find (child,
-					    G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
-					    0, 0, NULL,
-					    path_bar_button_pressed_callback,
-					    pane)) {
-			g_signal_connect (child, "button-press-event",
-					  G_CALLBACK (path_bar_button_pressed_callback),
-					  pane);
-			g_signal_connect (child, "button-release-event",
-					  G_CALLBACK (path_bar_button_released_callback),
-					  pane);
-			g_signal_connect (child, "drag-begin",
-					  G_CALLBACK (path_bar_button_drag_begin_callback),
-					  pane);
-		}
-	}
-
-	g_list_free (children);
 }
 
 static void
@@ -604,7 +521,7 @@ notebook_popup_menu_cb (GtkWidget *widget,
 	return TRUE;
 }
 
-static gboolean
+static void
 notebook_switch_page_cb (GtkNotebook *notebook,
 			 GtkWidget *page,
 			 unsigned int page_num,
@@ -622,8 +539,6 @@ notebook_switch_page_cb (GtkNotebook *notebook,
 
 	nemo_window_set_active_slot (nemo_window_slot_get_window (slot),
 					 slot);
-
-	return FALSE;
 }
 
 static void
@@ -646,7 +561,6 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 		nemo_window_set_active_slot (pane->window, next_slot);
 	}
 
-	nemo_window_manage_views_close_slot (slot);
 	pane->slots = g_list_remove (pane->slots, slot);
 }
 
@@ -657,18 +571,21 @@ notebook_page_added_cb (GtkNotebook *notebook,
 			gpointer user_data)
 {
 	NemoWindowPane *pane;
+	NemoWindowPane *slot_pane;
+	NemoWindowPane *dummy_slot_pane;
 	NemoWindowSlot *slot;
 	NemoWindowSlot *dummy_slot;
 	gboolean dnd_slot;
 
 	pane = NEMO_WINDOW_PANE (user_data);
 	slot = NEMO_WINDOW_SLOT (page);
-
+	slot_pane = nemo_window_slot_get_pane (slot);
+	
 	//Slot has been dropped onto another pane (new window or tab bar of other window)
 	//So reassociate the pane if needed.
-	if (slot->pane != pane) {
-		slot->pane->slots = g_list_remove (slot->pane->slots, slot);
-		slot->pane = pane;
+	if (slot_pane != pane) {
+		slot_pane->slots = g_list_remove (slot_pane->slots, slot);
+		nemo_window_slot_set_pane(slot, pane);
 		pane->slots = g_list_append (pane->slots, slot);
 		g_signal_emit_by_name (slot, "changed-pane");
 		nemo_window_set_active_slot (nemo_window_slot_get_window (slot), slot);
@@ -686,8 +603,8 @@ notebook_page_added_cb (GtkNotebook *notebook,
 
 	dummy_slot = g_list_nth_data (pane->slots, 0);
 	if (dummy_slot != NULL) {
-		nemo_window_pane_remove_slot_unsafe (
-			dummy_slot->pane, dummy_slot);
+	    dummy_slot_pane = nemo_window_slot_get_pane (dummy_slot);
+		nemo_window_pane_remove_slot_unsafe (dummy_slot_pane, dummy_slot);
 	}
 
 	gtk_widget_show (GTK_WIDGET (pane));
@@ -729,32 +646,16 @@ action_show_hide_search_callback (GtkAction *action,
 				  gpointer user_data)
 {
 	NemoWindowPane *pane = user_data;
-	NemoWindow *window = pane->window;
 	NemoWindowSlot *slot;
 
 	slot = pane->active_slot;
 
 	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
 	    remember_focus_widget (pane);
-	    nemo_window_slot_set_query_editor_visible (slot, TRUE);
+	    nemo_window_slot_set_search_visible(slot, TRUE);
 	} else {
-		GFile *location = NULL;
-
 		restore_focus_widget (pane);
-
-		/* Use the location bar as the return location */
-		if (slot->query_editor != NULL) {
-		    location = nemo_query_editor_get_location (slot->query_editor);
-			/* Last try: use the home directory as the return location */
-			if (location == NULL) {
-				location = g_file_new_for_path (g_get_home_dir ());
-			}
-
-			nemo_window_go_to (window, location);
-			g_object_unref (location);
-		}
-
-		nemo_window_slot_set_query_editor_visible (slot, FALSE);
+		nemo_window_slot_set_search_visible (slot, FALSE);
 	}
 }
 
@@ -829,15 +730,13 @@ nemo_window_pane_dispose (GObject *object)
 	G_OBJECT_CLASS (nemo_window_pane_parent_class)->dispose (object);
 }
 
-static void
-nemo_window_pane_constructed (GObject *obj)
+static GtkWidget *
+create_toolbar (NemoWindowPane *pane)
 {
-	NemoWindowPane *pane = NEMO_WINDOW_PANE (obj);
 	GtkSizeGroup *header_size_group;
 	NemoWindow *window;
 	GtkActionGroup *action_group;
-
-	G_OBJECT_CLASS (nemo_window_pane_parent_class)->constructed (obj);
+	GtkWidget *toolbar;
 
 	window = pane->window;
 
@@ -847,9 +746,9 @@ nemo_window_pane_constructed (GObject *obj)
 	/* build the toolbar */
 	action_group = nemo_window_create_toolbar_action_group (window);
 	pane->toolbar_action_group = action_group;
-	pane->tool_bar = GTK_WIDGET (nemo_toolbar_new (action_group));
+	toolbar = GTK_WIDGET (nemo_toolbar_new (action_group));
 
-    g_signal_connect_object (pane->tool_bar, "notify::show-location-entry",
+    g_signal_connect_object (toolbar, "notify::show-location-entry",
                              G_CALLBACK (location_entry_changed_cb),
                              pane, 0);
 
@@ -863,7 +762,7 @@ nemo_window_pane_constructed (GObject *obj)
 
 	/* Pack to windows hbox (under the menu */
 	gtk_box_pack_start (GTK_BOX (window->details->toolbar_holder),
-			    pane->tool_bar,
+			    toolbar,
 			    TRUE, TRUE, 0);
 
 	/* start as non-active */
@@ -871,71 +770,97 @@ nemo_window_pane_constructed (GObject *obj)
 
 	g_settings_bind_with_mapping (nemo_window_state,
 				      NEMO_WINDOW_STATE_START_WITH_TOOLBAR,
-				      pane->tool_bar,
+				      toolbar,
 				      "visible",
 				      G_SETTINGS_BIND_GET,
 				      nemo_window_disable_chrome_mapping, NULL,
 				      window, NULL);
 
 	/* connect to the pathbar signals */
-	pane->path_bar = nemo_toolbar_get_path_bar (NEMO_TOOLBAR (pane->tool_bar));
+	pane->path_bar = nemo_toolbar_get_path_bar (NEMO_TOOLBAR (toolbar));
 	gtk_size_group_add_widget (header_size_group, pane->path_bar);
 
 	g_signal_connect_object (pane->path_bar, "path-clicked",
 				 G_CALLBACK (path_bar_location_changed_callback), pane, 0);
-	g_signal_connect_object (pane->path_bar, "path-set",
-				 G_CALLBACK (path_bar_path_set_callback), pane, 0);
+	g_signal_connect_object (pane->path_bar, "path-event",
+				 G_CALLBACK (path_bar_path_event_callback), pane, 0);
 
-	/* connect to the location bar signals */
-	pane->location_bar = nemo_toolbar_get_location_bar (NEMO_TOOLBAR (pane->tool_bar));
-	gtk_size_group_add_widget (header_size_group, pane->location_bar);
+	/* connect to the location entry signals */
+	pane->location_entry = nemo_toolbar_get_location_entry (NEMO_TOOLBAR (toolbar));
+	gtk_size_group_add_widget (header_size_group, pane->location_entry);
 
-	nemo_clipboard_set_up_editable
-		(GTK_EDITABLE (nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar))),
-		 nemo_window_get_ui_manager (NEMO_WINDOW (window)),
-		 TRUE);
+	nemo_clipboard_set_up_editable (GTK_EDITABLE (pane->location_entry),
+	                                nemo_window_get_ui_manager (NEMO_WINDOW (window)),
+	                                TRUE);
 
-	g_signal_connect_object (pane->location_bar, "location-changed",
-				 G_CALLBACK (navigation_bar_location_changed_callback), pane, 0);
-	g_signal_connect_object (pane->location_bar, "cancel",
-				 G_CALLBACK (navigation_bar_cancel_callback), pane, 0);
-	g_signal_connect_object (nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar)), "focus-in-event",
+	g_signal_connect_object (pane->location_entry, "location-changed",
+				 G_CALLBACK (location_entry_location_changed_callback), pane, 0);
+	g_signal_connect_object (pane->location_entry, "cancel",
+				 G_CALLBACK (location_entry_cancel_callback), pane, 0);
+	g_signal_connect_object (pane->location_entry, "focus-in-event",
 				 G_CALLBACK (toolbar_focus_in_callback), pane, 0);
 
-	/* initialize the notebook */
-	pane->notebook = g_object_new (NEMO_TYPE_NOTEBOOK, NULL);
-	gtk_box_pack_start (GTK_BOX (pane), pane->notebook,
-			    TRUE, TRUE, 0);
-	g_signal_connect (pane->notebook,
-			  "tab-close-request",
-			  G_CALLBACK (notebook_tab_close_requested),
-			  pane);
-	g_signal_connect_after (pane->notebook,
-				"button_press_event",
+	g_object_unref (header_size_group);
+
+	return toolbar;
+}
+
+static GtkWidget *
+create_notebook (NemoWindowPane *pane)
+{
+	GtkWidget *notebook;
+
+	notebook = g_object_new (NEMO_TYPE_NOTEBOOK, NULL);
+	g_signal_connect (notebook, "tab-close-request",
+				G_CALLBACK (notebook_tab_close_requested),
+				pane);
+	g_signal_connect (notebook, "popup-menu",
+			G_CALLBACK (notebook_popup_menu_cb),
+			pane);
+	g_signal_connect (notebook, "switch-page",
+			G_CALLBACK (notebook_switch_page_cb),
+			pane);
+	g_signal_connect_after (notebook, "button-press-event",
 				G_CALLBACK (notebook_button_press_cb),
 				pane);
-	g_signal_connect (pane->notebook, "popup-menu",
-			  G_CALLBACK (notebook_popup_menu_cb),
-			  pane);
-	g_signal_connect (pane->notebook,
-			  "switch-page",
-			  G_CALLBACK (notebook_switch_page_cb),
-			  pane);
-	g_signal_connect (pane->notebook, "create-window",
+
+	g_signal_connect (notebook, "create-window",
 			  G_CALLBACK (notebook_create_window_cb),
 			  pane);
-	g_signal_connect (pane->notebook, "page-added",
+	g_signal_connect (notebook, "page-added",
 			  G_CALLBACK (notebook_page_added_cb),
 			  pane);
-	g_signal_connect (pane->notebook, "page-removed",
+	g_signal_connect (notebook, "page-removed",
 			  G_CALLBACK (notebook_page_removed_cb),
 			  pane);
 
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (pane->notebook), FALSE);
-	gtk_notebook_set_show_border (GTK_NOTEBOOK (pane->notebook), FALSE);
-	gtk_notebook_set_group_name (GTK_NOTEBOOK (pane->notebook), "nemo-slots");
-	gtk_widget_show (pane->notebook);
-	gtk_container_set_border_width (GTK_CONTAINER (pane->notebook), 0);
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_notebook_set_group_name (GTK_NOTEBOOK (notebook), "nemo-slots");
+	gtk_widget_show (notebook);
+	gtk_container_set_border_width (GTK_CONTAINER (notebook), 0);
+
+   	gtk_box_pack_start (GTK_BOX (pane), notebook,
+    		    TRUE, TRUE, 0);
+
+	return notebook;
+}
+
+static void
+nemo_window_pane_constructed (GObject *obj)
+{
+	NemoWindowPane *pane = NEMO_WINDOW_PANE (obj);
+	NemoWindow *window;
+
+	G_OBJECT_CLASS (nemo_window_pane_parent_class)->constructed (obj);
+
+	window = pane->window;
+
+	/* build the toolbar */
+	pane->tool_bar = create_toolbar (pane);
+
+	/* initialize the notebook */
+	pane->notebook = create_notebook (pane);
 
 	/* Ensure that the view has some minimal size and that other parts
 	 * of the UI (like location bar and tabs) don't request more and
@@ -949,9 +874,6 @@ nemo_window_pane_constructed (GObject *obj)
 	if (NEMO_IS_DESKTOP_WINDOW(window)) {
 		gtk_widget_hide (GTK_WIDGET (window->details->toolbar_holder));
 	}
-
-	/* we can unref the size group now */
-	g_object_unref (header_size_group);
 }
 
 static void
@@ -1039,6 +961,29 @@ nemo_window_pane_get_toolbar_action_group (NemoWindowPane *pane)
 }
 
 void
+nemo_window_pane_sync_bookmarks (NemoWindowPane *pane)
+{
+	gboolean can_bookmark = FALSE;
+	NemoWindowSlot *slot;
+	NemoBookmarkList *bookmarks;
+	GtkAction *action;
+
+	slot = pane->active_slot;
+
+	GFile *location = nemo_window_slot_get_location(slot);
+	if (location != NULL) {
+		bookmarks = nemo_application_get_bookmarks
+			(NEMO_APPLICATION (gtk_window_get_application (GTK_WINDOW (pane->window))));
+		can_bookmark = nemo_bookmark_list_can_bookmark_location (bookmarks, location);
+	}
+
+	action = gtk_action_group_get_action (nemo_window_get_main_action_group (pane->window),
+					      NEMO_ACTION_ADD_BOOKMARK);
+
+	gtk_action_set_sensitive (action, can_bookmark);
+}
+
+void
 nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 {
 	NemoWindowSlot *slot, *active_slot;
@@ -1048,15 +993,12 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 	nemo_window_pane_hide_temporary_bars (pane);
 
 	/* Change the location bar and path bar to match the current location. */
-	if (slot->location != NULL) {
-		char *uri;
-
+	GFile *location = nemo_window_slot_get_location(slot);
+	if (location != NULL) {
 		/* this may be NULL if we just created the slot */
-		uri = nemo_window_slot_get_location_uri (slot);
-		nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar), uri);
-		g_free (uri);
-		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
-        restore_focus_widget (pane);
+		nemo_location_entry_set_location (NEMO_LOCATION_ENTRY (pane->location_entry), location);
+		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), location);
+		restore_focus_widget (pane);
 	}
 
 	/* Update window global UI if this is the active pane */
@@ -1069,62 +1011,23 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_BACK,
-						       active_slot->back_list != NULL);
+						       nemo_window_slot_get_back_history (active_slot) != NULL);
 		nemo_navigation_state_set_boolean (nav_state,
 						       NEMO_ACTION_FORWARD,
-						       active_slot->forward_list != NULL);
-
+						       nemo_window_slot_get_forward_history(active_slot) != NULL);
+		nemo_window_pane_sync_bookmarks (pane);
 	}
-}
-
-static void
-toggle_toolbar_search_button (NemoWindowPane *pane,
-                                  gboolean        active)
-{
-	GtkActionGroup *group;
-	GtkAction *action;
-
-	group = pane->action_group;
-	action = gtk_action_group_get_action (group, NEMO_ACTION_SEARCH);
-
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), active);
-}
-
-void
-nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
-{
-	NemoWindowSlot *slot;
-	NemoDirectory *directory;
-	NemoSearchDirectory *search_directory;
-
-	slot = pane->active_slot;
-	search_directory = NULL;
-
-	directory = nemo_directory_get (slot->location);
-	if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
-		search_directory = NEMO_SEARCH_DIRECTORY (directory);
-	}
-
-	if (search_directory != NULL) {
-		toggle_toolbar_search_button (pane, TRUE);
-	} else {
-	    toggle_toolbar_search_button (pane, FALSE);
-	}
-
-	nemo_directory_unref (directory);
 }
 
 void
 nemo_window_pane_close_slot (NemoWindowPane *pane,
 				 NemoWindowSlot *slot)
 {
-	NemoWindow *window;
-
 	DEBUG ("Requesting to remove slot %p from pane %p", slot, pane);
-
-	window = pane->window;
-	if (!window)
+	if (pane->window == NULL)
 		return;
+
+	NemoWindow *window = pane->window;
 
 	if (pane->active_slot == slot) {
 		NemoWindowSlot *next_slot;
@@ -1134,9 +1037,7 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 
 	nemo_window_pane_remove_slot_unsafe (pane, slot);
 
-	/* If that was the last slot in the pane, close the pane or even the
-	 * whole window.
-	 */
+	/* If that was the last slot in the pane, close the pane or even the whole window. */
 	if (pane->slots == NULL) {
 		if (nemo_window_split_view_showing (window)) {
 			NemoWindowPane *new_pane;
@@ -1163,13 +1064,17 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 void
 nemo_window_pane_grab_focus (NemoWindowPane *pane)
 {
-	if (NEMO_IS_WINDOW_PANE (pane) && pane->active_slot) {
-		nemo_view_grab_focus (pane->active_slot->content_view);
-	}
+	if (NEMO_IS_WINDOW_PANE (pane) &&
+		pane->active_slot) {
+		NemoView *view = nemo_window_slot_get_view (pane->active_slot);
+		if (view) {
+			nemo_view_grab_focus (view);	
+		}
+	}	
 }
 
 void
-nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
+nemo_window_pane_ensure_location_entry (NemoWindowPane *pane)
 {
     gboolean show_location, use_temp_toolbars;
 
@@ -1185,7 +1090,7 @@ nemo_window_pane_ensure_location_bar (NemoWindowPane *pane)
     }
     if (show_location) {
         remember_focus_widget (pane);
-        nemo_location_bar_activate (NEMO_LOCATION_BAR (pane->location_bar));
+        nemo_location_entry_focus (NEMO_LOCATION_ENTRY (pane->location_entry));
     } else {
         restore_focus_widget (pane);
     }
@@ -1199,15 +1104,15 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 	GtkNotebook *notebook;
 
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
-	g_assert (NEMO_IS_WINDOW_PANE (slot->pane));
 
 	DEBUG ("Removing slot %p", slot);
 
 	/* save pane because slot is not valid anymore after this call */
-	pane = slot->pane;
+	pane = nemo_window_slot_get_pane(slot);
 	notebook = GTK_NOTEBOOK (pane->notebook);
 
-	nemo_window_manage_views_close_slot (slot);
+	pane->slots = g_list_remove (pane->slots, slot);
+	nemo_window_slot_removed (pane->window, slot);
 
 	page_num = gtk_notebook_page_num (notebook, GTK_WIDGET (slot));
 	g_assert (page_num >= 0);
@@ -1220,10 +1125,9 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 	g_signal_handlers_unblock_by_func (notebook,
 					   G_CALLBACK (notebook_switch_page_cb),
 					   pane);
-
+	
 	gtk_notebook_set_show_tabs (notebook,
 				    gtk_notebook_get_n_pages (notebook) > 1);
-	pane->slots = g_list_remove (pane->slots, slot);
 }
 
 NemoWindowSlot *
@@ -1245,12 +1149,13 @@ nemo_window_pane_open_slot (NemoWindowPane *pane,
 				   (flags & NEMO_WINDOW_OPEN_SLOT_APPEND) != 0 ?
 				   -1 :
 				   gtk_notebook_get_current_page (GTK_NOTEBOOK (pane->notebook)) + 1,
-				   FALSE);
+				   TRUE);
 	g_signal_handlers_unblock_by_func (pane->notebook,
 					   G_CALLBACK (notebook_switch_page_cb),
 					   pane);
 
 	pane->slots = g_list_append (pane->slots, slot);
+	nemo_window_slot_added (pane->window, slot);
 
 	return slot;
 }

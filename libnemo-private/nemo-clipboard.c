@@ -19,9 +19,7 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this program; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * License along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Rebecca Schulman <rebecka@eazel.com>,
  *          Darin Adler <darin@bentspoon.com>
@@ -91,14 +89,6 @@ editable_select_all_callback (gpointer target)
 
 	gtk_editable_set_position (editable, -1);
 	gtk_editable_select_region (editable, 0, -1);
-}
-
-static void
-text_view_select_all_callback (gpointer target)
-{
-	g_assert (GTK_IS_TEXT_VIEW (target));
-
-	g_signal_emit_by_name (target, "select-all", TRUE);
 }
 
 static void
@@ -220,7 +210,7 @@ static void
 editable_connect_callbacks (GObject *object,
 			    TargetCallbackData *target_data)
 {
-	g_signal_connect_after (object, "selection_changed",
+	g_signal_connect_after (object, "selection-changed",
 				G_CALLBACK (selection_changed_callback), target_data);
 	selection_changed_callback (GTK_WIDGET (object),
 				    target_data);
@@ -234,72 +224,6 @@ editable_disconnect_callbacks (GObject *object,
 					      G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
 					      0, 0, NULL,
 					      G_CALLBACK (selection_changed_callback),
-					      target_data);
-}
-
-static void
-text_buffer_update_sensitivity (GtkTextBuffer *buffer,
-				TargetCallbackData *target_data)
-{
-	g_assert (GTK_IS_TEXT_BUFFER (buffer));
-	g_assert (target_data != NULL);
-
-	if (gtk_text_buffer_get_selection_bounds (buffer, NULL, NULL)) {
-		set_clipboard_menu_items_sensitive (target_data->action_group);
-	} else {
-		set_clipboard_menu_items_insensitive (target_data->action_group);
-	}
-}
-
-static void
-text_buffer_delete_range (GtkTextBuffer *buffer,
-			  GtkTextIter   *iter1,
-			  GtkTextIter   *iter2,
-			  TargetCallbackData *target_data)
-{
-	text_buffer_update_sensitivity (buffer, target_data);
-}
-
-static void
-text_buffer_mark_set (GtkTextBuffer *buffer,
-		      GtkTextIter *iter,
-		      GtkTextMark *mark,
-		      TargetCallbackData *target_data)
-{
-	/* anonymous marks with NULL names refer to cursor moves */
-	if (gtk_text_mark_get_name (mark) != NULL) {
-		text_buffer_update_sensitivity (buffer, target_data);
-	}
-}
-
-static void
-text_view_connect_callbacks (GObject *object,
-			     TargetCallbackData *target_data)
-{
-	GtkTextBuffer *buffer;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (object));
-	g_assert (buffer);
-
-	g_signal_connect_after (buffer, "mark-set",
-				G_CALLBACK (text_buffer_mark_set), target_data);
-	g_signal_connect_after (buffer, "delete-range",
-				G_CALLBACK (text_buffer_delete_range), target_data);
-	text_buffer_update_sensitivity (buffer, target_data);
-}
-
-static void
-text_view_disconnect_callbacks (GObject *object,
-				TargetCallbackData *target_data)
-{
-	GtkTextBuffer *buffer;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (object));
-	g_assert (buffer);
-
-	g_signal_handlers_disconnect_matched (buffer,
-					      G_SIGNAL_MATCH_DATA,
-					      0, 0, NULL, NULL,
 					      target_data);
 }
 
@@ -318,7 +242,7 @@ merge_in_clipboard_menu_items (GObject *widget_as_object,
 
 	set_paste_sensitive_if_clipboard_contains_data (target_data->action_group);
 	
-	g_signal_connect (gtk_clipboard_get (GDK_SELECTION_CLIPBOARD), "owner_change",
+	g_signal_connect (gtk_clipboard_get (GDK_SELECTION_CLIPBOARD), "owner-change",
 			  G_CALLBACK (owner_change_callback), target_data);
 	
 	if (add_selection_callback) {
@@ -428,16 +352,16 @@ target_data_free (TargetCallbackData *target_data)
 }
 
 static const GtkActionEntry clipboard_entries[] = {
-  /* name, stock id */      { "Cut", GTK_STOCK_CUT,
-  /* label, accelerator */    NULL, NULL,
+  /* name, stock id */      { "Cut", NULL,
+  /* label, accelerator */    N_("Cu_t"), "<control>X",
   /* tooltip */               N_("Cut the selected text to the clipboard"),
                               G_CALLBACK (action_cut_callback) },
-  /* name, stock id */      { "Copy", GTK_STOCK_COPY,
-  /* label, accelerator */    NULL, NULL,
+  /* name, stock id */      { "Copy", NULL,
+  /* label, accelerator */    N_("_Copy"), "<control>C",
   /* tooltip */               N_("Copy the selected text to the clipboard"),
                               G_CALLBACK (action_copy_callback) },
-  /* name, stock id */      { "Paste", GTK_STOCK_PASTE,
-  /* label, accelerator */    NULL, NULL,
+  /* name, stock id */      { "Paste", NULL,
+  /* label, accelerator */    N_("_Paste"), "<control>V",
   /* tooltip */               N_("Paste the text stored on the clipboard"),
                               G_CALLBACK (action_paste_callback) },
   /* name, stock id */      { "Select All", NULL,
@@ -500,9 +424,9 @@ nemo_clipboard_real_set_up (gpointer target,
 		 connect_callbacks,
 		 disconnect_callbacks);
 
-	g_signal_connect (target, "focus_in_event",
+	g_signal_connect (target, "focus-in-event",
 			  G_CALLBACK (focus_changed_callback), target_data);
-	g_signal_connect (target, "focus_out_event",
+	g_signal_connect (target, "focus-out-event",
 			  G_CALLBACK (focus_changed_callback), target_data);
 	g_signal_connect (target, "destroy",
 			  G_CALLBACK (target_destroy_callback), target_data);
@@ -529,19 +453,6 @@ nemo_clipboard_set_up_editable (GtkEditable *target,
 					editable_select_all_callback,
 					editable_connect_callbacks,
 					editable_disconnect_callbacks);
-}
-
-void
-nemo_clipboard_set_up_text_view (GtkTextView *target,
-				     GtkUIManager *ui_manager)
-{
-	g_return_if_fail (GTK_IS_TEXT_VIEW (target));
-	g_return_if_fail (GTK_IS_UI_MANAGER (ui_manager));
-
-	nemo_clipboard_real_set_up (target, ui_manager, TRUE,
-					text_view_select_all_callback,
-					text_view_connect_callbacks,
-					text_view_disconnect_callbacks);
 }
 
 static GList *
@@ -585,13 +496,13 @@ nemo_clipboard_get_uri_list_from_selection_data (GtkSelectionData *selection_dat
 	    || gtk_selection_data_get_length (selection_data) <= 0) {
 		items = NULL;
 	} else {
-		guchar *data;
+		gchar *data;
 		/* Not sure why it's legal to assume there's an extra byte
 		 * past the end of the selection data that it's safe to write
 		 * to. But gtk_editable_selection_received does this, so I
 		 * think it is OK.
 		 */
-		data = (guchar *) gtk_selection_data_get_data (selection_data);
+		data = (gchar *) gtk_selection_data_get_data (selection_data);
 		data[gtk_selection_data_get_length (selection_data)] = '\0';
 		lines = g_strsplit (data, "\n", 0);
 		items = convert_lines_to_str_list (lines, cut);

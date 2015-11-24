@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Cosimo Cecchi <cosimoc@redhat.com>
  *
@@ -46,7 +45,7 @@ typedef struct _NemoToolbarClass NemoToolbarClass;
 
 typedef enum {
 	NEMO_TOOLBAR_MODE_PATH_BAR,
-	NEMO_TOOLBAR_MODE_LOCATION_BAR,
+	NEMO_TOOLBAR_MODE_LOCATION_ENTRY,
 } NemoToolbarMode;
 
 struct _NemoToolbar {
@@ -66,7 +65,7 @@ GtkWidget *nemo_toolbar_new (GtkActionGroup *action_group);
 
 gboolean  nemo_toolbar_get_show_location_entry (NemoToolbar *self);
 GtkWidget *nemo_toolbar_get_path_bar (NemoToolbar *self);
-GtkWidget *nemo_toolbar_get_location_bar (NemoToolbar *self);
+GtkWidget *nemo_toolbar_get_location_entry (NemoToolbar *self);
 
 void nemo_toolbar_set_show_main_bar (NemoToolbar *self,
 					 gboolean show_main_bar);

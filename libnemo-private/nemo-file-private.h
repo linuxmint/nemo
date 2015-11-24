@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Darin Adler <darin@bentspoon.com>
 */
@@ -227,6 +225,8 @@ struct NemoFileDetails
 	eel_boolean_bit filesystem_info_is_up_to_date : 1;
 
 	time_t trash_time; /* 0 is unknown */
+
+	gdouble search_relevance;
 
 	guint64 free_space; /* (guint)-1 for unknown */
 	time_t free_space_read; /* The time free_space was updated, or 0 for never */

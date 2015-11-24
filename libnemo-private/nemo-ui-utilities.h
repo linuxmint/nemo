@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Alexander Larsson <alexl@redhat.com>
 */
@@ -39,5 +38,9 @@ GtkAction * nemo_action_from_menu_item         (NemoMenuItem  *item,
 
 GdkPixbuf * nemo_ui_get_menu_icon              (const char        *icon_name,
                                                 GtkWidget         *parent_widget);
+char * nemo_escape_action_name                 (const char        *action_name,
+						    const char        *prefix);
+void   nemo_ui_frame_image                     (GdkPixbuf        **pixbuf);
+void   nemo_ui_frame_video                     (GdkPixbuf        **pixbuf);
 
 #endif /* NEMO_UI_UTILITIES_H */

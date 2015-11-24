@@ -3,6 +3,9 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Define to enable Zeitgeist support */
+#undef BUILD_ZEITGEIST
+
 /* Enable debug code */
 #undef ENABLE_DEBUG
 
@@ -11,6 +14,9 @@
 
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
+
+/* enable profiling */
+#undef ENABLE_PROFILING
 
 /* Define to enable Tracker support */
 #undef ENABLE_TRACKER
@@ -22,6 +28,9 @@
 /* the gettext translation domain */
 #undef GETTEXT_PACKAGE
 
+/* Define to build against gnome libs */
+#undef GNOME_BUILD
+
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #undef HAVE_BIND_TEXTDOMAIN_CODESET
 
@@ -31,7 +40,7 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to enable xmp support */
+/* Define to enable XMP support */
 #undef HAVE_EXEMPI
 
 /* Define to enable EXIF support */
@@ -73,9 +82,6 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define if strftime supports %E and %O modifiers. */
-#undef HAVE_STRFTIME_EXTENSION
-
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
@@ -100,10 +106,13 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Have Unity */
+#undef HAVE_UNITY
+
 /* Define to 1 if you have the <X11/XF86keysym.h> header file. */
 #undef HAVE_X11_XF86KEYSYM_H
 
-/* path for translations */
+/* Define the location where the catalogs will be installed */
 #undef LOCALEDIR
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
@@ -148,6 +157,3 @@
 #  undef WORDS_BIGENDIAN
 # endif
 #endif
-
-/* Define to empty if `const' does not conform to ANSI C. */
-#undef const

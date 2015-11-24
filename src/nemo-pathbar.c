@@ -13,9 +13,7 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -33,16 +31,13 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-trash-monitor.h>
-#include <libnemo-private/nemo-icon-dnd.h>
+#include <libnemo-private/nemo-canvas-dnd.h>
 
-#include "nemo-window.h"
-#include "nemo-window-private.h"
-#include "nemo-window-slot.h"
 #include "nemo-window-slot-dnd.h"
 
 enum {
     PATH_CLICKED,
-    PATH_SET,
+    PATH_EVENT,
     LAST_SIGNAL
 };
 
@@ -62,8 +57,6 @@ typedef enum {
 #define INITIAL_SCROLL_TIMEOUT   300
 
 static guint path_bar_signals [LAST_SIGNAL] = { 0 };
-
-static gboolean desktop_is_home;
 
 #define NEMO_PATH_BAR_ICON_SIZE 16
 #define NEMO_PATH_BAR_BUTTON_MAX_WIDTH 250
@@ -86,9 +79,6 @@ typedef struct {
     NemoFile *file;
     unsigned int file_changed_signal_id;
 
-    /* custom icon */ 
-    GdkPixbuf *custom_icon;
-
     char *xdg_icon;
 
     /* flag to indicate its the base folder in the URI */
@@ -102,8 +92,6 @@ typedef struct {
 } ButtonData;
 
 struct _NemoPathBarDetails {
-	GtkContainer parent;
-
 	GdkWindow *event_window;
  
 	GFile *root_path;
@@ -184,43 +172,6 @@ get_slider_button (NemoPathBar  *path_bar,
 }
 
 static void
-update_button_types (NemoPathBar *path_bar)
-{
-    GList *list;
-    GFile *path = NULL;
-
-    for (list = path_bar->priv->button_list; list; list = list->next) {
-        ButtonData *button_data;
-        button_data = BUTTON_DATA (list->data);
-        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button_data->button))) {
-            path = g_object_ref (button_data->path);
-            break;
-        }
-    }
-    if (path != NULL) {
-        nemo_path_bar_update_path (path_bar, path, TRUE);
-        g_object_unref (path);
-    }
-}
-
-
-static void
-desktop_location_changed_callback (gpointer user_data)
-{
-    NemoPathBar *path_bar;
-    
-    path_bar = NEMO_PATH_BAR (user_data);
-    
-    g_object_unref (path_bar->priv->desktop_path);
-    g_object_unref (path_bar->priv->home_path);
-    path_bar->priv->desktop_path = nemo_get_desktop_location ();
-    path_bar->priv->home_path = g_file_new_for_path (g_get_home_dir ());
-    desktop_is_home = g_file_equal (path_bar->priv->home_path, path_bar->priv->desktop_path);
-    
-    update_button_types (path_bar);
-}
-
-static void
 trash_state_changed_cb (NemoTrashMonitor *monitor,
                         gboolean state,
                         NemoPathBar *path_bar)
@@ -292,7 +243,7 @@ nemo_path_bar_slider_drag_motion (GtkWidget      *widget,
 
         path_bar->priv->drag_slider_timeout_for_up_button =
             widget == path_bar->priv->up_slider_button;
-    }
+	}
 }
 
 static void
@@ -340,6 +291,7 @@ nemo_path_bar_init (NemoPathBar *path_bar)
     gtk_widget_set_has_window (GTK_WIDGET (path_bar), FALSE);
     gtk_widget_set_redraw_on_allocate (GTK_WIDGET (path_bar), FALSE);
 
+    path_bar->priv->spacing = 0;
     path_bar->priv->up_slider_button = get_slider_button (path_bar, GTK_ARROW_LEFT);
     path_bar->priv->down_slider_button = get_slider_button (path_bar, GTK_ARROW_RIGHT);
     path_bar->priv->icon_size = NEMO_PATH_BAR_ICON_SIZE;
@@ -357,19 +309,13 @@ nemo_path_bar_init (NemoPathBar *path_bar)
     path_bar->priv->xdg_templates_path = get_xdg_dir (G_USER_DIRECTORY_TEMPLATES);
     path_bar->priv->xdg_videos_path = get_xdg_dir (G_USER_DIRECTORY_VIDEOS);
 
-    desktop_is_home = g_file_equal (path_bar->priv->home_path, path_bar->priv->desktop_path);
-
-    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-                  G_CALLBACK(desktop_location_changed_callback),
-                  path_bar);
-
     g_signal_connect_swapped (path_bar->priv->up_slider_button, "clicked", G_CALLBACK (nemo_path_bar_scroll_up), path_bar);
     g_signal_connect_swapped (path_bar->priv->down_slider_button, "clicked", G_CALLBACK (nemo_path_bar_scroll_down), path_bar);
 
-    g_signal_connect (path_bar->priv->up_slider_button, "button_press_event", G_CALLBACK (nemo_path_bar_slider_button_press), path_bar);
-    g_signal_connect (path_bar->priv->up_slider_button, "button_release_event", G_CALLBACK (nemo_path_bar_slider_button_release), path_bar);
-    g_signal_connect (path_bar->priv->down_slider_button, "button_press_event", G_CALLBACK (nemo_path_bar_slider_button_press), path_bar);
-    g_signal_connect (path_bar->priv->down_slider_button, "button_release_event", G_CALLBACK (nemo_path_bar_slider_button_release), path_bar);
+    g_signal_connect (path_bar->priv->up_slider_button, "button-press-event", G_CALLBACK (nemo_path_bar_slider_button_press), path_bar);
+    g_signal_connect (path_bar->priv->up_slider_button, "button-release-event", G_CALLBACK (nemo_path_bar_slider_button_release), path_bar);
+    g_signal_connect (path_bar->priv->down_slider_button, "button-press-event", G_CALLBACK (nemo_path_bar_slider_button_press), path_bar);
+    g_signal_connect (path_bar->priv->down_slider_button, "button-release-event", G_CALLBACK (nemo_path_bar_slider_button_release), path_bar);
 
     gtk_drag_dest_set (GTK_WIDGET (path_bar->priv->up_slider_button),
                0, NULL, 0, 0);
@@ -385,7 +331,7 @@ nemo_path_bar_init (NemoPathBar *path_bar)
 
     gtk_drag_dest_set (GTK_WIDGET (path_bar->priv->down_slider_button),
                0, NULL, 0, 0);
-    gtk_drag_dest_set_track_motion (GTK_WIDGET (path_bar->priv->up_slider_button), TRUE);
+    gtk_drag_dest_set_track_motion (GTK_WIDGET (path_bar->priv->down_slider_button), TRUE);
     g_signal_connect (path_bar->priv->down_slider_button,
               "drag-motion",
               G_CALLBACK (nemo_path_bar_slider_drag_motion),
@@ -431,9 +377,7 @@ nemo_path_bar_finalize (GObject *object)
 
     g_signal_handlers_disconnect_by_func (nemo_trash_monitor_get (),
                           trash_state_changed_cb, path_bar);
-    g_signal_handlers_disconnect_by_func (nemo_preferences,
-                          desktop_location_changed_callback,
-                          path_bar);
+
 
     G_OBJECT_CLASS (nemo_path_bar_parent_class)->finalize (object);
 }
@@ -489,7 +433,7 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
         gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
         height = MAX (height, child_height);
         *minimum = MAX (*minimum, child_min);
-        *natural = MAX (*natural, child_nat);
+		*natural = *natural + child_nat;
     }
     path_bar->priv->slider_width = MIN (height * 2 / 3 + 5, height);
     *minimum += path_bar->priv->slider_width * 2;
@@ -512,7 +456,7 @@ nemo_path_bar_get_preferred_height (GtkWidget *widget,
 
     for (list = path_bar->priv->button_list; list; list = list->next) {
         button_data = BUTTON_DATA (list->data);
-       gtk_widget_get_preferred_height (button_data->button, &child_min, &child_nat);
+        gtk_widget_get_preferred_height (button_data->button, &child_min, &child_nat);
 
         *minimum = MAX (*minimum, child_min);
         *natural = MAX (*natural, child_nat);
@@ -523,7 +467,6 @@ static void
 nemo_path_bar_update_slider_buttons (NemoPathBar *path_bar)
 {
     if (path_bar->priv->button_list) {
-
         GtkWidget *button;
 
         button = BUTTON_DATA (path_bar->priv->button_list->data)->button;
@@ -747,7 +690,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     if (direction == GTK_TEXT_DIR_RTL) {
         child_allocation.x = allocation->x + allocation->width;
         if (need_sliders || path_bar->priv->fake_root) {
-            child_allocation.x -= (path_bar->priv->slider_width);
+            child_allocation.x -= path_bar->priv->slider_width;
             up_slider_offset = allocation->width - path_bar->priv->slider_width;
         }
     } else {
@@ -801,7 +744,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     } 
     
     if (BUTTON_DATA (pathbar_root_button->data)->fake_root) {
-        path_bar->priv->fake_root = pathbar_root_button; 
+        path_bar->priv->fake_root = pathbar_root_button;
     } 
 	
     for (list = pathbar_root_button->next; list; list = list->next) {
@@ -809,7 +752,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         needs_reorder |= gtk_widget_get_child_visible (child) == TRUE;
         gtk_widget_set_child_visible (child, FALSE);
         if (BUTTON_DATA (list->data)->fake_root) {
-            path_bar->priv->fake_root = list; 
+            path_bar->priv->fake_root = list;
         } 
     }
 
@@ -842,8 +785,8 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     } else {
         needs_reorder |= gtk_widget_get_child_visible (path_bar->priv->up_slider_button) == TRUE;
         gtk_widget_set_child_visible (path_bar->priv->down_slider_button, FALSE); 
-        /* Reset Scrolling to have the left most folder in focus when resizing again */ 	
-        path_bar->priv->scrolled_root_button = NULL;
+		/* Reset Scrolling to have the left most folder in focus when resizing again */ 	
+		path_bar->priv->scrolled_root_button = NULL;
     }
 
     if (needs_reorder) {
@@ -926,7 +869,8 @@ nemo_path_bar_realize (GtkWidget *widget)
     attributes.event_mask |= 
         GDK_SCROLL_MASK |
         GDK_BUTTON_PRESS_MASK |
-        GDK_BUTTON_RELEASE_MASK;
+        GDK_BUTTON_RELEASE_MASK |
+		GDK_POINTER_MOTION_MASK;
     attributes_mask = GDK_WA_X | GDK_WA_Y;
 
     path_bar->priv->event_window = gdk_window_new (gtk_widget_get_parent_window (widget),
@@ -1164,15 +1108,15 @@ nemo_path_bar_class_init (NemoPathBarClass *path_bar_class)
         g_cclosure_marshal_VOID__OBJECT,
         G_TYPE_NONE, 1,
         G_TYPE_FILE);
-    path_bar_signals [PATH_SET] =
-        g_signal_new ("path-set",
+    path_bar_signals [PATH_EVENT] =
+        g_signal_new ("path-event",
         G_OBJECT_CLASS_TYPE (path_bar_class),
-        G_SIGNAL_RUN_FIRST,
-        G_STRUCT_OFFSET (NemoPathBarClass, path_set),
-        NULL, NULL,
-        g_cclosure_marshal_VOID__OBJECT,
-        G_TYPE_NONE, 1,
-        G_TYPE_FILE);
+        G_SIGNAL_RUN_FIRST  | G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET (NemoPathBarClass, path_event),
+        NULL, NULL, NULL,
+        G_TYPE_BOOLEAN, 2,
+        G_TYPE_FILE,
+		GDK_TYPE_EVENT);
 
      gtk_container_class_handle_border_width (container_class);
      g_type_class_add_private (path_bar_class, sizeof (NemoPathBarDetails));
@@ -1195,7 +1139,7 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
 
     if (path_bar->priv->ignore_click) {
         path_bar->priv->ignore_click = FALSE;
-        return;
+        return;   
     }
 
     gtk_widget_queue_resize (GTK_WIDGET (path_bar));
@@ -1212,8 +1156,8 @@ nemo_path_bar_scroll_down (NemoPathBar *path_bar)
     }
 
     if (down_button == NULL || down_button == path_bar->priv->button_list) {
-	/* No Button visible or we scroll back to curren folder reset scrolling */  
-	path_bar->priv->scrolled_root_button = NULL; 
+        /* No Button visible or we scroll back to curren folder reset scrolling */  
+        path_bar->priv->scrolled_root_button = NULL;
         return;
     }
   
@@ -1403,7 +1347,7 @@ nemo_path_bar_check_icon_theme (NemoPathBar *path_bar)
 }
 
 /* Public functions and their helpers */
-void
+static void
 nemo_path_bar_clear_buttons (NemoPathBar *path_bar)
 {
     while (path_bar->priv->button_list != NULL) {
@@ -1436,32 +1380,79 @@ button_clicked_cb (GtkWidget *button,
     g_signal_emit (path_bar, path_bar_signals [PATH_CLICKED], 0, button_data->path);
 }
 
-static NemoIconInfo *
-get_type_icon_info (ButtonData *button_data, gint scale)
+static gboolean
+button_event_cb (GtkWidget *button,
+		 GdkEventButton *event,
+		 gpointer   data)
+{
+        ButtonData *button_data;
+        NemoPathBar *path_bar;
+        GList *button_list;
+	gboolean retval;
+
+        button_data = BUTTON_DATA (data);
+        path_bar = NEMO_PATH_BAR (gtk_widget_get_parent (button));
+
+	if (event->type == GDK_BUTTON_PRESS) {
+		g_object_set_data (G_OBJECT (button), "handle-button-release",
+				   GINT_TO_POINTER (TRUE));
+	}
+
+	if (event->type == GDK_BUTTON_RELEASE &&
+	    !GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (button),
+						  "handle-button-release"))) {
+		return FALSE;
+	}
+
+        button_list = g_list_find (path_bar->priv->button_list, button_data);
+        g_assert (button_list != NULL);
+
+        g_signal_emit (path_bar, path_bar_signals [PATH_EVENT], 0, button_data->path, event, &retval);
+
+	return retval;
+}
+
+static void
+button_drag_begin_cb (GtkWidget *widget,
+		      GdkDragContext *drag_context,
+		      gpointer user_data)
+{
+	g_object_set_data (G_OBJECT (widget), "handle-button-release",
+			   GINT_TO_POINTER (FALSE));
+}
+
+static GIcon *
+get_gicon_for_mount (ButtonData *button_data)
+{
+	GIcon *icon;
+	GMount *mount;
+
+	icon = NULL;
+	mount = nemo_get_mounted_mount_for_root (button_data->path);
+
+	if (mount != NULL) {
+		icon = g_mount_get_icon (mount);
+		g_object_unref (mount);
+	}
+
+	return icon;
+}
+
+static GIcon *
+get_gicon (ButtonData *button_data)
 {
     switch (button_data->type)
         {
         case ROOT_BUTTON:
-            return nemo_icon_info_lookup_from_name (NEMO_ICON_FILESYSTEM,
-                                    NEMO_PATH_BAR_ICON_SIZE, scale);
-
+            return g_themed_icon_new (NEMO_ICON_FILESYSTEM);
         case HOME_BUTTON:
-            return nemo_icon_info_lookup_from_name (NEMO_ICON_HOME,
-                                    NEMO_PATH_BAR_ICON_SIZE, scale);
-
+            return g_themed_icon_new (NEMO_ICON_HOME);
         case DESKTOP_BUTTON:
-            return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP,
-                                    NEMO_PATH_BAR_ICON_SIZE, scale);
+            return g_themed_icon_new (NEMO_ICON_DESKTOP);            
         case XDG_BUTTON:
-            return nemo_icon_info_lookup_from_name (button_data->xdg_icon,
-                                NEMO_PATH_BAR_ICON_SIZE, scale);
-        case NORMAL_BUTTON:
-            if (button_data->is_base_dir) {
-                return nemo_file_get_icon (button_data->file,
-                                   NEMO_PATH_BAR_ICON_SIZE,
-                                   scale,
-                                   NEMO_FILE_ICON_FLAGS_NONE);
-            }
+            return g_themed_icon_new (button_data->xdg_icon); 
+        case MOUNT_BUTTON:
+            return get_gicon_for_mount (button_data);                                
         default:
             return NULL;
         }
@@ -1474,9 +1465,6 @@ button_data_free (ButtonData *button_data)
 {
     g_object_unref (button_data->path);
     g_free (button_data->dir_name);
-    if (button_data->custom_icon) {
-        g_object_unref (button_data->custom_icon);
-    }
     if (button_data->type == XDG_BUTTON) {
         g_free (button_data->xdg_icon);
     }
@@ -1557,34 +1545,24 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data, gint scale)
         }
     }
 
-    if (button_data->image != NULL) {
-        if (button_data->custom_icon) {
-            cairo_surface_t *surface;
-            surface = gdk_cairo_surface_create_from_pixbuf (button_data->custom_icon, scale, NULL);
-            g_object_set (GTK_IMAGE (button_data->image), "surface", surface, NULL);  
-            gtk_widget_show (GTK_WIDGET (button_data->image));
-        } else {
-            icon_info = get_type_icon_info (button_data, scale);
-
-            pixbuf = NULL;
-
-            if (icon_info != NULL) {
-                pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, NEMO_PATH_BAR_ICON_SIZE);
-                g_object_unref (icon_info);
-            }
-
-            if (pixbuf != NULL) {
-                cairo_surface_t *surface;
-                surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, scale, NULL);
-                g_object_set (GTK_IMAGE (button_data->image), "surface", surface, NULL);
-                gtk_widget_show (GTK_WIDGET (button_data->image));
-                g_object_unref (pixbuf);
-            } else {
-                gtk_widget_hide (GTK_WIDGET (button_data->image));
-            }
-        }
+    GIcon *icon = get_gicon (button_data);
+    if (icon != NULL) {
+        gtk_image_set_from_gicon (GTK_IMAGE (button_data->image), icon, GTK_ICON_SIZE_MENU);
+        gtk_widget_show (GTK_WIDGET (button_data->image));
+        g_object_unref (icon);
+    } else if (button_data->is_base_dir) {
+        icon_info = nemo_file_get_icon (button_data->file,
+                        NEMO_PATH_BAR_ICON_SIZE,
+                        scale,
+                        NEMO_FILE_ICON_FLAGS_NONE);
+        pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, NEMO_PATH_BAR_ICON_SIZE);
+        cairo_surface_t *surface;
+        surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, scale, NULL);
+        g_object_set (GTK_IMAGE (button_data->image), "surface", surface, NULL);
+        g_object_unref (pixbuf);
+    } else {
+        gtk_widget_hide (GTK_WIDGET (button_data->image));
     }
-
 }
 
 static void
@@ -1606,92 +1584,20 @@ nemo_path_bar_update_button_state (ButtonData *button_data,
     }
 }
 
-static gboolean
-setup_file_path_mounted_mount (GFile *location, ButtonData *button_data, gint scale)
-{
-    GVolumeMonitor *volume_monitor;
-    GList *mounts, *l;
-    GMount *mount;
-    gboolean result;
-    GIcon *icon;
-    NemoIconInfo *info;
-    GFile *root, *default_location;
-
-    result = FALSE;
-    volume_monitor = g_volume_monitor_get ();
-    mounts = g_volume_monitor_get_mounts (volume_monitor);
-    for (l = mounts; l != NULL; l = l->next) {
-        mount = l->data;
-        if (g_mount_is_shadowed (mount)) {
-            continue;
-        }
-        if (result) {
-            continue;
-        }
-        root = g_mount_get_root (mount);
-        if (g_file_equal (location, root)) {
-            result = TRUE;
-            /* set mount specific details in button_data */
-            if (button_data) {
-                icon = g_mount_get_icon (mount);
-                if (icon == NULL) {
-                    icon = g_themed_icon_new (NEMO_ICON_FOLDER);
-                }
-                info = nemo_icon_info_lookup (icon, NEMO_PATH_BAR_ICON_SIZE, scale);
-                g_object_unref (icon);
-                button_data->custom_icon = nemo_icon_info_get_pixbuf_at_size (info, NEMO_PATH_BAR_ICON_SIZE);
-                g_object_unref (info);
-                button_data->dir_name = g_mount_get_name (mount);
-                button_data->type = MOUNT_BUTTON;
-                button_data->fake_root = TRUE;
-            }
-            g_object_unref (root);
-            break;
-        }
-        default_location = g_mount_get_default_location (mount);
-        if (!g_file_equal (default_location, root) &&
-            g_file_equal (location, default_location)) {
-            result = TRUE;
-            /* set mount specific details in button_data */
-            if (button_data) {
-                icon = g_mount_get_icon (mount);
-                if (icon == NULL) {
-                    icon = g_themed_icon_new (NEMO_ICON_FOLDER);
-                }
-                info = nemo_icon_info_lookup (icon, NEMO_PATH_BAR_ICON_SIZE, scale);
-                g_object_unref (icon);
-                button_data->custom_icon = nemo_icon_info_get_pixbuf_at_size (info, NEMO_PATH_BAR_ICON_SIZE);
-                g_object_unref (info);
-                button_data->type = DEFAULT_LOCATION_BUTTON;
-                button_data->fake_root = TRUE;
-            }
-            g_object_unref (default_location);
-            g_object_unref (root);
-            break;
-        }
-        g_object_unref (default_location);
-        g_object_unref (root);
-    }
-    g_list_free_full (mounts, g_object_unref);
-    return result;
-}
-
 static void
 setup_button_type (ButtonData       *button_data,
            NemoPathBar  *path_bar,
            GFile *location)
 {
+    GMount *mount;
+
     if (nemo_is_root_directory (location)) {
         button_data->type = ROOT_BUTTON;
     } else if (nemo_is_home_directory (location)) {
         button_data->type = HOME_BUTTON;
         button_data->fake_root = TRUE;
     } else if (nemo_is_desktop_directory (location)) {
-        if (!desktop_is_home) {
-            button_data->type = DESKTOP_BUTTON;
-        } else {
-            button_data->type = NORMAL_BUTTON;
-        }
+        button_data->type = DESKTOP_BUTTON;
     } else if (path_bar->priv->xdg_documents_path != NULL && g_file_equal (location, path_bar->priv->xdg_documents_path)) {
         button_data->type = XDG_BUTTON;
         button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_DOCUMENTS);
@@ -1713,9 +1619,11 @@ setup_button_type (ButtonData       *button_data,
     } else if (path_bar->priv->xdg_public_path != NULL && g_file_equal (location, path_bar->priv->xdg_public_path)) {
         button_data->type = XDG_BUTTON;
         button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_PUBLIC_SHARE);
-    } else if (setup_file_path_mounted_mount (location, button_data,
-                                              gtk_widget_get_scale_factor (GTK_WIDGET (path_bar)))) {
-        /* already setup */
+    } else if ((mount = nemo_get_mounted_mount_for_root (location)) != NULL) {
+        button_data->dir_name = g_mount_get_name (mount);
+        button_data->type = MOUNT_BUTTON;
+        button_data->fake_root = TRUE;
+        g_object_unref (mount);
     } else {
         button_data->type = NORMAL_BUTTON;
     }
@@ -1844,12 +1752,15 @@ button_data_file_changed (NemoFile *file,
     } else if (nemo_file_is_gone (file)) {
         gint idx, position;
 
-        /* if the current or a parent location are gone, don't do anything, as the view
-         * will get the event too and call us back.
+        /* if the current or a parent location are gone, clear all the buttons,
+         * the view will set the new path.
          */
         current_location = nemo_file_get_location (current_button_data->file);
 
-        if (g_file_has_prefix (location, current_location)) {
+        if (g_file_has_prefix (current_location, location) ||
+            g_file_equal (current_location, location)) {
+        	nemo_path_bar_clear_buttons (path_bar);
+        } else if (g_file_has_prefix (location, current_location)) {
             /* remove this and the following buttons */
             position = g_list_position (path_bar->priv->button_list,
                     g_list_find (path_bar->priv->button_list, button_data));
@@ -1958,6 +1869,9 @@ make_directory_button (NemoPathBar  *path_bar,
                                        gtk_widget_get_scale_factor (GTK_WIDGET (path_bar)));
 
     g_signal_connect (button_data->button, "clicked", G_CALLBACK (button_clicked_cb), button_data);
+	g_signal_connect (button_data->button, "button-press-event", G_CALLBACK (button_event_cb), button_data);
+	g_signal_connect (button_data->button, "button-release-event", G_CALLBACK (button_event_cb), button_data);
+	g_signal_connect (button_data->button, "drag-begin", G_CALLBACK (button_drag_begin_cb), button_data);
     g_object_weak_ref (G_OBJECT (button_data->button), (GWeakNotify) button_data_free, button_data);
 
     setup_button_drag_source (button_data);
@@ -2037,7 +1951,7 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
                    GFile *file_path,
                    gboolean emit_signal)
 {
-    NemoFile *file, *parent_file;
+    NemoFile *file;
     gboolean first_directory, last_directory;
     gboolean result;
     GList *new_buttons, *l, *fake_root;
@@ -2049,7 +1963,6 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
     fake_root = NULL;
     result = TRUE;
     first_directory = TRUE;
-    last_directory;
     new_buttons = NULL;
     current_button_data = NULL;
 
@@ -2058,6 +1971,8 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
     gtk_widget_push_composite_child ();
 
     while (file != NULL) {
+        NemoFile *parent_file;
+
         parent_file = nemo_file_get_parent (file);
         last_directory = !parent_file;
         button_data = make_directory_button (path_bar, file, first_directory, last_directory);
@@ -2098,7 +2013,7 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
     path_bar->priv->current_path = g_object_ref (file_path);
     path_bar->priv->current_button_data = current_button_data;
 
-    g_signal_emit (path_bar, path_bar_signals [PATH_SET], 0, file_path);
+    child_ordering_changed (path_bar);
 
     return result;
 }
@@ -2126,24 +2041,3 @@ nemo_path_bar_set_path (NemoPathBar *path_bar, GFile *file_path)
 
     return nemo_path_bar_update_path (path_bar, file_path, TRUE);
 }
-
-GFile *
-nemo_path_bar_get_path_for_button (NemoPathBar *path_bar,
-                       GtkWidget       *button)
-{
-    GList *list;
- 
-    g_return_val_if_fail (NEMO_IS_PATH_BAR (path_bar), NULL);
-    g_return_val_if_fail (GTK_IS_BUTTON (button), NULL);
-
-    for (list = path_bar->priv->button_list; list; list = list->next) {
-        ButtonData *button_data;
-        button_data = BUTTON_DATA (list->data);
-        if (button_data->button == button) {
-            return g_object_ref (button_data->path);
-        }
-    }
-
-    return NULL;
-}
-

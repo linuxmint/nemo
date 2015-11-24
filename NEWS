@@ -1,3 +1,486 @@
+Nemo merged with changes in Nautilus 3.12.2:
+
+Changes:
+* Don't resolve symlinks before launching an application
+* Fix a crasher when switching location out of trash
+* Fix a crasher when enumerating windows (Robert Ancell)
+* Fix a crasher when listing bookmarks (Robert Ancell)
+* Fix arrow direction in connect server dialog for RTL (Yosef Or Boczko)
+* Use spaces between em dashes in file operations (Ross Lagerwall)
+* Do not use legacy emblem names (David King)
+* Sync the GTK+ setting for 'sort-directories-first' (Matthias Clasen)
+
+Revert: 
+* Use headerbar in bookmarks dialog (Yosef Or Boczko)
+
+Nemo merged with changes in Nautilus  3.11.92:
+
+Changes:
+* Only show one button for mixed Video CD/Video DVD media
+* Add a force-desktop action to NautilusApplication (Ray Strode)
+
+Nemo merged with changes in Nautilus  3.11.90:
+
+Changes:
+* Fix tab label not being update on removals or renames
+* Fix minimum size requisition of Nautilus windows
+* Fix high CPU usage when searching with criteria (Daniel Wyatt)
+* Fix unwanted search entries on the desktop (Marc Deslauriers)
+* Fix some critical assertions
+* Fix a crash when selecting an unsupported custom image (Nelson Benítez León)
+* Remove Set as Background action on interactive DND
+ Add film strip in nautilus rather than in totem (Bastien Nocera)
+
+Revert: 
+* Port to GtkHeaderBar (Yosef Or Boczko, Matthias Clasen)
+
+Nemo merged with changes in Nautilus  3.11.3:
+
+Changes:
+* Don't perform deep counts on regular files (Ross Lagerwall)
+* Fix overlapping filenames on hover in canvas view (Manuel Bachmann)
+* Use search bar style for the query editor (William Jon McCann)
+* Support building against Tracker 0.18 (Dominique Leuenberger)
+
+Nemo merged with changes in Nautilus  3.11.2:
+
+Changes:
+* Improve tab labels (William Jon McCann)
+
+Nemo merged with changes in Nautilus  3.10.1:
+
+Changes:
+* Fix crash on file copy
+
+Nemo merged with changes in Nautilus 3.10.0:
+
+Changes:
+* nothing changed
+
+Nemo merged with changes in Nautilus 3.9.92:
+
+Changes:
+* Use new gtk_drag_begin_full API (Jasper St. Pierre)
+* Increase default window width to fit four icons (Michael Catanzaro)
+* Don't filter out NoDisplay applications from "Open With..."
+* Fix desktop file categories (Elad Alfassa)
+
+Nemo merged with changes in Nautilus 3.9.91:
+
+Changes:
+* Don't present redundant options for operations on single
+  files (William Kunkel)
+* Fix desktop window for newer GTK+ client side decorations
+  (Christian Hergert, Matthias Clasen)
+* Fix double menu when right clicking on the pathbar (Stefano Facchini)
+
+Revert:
+* Fix headerbar appearance with latest GTK+ (Yosef or Boczko)
+
+Nemo merged with changes in Nautilus 3.9.90:
+
+Changes:
+* Fix support for HiDpi displays
+* Replace control characters when fixing filenames for FAT
+* Fix crash while dragging an expander in list view
+* Don't use som deprecated GtkStock 
+* Fix "Reset to Defaults" not resetting columns in List
+  view (Garret Regier)
+* Use more friendly strings in the Location column in
+  List view (Garret Regier)
+* Add Access Date column in Recent (Garret Regier)
+* Add Location column by default in search views (Garret Reiger)
+* Fix search not remembering per-view settings (Garret Reiger)
+* Fix hidden files setting not correctly refreshing on
+  change (Srinivasa Ragavan)
+* Fix incorrect click target in canvas view under certain
+  circumstances (Srinivasa Ragavan)
+* Fix DnD glitches on pathbar buttons (Nelson Benitez Leon)
+* Show invalid filename dialog when copying, if required (Nelson Benitez Leon)
+
+Revert:
+* Use new GTK titlebar look (Yosef Or Boczko)
+* Remove of menu icons 
+
+Nemo merged with changes in Nautilus 3.9.3:
+
+Changes:
+* Shade rubberbands on the desktop using the wallpaper color (Ted Gould)
+* Enter location bar upon entering "~" (Garrett Regier)
+* Use Shift+Ctrl+Z, not Ctrl+Y, for Redo (Adam Dingle)
+* Remove multicontext menu items from editable entries
+
+Revert:
+* Port to GtkPlacesSidebar (Federico Mena Quintero)
+
+Nemo merged with changes in Nautilus 3.8.2:
+
+Changes:
+* Don't grab focus to search entry needlessly (Rui Matos)
+* Increase default size to fit 4 columns of icons (Michael Catanzaro)
+* Remove no-longer-existing keys from GConf conversion
+* Change 'x-nautilus-search:' To 'Search' in tooltips (Ting-Wei Lan)
+
+Nemo merged with changes in Nautilus 3.8.1:
+
+Changes:
+* Use a consistent name for applications in the Open With context menu
+* Don't follow symbolic links when searching recursively
+* Increase default sidebar width
+* Fix resetting view to default preferences not working (Michael Wood)
+* Fix behavior of search entry with external Input Methods (Rui Matos)
+* Fix partial ranking order of search results
+* Fix move of special icons on the Desktop triggering file operations
+* Fix copy action not working in Recent
+
+Nemo merged with changes in Nautilus 3.8.0:
+
+Changes:
+* Fix inconsistency in handling of NoDisplay=true applications
+
+Nemo merged with changes in Nautilus 3.7.92:
+
+Changes:
+* Ensure target directories exist when restoring trash contents (3.8)
+* Export non-VFS URIs to DnD selections
+* Fix double tap not working on certain touchscreen devices
+* Fix inability to move desktop icons to non-primary displays in certain
+  configurations
+
+Revert: 
+* Hide Change Background desktop action g-c-c is not installed
+* Fix for removal of org.gnome.desktop.background draw-background setting
+
+Nemo merged with changes in Nautilus 3.7.91:
+
+Changes:
+* Export an OpenLocations property over DBus (Marco Trevisan)
+* Add a way to reuse and raise existing windows already opened to a
+  given location (Marco Trevisan)
+* Use an ARGB window for the desktop (Matthias Clasen)
+* Stop drawing the desktop background
+* Register our GtkApplication with gnome-session
+* Fix Tracker search not working correctly
+* Fix activation of search provider results
+* Fix nautilus --quit from terminal not working
+
+Nemo merged with changes in Nautilus 3.7.90:
+
+Changes:
+* Add a "Connect to Server" item in the Network section of the sidebar
+* Add a "Format..." item in volume context menus in the sidebar
+* Fix accelerators not showing up in gear and view menus
+
+Revert: 
+* Add back a Treeview option for list view. This is off by default, and
+  is backed by a checkbox in the Preferences dialog
+* Use G_APP_INFO_CREATE_NEEDS_TERMINAL instead of handrolled
+  code (William Jon McCann)
+
+Nemo merged with changes in Nautilus 3.7.5:
+
+Changes:
+* Switch to hovered locations on DnD (William Jon McCann)
+* Support a --force-desktop commandline option for classic mode
+* Use a better position for navigation button popup menus
+* Fix many memory leaks (Pavel Vasin)
+* Fix a crasher when a file in trash has reserved characters in the filename
+* Fix a crasher when closing the sidebar immediately after construction
+* Fix a crasher closing the properties dialog while calculating folder size
+* Fix backup files showing up in search provider results
+* Fix floating bar buttons being added twice
+
+Revert:
+* Add a separate desktop file for classic mode integration
+
+Nemo merged with changes in Nautilus 3.7.4:
+
+Changes:
+* Support a --select commandline option to force selection of the passed-in URI
+* Add source hints to notifications (Matthias Clasen)
+* Modernize build infrastructure (Javier Jardon)
+* Fix a crasher in the Shell search provider
+
+Revert: 
+* Use public GTK-a11y support instead of our own hacks
+
+Nemo merged with changes in Nautilus 3.7.3:
+
+Changes:
+* Update search provider to org.gnome.Shell.SearchProvider2 interface
+* Rely on GIO to parse ".hidden" files
+* Consistently use unicode ellipsis instead of three periods (Jeremy Bicha)
+* Use a different label for removing a file from "Recent" (Paolo Borelli)
+* Restore the previous behavior wrt. framing for custom icons
+* Share the "show hidden" GSetting option with the GTK+
+  file chooser (Timothy Arceri)
+* Fix missing unmount sync notification under some circumstances
+* Fix infinite loop while deep counting the size of "/" (Phillip Susi)
+* Fix wrong filename when restoring file from trash (Timothy Arceri)
+
+Nemo merged with changes in Nautilus 3.7.2:
+
+Changes:
+* Request to render larger thumbnails by default
+* Don't quote the current location name in search bar
+* Use "Run" in menus when launchine executables
+
+Rejected:
+* Fix stray Empty Document item in New Document menu
+
+Nemo merged with changes in Nautilus 3.6.3.
+
+Changes:
+* Fix links on remote volumes not activating default action
+* Fix duplicated query editor filter rows when changing search location
+* Fix search toolbar disappearing with very long folder names
+* Fix missing Trash action after "Recent" was visited
+* Fix missing frame around thumbnails for some zoom factors
+* Fix crash when unmounting remote volumes
+
+Nemo merged with changes in Nautilus 3.6.2.
+
+Changes:
+* Open default location for remote shares when mounting
+* Resolve symbolic links before launching a file
+* Fix missing search results from Tracker for names that contain hyphens
+* Fix black input field when renaming a file in icon view with XIM enabled
+* Fix missing item selection in the sidebar when starting up
+* Fix wrong return location when unmounting local and remote mounts
+* Fix search tabs changing location to $HOME on tab switch
+* Fix search toggle button state inconsistent when switching between tabs
+* Fix search string being eaten by a hidden entry under certain circumstances
+* Fix missing tooltips on stock toolbar buttons
+* Fix crasher when using the Tracker engine from the Shell search provider
+* Fix crasher in Shell search provider
+* Fix crasher when unmounting a volume under certain circumstances
+
+Nemo merged with changes in Nautilus 3.7.1.
+
+Changes:
+* Turn on again recursive search for the simple engine
+* Enable incremental loading for search directories
+* Add extra information to image properties page
+* Show free space pie chart for the local root filesystem
+* Resolve symbolic links before launching a file
+* Avoid sync I/O when reading bookmark locations
+* Don't add non-existent XDG folders to the sidebar
+* Don't offer to remove built-in XDG folder bookmarks
+* Fix black input field when renaming a file in icon view with XIM enabled
+* Fix wrong return location when unmounting a remote mount
+* Fix notebook tabs not properly switching after timeout when hovered
+* Fix search toggle button state inconsistent when switching between tabs
+* Fix crasher when using the Tracker engine from the Shell search provider
+* Fix crasher in Shell search provider
+* Fix crasher when unmounting a volume under certain circumstances
+* Switch to feshly opened notebook tabs 
+
+Nemo merged with changes in Nautilus 3.6.1.
+
+Changes:
+* Fix floating bar not disappearing on search finish
+* Fix fullcolor icons appearing in the pathbar for mount roots
+* Fix drag and drop of multiple rows in list view
+* Fix search relevance not being applied correctly when searching
+* Fix sidebar visibility switch applying to all windows
+* Fix search location when moving to a search directory in Back/Forward
+  history
+* Fix missing search results with non-ASCII characters
+* Fix Home/Trash not showing up in shell provider results
+* Fix startup notification not working when opening multiple windows
+* Fix search results not focusing when activated from the Shell
+* Fix error dialog not showing up when entering a non-existant location
+  in Connect to Server
+* Fix inability to open files after cancelling a rename in list view under
+  some circumstances
+* Fix desktop icons not following the primary monitor workarea when multihead
+  is used with the desktop enabled
+* Fix crasher when search string changes too fast
+* Fix crasher when enabling search while loading a directory
+* Fix crasher when trying to open a saved search file
+* Fix crasher when Tracker is installed but not running
+* Fix crasher in the shell search provider for bookmarks/mounts with an
+  empty name
+
+Nemo merged with changes in Nautilus 3.6.0.
+
+Changes:
+* Fix toggling of hidden files visibility in searches
+* Fix base directory appearing in search results
+* Fix missing search results under some locales
+* Fix unmounted mounts showing in shell search provider results
+* Fix a crasher when a window is closed while the view is loading
+
+Nemo merged with changes in Nautilus 3.5.92.
+
+Changes:
+* Add a Shell search results provider
+* Add a NautilusDirectory-based search engine implementation for network
+  directories
+* Improve performance and stability of the search engine
+* Change the Type column to only show basic type information
+* Preserve view selection when exiting search
+* Use an icon for the location entry
+* Fix wrong order of files when searching in canvas view
+* Fix inability to drop on current directory in list view
+* Fix crash when trying to undo failed directory creations
+* Fix positioning of detached tabs
+* Fix symlink creation for remote shares
+* Fix duplicate entries in the sidebar
+* Fix inability to clear entry in Connect to Server dialog
+* Fix view selector flashing while switching views
+* Plug a number of memory leaks
+* Tweak the color scheme for the pie chart in mount properties
+
+Rejected:
+* Remove the SELinux context column for list view
+
+Nemo merged with changes in Nautilus 3.5.91.
+
+Changes:
+* New design for the Connect to Server dialog
+* Cleanup icon view caption strings
+* Fix wrong zoom level restored at startup
+* Fix unparented mount/eject error dialogs
+* Fix drag and drop for unwritable locations
+* Fix stray templates bar when no templates directory is defined
+* Fix item count not updating in realtime for directories in Properties
+* Fix missing history context menu on navigation buttons
+* Fix missing Create Link context action
+* Fix missing frame around custom icons
+* Fix broken behavior with multiline filenames
+* Plug a number of memory leaks
+
+
+Rejected:
+* Follow 12h/24h GSettings preference for view date display
+* Add paste and location properties actions to the gear menu
+* Use symbolic icons in the sidebar for drives and mounts
+* Fix Open With menu showing for apps that don't support URIs and files
+* Fix missing keybindings for Back/Forward/Up/Go Home
+* Remove context menu on blank list view space
+
+Nemo merged with changes in Nautilus 3.5.90.
+
+Changes:
+* Add cluebars for Templates and Scripts special directories
+* Add ability to reorder bookmarks
+* Improve strings in the Autorun prompt
+* Improve error message strings
+* Improve the image Properties page
+* Improve the Permissions page in the Properties window
+* Improve the layout of the Bookmarks dialog
+* Use the dropped text paragraph as name when creating new files
+  using DnD of text snippets
+* Use double quotes instead of ASCII quotes for filenames
+* Remove support for Manual layouting in icon views outside of Desktop
+* Fix segfault when no search results are found
+
+Rejected:
+* Reorganize application and gear menu, and add a menu for view actions
+* Add a View options selector to the toolbar
+* Change default action for executable text files to Display
+* Change the view mode and zoom level to be per-window instead of per-folder
+* Remove the Octal permissions list view column
+
+
+Nemo merged with changes in Nautilus 3.5.5.
+
+Changes:
+* Combine results from both search providers
+* Use a ranking algorithm for search results
+* Preselect first search result
+* Improve styling for the search query editor
+* Fix previewers not being activated correctly
+
+Rejected:
+* Add a keybinding for the gear menu
+
+
+Nemo merged with changes in Nautilus 3.5.4. 
+
+Changes:
+* Add a notification while ejecting volumes
+* List view:
+  - Use a better default column order
+  - Change some list column names
+* Search:
+  - Combine the search bar and the query editor
+  - Tracker engine performance improvements and fixes
+* Sidebar:
+  - Add a recent files place
+* Fix loading string not disappearing in image properties on load
+
+Rejected:
+* List view:
+  - New date format display
+  - Use a list model instead of a tree model for list view
+  - Use 32px icons by default
+* Search:
+  - "Just type" search
+* Sidebar:
+  - Use symbolic icons
+  - Improve order of the items
+* Toolbar:
+  - Change toolbar layout to the GNOME 3 style
+  - Don't show titlebar when maximized
+  - Use a linked style for the pathbar
+* Menus:
+  - Migrate the menubar to a gear menu
+  - Remove "Go" menu
+  - Remove "Bookmarks" menu
+* Remove "Text beside icons" option for icon view
+
+
+Nemo merged with changes in Nautilus 3.5.3. 
+
+Changes:
+* Fix crasher after ejecting a volume from the sidebar
+* Fix possible crasher when cancelling a rename operation
+* Fix accessibility implementation of rename entries and icon view
+
+Rejected:
+* Fix DnD not working on sidebar bookmarks
+* Fix thumbnails failing to display in icon view
+* Fix crasher on gtk-shell-shows-app-menu GtkSetting change
+* Use GtkSearchEntry
+
+
+Nemo merged with changes in Nautilus 3.5.2. 
+
+Changes:
+* Add a way to create a new directory for selection
+* Don't pack multiple x-content bars in the view
+* Show icons x-content bar application launchers
+* Fix pathbar buttons disappearing for too long titles
+* Remove markup from GtkBuilder strings
+
+Rejected:
+* Remove statusbar
+* Remove "Go->Computer"
+* Remove compact view
+* Remove extra panes and tree sidebar
+* Fix sidebar typeahead find being triggered
+* Don't show old 'note' emblems
+
+
+Nemo merged with changes in Nautilus 3.5.1. 
+
+Changes:
+* Add support for AFP shares in the Connect to Server dialog
+* Don't remove selection when clicking on a row out of name boundaries
+* Fix a wrapping issue with numeric strings in some circumstances
+* Fix rename field selection color for backdrop state
+* Don't select all icons on Ctrl+A when the search entry is focused
+* Remove desktop-is-home-dir GSetting
+
+Rejected: 
+* Add an application menu
+* Don't show sliders up to the file system root in the pathbar
+* Don't remove selection when clicking on a row out of name boundaries
+* Remove custom accel map loading/saving
+
+
 Development: 1/22/2013:
 
 - Breadcrumbs:  Stylable by themes, see src/nemo-styles-fallback.css for default style information.

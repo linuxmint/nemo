@@ -16,9 +16,7 @@
    General Public License for more details.
    
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
    
    Authors: Ettore Perazzoli <ettore@gnu.org>,
             Pavel Cisler <pavel@eazel.com>
@@ -107,7 +105,7 @@ void nemo_file_operations_unmount_mount (GtkWindow                      *parent_
 					     gboolean                        check_trash);
 void nemo_file_operations_unmount_mount_full (GtkWindow                 *parent_window,
 						  GMount                    *mount,
-                          GMountOperation           *mount_operation,
+						  GMountOperation           *mount_operation,
 						  gboolean                   eject,
 						  gboolean                   check_trash,
 						  NemoUnmountCallback    callback,

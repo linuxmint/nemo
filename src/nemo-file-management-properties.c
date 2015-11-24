@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Jan Arne Petersen <jpetersen@uni-bonn.de>
 */
@@ -47,8 +46,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SORT_ORDER_WIDGET "sort_order_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET "date_format_combobox"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_TEXT_WIDGET "preview_text_combobox"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET "preview_image_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FILES_WIDGET "preview_image_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET "size_prefixes_combobox"
 
@@ -58,7 +56,6 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET "compact_layout_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET "labels_beside_icons_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ALL_COLUMNS_SAME_WIDTH "all_columns_same_width_checkbutton"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET "always_use_browser_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET "trash_confirm_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET "trash_delete_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SWAP_TRASH_DELETE "swap_trash_binding_checkbutton"
@@ -233,9 +230,9 @@ nemo_file_management_properties_dialog_response_cb (GtkDialog *parent,
 							int response_id,
 							GtkBuilder *builder)
 {
-    if (response_id == GTK_RESPONSE_CLOSE) {
-        gtk_widget_destroy (GTK_WIDGET (parent));
-    }
+	if (response_id == GTK_RESPONSE_CLOSE) {
+		gtk_widget_destroy (GTK_WIDGET (parent));
+	}
 }
 
 static void
@@ -338,8 +335,8 @@ icon_captions_changed_callback (GtkComboBox *combo_box,
 	}
 	g_ptr_array_add (captions, NULL);
 
-	g_settings_set_strv (nemo_icon_view_preferences,
-			     NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+	g_settings_set_strv (nemo_canvas_view_preferences,
+			     NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS,
 			     (const char **)captions->pdata);
 	g_ptr_array_free (captions, TRUE);
 }
@@ -382,7 +379,7 @@ update_icon_captions_from_settings (GtkBuilder *builder)
 	char **captions;
 	int i, j;
 
-	captions = g_settings_get_strv (nemo_icon_view_preferences, NEMO_PREFERENCES_ICON_VIEW_CAPTIONS);
+	captions = g_settings_get_strv (nemo_canvas_view_preferences, NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS);
 	if (captions == NULL)
 		return;
 
@@ -413,8 +410,8 @@ nemo_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *buil
 	int i;
 	gboolean writable;
 
-	writable = g_settings_is_writable (nemo_icon_view_preferences,
-					   NEMO_PREFERENCES_ICON_VIEW_CAPTIONS);
+	writable = g_settings_is_writable (nemo_canvas_view_preferences,
+					   NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS);
 
 	columns = nemo_get_common_columns ();
 
@@ -442,27 +439,27 @@ create_date_format_menu (GtkBuilder *builder)
 {
 	GtkComboBoxText *combo_box;
 	gchar *date_string;
-	time_t now_raw;
-	struct tm* now;
+	GDateTime *now;
 
 	combo_box = GTK_COMBO_BOX_TEXT
 		(gtk_builder_get_object (builder,
 					 NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET));
 
-	now_raw = time (NULL);
-	now = localtime (&now_raw);
+	now = g_date_time_new_now_local ();
 
-	date_string = eel_strdup_strftime ("%c", now);
+	date_string = g_date_time_format (now, "%c");
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
 
-	date_string = eel_strdup_strftime ("%Y-%m-%d %H:%M:%S", now);
+	date_string = g_date_time_format (now, "%Y-%m-%d %H:%M:%S");
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
 
-	date_string = eel_strdup_strftime (_("today at %-I:%M:%S %p"), now);
+	date_string = g_date_time_format (now, _("today at %-I:%M:%S %p"));
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
+
+	g_date_time_unref (now);
 }
 
 static void
@@ -507,7 +504,7 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 
 	g_signal_connect (chooser, "changed",
 			  G_CALLBACK (columns_changed_callback), chooser);
-	g_signal_connect (chooser, "use_default",
+	g_signal_connect (chooser, "use-default",
 			  G_CALLBACK (use_default_callback), chooser);
 
 	gtk_widget_show (chooser);
@@ -526,6 +523,19 @@ bind_builder_bool (GtkBuilder *builder,
 			 gtk_builder_get_object (builder, widget_name),
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
+
+#if GTK_CHECK_VERSION(3, 12, 0)
+static void
+bind_builder_bool_oneway (GtkBuilder *builder,
+			  GSettings *settings,
+			  const char *widget_name,
+			  const char *prefs)
+{
+	g_settings_bind (settings, prefs,
+			 gtk_builder_get_object (builder, widget_name),
+			 "active", G_SETTINGS_BIND_SET);
+}
+#endif
 
 static void
 bind_builder_bool_inverted (GtkBuilder *builder,
@@ -593,7 +603,6 @@ bind_builder_enum (GtkBuilder *builder,
 				      enum_set_mapping,
 				      enum_values, NULL);
 }
-
 
 typedef struct {
 	const guint64 *values;
@@ -744,7 +753,7 @@ setup_quick_renames (GtkBuilder *builder)
 {
 	gboolean enabled = FALSE;
 	enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (W (click_behavior_components[1])));
-	if(enabled==FALSE){
+	if (enabled == FALSE) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), FALSE);
 	}
 	gtk_widget_set_sensitive (GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN)), enabled);
@@ -754,10 +763,10 @@ static void
 connect_quick_renames (GtkBuilder *builder)
 {
 	GtkRadioButton *w;
-	w=GTK_RADIO_BUTTON(W(click_behavior_components[0]));
+	w = GTK_RADIO_BUTTON (W (click_behavior_components[0]));
  		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
 
-	w=GTK_RADIO_BUTTON(W(click_behavior_components[1]));
+	w = GTK_RADIO_BUTTON (W (click_behavior_components[1]));
 		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
 }
 
@@ -769,15 +778,24 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 	/* setup UI */
 	nemo_file_management_properties_size_group_create (builder,
 							       "views_label",
-							       5);
+							       4);
 	nemo_file_management_properties_size_group_create (builder,
 							       "captions_label",
 							       3);
 	nemo_file_management_properties_size_group_create (builder,
 							       "preview_label",
-							       4);
+							       3);
 	create_date_format_menu (builder);
 
+	/* setup preferences */
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
+			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+#if GTK_CHECK_VERSION(3, 12, 0)
+	bind_builder_bool_oneway (builder, gtk_filechooser_preferences,
+				  NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
+			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+#endif
 
 	/* nemo patch */
 	bind_builder_bool (builder, nemo_preferences,
@@ -820,24 +838,18 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
 	/* setup preferences */
-    bind_builder_bool (builder, nemo_icon_view_preferences,
-        NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,
-        NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
-	bind_builder_bool (builder, nemo_icon_view_preferences,
+    bind_builder_bool (builder, nemo_canvas_view_preferences,
+                NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,
+                NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
+	bind_builder_bool (builder, nemo_canvas_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET,
-			   NEMO_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);
+			   NEMO_PREFERENCES_CANVAS_VIEW_LABELS_BESIDE_ICONS);
 	bind_builder_bool (builder, nemo_compact_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_ALL_COLUMNS_SAME_WIDTH,
 			   NEMO_PREFERENCES_COMPACT_VIEW_ALL_COLUMNS_SAME_WIDTH);
-	bind_builder_bool (builder, nemo_preferences,
-			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
-			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 	bind_builder_bool(builder, nemo_preferences,
 			    NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN,
 			    NEMO_PREFERENCES_CLICK_TO_RENAME);
-	bind_builder_bool_inverted (builder, nemo_preferences,
-				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
-				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
 			   NEMO_PREFERENCES_CONFIRM_TRASH);
@@ -858,9 +870,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET,
 			   NEMO_PREFERENCES_DEFAULT_FOLDER_VIEWER,
 			   (const char **) default_view_values);
-	bind_builder_enum (builder, nemo_icon_view_preferences,
+	bind_builder_enum (builder, nemo_canvas_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET,
-			   NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
+			   NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_ZOOM_LEVEL,
 			   (const char **) zoom_values);
 	bind_builder_enum (builder, nemo_compact_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_VIEW_ZOOM_WIDGET,
@@ -875,12 +887,8 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_PREFERENCES_DEFAULT_SORT_ORDER,
 			   (const char **) sort_order_values);
 	bind_builder_enum (builder, nemo_preferences,
-			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_TEXT_WIDGET,
-			   NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS,
-			   (const char **) preview_values);
-	bind_builder_enum (builder, nemo_preferences,
-			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET,
-			   NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FILES_WIDGET,
+			   NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS,
 			   (const char **) preview_values);
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET,
@@ -907,7 +915,7 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 	bind_builder_uint_enum (builder, nemo_preferences,
 				NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET,
-				NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT,
+				NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT,
 				thumbnail_limit_values,
 				G_N_ELEMENTS (thumbnail_limit_values));
 

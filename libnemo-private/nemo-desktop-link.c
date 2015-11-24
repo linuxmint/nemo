@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Alexander Larsson <alexl@redhat.com>
 */
@@ -86,6 +84,20 @@ mount_changed_callback (GMount *mount, NemoDesktopLink *link)
 	nemo_desktop_link_changed (link);
 }
 
+static GIcon *
+get_desktop_trash_icon (void)
+{
+	const gchar *icon_name;
+
+	if (nemo_trash_monitor_is_empty ()) {
+		icon_name = NEMO_DESKTOP_ICON_TRASH;
+	} else {
+		icon_name = NEMO_DESKTOP_ICON_TRASH_FULL;
+	}
+
+	return g_themed_icon_new (icon_name);
+}
+
 static void
 trash_state_changed_callback (NemoTrashMonitor *trash_monitor,
 			      gboolean state,
@@ -99,7 +111,7 @@ trash_state_changed_callback (NemoTrashMonitor *trash_monitor,
 	if (link->details->icon) {
 		g_object_unref (link->details->icon);
 	}
-	link->details->icon = nemo_trash_monitor_get_icon ();
+	link->details->icon = get_desktop_trash_icon ();
 
 	nemo_desktop_link_changed (link);
 }
@@ -117,7 +129,7 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 		link->details->filename = g_strdup ("home");
 		link->details->display_name = g_strdup (_("Home"));
 		link->details->activation_location = g_file_new_for_path (g_get_home_dir ());
-		link->details->icon = g_themed_icon_new (NEMO_ICON_HOME);
+		link->details->icon = g_themed_icon_new (NEMO_DESKTOP_ICON_HOME);
 		
 		break;
 
@@ -125,8 +137,7 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 		link->details->filename = g_strdup ("computer");
 		link->details->display_name = g_strdup (_("Computer"));
 		link->details->activation_location = g_file_new_for_uri ("computer:///");
-		/* TODO: This might need a different icon: */
-		link->details->icon = g_themed_icon_new (NEMO_ICON_COMPUTER);
+		link->details->icon = g_themed_icon_new (NEMO_DESKTOP_ICON_COMPUTER);
 
 		break;
 
@@ -134,11 +145,11 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 		link->details->filename = g_strdup ("trash");
 		link->details->display_name = g_strdup (_("Trash"));
 		link->details->activation_location = g_file_new_for_uri (EEL_TRASH_URI);
-		link->details->icon = nemo_trash_monitor_get_icon ();
+		link->details->icon = get_desktop_trash_icon ();
 
 		link->details->signal_handler_obj = G_OBJECT (nemo_trash_monitor_get ());
 		link->details->signal_handler =
-			g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
+			g_signal_connect_object (nemo_trash_monitor_get (), "trash-state-changed",
 						 G_CALLBACK (trash_state_changed_callback), link, 0);
 		break;
 
@@ -146,7 +157,7 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 		link->details->filename = g_strdup ("network");
 		link->details->display_name = g_strdup (_("Network"));
 		link->details->activation_location = g_file_new_for_uri ("network:///");
-		link->details->icon = g_themed_icon_new (NEMO_ICON_NETWORK);
+		link->details->icon = g_themed_icon_new (NEMO_DESKTOP_ICON_NETWORK);
 		
 		break;
 

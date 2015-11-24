@@ -16,8 +16,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Authors:
  *   Alexander Larsson <alexl@redhat.com>
@@ -161,13 +160,13 @@ parse_xml_node (GFile *file,
 			continue;
 		}
 
-		new_key = convert_key_name (attr->name);
+		new_key = convert_key_name ((const gchar *) attr->name);
 		if (new_key) {
 			property = xmlGetProp (filenode, attr->name);
 			if (property) {
 				g_file_info_set_attribute_string (info,
 								  new_key,
-								  property);
+								  (const gchar *) property);
 				xmlFree (property);
 			}
 		}
@@ -176,7 +175,7 @@ parse_xml_node (GFile *file,
 	list_keys = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
 	for (node = filenode->children; node != NULL; node = node->next) {
 		for (attr = node->properties; attr != NULL; attr = attr->next) {
-			new_key = convert_key_name (node->name);
+			new_key = convert_key_name ((const gchar *) node->name);
 			if (new_key) {
 				property = xmlGetProp (node, attr->name);
 				if (property) {
@@ -304,7 +303,9 @@ main (int argc, char *argv[])
 	GError *error = NULL;
 	int i;
 
-	g_type_init ();
+#if !GLIB_CHECK_VERSION (2, 35, 1)
+       g_type_init ();
+#endif
 
 	context = g_option_context_new ("<nemo metadata files> - convert nemo metadata");
 	g_option_context_add_main_entries (context, entries, NULL);

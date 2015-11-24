@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: John Sullivan <sullivan@eazel.com>
  */
@@ -29,11 +28,36 @@
 #define NEMO_BOOKMARKS_WINDOW_H
 
 #include <gtk/gtk.h>
+
+#include "nemo-window.h"
 #include "nemo-bookmark-list.h"
 
-GtkWindow *create_bookmarks_window                 (NemoBookmarkList *bookmarks,
-						    GObject              *undo_manager_source);
-void       nemo_bookmarks_window_save_geometry (GtkWindow            *window);
-void	   edit_bookmarks_dialog_set_signals	   (GObject 		 *undo_manager_source);
+#define NEMO_TYPE_BOOKMARKS_WINDOW nemo_bookmarks_window_get_type()
+#define NEMO_BOOKMARKS_WINDOW(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_BOOKMARKS_WINDOW, NemoBookmarksWindow))
+#define NEMO_BOOKMARKS_WINDOW_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_BOOKMARKS_WINDOW, NemoBookmarksWindowClass))
+#define NEMO_IS_BOOKMARKS_WINDOW(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_BOOKMARKS_WINDOW))
+#define NEMO_IS_BOOKMARKS_WINDOW_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_BOOKMARKS_WINDOW))
+#define NEMO_BOOKMARKS_WINDOW_GET_CLASS(obj) \
+  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_BOOKMARKS_WINDOW, NemoBookmarksWindowClass))
+
+typedef struct NemoBookmarksWindowPrivate NemoBookmarksWindowPrivate;
+
+typedef struct  {
+	GtkWindow parent;
+
+	NemoBookmarksWindowPrivate *priv;
+} NemoBookmarksWindow;
+
+typedef struct {
+	GtkWindowClass parent_class;
+} NemoBookmarksWindowClass;
+
+GType nemo_bookmarks_window_get_type (void);
+
+GtkWindow *nemo_bookmarks_window_new (NemoWindow       *parent_window);
 
 #endif /* NEMO_BOOKMARKS_WINDOW_H */

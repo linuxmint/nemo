@@ -16,9 +16,7 @@
    General Public License for more details.
    
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
    
    Authors: Cosimo Cecchi <cosimoc@gnome.org>
 */
@@ -78,7 +76,7 @@ file_icons_changed (NemoFile *file,
 	pixbuf = nemo_file_get_icon_pixbuf (fcd->details->destination,
 						NEMO_ICON_SIZE_LARGE,
 						TRUE,
-                        gtk_widget_get_scale_factor (fcd->details->dest_image),
+						gtk_widget_get_scale_factor (fcd->details->dest_image),
 						NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (fcd->details->dest_image), pixbuf);
@@ -87,7 +85,7 @@ file_icons_changed (NemoFile *file,
 	pixbuf = nemo_file_get_icon_pixbuf (fcd->details->source,
 						NEMO_ICON_SIZE_LARGE,
 						TRUE,
-                        gtk_widget_get_scale_factor (fcd->details->src_image),
+						gtk_widget_get_scale_factor (fcd->details->src_image),
 						NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (fcd->details->src_image), pixbuf);
@@ -140,7 +138,7 @@ file_list_ready_cb (GList *files,
 	if (dest_is_dir) {
 		if (source_is_dir) {
 			primary_text = g_strdup_printf
-				(_("Merge folder \"%s\"?"),
+				(_("Merge folder “%s”?"),
 				 dest_name);
 
 			message_extra = 
@@ -149,43 +147,43 @@ file_list_ready_cb (GList *files,
 
 			if (src_mtime > dest_mtime) {
 				message = g_strdup_printf (
-					_("An older folder with the same name already exists in \"%s\"."),
+					_("An older folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			} else if (src_mtime < dest_mtime) {
 				message = g_strdup_printf (
-					_("A newer folder with the same name already exists in \"%s\"."),
+					_("A newer folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			} else {
 				message = g_strdup_printf (
-					_("Another folder with the same name already exists in \"%s\"."),
+					_("Another folder with the same name already exists in “%s”."),
 					dest_dir_name);
 			}
 		} else {
 			message_extra =
 				_("Replacing it will remove all files in the folder.");
 			primary_text = g_strdup_printf
-				(_("Replace folder \"%s\"?"), dest_name);
+				(_("Replace folder “%s”?"), dest_name);
 			message = g_strdup_printf
-				(_("A folder with the same name already exists in \"%s\"."),
+				(_("A folder with the same name already exists in “%s”."),
 				 dest_dir_name);
 		}
 	} else {
 		primary_text = g_strdup_printf
-			(_("Replace file \"%s\"?"), dest_name);
+			(_("Replace file “%s”?"), dest_name);
 
 		message_extra = _("Replacing it will overwrite its content.");
 
 		if (src_mtime > dest_mtime) {
 			message = g_strdup_printf (
-				_("An older file with the same name already exists in \"%s\"."),
+				_("An older file with the same name already exists in “%s”."),
 				dest_dir_name);
 		} else if (src_mtime < dest_mtime) {
 			message = g_strdup_printf (
-				_("A newer file with the same name already exists in \"%s\"."),
+				_("A newer file with the same name already exists in “%s”."),
 				dest_dir_name);
 		} else {
 			message = g_strdup_printf (
-				_("Another file with the same name already exists in \"%s\"."),
+				_("Another file with the same name already exists in “%s”."),
 				dest_dir_name);
 		}
 	}
@@ -223,7 +221,7 @@ file_list_ready_cb (GList *files,
 	pixbuf = nemo_file_get_icon_pixbuf (dest,
 						NEMO_ICON_SIZE_LARGE,
 						TRUE,
-                        gtk_widget_get_scale_factor (fcd->details->titles_vbox),
+						gtk_widget_get_scale_factor (fcd->details->titles_vbox),
 						NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
 	details->dest_image = gtk_image_new_from_pixbuf (pixbuf);
 	gtk_box_pack_start (GTK_BOX (details->first_hbox),
@@ -234,7 +232,7 @@ file_list_ready_cb (GList *files,
 	pixbuf = nemo_file_get_icon_pixbuf (src,
 						NEMO_ICON_SIZE_LARGE,
 						TRUE,
-                        gtk_widget_get_scale_factor (fcd->details->titles_vbox),
+						gtk_widget_get_scale_factor (fcd->details->titles_vbox),
 						NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
 	details->src_image = gtk_image_new_from_pixbuf (pixbuf);
 	gtk_box_pack_start (GTK_BOX (details->second_hbox),
@@ -254,13 +252,13 @@ file_list_ready_cb (GList *files,
 
 	str = g_string_new (NULL);
 	g_string_append_printf (str, "<b>%s</b>\n", _("Original file"));
-	g_string_append_printf (str, "<i>%s</i> %s\n", _("Size:"), size);
+	g_string_append_printf (str, "%s %s\n", _("Size:"), size);
 
 	if (should_show_type) {
-		g_string_append_printf (str, "<i>%s</i> %s\n", _("Type:"), type);
+		g_string_append_printf (str, "%s %s\n", _("Type:"), type);
 	}
 
-	g_string_append_printf (str, "<i>%s</i> %s", _("Last modified:"), date);
+	g_string_append_printf (str, "%s %s", _("Last modified:"), date);
 
 	label_text = str->str;
 	gtk_label_set_markup (GTK_LABEL (label),
@@ -285,13 +283,13 @@ file_list_ready_cb (GList *files,
 	}
 
 	g_string_append_printf (str, "<b>%s</b>\n", _("Replace with"));
-	g_string_append_printf (str, "<i>%s</i> %s\n", _("Size:"), size);
+	g_string_append_printf (str, "%s %s\n", _("Size:"), size);
 
 	if (should_show_type) {
-		g_string_append_printf (str, "<i>%s</i> %s\n", _("Type:"), type);
+		g_string_append_printf (str, "%s %s\n", _("Type:"), type);
 	}
 
-	g_string_append_printf (str, "<i>%s</i> %s", _("Last modified:"), date);
+	g_string_append_printf (str, "%s %s", _("Last modified:"), date);
 	label_text = g_string_free (str, FALSE);
 
 	gtk_label_set_markup (GTK_LABEL (label),
@@ -476,8 +474,8 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 	/* Setup the dialog image */
-	widget = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
-					   GTK_ICON_SIZE_DIALOG);
+	widget = gtk_image_new_from_icon_name ("dialog-warning",
+					       GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 0);
 	gtk_misc_set_alignment (GTK_MISC (widget), 0.5, 0.0);
 
@@ -522,8 +520,8 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 
 	widget = gtk_button_new_with_label (_("Reset"));
 	gtk_button_set_image (GTK_BUTTON (widget),
-			      gtk_image_new_from_stock (GTK_STOCK_UNDO,
-							GTK_ICON_SIZE_MENU));
+			      gtk_image_new_from_icon_name ("edit-undo",
+							    GTK_ICON_SIZE_MENU));
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 6);
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (reset_button_clicked_cb), dialog);
@@ -541,7 +539,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 
 	/* Add buttons */
 	gtk_dialog_add_buttons (dialog,
-				GTK_STOCK_CANCEL,
+				_("_Cancel"),
 				GTK_RESPONSE_CANCEL,
 				_("_Skip"),
 				CONFLICT_RESPONSE_SKIP,

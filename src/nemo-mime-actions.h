@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Maciej Stachowiak <mjs@eazel.com>
 */
@@ -41,6 +40,7 @@ GList *                nemo_mime_get_applications_for_files           (GList    
 
 gboolean               nemo_mime_file_opens_in_view                   (NemoFile            *file);
 gboolean               nemo_mime_file_opens_in_external_app           (NemoFile            *file);
+gboolean               nemo_mime_file_launches                        (NemoFile            *file);
 void                   nemo_mime_activate_files                       (GtkWindow               *parent_window,
 									   NemoWindowSlot      *slot,
 									   GList                   *files,

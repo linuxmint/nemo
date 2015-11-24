@@ -16,9 +16,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *  Based on ephy-navigation-action.h from Epiphany
  *
@@ -43,6 +42,7 @@ G_DEFINE_TYPE (NemoNavigationAction, nemo_navigation_action, GTK_TYPE_ACTION);
 struct NemoNavigationActionPrivate
 {
 	NemoWindow *window;
+	GtkWidget *widget;
 	NemoNavigationDirection direction;
 	char *arrow_tooltip;
 
@@ -95,8 +95,9 @@ fill_menu (NemoWindow *window,
 	GList *list;
 
 	slot = nemo_window_get_active_slot (window);
+	list = back ? nemo_window_slot_get_back_history (slot) :
+		nemo_window_slot_get_forward_history (slot);
 	
-	list = back ? slot->back_list : slot->forward_list;
 	index = 0;
 	while (list != NULL) {
 		menu_item = nemo_bookmark_menu_item_new (NEMO_BOOKMARK (list->data));
@@ -112,6 +113,62 @@ fill_menu (NemoWindow *window,
 		list = g_list_next (list);
 		++index;
 	}
+}
+
+/* adapted from gtk/gtkmenubutton.c */
+static void
+menu_position_func (GtkMenu       *menu,
+		    gint          *x,
+		    gint          *y,
+		    gboolean      *push_in,
+		    GtkWidget     *widget)
+{
+	GtkWidget *toplevel;
+	GtkRequisition menu_req;
+	GdkRectangle monitor;
+	gint monitor_num;
+	GdkScreen *screen;
+	GdkWindow *window;
+	GtkAllocation allocation;
+
+	/* Set the dropdown menu hint on the toplevel, so the WM can omit the top side
+	 * of the shadows.
+	 */
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (menu));
+	gtk_window_set_type_hint (GTK_WINDOW (toplevel), GDK_WINDOW_TYPE_HINT_DROPDOWN_MENU);
+
+	window = gtk_widget_get_window (widget);
+	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
+	monitor_num = gdk_screen_get_monitor_at_window (screen, window);
+	if (monitor_num < 0) {
+		monitor_num = 0;
+	}
+
+	gdk_screen_get_monitor_workarea (screen, monitor_num, &monitor);
+	gtk_widget_get_preferred_size (GTK_WIDGET (menu), &menu_req, NULL);
+	gtk_widget_get_allocation (widget, &allocation);
+	gdk_window_get_origin (window, x, y);
+
+	*x += allocation.x;
+	*y += allocation.y;
+
+	if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) {
+		*x -= MAX (menu_req.width - allocation.width, 0);
+	} else {
+		*x += MAX (allocation.width - menu_req.width, 0);
+	}
+
+	if ((*y + allocation.height + menu_req.height) <= monitor.y + monitor.height) {
+		*y += allocation.height;
+	} else if ((*y - menu_req.height) >= monitor.y) {
+		*y -= menu_req.height;
+	} else if (monitor.y + monitor.height - (*y + allocation.height) > *y) {
+		*y += allocation.height;
+	} else {
+		*y -= menu_req.height;
+	}
+
+	*push_in = FALSE;
 }
 
 static void
@@ -148,7 +205,8 @@ show_menu (NemoNavigationAction *self,
 		break;
 	}
 
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
+			(GtkMenuPositionFunc) menu_position_func, self->priv->widget,
                         button, event_time);
 }
 
@@ -191,6 +249,8 @@ tool_button_press_cb (GtkButton *button,
                       gpointer user_data)
 {
         NemoNavigationAction *self = user_data;
+
+        self->priv->widget = GTK_WIDGET (button);
 
         if (event->button == 3) {
                 /* right click */

@@ -17,8 +17,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Pavel Cisler <pavel@eazel.com>,
    	    Ettore Perazzoli <ettore@gnu.org>
@@ -81,7 +80,7 @@ nemo_drag_finalize (NemoDragInfo *drag_info)
 {
 	gtk_target_list_unref (drag_info->target_list);
 	nemo_drag_destroy_selection_list (drag_info->selection_list);
-
+	nemo_drag_destroy_selection_list (drag_info->selection_cache);
 	g_free (drag_info);
 }
 
@@ -97,6 +96,7 @@ nemo_drag_selection_item_new (void)
 static void
 drag_selection_item_destroy (NemoDragSelectionItem *item)
 {
+	g_clear_object (&item->file);
 	g_free (item->uri);
 	g_free (item);
 }
@@ -220,6 +220,7 @@ nemo_drag_build_selection_list (GtkSelectionData *data)
 		item->uri = g_malloc (len + 1);
 		memcpy (item->uri, oldp, len);
 		item->uri[len] = 0;
+		item->file = nemo_file_get_existing_by_uri (item->uri);
 
 		p++;
 		if (*p == '\n' || *p == '\0') {
@@ -239,7 +240,7 @@ nemo_drag_build_selection_list (GtkSelectionData *data)
 
 		/* 2: Decode geometry information.  */
 
-		item->got_icon_position = sscanf (p, "%d:%d:%d:%d%*s",
+		item->got_icon_position = sscanf ((const gchar *) p, "%d:%d:%d:%d%*s",
 						  &item->icon_x, &item->icon_y,
 						  &item->icon_width, &item->icon_height) == 4;
 		if (!item->got_icon_position) {
@@ -455,9 +456,23 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 	}
 	
 	dropped_uri = ((NemoDragSelectionItem *)items->data)->uri;
-	dropped_file = nemo_file_get_existing_by_uri (dropped_uri);
+	dropped_file = ((NemoDragSelectionItem *)items->data)->file;
 	target_file = nemo_file_get_existing_by_uri (target_uri_string);
-	
+
+	if (eel_uri_is_desktop (dropped_uri) &&
+	    !eel_uri_is_desktop (target_uri_string)) {
+		/* Desktop items only move on the desktop */
+		*action = 0;
+		return;
+	}
+
+	if (eel_uri_is_desktop (dropped_uri) &&
+	    !eel_uri_is_desktop (target_uri_string)) {
+		/* Desktop items only move on the desktop */
+		*action = 0;
+		return;
+	}
+
 	/*
 	 * Check for trash URI.  We do a find_directory for any Trash directory.
 	 * Passing 0 permissions as gnome-vfs would override the permissions
@@ -468,8 +483,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;
 		}
-
-		nemo_file_unref (dropped_file);
 		nemo_file_unref (target_file);
 		return;
 
@@ -477,7 +490,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;
 		}
-		nemo_file_unref (dropped_file);
 		nemo_file_unref (target_file);
 		return;
 	} else if (eel_uri_is_desktop (target_uri_string)) {
@@ -493,14 +505,12 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 			}
 			
 			g_object_unref (target);
-			nemo_file_unref (dropped_file);
 			nemo_file_unref (target_file);
 			return;
 		}
 	} else if (target_file != NULL && nemo_file_is_archive (target_file)) {
 		*action = GDK_ACTION_COPY;
 
-		nemo_file_unref (dropped_file);
 		nemo_file_unref (target_file);
 		return;
 	} else {
@@ -509,7 +519,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 
 	same_fs = check_same_fs (target_file, dropped_file);
 
-	nemo_file_unref (dropped_file);
 	nemo_file_unref (target_file);
 	
 	/* Compare the first dropped uri with the target uri for same fs match. */
@@ -574,80 +583,6 @@ add_one_gnome_icon (const char *uri, int x, int y, int w, int h,
 				uri, x, y, w, h);
 }
 
-/*
- * Cf. #48423
- */
-#ifdef THIS_WAS_REALLY_BROKEN
-static gboolean
-is_path_that_gnome_uri_list_extract_filenames_can_parse (const char *path)
-{
-	if (path == NULL || path [0] == '\0') {
-		return FALSE;
-	}
-
-	/* It strips leading and trailing spaces. So it can't handle
-	 * file names with leading and trailing spaces.
-	 */
-	if (g_ascii_isspace (path [0])) {
-		return FALSE;
-	}
-	if (g_ascii_isspace (path [strlen (path) - 1])) {
-		return FALSE;
-	}
-
-	/* # works as a comment delimiter, and \r and \n are used to
-	 * separate the lines, so it can't handle file names with any
-	 * of these.
-	 */
-	if (strchr (path, '#') != NULL
-	    || strchr (path, '\r') != NULL
-	    || strchr (path, '\n') != NULL) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-/* Encode a "text/plain" selection; this is a broken URL -- just
- * "file:" with a path after it (no escaping or anything). We are
- * trying to make the old gnome_uri_list_extract_filenames function
- * happy, so this is coded to its idiosyncrasises.
- */
-static void
-add_one_compatible_uri (const char *uri, int x, int y, int w, int h, gpointer data)
-{
-	GString *result;
-	char *local_path;
-	
-	result = (GString *) data;
-
-	/* For URLs that do not have a file: scheme, there's no harm
-	 * in passing the real URL. But for URLs that do have a file:
-	 * scheme, we have to send a URL that will work with the old
-	 * gnome-libs function or nothing will be able to understand
-	 * it.
-	 */
-	if (!eel_istr_has_prefix (uri, "file:")) {
-		g_string_append (result, uri);
-		g_string_append (result, "\r\n");
-	} else {
-		local_path = g_filename_from_uri (uri, NULL, NULL);
-
-		/* Check for characters that confuse the old
-		 * gnome_uri_list_extract_filenames implementation, and just leave
-		 * out any paths with those in them.
-		 */
-		if (is_path_that_gnome_uri_list_extract_filenames_can_parse (local_path)) {
-			g_string_append (result, "file:");
-			g_string_append (result, local_path);
-			g_string_append (result, "\r\n");
-		}
-
-		g_free (local_path);
-	}
-}
-#endif
-
 static void
 add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
 {
@@ -659,8 +594,81 @@ add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
 	g_string_append (result, "\r\n");
 }
 
+static void
+cache_one_item (const char *uri,
+		int x, int y,
+		int w, int h,
+		gpointer data)
+{
+	GList **cache = data;
+	NemoDragSelectionItem *item;
+
+	item = nemo_drag_selection_item_new ();
+	item->uri = g_strdup (uri);
+	item->file = nemo_file_get_existing_by_uri (uri);
+	item->icon_x = x;
+	item->icon_y = y;
+	item->icon_width = w;
+	item->icon_height = h;
+	*cache = g_list_prepend (*cache, item);
+}
+
+GList *
+nemo_drag_create_selection_cache (gpointer container_context,
+				      NemoDragEachSelectedItemIterator each_selected_item_iterator)
+{
+	GList *cache = NULL;
+
+	(* each_selected_item_iterator) (cache_one_item, container_context, &cache);
+	cache = g_list_reverse (cache);
+
+	return cache;
+}
+
 /* Common function for drag_data_get_callback calls.
  * Returns FALSE if it doesn't handle drag data */
+gboolean
+nemo_drag_drag_data_get_from_cache (GList *cache,
+					GdkDragContext *context,
+					GtkSelectionData *selection_data,
+					guint info,
+					guint32 time)
+{
+	GList *l;
+	GString *result;
+	NemoDragEachSelectedItemDataGet func;
+
+	if (cache == NULL) {
+		return FALSE;
+	}
+
+	switch (info) {
+	case NEMO_ICON_DND_GNOME_ICON_LIST:
+		func = add_one_gnome_icon;
+		break;
+	case NEMO_ICON_DND_URI_LIST:
+	case NEMO_ICON_DND_TEXT:
+		func = add_one_uri;
+		break;
+	default:
+		return FALSE;
+	}
+
+	result = g_string_new (NULL);
+
+	for (l = cache; l != NULL; l = l->next) {
+		NemoDragSelectionItem *item = l->data;
+		(*func) (item->uri, item->icon_x, item->icon_y, item->icon_width, item->icon_height, result);
+	}
+
+	gtk_selection_data_set (selection_data,
+				gtk_selection_data_get_target (selection_data),
+				8, (guchar *) result->str, result->len);
+	g_string_free (result, TRUE);
+
+	return TRUE;
+}
+
 gboolean
 nemo_drag_drag_data_get (GtkWidget *widget,
 			GdkDragContext *context,
@@ -687,10 +695,10 @@ nemo_drag_drag_data_get (GtkWidget *widget,
 	default:
 		return FALSE;
 	}
-	
+
 	gtk_selection_data_set (selection_data,
 				gtk_selection_data_get_target (selection_data),
-				8, result->str, result->len);
+				8, (guchar *) result->str, result->len);
 	g_string_free (result, TRUE);
 
 	return TRUE;
@@ -911,7 +919,7 @@ nemo_drag_autoscroll_start (NemoDragInfo *drag_info,
 	if (nemo_drag_autoscroll_in_scroll_region (widget)) {
 		if (drag_info->auto_scroll_timeout_id == 0) {
 			drag_info->waiting_to_autoscroll = TRUE;
-			drag_info->start_auto_scroll_in = eel_get_system_time() 
+			drag_info->start_auto_scroll_in = g_get_monotonic_time () 
 				+ AUTOSCROLL_INITIAL_DELAY;
 			
 			drag_info->auto_scroll_timeout_id = g_timeout_add

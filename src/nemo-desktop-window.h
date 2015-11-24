@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Darin Adler <darin@bentspoon.com>
  */
@@ -47,7 +46,6 @@ typedef struct NemoDesktopWindowDetails NemoDesktopWindowDetails;
 typedef struct {
 	NemoWindow parent_spot;
 	NemoDesktopWindowDetails *details;
-        gboolean affect_desktop_on_next_location_change;
 } NemoDesktopWindow;
 
 typedef struct {
@@ -55,8 +53,8 @@ typedef struct {
 } NemoDesktopWindowClass;
 
 GType                  nemo_desktop_window_get_type            (void);
-NemoDesktopWindow *nemo_desktop_window_new                 (GdkScreen *screen);
-void                   nemo_desktop_window_update_directory    (NemoDesktopWindow *window);
+NemoDesktopWindow *nemo_desktop_window_new                 (GtkApplication        *application,
+								    GdkScreen             *screen);
 gboolean               nemo_desktop_window_loaded              (NemoDesktopWindow *window);
 
 #endif /* NEMO_DESKTOP_WINDOW_H */

@@ -15,8 +15,7 @@
  *  Library General Public License for more details.
  *
  *  You should have received a copy of the GNU Library General Public
- *  License along with this library; if not, write to the Free
- *  Software Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ *  License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  *  Author: Dave Camp <dave@ximian.com>
  * 
@@ -213,7 +212,15 @@ nemo_module_setup (void)
 	if (!initialized) {
 		initialized = TRUE;
 		
-		load_module_dir (NEMO_EXTENSIONDIR);
+		if (g_file_test(NEMO_EXTENSIONDIR, G_FILE_TEST_EXISTS)) {
+			load_module_dir (NEMO_EXTENSIONDIR);
+	    } else {
+	        gchar *path = NULL;
+
+	        path = g_build_filename ("/", "usr", "lib", "nemo", "extensions-3.0", NULL);
+	        load_module_dir  (path);
+	        g_clear_pointer (&path, g_free);
+	    }
 
 		eel_debug_call_at_shutdown (free_module_objects);
 	}

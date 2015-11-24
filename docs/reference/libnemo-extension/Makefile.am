@@ -15,13 +15,6 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 # e.g. DOC_SOURCE_DIR=../../../libnemo-extension
 DOC_SOURCE_DIR=$(top_srcdir)/libnemo-extension
 
-# Extra options to pass to gtkdoc-scangobj. Not normally needed.
-SCANGOBJ_OPTIONS=--type-init-func="g_type_init()"
-
-# Extra options to supply to gtkdoc-scan.
-# e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED" 
-SCAN_OPTIONS=--deprecated-guards="G_DISABLE_DEPRECATED"
-
 # Extra options to supply to gtkdoc-mkdb.
 MKDB_OPTIONS=--sgml-mode --output-format=xml
 
@@ -81,3 +74,5 @@ include $(top_srcdir)/gtk-doc.make
 # Other files to distribute
 # e.g. EXTRA_DIST += version.xml.in
 EXTRA_DIST += version.xml.in
+
+-include $(top_srcdir)/git.mk

@@ -230,6 +230,9 @@ show_selection_idle_callback (gpointer callback_data)
 
 	view->details->show_selection_idle_id = 0;
 
+	if (view->details->selection_location == NULL) {
+		return FALSE;
+	}
 	file = nemo_file_get_by_uri (view->details->selection_location);
 	if (file == NULL) {
 		return FALSE;
@@ -691,10 +694,6 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 	gboolean file_is_special_link;
 	gboolean can_move_file_to_trash;
 	gboolean can_delete_file;
-	gboolean using_browser;
-
-	using_browser = g_settings_get_boolean (nemo_preferences,
-						NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 
 	if (event->button == 3) {
 		gboolean show_unmount = FALSE;
@@ -721,12 +720,12 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 
 		create_popup_menu (view);
 
-		if (using_browser) {
-			gtk_widget_set_sensitive (view->details->popup_open_in_new_window,
-						  nemo_file_is_directory (view->details->popup_file));
-			gtk_widget_set_sensitive (view->details->popup_open_in_new_tab,
-						  nemo_file_is_directory (view->details->popup_file));
-		}
+
+		gtk_widget_set_sensitive (view->details->popup_open_in_new_window,
+					nemo_file_is_directory (view->details->popup_file));
+		gtk_widget_set_sensitive (view->details->popup_open_in_new_tab,
+					nemo_file_is_directory (view->details->popup_file));
+
 
 		gtk_widget_set_sensitive (view->details->popup_create_folder,
 			nemo_file_is_directory (view->details->popup_file) &&
@@ -824,13 +823,9 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 
 		file = sort_model_path_to_file (view, path);
 
-		if (using_browser) {
-			flags = (event->state & GDK_CONTROL_MASK) ?
+		flags = (event->state & GDK_CONTROL_MASK) ?
 				NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW :
 				NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-		} else {
-			flags = NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND;
-		}
 
 		if (file) {
 			fm_tree_view_activate_file (view, file, flags);
@@ -1262,12 +1257,7 @@ create_popup_menu (FMTreeView *view)
 	g_signal_connect (menu_item, "activate",
 			  G_CALLBACK (fm_tree_view_open_in_new_tab_cb),
 			  view);
-	g_settings_bind (nemo_preferences,
-			 NEMO_PREFERENCES_ALWAYS_USE_BROWSER,
-			 menu_item,
-			 "visible",
-			 G_SETTINGS_BIND_GET);
-
+	gtk_widget_show (menu_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
 	view->details->popup_open_in_new_tab = menu_item;
 	
@@ -1276,12 +1266,7 @@ create_popup_menu (FMTreeView *view)
 	g_signal_connect (menu_item, "activate",
 			  G_CALLBACK (fm_tree_view_open_in_new_window_cb),
 			  view);
-	g_settings_bind (nemo_preferences,
-			 NEMO_PREFERENCES_ALWAYS_USE_BROWSER,
-			 menu_item,
-			 "visible",
-			 G_SETTINGS_BIND_GET);
-
+	gtk_widget_show (menu_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
 	view->details->popup_open_in_new_window = menu_item;
 	
@@ -1493,9 +1478,9 @@ create_tree (FMTreeView *view)
 	}
 	g_list_free (mounts);
 	
-	g_signal_connect_object (volume_monitor, "mount_added",
+	g_signal_connect_object (volume_monitor, "mount-added",
 				 G_CALLBACK (mount_added_callback), view, 0);
-	g_signal_connect_object (volume_monitor, "mount_removed",
+	g_signal_connect_object (volume_monitor, "mount-removed",
 				 G_CALLBACK (mount_removed_callback), view, 0);
 	
 	g_object_unref (view->details->child_model);
@@ -1505,15 +1490,15 @@ create_tree (FMTreeView *view)
 	view->details->drag_dest = 
 		nemo_tree_view_drag_dest_new (view->details->tree_widget);
 	g_signal_connect_object (view->details->drag_dest, 
-				 "get_root_uri",
+				 "get-root-uri",
 				 G_CALLBACK (get_root_uri_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest, 
-				 "get_file_for_path",
+				 "get-file-for-path",
 				 G_CALLBACK (get_file_for_path_callback),
 				 view, 0);
 	g_signal_connect_object (view->details->drag_dest,
-				 "move_copy_items",
+				 "move-copy-items",
 				 G_CALLBACK (move_copy_items_callback),
 				 view, 0);
 
@@ -1557,7 +1542,7 @@ create_tree (FMTreeView *view)
 			  view);
 
 	g_signal_connect (G_OBJECT (view->details->tree_widget), 
-			  "button_press_event", G_CALLBACK (button_pressed_callback),
+			  "button-press-event", G_CALLBACK (button_pressed_callback),
 			  view);
 
 	slot = nemo_window_get_active_slot (view->details->window);
@@ -1631,7 +1616,7 @@ fm_tree_view_init (FMTreeView *view)
 	
 	gtk_widget_show (GTK_WIDGET (view));
 
-	g_signal_connect_object (view, "parent_set",
+	g_signal_connect_object (view, "parent-set",
 				 G_CALLBACK (parent_set_callback), view, 0);
 
 	view->details->selection_location = NULL;
@@ -1761,7 +1746,7 @@ fm_tree_view_set_parent_window (FMTreeView *sidebar,
 
 	slot = nemo_window_get_active_slot (window);
 
-	g_signal_connect_object (window, "loading_uri",
+	g_signal_connect_object (window, "loading-uri",
 				 G_CALLBACK (loading_uri_callback), sidebar, 0);
 	location = nemo_window_slot_get_current_uri (slot);
 	loading_uri_callback (window, location, sidebar);

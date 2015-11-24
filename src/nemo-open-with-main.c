@@ -57,9 +57,8 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
                 gpointer user_data)
 {
 
-    NemoFile *file;
     GAppInfo *info;
-    GList files;
+    const GList *files;
 
     if (response_id != GTK_RESPONSE_OK) {
         gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -69,12 +68,9 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
     NemoMimeApplicationChooser *chooser = NEMO_MIME_APPLICATION_CHOOSER (user_data);
 
     info = nemo_mime_application_chooser_get_info (chooser);
-    file = nemo_file_get_by_uri (nemo_mime_application_chooser_get_uri (chooser));
+    files = nemo_mime_application_chooser_get_files (chooser);
 
-    files.next = NULL;
-    files.prev = NULL;
-    files.data = file;
-    nemo_launch_application (info, &files, NULL);
+    nemo_launch_application (info, files, NULL);
 
     gtk_widget_destroy (GTK_WIDGET (dialog));
     g_object_unref (info);
@@ -153,7 +149,11 @@ main (int argc, char *argv[])
 
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
-    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, NULL, mime_type, ok_button);
+    GList files;
+    files.next = NULL;
+    files.prev = NULL;
+    files.data = nemo_file_get_by_uri(uri);
+    GtkWidget *chooser = nemo_mime_application_chooser_new (&files, mime_type, ok_button);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 

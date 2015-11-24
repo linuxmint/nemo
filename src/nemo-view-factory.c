@@ -22,6 +22,8 @@
    Author: Alexander Larsson <alexl@redhat.com>
 */
 
+#include "config.h"
+
 #include "nemo-view-factory.h"
 
 static GList *registered_views;
@@ -68,9 +70,8 @@ nemo_view_factory_create (const char *id,
 	}
 
 	view = view_info->create (slot);
-	if (g_object_is_floating (view)) {
-		g_object_ref_sink (view);
-	}
+	g_object_ref_sink (view);
+
 	return view;
 }
 

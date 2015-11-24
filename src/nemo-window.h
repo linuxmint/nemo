@@ -17,8 +17,7 @@
  *  General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ *  along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *  Authors: Elliot Lee <sopwith@redhat.com>
  *           Darin Adler <darin@bentspoon.com>
@@ -34,9 +33,30 @@
 #include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-search-directory.h>
 
+typedef struct NemoWindow NemoWindow;
+typedef struct NemoWindowClass NemoWindowClass;
+typedef struct NemoWindowDetails NemoWindowDetails;
+
+typedef enum {
+        NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND = 1 << 0,
+        NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW = 1 << 1,
+        NEMO_WINDOW_OPEN_FLAG_NEW_TAB = 1 << 2,
+        NEMO_WINDOW_OPEN_FLAG_USE_DEFAULT_LOCATION = 1 << 3
+} NemoWindowOpenFlags;
+
+typedef enum {
+	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
+	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
+}  NemoWindowOpenSlotFlags;
+
+typedef gboolean (* NemoWindowGoToCallback) (NemoWindow *window,
+                                                 GFile *location,
+                                                 GError *error,
+                                                 gpointer user_data);
+
 #include "nemo-navigation-state.h"
 #include "nemo-view.h"
-#include "nemo-window-types.h"
+#include "nemo-window-slot.h"
 
 #define NEMO_TYPE_WINDOW nemo_window_get_type()
 #define NEMO_WINDOW(obj) \
@@ -55,17 +75,6 @@ typedef enum {
         NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE
 } NemoWindowShowHiddenFilesMode;
 
-typedef enum {
-        NEMO_WINDOW_NOT_SHOWN,
-        NEMO_WINDOW_POSITION_SET,
-        NEMO_WINDOW_SHOULD_SHOW
-} NemoWindowShowState;
-
-typedef enum {
-	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
-	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
-}  NemoWindowOpenSlotFlags;
-
 enum {
     SORT_NULL = -1,
     SORT_ASCENDING = 0,
@@ -81,15 +90,14 @@ enum {
 #define NEMO_WINDOW_SIDEBAR_PLACES "places"
 #define NEMO_WINDOW_SIDEBAR_TREE "tree"
 
-typedef struct NemoWindowDetails NemoWindowDetails;
-
-typedef struct {
-        GtkWindowClass parent_spot;
+struct NemoWindowClass {
+        GtkApplicationWindowClass parent_spot;
 
 	/* Function pointers for overriding, without corresponding signals */
 
         void   (* sync_title) (NemoWindow *window,
 			       NemoWindowSlot *slot);
+        void   (* sync_view_as_menus) (NemoWindow *window);
         NemoIconInfo * (* get_icon) (NemoWindow *window,
                                          NemoWindowSlot *slot);
 
@@ -99,16 +107,16 @@ typedef struct {
         /* Signals used only for keybindings */
         void   (* go_up)  (NemoWindow *window);
 	void   (* reload) (NemoWindow *window);
-} NemoWindowClass;
+};
 
 struct NemoWindow {
-        GtkWindow parent_object;
+        GtkApplicationWindow parent_object;
         
         NemoWindowDetails *details;
 };
 
 GType            nemo_window_get_type             (void);
-NemoWindow * nemo_window_new                  (GdkScreen         *screen);
+NemoWindow *     nemo_window_new                  (GdkScreen         *screen);
 void             nemo_window_close                (NemoWindow    *window);
 
 void             nemo_window_connect_content_view (NemoWindow    *window,
@@ -146,9 +154,7 @@ GList *              nemo_window_get_panes             (NemoWindow *window);
 NemoWindowSlot * nemo_window_get_active_slot       (NemoWindow *window);
 void                 nemo_window_push_status           (NemoWindow *window,
                                                             const char *text);
-GtkWidget *          nemo_window_ensure_location_bar   (NemoWindow *window);
-void                 nemo_window_sync_location_widgets (NemoWindow *window);
-void                 nemo_window_sync_search_widgets   (NemoWindow *window);
+GtkWidget *          nemo_window_ensure_location_entry   (NemoWindow *window);
 void                 nemo_window_grab_focus            (NemoWindow *window);
 
 void     nemo_window_hide_sidebar         (NemoWindow *window);
