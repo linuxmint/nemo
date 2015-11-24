@@ -38,9 +38,6 @@ struct _NemoFreedesktopDBus {
 	/* Id from g_dbus_own_name() */
 	guint owner_id;
 
-	/* DBus paraphernalia */
-	GDBusObjectManagerServer *object_manager;
-
 	/* Our DBus implementation skeleton */
 	NemoFreedesktopFileManager1 *skeleton;
 };
@@ -145,8 +142,6 @@ bus_acquired_cb (GDBusConnection *conn,
 
 	DEBUG ("Bus acquired at %s", name);
 
-	fdb->object_manager = g_dbus_object_manager_server_new (NEMO_FDO_DBUS_PATH);
-
 	fdb->skeleton = nemo_freedesktop_file_manager1_skeleton_new ();
 
 	g_signal_connect (fdb->skeleton, "handle-show-items",
@@ -157,8 +152,6 @@ bus_acquired_cb (GDBusConnection *conn,
 			  G_CALLBACK (skeleton_handle_show_item_properties_cb), fdb);
 
 	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), conn, NEMO_FDO_DBUS_PATH, NULL);
-
-	g_dbus_object_manager_server_set_connection (fdb->object_manager, conn);
 }
 
 static void
@@ -192,8 +185,6 @@ nemo_freedesktop_dbus_dispose (GObject *object)
 		g_object_unref (fdb->skeleton);
 		fdb->skeleton = NULL;
 	}
-
-	g_clear_object (&fdb->object_manager);
 
 	G_OBJECT_CLASS (nemo_freedesktop_dbus_parent_class)->dispose (object);
 }

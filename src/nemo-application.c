@@ -1387,7 +1387,6 @@ nemo_application_startup (GApplication *app)
 	gtk_window_set_default_icon_name ("system-file-manager");
 
 	/* create DBus manager */
-	self->priv->dbus_manager = nemo_dbus_manager_new ();
 	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
 
 	/* initialize preferences and create the global GSettings objects */
@@ -1460,6 +1459,34 @@ nemo_application_startup (GApplication *app)
 #endif
 
 	nemo_profile_end (NULL);
+}
+
+static gboolean
+nemo_application_dbus_register (GApplication	 *app,
+				    GDBusConnection      *connection,
+				    const gchar		 *object_path,
+				    GError		**error)
+{
+	NemoApplication *self = NEMO_APPLICATION (app);
+
+	self->priv->dbus_manager = nemo_dbus_manager_new ();
+	if (!nemo_dbus_manager_register (self->priv->dbus_manager, connection, error)) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void
+nemo_application_dbus_unregister (GApplication	*app,
+				      GDBusConnection   *connection,
+				      const gchar	*object_path)
+{
+	NemoApplication *self = NEMO_APPLICATION (app);
+
+	if (self->priv->dbus_manager) {
+		nemo_dbus_manager_unregister (self->priv->dbus_manager);
+	}
 }
 
 static void
@@ -1607,6 +1634,8 @@ nemo_application_class_init (NemoApplicationClass *class)
 	application_class->quit_mainloop = nemo_application_quit_mainloop;
 	application_class->open = nemo_application_open;
 	application_class->local_command_line = nemo_application_local_command_line;
+	application_class->dbus_register = nemo_application_dbus_register;
+	application_class->dbus_unregister = nemo_application_dbus_unregister;
 
 	gtkapp_class = GTK_APPLICATION_CLASS (class);
 	gtkapp_class->window_added = nemo_application_window_added;

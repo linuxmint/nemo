@@ -35,7 +35,6 @@
 struct _NemoDBusManager {
   GObject parent;
 
-  GDBusObjectManagerServer *object_manager;
   NemoDBusFileOperations *file_operations;
 };
 
@@ -51,14 +50,8 @@ nemo_dbus_manager_dispose (GObject *object)
   NemoDBusManager *self = (NemoDBusManager *) object;
 
   if (self->file_operations) {
-    g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->file_operations));
     g_object_unref (self->file_operations);
     self->file_operations = NULL;
-  }
-
-  if (self->object_manager) {
-    g_object_unref (self->object_manager);
-    self->object_manager = NULL;
   }
 
   G_OBJECT_CLASS (nemo_dbus_manager_parent_class)->dispose (object);
@@ -134,14 +127,6 @@ handle_empty_trash (NemoDBusFileOperations *object,
 static void
 nemo_dbus_manager_init (NemoDBusManager *self)
 {
-  GDBusConnection *connection;
-#if GLIB_CHECK_VERSION (2, 34, 0)
-  connection = g_application_get_dbus_connection (g_application_get_default ());
-#else
-  connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
-#endif
-
-  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo");
   self->file_operations = nemo_dbus_file_operations_skeleton_new ();
 
   g_signal_connect (self->file_operations,
@@ -156,11 +141,6 @@ nemo_dbus_manager_init (NemoDBusManager *self)
 		    "handle-empty-trash",
 		    G_CALLBACK (handle_empty_trash),
 		    self);
-
-  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), connection,
-				    "/org/Nemo", NULL);
-
-  g_dbus_object_manager_server_set_connection (self->object_manager, connection);
 }
 
 static void
@@ -176,4 +156,19 @@ nemo_dbus_manager_new (void)
 {
   return g_object_new (nemo_dbus_manager_get_type (),
                        NULL);
+}
+
+gboolean
+nemo_dbus_manager_register (NemoDBusManager *self,
+                                GDBusConnection     *connection,
+                                GError             **error)
+{
+  return g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations),
+                                           connection, "/org/nemo", error);
+}
+
+void
+nemo_dbus_manager_unregister (NemoDBusManager *self)
+{
+  g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->file_operations));
 }

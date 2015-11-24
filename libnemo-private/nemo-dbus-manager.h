@@ -32,4 +32,9 @@ typedef struct _NemoDBusManagerClass NemoDBusManagerClass;
 GType nemo_dbus_manager_get_type (void);
 NemoDBusManager * nemo_dbus_manager_new (void);
 
+gboolean nemo_dbus_manager_register   (NemoDBusManager *self,
+                                           GDBusConnection     *connection,
+                                           GError             **error);
+void     nemo_dbus_manager_unregister (NemoDBusManager *self);
+
 #endif /* __NEMO_DBUS_MANAGER_H__ */
