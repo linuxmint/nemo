@@ -1386,9 +1386,6 @@ nemo_application_startup (GApplication *app)
 
 	gtk_window_set_default_icon_name ("system-file-manager");
 
-	/* initialize the previewer singleton */
-	//nemo_previewer_get_singleton ();
-
 	/* create DBus manager */
 	self->priv->dbus_manager = nemo_dbus_manager_new ();
 	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
@@ -1580,7 +1577,6 @@ static void
 nemo_application_window_removed (GtkApplication *app,
 				     GtkWindow *window)
 {
-	NemoPreviewer *previewer;
 	GList *l;
 
 	/* chain to parent */
@@ -1589,8 +1585,7 @@ nemo_application_window_removed (GtkApplication *app,
 	/* if this was the last window, close the previewer */
 	for (l = gtk_application_get_windows (GTK_APPLICATION (app)); l && !NEMO_IS_WINDOW (l->data); l = l->next);
 	if (!l) {
-		previewer = nemo_previewer_get_singleton ();
-		nemo_previewer_call_close (previewer);
+		nemo_previewer_call_close ();
 	}
 
 	g_signal_handlers_disconnect_by_func (window, on_slot_added, app);
