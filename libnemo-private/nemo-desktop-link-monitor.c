@@ -433,13 +433,12 @@ nemo_desktop_link_monitor_init (NemoDesktopLinkMonitor *monitor)
 				  G_CALLBACK (desktop_volumes_visible_changed),
 				  monitor);
 
-	g_signal_connect_object (monitor->details->volume_monitor, "mount_added",
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-added",
 				 G_CALLBACK (mount_added_callback), monitor, 0);
-	g_signal_connect_object (monitor->details->volume_monitor, "mount_removed",
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-removed",
 				 G_CALLBACK (mount_removed_callback), monitor, 0);
-	g_signal_connect_object (monitor->details->volume_monitor, "mount_changed",
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-changed",
 				 G_CALLBACK (mount_changed_callback), monitor, 0);
-
 }
 
 static void
@@ -463,8 +462,6 @@ desktop_link_monitor_finalize (GObject *object)
 	NemoDesktopLinkMonitor *monitor;
 
 	monitor = NEMO_DESKTOP_LINK_MONITOR (object);
-
-	g_object_unref (monitor->details->volume_monitor);
 
 	/* Default links */
 
@@ -500,6 +497,8 @@ desktop_link_monitor_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
 					      desktop_volumes_visible_changed,
 					      monitor);
+
+	g_object_unref (monitor->details->volume_monitor);
 
 	G_OBJECT_CLASS (nemo_desktop_link_monitor_parent_class)->finalize (object);
 }

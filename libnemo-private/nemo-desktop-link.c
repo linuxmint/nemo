@@ -42,9 +42,6 @@ struct NemoDesktopLinkDetails {
 	GIcon *icon;
 
 	NemoDesktopIconFile *icon_file;
-	
-	GObject *signal_handler_obj;
-	gulong signal_handler;
 
 	/* Just for mount icons: */
 	GMount *mount;
@@ -147,9 +144,7 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 		link->details->activation_location = g_file_new_for_uri (EEL_TRASH_URI);
 		link->details->icon = get_desktop_trash_icon ();
 
-		link->details->signal_handler_obj = G_OBJECT (nemo_trash_monitor_get ());
-		link->details->signal_handler =
-			g_signal_connect_object (nemo_trash_monitor_get (), "trash-state-changed",
+		g_signal_connect_object (nemo_trash_monitor_get (), "trash-state-changed",
 						 G_CALLBACK (trash_state_changed_callback), link, 0);
 		break;
 
@@ -207,11 +202,9 @@ nemo_desktop_link_new_from_mount (GMount *mount)
 	link->details->activation_location = g_mount_get_default_location (mount);
 	link->details->icon = g_mount_get_icon (mount);
 	
-	link->details->signal_handler_obj = G_OBJECT (mount);
-	link->details->signal_handler =
-		g_signal_connect (mount, "changed",
-				  G_CALLBACK (mount_changed_callback), link);
-	
+	g_signal_connect_object (mount, "changed",
+				 G_CALLBACK (mount_changed_callback), link, 0);
+
 	create_icon_file (link);
 
 	return link;
@@ -311,11 +304,6 @@ desktop_link_finalize (GObject *object)
 	NemoDesktopLink *link;
 
 	link = NEMO_DESKTOP_LINK (object);
-
-	if (link->details->signal_handler != 0) {
-		g_signal_handler_disconnect (link->details->signal_handler_obj,
-					     link->details->signal_handler);
-	}
 
 	if (link->details->icon_file != NULL) {
 		nemo_desktop_icon_file_remove (link->details->icon_file);

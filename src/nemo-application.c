@@ -51,7 +51,6 @@
 #include "nemo-statusbar.h"
 
 #include <libnemo-private/nemo-dbus-manager.h>
-#include <libnemo-private/nemo-desktop-link-monitor.h>
 #include <libnemo-private/nemo-directory-private.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
 #include <libnemo-private/nemo-file-utilities.h>
@@ -97,14 +96,13 @@
 
 #define NEMO_ACCEL_MAP_SAVE_DELAY 30
 
-/* Keeps track of all the desktop windows. */
-static GList *nemo_application_desktop_windows;
-
 /* The saving of the accelerator map was requested  */
 static gboolean save_of_accel_map_requested = FALSE;
 
 static void     desktop_changed_callback          (gpointer                  user_data);
 static void     nemo_application_open_desktop (NemoApplication *application);
+static void     nemo_application_close_desktop (void);
+
 
 G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 
@@ -300,107 +298,6 @@ menu_provider_init_callback (void)
         }
 
         nemo_module_extension_list_free (providers);
-}
-
-static void 
-selection_get_cb (GtkWidget          *widget,
-		  GtkSelectionData   *selection_data,
-		  guint               info,
-		  guint               time)
-{
-	/* No extra targets atm */
-}
-
-static GtkWidget *
-get_desktop_manager_selection (GdkScreen *screen)
-{
-	char selection_name[32];
-	GdkAtom selection_atom;
-	Window selection_owner;
-	GdkDisplay *display;
-	GtkWidget *selection_widget;
-
-	g_snprintf (selection_name, sizeof (selection_name),
-		    "_NET_DESKTOP_MANAGER_S%d", gdk_screen_get_number (screen));
-	selection_atom = gdk_atom_intern (selection_name, FALSE);
-	display = gdk_screen_get_display (screen);
-
-	selection_owner = XGetSelectionOwner (GDK_DISPLAY_XDISPLAY (display),
-					      gdk_x11_atom_to_xatom_for_display (display, 
-										 selection_atom));
-	if (selection_owner != None) {
-		return NULL;
-	}
-	
-	selection_widget = gtk_invisible_new_for_screen (screen);
-	/* We need this for gdk_x11_get_server_time() */
-	gtk_widget_add_events (selection_widget, GDK_PROPERTY_CHANGE_MASK);
-
-	if (gtk_selection_owner_set_for_display (display,
-						 selection_widget,
-						 selection_atom,
-						 gdk_x11_get_server_time (gtk_widget_get_window (selection_widget)))) {
-		
-		g_signal_connect (selection_widget, "selection-get",
-				  G_CALLBACK (selection_get_cb), NULL);
-		return selection_widget;
-	}
-
-	gtk_widget_destroy (selection_widget);
-	
-	return NULL;
-}
-
-static void
-desktop_unrealize_cb (GtkWidget        *widget,
-		      GtkWidget        *selection_widget)
-{
-	gtk_widget_destroy (selection_widget);
-}
-
-static gboolean
-selection_clear_event_cb (GtkWidget	        *widget,
-			  GdkEventSelection     *event,
-			  NemoDesktopWindow *window)
-{
-	gtk_widget_destroy (GTK_WIDGET (window));
-	
-	nemo_application_desktop_windows =
-		g_list_remove (nemo_application_desktop_windows, window);
-
-	return TRUE;
-}
-
-static void
-nemo_application_create_desktop_windows (NemoApplication *application)
-{
-	GdkScreen *screen;
-	NemoDesktopWindow *window;
-	GtkWidget *selection_widget;
-
-	screen = gdk_screen_get_default ();
-
-	DEBUG ("Creating desktop window");
-		
-	selection_widget = get_desktop_manager_selection (screen);
-	if (selection_widget != NULL) {
-		window = nemo_desktop_window_new (GTK_APPLICATION (application), screen);
-
-		g_signal_connect (selection_widget, "selection-clear-event",
-				  G_CALLBACK (selection_clear_event_cb), window);
-
-		g_signal_connect (window, "unrealize",
-				  G_CALLBACK (desktop_unrealize_cb), selection_widget);
-
-		/* We realize it immediately so that the NEMO_DESKTOP_WINDOW_ID
-		   property is set so gnome-settings-daemon doesn't try to set the
-		   background. And we do a gdk_flush() to be sure X gets it. */
-		gtk_widget_realize (GTK_WIDGET (window));
-		gdk_flush ();
-
-		nemo_application_desktop_windows =
-			g_list_prepend (nemo_application_desktop_windows, window);
-	}
 }
 
 void
@@ -739,7 +636,8 @@ static void
 nemo_application_init (NemoApplication *application)
 {
 	GSimpleAction *action_quit;
-	GSimpleAction *action_force_desktop; 
+	GSimpleAction *action_open_desktop;
+	GSimpleAction *action_close_desktop;
 
 	application->priv =
 		G_TYPE_INSTANCE_GET_PRIVATE (application, NEMO_TYPE_APPLICATION,
@@ -751,11 +649,19 @@ nemo_application_init (NemoApplication *application)
 				  G_CALLBACK (nemo_application_quit), application);
 	g_object_unref (action_quit);
 
-    action_force_desktop = g_simple_action_new ("force-desktop", NULL);
-    g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_force_desktop));
-	g_signal_connect_swapped (action_force_desktop, "activate",
+	action_open_desktop = g_simple_action_new ("open-desktop", NULL);
+    g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_open_desktop));
+	g_signal_connect_swapped (action_open_desktop, "activate",
 				  G_CALLBACK (nemo_application_open_desktop), application);
-    g_object_unref (action_force_desktop);
+    g_object_unref (action_open_desktop);
+
+
+    action_close_desktop = g_simple_action_new ("close-desktop", NULL);
+    g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_close_desktop));
+	g_signal_connect_swapped (action_close_desktop, "activate",
+				  G_CALLBACK (nemo_application_close_desktop), application);
+    g_object_unref (action_close_desktop);
+
 }
 
 static void
@@ -1042,7 +948,14 @@ nemo_application_local_command_line (GApplication *application,
 	if (self->priv->force_desktop) {
 		DEBUG ("Forcing desktop, as requested");
 		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"force-desktop", NULL);
+						"open-desktop", NULL);
+                /* fall through */
+	}
+
+	if (self->priv->no_desktop) {
+		DEBUG ("Forcing desktop off, as requested");
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"close-desktop", NULL);
                 /* fall through */
 	}
 
@@ -1187,21 +1100,18 @@ init_icons_and_styles (void)
 static void
 nemo_application_open_desktop (NemoApplication *application)
 {
-	/* Initialize the desktop link monitor singleton */
-	nemo_desktop_link_monitor_get ();
-
-	nemo_application_create_desktop_windows (application);
+	nemo_desktop_window_ensure ();	
 }
 
 static void
 nemo_application_close_desktop (void)
 {
-	g_list_foreach (nemo_application_desktop_windows,
-			(GFunc) gtk_widget_destroy, NULL);
-	g_list_free (nemo_application_desktop_windows);
-	nemo_application_desktop_windows = NULL;
+	GtkWidget *desktop_window;
 
-	nemo_desktop_link_monitor_shutdown ();
+	desktop_window = nemo_desktop_window_get ();
+	if (desktop_window != NULL) {
+		gtk_widget_destroy (desktop_window);
+	}
 }
 
 /* callback for showing or hiding the desktop based on the user's preference */
@@ -1212,9 +1122,11 @@ desktop_changed_callback (gpointer user_data)
 
 	application = NEMO_APPLICATION (user_data);
 	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
-		nemo_application_open_desktop (application);
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"open-desktop", NULL);
 	} else {
-		nemo_application_close_desktop ();
+		g_action_group_activate_action (G_ACTION_GROUP (application),
+						"close-desktop", NULL);
 	}
 }
 
@@ -1234,8 +1146,6 @@ init_desktop (NemoApplication *self)
 {
 	GdkScreen *screen;
 	screen = gdk_display_get_default_screen (gdk_display_get_default ());
-	/* Initialize the desktop link monitor singleton */
-	nemo_desktop_link_monitor_get ();
 
 	gboolean should_show;
 
@@ -1251,13 +1161,21 @@ init_desktop (NemoApplication *self)
 	}
 
 	if (should_show) {
-		nemo_application_open_desktop (self);
+		g_action_group_activate_action (G_ACTION_GROUP (self),
+						"open-desktop", NULL);
+	} else {
+		g_action_group_activate_action (G_ACTION_GROUP (self),
+						"close-desktop", NULL);
 	}
 
-	/* Monitor the preference to show or hide the desktop */
+	/* Monitor the preference to show or hide the desktop, if no other
+	 * command line option was specified.
+	 */
+	if (!self->priv->no_desktop && !self->priv->force_desktop) {
 	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
 				  G_CALLBACK (desktop_changed_callback),
 				  self);
+	}
 
 	g_signal_connect (screen, "monitors-changed",
 				  G_CALLBACK (monitors_changed_callback),
