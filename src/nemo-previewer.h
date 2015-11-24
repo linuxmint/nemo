@@ -23,43 +23,14 @@
 #ifndef __NEMO_PREVIEWER_H__
 #define __NEMO_PREVIEWER_H__
 
-#include <glib-object.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
-#define NEMO_TYPE_PREVIEWER nemo_previewer_get_type()
-#define NEMO_PREVIEWER(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_PREVIEWER, NemoPreviewer))
-#define NEMO_PREVIEWER_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_PREVIEWER, NemoPreviewerClass))
-#define NEMO_IS_PREVIEWER(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_PREVIEWER))
-#define NEMO_IS_PREVIEWER_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_PREVIEWER))
-#define NEMO_PREVIEWER_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_PREVIEWER, NemoPreviewerClass))
-
-typedef struct _NemoPreviewerPriv NemoPreviewerPriv;
-
-typedef struct {
-  GObject parent;
-
-  /* private */
-  NemoPreviewerPriv *priv;
-} NemoPreviewer;
-
-typedef struct {
-  GObjectClass parent_class;
-} NemoPreviewerClass;
-
-GType nemo_previewer_get_type (void);
-
-NemoPreviewer *nemo_previewer_get_singleton (void);
-void nemo_previewer_call_show_file (NemoPreviewer *previewer,
-                                        const gchar *uri,
-                                        guint xid,
-					gboolean close_if_already_visible);
-void nemo_previewer_call_close (NemoPreviewer *previewer);
+void nemo_previewer_call_show_file (const gchar *uri,
+                                        guint        xid,
+					gboolean     close_if_already_visible);
+void nemo_previewer_call_close     (void);
 
 G_END_DECLS
 
