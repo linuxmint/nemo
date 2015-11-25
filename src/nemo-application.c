@@ -35,6 +35,7 @@
 
 #include "nemo-bookmarks-window.h"
 #include "nemo-connect-server-dialog.h"
+#include "nemo-dbus-manager.h"
 #include "nemo-desktop-canvas-view.h"
 #include "nemo-desktop-window.h"
 #include "nemo-freedesktop-dbus.h"
@@ -50,7 +51,6 @@
 #include "nemo-window-slot.h"
 #include "nemo-statusbar.h"
 
-#include <libnemo-private/nemo-dbus-manager.h>
 #include <libnemo-private/nemo-directory-private.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
 #include <libnemo-private/nemo-file-utilities.h>
