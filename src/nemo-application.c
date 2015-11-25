@@ -132,6 +132,10 @@ struct _NemoApplicationPriv {
 NemoBookmarkList *
 nemo_application_get_bookmarks (NemoApplication *application)
 {
+	if (!application->priv->bookmark_list) {
+		application->priv->bookmark_list = nemo_bookmark_list_new ();
+	}
+
 	return application->priv->bookmark_list;
 }
 
@@ -404,12 +408,12 @@ get_window_slot_for_location (NemoApplication *application, GFile *location)
 
 static void
 open_window (NemoApplication *application,
-	     GFile *location, GdkScreen *screen)
+	     GFile *location)
 {
 	NemoWindow *window;
 
 	nemo_profile_start (NULL);
-	window = nemo_application_create_window (application, screen);
+	window = nemo_application_create_window (application, gdk_screen_get_default ());
 
 	if (location != NULL) {
 		nemo_window_go_to (window, location);
@@ -418,40 +422,6 @@ open_window (NemoApplication *application,
 	}
 
 	nemo_profile_end (NULL);
-}
-
-static void
-open_windows (NemoApplication *application,
-	      gboolean force_new,
-	      GFile **files,
-	      gint n_files,
-	      GdkScreen *screen)
-{
-	guint i;
-
-	if (files == NULL || files[0] == NULL) {
-		/* Open a window pointing at the default location. */
-		open_window (application, NULL, screen);
-	} else {
-		/* Open windows at each requested location. */
-		for (i = 0; i < n_files; ++i) {
-			NemoWindowSlot *slot = NULL;
-
-			if (!force_new)
-				slot = get_window_slot_for_location (application, files[i]);
-
-			if (!slot) {
-				open_window (application, files[i], screen);
-			} else {
-				/* We open the location again to update any possible selection */
-				nemo_window_slot_open_location (slot, files[i], 0);
-
-				NemoWindow *window = nemo_window_slot_get_window (slot);
-				nemo_window_set_active_slot (window, slot);
-				gtk_window_present (GTK_WINDOW (window));
-			}
-		}
-	}
 }
 
 void
@@ -498,13 +468,33 @@ nemo_application_open (GApplication *app,
 			   const gchar *hint)
 {
 	NemoApplication *self = NEMO_APPLICATION (app);
+	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
+	NemoWindowSlot *slot = NULL;
+	NemoWindow *window;
+	GFile *file;
+	gint idx;
 
 	DEBUG ("Open called on the GApplication instance; %d files", n_files);
 
-	gboolean force_new = (g_strcmp0 (hint, "new-window") == 0);
+	/* Open windows at each requested location. */
+	for (idx = 0; idx < n_files; idx++) {
+		file = files[idx];
 
-	open_windows (self, force_new, files, n_files,
-		      gdk_screen_get_default ());
+		if (!force_new) {
+			slot = get_window_slot_for_location (self, file);
+		}
+
+		if (!slot) {
+			open_window (self, file);
+		} else {
+			/* We open the location again to update any possible selection */
+			nemo_window_slot_open_location (slot, file, 0);
+
+			window = nemo_window_slot_get_window (slot);
+			nemo_window_set_active_slot (window, slot);
+			gtk_window_present (GTK_WINDOW (window));
+		}
+	}
 }
 
 static GtkWindow *
