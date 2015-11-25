@@ -222,7 +222,7 @@ ensure_filmholes (void)
 	}
 	if (filmholes_right == NULL &&
 	    filmholes_left != NULL) {
-		filmholes_right = gdk_pixbuf_flip (filmholes_left, FALSE);
+		filmholes_right = gdk_pixbuf_flip (filmholes_left, TRUE);
 	}
 
 	return (filmholes_left && filmholes_right);
