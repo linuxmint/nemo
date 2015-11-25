@@ -29,16 +29,12 @@ servicedir = $(datadir)/dbus-1/services
 service_DATA = $(service_in_files:.service.in=.service)
 service_in_files = 				\
 	org.nemo.freedesktop.FileManager1.service.in	\
-	org.Nemo.service.in		\
-	org.Nemo.SearchProvider.service.in
+	org.Nemo.service.in
 
 org.Nemo.service: org.Nemo.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 org.nemo.freedesktop.FileManager1.service: org.nemo.freedesktop.FileManager1.service.in Makefile
-	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
-
-org.Nemo.SearchProvider.service: org.Nemo.SearchProvider.service.in Makefile
 	$(AM_V_GEN) sed -e "s|\@bindir\@|$(bindir)|" $< > $@
 
 searchproviderdir = $(datadir)/gnome-shell/search-providers

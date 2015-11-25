@@ -54,8 +54,6 @@ typedef struct {
 struct _NemoShellSearchProvider {
   GObject parent;
 
-  guint name_owner_id;
-  GDBusObjectManagerServer *object_manager;
   NemoShellSearchProvider2 *skeleton;
 
   PendingSearch *current_search;
@@ -658,66 +656,11 @@ handle_launch_search (NemoShellSearchProvider2 *skeleton,
 }
 
 static void
-search_provider_name_acquired_cb (GDBusConnection *connection,
-                                  const gchar     *name,
-                                  gpointer         user_data)
-{
-  g_debug ("Search provider name acquired: %s\n", name);
-}
-
-static void
-search_provider_name_lost_cb (GDBusConnection *connection,
-                              const gchar     *name,
-                              gpointer         user_data)
-{
-  g_debug ("Search provider name lost: %s\n", name);
-}
-
-static void
-search_provider_bus_acquired_cb (GDBusConnection *connection,
-                                 const gchar *name,
-                                 gpointer user_data)
-{
-  NemoShellSearchProvider *self = user_data;
-
-  self->object_manager = g_dbus_object_manager_server_new ("/org/Nemo/SearchProvider");
-  self->skeleton = nemo_shell_search_provider2_skeleton_new ();
-
-  g_signal_connect (self->skeleton, "handle-get-initial-result-set",
-                    G_CALLBACK (handle_get_initial_result_set), self);
-  g_signal_connect (self->skeleton, "handle-get-subsearch-result-set",
-                    G_CALLBACK (handle_get_subsearch_result_set), self);
-  g_signal_connect (self->skeleton, "handle-get-result-metas",
-                    G_CALLBACK (handle_get_result_metas), self);
-  g_signal_connect (self->skeleton, "handle-activate-result",
-                    G_CALLBACK (handle_activate_result), self);
-  g_signal_connect (self->skeleton, "handle-launch-search",
-                    G_CALLBACK (handle_launch_search), self);
-
-  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
-                                    connection,
-                                    "/org/Nemo/SearchProvider", NULL);
-  g_dbus_object_manager_server_set_connection (self->object_manager, connection);
-
-  g_application_release (g_application_get_default ());
-}
-
-static void
 search_provider_dispose (GObject *obj)
 {
   NemoShellSearchProvider *self = NEMO_SHELL_SEARCH_PROVIDER (obj);
 
-  if (self->name_owner_id != 0) {
-    g_bus_unown_name (self->name_owner_id);
-    self->name_owner_id = 0;
-  }
-
-  if (self->skeleton != NULL) {
-    g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->skeleton));
-    g_clear_object (&self->skeleton);
-  }
-
-  g_clear_object (&self->object_manager);
+  g_clear_object (&self->skeleton);
   g_hash_table_destroy (self->metas_cache);
   cancel_current_search (self);
 
@@ -734,14 +677,18 @@ nemo_shell_search_provider_init (NemoShellSearchProvider *self)
   self->bookmarks = nemo_application_get_bookmarks (NEMO_APPLICATION (g_application_get_default ()));
   self->volumes = g_volume_monitor_get ();
 
-  g_application_hold (g_application_get_default ());
-  self->name_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                                        "org.Nemo.SearchProvider",
-                                        G_BUS_NAME_OWNER_FLAGS_NONE,
-                                        search_provider_bus_acquired_cb,
-                                        search_provider_name_acquired_cb,
-                                        search_provider_name_lost_cb,
-                                        self, NULL);
+  self->skeleton = nemo_shell_search_provider2_skeleton_new ();
+
+  g_signal_connect (self->skeleton, "handle-get-initial-result-set",
+                    G_CALLBACK (handle_get_initial_result_set), self);
+  g_signal_connect (self->skeleton, "handle-get-subsearch-result-set",
+                    G_CALLBACK (handle_get_subsearch_result_set), self);
+  g_signal_connect (self->skeleton, "handle-get-result-metas",
+                    G_CALLBACK (handle_get_result_metas), self);
+  g_signal_connect (self->skeleton, "handle-activate-result",
+                    G_CALLBACK (handle_activate_result), self);
+  g_signal_connect (self->skeleton, "handle-launch-search",
+                    G_CALLBACK (handle_launch_search), self);
 }
 
 static void
@@ -757,4 +704,20 @@ nemo_shell_search_provider_new (void)
 {
   return g_object_new (nemo_shell_search_provider_get_type (),
                        NULL);
+}
+
+gboolean
+nemo_shell_search_provider_register (NemoShellSearchProvider *self,
+                                         GDBusConnection             *connection,
+                                         GError                     **error)
+{
+  return g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skeleton),
+                                           connection,
+                                           "/org/Nemo/SearchProvider", error);
+}
+
+void
+nemo_shell_search_provider_unregister (NemoShellSearchProvider *self)
+{
+  g_dbus_interface_skeleton_unexport (G_DBUS_INTERFACE_SKELETON (self->skeleton));
 }

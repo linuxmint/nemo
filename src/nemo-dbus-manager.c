@@ -25,10 +25,10 @@
 #include "nemo-dbus-manager.h"
 #include "nemo-generated.h"
 
-#include "nemo-file-operations.h"
+#include <libnemo-private/nemo-file-operations.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_DBUS
-#include "nemo-debug.h"
+#include <libnemo-private/nemo-debug.h>
 
 #include <gio/gio.h>
 
