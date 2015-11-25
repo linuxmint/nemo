@@ -1,3 +1,10 @@
+Nemo merged with changes in Nautilus 3.13.2:
+
+Changes:
+* Use new gear menu icon (Matthias)
+* Include application-specific theming for Adwaita (Matthias)
+* Share pathbar styling with GTK+ (Matthias)
+
 Nemo merged with changes in Nautilus 3.13.1:
 
 Changes:

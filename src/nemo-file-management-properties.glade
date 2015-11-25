@@ -254,6 +254,7 @@
     <property name="default_width">800</property>
     <property name="default_height">600</property>
     <property name="type_hint">dialog</property>
+    <property name="title" translatable="yes">Files Preferences</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
