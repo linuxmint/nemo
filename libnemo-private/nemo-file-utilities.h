@@ -36,7 +36,6 @@
 /* These functions all return something something that needs to be
  * freed with g_free, is not NULL, and is guaranteed to exist.
  */
-char *   nemo_get_xdg_dir                        (const char *type);
 char *   nemo_get_user_directory                 (void);
 char *   nemo_get_desktop_directory              (void);
 GFile *  nemo_get_desktop_location               (void);

@@ -31,7 +31,6 @@
 #include "nemo-file.h"
 #include "nemo-file-operations.h"
 #include "nemo-search-directory.h"
-#include "nemo-signaller.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
@@ -44,14 +43,6 @@
 #include <stdlib.h>
 
 #define NEMO_USER_DIRECTORY_NAME "nemo"
-
-#define DESKTOP_DIRECTORY_NAME "Desktop"
-#define LEGACY_DESKTOP_DIRECTORY_NAME ".gnome-desktop"
-
-static void update_xdg_dir_cache (void);
-static void schedule_user_dirs_changed (void);
-static void desktop_dir_changed (void);
-
 
 /* Allowed characters outside alphanumeric for unreserved. */
 #define G_URI_OTHER_UNRESERVED "-._~"
@@ -366,306 +357,17 @@ nemo_get_scripts_directory_path (void)
 	return g_build_filename (g_get_user_data_dir (), "nemo", "scripts", NULL);
 }
 
-typedef struct {
-	char *type;
-	char *path;
-	NemoFile *file;
-} XdgDirEntry;
-
-
-static XdgDirEntry *
-parse_xdg_dirs (const char *config_file)
-{
-  GArray *array;
-  char *config_file_free = NULL;
-  XdgDirEntry dir;
-  char *data;
-  char **lines;
-  char *p, *d;
-  int i;
-  char *type_start, *type_end;
-  char *value, *unescaped;
-  gboolean relative;
-
-  array = g_array_new (TRUE, TRUE, sizeof (XdgDirEntry));
-  
-  if (config_file == NULL)
-    {
-      config_file_free = g_build_filename (g_get_user_config_dir (),
-					   "user-dirs.dirs", NULL);
-      config_file = (const char *)config_file_free;
-    }
-
-  if (g_file_get_contents (config_file, &data, NULL, NULL))
-    {
-      lines = g_strsplit (data, "\n", 0);
-      g_free (data);
-      for (i = 0; lines[i] != NULL; i++)
-	{
-	  p = lines[i];
-	  while (g_ascii_isspace (*p))
-	    p++;
-      
-	  if (*p == '#')
-	    continue;
-      
-	  value = strchr (p, '=');
-	  if (value == NULL)
-	    continue;
-	  *value++ = 0;
-      
-	  g_strchug (g_strchomp (p));
-	  if (!g_str_has_prefix (p, "XDG_"))
-	    continue;
-	  if (!g_str_has_suffix (p, "_DIR"))
-	    continue;
-	  type_start = p + 4;
-	  type_end = p + strlen (p) - 4;
-      
-	  while (g_ascii_isspace (*value))
-	    value++;
-      
-	  if (*value != '"')
-	    continue;
-	  value++;
-      
-	  relative = FALSE;
-	  if (g_str_has_prefix (value, "$HOME"))
-	    {
-	      relative = TRUE;
-	      value += 5;
-	      while (*value == '/')
-		      value++;
-	    }
-	  else if (*value != '/')
-	    continue;
-	  
-	  d = unescaped = g_malloc (strlen (value) + 1);
-	  while (*value && *value != '"')
-	    {
-	      if ((*value == '\\') && (*(value + 1) != 0))
-		value++;
-	      *d++ = *value++;
-	    }
-	  *d = 0;
-      
-	  *type_end = 0;
-	  dir.type = g_strdup (type_start);
-	  if (relative)
-	    {
-	      dir.path = g_build_filename (g_get_home_dir (), unescaped, NULL);
-	      g_free (unescaped);
-	    }
-	  else 
-	    dir.path = unescaped;
-      
-	  g_array_append_val (array, dir);
-	}
-      
-      g_strfreev (lines);
-    }
-  
-  g_free (config_file_free);
-  
-  return (XdgDirEntry *)g_array_free (array, FALSE);
-}
-
-static XdgDirEntry *cached_xdg_dirs = NULL;
-static GFileMonitor *cached_xdg_dirs_monitor = NULL;
-
-static void
-xdg_dir_changed (NemoFile *file,
-		 XdgDirEntry *dir)
-{
-	GFile *location, *dir_location;
-	char *path;
-
-	location = nemo_file_get_location (file);
-	dir_location = g_file_new_for_path (dir->path);
-	if (!g_file_equal (location, dir_location)) {
-		path = g_file_get_path (location);
-
-		if (path) {
-			char *argv[5];
-			int i;
-			
-			g_free (dir->path);
-			dir->path = path;
-
-			i = 0;
-			argv[i++] = "xdg-user-dirs-update";
-			argv[i++] = "--set";
-			argv[i++] = dir->type;
-			argv[i++] = dir->path;
-			argv[i++] = NULL;
-
-			/* We do this sync, to avoid possible race-conditions
-			   if multiple dirs change at the same time. Its
-			   blocking the main thread, but these updates should
-			   be very rare and very fast. */
-			g_spawn_sync (NULL, 
-				      argv, NULL,
-				      G_SPAWN_SEARCH_PATH |
-				      G_SPAWN_STDOUT_TO_DEV_NULL |
-				      G_SPAWN_STDERR_TO_DEV_NULL,
-				      NULL, NULL,
-				      NULL, NULL, NULL, NULL);
-			g_reload_user_special_dirs_cache ();
-			schedule_user_dirs_changed ();
-			desktop_dir_changed ();
-			/* Icon might have changed */
-			nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_INFO);
-		}
-	}
-	g_object_unref (location);
-	g_object_unref (dir_location);
-}
-
-static void 
-xdg_dir_cache_changed_cb (GFileMonitor  *monitor,
-			  GFile *file,
-			  GFile *other_file,
-			  GFileMonitorEvent event_type)
-{
-	if (event_type == G_FILE_MONITOR_EVENT_CHANGED ||
-	    event_type == G_FILE_MONITOR_EVENT_CREATED) {
-		update_xdg_dir_cache ();
-	}
-}
-
-static int user_dirs_changed_tag = 0;
-
-static gboolean
-emit_user_dirs_changed_idle (gpointer data)
-{
-	g_signal_emit_by_name (nemo_signaller_get_current (),
-			       "user-dirs-changed");
-	user_dirs_changed_tag = 0;
-	return FALSE;
-}
-
-static void
-schedule_user_dirs_changed (void)
-{
-	if (user_dirs_changed_tag == 0) {
-		user_dirs_changed_tag = g_idle_add (emit_user_dirs_changed_idle, NULL);
-	}
-}
-
-static void
-unschedule_user_dirs_changed (void)
-{
-	if (user_dirs_changed_tag != 0) {
-		g_source_remove (user_dirs_changed_tag);
-		user_dirs_changed_tag = 0;
-	}
-}
-
-static void
-free_xdg_dir_cache (void)
-{
-	int i;
-
-	if (cached_xdg_dirs != NULL) {
-		for (i = 0; cached_xdg_dirs[i].type != NULL; i++) {
-			if (cached_xdg_dirs[i].file != NULL) {
-				nemo_file_monitor_remove (cached_xdg_dirs[i].file,
-							      &cached_xdg_dirs[i]);
-				g_signal_handlers_disconnect_by_func (cached_xdg_dirs[i].file,
-								      G_CALLBACK (xdg_dir_changed),
-								      &cached_xdg_dirs[i]);
-				nemo_file_unref (cached_xdg_dirs[i].file);
-			}
-			g_free (cached_xdg_dirs[i].type);
-			g_free (cached_xdg_dirs[i].path);
-		}
-		g_free (cached_xdg_dirs);
-	}
-}
-
-static void
-destroy_xdg_dir_cache (void)
-{
-	free_xdg_dir_cache ();
-	unschedule_user_dirs_changed ();
-	desktop_dir_changed ();
-
-	if (cached_xdg_dirs_monitor != NULL) {
-		g_object_unref  (cached_xdg_dirs_monitor);
-		cached_xdg_dirs_monitor = NULL;
-	}
-}
-
-static void
-update_xdg_dir_cache (void)
-{
-	GFile *file;
-	char *config_file, *uri;
-	int i;
-
-	free_xdg_dir_cache ();
-	g_reload_user_special_dirs_cache ();
-	schedule_user_dirs_changed ();
-	desktop_dir_changed ();
-
-	cached_xdg_dirs = parse_xdg_dirs (NULL);
-	
-	for (i = 0 ; cached_xdg_dirs[i].type != NULL; i++) {
-		cached_xdg_dirs[i].file = NULL;
-		if (strcmp (cached_xdg_dirs[i].path, g_get_home_dir ()) != 0) {
-			uri = g_filename_to_uri (cached_xdg_dirs[i].path, NULL, NULL);
-			cached_xdg_dirs[i].file = nemo_file_get_by_uri (uri);
-			nemo_file_monitor_add (cached_xdg_dirs[i].file,
-						   &cached_xdg_dirs[i],
-						   NEMO_FILE_ATTRIBUTE_INFO);
-			g_signal_connect (cached_xdg_dirs[i].file,
-					  "changed", G_CALLBACK (xdg_dir_changed), &cached_xdg_dirs[i]);
-			g_free (uri);
-		}
-	}
-
-	if (cached_xdg_dirs_monitor == NULL) {
-		config_file = g_build_filename (g_get_user_config_dir (),
-						     "user-dirs.dirs", NULL);
-		file = g_file_new_for_path (config_file);
-		cached_xdg_dirs_monitor = g_file_monitor_file (file, 0, NULL, NULL);
-		g_signal_connect (cached_xdg_dirs_monitor, "changed",
-				  G_CALLBACK (xdg_dir_cache_changed_cb), NULL);
-		g_object_unref (file);
-		g_free (config_file);
-
-		eel_debug_call_at_shutdown (destroy_xdg_dir_cache); 
-	}
-}
-
-char *
-nemo_get_xdg_dir (const char *type)
-{
-	int i;
-
-	if (cached_xdg_dirs == NULL) {
-		update_xdg_dir_cache ();
-	}
-
-	for (i = 0 ; cached_xdg_dirs != NULL && cached_xdg_dirs[i].type != NULL; i++) {
-		if (strcmp (cached_xdg_dirs[i].type, type) == 0) {
-			return g_strdup (cached_xdg_dirs[i].path);
-		}
-	}
-	if (strcmp ("DESKTOP", type) == 0) {
-		return g_build_filename (g_get_home_dir (), DESKTOP_DIRECTORY_NAME, NULL);
-	}
-	if (strcmp ("TEMPLATES", type) == 0) {
-		return g_build_filename (g_get_home_dir (), "Templates", NULL);
-	}
-	
-	return g_strdup (g_get_home_dir ());
-}
-
-static char *
+static const char *
 get_desktop_path (void)
 {
-	return nemo_get_xdg_dir ("DESKTOP");
+	const char *desktop_path;
+
+	desktop_path = g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP);
+	if (desktop_path == NULL) {
+		desktop_path = g_get_home_dir ();
+	}
+
+	return desktop_path;
 }
 
 /**
@@ -678,7 +380,7 @@ get_desktop_path (void)
 char *
 nemo_get_desktop_directory (void)
 {
-	char *desktop_directory;
+	const char *desktop_directory;
 	
 	desktop_directory = get_desktop_path ();
 
@@ -694,20 +396,13 @@ nemo_get_desktop_directory (void)
 		 */
 	}
 
-	return desktop_directory;
+	return g_strdup (desktop_directory);
 }
 
 GFile *
 nemo_get_desktop_location (void)
 {
-	char *desktop_directory;
-	GFile *res;
-	
-	desktop_directory = get_desktop_path ();
-
-	res = g_file_new_for_path (desktop_directory);
-	g_free (desktop_directory);
-	return res;
+	return g_file_new_for_path (get_desktop_path ());
 }
 
 /**
@@ -740,19 +435,18 @@ nemo_get_home_directory_uri (void)
 gboolean
 nemo_should_use_templates_directory (void)
 {
-	char *dir;
+	const char *dir;
 	gboolean res;
-	
-	dir = nemo_get_xdg_dir ("TEMPLATES");
-	res = strcmp (dir, g_get_home_dir ()) != 0;
-	g_free (dir);
+
+	dir = g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
+	res = dir && (g_strcmp0 (dir, g_get_home_dir ()) != 0);
 	return res;
 }
 
 char *
 nemo_get_templates_directory (void)
 {
-	return nemo_get_xdg_dir ("TEMPLATES");
+	return g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES));
 }
 
 void
@@ -799,26 +493,10 @@ static GFile *desktop_dir = NULL;
 static GFile *desktop_dir_dir = NULL;
 static char *desktop_dir_filename = NULL;
 
-
-static void
-desktop_dir_changed (void)
-{
-	if (desktop_dir) {
-		g_object_unref (desktop_dir);
-	}
-	if (desktop_dir_dir) {
-		g_object_unref (desktop_dir_dir);
-	}
-	g_free (desktop_dir_filename);
-	desktop_dir = NULL;
-	desktop_dir_dir = NULL;
-	desktop_dir_filename = NULL;
-}
-
 static void
 update_desktop_dir (void)
 {
-	char *path;
+	const char *path;
 	char *dirname;
 
 	path = get_desktop_path ();
@@ -828,7 +506,6 @@ update_desktop_dir (void)
 	desktop_dir_dir = g_file_new_for_path (dirname);
 	g_free (dirname);
 	desktop_dir_filename = g_path_get_basename (path);
-	g_free (path);
 }
 
 gboolean
