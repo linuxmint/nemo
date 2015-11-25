@@ -34,5 +34,9 @@ typedef GObjectClass NemoShellSearchProviderClass;
 GType nemo_shell_search_provider_get_type (void);
 NemoShellSearchProvider * nemo_shell_search_provider_new (void);
 
-#endif /* __NEMO_SHELL_SEARCH_PROVIDER_H__ */
+gboolean nemo_shell_search_provider_register   (NemoShellSearchProvider *self,
+                                                    GDBusConnection             *connection,
+                                                    GError                     **error);
+void     nemo_shell_search_provider_unregister (NemoShellSearchProvider *self);
 
+#endif /* __NEMO_SHELL_SEARCH_PROVIDER_H__ */

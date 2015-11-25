@@ -1,3 +1,3 @@
 [D-BUS Service]
-Name=org.Nemo.SearchProvider
+Name=org.Nemo
 Exec=@bindir@/nemo --gapplication-service

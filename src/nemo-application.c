@@ -99,7 +99,6 @@
 /* The saving of the accelerator map was requested  */
 static gboolean save_of_accel_map_requested = FALSE;
 
-static void     desktop_changed_callback          (gpointer                  user_data);
 static void     nemo_application_open_desktop (NemoApplication *application);
 static void     nemo_application_close_desktop (void);
 
@@ -111,8 +110,7 @@ struct _NemoApplicationPriv {
 	NemoDBusManager *dbus_manager;
 	NemoFreedesktopDBus *fdb_manager;
 
-	gboolean no_desktop;
-	gboolean force_desktop;
+	gboolean desktop_override;
 	gboolean no_default_window;
 
     gboolean cache_problem;
@@ -909,16 +907,14 @@ nemo_application_handle_local_options (GApplication *application,
 
 	if (g_variant_dict_contains (options, "force-desktop")) {
 		DEBUG ("Forcing desktop, as requested");
+		self->priv->desktop_override = TRUE;
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"open-desktop", NULL);
-                /* fall through */
-	}
-
-	if (g_variant_dict_contains (options, "no-desktop")) {
+	} else if (g_variant_dict_contains (options, "no-desktop")) {
 		DEBUG ("Forcing desktop off, as requested");
+		self->priv->desktop_override = TRUE;
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"close-desktop", NULL);
-                /* fall through */
 	}
 
 	self->priv->no_default_window = g_variant_dict_contains (options, "no-default-window");
@@ -1058,22 +1054,6 @@ nemo_application_close_desktop (void)
 	}
 }
 
-/* callback for showing or hiding the desktop based on the user's preference */
-static void
-desktop_changed_callback (gpointer user_data)
-{
-	NemoApplication *application;
-
-	application = NEMO_APPLICATION (user_data);
-	if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
-		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"open-desktop", NULL);
-	} else {
-		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"close-desktop", NULL);
-	}
-}
-
 static void
 monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
 {
@@ -1086,40 +1066,38 @@ monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
 }
 
 static void
+nemo_application_set_desktop_visible (NemoApplication *self,
+					  gboolean             visible)
+{
+	const gchar *action_name;
+
+	action_name = visible ? "open-desktop" : "close-desktop";
+	g_action_group_activate_action (G_ACTION_GROUP (self),
+					action_name, NULL);
+}
+
+static void
+update_desktop_from_gsettings (NemoApplication *self)
+{
+	/* desktop GSetting was overridden - don't do anything */
+	if (self->priv->desktop_override) {
+		return;
+	}
+
+	nemo_application_set_desktop_visible (self, g_settings_get_boolean (gnome_background_preferences,
+										NEMO_PREFERENCES_SHOW_DESKTOP));
+}
+
+static void
 init_desktop (NemoApplication *self)
 {
 	GdkScreen *screen;
 	screen = gdk_display_get_default_screen (gdk_display_get_default ());
-
-	gboolean should_show;
-
-	/* by default, take the GSettings value */
-	should_show = g_settings_get_boolean (nemo_desktop_preferences,
-					      NEMO_PREFERENCES_SHOW_DESKTOP);
-
-	/* the command line switches take over the setting */
-	if (self->priv->no_desktop) {
-		should_show = FALSE;
-	} else if (self->priv->force_desktop) {
-		should_show = TRUE;
-	}
-
-	if (should_show) {
-		g_action_group_activate_action (G_ACTION_GROUP (self),
-						"open-desktop", NULL);
-	} else {
-		g_action_group_activate_action (G_ACTION_GROUP (self),
-						"close-desktop", NULL);
-	}
-
-	/* Monitor the preference to show or hide the desktop, if no other
-	 * command line option was specified.
-	 */
-	if (!self->priv->no_desktop && !self->priv->force_desktop) {
-	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
-				  G_CALLBACK (desktop_changed_callback),
+	
+	update_desktop_from_gsettings (self);
+	g_signal_connect_swapped (gnome_background_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
+				  G_CALLBACK (update_desktop_from_gsettings),
 				  self);
-	}
 
 	g_signal_connect (screen, "monitors-changed",
 				  G_CALLBACK (monitors_changed_callback),
@@ -1370,10 +1348,6 @@ nemo_application_startup (GApplication *app)
                               G_CALLBACK (menu_state_changed_callback), self);
 
 
-	/* Bookmarks and search */
-	self->priv->bookmark_list = nemo_bookmark_list_new ();
-	self->priv->search_provider = nemo_shell_search_provider_new ();
-
 	/* Check the user's .nemo directories and post warnings
 	 * if there are problems.
 	 */
@@ -1418,6 +1392,11 @@ nemo_application_dbus_register (GApplication	 *app,
 		return FALSE;
 	}
 
+	self->priv->search_provider = nemo_shell_search_provider_new ();
+	if (!nemo_shell_search_provider_register (self->priv->search_provider, connection, error)) {
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -1430,6 +1409,10 @@ nemo_application_dbus_unregister (GApplication	*app,
 
 	if (self->priv->dbus_manager) {
 		nemo_dbus_manager_unregister (self->priv->dbus_manager);
+	}
+
+	if (self->priv->search_provider) {
+		nemo_shell_search_provider_unregister (self->priv->search_provider);
 	}
 }
 
