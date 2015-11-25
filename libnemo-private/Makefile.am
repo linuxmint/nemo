@@ -19,20 +19,6 @@ AM_CPPFLAGS = 						\
 	-DNEMO_EXTENSIONDIR=\""$(libdir)/nemo/extensions-3.0"\" \
 	$(NULL)
 
-dbus_built_sources = nemo-generated.c nemo-generated.h
-$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/dbus-interfaces.xml
-	gdbus-codegen									\
-		--interface-prefix org.Nemo.					\
-		--c-namespace NemoDBus						\
-		--c-generate-object-manager						\
-		--generate-c-code nemo-generated					\
-		$(top_srcdir)/data/dbus-interfaces.xml					\
-		$(NULL)
-
-BUILT_SOURCES = \
-	$(dbus_built_sources) \
-	$(NULL)
-
 if ENABLE_TRACKER
 nemo_tracker_engine_sources = \
 	nemo-search-engine-tracker.c \
@@ -80,8 +66,6 @@ libnemo_private_la_SOURCES = \
 	nemo-column-chooser.h \
 	nemo-column-utilities.c \
 	nemo-column-utilities.h \
-	nemo-dbus-manager.c \
-	nemo-dbus-manager.h \
 	nemo-debug.c \
 	nemo-debug.h \
 	nemo-default-file-icon.c \
@@ -125,8 +109,6 @@ libnemo_private_la_SOURCES = \
 	nemo-file-utilities.h \
 	nemo-file.c \
 	nemo-file.h \
-	nemo-generated.c \
-	nemo-generated.h \
 	nemo-global-preferences.c \
 	nemo-global-preferences.h \
 	nemo-icon-info.c \

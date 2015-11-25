@@ -49,6 +49,19 @@ LDADD =\
 	$(UNITY_LIBS) \
 	$(NULL)
 
+dbus_built_sources = 					\
+	nemo-generated.c				\
+	nemo-generated.h
+
+$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/dbus-interfaces.xml
+	gdbus-codegen									\
+		--interface-prefix org.Nemo.					\
+		--c-namespace NemoDBus						\
+		--c-generate-object-manager						\
+		--generate-c-code nemo-generated					\
+		$(top_srcdir)/data/dbus-interfaces.xml					\
+		$(NULL)
+
 dbus_freedesktop_built_sources =			\
 	nemo-freedesktop-generated.c		\
 	nemo-freedesktop-generated.h
@@ -125,6 +138,7 @@ nemo-enum-types.c: $(headers) Makefile
 	&& rm -f xgen-gtc
 
 nemo_built_sources = \
+	$(dbus_built_sources) \
 	$(dbus_freedesktop_built_sources) \
 	$(dbus_shell_search_provider_built_sources) \
 	nemo-resources.c \
@@ -151,6 +165,8 @@ nemo_SOURCES = \
 	nemo-canvas-view-container.h		\
 	nemo-connect-server-dialog.c	\
 	nemo-connect-server-dialog.h	\
+	nemo-dbus-manager.c 		\
+	nemo-dbus-manager.h 		\
 	nemo-desktop-canvas-view.c		\
 	nemo-desktop-canvas-view.h		\
 	nemo-desktop-item-properties.c	\
@@ -293,7 +309,6 @@ nemo_extensions_list_SOURCES= \
 
 BUILT_SOURCES = 					\
 	$(nemo_built_sources) 			\
-	$(dbus_shell_search_provider_built_sources) 	\
 	$(NULL)
 
 polkitdir = $(datadir)/polkit-1/actions
