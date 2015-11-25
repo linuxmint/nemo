@@ -3,7 +3,7 @@
 [encoding: UTF-8]
 data/nemo-autorun-software.desktop.in.in
 data/nemo-connect-server.desktop.in.in
-data/nemo.desktop.in.in
+data/org.Nemo.desktop.in.in
 data/nemo.xml.in
 eel/eel-canvas.c
 eel/eel-editable-label.c
