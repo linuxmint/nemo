@@ -15,5 +15,6 @@
     <file alias="icons/knob.png">../icons/knob.png</file>
     <file>nemo-style-fallback.css</file>
     <file>nemo-style-application.css</file>
+    <file>Adwaita.css</file>
   </gresource>
 </gresources>

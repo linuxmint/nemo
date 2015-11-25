@@ -1273,6 +1273,56 @@ init_gtk_accels (void)
 }
 
 static void
+theme_changed (GtkSettings *settings)
+{
+	static GtkCssProvider *provider = NULL;
+	gchar *theme;
+	GdkScreen *screen;
+
+	g_object_get (settings, "gtk-theme-name", &theme, NULL);
+	screen = gdk_screen_get_default ();
+
+	if (g_str_equal (theme, "Adwaita"))
+	{
+		if (provider == NULL)
+		{
+			GFile *file;
+
+			provider = gtk_css_provider_new ();
+			file = g_file_new_for_uri ("resource:///org/nemo/Adwaita.css");
+			gtk_css_provider_load_from_file (provider, file, NULL);
+			g_object_unref (file);
+		}
+
+		gtk_style_context_add_provider_for_screen (screen,
+							   GTK_STYLE_PROVIDER (provider),
+							   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	}
+	else if (provider != NULL)
+	{
+		gtk_style_context_remove_provider_for_screen (screen,
+							      GTK_STYLE_PROVIDER (provider));
+		g_clear_object (&provider);
+	}
+
+	g_free (theme);
+}
+
+static void
+setup_theme_extensions (void)
+{
+	GtkSettings *settings;
+
+	/* Set up a handler to load our custom css for Adwaita.
+	 * See https://bugzilla.gnome.org/show_bug.cgi?id=732959
+	 * for a more automatic solution that is still under discussion.
+	 */
+	settings = gtk_settings_get_default ();
+	g_signal_connect (settings, "notify::gtk-theme-name", G_CALLBACK (theme_changed), NULL);
+	theme_changed (settings);
+}
+
+static void
 menu_state_changed_callback (NemoApplication *self)
 {
     if (!g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR) &&
@@ -1330,6 +1380,8 @@ nemo_application_startup (GApplication *app)
 	G_APPLICATION_CLASS (nemo_application_parent_class)->startup (app);
 
 	gtk_window_set_default_icon_name ("system-file-manager");
+
+	setup_theme_extensions ();
 
 	/* create DBus manager */
 	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
