@@ -7,7 +7,7 @@ xml_files = $(xml_in_files:.xml.in=.xml)
 desktopdir       = $(datadir)/applications
 desktop_DATA     = $(desktop_in_files:.desktop.in=.desktop)
 desktop_in_files = 					\
-	nemo.desktop.in				\
+	org.Nemo.desktop.in				\
 	nemo-autorun-software.desktop.in		\
 	nemo-connect-server.desktop.in
 
@@ -52,8 +52,8 @@ nemodata_DATA = \
 	$(NULL)
 
 EXTRA_DIST = $(nemodata_DATA) 	\
-	nemo.desktop		\
-	nemo.desktop.in		\
+	org.Nemo.desktop		\
+	org.Nemo.desktop.in		\
 	dbus-interfaces.xml		\
 	freedesktop-dbus-interfaces.xml	\
 	shell-search-provider-dbus-interfaces.xml \

@@ -280,6 +280,7 @@ Exec=nemo --new-window %U
 Icon=folder
 Terminal=false
 Type=Application
+DBusActivatable=true
 StartupNotify=false
 Categories=GNOME;GTK;Utility;Core;FileManager;
 MimeType=inode/directory;application/x-gnome-saved-search;
