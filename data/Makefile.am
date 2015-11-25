@@ -42,11 +42,6 @@ searchprovider_DATA = nemo-search-provider.ini
 
 nemodatadir = $(datadir)/nemo
 
-nemodata_DATA = \
-	nemo-extras.placeholder 	\
-	nemo-suggested.placeholder 	\
-	$(NULL)
-
 EXTRA_DIST = $(nemodata_DATA) 	\
 	org.Nemo.desktop		\
 	org.Nemo.desktop.in		\
