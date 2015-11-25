@@ -347,7 +347,6 @@ static void     nemo_view_select_file                      (NemoView      *view,
 							        NemoFile         *file);
 
 static void     update_templates_directory                     (NemoView *view);
-static void     user_dirs_changed                              (NemoView *view);
 
 static gboolean file_list_all_are_folders                      (GList *file_list);
 
@@ -2841,10 +2840,6 @@ nemo_view_init (NemoView *view)
 		nemo_directory_unref (templates_directory);
 	}
 	update_templates_directory (view);
-	g_signal_connect_object (nemo_signaller_get_current (),
-				 "user-dirs-changed",
-				 G_CALLBACK (user_dirs_changed),
-				 view, G_CONNECT_SWAPPED);
 
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
@@ -6519,14 +6514,6 @@ update_templates_directory (NemoView *view)
 		add_directory_to_templates_directory_list (view, templates_directory);
 		nemo_directory_unref (templates_directory);
 	}
-}
-
-static void
-user_dirs_changed (NemoView *view)
-{
-	update_templates_directory (view);
-	view->details->templates_invalid = TRUE;
-	schedule_update_menus (view);
 }
 
 static gboolean
