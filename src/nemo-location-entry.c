@@ -654,13 +654,16 @@ void
 nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 					      NemoLocationEntryAction secondary_action)
 {
-	gboolean rtl;
-
 	if (entry->details->secondary_action == secondary_action) {
 		return;
 	}
 
-	rtl = gtk_widget_get_direction (GTK_WIDGET (entry)) == GTK_TEXT_DIR_RTL;
+#if	GTK_CHECK_VERSION(3,13,2)
+	// gtk 3.13.2 supports RTL icons in GtkIconTheme
+    const gboolean rtl = false; 
+#else 
+	const gboolean rtl = gtk_widget_get_direction (GTK_WIDGET (entry)) == GTK_TEXT_DIR_RTL;
+#endif	
 
 	switch (secondary_action) {
 	case NEMO_LOCATION_ENTRY_ACTION_CLEAR:
