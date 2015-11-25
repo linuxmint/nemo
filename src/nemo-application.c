@@ -949,9 +949,32 @@ nemo_application_activate (GApplication *app)
 static void
 nemo_application_init (NemoApplication *application)
 {
+	GSimpleAction *action_quit;
+	GSimpleAction *action_open_desktop;
+	GSimpleAction *action_close_desktop;
+
 	application->priv =
 		G_TYPE_INSTANCE_GET_PRIVATE (application, NEMO_TYPE_APPLICATION,
 					     NemoApplicationPriv);
+
+	action_quit = g_simple_action_new ("quit", NULL);
+	g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_quit));
+	g_signal_connect_swapped (action_quit, "activate",
+				  G_CALLBACK (nemo_application_quit), application);
+	g_object_unref (action_quit);
+
+	action_open_desktop = g_simple_action_new ("open-desktop", NULL);
+	g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_open_desktop));
+	g_signal_connect_swapped (action_open_desktop, "activate",
+				  G_CALLBACK (nemo_application_open_desktop), application);
+	g_object_unref (action_open_desktop);
+
+
+	action_close_desktop = g_simple_action_new ("close-desktop", NULL);
+	g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_close_desktop));
+	g_signal_connect_swapped (action_close_desktop, "activate",
+				  G_CALLBACK (nemo_application_close_desktop), application);
+	g_object_unref (action_close_desktop);
 
 	g_application_add_main_option_entries (G_APPLICATION (application), options);
 }
