@@ -213,28 +213,95 @@ nemo_floating_bar_hide (GtkWidget *widget)
 	gtk_spinner_stop (GTK_SPINNER (self->priv->spinner));
 }
 
-static gboolean
-nemo_floating_bar_draw (GtkWidget *widget,
-			    cairo_t *cr)
+static void
+get_padding_and_border (GtkWidget *widget,
+                        GtkBorder *border)
 {
-	GtkStyleContext *context;
+  GtkStyleContext *context;
+  GtkStateFlags state;
+  GtkBorder tmp;
 
-	context = gtk_widget_get_style_context (widget);
+  context = gtk_widget_get_style_context (widget);
+  state = gtk_widget_get_state_flags (widget);
 
-	gtk_style_context_save (context);
-	gtk_style_context_set_state (context, gtk_widget_get_state_flags (widget));
+  gtk_style_context_get_padding (context, state, border);
+  gtk_style_context_get_border (context, state, &tmp);
+  border->top += tmp.top;
+  border->right += tmp.right;
+  border->bottom += tmp.bottom;
+  border->left += tmp.left;
+}
 
-	gtk_render_background (context, cr, 0, 0,
-			       gtk_widget_get_allocated_width (widget),
-			       gtk_widget_get_allocated_height (widget));
+static void
+nemo_floating_bar_get_preferred_width (GtkWidget *widget,
+					   gint      *minimum_size,
+					   gint      *natural_size)
+{
+	GtkBorder border;
 
-	gtk_render_frame (context, cr, 0, 0,
-			  gtk_widget_get_allocated_width (widget),
-			  gtk_widget_get_allocated_height (widget));
+	get_padding_and_border (widget, &border);
 
-	gtk_style_context_restore (context);
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_width (widget,
+										    minimum_size,
+										    natural_size);
 
-	return GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->draw (widget, cr);;
+	*minimum_size += border.left + border.right;
+	*natural_size += border.left + border.right;
+}
+
+static void
+nemo_floating_bar_get_preferred_width_for_height (GtkWidget *widget,
+						      gint       height,
+						      gint      *minimum_size,
+						      gint      *natural_size)
+{
+	GtkBorder border;
+
+	get_padding_and_border (widget, &border);
+
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_width_for_height (widget,
+											       height,
+											       minimum_size,
+											       natural_size);
+
+	*minimum_size += border.left + border.right;
+	*natural_size += border.left + border.right;
+}
+
+static void
+nemo_floating_bar_get_preferred_height (GtkWidget *widget,
+					    gint      *minimum_size,
+					    gint      *natural_size)
+{
+	GtkBorder border;
+
+	get_padding_and_border (widget, &border);
+
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_height (widget,
+										     minimum_size,
+										     natural_size);
+
+	*minimum_size += border.top + border.bottom;
+	*natural_size += border.top + border.bottom;
+}
+
+static void
+nemo_floating_bar_get_preferred_height_for_width (GtkWidget *widget,
+						      gint       width,
+						      gint      *minimum_size,
+						      gint      *natural_size)
+{
+	GtkBorder border;
+
+	get_padding_and_border (widget, &border);
+
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_height_for_width (widget,
+											       width,
+											       minimum_size,
+											       natural_size);
+
+	*minimum_size += border.top + border.bottom;
+	*natural_size += border.top + border.bottom;
 }
 
 static void
@@ -315,7 +382,10 @@ nemo_floating_bar_class_init (NemoFloatingBarClass *klass)
 	oclass->get_property = nemo_floating_bar_get_property;
 	oclass->finalize = nemo_floating_bar_finalize;
 
-	wclass->draw = nemo_floating_bar_draw;
+	wclass->get_preferred_width = nemo_floating_bar_get_preferred_width;
+	wclass->get_preferred_width_for_height = nemo_floating_bar_get_preferred_width_for_height;
+	wclass->get_preferred_height = nemo_floating_bar_get_preferred_height;
+	wclass->get_preferred_height_for_width = nemo_floating_bar_get_preferred_height_for_width;
 	wclass->show = nemo_floating_bar_show;
 	wclass->hide = nemo_floating_bar_hide;
 	wclass->parent_set = nemo_floating_bar_parent_set;
@@ -428,6 +498,7 @@ nemo_floating_bar_add_action (NemoFloatingBar *self,
 		gtk_widget_show (w);
 
 		button = gtk_button_new ();
+		gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
 		gtk_button_set_image (GTK_BUTTON (button), w);
 		gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
 		gtk_widget_show (button);
