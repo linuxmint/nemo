@@ -38,12 +38,6 @@ NemoWindow > GtkGrid > .pane-separator:hover {
     color: shade (@theme_bg_color, 0.9);
 }
 
-NemoWindow > GtkGrid > .pane-separator:backdrop,
-NemoWindow > GtkGrid > .pane-separator:hover:backdrop {
-    border-color: @unfocused_borders;
-    background-color: @sidebar_bg_unfocused;
-}
-
 NemoNotebook.notebook {
     border-right-width: 0;
     border-left-width: 0;
@@ -52,19 +46,6 @@ NemoNotebook.notebook {
 
 NemoNotebook .frame {
     border-width: 0;
-}
-
-NemoToolbar .button {
-    icon-shadow: 0 1px @button_text_shadow;
-}
-
-NemoToolbar .button:active {
-    icon-shadow: 0 1px @button_active_text_shadow;
-}
-
-NemoToolbar .button:insensitive,
-NemoToolbar .button:active *:insensitive {
-    icon-shadow: none;
 }
 
 NemoQueryEditor .search-bar.toolbar {
@@ -92,4 +73,73 @@ NemoQueryEditor .search-bar.toolbar:only-child {
 
 NemoQueryEditor .toolbar:backdrop:nth-child(2) {
     border-color: @unfocused_borders;
+}
+
+@define-color floating_bar_inset_color alpha(white, 0.45);
+
+.floating-bar {
+    background-image: linear-gradient(to bottom,
+                                      @theme_base_color 20%,
+                                      shade(@theme_base_color, 0.9)
+                                      );
+    background-color: @theme_base_color;
+    border-color: @borders;
+
+    color: @theme_fg_color;
+    text-shadow: 0 1px alpha(white, 0.40);
+
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: inset 1px 1px @floating_bar_inset_color, -1px -1px @floating_bar_inset_color;
+}
+
+.floating-bar.top {
+    border-top-width: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.floating-bar.right {
+    border-right-width: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.floating-bar.bottom {
+    border-bottom-width: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.floating-bar.left {
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.floating-bar.bottom.right {
+    box-shadow: inset 1px 1px @floating_bar_inset_color;
+}
+
+.floating-bar.bottom.left {
+    box-shadow: inset -1px 1px @floating_bar_inset_color;
+}
+
+.floating-bar:backdrop {
+    background-color: @theme_unfocused_base_color;
+    border-color: shade(@theme_unfocused_base_color, 0.9);
+    background-image: none;
+    box-shadow: none;
+}
+
+.floating-bar .button {
+    background-color: transparent;
+    background-image: none;
+
+    border-style: none;
+    border-image: none;
+
+    -GtkButton-image-spacing: 0;
+    -GtkButton-inner-border: 0;
 }

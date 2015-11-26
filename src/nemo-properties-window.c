@@ -92,6 +92,22 @@
 static GHashTable *windows;
 static GHashTable *pending_lists;
 
+typedef struct {
+	NemoFile *file;
+	char         *owner;
+	GtkWindow    *window;
+	unsigned int  timeout;
+	gboolean      cancelled;
+} OwnerChange;
+
+typedef struct {
+	NemoFile *file;
+	char         *group;
+	GtkWindow    *window;
+	unsigned int  timeout;
+	gboolean      cancelled;
+} GroupChange;
+
 struct NemoPropertiesWindowDetails {	
 	GList *original_files;
 	GList *target_files;
@@ -115,12 +131,8 @@ struct NemoPropertiesWindowDetails {
 	guint update_directory_contents_timeout_id;
 	guint update_files_timeout_id;
 
-	NemoFile *group_change_file;
-	char         *group_change_group;
-	unsigned int  group_change_timeout;
-	NemoFile *owner_change_file;
-	char         *owner_change_owner;
-	unsigned int  owner_change_timeout;
+	GroupChange  *group_change;
+	OwnerChange  *owner_change;
 
 	GList *permission_buttons;
 	GList *permission_combos;
@@ -218,8 +230,8 @@ static void properties_window_update              (NemoPropertiesWindow *window,
 						   GList              *files);
 static void is_directory_ready_callback           (NemoFile       *file,
 						   gpointer            data);
-static void cancel_group_change_callback          (NemoPropertiesWindow *window);
-static void cancel_owner_change_callback          (NemoPropertiesWindow *window);
+static void cancel_group_change_callback          (GroupChange        *change);
+static void cancel_owner_change_callback          (OwnerChange        *change);
 static void parent_widget_destroyed_callback      (GtkWidget          *widget,
 						   gpointer            callback_data);
 static void select_image_button_callback          (GtkWidget          *widget,
@@ -1364,78 +1376,70 @@ attach_value_field (NemoPropertiesWindow *window,
 }
 
 static void
-group_change_callback (NemoFile *file,
-		       GFile *res_loc,
-		       GError *error,
-		       NemoPropertiesWindow *window)
+group_change_free (GroupChange *change)
 {
-	char *group;
+	nemo_file_unref (change->file);
+	g_free (change->group);
+	g_object_unref (change->window);
 
-	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->group_change_file == file);
-
-	group = window->details->group_change_group;
-	g_assert (group != NULL);
-
-	/* Report the error if it's an error. */
-	eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, window);
-	nemo_report_error_setting_group (file, error, GTK_WINDOW (window));
-
-	nemo_file_unref (file);
-	g_free (group);
-
-	window->details->group_change_file = NULL;
-	window->details->group_change_group = NULL;
-	g_object_unref (G_OBJECT (window));
+	g_free (change);
 }
 
 static void
-cancel_group_change_callback (NemoPropertiesWindow *window)
+group_change_callback (NemoFile *file,
+		       GFile *res_loc,
+		       GError *error,
+		       GroupChange *change)
 {
-	NemoFile *file;
-	char *group;
+	NemoPropertiesWindow *window;
 
-	file = window->details->group_change_file;
-	g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NEMO_IS_FILE (change->file));
+	g_assert (change->group != NULL);
 
-	group = window->details->group_change_group;
-	g_assert (group != NULL);
+	if (!change->cancelled) {
+		/* Report the error if it's an error. */
+		eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, change);
+		nemo_report_error_setting_group (change->file, error, change->window);
+	}
 
-	nemo_file_cancel (file, (NemoFileOperationCallback) group_change_callback, window);
+	window = NEMO_PROPERTIES_WINDOW(change->window);
+	if (window->details->group_change == change) {
+		window->details->group_change = NULL;
+	}
 
-	g_free (group);
-	nemo_file_unref (file);
+	group_change_free (change);
+}
 
-	window->details->group_change_file = NULL;
-	window->details->group_change_group = NULL;
-	g_object_unref (window);
+static void
+cancel_group_change_callback (GroupChange *change)
+{
+	g_assert (NEMO_IS_FILE (change->file));
+	g_assert (change->group != NULL);
+
+	change->cancelled = TRUE;
+	nemo_file_cancel (change->file, (NemoFileOperationCallback) group_change_callback, change);
 }
 
 static gboolean
-schedule_group_change_timeout (NemoPropertiesWindow *window)
+schedule_group_change_timeout (GroupChange *change)
 {
-	NemoFile *file;
-	char *group;
+	g_assert (NEMO_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NEMO_IS_FILE (change->file));
+	g_assert (change->group != NULL);
 
-	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
-
-	file = window->details->group_change_file;
-	g_assert (NEMO_IS_FILE (file));
-
-	group = window->details->group_change_group;
-	g_assert (group != NULL);
+	change->timeout = 0;
 
 	eel_timed_wait_start
 		((EelCancelCallback) cancel_group_change_callback,
-		 window,
+		 change,
 		 _("Cancel Group Change?"),
-		 GTK_WINDOW (window));
+		 change->window);
 
 	nemo_file_set_group
-		(file,  group,
-		 (NemoFileOperationCallback) group_change_callback, window);
+		(change->file, change->group,
+		 (NemoFileOperationCallback) group_change_callback, change);
 
-	window->details->group_change_timeout = 0;
 	return FALSE;
 }
 
@@ -1444,55 +1448,45 @@ schedule_group_change (NemoPropertiesWindow *window,
 		       NemoFile       *file,
 		       const char         *group)
 {
+	GroupChange *change;
+
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->group_change_group == NULL);
-	g_assert (window->details->group_change_file == NULL);
+	g_assert (window->details->group_change == NULL);
 	g_assert (NEMO_IS_FILE (file));
 
-	window->details->group_change_file = nemo_file_ref (file);
-	window->details->group_change_group = g_strdup (group);
-	g_object_ref (G_OBJECT (window));
-	window->details->group_change_timeout =
+	change = g_new0 (GroupChange, 1);
+
+	change->file = nemo_file_ref (file);
+	change->group = g_strdup (group);
+	change->window = g_object_ref (G_OBJECT (window));
+	change->timeout =
 		g_timeout_add (CHOWN_CHGRP_TIMEOUT,
 			       (GSourceFunc) schedule_group_change_timeout,
-			       window);
+			       change);
+
+	window->details->group_change = change;
 }
 
 static void
 unschedule_or_cancel_group_change (NemoPropertiesWindow *window)
 {
-	NemoFile *file;
-	char *group;
+	GroupChange *change;
 
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
-	file = window->details->group_change_file;
-	group = window->details->group_change_group;
+	change = window->details->group_change;
 
-	g_assert ((file == NULL && group == NULL) ||
-		  (file != NULL && group != NULL));
-
-	if (file != NULL) {
-		g_assert (NEMO_IS_FILE (file));
-
-		if (window->details->group_change_timeout == 0) {
-			nemo_file_cancel (file,
-					      (NemoFileOperationCallback) group_change_callback, window);
-			eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, window);
+	if (change != NULL) {
+		if (change->timeout == 0) {
+			/* The operation was started, cancel it and let the operation callback free the change */
+			cancel_group_change_callback (change);
+			eel_timed_wait_stop ((EelCancelCallback) cancel_group_change_callback, change);
+		} else {
+			g_source_remove (change->timeout);
+			group_change_free (change);
 		}
 
-		nemo_file_unref (file);
-		g_free (group);
-
-		window->details->group_change_file = NULL;
-		window->details->group_change_group = NULL;
-		g_object_unref (G_OBJECT (window));
-	}
-
-	if (window->details->group_change_timeout > 0) {
-		g_assert (file != NULL);
-		g_source_remove (window->details->group_change_timeout);
-		window->details->group_change_timeout = 0;
+		window->details->group_change = NULL;
 	}
 }
 
@@ -1714,18 +1708,18 @@ combo_box_row_separator_func (GtkTreeModel *model,
 static GtkComboBox *
 attach_combo_box (GtkGrid *grid,
 		  GtkWidget *sibling,
-		  gboolean two_columns)
+		  gboolean three_columns)
 {
 	GtkWidget *combo_box;
 	GtkWidget *aligner;
 
-	if (!two_columns) {
+	if (!three_columns) {
 		combo_box = gtk_combo_box_text_new ();
 	} else {
 		GtkTreeModel *model;
 		GtkCellRenderer *renderer;
 
-		model = GTK_TREE_MODEL (gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING));
+		model = GTK_TREE_MODEL (gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING));
 		combo_box = gtk_combo_box_new_with_model (model);
 		g_object_unref (G_OBJECT (model));
 
@@ -1779,78 +1773,70 @@ attach_group_combo_box (GtkGrid *grid,
 }	
 
 static void
-owner_change_callback (NemoFile *file,
-                       GFile 	    *result_location,
-		       GError        *error,
-		       NemoPropertiesWindow *window)
+owner_change_free (OwnerChange *change)
 {
-	char *owner;
+	nemo_file_unref (change->file);
+	g_free (change->owner);
+	g_object_unref (change->window);
 
-	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->owner_change_file == file);
-
-	owner = window->details->owner_change_owner;
-	g_assert (owner != NULL);
-
-	/* Report the error if it's an error. */
-	eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, window);
-	nemo_report_error_setting_owner (file, error, GTK_WINDOW (window));
-
-	nemo_file_unref (file);
-	g_free (owner);
-
-	window->details->owner_change_file = NULL;
-	window->details->owner_change_owner = NULL;
-	g_object_unref (G_OBJECT (window));
+	g_free (change);
 }
 
 static void
-cancel_owner_change_callback (NemoPropertiesWindow *window)
+owner_change_callback (NemoFile *file,
+                       GFile 	    *result_location,
+		       GError        *error,
+		       OwnerChange *change)
 {
-	NemoFile *file;
-	char *owner;
+	NemoPropertiesWindow *window;
 
-	file = window->details->owner_change_file;
-	g_assert (NEMO_IS_FILE (file));
+	g_assert (NEMO_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NEMO_IS_FILE (change->file));
+	g_assert (change->owner != NULL);
 
-	owner = window->details->owner_change_owner;
-	g_assert (owner != NULL);
+	if (!change->cancelled) {
+		/* Report the error if it's an error. */
+		eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, change);
+		nemo_report_error_setting_owner (file, error, change->window);
+	}
 
-	nemo_file_cancel (file, (NemoFileOperationCallback) owner_change_callback, window);
+	window = NEMO_PROPERTIES_WINDOW(change->window);
+	if (window->details->owner_change == change) {
+		window->details->owner_change = NULL;
+	}
 
-	nemo_file_unref (file);
-	g_free (owner);
+	owner_change_free (change);
+}
 
-	window->details->owner_change_file = NULL;
-	window->details->owner_change_owner = NULL;
-	g_object_unref (window);
+static void
+cancel_owner_change_callback (OwnerChange *change)
+{
+	g_assert (NEMO_IS_FILE (change->file));
+	g_assert (change->owner != NULL);
+
+	change->cancelled = TRUE;
+	nemo_file_cancel (change->file, (NemoFileOperationCallback) owner_change_callback, change);
 }
 
 static gboolean
-schedule_owner_change_timeout (NemoPropertiesWindow *window)
+schedule_owner_change_timeout (OwnerChange *change)
 {
-	NemoFile *file;
-	char *owner;
+	g_assert (NEMO_IS_PROPERTIES_WINDOW (change->window));
+	g_assert (NEMO_IS_FILE (change->file));
+	g_assert (change->owner != NULL);
 
-	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
-
-	file = window->details->owner_change_file;
-	g_assert (NEMO_IS_FILE (file));
-
-	owner = window->details->owner_change_owner;
-	g_assert (owner != NULL);
+	change->timeout = 0;
 
 	eel_timed_wait_start
 		((EelCancelCallback) cancel_owner_change_callback,
-		 window,
+		 change,
 		 _("Cancel Owner Change?"),
-		 GTK_WINDOW (window));
+		 change->window);
 
 	nemo_file_set_owner
-		(file,  owner,
-		 (NemoFileOperationCallback) owner_change_callback, window);
+		(change->file, change->owner,
+		 (NemoFileOperationCallback) owner_change_callback, change);
 
-	window->details->owner_change_timeout = 0;
 	return FALSE;
 }
 
@@ -1859,55 +1845,47 @@ schedule_owner_change (NemoPropertiesWindow *window,
 		       NemoFile       *file,
 		       const char         *owner)
 {
+	OwnerChange *change;
+
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
-	g_assert (window->details->owner_change_owner == NULL);
-	g_assert (window->details->owner_change_file == NULL);
+	g_assert (window->details->owner_change == NULL);
 	g_assert (NEMO_IS_FILE (file));
 
-	window->details->owner_change_file = nemo_file_ref (file);
-	window->details->owner_change_owner = g_strdup (owner);
-	g_object_ref (G_OBJECT (window));
-	window->details->owner_change_timeout =
+	change = g_new0 (OwnerChange, 1);
+
+	change->file = nemo_file_ref (file);
+	change->owner = g_strdup (owner);
+	change->window = g_object_ref (G_OBJECT (window));
+	change->timeout =
 		g_timeout_add (CHOWN_CHGRP_TIMEOUT,
 			       (GSourceFunc) schedule_owner_change_timeout,
-			       window);
+			       change);
+
+	window->details->owner_change = change;
 }
 
 static void
 unschedule_or_cancel_owner_change (NemoPropertiesWindow *window)
 {
-	NemoFile *file;
-	char *owner;
+	OwnerChange *change;
 
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
-	file = window->details->owner_change_file;
-	owner = window->details->owner_change_owner;
+	change = window->details->owner_change;
 
-	g_assert ((file == NULL && owner == NULL) ||
-		  (file != NULL && owner != NULL));
+	if (change != NULL) {
+		g_assert (NEMO_IS_FILE (change->file));
 
-	if (file != NULL) {
-		g_assert (NEMO_IS_FILE (file));
-
-		if (window->details->owner_change_timeout == 0) {
-			nemo_file_cancel (file,
-					      (NemoFileOperationCallback) owner_change_callback, window);
-			eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, window);
+		if (change->timeout == 0) {
+			/* The operation was started, cancel it and let the operation callback free the change */
+			cancel_owner_change_callback (change);
+			eel_timed_wait_stop ((EelCancelCallback) cancel_owner_change_callback, change);
+		} else {
+			g_source_remove (change->timeout);
+			owner_change_free (change);
 		}
 
-		nemo_file_unref (file);
-		g_free (owner);
-
-		window->details->owner_change_file = NULL;
-		window->details->owner_change_owner = NULL;
-		g_object_unref (G_OBJECT (window));
-	}
-
-	if (window->details->owner_change_timeout > 0) {
-		g_assert (file != NULL);
-		g_source_remove (window->details->owner_change_timeout);
-		window->details->owner_change_timeout = 0;
+		window->details->owner_change = NULL;
 	}
 }
 
@@ -1915,20 +1893,15 @@ static void
 changed_owner_callback (GtkComboBox *combo_box, NemoFile* file)
 {
 	NemoPropertiesWindow *window;
-	char *owner_text;
-	char **name_array;
 	char *new_owner;
 	char *cur_owner;
 
 	g_assert (GTK_IS_COMBO_BOX (combo_box));
 	g_assert (NEMO_IS_FILE (file));
 
-	owner_text = combo_box_get_active_entry (combo_box, 0);
-        if (! owner_text)
+	new_owner = combo_box_get_active_entry (combo_box, 2);
+        if (! new_owner)
 	    return;
-    	name_array = g_strsplit (owner_text, " - ", 2);
-	new_owner = name_array[0];
-	g_free (owner_text);
 	cur_owner = nemo_file_get_owner_name (file);
 
 	if (strcmp (new_owner, cur_owner) != 0) {
@@ -1938,7 +1911,7 @@ changed_owner_callback (GtkComboBox *combo_box, NemoFile* file)
 		unschedule_or_cancel_owner_change (window);
 		schedule_owner_change (window, file, new_owner);
 	}
-	g_strfreev (name_array);
+	g_free (new_owner);
 	g_free (cur_owner);
 }
 
@@ -1952,6 +1925,7 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 	GtkTreeIter iter;
 	char *user_name;
 	char *owner_name;
+	char *nice_owner_name;
 	int user_index;
 	int owner_index;
 	char **name_array;
@@ -1981,7 +1955,7 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 			user_name = (char *)node->data;
 
 			name_array = g_strsplit (user_name, "\n", 2);
-			if (name_array[1] != NULL) {
+			if (name_array[1] != NULL && *name_array[1] != 0) {
 				combo_text = g_strdup_printf ("%s - %s", name_array[0], name_array[1]);
 			} else {
 				combo_text = g_strdup (name_array[0]);
@@ -1991,6 +1965,7 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 			gtk_list_store_set (store, &iter,
 					    0, combo_text,
 					    1, user_name,
+					    2, name_array[0],
 					    -1);
 
 			g_strfreev (name_array);
@@ -1998,8 +1973,9 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 		}
 	}
 
-	owner_name = nemo_file_get_string_attribute (file, "owner");
-	owner_index = tree_model_get_entry_index (model, 0, owner_name);
+	owner_name = nemo_file_get_owner_name (file);
+	owner_index = tree_model_get_entry_index (model, 2, owner_name);
+	nice_owner_name = nemo_file_get_string_attribute (file, "owner");
 
 	/* If owner wasn't in list, we prepend it (with a separator). 
 	 * This can happen if the owner is an id with no matching
@@ -2012,30 +1988,24 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 			gtk_list_store_set (store, &iter,
 					    0, "-",
 					    1, NULL,
+					    2, NULL,
 					    -1);
 		}
 
-		name_array = g_strsplit (owner_name, " - ", 2);
-		if (name_array[1] != NULL) {
-			user_name = g_strdup_printf ("%s\n%s", name_array[0], name_array[1]);
-		} else {
-			user_name = g_strdup (name_array[0]);
-		}
 		owner_index = 0;
 
 		gtk_list_store_prepend (store, &iter);
 		gtk_list_store_set (store, &iter,
-				    0, owner_name,
-				    1, user_name,
+				    0, nice_owner_name,
+				    1, owner_name,
+				    2, owner_name,
 				    -1);
-
-		g_free (user_name);
-		g_strfreev (name_array);
 	}
 
 	gtk_combo_box_set_active (combo_box, owner_index);
 
 	g_free (owner_name);
+	g_free (nice_owner_name);
 	g_list_free_full (users, g_free);
 }	
 

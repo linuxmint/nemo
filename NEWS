@@ -1,3 +1,12 @@
+Nemo merged with changes in Nautilus 3.13.90:
+
+Changes:
+* Fix problems with fast group/owner changes
+* Fix user list for owner changes
+* Use margin-start/end instead of deprecated margin-left/right
+* Fix floating bar CSS style after Adwaita GTK move
+* Fix build glitch with enums file (Volker Sobek)
+
 Nemo merged with changes in Nautilus 3.13.2:
 
 Changes:
