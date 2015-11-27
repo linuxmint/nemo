@@ -2778,8 +2778,7 @@ nemo_canvas_item_accessible_ref_state_set (AtkObject *accessible)
 	AtkStateSet *state_set;
 	NemoCanvasItem *item;
 	NemoCanvasContainer *container;
-	NemoCanvasIcon *icon;
-	GList *l;
+	GList *selection;
 	gboolean one_item_selected;
 
 	state_set = ATK_OBJECT_CLASS (nemo_canvas_item_accessible_parent_class)->ref_state_set (accessible);
@@ -2793,29 +2792,15 @@ nemo_canvas_item_accessible_ref_state_set (AtkObject *accessible)
 	if (item->details->is_highlighted_as_keyboard_focus) {
 		atk_state_set_add_state (state_set, ATK_STATE_FOCUSED);
 	} else if (!container->details->keyboard_focus) {
-
-		one_item_selected = FALSE;
-		l = container->details->icons;
-		while (l) {
-			icon = l->data;
-		
-			if (icon->item == item) {
-				if (icon->is_selected) {
-					one_item_selected = TRUE;
-				} else {
-					break;
-				}
-			} else if (icon->is_selected) {
-				one_item_selected = FALSE;
-				break;
-			}
-
-			l = l->next;
-		}
+		selection = nemo_canvas_container_get_selection (container);
+		one_item_selected = (g_list_length (selection) == 1) &&
+			item->details->is_highlighted_for_selection;
 
 		if (one_item_selected) {
 			atk_state_set_add_state (state_set, ATK_STATE_FOCUSED);
 		}
+
+		g_list_free (selection);
 	}
 
 	return state_set;
