@@ -259,10 +259,6 @@ struct NemoCanvasContainerDetails {
 	int top_margin;
 	int bottom_margin;
 
-	/* Whether we should use drop shadows for the icon labels or not */
-	gboolean use_drop_shadows;
-	gboolean drop_shadows_requested;
-
 	/* a11y items used by canvas items */
 	guint a11y_item_action_idle_handler;
 	GQueue* a11y_item_action_queue;
