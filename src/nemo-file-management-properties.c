@@ -524,19 +524,6 @@ bind_builder_bool (GtkBuilder *builder,
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
 
-#if GTK_CHECK_VERSION(3, 12, 0)
-static void
-bind_builder_bool_oneway (GtkBuilder *builder,
-			  GSettings *settings,
-			  const char *widget_name,
-			  const char *prefs)
-{
-	g_settings_bind (settings, prefs,
-			 gtk_builder_get_object (builder, widget_name),
-			 "active", G_SETTINGS_BIND_SET);
-}
-#endif
-
 static void
 bind_builder_bool_inverted (GtkBuilder *builder,
 			    GSettings *settings,
@@ -770,6 +757,17 @@ connect_quick_renames (GtkBuilder *builder)
 		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
 }
 
+#if GTK_CHECK_VERSION(3, 12, 0)
+static void
+set_gtk_filechooser_sort_first (GObject *object,
+				GParamSpec *pspec)
+{
+	g_settings_set_boolean (gtk_filechooser_preferences,
+				NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST,
+				gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (object)));
+}
+#endif
+
 static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *window)
 {
@@ -792,9 +790,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 #if GTK_CHECK_VERSION(3, 12, 0)
-	bind_builder_bool_oneway (builder, gtk_filechooser_preferences,
-				  NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
-			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+	g_signal_connect (gtk_builder_get_object (builder, NAUTILUS_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET),
+                          "notify::active",
+                          G_CALLBACK (set_gtk_filechooser_sort_first), NULL);
 #endif
 
 	/* nemo patch */
