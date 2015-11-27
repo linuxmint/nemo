@@ -274,7 +274,7 @@ nemo_desktop_icon_file_new (NemoDesktopLink *link)
 	eazel_dump_stack_trace ("\t", 10);
 #endif
 
-	file->details->directory = directory;
+	nemo_file_set_directory (file, directory);
 
 	icon_file = NEMO_DESKTOP_ICON_FILE (file);
 	icon_file->details->link = link;
