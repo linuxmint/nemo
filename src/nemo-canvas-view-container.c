@@ -62,10 +62,6 @@ nemo_canvas_view_container_get_icon_images (NemoCanvasContainer *container,
 	gboolean use_embedding;
 	NemoFileIconFlags flags;
 	NemoIconInfo *icon_info;
-	GdkPixbuf *pixbuf;
-	GIcon *emblemed_icon;
-	GEmblem *emblem;
-	GList *emblem_icons, *l;
 	gint scale;
 
 	file = (NemoFile *) data;
@@ -100,58 +96,6 @@ nemo_canvas_view_container_get_icon_images (NemoCanvasContainer *container,
 
 	scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas_view));
 	icon_info = nemo_file_get_icon (file, size, scale, flags);
-	emblem_icons = nemo_file_get_emblem_icons (file);
-
-	/* apply emblems */
-	if (emblem_icons != NULL) {
-		l = emblem_icons;
-
-
-		pixbuf = nemo_icon_info_get_pixbuf (icon_info);
-
-        gint w, h, s;
-        gboolean bad_ratio;
-
-        w = gdk_pixbuf_get_width (pixbuf);
-        h = gdk_pixbuf_get_height (pixbuf);
-
-        s = MAX (w, h);
-        if (s < size)
-            size = s;
-
-        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
-                    nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
-
-        if (bad_ratio)
-            goto skip_emblem; /* Would prefer to not use goto, but
-                               * I don't want to do these checks on
-                               * non-emblemed icons (the majority)
-                               * as it would be too costly */
-
-        emblem = g_emblem_new (l->data);
-
-		emblemed_icon = g_emblemed_icon_new (G_ICON (pixbuf), emblem);
-		g_object_unref (emblem);
-
-		for (l = l->next; l != NULL; l = l->next) {
-			emblem = g_emblem_new (l->data);
-			g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon),
-						    emblem);
-			g_object_unref (emblem);
-		}
-
-		g_clear_object (&icon_info);
-		icon_info = nemo_icon_info_lookup (emblemed_icon, size, scale);
-        g_object_unref (emblemed_icon);
-
-skip_emblem:
-		g_object_unref (pixbuf);
-
-	}
-
-	if (emblem_icons != NULL) {
-		g_list_free_full (emblem_icons, g_object_unref);
-	}
 
 	return icon_info;
 }

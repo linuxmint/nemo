@@ -81,7 +81,8 @@ typedef enum {
 	/* uses the icon of the mount if present */
 	NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON = (1<<6),
 	/* render emblems */
-	NEMO_FILE_ICON_FLAGS_USE_EMBLEMS = (1<<7)
+	NEMO_FILE_ICON_FLAGS_USE_EMBLEMS = (1<<7),
+	NEMO_FILE_ICON_FLAGS_USE_ONE_EMBLEM = (1<<8)
 } NemoFileIconFlags;	
 
 typedef enum {
