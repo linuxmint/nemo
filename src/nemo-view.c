@@ -6781,14 +6781,19 @@ ensure_expander_attached (NemoView *view, GtkWidget *menu_item)
                                                                           "button-release-event",
                                                                           G_CALLBACK (on_menu_button_released),
                                                                           view);
-        gtk_widget_set_has_tooltip (menu_item, TRUE);
-        g_signal_connect (menu_item, "query-tooltip", G_CALLBACK (on_query_menu_tooltip), view);
     }
 
     if (view->details->menu_widget_ref == NULL) {
         view->details->menu_widget_ref = menu_item;
         g_signal_connect (menu_item, "destroy", G_CALLBACK (on_menu_destroyed), view);
     }
+
+    gtk_widget_set_has_tooltip (menu_item, TRUE);
+
+    g_signal_handlers_disconnect_matched (menu_item, G_SIGNAL_MATCH_FUNC,
+                                          0, 0, NULL, on_query_menu_tooltip, NULL);
+
+    g_signal_connect (menu_item, "query-tooltip", G_CALLBACK (on_query_menu_tooltip), view);
 }
 
 static GtkMenu *
