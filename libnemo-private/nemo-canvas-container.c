@@ -507,6 +507,13 @@ icon_toggle_selected (NemoCanvasContainer *container,
 	end_renaming_mode (container, TRUE);
 
 	icon->is_selected = !icon->is_selected;
+	if (icon->is_selected) {
+		container->details->selection = g_list_prepend (container->details->selection, icon->data);
+		container->details->selection_needs_resort = TRUE;
+	} else {
+		container->details->selection = g_list_remove (container->details->selection, icon->data);
+	}
+
 	eel_canvas_item_set (EEL_CANVAS_ITEM (icon->item),
 			     "highlighted_for_selection", (gboolean) icon->is_selected,
 			     NULL);
@@ -1183,6 +1190,32 @@ nemo_canvas_container_update_scroll_region (NemoCanvasContainer *container)
 	}
 }
 
+static void
+cache_icon_positions (NemoCanvasContainer *container)
+{
+	GList *l;
+	gint idx;
+	NemoCanvasIcon *icon;
+
+	for (l = container->details->icons, idx = 0; l != NULL; l = l ->next) {
+		icon = l->data;
+		icon->position = idx++;
+	}
+}
+
+static int
+compare_icons_data (gconstpointer a, gconstpointer b, gpointer canvas_container)
+{
+	NemoCanvasContainerClass *klass;
+	NemoCanvasIconData *data_a, *data_b;
+
+	data_a = (NemoCanvasIconData *) a;
+	data_b = (NemoCanvasIconData *) b;
+	klass  = NEMO_CANVAS_CONTAINER_GET_CLASS (canvas_container);
+
+	return klass->compare_icons (canvas_container, data_a, data_b);
+}
+
 static int
 compare_icons (gconstpointer a, gconstpointer b, gpointer canvas_container)
 {
@@ -1194,6 +1227,15 @@ compare_icons (gconstpointer a, gconstpointer b, gpointer canvas_container)
 	klass  = NEMO_CANVAS_CONTAINER_GET_CLASS (canvas_container);
 
 	return klass->compare_icons (canvas_container, icon_a->data, icon_b->data);
+}
+
+static void
+sort_selection (NemoCanvasContainer *container)
+{
+	container->details->selection = g_list_sort_with_data (container->details->selection,
+							       compare_icons_data,
+							       container);
+	container->details->selection_needs_resort = FALSE;
 }
 
 static void
@@ -1212,6 +1254,8 @@ static void
 resort (NemoCanvasContainer *container)
 {
 	sort_icons (container, &container->details->icons);
+	sort_selection (container);
+	cache_icon_positions (container);
 }
 
 typedef struct {
@@ -2327,20 +2371,6 @@ invalidate_label_sizes (NemoCanvasContainer *container)
 		icon = p->data;
 
 		nemo_canvas_item_invalidate_label_size (icon->item);		
-	}
-}
-
-/* invalidate the entire labels (i.e. their attributes) for all the icons */
-static void
-invalidate_labels (NemoCanvasContainer *container)
-{
-	GList *p;
-	NemoCanvasIcon *icon;
-	
-	for (p = container->details->icons; p != NULL; p = p->next) {
-		icon = p->data;
-
-		nemo_canvas_item_invalidate_label (icon->item);		
 	}
 }
 
@@ -4267,6 +4297,29 @@ unrealize (GtkWidget *widget)
 }
 
 static void
+nemo_canvas_container_request_update_all_internal (NemoCanvasContainer *container,
+						       gboolean invalidate_labels)
+{
+	GList *node;
+	NemoCanvasIcon *icon;
+
+	g_return_if_fail (NEMO_IS_CANVAS_CONTAINER (container));
+
+	for (node = container->details->icons; node != NULL; node = node->next) {
+		icon = node->data;
+
+		if (invalidate_labels) {
+			nemo_canvas_item_invalidate_label (icon->item);
+		}
+
+		nemo_canvas_container_update_icon (container, icon);
+	}
+
+	container->details->needs_resort = TRUE;
+	redo_layout (container);
+}
+
+static void
 style_updated (GtkWidget *widget)
 {
 	NemoCanvasContainer *container;
@@ -4281,7 +4334,6 @@ style_updated (GtkWidget *widget)
 	}
 
 	if (gtk_widget_get_realized (widget)) {
-		invalidate_labels (container);
 		nemo_canvas_container_request_update_all (container);
 	}
 }
@@ -6562,7 +6614,9 @@ nemo_canvas_container_clear (NemoCanvasContainer *container)
 	details->icons = NULL;
 	g_list_free (details->new_icons);
 	details->new_icons = NULL;
-	
+	g_list_free (details->selection);
+	details->selection = NULL;
+
  	g_hash_table_destroy (details->icon_set);
  	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
  
@@ -6762,6 +6816,7 @@ icon_destroy (NemoCanvasContainer *container,
  
 	details->icons = g_list_remove (details->icons, icon);
 	details->new_icons = g_list_remove (details->new_icons, icon);
+	details->selection = g_list_remove (details->selection, icon->data);
 	g_hash_table_remove (details->icon_set, icon->data);
 
 	was_selected = icon->is_selected;
@@ -7512,7 +7567,6 @@ nemo_canvas_container_set_zoom_level (NemoCanvasContainer *container, int new_le
 		/ NEMO_ICON_SIZE_STANDARD;
 	eel_canvas_set_pixels_per_unit (EEL_CANVAS (container), pixels_per_unit);
 
-	invalidate_labels (container);
 	nemo_canvas_container_request_update_all (container);
 }
 
@@ -7526,18 +7580,7 @@ nemo_canvas_container_set_zoom_level (NemoCanvasContainer *container, int new_le
 void
 nemo_canvas_container_request_update_all (NemoCanvasContainer *container)
 {
-	GList *node;
-	NemoCanvasIcon *icon;
-
-	g_return_if_fail (NEMO_IS_CANVAS_CONTAINER (container));
-
-	for (node = container->details->icons; node != NULL; node = node->next) {
-		icon = node->data;
-		nemo_canvas_container_update_icon (container, icon);
-	}
-
-	container->details->needs_resort = TRUE;
-	redo_layout (container);
+	nemo_canvas_container_request_update_all_internal (container, FALSE);
 }
 
 /**
@@ -7572,21 +7615,13 @@ nemo_canvas_container_reveal (NemoCanvasContainer *container, NemoCanvasIconData
 GList *
 nemo_canvas_container_get_selection (NemoCanvasContainer *container)
 {
-	GList *list, *p;
-
 	g_return_val_if_fail (NEMO_IS_CANVAS_CONTAINER (container), NULL);
 
-	list = NULL;
-	for (p = container->details->icons; p != NULL; p = p->next) {
-		NemoCanvasIcon *icon;
-
-		icon = p->data;
-		if (icon->is_selected) {
-			list = g_list_prepend (list, icon->data);
-		}
+	if (container->details->selection_needs_resort) {
+		sort_selection (container);
 	}
 
-	return g_list_reverse (list);
+	return g_list_copy (container->details->selection);
 }
 
 static GList *
@@ -8255,7 +8290,6 @@ nemo_canvas_container_set_layout_mode (NemoCanvasContainer *container,
 	g_return_if_fail (NEMO_IS_CANVAS_CONTAINER (container));
 
 	container->details->layout_mode = mode;
-	invalidate_labels (container);
 
 	container->details->needs_resort = TRUE;
 	redo_layout (container);
@@ -8272,7 +8306,6 @@ nemo_canvas_container_set_label_position (NemoCanvasContainer *container,
 	if (container->details->label_position != position) {
 		container->details->label_position = position;
 
-		invalidate_labels (container);
 		nemo_canvas_container_request_update_all (container);
 
 		schedule_redo_layout (container);
@@ -8728,7 +8761,6 @@ nemo_canvas_container_set_font (NemoCanvasContainer *container,
 	g_free (container->details->font);
 	container->details->font = g_strdup (font);
 
-	invalidate_labels (container);
 	nemo_canvas_container_request_update_all (container);
 	gtk_widget_queue_draw (GTK_WIDGET (container));
 }
@@ -8795,7 +8827,6 @@ nemo_canvas_container_set_all_columns_same_width (NemoCanvasContainer *container
 	if (all_columns_same_width != container->details->all_columns_same_width) {
 		container->details->all_columns_same_width = all_columns_same_width;
 
-		invalidate_labels (container);
 		nemo_canvas_container_request_update_all (container);
 	}
 }
@@ -8976,17 +9007,15 @@ nemo_canvas_container_accessible_icon_added_cb (NemoCanvasContainer *container,
 	NemoCanvasIcon *icon;
 	AtkObject *atk_parent;
 	AtkObject *atk_child;
-	int index;
 
 	icon = g_hash_table_lookup (container->details->icon_set, icon_data);
 	if (icon) {
 		atk_parent = ATK_OBJECT (data);
 		atk_child = atk_gobject_accessible_for_object 
 			(G_OBJECT (icon->item));
-		index = g_list_index (container->details->icons, icon);
 		
 		g_signal_emit_by_name (atk_parent, "children-changed::add",
-				       index, atk_child, NULL);
+				       icon->position, atk_child, NULL);
 	}
 }
 
@@ -8998,17 +9027,15 @@ nemo_canvas_container_accessible_icon_removed_cb (NemoCanvasContainer *container
 	NemoCanvasIcon *icon;
 	AtkObject *atk_parent;
 	AtkObject *atk_child;
-	int index;
 	
 	icon = g_hash_table_lookup (container->details->icon_set, icon_data);
 	if (icon) {
 		atk_parent = ATK_OBJECT (data);
 		atk_child = atk_gobject_accessible_for_object 
 			(G_OBJECT (icon->item));
-		index = g_list_index (container->details->icons, icon);
 		
 		g_signal_emit_by_name (atk_parent, "children-changed::remove",
-				       index, atk_child, NULL);
+				       icon->position, atk_child, NULL);
 	}
 }
 

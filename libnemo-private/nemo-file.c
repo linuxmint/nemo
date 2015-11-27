@@ -509,6 +509,22 @@ nemo_file_clear_info (NemoFile *file)
 	clear_metadata (file);
 }
 
+void
+nemo_file_set_directory (NemoFile *file,
+			     NemoDirectory *directory)
+{
+	char *parent_uri;
+
+	g_clear_object (&file->details->directory);
+	g_free (file->details->directory_name_collation_key);
+
+	file->details->directory = nemo_directory_ref (directory);
+
+	parent_uri = nemo_file_get_parent_uri (file);
+	file->details->directory_name_collation_key = g_utf8_collate_key_for_filename (parent_uri, -1);
+	g_free (parent_uri);
+}
+
 static NemoFile *
 nemo_file_new_from_filename (NemoDirectory *directory,
 				 const char *filename,
@@ -539,8 +555,7 @@ nemo_file_new_from_filename (NemoDirectory *directory,
 	} else {
 		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 	}
-
-	file->details->directory = nemo_directory_ref (directory);
+	nemo_file_set_directory (file, directory);
 
 	file->details->name = eel_ref_str_new (filename);
 
@@ -643,7 +658,7 @@ nemo_file_new_from_info (NemoDirectory *directory,
 	g_return_val_if_fail (info != NULL, NULL);
 
 	file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
-	file->details->directory = nemo_directory_ref (directory);
+	nemo_file_set_directory (file, directory);
 
 	update_info_and_name (file, info);
 
@@ -797,6 +812,7 @@ finalize (GObject *object)
 	eel_ref_str_unref (file->details->name);
 	eel_ref_str_unref (file->details->display_name);
 	g_free (file->details->display_name_collation_key);
+	g_free (file->details->directory_name_collation_key);
 	eel_ref_str_unref (file->details->edit_name);
 	if (file->details->icon) {
 		g_object_unref (file->details->icon);
@@ -940,7 +956,6 @@ nemo_file_get_parent_location (NemoFile *file)
 	g_assert (NEMO_IS_FILE (file));
 	
 	if (nemo_file_is_self_owned (file)) {
-		/* Callers expect an empty string, not a NULL. */
 		return NULL;
 	}
 
@@ -2708,8 +2723,7 @@ nemo_file_update_name_and_directory (NemoFile *file,
 	monitors = nemo_directory_remove_file_monitors (old_directory, file);
 	nemo_directory_remove_file (old_directory, file);
 
-	file->details->directory = nemo_directory_ref (new_directory);
-	nemo_directory_unref (old_directory);
+	nemo_file_set_directory (file, new_directory);
 
 	if (name) {
 		update_name_internal (file, name, FALSE);
@@ -2725,13 +2739,6 @@ nemo_file_update_name_and_directory (NemoFile *file,
 	nemo_file_unref (file);
 
 	return TRUE;
-}
-
-void
-nemo_file_set_directory (NemoFile *file,
-			     NemoDirectory *new_directory)
-{
-	nemo_file_update_name_and_directory (file, NULL, new_directory);
 }
 
 static Knowledge
@@ -2981,22 +2988,8 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 static int
 compare_by_directory_name (NemoFile *file_1, NemoFile *file_2)
 {
-	char *directory_1, *directory_2;
-	int compare;
-
-	if (file_1->details->directory == file_2->details->directory) {
-		return 0;
-	}
-
-	directory_1 = nemo_file_get_parent_uri_for_display (file_1);
-	directory_2 = nemo_file_get_parent_uri_for_display (file_2);
-
-	compare = g_utf8_collate (directory_1, directory_2);
-
-	g_free (directory_1);
-	g_free (directory_2);
-
-	return compare;
+	return strcmp (file_1->details->directory_name_collation_key,
+		       file_2->details->directory_name_collation_key);
 }
 
 static gboolean
@@ -4475,25 +4468,27 @@ nemo_file_get_icon (NemoFile *file,
 				thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
 			}
 
-            if (file->details->thumbnail_scale == thumb_scale &&
-                file->details->scaled_thumbnail != NULL) {
-                scaled_pixbuf = file->details->scaled_thumbnail;
-            } else {
-                scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-                                     MAX (w * thumb_scale, 1),
-                                     MAX (h * thumb_scale, 1),
-                                     GDK_INTERP_BILINEAR);
-                /* We don't want frames around small icons */
-                if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
-				if (nemo_is_video_file (file))
-					nemo_ui_frame_video (&scaled_pixbuf);
-				else
-					nemo_ui_frame_image (&scaled_pixbuf);
-                }
-                g_clear_object (&file->details->scaled_thumbnail);
-                file->details->scaled_thumbnail = scaled_pixbuf;
-                file->details->thumbnail_scale = thumb_scale;
-            }
+			if (file->details->thumbnail_scale == thumb_scale &&
+			    file->details->scaled_thumbnail != NULL) {
+				scaled_pixbuf = file->details->scaled_thumbnail;
+			} else {
+				scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
+									 MAX (w * thumb_scale, 1),
+									 MAX (h * thumb_scale, 1),
+									 GDK_INTERP_BILINEAR);
+
+				/* We don't want frames around small icons */
+				if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+					if (nemo_is_video_file (file))
+						nemo_ui_frame_video (&scaled_pixbuf);
+					else
+						nemo_ui_frame_image (&scaled_pixbuf);
+				}
+
+				g_clear_object (&file->details->scaled_thumbnail);
+				file->details->scaled_thumbnail = scaled_pixbuf;
+				file->details->thumbnail_scale = thumb_scale;
+			}
 
 			g_object_unref (raw_pixbuf);
 
