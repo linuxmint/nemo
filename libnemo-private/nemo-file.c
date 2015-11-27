@@ -4071,6 +4071,23 @@ get_custom_icon_metadata_name (NemoFile *file)
 }
 
 static GIcon *
+get_mount_icon (NemoFile *file)
+{
+	GMount *mount;
+	GIcon *mount_icon;
+
+	mount = nemo_file_get_mount (file);
+	mount_icon = NULL;
+
+	if (mount != NULL) {
+		mount_icon = g_mount_get_icon (mount);
+		g_object_unref (mount);
+	}
+
+	return mount_icon;
+}
+
+static GIcon *
 get_link_icon (NemoFile *file)
 {
 	GIcon *icon = NULL;
@@ -4196,11 +4213,201 @@ nemo_is_video_file (NemoFile *file)
 	return FALSE;
 }
 
+static GList *
+sort_keyword_list_and_remove_duplicates (GList *keywords)
+{
+	GList *p;
+	GList *duplicate_link;
+
+	if (keywords != NULL) {
+		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
+
+		p = keywords;
+		while (p->next != NULL) {
+			if (strcmp ((const char *) p->data, (const char *) p->next->data) == 0) {
+				duplicate_link = p->next;
+				keywords = g_list_remove_link (keywords, duplicate_link);
+				g_list_free_full (duplicate_link, g_free);
+			} else {
+				p = p->next;
+			}
+		}
+	}
+
+	return keywords;
+}
+
+static void
+clean_up_metadata_keywords (NemoFile *file,
+			    GList **metadata_keywords)
+{
+	NemoFile *parent_file;
+	GList *l, *res = NULL;
+	char *exclude[4];
+	char *keyword;
+	gboolean found;
+	gint i;
+
+	i = 0;
+	exclude[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+	exclude[i++] = NEMO_FILE_EMBLEM_NAME_NOTE;
+
+	parent_file = nemo_file_get_parent (file);
+	if (parent_file) {
+		if (!nemo_file_can_write (parent_file)) {
+			exclude[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+		}
+		nemo_file_unref (parent_file);
+	}
+	exclude[i++] = NULL;
+
+	for (l = *metadata_keywords; l != NULL; l = l->next) {
+		keyword = l->data;
+		found = FALSE;
+
+		for (i = 0; exclude[i] != NULL; i++) {
+			if (strcmp (exclude[i], keyword) == 0) {
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (!found) {
+			res = g_list_prepend (res, keyword);
+		}
+	}
+
+	g_list_free (*metadata_keywords);
+	*metadata_keywords = res;
+}
+
+/**
+ * nemo_file_get_keywords
+ *
+ * Return this file's keywords.
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: A list of keywords.
+ *
+ **/
+static GList *
+nemo_file_get_keywords (NemoFile *file)
+{
+	GList *keywords, *metadata_keywords;
+
+	if (file == NULL) {
+		return NULL;
+	}
+
+	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+	keywords = g_list_copy_deep (file->details->extension_emblems, (GCopyFunc) g_strdup, NULL);
+	keywords = g_list_concat (keywords, g_list_copy_deep (file->details->pending_extension_emblems, (GCopyFunc) g_strdup, NULL));
+
+	metadata_keywords = nemo_file_get_metadata_list (file, NEMO_METADATA_KEY_EMBLEMS);
+	clean_up_metadata_keywords (file, &metadata_keywords);
+	keywords = g_list_concat (keywords, metadata_keywords);
+
+	return sort_keyword_list_and_remove_duplicates (keywords);
+}
+
+/**
+ * nemo_file_get_emblem_icons
+ *
+ * Return the list of names of emblems that this file should display,
+ * in canonical order.
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: A list of emblem names.
+ *
+ **/
+GList *
+nemo_file_get_emblem_icons (NemoFile *file)
+{
+	GList *keywords, *l;
+	GList *icons;
+	char *icon_names[2];
+	char *keyword;
+	GIcon *icon;
+
+	if (file == NULL) {
+		return NULL;
+	}
+
+	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+	keywords = nemo_file_get_keywords (file);
+	keywords = prepend_automatic_keywords (file, keywords);
+
+	icons = NULL;
+	for (l = keywords; l != NULL; l = l->next) {
+		keyword = l->data;
+
+		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
+		icon_names[1] = keyword;
+		icon = g_themed_icon_new_from_names (icon_names, 2);
+		g_free (icon_names[0]);
+
+		icons = g_list_prepend (icons, icon);
+	}
+
+	icon = get_mount_icon (file);
+	if (icon != NULL) {
+		icons = g_list_prepend (icons, icon);
+	}
+
+	g_list_free_full (keywords, g_free);
+
+	return icons;
+}
+
 static void
 prepend_icon_name (const char *name,
 		   GThemedIcon *icon)
 {
 	g_themed_icon_prepend_name(icon, name);
+}
+
+static GIcon *
+apply_emblems_to_icon (NemoFile *file,
+		       GIcon *icon,
+		       NemoFileIconFlags flags)
+{
+	GIcon *emblemed_icon;
+	GEmblem *emblem;
+	GList *emblems, *l;
+
+	emblemed_icon = NULL;
+	emblems = nemo_file_get_emblem_icons (file);
+
+	for (l = emblems; l != NULL; l = l->next) {
+		if (g_icon_equal (l->data, icon)) {
+			continue;
+		}
+
+		emblem = g_emblem_new (l->data);
+
+		if (emblemed_icon == NULL) {
+			emblemed_icon = g_emblemed_icon_new (icon, emblem);
+		} else {
+			g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
+		}
+
+		if (emblemed_icon != NULL &&
+		    (flags & NEMO_FILE_ICON_FLAGS_USE_ONE_EMBLEM)) {
+			break;
+		}
+	}
+
+	if (emblems != NULL) {
+		g_list_free_full (emblems, g_object_unref);
+	}
+
+	if (emblemed_icon != NULL) {
+		return emblemed_icon;
+	} else {
+		return g_object_ref (icon);
+	}
 }
 
 GIcon *
@@ -4210,9 +4417,7 @@ nemo_file_get_gicon (NemoFile *file,
 	const char * const * names;
 	const char *name;
 	GPtrArray *prepend_array;
-	GMount *mount;
-	GIcon *icon, *mount_icon = NULL, *emblemed_icon;
-	GEmblem *emblem;
+	GIcon *icon, *emblemed_icon;
 	int i;
 	gboolean is_folder = FALSE, is_preview = FALSE, is_inode_directory = FALSE;
 
@@ -4232,19 +4437,16 @@ nemo_file_get_gicon (NemoFile *file,
 		return icon;
 	}
 
+	if (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON) {
+		icon = get_mount_icon (file);
+
+		if (icon != NULL) {
+			return icon;
+		}
+	}
+
 	if (file->details->icon) {
 		icon = NULL;
-
-		/* fetch the mount icon here, we'll use it later */
-		if (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON ||
-		    flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) {
-			mount = nemo_file_get_mount (file);
-
-			if (mount != NULL) {
-				mount_icon = g_mount_get_icon (mount);
-				g_object_unref (mount);
-			}
-		}
 
 		if (((flags & NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT) ||
 		     (flags & NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
@@ -4309,23 +4511,10 @@ nemo_file_get_gicon (NemoFile *file,
 			icon = g_object_ref (file->details->icon);
 		}
 
-		if ((flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON) &&
-		    mount_icon != NULL) {
+		if (flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) {
+			emblemed_icon = apply_emblems_to_icon (file, icon, flags);
 			g_object_unref (icon);
-			icon = mount_icon;
-		} else if ((flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) &&
-			     mount_icon != NULL && !g_icon_equal (mount_icon, icon)) {
-
-			emblem = g_emblem_new (mount_icon);
-			emblemed_icon = g_emblemed_icon_new (icon, emblem);
-
-			g_object_unref (emblem);
-			g_object_unref (icon);
-			g_object_unref (mount_icon);
-
 			icon = emblemed_icon;
-		} else if (mount_icon != NULL) {
-			g_object_unref (mount_icon);
 		}
 
 		return icon;
@@ -6791,121 +6980,6 @@ nemo_file_is_launchable (NemoFile *file)
 		nemo_file_can_execute (file) &&
 		nemo_file_is_executable (file) &&
 		!nemo_file_is_directory (file);
-}
-
-static GList *
-sort_keyword_list_and_remove_duplicates (GList *keywords)
-{
-	GList *p;
-	GList *duplicate_link;
-	
-	if (keywords != NULL) {
-		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
-
-		p = keywords;
-		while (p->next != NULL) {
-			if (strcmp ((const char *) p->data, (const char *) p->next->data) == 0) {
-				duplicate_link = p->next;
-				keywords = g_list_remove_link (keywords, duplicate_link);
-				g_list_free_full (duplicate_link, g_free);
-			} else {
-				p = p->next;
-			}
-		}
-	}
-	
-	return keywords;
-}
-
-/**
- * nemo_file_get_keywords
- * 
- * Return this file's keywords.
- * @file: NemoFile representing the file in question.
- * 
- * Returns: A list of keywords.
- * 
- **/
-static GList *
-nemo_file_get_keywords (NemoFile *file)
-{
-	GList *keywords;
-
-	if (file == NULL) {
-		return NULL;
-	}
-
-	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
-
-	keywords = eel_g_str_list_copy (file->details->extension_emblems);
-	keywords = g_list_concat (keywords, eel_g_str_list_copy (file->details->pending_extension_emblems));
-	keywords = g_list_concat (keywords, nemo_file_get_metadata_list (file, NEMO_METADATA_KEY_EMBLEMS));
-
-	return sort_keyword_list_and_remove_duplicates (keywords);
-}
-
-/**
- * nemo_file_get_emblem_icons
- * 
- * Return the list of names of emblems that this file should display,
- * in canonical order.
- * @file: NemoFile representing the file in question.
- * 
- * Returns: A list of emblem names.
- * 
- **/
-GList *
-nemo_file_get_emblem_icons (NemoFile *file)
-{
-	NemoFile *parent_file;
-	GList *keywords, *l;
-	GList *icons;
-	char *icon_names[2];
-	char *exclude[3];
-	char *keyword;
-	GIcon *icon;
-	int i;
-	
-	if (file == NULL) {
-		return NULL;
-	}
-	
-	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
-
-	i = 0;
-	parent_file = nemo_file_get_parent (file);
-	exclude[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
-	if (parent_file) {
-		if (!nemo_file_can_write (parent_file)) {
-			exclude[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
-		}
-		nemo_file_unref (parent_file);
-	}
-	exclude[i++] = NULL;
-
-	keywords = nemo_file_get_keywords (file);
-	keywords = prepend_automatic_keywords (file, keywords);
-
-	icons = NULL;
-	for (l = keywords; l != NULL; l = l->next) {
-		keyword = l->data;
-		for (i = 0; exclude[i] != NULL; i++) {
-			if (strcmp (exclude[i], keyword) == 0) {
-				continue;
-			}
-		}
-
-		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
-		icon_names[1] = keyword;
-		icon = g_themed_icon_new_from_names (icon_names, 2);
-		g_free (icon_names[0]);
-
-		icons = g_list_prepend (icons, icon);
-	}
-
-	g_list_free_full (keywords, g_free);
-	
-	return icons;
 }
 
 /**
