@@ -82,7 +82,7 @@ nemo_canvas_view_container_get_icon_images (NemoCanvasContainer *container,
 	
 	*has_window_open = nemo_file_has_open_window (file);
 
-	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
+	flags = NEMO_FILE_ICON_FLAGS_USE_EMBLEMS;
 	if (!nemo_canvas_view_is_compact (canvas_view) ||
 	    nemo_canvas_container_get_zoom_level (container) > NEMO_ZOOM_LEVEL_STANDARD) {
 		flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;

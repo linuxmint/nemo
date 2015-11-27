@@ -4237,7 +4237,7 @@ nemo_file_get_gicon (NemoFile *file,
 
 		/* fetch the mount icon here, we'll use it later */
 		if (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON ||
-		    flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) {
+		    flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) {
 			mount = nemo_file_get_mount (file);
 
 			if (mount != NULL) {
@@ -4250,7 +4250,7 @@ nemo_file_get_gicon (NemoFile *file,
 		     (flags & NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
 		     (flags & NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER) ||
 		     (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON) ||
-		     (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) ||
+		     (flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) ||
 		     ((flags & NEMO_FILE_ICON_FLAGS_IGNORE_VISITING) == 0 &&
 		      nemo_file_has_open_window (file))) &&
 		    G_IS_THEMED_ICON (file->details->icon)) {
@@ -4313,7 +4313,7 @@ nemo_file_get_gicon (NemoFile *file,
 		    mount_icon != NULL) {
 			g_object_unref (icon);
 			icon = mount_icon;
-		} else if ((flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) &&
+		} else if ((flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) &&
 			     mount_icon != NULL && !g_icon_equal (mount_icon, icon)) {
 
 			emblem = g_emblem_new (mount_icon);

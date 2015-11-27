@@ -305,7 +305,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 
 			flags = NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
 				NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
-				NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
+				NEMO_FILE_ICON_FLAGS_USE_EMBLEMS;
 			if (model->details->drag_view != NULL) {
 				GtkTreePath *path_a, *path_b;
 				
