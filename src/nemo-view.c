@@ -2320,19 +2320,15 @@ all_files_in_trash (GList *files)
 }
 
 static gboolean
-all_selected_items_in_trash (NemoView *view)
+all_selected_items_in_trash (GList *selection)
 {
-	GList *selection;
 	gboolean result;
 
 	/* If the contents share a parent directory, we need only
 	 * check that parent directory. Otherwise we have to inspect
 	 * each selected item.
 	 */
-	selection = nemo_view_get_selection (view);
 	result = (selection == NULL) ? FALSE : all_files_in_trash (selection);
-	nemo_file_list_free (selection);
-
 	return result;
 }
 
@@ -4390,17 +4386,13 @@ nemo_view_duplicate_selection (NemoView *view, GList *files,
  */
  
 static gboolean
-special_link_in_selection (NemoView *view)
+special_link_in_selection (GList *selection)
 {
 	gboolean saw_link;
-	GList *selection, *node;
+	GList *node;
 	NemoFile *file;
 
-	g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
-
 	saw_link = FALSE;
-
-	selection = nemo_view_get_selection (NEMO_VIEW (view));
 
 	for (node = selection; node != NULL; node = node->next) {
 		file = NEMO_FILE (node->data);
@@ -4412,8 +4404,6 @@ special_link_in_selection (NemoView *view)
 		}
 	}
 	
-	nemo_file_list_free (selection);
-	
 	return saw_link;
 }
 
@@ -4423,17 +4413,13 @@ special_link_in_selection (NemoView *view)
  */
  
 static gboolean
-desktop_or_home_dir_in_selection (NemoView *view)
+desktop_or_home_dir_in_selection (GList *selection)
 {
 	gboolean saw_desktop_or_home_dir;
-	GList *selection, *node;
+	GList *node;
 	NemoFile *file;
 
-	g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
-
 	saw_desktop_or_home_dir = FALSE;
-
-	selection = nemo_view_get_selection (NEMO_VIEW (view));
 
 	for (node = selection; node != NULL; node = node->next) {
 		file = NEMO_FILE (node->data);
@@ -4447,8 +4433,6 @@ desktop_or_home_dir_in_selection (NemoView *view)
 		}
 	}
 	
-	nemo_file_list_free (selection);
-	
 	return saw_desktop_or_home_dir;
 }
 
@@ -4458,17 +4442,13 @@ desktop_or_home_dir_in_selection (NemoView *view)
  */
 
 static gboolean
-directory_in_selection (NemoView *view)
+directory_in_selection (GList *selection)
 {
     gboolean has_dir;
-    GList *selection, *node;
+    GList *node;
     NemoFile *file;
 
-    g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
-
     has_dir = FALSE;
-
-    selection = nemo_view_get_selection (NEMO_VIEW (view));
 
     for (node = selection; node != NULL; node = node->next) {
         file = NEMO_FILE (node->data);
@@ -4478,7 +4458,6 @@ directory_in_selection (NemoView *view)
             break;
         }
     }
-    nemo_file_list_free (selection);
 
     return has_dir;
 }
@@ -9926,6 +9905,7 @@ real_update_menus (NemoView *view)
 	gboolean selection_contains_desktop_or_home_dir;
 	gboolean selection_contains_directory;
 	gboolean selection_contains_recent;
+	gboolean selection_all_in_trash;
 	gboolean can_create_files;
 	gboolean can_delete_files;
 	gboolean can_move_files;
@@ -9953,10 +9933,11 @@ real_update_menus (NemoView *view)
 	selection = nemo_view_get_selection (view);
 	selection_count = g_list_length (selection);
 
-	selection_contains_special_link = special_link_in_selection (view);
-	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view);
-	selection_contains_directory = directory_in_selection (view);
+	selection_contains_special_link = special_link_in_selection (selection);
+	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (selection);
+	selection_contains_directory = directory_in_selection (selection);
 	selection_contains_recent = showing_recent_directory (view);	
+	selection_all_in_trash = all_selected_items_in_trash (selection);
 
 	can_create_files = nemo_view_supports_creating_files (view);
 	can_delete_files =
@@ -10088,8 +10069,7 @@ real_update_menus (NemoView *view)
 					      NEMO_VIEW_POPUP_PATH_OPEN);
 
 	/* Only force displaying the icon if it is an application icon */
-	gtk_image_menu_item_set_always_show_image (
-						   GTK_IMAGE_MENU_ITEM (menuitem), app_icon != NULL);
+	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem), app_icon != NULL);
 
 	if (app_icon == NULL) {
 		app_icon = g_themed_icon_new ("document-open");
@@ -10149,7 +10129,7 @@ real_update_menus (NemoView *view)
 	reset_extension_actions_menu (view, selection);
     reset_move_copy_to_menu (view);
 
-	if (all_selected_items_in_trash (view)) {
+	if (selection_all_in_trash) {
 		label = _("_Delete Permanently");
 		tip = _("Delete all selected items permanently");
 		show_separate_delete_command = FALSE;
@@ -10164,7 +10144,7 @@ real_update_menus (NemoView *view)
 	g_object_set (action,
 		      "label", label,
 		      "tooltip", tip,
-		      "icon-name", all_selected_items_in_trash (view) ?
+		      "icon-name", selection_all_in_trash ?
 		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
 		      NULL);
 	/* if the backend supports delete but not trash then don't show trash */
