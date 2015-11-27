@@ -80,8 +80,8 @@ typedef enum {
 	NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE = (1<<5),
 	/* uses the icon of the mount if present */
 	NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON = (1<<6),
-	/* render the mount icon as an emblem over the regular one */
-	NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM = (1<<7)
+	/* render emblems */
+	NEMO_FILE_ICON_FLAGS_USE_EMBLEMS = (1<<7)
 } NemoFileIconFlags;	
 
 typedef enum {
