@@ -195,6 +195,7 @@ struct NemoViewDetails
 
     GtkWidget *expander_menu_widget;
     GtkWidget *menu_widget_ref;
+    GtkWidget *expander_label_widget;
     guint menu_expander_click_handler_id;
     gchar *expander_tooltip_text;
 
@@ -2687,6 +2688,7 @@ nemo_view_init (NemoView *view)
 
     view->details->expander_menu_widget = NULL;
     view->details->menu_widget_ref = NULL;
+    view->details->expander_label_widget = NULL;
     view->details->menu_expander_click_handler_id = 0;
     view->details->expander_tooltip_text = NULL;
 
@@ -6637,7 +6639,7 @@ update_templates_menu (NemoView *view)
 	g_free (templates_directory_uri);
 }
 
-static void attach_expander_to_first_visible_menu_item (NemoView *view, GtkWidget *menu);
+static void ensure_expander_attached (NemoView *view, GtkWidget *menu_item);
 
 static void
 on_expander_destroyed (GtkWidget *widget, NemoView *view)
@@ -6649,6 +6651,7 @@ static void
 on_menu_destroyed (GtkWidget *widget, NemoView *view)
 {
     view->details->menu_widget_ref = NULL;
+    view->details->expander_label_widget = NULL;
 }
 
 static gboolean
@@ -6662,28 +6665,6 @@ pointer_in_expander_widget (GtkWidget *widget, gint x, gint y)
             (x <= alloc.x + alloc.width) &&
             (y >= alloc.y) &&
             (y <= alloc.y + alloc.height));
-}
-
-static gboolean
-on_menu_button_released (GtkWidget *widget, GdkEvent *event, NemoView *view)
-{
-    if (event->button.button != GDK_BUTTON_PRIMARY)
-        return FALSE;
-
-    gint ev_x = (gint) event->button.x;
-    gint ev_y = (gint) event->button.y;
-
-    if (pointer_in_expander_widget (view->details->expander_menu_widget, ev_x, ev_y)) {
-        g_settings_set_boolean (nemo_preferences,
-                                NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS,
-                                !g_settings_get_boolean (nemo_preferences,
-                                                         NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS));
-        attach_expander_to_first_visible_menu_item (view, widget);
-        schedule_update_menus (view);
-        return TRUE;
-    }
-
-    return FALSE;
 }
 
 static gboolean
@@ -6726,7 +6707,7 @@ get_expander_widget_and_tooltip (NemoView *view, gchar **tooltip)
 }
 
 static void
-container_forall_function (GtkWidget *widget, GtkWidget *expander)
+attach_expander (NemoView *view, GtkWidget *widget, GtkWidget *expander)
 {
     GtkWidget *parent = gtk_widget_get_parent (widget);
     GtkWidget *hbox = NULL;
@@ -6743,6 +6724,8 @@ container_forall_function (GtkWidget *widget, GtkWidget *expander)
         gtk_box_pack_start (GTK_BOX (hbox), widget, TRUE, TRUE, 0);
         gtk_container_add (GTK_CONTAINER (parent), hbox);
 
+        view->details->expander_label_widget = widget;
+
         g_object_unref (widget);
     }
 
@@ -6753,8 +6736,30 @@ container_forall_function (GtkWidget *widget, GtkWidget *expander)
     gtk_box_pack_end (GTK_BOX (hbox), expander, FALSE, FALSE, 0);
 }
 
+static gboolean
+on_menu_button_released (GtkWidget *widget, GdkEvent *event, NemoView *view)
+{
+    if (event->button.button != GDK_BUTTON_PRIMARY)
+        return FALSE;
+
+    gint ev_x = (gint) event->button.x;
+    gint ev_y = (gint) event->button.y;
+
+    if (pointer_in_expander_widget (view->details->expander_menu_widget, ev_x, ev_y)) {
+        g_settings_set_boolean (nemo_preferences,
+                                NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS,
+                                !g_settings_get_boolean (nemo_preferences,
+                                                         NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS));
+        ensure_expander_attached (view, widget);
+        schedule_update_menus (view);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static void
-attach_expander_to_first_visible_menu_item (NemoView *view, GtkWidget *menu)
+ensure_expander_attached (NemoView *view, GtkWidget *menu_item)
 {
     gchar *tooltip = NULL;
 
@@ -6762,38 +6767,27 @@ attach_expander_to_first_visible_menu_item (NemoView *view, GtkWidget *menu)
 
     view->details->expander_menu_widget = expander;
 
-    GList *children = gtk_container_get_children (GTK_CONTAINER (menu));
-    GList *iter;
-
-    GtkWidget *menu_item = NULL;
-
-    for (iter = children; iter != NULL; iter = iter->next) {
-        menu_item = iter->data;
-
-        if (gtk_widget_get_visible (menu_item))
-            break;
-    }
-
-    g_list_free (children);
-
     g_clear_pointer (&view->details->expander_tooltip_text, g_free);
     view->details->expander_tooltip_text = g_strdup (tooltip);
 
-    gtk_container_forall (GTK_CONTAINER (menu_item), (GtkCallback) container_forall_function, expander);
+    GtkWidget *child = gtk_bin_get_child (GTK_BIN (menu_item));
+
+    attach_expander (view, child, expander);
+
     gtk_widget_show_all (menu_item);
 
     if (view->details->menu_expander_click_handler_id == 0) {
-        view->details->menu_expander_click_handler_id = g_signal_connect (menu,
+        view->details->menu_expander_click_handler_id = g_signal_connect (menu_item,
                                                                           "button-release-event",
                                                                           G_CALLBACK (on_menu_button_released),
                                                                           view);
-        gtk_widget_set_has_tooltip (menu, TRUE);
-        g_signal_connect (menu, "query-tooltip", G_CALLBACK (on_query_menu_tooltip), view);
+        gtk_widget_set_has_tooltip (menu_item, TRUE);
+        g_signal_connect (menu_item, "query-tooltip", G_CALLBACK (on_query_menu_tooltip), view);
     }
 
     if (view->details->menu_widget_ref == NULL) {
-        view->details->menu_widget_ref = menu;
-        g_signal_connect (menu, "destroy", G_CALLBACK (on_menu_destroyed), view);
+        view->details->menu_widget_ref = menu_item;
+        g_signal_connect (menu_item, "destroy", G_CALLBACK (on_menu_destroyed), view);
     }
 }
 
@@ -6807,10 +6801,6 @@ create_popup_menu (NemoView *view, const char *popup_path)
 	gtk_menu_set_screen (GTK_MENU (menu),
 			     gtk_widget_get_screen (GTK_WIDGET (view)));
 	gtk_widget_show (GTK_WIDGET (menu));
-
-    if (g_strcmp0 (popup_path, NEMO_VIEW_POPUP_PATH_SELECTION) == 0) {
-        attach_expander_to_first_visible_menu_item (view, menu);
-    }
 
 	return GTK_MENU (menu);
 }
@@ -9765,6 +9755,11 @@ real_update_menus (NemoView *view)
 		      label_with_underscore ? label_with_underscore : _("_Open"),
 		      NULL);
 
+    if (view->details->expander_label_widget) {
+        gtk_label_set_text_with_mnemonic (GTK_LABEL (view->details->expander_label_widget),
+                                          label_with_underscore ? label_with_underscore : _("_Open"));
+    }
+
 	menuitem = gtk_ui_manager_get_widget (
 					      nemo_window_get_ui_manager (view->details->window),
 					      NEMO_VIEW_MENU_PATH_OPEN);
@@ -9776,6 +9771,8 @@ real_update_menus (NemoView *view)
 	menuitem = gtk_ui_manager_get_widget (
 					      nemo_window_get_ui_manager (view->details->window),
 					      NEMO_VIEW_POPUP_PATH_OPEN);
+
+    ensure_expander_attached (view, menuitem);
 
 	/* Only force displaying the icon if it is an application icon */
 	gtk_image_menu_item_set_always_show_image (
