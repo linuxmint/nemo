@@ -4336,7 +4336,6 @@ style_updated (GtkWidget *widget)
 	NemoCanvasContainer *container;
 
 	container = NEMO_CANVAS_CONTAINER (widget);
-	container->details->use_drop_shadows = container->details->drop_shadows_requested;
 
 	/* Don't chain up to parent, if this is a desktop container,
 	 * because that resets the background of the window.
@@ -8784,19 +8783,6 @@ nemo_canvas_container_set_margins (NemoCanvasContainer *container,
 
 	/* redo layout of icons as the margins have changed */
 	schedule_redo_layout (container);
-}
-
-void
-nemo_canvas_container_set_use_drop_shadows (NemoCanvasContainer  *container,
-						gboolean                use_drop_shadows)
-{
-	if (container->details->drop_shadows_requested == use_drop_shadows) {
-		return;
-	}
-
-	container->details->drop_shadows_requested = use_drop_shadows;
-	container->details->use_drop_shadows = use_drop_shadows;
-	gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
 /* handle theme changes */

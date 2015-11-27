@@ -342,8 +342,6 @@ void              nemo_canvas_container_set_margins                   (NemoCanva
 									   int                     right_margin,
 									   int                     top_margin,
 									   int                     bottom_margin);
-void              nemo_canvas_container_set_use_drop_shadows          (NemoCanvasContainer  *container,
-									   gboolean                use_drop_shadows);
 char*             nemo_canvas_container_get_icon_description          (NemoCanvasContainer  *container,
 									     NemoCanvasIconData       *data);
 gboolean          nemo_canvas_container_get_allow_moves               (NemoCanvasContainer  *container);

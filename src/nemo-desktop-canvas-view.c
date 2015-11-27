@@ -474,7 +474,6 @@ nemo_desktop_canvas_view_init (NemoDesktopCanvasView *desktop_canvas_view)
 	}
 
 	canvas_container = get_canvas_container (desktop_canvas_view);
-	nemo_canvas_container_set_use_drop_shadows (canvas_container, TRUE);
 	nemo_canvas_view_container_set_sort_desktop (NEMO_CANVAS_VIEW_CONTAINER (canvas_container), TRUE);
 
 	/* Do a reload on the desktop if we don't have FAM, a smarter
