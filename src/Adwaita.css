@@ -25,18 +25,6 @@
     color: @theme_unfocused_selected_fg_color;
 }
 
-NemoWindow .sidebar .frame {
-    border-style: none;
-}
-
-NemoNotebook .frame {
-    border-width: 0;
-}
-
-NemoNotebook.notebook tab .button {
-    padding: 0px;
-}
-
 /* Floating status bar */
 .floating-bar {
   padding: 2px;

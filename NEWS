@@ -1,3 +1,10 @@
+Nemo merged with changes in Nautilus 3.13.91:
+
+Changes:
+* Performance improvements for canvas and list views
+* Fix CSS style for new GTK (Lapo Calamandrei, Alex Diavatis, António Fernandes)
+* Fix handling of sort-directories-first setting (Matthias Clasen)
+
 Nemo merged with changes in Nautilus 3.13.90:
 
 Changes:
