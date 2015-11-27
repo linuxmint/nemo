@@ -51,8 +51,6 @@
 #define DEBUG_FLAG NEMO_DEBUG_CANVAS_CONTAINER
 #include "nemo-debug.h"
 
-#define TAB_NAVIGATION_DISABLED
-
 /* Interval for updating the rubberband selection, in milliseconds.  */
 #define RUBBERBAND_TIMEOUT_INTERVAL 10
 
@@ -1216,17 +1214,6 @@ resort (NemoCanvasContainer *container)
 	sort_icons (container, &container->details->icons);
 }
 
-#if 0
-static double
-get_grid_width (NemoCanvasContainer *container)
-{
-	if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-		return TEXT_BESIDE_ICON_GRID_WIDTH;
-	} else {
-		return STANDARD_ICON_GRID_WIDTH;
-	}
-}
-#endif
 typedef struct {
 	double width;
 	double height;
@@ -4020,57 +4007,6 @@ keyboard_space (NemoCanvasContainer *container,
 	}
 }
 
-/* look for the first canvas that matches the longest part of a given
- * search pattern
- */
-typedef struct {
-	gunichar *name;
-	int last_match_length;
-} BestNameMatch;
-
-#ifndef TAB_NAVIGATION_DISABLED
-static void
-select_previous_or_next_icon (NemoCanvasContainer *container, 
-				gboolean next, 
-				GdkEventKey *event)
-{
-	NemoCanvasIcon *icon;
-	const GList *item;
-
-	item = NULL;
-	/* Chose the icon to start with.
-	 * If we have a keyboard focus, start with it.
-	 * Otherwise, use the single selected icon.
-	 */
-	icon = container->details->keyboard_focus;
-	if (icon == NULL) {
-		icon = get_first_selected_icon (container);
-	}
-
-	if (icon != NULL) {
-		/* must have at least @canvas in the list */
-		g_assert (container->details->icons != NULL);
-		item = g_list_find (container->details->icons, icon);
-		g_assert (item != NULL);
-		
-		item = next ? item->next : item->prev;
-		if (item == NULL) {
-			item = next ? g_list_first (container->details->icons) : g_list_last (container->details->icons);
-		}
-
-	} else if (container->details->icons != NULL) {
-		/* no selection yet, pick the first or last item to select */
-		item = next ? g_list_first (container->details->icons) : g_list_last (container->details->icons);
-	}
-
-	icon = (item != NULL) ? item->data : NULL;
-
-	if (icon != NULL) {
-		keyboard_move_to (container, icon, NULL, event);
-	}
-}
-#endif
-
 static void
 destroy (GtkWidget *object)
 {
@@ -5578,14 +5514,6 @@ key_press_event (GtkWidget *widget,
 			keyboard_space (container, event);
 			handled = TRUE;
 			break;
-#ifndef TAB_NAVIGATION_DISABLED
-		case GDK_KEY_Tab:
-		case GDK_KEY_ISO_Left_Tab:
-			select_previous_or_next_icon (container, 
-							(event->state & GDK_SHIFT_MASK) == 0, event);
-			handled = TRUE;
-			break;
-#endif
 		case GDK_KEY_Return:
 		case GDK_KEY_KP_Enter:
 			if ((event->state & GDK_SHIFT_MASK) != 0) {
@@ -9021,8 +8949,6 @@ nemo_canvas_container_accessible_update_selection (AtkObject *accessible)
 {
 	NemoCanvasContainer *container;
 	NemoCanvasContainerAccessiblePrivate *priv;
-	GList *l;
-	NemoCanvasIcon *icon;
 
 	container = NEMO_CANVAS_CONTAINER (gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible)));
 	priv = GET_ACCESSIBLE_PRIV (accessible);
@@ -9031,16 +8957,8 @@ nemo_canvas_container_accessible_update_selection (AtkObject *accessible)
 		g_list_free (priv->selection);
 		priv->selection = NULL;
 	}
-	
-	for (l = container->details->icons; l != NULL; l = l->next) {
-		icon = l->data;
-		if (icon->is_selected) {
-			priv->selection = g_list_prepend (priv->selection, 
-							  icon);
-		}
-	}
 
-	priv->selection = g_list_reverse (priv->selection);
+	priv->selection = nemo_canvas_container_get_selection (container);
 }
 
 static void
