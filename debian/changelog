@@ -1,3 +1,11 @@
+nemo (2.8.6) rosa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-view.c: Fix Open context menu entry not updating its label when a new selection is made.  Also, fix tracking the context toggle when the menu has scroll bars.
+  * nemo-view: fix invalid View reference when view types change, and the tooltip is updated for the context menu toggle.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 27 Nov 2015 09:59:44 +0000
+
 nemo (2.8.5) rosa; urgency=medium
 
   [ Michael Webster ]
