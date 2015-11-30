@@ -872,18 +872,15 @@ nemo_application_handle_local_options (GApplication *application,
 	}
 
 #ifndef GNOME_BUILD
-    if (fix_cache) {
-        if (geteuid () != 0) {
-            g_printerr ("The --fix-cache option must be run with sudo or as the root user.\n");
-        } else {
-
-
-            gnome_desktop_thumbnail_cache_fix_permissions ();
-            g_print ("User thumbnail cache successfully repaired.\n");
-        }
-
-        goto out;
-    }
+	if (g_variant_dict_contains (options, "fix-cache")) {
+		if (geteuid () != 0) {
+			g_printerr ("The --fix-cache option must be run with sudo or as the root user.\n");
+		} else {
+			gnome_desktop_thumbnail_cache_fix_permissions ();
+			g_print ("User thumbnail cache successfully repaired.\n");
+		}
+		goto out;
+	    }
 #endif
 
 	g_application_register (application, NULL, &error);
