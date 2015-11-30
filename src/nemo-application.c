@@ -1104,7 +1104,7 @@ update_desktop_from_gsettings (NemoApplication *self)
 		return;
 	}
 
-	nemo_application_set_desktop_visible (self, g_settings_get_boolean (gnome_background_preferences,
+	nemo_application_set_desktop_visible (self, g_settings_get_boolean (nemo_desktop_preferences,
 										NEMO_PREFERENCES_SHOW_DESKTOP));
 }
 
@@ -1115,7 +1115,7 @@ init_desktop (NemoApplication *self)
 	screen = gdk_display_get_default_screen (gdk_display_get_default ());
 	
 	update_desktop_from_gsettings (self);
-	g_signal_connect_swapped (gnome_background_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
+	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
 				  G_CALLBACK (update_desktop_from_gsettings),
 				  self);
 
