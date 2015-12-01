@@ -4374,6 +4374,7 @@ apply_emblems_to_icon (NemoFile *file,
 		       NemoFileIconFlags flags)
 {
 	GIcon *emblemed_icon;
+	GIcon *emblem_icon;
 	GEmblem *emblem;
 	GList *emblems, *l;
 
@@ -4381,17 +4382,25 @@ apply_emblems_to_icon (NemoFile *file,
 	emblems = nemo_file_get_emblem_icons (file);
 
 	for (l = emblems; l != NULL; l = l->next) {
-		if (g_icon_equal (l->data, icon)) {
+		emblem_icon = l->data;
+		if (g_icon_equal (emblem_icon, icon)) {
 			continue;
 		}
 
-		emblem = g_emblem_new (l->data);
+        if (flags & NEMO_FILE_ICON_FLAGS_USE_ONE_EMBLEM &&
+        		!nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
+        	continue;
+        }
+
+		emblem = g_emblem_new (emblem_icon);
 
 		if (emblemed_icon == NULL) {
 			emblemed_icon = g_emblemed_icon_new (icon, emblem);
 		} else {
 			g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
 		}
+
+		g_object_unref (emblem);
 
 		if (emblemed_icon != NULL &&
 		    (flags & NEMO_FILE_ICON_FLAGS_USE_ONE_EMBLEM)) {
@@ -4521,37 +4530,6 @@ nemo_file_get_gicon (NemoFile *file,
 	}
 	
 	return g_themed_icon_new ("text-x-generic");
-}
-
-GIcon *
-nemo_file_get_emblemed_icon (NemoFile *file,
-                             NemoFileIconFlags flags)
-{
-    GIcon *gicon, *emblem_icon, *emblemed_icon;
-    GEmblem *emblem;
-    GList *emblem_icons, *l;
-
-    gicon = nemo_file_get_gicon (file, flags);
-
-    emblem = NULL;
-    emblem_icons = nemo_file_get_emblem_icons (file);
-
-    emblemed_icon = g_emblemed_icon_new (gicon, NULL);
-    g_object_unref (gicon);
-
-    /* pick only the first emblem we can render for the tree view */
-    for (l = emblem_icons; l != NULL; l = l->next) {
-        emblem_icon = l->data;
-        if (nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
-            emblem = g_emblem_new (emblem_icon);
-            g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
-            g_object_unref (emblem);
-        }
-    }
-
-    g_list_free_full (emblem_icons, g_object_unref);
-
-    return emblemed_icon;
 }
 
 static GIcon *
