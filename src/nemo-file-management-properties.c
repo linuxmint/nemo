@@ -59,7 +59,6 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET "trash_confirm_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET "trash_delete_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SWAP_TRASH_DELETE "swap_trash_binding_checkbutton"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_PREVIOUS_ICON_TOOLBAR_WIDGET "show_previous_icon_toolbar_checkbutton"
@@ -424,9 +423,11 @@ nemo_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *buil
 		create_icon_caption_combo_box_items (GTK_COMBO_BOX_TEXT (combo_box), columns);
 		gtk_widget_set_sensitive (combo_box, writable);
 
-		g_signal_connect (combo_box, "changed",
-				  G_CALLBACK (icon_captions_changed_callback),
-				  builder);
+		g_signal_connect_data (combo_box, "changed",
+				       G_CALLBACK (icon_captions_changed_callback),
+				       g_object_ref (builder),
+				       (GClosureNotify)g_object_unref,
+				       0);
 	}
 
 	nemo_column_list_free (columns);
