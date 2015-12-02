@@ -4537,8 +4537,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
                                                         g_date_time_get_day_of_month (now),
                                                         0, 1, 0);
 
-		days_ago = g_date_time_difference (today_midnight, file_date) /
-                           (24 * 60 * 60 * 1000 * 1000L);
+		days_ago = g_date_time_difference (today_midnight, file_date) / G_TIME_SPAN_DAY;
 
 		use_24 = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
 
