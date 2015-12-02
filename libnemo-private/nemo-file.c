@@ -4136,6 +4136,23 @@ get_custom_icon (NemoFile *file)
 	return icon;
 }
 
+static GIcon *
+get_default_file_icon (NemoFileIconFlags flags)
+{
+	static GIcon *fallback_icon = NULL;
+	static GIcon *fallback_icon_preview = NULL;
+	if (fallback_icon == NULL) {
+		fallback_icon = g_themed_icon_new ("text-x-generic");
+		fallback_icon_preview = g_themed_icon_new ("text-x-preview");
+		g_themed_icon_append_name (G_THEMED_ICON (fallback_icon_preview), "text-x-generic");
+	}
+	if (flags & NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT) {
+		return fallback_icon_preview;
+	} else {
+		return fallback_icon;
+	}
+}
+
 GFilesystemPreviewType
 nemo_file_get_filesystem_use_preview (NemoFile *file)
 {
@@ -4428,7 +4445,10 @@ nemo_file_get_gicon (NemoFile *file,
 	GPtrArray *prepend_array;
 	GIcon *icon, *emblemed_icon;
 	int i;
-	gboolean is_folder = FALSE, is_preview = FALSE, is_inode_directory = FALSE;
+	gboolean is_folder = FALSE, is_inode_directory = FALSE;
+    gboolean is_preview = FALSE;
+
+	icon = NULL;
 
 	if (file == NULL) {
 		return NULL;
@@ -4450,7 +4470,7 @@ nemo_file_get_gicon (NemoFile *file,
 		icon = get_mount_icon (file);
 
 		if (icon != NULL) {
-			return icon;
+			goto out;
 		}
 	}
 
@@ -4519,34 +4539,20 @@ nemo_file_get_gicon (NemoFile *file,
 		if (icon == NULL) {
 			icon = g_object_ref (file->details->icon);
 		}
+	}
 
-		if (flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) {
-			emblemed_icon = apply_emblems_to_icon (file, icon, flags);
-			g_object_unref (icon);
-			icon = emblemed_icon;
-		}
+ out:
+	if (icon == NULL) {
+		icon = g_object_ref (get_default_file_icon (flags));
+	}
 
-		return icon;
+	if (flags & NEMO_FILE_ICON_FLAGS_USE_EMBLEMS) {
+		emblemed_icon = apply_emblems_to_icon (file, icon, flags);
+		g_object_unref (icon);
+		icon = emblemed_icon;
 	}
 	
-	return g_themed_icon_new ("text-x-generic");
-}
-
-static GIcon *
-get_default_file_icon (NemoFileIconFlags flags)
-{
-	static GIcon *fallback_icon = NULL;
-	static GIcon *fallback_icon_preview = NULL;
-	if (fallback_icon == NULL) {
-		fallback_icon = g_themed_icon_new ("text-x-generic");
-		fallback_icon_preview = g_themed_icon_new ("text-x-preview");
-		g_themed_icon_append_name (G_THEMED_ICON (fallback_icon_preview), "text-x-generic");
-	}
-	if (flags & NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT) {
-		return fallback_icon_preview;
-	} else {
-		return fallback_icon;
-	}
+	return icon;
 }
 
 static gint
@@ -4573,36 +4579,21 @@ nemo_file_get_thumbnail_path (NemoFile *file)
 	return g_strdup (file->details->thumbnail_path);
 }
 
-NemoIconInfo *
-nemo_file_get_icon (NemoFile *file,
-			int size,
-			int scale,
-			NemoFileIconFlags flags)
+static NemoIconInfo *
+nemo_file_get_thumbnail_icon (NemoFile *file,
+				  int size,
+				  int scale,
+				  NemoFileIconFlags flags)
 {
-	NemoIconInfo *icon;
-	GIcon *gicon;
-	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
 	int modified_size;
+	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
+	int w, h, s;
+	double thumb_scale;
+	GIcon *gicon;
+	NemoIconInfo *icon;
 
-	if (file == NULL) {
-		return NULL;
-	}
+	icon = NULL;
 
-	gicon = get_custom_icon (file);
-	if (gicon == NULL) {
-		gicon = get_link_icon (file);
-	}
-
-	if (gicon != NULL) {
-		icon = nemo_icon_info_lookup (gicon, size, scale);
-		g_object_unref (gicon);
-
-		return icon;
-	}
-
-	DEBUG ("Called file_get_icon(), at size %d, force thumbnail %d", size,
-	       flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
-	
 	if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
 		modified_size = size * scale;
 	} else {
@@ -4611,97 +4602,132 @@ nemo_file_get_icon (NemoFile *file,
 		       modified_size, cached_thumbnail_size);
 	}
 
-	if (flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS &&
-	    nemo_file_should_show_thumbnail (file)) {
-		if (file->details->thumbnail) {
-			int w, h, s;
-			double thumb_scale;
+	if (file->details->thumbnail) {
+		raw_pixbuf = g_object_ref (file->details->thumbnail);
 
-			raw_pixbuf = g_object_ref (file->details->thumbnail);
+		w = gdk_pixbuf_get_width (raw_pixbuf);
+		h = gdk_pixbuf_get_height (raw_pixbuf);
 
-			w = gdk_pixbuf_get_width (raw_pixbuf);
-			h = gdk_pixbuf_get_height (raw_pixbuf);
-			
-			s = MAX (w, h);			
-			/* Don't scale up small thumbnails in the standard view */
-			if (s <= cached_thumbnail_size) {
-				thumb_scale = (double)size / NEMO_ICON_SIZE_STANDARD;
-			}
-			else {
-				thumb_scale = (double)modified_size / s;
-			}
-			/* Make sure that icons don't get smaller than NEMO_ICON_SIZE_SMALLEST */
-			if (s*thumb_scale <= NEMO_ICON_SIZE_SMALLEST) {
-				thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
-			}
-
-			if (file->details->thumbnail_scale == thumb_scale &&
-			    file->details->scaled_thumbnail != NULL) {
-				scaled_pixbuf = file->details->scaled_thumbnail;
-			} else {
-				scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-									 MAX (w * thumb_scale, 1),
-									 MAX (h * thumb_scale, 1),
-									 GDK_INTERP_BILINEAR);
-
-				/* We don't want frames around small icons */
-				if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
-					if (nemo_is_video_file (file))
-						nemo_ui_frame_video (&scaled_pixbuf);
-					else
-						nemo_ui_frame_image (&scaled_pixbuf);
-				}
-
-				g_clear_object (&file->details->scaled_thumbnail);
-				file->details->scaled_thumbnail = scaled_pixbuf;
-				file->details->thumbnail_scale = thumb_scale;
-			}
-
-			g_object_unref (raw_pixbuf);
-
-			/* Don't scale up if more than 25%, then read the original
-			   image instead. We don't want to compare to exactly 100%,
-			   since the zoom level 150% gives thumbnails at 144, which is
-			   ok to scale up from 128. */
-			if (modified_size > 128 * 1.25 * scale &&
-			    !file->details->thumbnail_wants_original &&
-			    nemo_can_thumbnail_internally (file)) {
-				/* Invalidate if we resize upward */
-				file->details->thumbnail_wants_original = TRUE;
-				nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_THUMBNAIL);
-			}
-
-			DEBUG ("Returning thumbnailed image, at size %d %d",
-			       (int) (w * thumb_scale), (int) (h * thumb_scale));
-			
-			return nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
-		} else if (file->details->thumbnail_path == NULL &&
-			   file->details->can_read &&				
-			   !file->details->is_thumbnailing &&
-			   !file->details->thumbnailing_failed) {
-			if (nemo_can_thumbnail (file)) {
-				nemo_create_thumbnail (file, get_throttle_count (file));
-			}
+		s = MAX (w, h);
+		/* Don't scale up small thumbnails in the standard view */
+		if (s <= cached_thumbnail_size) {
+			thumb_scale = (double) size / NEMO_ICON_SIZE_STANDARD;
+		} else {
+			thumb_scale = (double) modified_size / s;
 		}
+
+		/* Make sure that icons don't get smaller than NEMO_ICON_SIZE_SMALLEST */
+		if (s * thumb_scale <= NEMO_ICON_SIZE_SMALLEST) {
+			thumb_scale = (double) NEMO_ICON_SIZE_SMALLEST / s;
+		}
+
+		if (file->details->thumbnail_scale == thumb_scale &&
+		    file->details->scaled_thumbnail != NULL) {
+			scaled_pixbuf = file->details->scaled_thumbnail;
+		} else {
+			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
+								 MAX (w * thumb_scale, 1),
+								 MAX (h * thumb_scale, 1),
+								 GDK_INTERP_BILINEAR);
+
+			/* We don't want frames around small icons */
+			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+				if (nemo_is_video_file (file)) {
+					nemo_ui_frame_video (&scaled_pixbuf);
+				} else {
+					nemo_ui_frame_image (&scaled_pixbuf);
+				}
+			}
+
+			g_clear_object (&file->details->scaled_thumbnail);
+			file->details->scaled_thumbnail = scaled_pixbuf;
+			file->details->thumbnail_scale = thumb_scale;
+		}
+
+		g_object_unref (raw_pixbuf);
+
+		/* Don't scale up if more than 25%, then read the original
+		   image instead. We don't want to compare to exactly 100%,
+		   since the zoom level 150% gives thumbnails at 144, which is
+		   ok to scale up from 128. */
+		if (modified_size > 128 * 1.25 * scale &&
+		    !file->details->thumbnail_wants_original &&
+		    nemo_can_thumbnail_internally (file)) {
+			/* Invalidate if we resize upward */
+			file->details->thumbnail_wants_original = TRUE;
+			nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_THUMBNAIL);
+		}
+
+		DEBUG ("Returning thumbnailed image, at size %d %d",
+		       (int) (w * thumb_scale), (int) (h * thumb_scale));
+
+		icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
+	} else if (file->details->thumbnail_path == NULL &&
+		   file->details->can_read &&
+		   !file->details->is_thumbnailing &&
+		   !file->details->thumbnailing_failed &&
+		   nemo_can_thumbnail (file)) {
+		nemo_create_thumbnail (file, get_throttle_count (file));
 	}
 
-	if (file->details->is_thumbnailing &&
-	    flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS)
+	if (icon == NULL && file->details->is_thumbnailing) {
 		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
-	else
-		gicon = nemo_file_get_gicon (file, flags);
-	
-	if (gicon) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
+		g_object_unref (gicon);
+	}
+
+	return icon;
+}
+
+NemoIconInfo *
+nemo_file_get_icon (NemoFile *file,
+			int size,
+			int scale,
+			NemoFileIconFlags flags)
+{
+	NemoIconInfo *icon;
+	GIcon *gicon;
+
+	icon = NULL;
+
+	if (file == NULL) {
+		goto out;
+	}
+
+	gicon = get_custom_icon (file);
+
+	if (gicon == NULL) {
+		gicon = get_link_icon (file);
+	}
+
+	if (gicon != NULL) {
+		icon = nemo_icon_info_lookup (gicon, size, scale);
+		g_object_unref (gicon);
+
+		goto out;
+	}
+
+	DEBUG ("Called file_get_icon(), at size %d, force thumbnail %d", size,
+	       flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
+
+	if (flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS &&
+	    nemo_file_should_show_thumbnail (file)) {
+		icon = nemo_file_get_thumbnail_icon (file, size, scale, flags);
+	}
+
+	if (icon == NULL) {
+		gicon = nemo_file_get_gicon (file, flags);
+		icon = nemo_icon_info_lookup (gicon, size, scale);
+		g_object_unref (gicon);
+
 		if (nemo_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
 			icon = nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
 		}
-		g_object_unref (gicon);
-		return icon;
-	} else {
-		return nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
 	}
+
+ out:
+	return icon;
 }
 
 GdkPixbuf *
