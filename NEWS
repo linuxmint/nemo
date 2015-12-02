@@ -1,3 +1,11 @@
+Nemo merged with changes in Nautilus 3.13.92:
+
+Changes:
+* Expand properties dialog notebook in its parent container
+* Fix crash when using the rename field context menu in list view
+* Fix crash when using a screen reader in canvas view
+* Fix crash when changing icon captions setting (Volker Sobek)
+
 Nemo merged with changes in Nautilus 3.13.91:
 
 Changes:
