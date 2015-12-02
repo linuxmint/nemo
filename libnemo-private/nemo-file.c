@@ -4137,6 +4137,24 @@ get_custom_icon (NemoFile *file)
 }
 
 static GIcon *
+get_custom_or_link_icon (NemoFile *file)
+{
+	GIcon *icon;
+
+	icon = get_custom_icon (file);
+	if (icon != NULL) {
+		return icon;
+	}
+
+	icon = get_link_icon (file);
+	if (icon != NULL) {
+		return icon;
+	}
+
+	return NULL;
+}
+
+static GIcon *
 get_default_file_icon (NemoFileIconFlags flags)
 {
 	static GIcon *fallback_icon = NULL;
@@ -4448,20 +4466,11 @@ nemo_file_get_gicon (NemoFile *file,
 	gboolean is_folder = FALSE, is_inode_directory = FALSE;
     gboolean is_preview = FALSE;
 
-	icon = NULL;
-
 	if (file == NULL) {
 		return NULL;
 	}
 
-	icon = get_custom_icon (file);
-
-	if (icon != NULL) {
-		return icon;
-	}
-
-	icon = get_link_icon (file);
-
+	icon = get_custom_or_link_icon (file);
 	if (icon != NULL) {
 		return icon;
 	}
@@ -4586,13 +4595,15 @@ nemo_file_get_thumbnail_icon (NemoFile *file,
 				  NemoFileIconFlags flags)
 {
 	int modified_size;
-	GdkPixbuf *raw_pixbuf, *scaled_pixbuf;
+	GdkPixbuf *pixbuf;
 	int w, h, s;
 	double thumb_scale;
-	GIcon *gicon;
+	GIcon *gicon, *emblemed_icon;
 	NemoIconInfo *icon;
 
 	icon = NULL;
+	gicon = NULL;
+	pixbuf = NULL;
 
 	if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
 		modified_size = size * scale;
@@ -4603,10 +4614,8 @@ nemo_file_get_thumbnail_icon (NemoFile *file,
 	}
 
 	if (file->details->thumbnail) {
-		raw_pixbuf = g_object_ref (file->details->thumbnail);
-
-		w = gdk_pixbuf_get_width (raw_pixbuf);
-		h = gdk_pixbuf_get_height (raw_pixbuf);
+		w = gdk_pixbuf_get_width (file->details->thumbnail);
+		h = gdk_pixbuf_get_height (file->details->thumbnail);
 
 		s = MAX (w, h);
 		/* Don't scale up small thumbnails in the standard view */
@@ -4623,28 +4632,26 @@ nemo_file_get_thumbnail_icon (NemoFile *file,
 
 		if (file->details->thumbnail_scale == thumb_scale &&
 		    file->details->scaled_thumbnail != NULL) {
-			scaled_pixbuf = file->details->scaled_thumbnail;
+			pixbuf = file->details->scaled_thumbnail;
 		} else {
-			scaled_pixbuf = gdk_pixbuf_scale_simple (raw_pixbuf,
-								 MAX (w * thumb_scale, 1),
-								 MAX (h * thumb_scale, 1),
-								 GDK_INTERP_BILINEAR);
+			pixbuf = gdk_pixbuf_scale_simple (file->details->thumbnail,
+							  MAX (w * thumb_scale, 1),
+							  MAX (h * thumb_scale, 1),
+							  GDK_INTERP_BILINEAR);
 
 			/* We don't want frames around small icons */
-			if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+			if (!gdk_pixbuf_get_has_alpha (file->details->thumbnail) || s >= 128 * scale) {
 				if (nemo_is_video_file (file)) {
-					nemo_ui_frame_video (&scaled_pixbuf);
+					nemo_ui_frame_video (&pixbuf);
 				} else {
-					nemo_ui_frame_image (&scaled_pixbuf);
+					nemo_ui_frame_image (&pixbuf);
 				}
 			}
 
 			g_clear_object (&file->details->scaled_thumbnail);
-			file->details->scaled_thumbnail = scaled_pixbuf;
+			file->details->scaled_thumbnail = pixbuf;
 			file->details->thumbnail_scale = thumb_scale;
 		}
-
-		g_object_unref (raw_pixbuf);
 
 		/* Don't scale up if more than 25%, then read the original
 		   image instead. We don't want to compare to exactly 100%,
@@ -4660,8 +4667,6 @@ nemo_file_get_thumbnail_icon (NemoFile *file,
 
 		DEBUG ("Returning thumbnailed image, at size %d %d",
 		       (int) (w * thumb_scale), (int) (h * thumb_scale));
-
-		icon = nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 	} else if (file->details->thumbnail_path == NULL &&
 		   file->details->can_read &&
 		   !file->details->is_thumbnailing &&
@@ -4670,10 +4675,23 @@ nemo_file_get_thumbnail_icon (NemoFile *file,
 		nemo_create_thumbnail (file, get_throttle_count (file));
 	}
 
-	if (icon == NULL && file->details->is_thumbnailing) {
+	if (pixbuf != NULL) {
+		gicon = g_object_ref (pixbuf);
+	} else if (file->details->is_thumbnailing) {
 		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
-		icon = nemo_icon_info_lookup (gicon, size, scale);
+	}
+
+	if (gicon != NULL) {
+		emblemed_icon = apply_emblems_to_icon (file, gicon, flags);
 		g_object_unref (gicon);
+
+		if (g_icon_equal (emblemed_icon, G_ICON (pixbuf))) {
+			icon = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
+		} else {
+			icon = nemo_icon_info_lookup (emblemed_icon, size, scale);
+		}
+
+		g_object_unref (emblemed_icon);
 	}
 
 	return icon;
@@ -4694,12 +4712,7 @@ nemo_file_get_icon (NemoFile *file,
 		goto out;
 	}
 
-	gicon = get_custom_icon (file);
-
-	if (gicon == NULL) {
-		gicon = get_link_icon (file);
-	}
-
+	gicon = get_custom_or_link_icon (file);
 	if (gicon != NULL) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
 		g_object_unref (gicon);
