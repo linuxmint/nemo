@@ -1,6 +1,19 @@
 Nemo merged with changes in Nautilus 3.14.0:
 
 Changes:
+* Fix new window activation with desktop icons enabled
+
+
+Nemo merged with changes in Nautilus 3.14.1:
+
+Changes:
+* Fix regression with --new-window option (Lubomir Rintel)
+* Use mount name if available for file operations progress report
+* Set max-width for value labels in properties (Lars Uebernickel)
+
+Nemo merged with changes in Nautilus 3.14.0:
+
+Changes:
 * none
 
 Nemo merged with changes in Nautilus 3.13.92:
