@@ -1,4 +1,10 @@
-Nemo merged with changes in Nautilus 3.14.0:
+Nemo merged with changes in Nautilus 3.14.3:
+
+Changes:
+* Don't create a window at start when using desktop (Carlos Soriano)
+* Avoid unreadable names in list view (Carlos Soriano)
+
+Nemo merged with changes in Nautilus 3.14.2:
 
 Changes:
 * Fix new window activation with desktop icons enabled

@@ -6,3 +6,7 @@ data/nemo-connect-server.desktop.in
 data/org.Nemo.desktop.in
 data/nemo-browser.desktop.in
 debian
+sub/data/nemo-autorun-software.desktop.in
+sub/data/nemo-computer.desktop.in
+sub/data/nemo-connect-server.desktop.in
+sub/data/org.Nemo.desktop.in
