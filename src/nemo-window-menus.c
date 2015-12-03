@@ -1745,6 +1745,8 @@ add_extension_menu_items (NemoWindow *window,
 			nemo_menu_item_list_free (children);
 			g_free (subdir);
 		}			
+
+                g_object_unref (action);
 	}
 }
 
