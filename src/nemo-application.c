@@ -306,11 +306,19 @@ void
 nemo_application_close_all_windows (NemoApplication *self)
 {
 	GList *l;
-	
-	for (l = gtk_application_get_windows (GTK_APPLICATION (self)); l; l = l->next) {
+	GList *windows;
+
+	/* nautilus_window_close() doesn't do anything for desktop windows */
+	windows = gtk_application_get_windows (GTK_APPLICATION (self));
+	/* make a copy, since the original list will be modified when destroying
+	 * a window, making this list invalid */
+	windows = g_list_copy (windows);
+	for (l = windows; l != NULL; l = l->next) {
 		if (NEMO_IS_WINDOW (l->data))
 			nemo_window_close (NEMO_WINDOW (l->data));
-	}	
+	}
+
+	g_list_free (windows);
 }
 
 NemoWindow *
