@@ -817,16 +817,20 @@ nemo_application_handle_file_args (NemoApplication *self,
 
 	g_variant_dict_lookup (options, G_OPTION_REMAINING, "^a&s", &remaining);
 
-	if (remaining == NULL) {
-		return -1;
-	}
-
 	/* Convert args to GFiles */
 	file_array = g_ptr_array_new_full (0, g_object_unref);
 
-	for (idx = 0; remaining[idx] != NULL; idx++) {
-		file = g_file_new_for_commandline_arg (remaining[idx]);
+	if (remaining) {
+		for (idx = 0; remaining[idx] != NULL; idx++) {
+			file = g_file_new_for_commandline_arg (remaining[idx]);
+			g_ptr_array_add (file_array, file);
+		}
+	} else if (g_variant_dict_contains (options, "new-window")) {
+		file = g_file_new_for_path (g_get_home_dir ());
 		g_ptr_array_add (file_array, file);
+	} else {
+		/* No options or options that glib already manages */
+		return -1;
 	}
 
 	len = file_array->len;
