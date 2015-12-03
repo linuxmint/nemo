@@ -761,6 +761,18 @@ free_stored_viewers (NemoWindow *window)
 	window->details->short_list_viewers = NULL;
 }
 
+static gint
+sort_panes_active_last (NemoWindowPane *a, NemoWindowPane *b, NemoWindow *window)
+{
+	if (window->details->active_pane == a) {
+		return 1;
+	}
+	if (window->details->active_pane == b) {
+		return -1;
+	}
+	return 0;
+}
+
 static void
 destroy_panes_foreach (gpointer data,
 		       gpointer user_data)
@@ -787,6 +799,11 @@ nemo_window_destroy (GtkWidget *object)
 
 	/* close all panes safely */
 	panes_copy = g_list_copy (window->details->panes);
+	if (window->details->active_pane != NULL) {
+		/* Make sure active pane is last one to be closed, to avoid default activation
+		 * of others slots when closing the active one, see bug #741952  */
+		panes_copy = g_list_sort_with_data (panes_copy, (GCompareDataFunc) sort_panes_active_last, window);
+	}	
 	g_list_foreach (panes_copy, (GFunc) destroy_panes_foreach, window);
 	g_list_free (panes_copy);
 
@@ -847,13 +864,13 @@ nemo_window_view_visible (NemoWindow *window,
 	 * Needs more investigation...
 	 */
 	slot = nemo_view_get_nemo_window_slot (view);
-	if (g_object_get_data (G_OBJECT (slot), "nautilus-window-view-visible") != NULL) {
+	if (g_object_get_data (G_OBJECT (slot), "nemo-window-view-visible") != NULL) {
 		return;
 	}
 
 	g_object_set_data (G_OBJECT (slot), "nemo-window-view-visible", GINT_TO_POINTER (1));
 
-        pane = nemo_window_slot_get_pane(slot);
+	pane = nemo_window_slot_get_pane(slot);
 	if (gtk_widget_get_visible (GTK_WIDGET (pane))) {
 		return;
 	}

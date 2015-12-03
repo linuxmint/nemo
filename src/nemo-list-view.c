@@ -2381,6 +2381,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			g_object_set (cell,
 				      "ellipsize", PANGO_ELLIPSIZE_END,
 				      "single-paragraph-mode", TRUE,
+				      "width-chars", 30,
 				      "xpad", 5,
 				      NULL);
 

@@ -915,7 +915,9 @@ nemo_application_handle_local_options (GApplication *application,
 		self->priv->desktop_override = TRUE;
 		g_action_group_activate_action (G_ACTION_GROUP (application),
 						"close-desktop", NULL);
-	}  else if (g_variant_dict_contains (options, "no-default-window")) {
+	}
+
+	if (g_variant_dict_contains (options, "no-default-window")) {
 		/* We want to avoid trigering the activate signal; so no window is created.
 		 * GApplication doesn't call activate if we return a value >= 0.
 		 * Use EXIT_SUCCESS since is >= 0. */
