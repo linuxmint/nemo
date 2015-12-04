@@ -10049,6 +10049,12 @@ real_update_menus (NemoView *view)
 	}
 
 	g_object_set (action, "label", label_with_underscore, NULL);
+
+    if (view->details->expander_label_widget) {
+        gtk_label_set_text_with_mnemonic (GTK_LABEL (view->details->expander_label_widget),
+                                          label_with_underscore);
+    }
+
 	g_free (label_with_underscore);
 
     if (view->details->expander_label_widget) {
