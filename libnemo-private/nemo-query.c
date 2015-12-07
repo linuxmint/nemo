@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Anders Carlsson <andersca@imendio.com>
  *
@@ -24,15 +23,19 @@
 #include <config.h>
 #include <string.h>
 
-#include "nemo-query.h"
 #include <eel/eel-glib-extensions.h>
 #include <glib/gi18n.h>
-#include <libnemo-private/nemo-file-utilities.h>
+
+#include "nemo-file-utilities.h"
+#include "nemo-query.h"
 
 struct NemoQueryDetails {
 	char *text;
 	char *location_uri;
 	GList *mime_types;
+	gboolean show_hidden;
+
+	char **prepared_words;
 };
 
 static void  nemo_query_class_init       (NemoQueryClass *class);
@@ -47,6 +50,7 @@ finalize (GObject *object)
 
 	query = NEMO_QUERY (object);
 	g_free (query->details->text);
+	g_strfreev (query->details->prepared_words);
 	g_free (query->details->location_uri);
 
 	G_OBJECT_CLASS (nemo_query_parent_class)->finalize (object);
@@ -68,6 +72,64 @@ nemo_query_init (NemoQuery *query)
 {
 	query->details = G_TYPE_INSTANCE_GET_PRIVATE (query, NEMO_TYPE_QUERY,
 						      NemoQueryDetails);
+	query->details->show_hidden = TRUE;
+	query->details->location_uri = nemo_get_home_directory_uri ();
+}
+
+static gchar *
+prepare_string_for_compare (const gchar *string)
+{
+	gchar *normalized, *res;
+
+	normalized = g_utf8_normalize (string, -1, G_NORMALIZE_NFD);
+	res = g_utf8_strdown (normalized, -1);
+	g_free (normalized);
+
+	return res;
+}
+
+gdouble
+nemo_query_matches_string (NemoQuery *query,
+			       const gchar *string)
+{
+	gchar *prepared_string, *ptr;
+	gboolean found;
+	gdouble retval;
+	gint idx, nonexact_malus;
+
+	if (!query->details->text) {
+		return -1;
+	}
+
+	if (!query->details->prepared_words) {
+		prepared_string = prepare_string_for_compare (query->details->text);
+		query->details->prepared_words = g_strsplit (prepared_string, " ", -1);
+		g_free (prepared_string);
+	}
+
+	prepared_string = prepare_string_for_compare (string);
+	found = TRUE;
+	ptr = NULL;
+	nonexact_malus = 0;
+
+	for (idx = 0; query->details->prepared_words[idx] != NULL; idx++) {
+		if ((ptr = strstr (prepared_string, query->details->prepared_words[idx])) == NULL) {
+			found = FALSE;
+			break;
+		}
+
+		nonexact_malus += strlen (ptr) - strlen (query->details->prepared_words[idx]);
+	}
+
+	if (!found) {
+		g_free (prepared_string);
+		return -1;
+	}
+
+	retval = MAX (10.0, 50.0 - (gdouble) (ptr - prepared_string) - nonexact_malus);
+	g_free (prepared_string);
+
+	return retval;
 }
 
 NemoQuery *
@@ -87,7 +149,10 @@ void
 nemo_query_set_text (NemoQuery *query, const char *text)
 {
 	g_free (query->details->text);
-	query->details->text = g_strdup (text);
+	query->details->text = g_strstrip (g_strdup (text));
+
+	g_strfreev (query->details->prepared_words);
+	query->details->prepared_words = NULL;
 }
 
 char *
@@ -123,14 +188,26 @@ nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 						    g_strdup (mime_type));
 }
 
+gboolean
+nemo_query_get_show_hidden_files (NemoQuery *query)
+{
+	return query->details->show_hidden;
+}
+
+void
+nemo_query_set_show_hidden_files (NemoQuery *query, gboolean show_hidden)
+{
+	query->details->show_hidden = show_hidden;
+}
+
 char *
 nemo_query_to_readable_string (NemoQuery *query)
 {
-	if (!query || !query->details->text) {
+	if (!query || !query->details->text || query->details->text[0] == '\0') {
 		return g_strdup (_("Search"));
 	}
 
-	return g_strdup_printf (_("Search for \"%s\""), query->details->text);
+	return g_strdup_printf (_("Search for “%s”"), query->details->text);
 }
 
 static char *
@@ -344,11 +421,9 @@ nemo_query_to_xml (NemoQuery *query)
 	g_string_append_printf (xml, "   <text>%s</text>\n", text);
 	g_free (text);
 
-	if (query->details->location_uri) {
-		uri = encode_home_uri (query->details->location_uri);
-		g_string_append_printf (xml, "   <location>%s</location>\n", uri);
-		g_free (uri);
-	}
+	uri = encode_home_uri (query->details->location_uri);
+	g_string_append_printf (xml, "   <location>%s</location>\n", uri);
+	g_free (uri);
 
 	if (query->details->mime_types) {
 		g_string_append (xml, "   <mimetypes>\n");

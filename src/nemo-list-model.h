@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Anders Carlsson <andersca@gnu.org>
 */
@@ -114,6 +113,9 @@ void              nemo_list_model_set_drag_view (NemoListModel *model,
 						     GtkTreeView *view,
 						     int begin_x, 
 						     int begin_y);
+GtkTreeView *     nemo_list_model_get_drag_view (NemoListModel *model,
+						     int *drag_begin_x,
+						     int *drag_begin_y);
 
 GtkTargetList *   nemo_list_model_get_drag_target_list (void);
 

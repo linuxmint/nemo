@@ -17,8 +17,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with the Gnome Library; see the file COPYING.LIB.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Authors: Pavel Cisler <pavel@eazel.com>,
  * 	    Ettore Perazzoli <ettore@gnu.org>
@@ -26,6 +25,7 @@
 
 #include <config.h>
 
+#include "nemo-notebook.h"
 #include "nemo-view-dnd.h"
 #include "nemo-window-slot-dnd.h"
 
@@ -40,11 +40,109 @@ typedef struct {
     GList *selection_list;
     GList *uri_list;
     char *netscape_url;
+    GtkSelectionData *selection_data;
   } data;
 
   NemoFile *target_file;
   NemoWindowSlot *target_slot;
+  GtkWidget *widget;
+
+  gboolean is_notebook;
+  guint switch_location_timer;
 } NemoDragSlotProxyInfo;
+
+static void
+switch_tab (NemoDragSlotProxyInfo *drag_info)
+{
+  GtkWidget *notebook, *slot;
+  gint idx, n_pages;
+
+  if (drag_info->target_slot == NULL) {
+    return;
+  }
+
+  notebook = gtk_widget_get_ancestor (GTK_WIDGET (drag_info->target_slot), NEMO_TYPE_NOTEBOOK);
+  n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
+
+  for (idx = 0; idx < n_pages; idx++)
+    {
+      slot = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), idx);
+      if (NEMO_WINDOW_SLOT (slot) == drag_info->target_slot)
+        {
+          gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), idx);
+          break;
+        }
+    }
+}
+
+static void
+switch_location (NemoDragSlotProxyInfo *drag_info)
+{
+  GFile *location;
+  GFile *current_location;
+  NemoWindowSlot *target_slot;
+  GtkWidget *window;
+
+  if (drag_info->target_file == NULL) {
+    return;
+  }
+
+  window = gtk_widget_get_toplevel (drag_info->widget);
+  g_assert (NEMO_IS_WINDOW (window));
+
+  target_slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
+
+  current_location = nemo_window_slot_get_location (target_slot);
+  location = nemo_file_get_location (drag_info->target_file);
+  if (! (current_location != NULL && g_file_equal (location, current_location))) {
+	nemo_window_slot_open_location (target_slot, location, 0);
+  }
+  g_object_unref (location);
+}
+
+static gboolean
+slot_proxy_switch_location_timer (gpointer user_data)
+{
+  NemoDragSlotProxyInfo *drag_info = user_data;
+
+  drag_info->switch_location_timer = 0;
+
+  if (drag_info->is_notebook)
+    switch_tab (drag_info);
+  else
+    switch_location (drag_info);
+
+  return FALSE;
+}
+
+static void
+slot_proxy_check_switch_location_timer (NemoDragSlotProxyInfo *drag_info,
+                                        GtkWidget *widget)
+{
+  GtkSettings *settings;
+  guint timeout;
+
+  if (drag_info->switch_location_timer)
+    return;
+
+  settings = gtk_widget_get_settings (widget);
+  g_object_get (settings, "gtk-timeout-expand", &timeout, NULL);
+
+  drag_info->switch_location_timer =
+    gdk_threads_add_timeout (timeout,
+                             slot_proxy_switch_location_timer,
+                             drag_info);
+}
+
+static void
+slot_proxy_remove_switch_location_timer (NemoDragSlotProxyInfo *drag_info)
+{
+  if (drag_info->switch_location_timer != 0)
+    {
+      g_source_remove (drag_info->switch_location_timer);
+      drag_info->switch_location_timer = 0;
+    }
+}
 
 static gboolean
 slot_proxy_drag_motion (GtkWidget          *widget,
@@ -54,18 +152,21 @@ slot_proxy_drag_motion (GtkWidget          *widget,
 			unsigned int        time,
 			gpointer            user_data)
 {
-  NemoDragSlotProxyInfo *drag_info;
+  NemoDragSlotProxyInfo *drag_info = user_data;
   NemoWindowSlot *target_slot;
   GtkWidget *window;
   GdkAtom target;
   int action = 0;
   char *target_uri;
+  gboolean valid_text_drag;
+  gboolean valid_xds_drag;
+
+  valid_text_drag = FALSE;
+  valid_xds_drag = FALSE;
 
   if (gtk_drag_get_source_widget (context) == widget) {
     goto out;
   }
-
-  drag_info = user_data;
 
   window = gtk_widget_get_toplevel (widget);
   g_assert (NEMO_IS_WINDOW (window));
@@ -95,6 +196,18 @@ slot_proxy_drag_motion (GtkWidget          *widget,
     }
   }
 
+  if (target_uri != NULL) {
+    NemoFile *file;
+    gboolean can;
+    file = nemo_file_get_existing_by_uri (target_uri);
+    can = nemo_file_can_write (file);
+    g_object_unref (file);
+    if (!can) {
+      action = 0;
+      goto out;
+    }
+  }
+
   if (drag_info->have_data &&
       drag_info->have_valid_data) {
     if (drag_info->info == NEMO_ICON_DND_GNOME_ICON_LIST) {
@@ -105,16 +218,23 @@ slot_proxy_drag_motion (GtkWidget          *widget,
       action = nemo_drag_default_drop_action_for_uri_list (context, target_uri);
     } else if (drag_info->info == NEMO_ICON_DND_NETSCAPE_URL) {
       action = nemo_drag_default_drop_action_for_netscape_url (context);
+    } else if (drag_info->info == NEMO_ICON_DND_TEXT) {
+      valid_text_drag = TRUE;
+    } else if (drag_info->info == NEMO_ICON_DND_XDNDDIRECTSAVE ||
+               drag_info->info == NEMO_ICON_DND_RAW) {
+      valid_xds_drag = TRUE;
     }
   }
 
   g_free (target_uri);
 
  out:
-  if (action != 0) {
+  if (action != 0 || valid_text_drag || valid_xds_drag) {
     gtk_drag_highlight (widget);
+    slot_proxy_check_switch_location_timer (drag_info, widget);
   } else {
     gtk_drag_unhighlight (widget);
+    slot_proxy_remove_switch_location_timer (drag_info);
   }
 
   gdk_drag_status (context, action, time);
@@ -136,6 +256,8 @@ drag_info_free (gpointer user_data)
 static void
 drag_info_clear (NemoDragSlotProxyInfo *drag_info)
 {
+  slot_proxy_remove_switch_location_timer (drag_info);
+
   if (!drag_info->have_data) {
     goto out;
   }
@@ -146,6 +268,12 @@ drag_info_clear (NemoDragSlotProxyInfo *drag_info)
     g_list_free (drag_info->data.uri_list);
   } else if (drag_info->info == NEMO_ICON_DND_NETSCAPE_URL) {
     g_free (drag_info->data.netscape_url);
+  } else if (drag_info->info == NEMO_ICON_DND_TEXT ||
+             drag_info->info == NEMO_ICON_DND_XDNDDIRECTSAVE ||
+             drag_info->info == NEMO_ICON_DND_RAW) {
+    if (drag_info->data.selection_data != NULL) {
+      gtk_selection_data_free (drag_info->data.selection_data);
+    }
   }
 
  out:
@@ -302,6 +430,11 @@ slot_proxy_drag_data_received (GtkWidget          *widget,
     drag_info->data.netscape_url = g_strdup ((char *) gtk_selection_data_get_data (data));
 
     drag_info->have_valid_data = drag_info->data.netscape_url != NULL;
+  } else if (info == NEMO_ICON_DND_TEXT ||
+             info == NEMO_ICON_DND_XDNDDIRECTSAVE ||
+             info == NEMO_ICON_DND_RAW) {
+    drag_info->data.selection_data = gtk_selection_data_copy (data);
+    drag_info->have_valid_data = drag_info->data.selection_data != NULL;
   }
 
   if (drag_info->drop_occured) {
@@ -318,7 +451,9 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   const GtkTargetEntry targets[] = {
     { NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-    { NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL }
+    { NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
+    { NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
+    { NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
   };
   GtkTargetList *target_list;
 
@@ -329,11 +464,15 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
   g_object_set_data_full (G_OBJECT (widget), "drag-slot-proxy-data", drag_info,
                           drag_info_free);
 
+  drag_info->is_notebook = (g_object_get_data (G_OBJECT (widget), "nemo-notebook-tab") != NULL);
+
   if (target_file != NULL)
     drag_info->target_file = g_object_ref (target_file);
 
   if (target_slot != NULL)
     drag_info->target_slot = g_object_ref (target_slot);
+
+  drag_info->widget = widget;
 
   gtk_drag_dest_set (widget, 0,
                      NULL, 0,
@@ -344,6 +483,7 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   target_list = gtk_target_list_new (targets, G_N_ELEMENTS (targets));
   gtk_target_list_add_uri_targets (target_list, NEMO_ICON_DND_URI_LIST);
+  gtk_target_list_add_text_targets (target_list, NEMO_ICON_DND_TEXT);
   gtk_drag_dest_set_target_list (widget, target_list);
   gtk_target_list_unref (target_list);
 

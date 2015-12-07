@@ -17,8 +17,7 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with the Gnome Library; see the file COPYING.LIB.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Authors: John Sullivan <sullivan@eazel.com>
  *          Cosimo Cecchi <cosimoc@redhat.com>
@@ -67,20 +66,20 @@ typedef struct NemoBookmarkClass NemoBookmarkClass;
 
 GType                 nemo_bookmark_get_type               (void);
 NemoBookmark *    nemo_bookmark_new                    (GFile *location,
-                                                                const char *custom_name,
-                                                                GIcon *icon);
-NemoBookmark *    nemo_bookmark_copy                   (NemoBookmark      *bookmark);
+                                                                const char *custom_name);
 const char *          nemo_bookmark_get_name               (NemoBookmark      *bookmark);
 GFile *               nemo_bookmark_get_location           (NemoBookmark      *bookmark);
 char *                nemo_bookmark_get_uri                (NemoBookmark      *bookmark);
 GIcon *               nemo_bookmark_get_icon               (NemoBookmark      *bookmark);
-gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);		
+GIcon *               nemo_bookmark_get_symbolic_icon      (NemoBookmark      *bookmark);
+gboolean              nemo_bookmark_get_exists             (NemoBookmark      *bookmark);
+gboolean              nemo_bookmark_get_xdg_type           (NemoBookmark      *bookmark,
+								GUserDirectory        *directory);
+gboolean              nemo_bookmark_get_is_builtin         (NemoBookmark      *bookmark);
+gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);
 void                  nemo_bookmark_set_custom_name        (NemoBookmark      *bookmark,
-								const char            *new_name);		
-gboolean              nemo_bookmark_uri_get_exists         (NemoBookmark      *bookmark);
+								const char            *new_name);
 int                   nemo_bookmark_compare_with           (gconstpointer          a,
-								gconstpointer          b);
-int                   nemo_bookmark_compare_uris           (gconstpointer          a,
 								gconstpointer          b);
 
 void                  nemo_bookmark_set_scroll_pos         (NemoBookmark      *bookmark,

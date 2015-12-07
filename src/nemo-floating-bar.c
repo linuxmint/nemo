@@ -15,9 +15,7 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Cosimo Cecchi <cosimoc@redhat.com>
  *
@@ -25,19 +23,24 @@
 
 #include <config.h>
 
+#include <string.h>
+
 #include "nemo-floating-bar.h"
 
 struct _NemoFloatingBarDetails {
-	gchar *label;
+	gchar *primary_label;
+	gchar *details_label;
 
-	GtkWidget *label_widget;
+	GtkWidget *primary_label_widget;
+	GtkWidget *details_label_widget;
 	GtkWidget *spinner;
 	gboolean show_spinner;
 	gboolean is_interactive;
 };
 
 enum {
-	PROP_LABEL = 1,
+	PROP_PRIMARY_LABEL = 1,
+	PROP_DETAILS_LABEL,
 	PROP_SHOW_SPINNER,
 	NUM_PROPERTIES
 };
@@ -70,7 +73,8 @@ nemo_floating_bar_finalize (GObject *obj)
 {
 	NemoFloatingBar *self = NEMO_FLOATING_BAR (obj);
 
-	g_free (self->priv->label);
+	g_free (self->priv->primary_label);
+	g_free (self->priv->details_label);
 
 	G_OBJECT_CLASS (nemo_floating_bar_parent_class)->finalize (obj);
 }
@@ -84,8 +88,11 @@ nemo_floating_bar_get_property (GObject *object,
 	NemoFloatingBar *self = NEMO_FLOATING_BAR (object);
 
 	switch (property_id) {
-	case PROP_LABEL:
-		g_value_set_string (value, self->priv->label);
+	case PROP_PRIMARY_LABEL:
+		g_value_set_string (value, self->priv->primary_label);
+		break;
+	case PROP_DETAILS_LABEL:
+		g_value_set_string (value, self->priv->details_label);
 		break;
 	case PROP_SHOW_SPINNER:
 		g_value_set_boolean (value, self->priv->show_spinner);
@@ -105,8 +112,11 @@ nemo_floating_bar_set_property (GObject *object,
 	NemoFloatingBar *self = NEMO_FLOATING_BAR (object);
 
 	switch (property_id) {
-	case PROP_LABEL:
-		nemo_floating_bar_set_label (self, g_value_get_string (value));
+	case PROP_PRIMARY_LABEL:
+		nemo_floating_bar_set_primary_label (self, g_value_get_string (value));
+		break;
+	case PROP_DETAILS_LABEL:
+		nemo_floating_bar_set_details_label (self, g_value_get_string (value));
 		break;
 	case PROP_SHOW_SPINNER:
 		nemo_floating_bar_set_show_spinner (self, g_value_get_boolean (value));
@@ -118,9 +128,22 @@ nemo_floating_bar_set_property (GObject *object,
 }
 
 static void
-update_label (NemoFloatingBar *self)
+update_labels (NemoFloatingBar *self)
 {
-	gtk_label_set_text (GTK_LABEL (self->priv->label_widget), self->priv->label);
+	gboolean primary_visible, details_visible;
+
+	primary_visible = (self->priv->primary_label != NULL) &&
+		(strlen (self->priv->primary_label) > 0);
+	details_visible = (self->priv->details_label != NULL) &&
+		(strlen (self->priv->details_label) > 0);
+
+	gtk_label_set_text (GTK_LABEL (self->priv->primary_label_widget),
+			    self->priv->primary_label);
+	gtk_widget_set_visible (self->priv->primary_label_widget, primary_visible);
+
+	gtk_label_set_text (GTK_LABEL (self->priv->details_label_widget),
+			    self->priv->details_label);
+	gtk_widget_set_visible (self->priv->details_label_widget, details_visible);
 }
 
 static gboolean
@@ -190,35 +213,102 @@ nemo_floating_bar_hide (GtkWidget *widget)
 	gtk_spinner_stop (GTK_SPINNER (self->priv->spinner));
 }
 
-static gboolean
-nemo_floating_bar_draw (GtkWidget *widget,
-			    cairo_t *cr)
+static void
+get_padding_and_border (GtkWidget *widget,
+                        GtkBorder *border)
 {
-	GtkStyleContext *context;
+  GtkStyleContext *context;
+  GtkStateFlags state;
+  GtkBorder tmp;
 
-	context = gtk_widget_get_style_context (widget);
+  context = gtk_widget_get_style_context (widget);
+  state = gtk_widget_get_state_flags (widget);
 
-	gtk_style_context_save (context);
-	gtk_style_context_set_state (context, gtk_widget_get_state_flags (widget));
+  gtk_style_context_get_padding (context, state, border);
+  gtk_style_context_get_border (context, state, &tmp);
+  border->top += tmp.top;
+  border->right += tmp.right;
+  border->bottom += tmp.bottom;
+  border->left += tmp.left;
+}
 
-	gtk_render_background (context, cr, 0, 0,
-			       gtk_widget_get_allocated_width (widget),
-			       gtk_widget_get_allocated_height (widget));
+static void
+nemo_floating_bar_get_preferred_width (GtkWidget *widget,
+					   gint      *minimum_size,
+					   gint      *natural_size)
+{
+	GtkBorder border;
 
-	gtk_render_frame (context, cr, 0, 0,
-			  gtk_widget_get_allocated_width (widget),
-			  gtk_widget_get_allocated_height (widget));
+	get_padding_and_border (widget, &border);
 
-	gtk_style_context_restore (context);
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_width (widget,
+										    minimum_size,
+										    natural_size);
 
-	return GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->draw (widget, cr);;
+	*minimum_size += border.left + border.right;
+	*natural_size += border.left + border.right;
+}
+
+static void
+nemo_floating_bar_get_preferred_width_for_height (GtkWidget *widget,
+						      gint       height,
+						      gint      *minimum_size,
+						      gint      *natural_size)
+{
+	GtkBorder border;
+
+	get_padding_and_border (widget, &border);
+
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_width_for_height (widget,
+											       height,
+											       minimum_size,
+											       natural_size);
+
+	*minimum_size += border.left + border.right;
+	*natural_size += border.left + border.right;
+}
+
+static void
+nemo_floating_bar_get_preferred_height (GtkWidget *widget,
+					    gint      *minimum_size,
+					    gint      *natural_size)
+{
+	GtkBorder border;
+
+	get_padding_and_border (widget, &border);
+
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_height (widget,
+										     minimum_size,
+										     natural_size);
+
+	*minimum_size += border.top + border.bottom;
+	*natural_size += border.top + border.bottom;
+}
+
+static void
+nemo_floating_bar_get_preferred_height_for_width (GtkWidget *widget,
+						      gint       width,
+						      gint      *minimum_size,
+						      gint      *natural_size)
+{
+	GtkBorder border;
+
+	get_padding_and_border (widget, &border);
+
+	GTK_WIDGET_CLASS (nemo_floating_bar_parent_class)->get_preferred_height_for_width (widget,
+											       width,
+											       minimum_size,
+											       natural_size);
+
+	*minimum_size += border.top + border.bottom;
+	*natural_size += border.top + border.bottom;
 }
 
 static void
 nemo_floating_bar_constructed (GObject *obj)
 {
 	NemoFloatingBar *self = NEMO_FLOATING_BAR (obj);
-	GtkWidget *w, *box;
+	GtkWidget *w, *box, *labels_box;
 
 	G_OBJECT_CLASS (nemo_floating_bar_parent_class)->constructed (obj);
 
@@ -230,18 +320,42 @@ nemo_floating_bar_constructed (GObject *obj)
 	self->priv->spinner = w;
 
 	gtk_widget_set_size_request (w, 16, 16);
+#if GTK_CHECK_VERSION(3,12,0)	
+	gtk_widget_set_margin_start (w, 8);
+#else
 	gtk_widget_set_margin_left (w, 8);
+#endif
 
-	w = gtk_label_new (NULL);
-	gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_END);
-	gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
-	g_object_set (w,
+	labels_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+	gtk_box_pack_start (GTK_BOX (box), labels_box, TRUE, TRUE, 0);
+#if GTK_CHECK_VERSION(3,12,0)
+	g_object_set (labels_box,
+		      "margin-top", 2,
+		      "margin-bottom", 2,
+		      "margin-start", 12,
+		      "margin-end", 12,
+		      NULL);
+#else
+	g_object_set (labels_box,
 		      "margin-top", 2,
 		      "margin-bottom", 2,
 		      "margin-left", 12,
 		      "margin-right", 12,
 		      NULL);
-	self->priv->label_widget = w;
+#endif
+	gtk_widget_show (labels_box);
+
+	w = gtk_label_new (NULL);
+	gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_MIDDLE);
+	gtk_label_set_single_line_mode (GTK_LABEL (w), TRUE);
+	gtk_container_add (GTK_CONTAINER (labels_box), w);
+	self->priv->primary_label_widget = w;
+	gtk_widget_show (w);
+
+	w = gtk_label_new (NULL);
+	gtk_label_set_single_line_mode (GTK_LABEL (w), TRUE);
+	gtk_container_add (GTK_CONTAINER (labels_box), w);
+	self->priv->details_label_widget = w;
 	gtk_widget_show (w);
 }
 
@@ -268,15 +382,24 @@ nemo_floating_bar_class_init (NemoFloatingBarClass *klass)
 	oclass->get_property = nemo_floating_bar_get_property;
 	oclass->finalize = nemo_floating_bar_finalize;
 
-	wclass->draw = nemo_floating_bar_draw;
+	wclass->get_preferred_width = nemo_floating_bar_get_preferred_width;
+	wclass->get_preferred_width_for_height = nemo_floating_bar_get_preferred_width_for_height;
+	wclass->get_preferred_height = nemo_floating_bar_get_preferred_height;
+	wclass->get_preferred_height_for_width = nemo_floating_bar_get_preferred_height_for_width;
 	wclass->show = nemo_floating_bar_show;
 	wclass->hide = nemo_floating_bar_hide;
 	wclass->parent_set = nemo_floating_bar_parent_set;
 
-	properties[PROP_LABEL] =
-		g_param_spec_string ("label",
-				     "Bar's label",
-				     "Label displayed by the bar",
+	properties[PROP_PRIMARY_LABEL] =
+		g_param_spec_string ("primary-label",
+				     "Bar's primary label",
+				     "Primary label displayed by the bar",
+				     NULL,
+				     G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_DETAILS_LABEL] =
+		g_param_spec_string ("details-label",
+				     "Bar's details label",
+				     "Details label displayed by the bar",
 				     NULL,
 				     G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 	properties[PROP_SHOW_SPINNER] =
@@ -300,17 +423,40 @@ nemo_floating_bar_class_init (NemoFloatingBarClass *klass)
 }
 
 void
-nemo_floating_bar_set_label (NemoFloatingBar *self,
-				 const gchar *label)
+nemo_floating_bar_set_primary_label (NemoFloatingBar *self,
+					 const gchar *label)
 {
-	if (g_strcmp0 (self->priv->label, label) != 0) {
-		g_free (self->priv->label);
-		self->priv->label = g_strdup (label);
+	if (g_strcmp0 (self->priv->primary_label, label) != 0) {
+		g_free (self->priv->primary_label);
+		self->priv->primary_label = g_strdup (label);
 
-		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LABEL]);
+		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PRIMARY_LABEL]);
 
-		update_label (self);
+		update_labels (self);
 	}
+}
+
+void
+nemo_floating_bar_set_details_label (NemoFloatingBar *self,
+					 const gchar *label)
+{
+	if (g_strcmp0 (self->priv->details_label, label) != 0) {
+		g_free (self->priv->details_label);
+		self->priv->details_label = g_strdup (label);
+
+		g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DETAILS_LABEL]);
+
+		update_labels (self);
+	}
+}
+
+void
+nemo_floating_bar_set_labels (NemoFloatingBar *self,
+				  const gchar *primary_label,
+				  const gchar *details_label)
+{
+	nemo_floating_bar_set_primary_label (self, primary_label);
+	nemo_floating_bar_set_details_label (self, details_label);
 }
 
 void
@@ -327,11 +473,13 @@ nemo_floating_bar_set_show_spinner (NemoFloatingBar *self,
 }
 
 GtkWidget *
-nemo_floating_bar_new (const gchar *label,
+nemo_floating_bar_new (const gchar *primary_label,
+			   const gchar *details_label,
 			   gboolean show_spinner)
 {
 	return g_object_new (NEMO_TYPE_FLOATING_BAR,
-			     "label", label,
+			     "primary-label", primary_label,
+			     "details-label", details_label,
 			     "show-spinner", show_spinner,
 			     "orientation", GTK_ORIENTATION_HORIZONTAL,
 			     "spacing", 8,
@@ -340,26 +488,29 @@ nemo_floating_bar_new (const gchar *label,
 
 void
 nemo_floating_bar_add_action (NemoFloatingBar *self,
-				  const gchar *stock_id,
+				  const gchar *icon_name,
 				  gint action_id)
 {
 	GtkWidget *w, *button;
 
-	w = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
-	gtk_widget_show (w);
+	if (!self->priv->is_interactive ) {
+		w = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
+		gtk_widget_show (w);
 
-	button = gtk_button_new ();
-	gtk_button_set_image (GTK_BUTTON (button), w);
-	gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
-	gtk_widget_show (button);
+		button = gtk_button_new ();
+		gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+		gtk_button_set_image (GTK_BUTTON (button), w);
+		gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
+		gtk_widget_show (button);
 
-	g_object_set_data (G_OBJECT (button), "action-id",
-			   GINT_TO_POINTER (action_id));
+		g_object_set_data (G_OBJECT (button), "action-id",
+				   GINT_TO_POINTER (action_id));
 
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (action_button_clicked_cb), self);
+		g_signal_connect (button, "clicked",
+				  G_CALLBACK (action_button_clicked_cb), self);
 
-	self->priv->is_interactive = TRUE;
+		self->priv->is_interactive = TRUE;
+	}
 }
 
 void

@@ -14,12 +14,13 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Cosimo Cecchi <cosimoc@redhat.com>
  *
  */
+
+#include "config.h"
 
 #include "nemo-previewer.h"
 
@@ -28,88 +29,17 @@
 
 #include <gio/gio.h>
 
-G_DEFINE_TYPE (NemoPreviewer, nemo_previewer, G_TYPE_OBJECT);
-
 #define PREVIEWER_DBUS_NAME "org.nemo.Preview"
 #define PREVIEWER_DBUS_IFACE "org.nemo.Preview"
 #define PREVIEWER_DBUS_PATH "/org/nemo/Preview"
-
-static NemoPreviewer *singleton = NULL;
-
-struct _NemoPreviewerPriv {
-  GDBusConnection *connection;
-};
-
-static void
-nemo_previewer_dispose (GObject *object)
-{
-  NemoPreviewer *self = NEMO_PREVIEWER (object);
-
-  DEBUG ("%p", self);
-
-  g_clear_object (&self->priv->connection);
-
-  G_OBJECT_CLASS (nemo_previewer_parent_class)->dispose (object);
-}
-
-static GObject *
-nemo_previewer_constructor (GType type,
-                                guint n_construct_params,
-                                GObjectConstructParam *construct_params)
-{
-  GObject *retval;
-
-  if (singleton != NULL)
-    return G_OBJECT (singleton);
-
-  retval = G_OBJECT_CLASS (nemo_previewer_parent_class)->constructor
-    (type, n_construct_params, construct_params);
-
-  singleton = NEMO_PREVIEWER (retval);
-  g_object_add_weak_pointer (retval, (gpointer) &singleton);
-
-  return retval;
-}
-
-static void
-nemo_previewer_init (NemoPreviewer *self)
-{
-  GError *error = NULL;
-
-  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, NEMO_TYPE_PREVIEWER,
-                                            NemoPreviewerPriv);
-
-  self->priv->connection = g_bus_get_sync (G_BUS_TYPE_SESSION,
-                                           NULL, &error);
-
-  if (error != NULL) {
-    g_printerr ("Unable to initialize DBus connection: %s", error->message);
-    g_error_free (error);
-    return;
-  }
-}
-
-static void
-nemo_previewer_class_init (NemoPreviewerClass *klass)
-{
-  GObjectClass *oclass;
-
-  oclass = G_OBJECT_CLASS (klass);
-  oclass->constructor = nemo_previewer_constructor;
-  oclass->dispose = nemo_previewer_dispose;
-
-  g_type_class_add_private (klass, sizeof (NemoPreviewerPriv));
-}
-
 static void
 previewer_show_file_ready_cb (GObject *source,
                               GAsyncResult *res,
                               gpointer user_data)
 {
-  NemoPreviewer *self = user_data;
   GError *error = NULL;
 
-  g_dbus_connection_call_finish (self->priv->connection,
+  g_dbus_connection_call_finish (G_DBUS_CONNECTION (source),
                                  res, &error);
 
   if (error != NULL) {
@@ -117,8 +47,6 @@ previewer_show_file_ready_cb (GObject *source,
            error->message);
     g_error_free (error);
   }
-
-  g_object_unref (self);
 }
 
 static void
@@ -126,10 +54,9 @@ previewer_close_ready_cb (GObject *source,
                           GAsyncResult *res,
                           gpointer user_data)
 {
-  NemoPreviewer *self = user_data;
   GError *error = NULL;
 
-  g_dbus_connection_call_finish (self->priv->connection,
+  g_dbus_connection_call_finish (G_DBUS_CONNECTION (source),
                                  res, &error);
 
   if (error != NULL) {
@@ -137,28 +64,15 @@ previewer_close_ready_cb (GObject *source,
            error->message);
     g_error_free (error);
   }
-
-  g_object_unref (self);
-}
-
-NemoPreviewer *
-nemo_previewer_get_singleton (void)
-{
-  return g_object_new (NEMO_TYPE_PREVIEWER, NULL);
 }
 
 void
-nemo_previewer_call_show_file (NemoPreviewer *self,
-                                   const gchar *uri,
+nemo_previewer_call_show_file (const gchar *uri,
                                    guint xid,
 				   gboolean close_if_already_visible)
 {
-  if (self->priv->connection == NULL) {
-    g_printerr ("No DBus connection available");
-    return;
-  }
-
-  g_dbus_connection_call (self->priv->connection,
+  GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
+  g_dbus_connection_call (connection,
                           PREVIEWER_DBUS_NAME,
                           PREVIEWER_DBUS_PATH,
                           PREVIEWER_DBUS_IFACE,
@@ -170,19 +84,16 @@ nemo_previewer_call_show_file (NemoPreviewer *self,
                           -1,
                           NULL,
                           previewer_show_file_ready_cb,
-                          g_object_ref (self));
+                          NULL);
 }
 
 void
-nemo_previewer_call_close (NemoPreviewer *self)
+nemo_previewer_call_close (void)
 {
-  if (self->priv->connection == NULL) {
-    g_printerr ("No DBus connection available");
-    return;
-  }
+  GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
 
   /* don't autostart the previewer if it's not running */
-  g_dbus_connection_call (self->priv->connection,
+  g_dbus_connection_call (connection,
                           PREVIEWER_DBUS_NAME,
                           PREVIEWER_DBUS_PATH,
                           PREVIEWER_DBUS_IFACE,
@@ -193,5 +104,5 @@ nemo_previewer_call_close (NemoPreviewer *self)
                           -1,
                           NULL,
                           previewer_close_ready_cb,
-                          g_object_ref (self));
+                          NULL);
 }

@@ -16,19 +16,19 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Alexander Larsson <alexl@redhat.com>
 */
 
 #include <config.h>
+
 #include "nemo-ui-utilities.h"
 #include "nemo-icon-info.h"
-#include <gio/gio.h>
+#include <eel/eel-graphic-effects.h>
 
+#include <gio/gio.h>
 #include <gtk/gtk.h>
-#include <eel/eel-debug.h>
 
 void
 nemo_ui_unmerge_ui (GtkUIManager *ui_manager,
@@ -133,4 +133,129 @@ nemo_ui_get_menu_icon (const char *icon_name,
 	g_object_unref (info);
 
 	return pixbuf;
+}
+
+char *
+nemo_escape_action_name (const char *action_name,
+			     const char *prefix)
+{
+	GString *s;
+
+	if (action_name == NULL) {
+		return NULL;
+	}
+
+	s = g_string_new (prefix);
+
+	while (*action_name != 0) {
+		switch (*action_name) {
+		case '\\':
+			g_string_append (s, "\\\\");
+			break;
+		case '/':
+			g_string_append (s, "\\s");
+			break;
+		case '&':
+			g_string_append (s, "\\a");
+			break;
+		case '"':
+			g_string_append (s, "\\q");
+			break;
+		default:
+			g_string_append_c (s, *action_name);
+		}
+
+		action_name ++;
+	}
+	return g_string_free (s, FALSE);
+}
+
+static GdkPixbuf *
+nemo_get_thumbnail_frame (void)
+{
+	static GdkPixbuf *thumbnail_frame = NULL;
+
+	if (thumbnail_frame == NULL) {
+		thumbnail_frame = gdk_pixbuf_new_from_resource ("/org/gnome/nemo/icons/thumbnail_frame.png", NULL);
+	}
+
+	return thumbnail_frame;
+}
+
+#define NEMO_THUMBNAIL_FRAME_LEFT 3
+#define NEMO_THUMBNAIL_FRAME_TOP 3
+#define NEMO_THUMBNAIL_FRAME_RIGHT 3
+#define NEMO_THUMBNAIL_FRAME_BOTTOM 3
+
+void
+nemo_ui_frame_image (GdkPixbuf **pixbuf)
+{
+	GdkPixbuf *pixbuf_with_frame, *frame;
+	int left_offset, top_offset, right_offset, bottom_offset;
+
+	frame = nemo_get_thumbnail_frame ();
+	if (frame == NULL) {
+		return;
+	}
+
+	left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
+	top_offset = NEMO_THUMBNAIL_FRAME_TOP;
+	right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
+	bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
+
+	pixbuf_with_frame = eel_embed_image_in_frame
+		(*pixbuf, frame,
+		 left_offset, top_offset, right_offset, bottom_offset);
+	g_object_unref (*pixbuf);
+
+	*pixbuf = pixbuf_with_frame;
+}
+
+static GdkPixbuf *filmholes_left = NULL;
+static GdkPixbuf *filmholes_right = NULL;
+
+static gboolean
+ensure_filmholes (void)
+{
+	if (filmholes_left == NULL) {
+		filmholes_left = gdk_pixbuf_new_from_resource ("/org/gnome/nemo/icons/filmholes.png", NULL);
+	}
+	if (filmholes_right == NULL &&
+	    filmholes_left != NULL) {
+		filmholes_right = gdk_pixbuf_flip (filmholes_left, TRUE);
+	}
+
+	return (filmholes_left && filmholes_right);
+}
+
+void
+nemo_ui_frame_video (GdkPixbuf **pixbuf)
+{
+	int width, height;
+	int holes_width, holes_height;
+	int i;
+
+	if (!ensure_filmholes ())
+		return;
+
+	width = gdk_pixbuf_get_width (*pixbuf);
+	height = gdk_pixbuf_get_height (*pixbuf);
+	holes_width = gdk_pixbuf_get_width (filmholes_left);
+	holes_height = gdk_pixbuf_get_height (filmholes_left);
+
+	for (i = 0; i < height; i += holes_height) {
+		gdk_pixbuf_composite (filmholes_left, *pixbuf, 0, i,
+				      MIN (width, holes_width),
+				      MIN (height - i, holes_height),
+				      0, i, 1, 1, GDK_INTERP_NEAREST, 255);
+	}
+
+	for (i = 0; i < height; i += holes_height) {
+		gdk_pixbuf_composite (filmholes_right, *pixbuf,
+				      width - holes_width, i,
+				      MIN (width, holes_width),
+				      MIN (height - i, holes_height),
+				      width - holes_width, i,
+				      1, 1, GDK_INTERP_NEAREST, 255);
+	}
 }

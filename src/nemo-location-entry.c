@@ -17,8 +17,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Maciej Stachowiak <mjs@eazel.com>
  *         Ettore Perazzoli <ettore@gnu.org>
@@ -33,6 +32,7 @@
 #include <config.h>
 #include "nemo-location-entry.h"
 
+#include "nemo-application.h"
 #include "nemo-window-private.h"
 #include "nemo-window.h"
 #include <gtk/gtk.h>
@@ -41,18 +41,39 @@
 #include <gio/gio.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-entry.h>
-#include <libnemo-private/nemo-icon-dnd.h>
 #include <libnemo-private/nemo-clipboard.h>
+#include <eel/eel-stock-dialogs.h>
+#include <eel/eel-string.h>
+#include <eel/eel-vfs-extensions.h>
 #include <stdio.h>
 #include <string.h>
 
+#define NEMO_DND_URI_LIST_TYPE 	  "text/uri-list"
+#define NEMO_DND_TEXT_PLAIN_TYPE 	  "text/plain"
+
+enum {
+	NEMO_DND_URI_LIST,
+	NEMO_DND_TEXT_PLAIN,
+	NEMO_DND_NTARGETS
+};
+
+static const GtkTargetEntry drag_types [] = {
+	{ NEMO_DND_URI_LIST_TYPE,   0, NEMO_DND_URI_LIST },
+	{ NEMO_DND_TEXT_PLAIN_TYPE, 0, NEMO_DND_TEXT_PLAIN },
+};
+
+static const GtkTargetEntry drop_types [] = {
+	{ NEMO_DND_URI_LIST_TYPE,   0, NEMO_DND_URI_LIST },
+	{ NEMO_DND_TEXT_PLAIN_TYPE, 0, NEMO_DND_TEXT_PLAIN },
+};
+
 struct NemoLocationEntryDetails {
-	GtkLabel *label;
-	
 	char *current_directory;
 	GFilenameCompleter *completer;
-	
+
 	guint idle_id;
+
+	GFile *last_location;
 
 	gboolean has_special_text;
 	gboolean setting_special_text;
@@ -60,7 +81,263 @@ struct NemoLocationEntryDetails {
 	NemoLocationEntryAction secondary_action;
 };
 
+enum {
+	CANCEL,
+	LOCATION_CHANGED,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
+
 G_DEFINE_TYPE (NemoLocationEntry, nemo_location_entry, NEMO_TYPE_ENTRY);
+
+void
+nemo_location_entry_focus (NemoLocationEntry *entry)
+{
+	/* Put the keyboard focus in the text field when switching to this mode,
+	 * and select all text for easy overtyping
+	 */
+	gtk_widget_grab_focus (GTK_WIDGET (entry));
+	nemo_entry_select_all (NEMO_ENTRY (entry));
+}
+
+static GFile *
+nemo_location_entry_get_location (NemoLocationEntry *entry)
+{
+	char *user_location;
+	GFile *location;
+
+	user_location = gtk_editable_get_chars (GTK_EDITABLE (entry), 0, -1);
+	location = g_file_parse_name (user_location);
+	g_free (user_location);
+
+	return location;
+}
+
+static void
+emit_location_changed (NemoLocationEntry *entry)
+{
+	GFile *location;
+
+	location = nemo_location_entry_get_location (entry);
+	g_signal_emit (entry, signals[LOCATION_CHANGED], 0, location);
+	g_object_unref (location);
+}
+
+static void
+nemo_location_entry_update_action (NemoLocationEntry *entry)
+{
+	const char *current_text;
+	GFile *location;
+
+	if (entry->details->last_location == NULL){
+		nemo_location_entry_set_secondary_action (entry,
+							      NEMO_LOCATION_ENTRY_ACTION_GOTO);
+		return;
+	}
+
+	current_text = gtk_entry_get_text (GTK_ENTRY (entry));
+	location = g_file_parse_name (current_text);
+
+	if (g_file_equal (entry->details->last_location, location)) {
+		nemo_location_entry_set_secondary_action (entry,
+							      NEMO_LOCATION_ENTRY_ACTION_CLEAR);
+	} else {
+		nemo_location_entry_set_secondary_action (entry,
+							      NEMO_LOCATION_ENTRY_ACTION_GOTO);
+	}
+
+	g_object_unref (location);
+}
+
+static int
+get_editable_number_of_chars (GtkEditable *editable)
+{
+	char *text;
+	int length;
+
+	text = gtk_editable_get_chars (editable, 0, -1);
+	length = g_utf8_strlen (text, -1);
+	g_free (text);
+	return length;
+}
+
+static void
+set_position_and_selection_to_end (GtkEditable *editable)
+{
+	int end;
+
+	end = get_editable_number_of_chars (editable);
+	gtk_editable_select_region (editable, end, end);
+	gtk_editable_set_position (editable, end);
+}
+
+static void
+nemo_location_entry_update_current_uri (NemoLocationEntry *entry,
+					    const char *uri)
+{
+	g_free (entry->details->current_directory);
+	entry->details->current_directory = g_strdup (uri);
+
+	nemo_entry_set_text (NEMO_ENTRY (entry), uri);
+	set_position_and_selection_to_end (GTK_EDITABLE (entry));
+}
+
+void
+nemo_location_entry_set_location (NemoLocationEntry *entry,
+				      GFile                 *location)
+{
+	gchar *uri, *formatted_uri;
+
+	g_assert (location != NULL);
+
+	/* Note: This is called in reaction to external changes, and
+	 * thus should not emit the LOCATION_CHANGED signal. */
+	uri = g_file_get_uri (location);
+	formatted_uri = g_file_get_parse_name (location);
+
+	if (eel_uri_is_search (uri)) {
+		nemo_location_entry_set_special_text (entry, "");
+	} else {
+		nemo_location_entry_update_current_uri (entry, formatted_uri);
+	}
+
+	/* remember the original location for later comparison */
+	if (entry->details->last_location != location) {
+		g_clear_object (&entry->details->last_location);
+		entry->details->last_location = g_object_ref (location);
+	}
+
+	nemo_location_entry_update_action (entry);
+
+	g_free (uri);
+	g_free (formatted_uri);
+}
+
+static void
+drag_data_received_callback (GtkWidget *widget,
+			     GdkDragContext *context,
+			     int x,
+			     int y,
+			     GtkSelectionData *data,
+			     guint info,
+			     guint32 time,
+			     gpointer callback_data)
+{
+	char **names;
+	NemoApplication *application;
+	int name_count;
+	NemoWindow *new_window;
+	GtkWidget *window;
+	GdkScreen      *screen;
+	gboolean new_windows_for_extras;
+	char *prompt;
+	char *detail;
+	GFile *location;
+	NemoLocationEntry *self = NEMO_LOCATION_ENTRY (widget);
+
+	g_assert (data != NULL);
+	g_assert (callback_data == NULL);
+
+	names = g_uri_list_extract_uris ((const gchar *) gtk_selection_data_get_data (data));
+
+	if (names == NULL || *names == NULL) {
+		g_warning ("No D&D URI's");
+		gtk_drag_finish (context, FALSE, FALSE, time);
+		return;
+	}
+
+	window = gtk_widget_get_toplevel (widget);
+	new_windows_for_extras = FALSE;
+	/* Ask user if they really want to open multiple windows
+	 * for multiple dropped URIs. This is likely to have been
+	 * a mistake.
+	 */
+	name_count = g_strv_length (names);
+	if (name_count > 1) {
+		prompt = g_strdup_printf (ngettext("Do you want to view %d location?",
+						   "Do you want to view %d locations?",
+						   name_count),
+					  name_count);
+		detail = g_strdup_printf (ngettext("This will open %d separate window.",
+						   "This will open %d separate windows.",
+						   name_count),
+					  name_count);
+		/* eel_run_simple_dialog should really take in pairs
+		 * like gtk_dialog_new_with_buttons() does. */
+		new_windows_for_extras = eel_run_simple_dialog (GTK_WIDGET (window),
+								TRUE,
+								GTK_MESSAGE_QUESTION,
+								prompt,
+								detail,
+								_("_Cancel"), _("_OK"),
+								NULL) != 0 /* GNOME_OK */;
+
+		g_free (prompt);
+		g_free (detail);
+
+		if (!new_windows_for_extras) {
+			gtk_drag_finish (context, FALSE, FALSE, time);
+			return;
+		}
+	}
+
+	location = g_file_new_for_uri (names[0]);
+	nemo_location_entry_set_location (self, location);
+	emit_location_changed (self);
+	g_object_unref (location);
+
+	if (new_windows_for_extras) {
+		int i;
+
+		application = NEMO_APPLICATION (g_application_get_default ());
+		screen = gtk_window_get_screen (GTK_WINDOW (window));
+
+		for (i = 1; names[i] != NULL; ++i) {
+			new_window = nemo_application_create_window (application, screen);
+			location = g_file_new_for_uri (names[i]);
+			nemo_window_go_to (new_window, location);
+			g_object_unref (location);
+		}
+	}
+
+	g_strfreev (names);
+
+	gtk_drag_finish (context, TRUE, FALSE, time);
+}
+
+static void
+drag_data_get_callback (GtkWidget *widget,
+			GdkDragContext *context,
+			GtkSelectionData *selection_data,
+			guint info,
+			guint32 time,
+			gpointer callback_data)
+{
+	NemoLocationEntry *self;
+	GFile *location;
+	gchar *uri;
+
+	g_assert (selection_data != NULL);
+	self = callback_data;
+
+	location = nemo_location_entry_get_location (self);
+	uri = g_file_get_uri (location);
+
+	switch (info) {
+	case NEMO_DND_URI_LIST:
+	case NEMO_DND_TEXT_PLAIN:
+		gtk_selection_data_set (selection_data,
+					gtk_selection_data_get_target (selection_data),
+					8, (guchar *) uri,
+					strlen (uri));
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	g_free (uri);
+	g_object_unref (location);
+}
 
 /* routine that performs the tab expansion.  Extract the directory name and
    incomplete basename, then iterate through the directory trying to complete it.  If we
@@ -143,28 +420,6 @@ entry_would_have_inserted_characters (const GdkEventKey *event)
 		}
 		return event->length > 0;
 	}
-}
-
-static int
-get_editable_number_of_chars (GtkEditable *editable)
-{
-	char *text;
-	int length;
-
-	text = gtk_editable_get_chars (editable, 0, -1);
-	length = g_utf8_strlen (text, -1);
-	g_free (text);
-	return length;
-}
-
-static void
-set_position_and_selection_to_end (GtkEditable *editable)
-{
-	int end;
-
-	end = get_editable_number_of_chars (editable);
-	gtk_editable_select_region (editable, end, end);
-	gtk_editable_set_position (editable, end);
 }
 
 static gboolean
@@ -250,6 +505,8 @@ finalize (GObject *object)
 
 	g_object_unref (entry->details->completer);
 	g_free (entry->details->special_text);
+
+	g_clear_object (&entry->details->last_location);
 
 	G_OBJECT_CLASS (nemo_location_entry_parent_class)->finalize (object);
 }
@@ -344,11 +601,18 @@ nemo_location_entry_activate (GtkEntry *entry)
 }
 
 static void
+nemo_location_entry_cancel (NemoLocationEntry *entry)
+{
+	nemo_location_entry_set_location (entry, entry->details->last_location);
+}
+
+static void
 nemo_location_entry_class_init (NemoLocationEntryClass *class)
 {
 	GtkWidgetClass *widget_class;
 	GObjectClass *gobject_class;
 	GtkEntryClass *entry_class;
+	GtkBindingSet *binding_set;
 
 	widget_class = GTK_WIDGET_CLASS (class);
 	widget_class->focus_in_event = nemo_location_entry_focus_in;
@@ -360,18 +624,30 @@ nemo_location_entry_class_init (NemoLocationEntryClass *class)
 	entry_class = GTK_ENTRY_CLASS (class);
 	entry_class->activate = nemo_location_entry_activate;
 
+	class->cancel = nemo_location_entry_cancel;
+
+	signals[CANCEL] = g_signal_new
+		("cancel",
+		 G_TYPE_FROM_CLASS (class),
+		 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+		 G_STRUCT_OFFSET (NemoLocationEntryClass,
+				  cancel),
+		 NULL, NULL,
+		 g_cclosure_marshal_VOID__VOID,
+		 G_TYPE_NONE, 0);
+
+	signals[LOCATION_CHANGED] = g_signal_new
+		("location-changed",
+		 G_TYPE_FROM_CLASS (class),
+		 G_SIGNAL_RUN_LAST, 0,
+		 NULL, NULL,
+		 g_cclosure_marshal_generic,
+		 G_TYPE_NONE, 1, G_TYPE_OBJECT);
+
+	binding_set = gtk_binding_set_by_class (class);
+	gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
+
 	g_type_class_add_private (class, sizeof (NemoLocationEntryDetails));
-}
-
-void
-nemo_location_entry_update_current_location (NemoLocationEntry *entry,
-						 const char *location)
-{
-	g_free (entry->details->current_directory);
-	entry->details->current_directory = g_strdup (location);
-
-	nemo_entry_set_text (NEMO_ENTRY (entry), location);
-	set_position_and_selection_to_end (GTK_EDITABLE (entry));
 }
 
 void
@@ -381,16 +657,24 @@ nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 	if (entry->details->secondary_action == secondary_action) {
 		return;
 	}
+
+#if	GTK_CHECK_VERSION(3,13,2)
+	// gtk 3.13.2 supports RTL icons in GtkIconTheme
+    const gboolean rtl = false; 
+#else 
+	const gboolean rtl = gtk_widget_get_direction (GTK_WIDGET (entry)) == GTK_TEXT_DIR_RTL;
+#endif	
+
 	switch (secondary_action) {
 	case NEMO_LOCATION_ENTRY_ACTION_CLEAR:
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), 
 						   GTK_ENTRY_ICON_SECONDARY,
-						   "edit-clear");
+						   rtl ? "edit-clear-rtl-symbolic" : "edit-clear-symbolic");
 		break;
 	case NEMO_LOCATION_ENTRY_ACTION_GOTO:
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry),
 						   GTK_ENTRY_ICON_SECONDARY,
-						   "go-next");
+						   rtl ? "go-next-rtl" : "go-next");
 		break;
 	default:
 		g_assert_not_reached ();
@@ -398,27 +682,49 @@ nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 	entry->details->secondary_action = secondary_action;
 }
 
-NemoLocationEntryAction
-nemo_location_entry_get_secondary_action (NemoLocationEntry *entry)
+static void
+editable_activate_callback (GtkEntry *entry,
+			    gpointer user_data)
 {
-    return entry->details->secondary_action;
+	NemoLocationEntry *self = user_data;
+	const char *entry_text;
+
+	entry_text = gtk_entry_get_text (entry);
+	if (entry_text != NULL && *entry_text != '\0') {
+		emit_location_changed (self);
+	}
+}
+
+static void
+editable_changed_callback (GtkEntry *entry,
+			   gpointer user_data)
+{
+	nemo_location_entry_update_action (NEMO_LOCATION_ENTRY (entry));
 }
 
 static void
 nemo_location_entry_init (NemoLocationEntry *entry)
 {
+	GtkTargetList *targetlist;
+
 	entry->details = G_TYPE_INSTANCE_GET_PRIVATE (entry, NEMO_TYPE_LOCATION_ENTRY,
 						      NemoLocationEntryDetails);
 
 	entry->details->completer = g_filename_completer_new ();
 	g_filename_completer_set_dirs_only (entry->details->completer, TRUE);
 
+	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, "folder");
+	gtk_entry_set_icon_activatable (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, FALSE);
+	targetlist = gtk_target_list_new (drag_types, G_N_ELEMENTS (drag_types));
+	gtk_entry_set_icon_drag_source (GTK_ENTRY (entry), GTK_ENTRY_ICON_PRIMARY, targetlist, GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+	gtk_target_list_unref (targetlist);
+
 	nemo_location_entry_set_secondary_action (entry,
 						      NEMO_LOCATION_ENTRY_ACTION_CLEAR);
 
 	nemo_entry_set_special_tab_handling (NEMO_ENTRY (entry), TRUE);
 
-	g_signal_connect (entry, "event_after",
+	g_signal_connect (entry, "event-after",
 		          G_CALLBACK (editable_event_after_callback), entry);
 
 	g_signal_connect (entry, "notify::text",
@@ -427,8 +733,25 @@ nemo_location_entry_init (NemoLocationEntry *entry)
 	g_signal_connect (entry, "icon-release",
 			  G_CALLBACK (nemo_location_entry_icon_release), NULL);
 
-	g_signal_connect (entry->details->completer, "got_completion_data",
+	g_signal_connect (entry->details->completer, "got-completion-data",
 		          G_CALLBACK (got_completion_data_callback), entry);
+
+	/* Drag source */
+	g_signal_connect_object (entry, "drag-data-get",
+				 G_CALLBACK (drag_data_get_callback), entry, 0);
+
+	/* Drag dest. */
+	gtk_drag_dest_set (GTK_WIDGET (entry),
+			   GTK_DEST_DEFAULT_ALL,
+			   drop_types, G_N_ELEMENTS (drop_types),
+			   GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+	g_signal_connect (entry, "drag-data-received",
+			  G_CALLBACK (drag_data_received_callback), NULL);
+
+	g_signal_connect_object (entry, "activate",
+				 G_CALLBACK (editable_activate_callback), entry, G_CONNECT_AFTER);
+	g_signal_connect_object (entry, "changed",
+				 G_CALLBACK (editable_changed_callback), entry, 0);
 }
 
 GtkWidget *

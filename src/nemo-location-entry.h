@@ -17,8 +17,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Maciej Stachowiak <mjs@eazel.com>
  *         Ettore Perazzoli <ettore@gnu.org>
@@ -50,6 +49,8 @@ typedef struct NemoLocationEntry {
 
 typedef struct {
 	NemoEntryClass parent_class;
+	/* for GtkBindingSet */
+	void         (* cancel)           (NemoLocationEntry *entry);
 } NemoLocationEntryClass;
 
 typedef enum {
@@ -63,8 +64,8 @@ void       nemo_location_entry_set_special_text     (NemoLocationEntry *entry,
 							 const char            *special_text);
 void       nemo_location_entry_set_secondary_action (NemoLocationEntry *entry,
 							 NemoLocationEntryAction secondary_action);
-NemoLocationEntryAction nemo_location_entry_get_secondary_action (NemoLocationEntry *entry);
-void       nemo_location_entry_update_current_location (NemoLocationEntry *entry,
-							    const char *path);
+void       nemo_location_entry_set_location         (NemoLocationEntry *entry,
+							 GFile         *location);
+void       nemo_location_entry_focus                (NemoLocationEntry *entry);
 
 #endif /* NEMO_LOCATION_ENTRY_H */

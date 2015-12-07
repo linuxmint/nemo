@@ -16,8 +16,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Based on Empathy's empathy-debug.
  */
@@ -38,8 +37,8 @@ typedef enum {
   NEMO_DEBUG_DBUS = 1 << 3,
   NEMO_DEBUG_DIRECTORY_VIEW = 1 << 4,
   NEMO_DEBUG_FILE = 1 << 5,
-  NEMO_DEBUG_ICON_CONTAINER = 1 << 6,
-  NEMO_DEBUG_ICON_VIEW = 1 << 7,
+  NEMO_DEBUG_CANVAS_CONTAINER = 1 << 6,
+  NEMO_DEBUG_CANVAS_VIEW = 1 << 7,
   NEMO_DEBUG_LIST_VIEW = 1 << 8,
   NEMO_DEBUG_MIME = 1 << 9,
   NEMO_DEBUG_PLACES = 1 << 10,
@@ -47,7 +46,9 @@ typedef enum {
   NEMO_DEBUG_SMCLIENT = 1 << 12,
   NEMO_DEBUG_WINDOW = 1 << 13,
   NEMO_DEBUG_UNDO = 1 << 14,
-  NEMO_DEBUG_ACTIONS = 1 << 15
+  NEMO_DEBUG_SEARCH = 1 << 15,
+  NEMO_DEBUG_SEARCH_HIT = 1 << 16,
+  NEMO_DEBUG_ACTIONS = 1 << 17
 } DebugFlags;
 
 void nemo_debug_set_flags (DebugFlags flags);

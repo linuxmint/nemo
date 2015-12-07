@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Alexander Larsson <alexl@redhat.com>
 */
@@ -79,7 +77,7 @@ nemo_clipboard_monitor_get (void)
 		eel_debug_call_at_shutdown (destroy_clipboard_monitor);
 		
 		clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
-		g_signal_connect (clipboard, "owner_change",
+		g_signal_connect (clipboard, "owner-change",
 				  G_CALLBACK (nemo_clipboard_monitor_emit_changed), NULL);
 	}
 	return clipboard_monitor;
@@ -165,7 +163,7 @@ nemo_clipboard_monitor_class_init (NemoClipboardMonitorClass *klass)
 	copied_files_atom = gdk_atom_intern ("x-special/gnome-copied-files", FALSE);
 
 	signals[CLIPBOARD_CHANGED] =
-		g_signal_new ("clipboard_changed",
+		g_signal_new ("clipboard-changed",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoClipboardMonitorClass, clipboard_changed),
@@ -173,7 +171,7 @@ nemo_clipboard_monitor_class_init (NemoClipboardMonitorClass *klass)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[CLIPBOARD_INFO] =
-		g_signal_new ("clipboard_info",
+		g_signal_new ("clipboard-info",
 		              G_TYPE_FROM_CLASS (klass),
 		              G_SIGNAL_RUN_LAST,
 		              G_STRUCT_OFFSET (NemoClipboardMonitorClass, clipboard_info),
@@ -306,7 +304,7 @@ nemo_get_clipboard_callback (GtkClipboard     *clipboard,
                 gsize len;
 
                 str = convert_file_list_to_string (clipboard_info, FALSE, &len);
-                gtk_selection_data_set (selection_data, copied_files_atom, 8, str, len);
+                gtk_selection_data_set (selection_data, copied_files_atom, 8, (guchar *) str, len);
                 g_free (str);
         }
 }

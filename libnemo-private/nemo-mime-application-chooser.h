@@ -17,8 +17,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along application the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Dave Camp <dave@novell.com>
 */
@@ -47,11 +46,10 @@ struct _NemoMimeApplicationChooserClass {
 };
 
 GType      nemo_mime_application_chooser_get_type (void);
-GtkWidget * nemo_mime_application_chooser_new (const char *uri,
-                                                    GList *files,
+GtkWidget * nemo_mime_application_chooser_new (GList *files,
                                                const char *mime_type,
                                                 GtkWidget *ok_button);
 GAppInfo  *nemo_mime_application_chooser_get_info (NemoMimeApplicationChooser *chooser);
-const gchar *nemo_mime_application_chooser_get_uri (NemoMimeApplicationChooser *chooser);
+const GList *nemo_mime_application_chooser_get_files (NemoMimeApplicationChooser *chooser);
 
 #endif /* NEMO_MIME_APPLICATION_CHOOSER_H */

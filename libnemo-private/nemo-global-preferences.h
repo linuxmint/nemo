@@ -17,8 +17,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with this program; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Ramiro Estrugo <ramiro@eazel.com>
 */
@@ -36,11 +35,8 @@ G_BEGIN_DECLS
 #define NEMO_PREFERENCES_ENABLE_DELETE			"enable-delete"
 #define NEMO_PREFERENCES_SWAP_TRASH_DELETE      "swap-trash-delete"
 
-/* Desktop options */
-#define NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR                "desktop-is-home-dir"
-
 /* Display  */
-#define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
+#define NEMO_PREFERENCES_SHOW_HIDDEN			"show-hidden"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
 #define NEMO_PREFERENCES_DATE_FORMAT			"date-format"
 
@@ -74,8 +70,6 @@ typedef enum
 /* Activating executable text files */
 #define NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION		"executable-text-activation"
 
-/* Spatial or browser mode */
-#define NEMO_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
 #define NEMO_PREFERENCES_SHOW_LOCATION_ENTRY		"show-location-entry"
@@ -139,24 +133,24 @@ enum
 };
 
 /* These IIDs are used by the preferences code and in nemo-application.c */
-#define NEMO_ICON_VIEW_IID		"OAFIID:Nemo_File_Manager_Icon_View"
+#define NEMO_CANVAS_VIEW_IID   "OAFIID:Nemo_File_Manager_Canvas_View"
 #define NEMO_COMPACT_VIEW_IID	"OAFIID:Nemo_File_Manager_Compact_View"
 #define NEMO_LIST_VIEW_IID		"OAFIID:Nemo_File_Manager_List_View"
 
 
 /* Icon View */
-#define NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
-#define NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT   "default-use-tighter-layout"
-#define NEMO_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS		"labels-beside-icons"
+#define NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
+#define NEMO_PREFERENCES_CANVAS_VIEW_DEFAULT_USE_TIGHTER_LAYOUT   "default-use-tighter-layout"
+#define NEMO_PREFERENCES_CANVAS_VIEW_LABELS_BESIDE_ICONS		"labels-beside-icons"
 
 /* Which text attributes appear beneath icon names */
-#define NEMO_PREFERENCES_ICON_VIEW_CAPTIONS				"captions"
+#define NEMO_PREFERENCES_CANVAS_VIEW_CAPTIONS				"captions"
 
 /* The default size for thumbnail icons */
-#define NEMO_PREFERENCES_ICON_VIEW_THUMBNAIL_SIZE			"thumbnail-size"
+#define NEMO_PREFERENCES_CANVAS_VIEW_THUMBNAIL_SIZE			"thumbnail-size"
 
 /* ellipsization preferences */
-#define NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
+#define NEMO_PREFERENCES_CANVAS_VIEW_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
 #define NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT		"text-ellipsis-limit"
 
 /* Compact View */
@@ -188,10 +182,9 @@ typedef enum
 	NEMO_SPEED_TRADEOFF_NEVER
 } NemoSpeedTradeoffValue;
 
-#define NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS		"show-icon-text"
 #define NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS "show-directory-item-counts"
-#define NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS	"show-image-thumbnails"
-#define NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT	"thumbnail-limit"
+#define NEMO_PREFERENCES_SHOW_FILE_THUMBNAILS	"show-image-thumbnails"
+#define NEMO_PREFERENCES_FILE_THUMBNAIL_LIMIT	"thumbnail-limit"
 
 typedef enum
 {
@@ -256,19 +249,20 @@ gboolean nemo_global_preferences_get_ignore_view_metadata (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 gboolean nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key);
 
-GSettings *nemo_preferences;
-GSettings *nemo_icon_view_preferences;
-GSettings *nemo_list_view_preferences;
-GSettings *nemo_compact_view_preferences;
-GSettings *nemo_desktop_preferences;
-GSettings *nemo_tree_sidebar_preferences;
-GSettings *nemo_window_state;
-GSettings *nemo_plugin_preferences;
-GSettings *gnome_lockdown_preferences;
-GSettings *gnome_background_preferences;
-GSettings *gnome_media_handling_preferences;
-GSettings *gnome_terminal_preferences;
-GSettings *cinnamon_privacy_preferences;
+extern GSettings *nemo_preferences;
+extern GSettings *nemo_canvas_view_preferences;
+extern GSettings *nemo_list_view_preferences;
+extern GSettings *nemo_compact_view_preferences;
+extern GSettings *nemo_desktop_preferences;
+extern GSettings *nemo_tree_sidebar_preferences;
+extern GSettings *nemo_window_state;
+extern GSettings *nemo_plugin_preferences;
+extern GSettings *gtk_filechooser_preferences;
+extern GSettings *gnome_lockdown_preferences;
+extern GSettings *gnome_background_preferences;
+extern GSettings *gnome_media_handling_preferences;
+extern GSettings *gnome_terminal_preferences;
+extern GSettings *cinnamon_privacy_preferences;
 
 G_END_DECLS
 

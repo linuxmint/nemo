@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Alexander Larsson <alexl@redhat.com>
 */
@@ -55,12 +53,10 @@ G_DEFINE_TYPE (NemoDesktopLinkMonitor, nemo_desktop_link_monitor, G_TYPE_OBJECT)
 
 static NemoDesktopLinkMonitor *the_link_monitor = NULL;
 
-static void
-destroy_desktop_link_monitor (void)
+void
+nemo_desktop_link_monitor_shutdown (void)
 {
-	if (the_link_monitor != NULL) {
-		g_object_unref (the_link_monitor);
-	}
+	g_clear_object (&the_link_monitor);
 }
 
 NemoDesktopLinkMonitor *
@@ -68,7 +64,7 @@ nemo_desktop_link_monitor_get (void)
 {
 	if (the_link_monitor == NULL) {
 		g_object_new (NEMO_TYPE_DESKTOP_LINK_MONITOR, NULL);
-		eel_debug_call_at_shutdown (destroy_desktop_link_monitor);
+		eel_debug_call_at_shutdown (nemo_desktop_link_monitor_shutdown);
 	}
 	return the_link_monitor;
 }
@@ -85,7 +81,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 
 	if (mount != NULL) {
 		display_name = nemo_desktop_link_get_display_name (link);
-		dialog_str = g_strdup_printf (_("You cannot move the volume \"%s\" to the trash."),
+		dialog_str = g_strdup_printf (_("You cannot move the volume “%s” to the trash."),
 					      display_name);
 		g_free (display_name);
 
@@ -95,18 +91,18 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
-				 _("If you want to eject the volume, please use \"Eject\" in the "
+				 _("If you want to eject the volume, please use Eject in the "
 				   "popup menu of the volume."),
-				 GTK_STOCK_OK, NULL);
+				 _("_OK"), NULL);
 		} else {
 			eel_run_simple_dialog
 				(parent_view, 
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
-				 _("If you want to unmount the volume, please use \"Unmount Volume\" in the "
+				 _("If you want to unmount the volume, please use Unmount Volume in the "
 				   "popup menu of the volume."),
-				 GTK_STOCK_OK, NULL);
+				 _("_OK"), NULL);
 		}
 
 		g_object_unref (mount);
@@ -437,13 +433,12 @@ nemo_desktop_link_monitor_init (NemoDesktopLinkMonitor *monitor)
 				  G_CALLBACK (desktop_volumes_visible_changed),
 				  monitor);
 
-	g_signal_connect_object (monitor->details->volume_monitor, "mount_added",
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-added",
 				 G_CALLBACK (mount_added_callback), monitor, 0);
-	g_signal_connect_object (monitor->details->volume_monitor, "mount_removed",
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-removed",
 				 G_CALLBACK (mount_removed_callback), monitor, 0);
-	g_signal_connect_object (monitor->details->volume_monitor, "mount_changed",
+	g_signal_connect_object (monitor->details->volume_monitor, "mount-changed",
 				 G_CALLBACK (mount_changed_callback), monitor, 0);
-
 }
 
 static void
@@ -467,8 +462,6 @@ desktop_link_monitor_finalize (GObject *object)
 	NemoDesktopLinkMonitor *monitor;
 
 	monitor = NEMO_DESKTOP_LINK_MONITOR (object);
-
-	g_object_unref (monitor->details->volume_monitor);
 
 	/* Default links */
 
@@ -504,6 +497,8 @@ desktop_link_monitor_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
 					      desktop_volumes_visible_changed,
 					      monitor);
+
+	g_object_unref (monitor->details->volume_monitor);
 
 	G_OBJECT_CLASS (nemo_desktop_link_monitor_parent_class)->finalize (object);
 }

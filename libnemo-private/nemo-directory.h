@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Darin Adler <darin@bentspoon.com>
 */
@@ -217,6 +215,7 @@ gboolean           nemo_directory_is_local                 (NemoDirectory       
 
 gboolean           nemo_directory_is_in_trash              (NemoDirectory         *directory);
 gboolean           nemo_directory_is_in_recent             (NemoDirectory         *directory);
+gboolean           nemo_directory_is_in_network            (NemoDirectory         *directory);
 
 /* Return false if directory contains anything besides a Nemo metafile.
  * Only valid if directory is monitored. Used by the Trash monitor.

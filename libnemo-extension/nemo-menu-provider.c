@@ -16,8 +16,7 @@
  *  Library General Public License for more details.
  *
  *  You should have received a copy of the GNU Library General Public
- *  License along with this library; if not, write to the Free
- *  Software Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ *  License along with this library; if not, see <http://www.gnu.org/licenses/>.
  * 
  *  Author:  Dave Camp <dave@ximian.com>
  *
@@ -36,7 +35,7 @@ nemo_menu_provider_base_init (gpointer g_class)
 	if (!initialized)
 	{
 		/* This signal should be emited each time the extension modify the list of menu items */
-		g_signal_new ("items_updated",
+		g_signal_new ("items-updated",
 			NEMO_TYPE_MENU_PROVIDER,
 			G_SIGNAL_RUN_LAST,
 			0,
@@ -127,6 +126,6 @@ nemo_menu_provider_emit_items_updated_signal (NemoMenuProvider* provider)
 {
 	g_return_if_fail (NEMO_IS_MENU_PROVIDER (provider));
 
-	g_signal_emit_by_name (provider, "items_updated");
+	g_signal_emit_by_name (provider, "items-updated");
 }
 

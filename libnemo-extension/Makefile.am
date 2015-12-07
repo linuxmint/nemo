@@ -9,7 +9,7 @@ AM_CPPFLAGS =\
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
 	$(WARNING_CFLAGS) \
-	$(DISABLE_DEPRECATED_CFLAGS) \
+	$(DISABLE_DEPRECATED) \
     -DLIBEXECDIR=\""$(libexecdir)"\" \
 	-DDATADIR=\""$(datadir)"\" \
 	$(NULL)
@@ -92,3 +92,5 @@ typelibs_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelibs_DATA)
 endif
+
+-include $(top_srcdir)/git.mk

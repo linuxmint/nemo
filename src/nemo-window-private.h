@@ -17,8 +17,7 @@
  *  General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ *  along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  *  Authors: Elliot Lee <sopwith@redhat.com>
  *           Darin Adler <darin@bentspoon.com>
@@ -61,20 +60,11 @@ struct NemoWindowDetails
 
 	/* View As menu */
 	GList *short_list_viewers;
-	char *extra_viewer;
 
 	/* View As choices */
 	GtkActionGroup *view_as_action_group; /* owned by ui_manager */
 	GtkRadioAction *view_as_radio_action;
-	GtkRadioAction *extra_viewer_radio_action;
 	guint short_list_merge_id;
-	guint extra_viewer_merge_id;
-
-	/* Ensures that we do not react on signals of a
-	 * view that is re-used as new view when its loading
-	 * is cancelled
-	 */
-	gboolean temporarily_ignore_view_signals;
 
         /* available panes, and active pane.
          * Both of them may never be NULL.
@@ -98,9 +88,6 @@ struct NemoWindowDetails
         /* Toolbar holder */
         GtkWidget *toolbar_holder;
 
-        guint extensions_toolbar_merge_id;
-        GtkActionGroup *extensions_toolbar_action_group;
-
         /* focus widget before the location bar has been shown temporarily */
         GtkWidget *last_focus_widget;
         	
@@ -110,6 +97,7 @@ struct NemoWindowDetails
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;
+        guint bookmarks_id;
 
         guint menu_state_changed_id;
 
@@ -132,7 +120,7 @@ struct NemoWindowDetails
 
 #define NEMO_WINDOW_MIN_WIDTH		200
 #define NEMO_WINDOW_MIN_HEIGHT		200
-#define NEMO_WINDOW_DEFAULT_WIDTH		800
+#define NEMO_WINDOW_DEFAULT_WIDTH		855
 #define NEMO_WINDOW_DEFAULT_HEIGHT		550
 
 typedef void (*NemoBookmarkFailedCallback) (NemoWindow *window,
@@ -141,15 +129,6 @@ typedef void (*NemoBookmarkFailedCallback) (NemoWindow *window,
 void               nemo_window_load_view_as_menus                    (NemoWindow    *window);
 void               nemo_window_load_extension_menus                  (NemoWindow    *window);
 NemoWindowPane *nemo_window_get_next_pane                        (NemoWindow *window);
-void               nemo_menus_append_bookmark_to_menu                (NemoWindow    *window, 
-                                                                          NemoBookmark  *bookmark, 
-                                                                          const char        *parent_path,
-                                                                          const char        *parent_id,
-                                                                          guint              index_in_parent,
-                                                                          GtkActionGroup    *action_group,
-                                                                          guint              merge_id,
-                                                                          GCallback          refresh_callback,
-                                                                          NemoBookmarkFailedCallback failed_callback);
 
 NemoWindowSlot *nemo_window_get_slot_for_view                    (NemoWindow *window,
 									  NemoView   *view);
@@ -160,11 +139,9 @@ void                 nemo_window_set_active_pane                     (NemoWindow
                                                                           NemoWindowPane *new_pane);
 NemoWindowPane * nemo_window_get_active_pane                     (NemoWindow *window);
 
-
 /* sync window GUI with current slot. Used when changing slots,
  * and when updating the slot state.
  */
-void nemo_window_sync_status           (NemoWindow *window);
 void nemo_window_sync_allow_stop       (NemoWindow *window,
 					    NemoWindowSlot *slot);
 void nemo_window_sync_title            (NemoWindow *window,
@@ -172,6 +149,7 @@ void nemo_window_sync_title            (NemoWindow *window,
 void nemo_window_sync_zoom_widgets     (NemoWindow *window);
 void nemo_window_sync_up_button        (NemoWindow *window);
 void nemo_window_sync_menu_bar         (NemoWindow *window);
+void nemo_window_sync_view_as_menus    (NemoWindow *window);
 
 /* window menus */
 GtkActionGroup *nemo_window_create_toolbar_action_group (NemoWindow *window);

@@ -16,9 +16,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Alexander Larsson <alexl@redhat.com>
 */
@@ -276,7 +274,7 @@ nemo_desktop_icon_file_new (NemoDesktopLink *link)
 	eazel_dump_stack_trace ("\t", 10);
 #endif
 
-	file->details->directory = directory;
+	nemo_file_set_directory (file, directory);
 
 	icon_file = NEMO_DESKTOP_ICON_FILE (file);
 	icon_file->details->link = link;

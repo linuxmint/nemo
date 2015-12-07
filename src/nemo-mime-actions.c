@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Maciej Stachowiak <mjs@eazel.com>
 */
@@ -268,23 +267,28 @@ filter_nemo_handler (GList *apps)
 }
 
 static GList*
-filter_non_uri_apps (GList *apps)
+filter_non_uri_apps (GList *apps,
+		     gboolean accept_files)
 {
 	GList *l, *next;
 	GAppInfo *app;
 
 	for (l = apps; l != NULL; l = next) {
+		gboolean support;
+
 		app = l->data;
 		next = l->next;
-		
-		if (!g_app_info_supports_uris (app)) {
+		support = g_app_info_supports_uris (app);
+		if (accept_files) {
+			support |= g_app_info_supports_files (app);
+		}
+		if (!support) {
 			apps = g_list_delete_link (apps, l);
 			g_object_unref (app);
 		}
 	}
 	return apps;
 }
-
 
 static gboolean
 nemo_mime_actions_check_if_required_attributes_ready (NemoFile *file)
@@ -453,11 +457,9 @@ nemo_mime_get_applications_for_file (NemoFile *file)
 		g_free (uri_scheme);
 	}
 
-	if (!file_has_local_path (file)) {
-		/* Filter out non-uri supporting apps */
-		result = filter_non_uri_apps (result);
-	}
-	
+	/* Filter out non-uri supporting apps */
+	result = filter_non_uri_apps (result, file_has_local_path (file));
+
 	result = g_list_sort (result, (GCompareFunc) application_compare_by_name);
 	g_free (mime_type);
 
@@ -628,32 +630,35 @@ report_broken_symbolic_link (GtkWindow *parent_window, NemoFile *file)
 	GtkDialog *dialog;
 	GList file_as_list;
 	int response;
-	
+	gboolean can_trash;
+
 	g_assert (nemo_file_is_broken_symbolic_link (file));
 
 	display_name = nemo_file_get_display_name (file);
-	if (nemo_file_is_in_trash (file)) {
-		prompt = g_strdup_printf (_("The Link \"%s\" is Broken."), display_name);
+	can_trash = nemo_file_can_trash (file) && !nemo_file_is_in_trash (file);
+
+	if (can_trash) {
+		prompt = g_strdup_printf (_("The link “%s” is broken. Move it to Trash?"), display_name);
 	} else {
-		prompt = g_strdup_printf (_("The Link \"%s\" is Broken. Move it to Trash?"), display_name);
+		prompt = g_strdup_printf (_("The link “%s” is broken."), display_name);
 	}
 	g_free (display_name);
 
 	target_path = nemo_file_get_symbolic_link_target_path (file);
 	if (target_path == NULL) {
-		detail = g_strdup (_("This link cannot be used, because it has no target."));
+		detail = g_strdup (_("This link cannot be used because it has no target."));
 	} else {
-		detail = g_strdup_printf (_("This link cannot be used, because its target "
-					    "\"%s\" doesn't exist."), target_path);
+		detail = g_strdup_printf (_("This link cannot be used because its target "
+					    "“%s” doesn't exist."), target_path);
 	}
 	
-	if (nemo_file_is_in_trash (file)) {
+	if (!can_trash) {
 		eel_run_simple_dialog (GTK_WIDGET (parent_window), FALSE, GTK_MESSAGE_WARNING,
-				       prompt, detail, GTK_STOCK_CANCEL, NULL);
+				       prompt, detail, _("_Cancel"), NULL);
 		goto out;
 	}
 
-	dialog = eel_show_yes_no_dialog (prompt, detail, _("Mo_ve to Trash"), GTK_STOCK_CANCEL,
+	dialog = eel_show_yes_no_dialog (prompt, detail, _("Mo_ve to Trash"), _("_Cancel"),
 					 parent_window);
 
 	gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
@@ -713,9 +718,9 @@ get_executable_text_file_action (GtkWindow *parent_window, NemoFile *file)
 
 
 	file_name = nemo_file_get_display_name (file);
-	prompt = g_strdup_printf (_("Do you want to run \"%s\", or display its contents?"), 
+	prompt = g_strdup_printf (_("Do you want to run “%s”, or display its contents?"), 
 	                            file_name);
-	detail = g_strdup_printf (_("\"%s\" is an executable text file."),
+	detail = g_strdup_printf (_("“%s” is an executable text file."),
 				    file_name);
 	g_free (file_name);
 
@@ -724,7 +729,7 @@ get_executable_text_file_action (GtkWindow *parent_window, NemoFile *file)
 					     _("Run in _Terminal"), RESPONSE_RUN_IN_TERMINAL,
      					     _("_Display"), RESPONSE_DISPLAY,
 					     parent_window);
-	gtk_dialog_add_button (dialog, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+	gtk_dialog_add_button (dialog, _("_Cancel"), GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button (dialog, _("_Run"), RESPONSE_RUN);
 	gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
 	gtk_widget_show (GTK_WIDGET (dialog));
@@ -812,6 +817,16 @@ get_activation_action (NemoFile *file)
 	g_free (activation_uri);
 
 	return action;
+}
+
+gboolean
+nemo_mime_file_launches (NemoFile *file)
+{
+	ActivationAction activation_action;
+
+	activation_action = get_activation_action (file);
+
+	return (activation_action == ACTIVATION_ACTION_LAUNCH);
 }
 
 gboolean
@@ -1057,7 +1072,7 @@ confirm_multiple_windows (GtkWindow *parent_window,
 						   "This will open %d separate windows.", count), count);
 	}
 	dialog = eel_show_yes_no_dialog (prompt, detail, 
-					 GTK_STOCK_OK, GTK_STOCK_CANCEL,
+					 _("_OK"), _("_Cancel"),
 					 parent_window);
 	g_free (detail);
 
@@ -1107,9 +1122,7 @@ open_with_dialog_response_cb (GtkDialog *dialog,
                               gpointer user_data)
 {
     GtkWindow *parent_window;
-    NemoFile *file;
     GAppInfo *info;
-    GList files;
 
     parent_window = user_data;
 
@@ -1126,14 +1139,11 @@ open_with_dialog_response_cb (GtkDialog *dialog,
     g_list_free (children);
 
     info = nemo_mime_application_chooser_get_info (chooser);
-    file = nemo_file_get_by_uri (nemo_mime_application_chooser_get_uri (chooser));
+    const GList *files = nemo_mime_application_chooser_get_files (chooser);
 
     g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 
-    files.next = NULL;
-    files.prev = NULL;
-    files.data = file;
-    nemo_launch_application (info, &files, parent_window);
+    nemo_launch_application (info, files, parent_window);
 
     gtk_widget_destroy (GTK_WIDGET (dialog));
     g_object_unref (info);
@@ -1146,11 +1156,8 @@ run_open_with_dialog (ActivateParametersSpecial *params)
     GtkWidget *ok_button;
 
     char *mime_type;
-    char *uri = NULL;
-    GList *uris = NULL;
 
     mime_type = nemo_file_get_mime_type (params->file);
-    uri = nemo_file_get_uri (params->file);
 
     dialog = gtk_dialog_new_with_buttons (_("Open with"),
                                           params->parent_window,
@@ -1165,7 +1172,11 @@ run_open_with_dialog (ActivateParametersSpecial *params)
 
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
-    GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type, ok_button);
+    GList files;
+    files.next = NULL;
+    files.prev = NULL;
+    files.data = params->file;
+    GtkWidget *chooser = nemo_mime_application_chooser_new (&files, mime_type, ok_button);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -1324,7 +1335,7 @@ activate_desktop_file (ActivateParameters *parameters,
 		primary = _("Untrusted application launcher");
 		display_name = nemo_file_get_display_name (file);
 		secondary =
-			g_strdup_printf (_("The application launcher \"%s\" has not been marked as trusted (executable). "
+			g_strdup_printf (_("The application launcher “%s” has not been marked as trusted (executable). "
 					   "If you do not know the source of this file, launching it may be unsafe."
 					   ),
 					 display_name);
@@ -1347,7 +1358,7 @@ activate_desktop_file (ActivateParameters *parameters,
 		}
 
 		gtk_dialog_add_button (GTK_DIALOG (dialog),
-				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+				       _("_Cancel"), GTK_RESPONSE_CANCEL);
 		gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
 
 		g_signal_connect (dialog, "response",
@@ -1503,8 +1514,7 @@ activate_files (ActivateParameters *parameters)
 
 	flags = parameters->flags;
 	if (count > 1) {
-		if ((parameters->flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0 &&
-            g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER)) {
+		if ((parameters->flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
 			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
 		} else {
 			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
@@ -1572,7 +1582,7 @@ activate_files (ActivateParameters *parameters)
 		detail = g_strdup_printf (ngettext ("This will open %d separate application.",
 						    "This will open %d separate applications.", num_apps), num_apps);
 		dialog = eel_show_yes_no_dialog (prompt, detail,
-						 GTK_STOCK_OK, GTK_STOCK_CANCEL,
+						 _("_OK"), _("_Cancel"),
 						 parameters->parent_window);
 		g_free (detail);
 
@@ -1646,8 +1656,7 @@ activation_mount_not_mounted_callback (GObject *source_object,
 		    (error->code != G_IO_ERROR_CANCELLED &&
 		     error->code != G_IO_ERROR_FAILED_HANDLED &&
 		     error->code != G_IO_ERROR_ALREADY_MOUNTED)) {
-			eel_show_error_dialog (_("Unable to mount location"),
-					       error->message, parameters->parent_window);
+			eel_show_error_dialog (_("Unable to mount location"), error->message, parameters->parent_window);
 		}
 
 		if (error->domain != G_IO_ERROR ||
@@ -1713,7 +1722,7 @@ activation_mount_not_mounted (ActivateParameters *parameters)
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nemo_file_list_call_when_ready
 		(files,
-		 nemo_mime_actions_get_required_file_attributes () | NEMO_FILE_ATTRIBUTE_LINK_INFO,
+		 nemo_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_callback, parameters);
 	nemo_file_list_free (files);
@@ -1828,7 +1837,7 @@ activate_activation_uris_ready_callback (GList *files_ignore,
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nemo_file_list_call_when_ready
 		(files,
-		 nemo_mime_actions_get_required_file_attributes () | NEMO_FILE_ATTRIBUTE_LINK_INFO,
+		 nemo_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_callback, parameters);
 	nemo_file_list_free (files);
@@ -1851,13 +1860,6 @@ activation_get_activation_uris (ActivateParameters *parameters)
 			parameters->locations = g_list_delete_link (parameters->locations, l);
 			continue;
 		}
-		
-		if (nemo_file_is_symbolic_link (file)) {
-			nemo_file_invalidate_attributes 
-				(file,
-				 NEMO_FILE_ATTRIBUTE_INFO |
-				 NEMO_FILE_ATTRIBUTE_LINK_INFO);
-		}
 	}
 
 	if (parameters->locations == NULL) {
@@ -1867,9 +1869,7 @@ activation_get_activation_uris (ActivateParameters *parameters)
 
 	files = get_file_list_for_launch_locations (parameters->locations);
 	nemo_file_list_call_when_ready
-		(files,
-		 NEMO_FILE_ATTRIBUTE_INFO |
-		 NEMO_FILE_ATTRIBUTE_LINK_INFO,
+		(files, nemo_mime_actions_get_required_file_attributes (),
 		 &parameters->files_handle,
 		 activate_activation_uris_ready_callback, parameters);
 	nemo_file_list_free (files);
@@ -2083,7 +2083,7 @@ nemo_mime_activate_files (GtkWindow *parent_window,
 	file_count = g_list_length (files);
 	if (file_count == 1) {
 		file_name = nemo_file_get_display_name (files->data);
-		parameters->timed_wait_prompt = g_strdup_printf (_("Opening \"%s\"."), file_name);
+		parameters->timed_wait_prompt = g_strdup_printf (_("Opening “%s”."), file_name);
 		g_free (file_name);
 	} else {
 		parameters->timed_wait_prompt = g_strdup_printf (ngettext ("Opening %d item.",

@@ -12,8 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Akshay Gupta <kitallis@gmail.com>
  *          Federico Mena Quintero <federico@gnome.org>
@@ -38,9 +37,6 @@ struct _NemoFreedesktopDBus {
 
 	/* Id from g_dbus_own_name() */
 	guint owner_id;
-
-	/* DBus paraphernalia */
-	GDBusObjectManagerServer *object_manager;
 
 	/* Our DBus implementation skeleton */
 	NemoFreedesktopFileManager1 *skeleton;
@@ -146,8 +142,6 @@ bus_acquired_cb (GDBusConnection *conn,
 
 	DEBUG ("Bus acquired at %s", name);
 
-	fdb->object_manager = g_dbus_object_manager_server_new ("/org/freedesktop/FileManager1");
-
 	fdb->skeleton = nemo_freedesktop_file_manager1_skeleton_new ();
 
 	g_signal_connect (fdb->skeleton, "handle-show-items",
@@ -157,9 +151,7 @@ bus_acquired_cb (GDBusConnection *conn,
 	g_signal_connect (fdb->skeleton, "handle-show-item-properties",
 			  G_CALLBACK (skeleton_handle_show_item_properties_cb), fdb);
 
-	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), conn, "/org/freedesktop/FileManager1", NULL);
-
-	g_dbus_object_manager_server_set_connection (fdb->object_manager, conn);
+	g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (fdb->skeleton), conn, NEMO_FDO_DBUS_PATH, NULL);
 }
 
 static void
@@ -194,8 +186,6 @@ nemo_freedesktop_dbus_dispose (GObject *object)
 		fdb->skeleton = NULL;
 	}
 
-	g_clear_object (&fdb->object_manager);
-
 	G_OBJECT_CLASS (nemo_freedesktop_dbus_parent_class)->dispose (object);
 }
 
@@ -211,7 +201,7 @@ static void
 nemo_freedesktop_dbus_init (NemoFreedesktopDBus *fdb)
 {
 	fdb->owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-					"org.freedesktop.FileManager1",
+					NEMO_FDO_DBUS_NAME,
 					G_BUS_NAME_OWNER_FLAGS_NONE,
 					bus_acquired_cb,
 					name_acquired_cb,
@@ -225,7 +215,6 @@ nemo_freedesktop_dbus_set_open_locations (NemoFreedesktopDBus *fdb,
 					      const gchar **locations)
 {
 	g_return_if_fail (NEMO_IS_FREEDESKTOP_DBUS (fdb));
-
 	nemo_freedesktop_file_manager1_set_open_locations (fdb->skeleton, locations);
 }
 

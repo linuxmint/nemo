@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Alexander Larsson <alexl@redhat.com>
 */
@@ -54,6 +52,8 @@ struct _NemoProgressInfo
 	char *details;
     char *initial_details;
 	double progress;
+	double current;
+	double total;
 	gboolean activity_mode;
 	gboolean started;
 	gboolean finished;
@@ -263,6 +263,42 @@ nemo_progress_info_get_progress (NemoProgressInfo *info)
 	G_UNLOCK (progress_info);
 	
 	return res;
+}
+
+double
+nemo_progress_info_get_current (NemoProgressInfo *info)
+{
+	double current;
+
+	G_LOCK (progress_info);
+
+	if (info->activity_mode) {
+		current = 0.0;
+	} else {
+		current = info->current;
+	}
+
+	G_UNLOCK (progress_info);
+
+	return current;
+}
+
+double
+nemo_progress_info_get_total (NemoProgressInfo *info)
+{
+	double total;
+
+	G_LOCK (progress_info);
+
+	if (info->activity_mode) {
+		total = -1.0;
+	} else {
+		total = info->total;
+	}
+
+	G_UNLOCK (progress_info);
+
+	return total;
 }
 
 void
@@ -641,6 +677,8 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	    ) {
 		info->activity_mode = FALSE;
 		info->progress = current_percent;
+		info->current = current;
+		info->total = total;
 		info->progress_at_idle = TRUE;
 		queue_idle (info, FALSE);
 	}

@@ -17,9 +17,7 @@
    General Public License for more details.
    
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
    
    Authors: Alexander Larsson <alexl@redhat.com>
             Ettore Perazzoli <ettore@gnu.org> 
@@ -67,6 +65,10 @@
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
 
+#ifdef BUILD_ZEITGEIST
+#include <zeitgeist.h>
+#endif
+
 /* TODO: TESTING!!! */
 
 typedef enum {
@@ -87,7 +89,7 @@ typedef struct {
 	GTimer *time;
 	GtkWindow *parent_window;
 	int screen_num;
-	int inhibit_cookie;
+	guint inhibit_cookie;
 	NemoProgressInfo *progress;
 	GCancellable *cancellable;
 	GHashTable *skip_files;
@@ -189,9 +191,11 @@ typedef struct {
 
 #define IS_IO_ERROR(__error, KIND) (((__error)->domain == G_IO_ERROR && (__error)->code == G_IO_ERROR_ ## KIND))
 
+#define CANCEL _("_Cancel")
 #define SKIP _("_Skip")
 #define SKIP_ALL _("S_kip All")
 #define RETRY _("_Retry")
+#define DELETE _("_Delete")
 #define DELETE_ALL _("Delete _All")
 #define REPLACE _("_Replace")
 #define REPLACE_ALL _("Replace _All")
@@ -204,6 +208,104 @@ static void add_job_to_job_queue (GIOSchedulerJobFunc job_func,
                                         GCancellable *cancellable,
                                     NemoProgressInfo *info,
                                               OpKind  kind);
+
+#ifdef BUILD_ZEITGEIST
+#define ZEITGEIST_NEMO_ACTOR "application://nemo.desktop"
+
+static void
+send_event_to_zeitgeist (ZeitgeistEvent *event)
+{
+	ZeitgeistLog *log = zeitgeist_log_get_default ();
+	zeitgeist_log_insert_events_no_reply (log, event, NULL);
+}
+
+typedef struct {
+	const char *event_interpretation;
+	//char *event_origin;
+	GFile *file;
+	gchar *original_uri; // for MOVE_EVENT
+} _ZeitgeistFileEventData;
+
+static void
+_log_zeitgeist_event_for_file_cb (GObject *source_object, GAsyncResult *res, gpointer user_data)
+{
+	_ZeitgeistFileEventData *data;
+	GError *error;
+	GFileInfo *info;
+	gchar *uri;
+	gchar *origin;
+	const gchar *display_name;
+	const gchar *mimetype;
+
+	data = user_data;
+
+	error = NULL;
+	info = g_file_query_info_finish (G_FILE (source_object), res, &error);
+
+	if (info) {
+		uri = g_file_get_uri (data->file);
+		origin = g_path_get_dirname (uri);
+		display_name = g_file_info_get_display_name (info);
+		mimetype = g_file_info_get_content_type (info);
+	} else {
+		g_warning ("Error getting info: %s\n", error->message);
+		g_error_free (error);
+		g_object_unref (data->file);
+		g_free (data->original_uri);
+		g_free (data);
+		return; // skip this event
+	}
+
+	ZeitgeistSubject *subject = zeitgeist_subject_new_full (
+		(data->original_uri) ? (data->original_uri) : uri,
+		NULL, // subject interpretation - auto-guess
+		NULL, // suject manifestation - auto-guess
+		mimetype,
+		origin,
+		display_name,
+		NULL // storage - auto-guess
+	);
+
+	if (data->original_uri)
+		zeitgeist_subject_set_current_uri (subject, uri);
+
+	g_free (uri);
+	g_free (origin);
+	g_object_unref (info);
+
+	if (subject) {
+		ZeitgeistEvent *event = zeitgeist_event_new_full (
+			data->event_interpretation,
+			ZEITGEIST_ZG_USER_ACTIVITY,
+			ZEITGEIST_NEMO_ACTOR,
+			subject, NULL);
+		send_event_to_zeitgeist (event);
+	}
+
+	g_object_unref (data->file);
+	g_free (data->original_uri);
+	g_free (data);
+}
+
+static void
+log_zeitgeist_event_for_file_no_reply (const char *event_interpretation, GFile *file, gchar *original_uri)
+{
+	_ZeitgeistFileEventData *data;
+	data = g_new0 (_ZeitgeistFileEventData, 1);
+
+	data->event_interpretation = event_interpretation;
+	data->original_uri = original_uri;
+	data->file = file;
+
+	g_file_query_info_async (file,
+		G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+		G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+		G_FILE_QUERY_INFO_NONE,
+		G_PRIORITY_DEFAULT,
+		NULL,
+		_log_zeitgeist_event_for_file_cb, data);
+}
+#endif // BUILD_ZEITGEIST
 
 static void
 mark_desktop_file_trusted (CommonJob *common,
@@ -556,7 +658,7 @@ parse_previous_duplicate_name (const char *name,
 
 	g_assert (name[0] != '\0');
 
-	*suffix = eel_filename_get_extension_offset (name + 1);
+	*suffix = eel_filename_get_extension_offset (name);
 
 	if (*suffix == NULL || (*suffix)[1] == '\0') {
 		/* no suffix */
@@ -805,19 +907,24 @@ custom_basename_to_string (char *format, va_list va)
 	GFile *file;
 	GFileInfo *info;
 	char *name, *basename, *tmp;
+	GMount *mount;
 
 	file = va_arg (va, GFile *);
 
-	info = g_file_query_info (file,
-				  G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
-				  0,
-				  g_cancellable_get_current (),
-				  NULL);
-	
-	name = NULL;
-	if (info) {
-		name = g_strdup (g_file_info_get_display_name (info));
-		g_object_unref (info);
+	if ((mount = nemo_get_mounted_mount_for_root (file)) != NULL) {
+		name = g_mount_get_name (mount);
+		g_object_unref (mount);
+	} else {
+		info = g_file_query_info (file,
+					  G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+					  0,
+					  g_cancellable_get_current (),
+					  NULL);
+		name = NULL;
+		if (info) {
+			name = g_strdup (g_file_info_get_display_name (info));
+			g_object_unref (info);
+		}
 	}
 	
 	if (name == NULL) {
@@ -1069,12 +1176,14 @@ init_common (gsize job_size,
 
 	if (parent_window) {
 		common->parent_window = parent_window;
-		eel_add_weak_pointer (&common->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (common->parent_window),
+					   (gpointer *) &common->parent_window);
+
 	}
 	common->progress = nemo_progress_info_new ();
 	common->cancellable = nemo_progress_info_get_cancellable (common->progress);
 	common->time = g_timer_new ();
-	common->inhibit_cookie = -1;
+	common->inhibit_cookie = 0;
 	common->screen_num = 0;
 	if (parent_window) {
 		screen = gtk_widget_get_screen (GTK_WIDGET (parent_window));
@@ -1089,13 +1198,19 @@ finalize_common (CommonJob *common)
 {
 	nemo_progress_info_finish (common->progress);
 
-	if (common->inhibit_cookie != -1) {
-		nemo_uninhibit_power_manager (common->inhibit_cookie);
+	if (common->inhibit_cookie != 0) {
+		gtk_application_uninhibit (GTK_APPLICATION (g_application_get_default ()),
+					   common->inhibit_cookie);
 	}
 
-	common->inhibit_cookie = -1;
+	common->inhibit_cookie = 0;
 	g_timer_destroy (common->time);
-	eel_remove_weak_pointer (&common->parent_window);
+
+	if (common->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (common->parent_window),
+					      (gpointer *) &common->parent_window);
+	}
+
 	if (common->skip_files) {
 		g_hash_table_destroy (common->skip_files);
 	}
@@ -1161,7 +1276,7 @@ static gboolean
 can_delete_without_confirm (GFile *file)
 {
 	if (g_file_has_uri_scheme (file, "burn") ||
-        g_file_has_uri_scheme (file, "recent") ||
+	    g_file_has_uri_scheme (file, "recent") ||
 	    g_file_has_uri_scheme (file, "x-nemo-desktop")) {
 		return TRUE;
 	}
@@ -1403,10 +1518,45 @@ run_question (CommonJob *job,
 	return res;
 }
 
+static int
+run_cancel_or_skip_warning (CommonJob *job,
+			    char *primary_text,
+			    char *secondary_text,
+			    const char *details_text,
+			    int total_operations,
+			    int operations_remaining)
+{
+	int response;
+
+	if (total_operations == 1) {
+		response = run_warning (job,
+					primary_text,
+					secondary_text,
+					details_text,
+					FALSE,
+					CANCEL,
+					NULL);
+	} else {
+		response = run_warning (job,
+					primary_text,
+					secondary_text,
+					details_text,
+					operations_remaining > 1,
+					CANCEL, SKIP_ALL, SKIP,
+					NULL);
+	}
+
+	return response;
+}
+
 static void
 inhibit_power_manager (CommonJob *job, const char *message)
 {
-	job->inhibit_cookie = nemo_inhibit_power_manager (message);
+	job->inhibit_cookie = gtk_application_inhibit (GTK_APPLICATION (g_application_get_default ()),
+						       GTK_WINDOW (job->parent_window),
+						       GTK_APPLICATION_INHIBIT_LOGOUT |
+						       GTK_APPLICATION_INHIBIT_SUSPEND,
+						       message);
 }
 
 static void
@@ -1452,7 +1602,7 @@ confirm_delete_from_trash (CommonJob *job,
 	g_assert (file_count > 0);
 	
 	if (file_count == 1) {
-		prompt = f (_("Are you sure you want to permanently delete \"%B\" "
+		prompt = f (_("Are you sure you want to permanently delete “%B” "
 					    "from the trash?"), files->data);
 	} else {
 		prompt = f (ngettext("Are you sure you want to permanently delete "
@@ -1468,7 +1618,7 @@ confirm_delete_from_trash (CommonJob *job,
 				f (_("If you delete an item, it will be permanently lost.")),
 				NULL,
 				FALSE,
-				GTK_STOCK_CANCEL, GTK_STOCK_DELETE,
+				CANCEL, DELETE,
 				NULL);
 	
 	return (response == 1);
@@ -1492,7 +1642,7 @@ confirm_empty_trash (CommonJob *job)
 				f(_("All items in the Trash will be permanently deleted.")),
 				NULL,
 				FALSE,
-				GTK_STOCK_CANCEL, _("Empty _Trash"),
+				CANCEL, _("Empty _Trash"),
 				NULL);
 
 	return (response == 1);
@@ -1519,7 +1669,7 @@ confirm_delete_directly (CommonJob *job,
 	}
 
 	if (file_count == 1) {
-		prompt = f (_("Are you sure you want to permanently delete \"%B\"?"), 
+		prompt = f (_("Are you sure you want to permanently delete “%B”?"), 
 			    files->data);
 	} else {
 		prompt = f (ngettext("Are you sure you want to permanently delete "
@@ -1534,7 +1684,7 @@ confirm_delete_directly (CommonJob *job,
 				f (_("If you delete an item, it will be permanently lost.")),
 				NULL,
 				FALSE,
-				GTK_STOCK_CANCEL, GTK_STOCK_DELETE,
+				CANCEL, DELETE,
 				NULL);
 
 	return response == 1;
@@ -1590,7 +1740,7 @@ report_delete_progress (CommonJob *job,
 					   seconds_count_format_time_units (remaining_time)),
 				 remaining_time);
 
-		details = g_strconcat (files_left_s, "\xE2\x80\x94", time_left_s, NULL);
+		details = g_strconcat (files_left_s, " \xE2\x80\x94 ", time_left_s, NULL);
 		nemo_progress_info_take_details (job->progress, details);
 
 		g_free (time_left_s);
@@ -1656,10 +1806,10 @@ delete_dir (CommonJob *job, GFile *dir,
 			details = NULL;
 			
 			if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-				secondary = f (_("Files in the folder \"%B\" cannot be deleted because you do "
+				secondary = f (_("Files in the folder “%B” cannot be deleted because you do "
 						 "not have permissions to see them."), dir);
 			} else {
-				secondary = f (_("There was an error getting information about the files in the folder \"%B\"."), dir);
+				secondary = f (_("There was an error getting information about the files in the folder “%B”."), dir);
 				details = error->message;
 			}
 			
@@ -1668,7 +1818,7 @@ delete_dir (CommonJob *job, GFile *dir,
 						secondary,
 						details,
 						FALSE,
-						GTK_STOCK_CANCEL, _("_Skip files"),
+						CANCEL, _("_Skip files"),
 						NULL);
 			
 			g_error_free (error);
@@ -1689,10 +1839,10 @@ delete_dir (CommonJob *job, GFile *dir,
 		primary = f (_("Error while deleting."));
 		details = NULL;
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be deleted because you do not have "
+			secondary = f (_("The folder “%B” cannot be deleted because you do not have "
 					 "permissions to read it."), dir);
 		} else {
-			secondary = f (_("There was an error reading the folder \"%B\"."), dir);
+			secondary = f (_("There was an error reading the folder “%B”."), dir);
 			details = error->message;
 		}
 		
@@ -1701,7 +1851,7 @@ delete_dir (CommonJob *job, GFile *dir,
 					secondary,
 					details,
 					FALSE,
-					GTK_STOCK_CANCEL, SKIP, RETRY,
+					CANCEL, SKIP, RETRY,
 					NULL);
 
 		g_error_free (error);
@@ -1728,14 +1878,13 @@ delete_dir (CommonJob *job, GFile *dir,
 			primary = f (_("Error while deleting."));
 			secondary = f (_("Could not remove the folder %B."), dir);
 			details = error->message;
-			
-			response = run_warning (job,
-						primary,
-						secondary,
-						details,
-						(source_info->num_files - transfer_info->num_files) > 1,
-						GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
-						NULL);
+
+			response = run_cancel_or_skip_warning (job,
+			                                       primary,
+			                                       secondary,
+			                                       details,
+			                                       source_info->num_files,
+			                                       source_info->num_files - transfer_info->num_files);
 			
 			if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 				abort_job (job);
@@ -1806,13 +1955,12 @@ delete_file (CommonJob *job, GFile *file,
 		secondary = f (_("There was an error deleting %B."), file);
 		details = error->message;
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					details,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       details,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 			abort_job (job);
@@ -1936,11 +2084,14 @@ trash_files (CommonJob *job, GList *files, int *files_skipped)
 				goto skip;
 			}
 
-			primary = f (_("Cannot move file to trash, do you want to delete immediately?"));
-			secondary = f (_("The file \"%B\" cannot be moved to the trash."), file);
+			/* Translators: %B is a file name */
+			primary = f (_("“%B” can't be put in the trash. Do you want to delete it immediately?"), file);
 			details = NULL;
+			secondary = NULL;
 			if (!IS_IO_ERROR (error, NOT_SUPPORTED)) {
 				details = error->message;
+			} else if (!g_file_is_native (file)) {
+				secondary = f (_("This remote location does not support sending items to the trash."));
 			}
 
 			response = run_question (job,
@@ -1948,7 +2099,7 @@ trash_files (CommonJob *job, GList *files, int *files_skipped)
 						 secondary,
 						 details,
 						 (total_files - files_trashed) > 1,
-						 GTK_STOCK_CANCEL, SKIP_ALL, SKIP, DELETE_ALL, GTK_STOCK_DELETE,
+						 CANCEL, SKIP_ALL, SKIP, DELETE_ALL, DELETE,
 						 NULL);
 
 			if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
@@ -1995,6 +2146,36 @@ delete_job_done (gpointer user_data)
 	GHashTable *debuting_uris;
 
 	job = user_data;
+
+#ifdef BUILD_ZEITGEIST
+	// Send event to Zeitgeist for deletions/trash
+	GList *file_iter = job->files;
+	while (file_iter != NULL) {
+		gchar *uri = g_file_get_uri (file_iter->data);
+		gchar *origin = g_path_get_dirname (uri);
+		gchar *parse_name = g_file_get_parse_name (file_iter->data);
+		gchar *display_name = g_path_get_basename (parse_name);
+		ZeitgeistEvent *event = zeitgeist_event_new_full (
+			ZEITGEIST_ZG_DELETE_EVENT,
+			ZEITGEIST_ZG_USER_ACTIVITY,
+			ZEITGEIST_NEMO_ACTOR,
+			zeitgeist_subject_new_full (
+				uri,
+				NULL, // subject interpretation - auto-guess
+				NULL, // suject manifestation - auto-guess
+				NULL, // mime-type
+				origin,
+				display_name,
+				NULL // storage - auto-guess
+			), NULL);
+		send_event_to_zeitgeist (event);
+		g_free (uri);
+		g_free (origin);
+		g_free (parse_name);
+		g_free (display_name);
+		file_iter = g_list_next (file_iter);
+	}
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 
@@ -2158,7 +2339,7 @@ nemo_file_operations_delete (GList                  *files,
 typedef struct {
 	gboolean eject;
 	GMount *mount;
-    GMountOperation *mount_operation;
+	GMountOperation *mount_operation;
 	GtkWindow *parent_window;
 	NemoUnmountCallback callback;
 	gpointer callback_data;
@@ -2167,14 +2348,14 @@ typedef struct {
 static void
 unmount_data_free (UnmountData *data)
 {
-    if (data->parent_window) {
-        g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
-                                      (gpointer *) &data->parent_window);
-    }
+	if (data->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (data->parent_window),
+					      (gpointer *) &data->parent_window);
+	}
 
-    g_clear_object (&data->mount_operation);
-    g_object_unref (data->mount);
-    g_free (data);
+	g_clear_object (&data->mount_operation);
+	g_object_unref (data->mount);
+	g_free (data);
 }
 
 static void
@@ -2217,7 +2398,7 @@ unmount_mount_callback (GObject *source_object,
 	if (error != NULL) {
 		g_error_free (error);
 	}
-	
+
 	unmount_data_free (data);
 }
 
@@ -2227,10 +2408,10 @@ do_unmount (UnmountData *data)
 	GMountOperation *mount_op;
 
 	if (data->mount_operation) {
-        mount_op = g_object_ref (data->mount_operation);
-    } else {
-        mount_op = gtk_mount_operation_new (data->parent_window);
-    }
+		mount_op = g_object_ref (data->mount_operation);
+	} else {
+		mount_op = gtk_mount_operation_new (data->parent_window);
+	}
 	if (data->eject) {
 		g_mount_eject_with_operation (data->mount,
 					      0,
@@ -2367,7 +2548,7 @@ prompt_empty_trash (GtkWindow *parent_window)
 						    "will be permanently lost."));
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog), 
 	                        _("Do _not Empty Trash"), GTK_RESPONSE_REJECT, 
-	                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, 
+				CANCEL, GTK_RESPONSE_CANCEL, 
 	                        _("Empty _Trash"), GTK_RESPONSE_ACCEPT, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
 	gtk_window_set_title (GTK_WINDOW (dialog), ""); /* as per HIG */
@@ -2402,7 +2583,7 @@ empty_trash_for_unmount_done (gboolean success,
 void
 nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_window,
 					     GMount                         *mount,
-                         GMountOperation                *mount_operation,
+					     GMountOperation                *mount_operation,
 					     gboolean                        eject,
 					     gboolean                        check_trash,
 					     NemoUnmountCallback         callback,
@@ -2416,13 +2597,13 @@ nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_
 	data->callback_data = callback_data;
 	if (parent_window) {
 		data->parent_window = parent_window;
-		eel_add_weak_pointer (&data->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (data->parent_window),
+					   (gpointer *) &data->parent_window);
 		
 	}
-
-    if (mount_operation) {
-        data->mount_operation = g_object_ref (mount_operation);
-    }
+	if (mount_operation) {
+		data->mount_operation = g_object_ref (mount_operation);
+	}
 	data->eject = eject;
 	data->mount = g_object_ref (mount);
 
@@ -2494,13 +2675,16 @@ volume_mount_cb (GObject *source_object,
 	if (!g_volume_mount_finish (G_VOLUME (source_object), res, &error)) {
 		if (error->code != G_IO_ERROR_FAILED_HANDLED &&
                     error->code != G_IO_ERROR_ALREADY_MOUNTED) {
+			GtkWindow *parent;
+
+			parent = gtk_mount_operation_get_parent (GTK_MOUNT_OPERATION (mount_op));
 			name = g_volume_get_name (G_VOLUME (source_object));
-			primary = g_strdup_printf (_("Unable to mount %s"), name);
+			primary = g_strdup_printf (_("Unable to access “%s”"), name);
 			g_free (name);
 			success = FALSE;
 			eel_show_error_dialog (primary,
 					       error->message,
-					       NULL);
+					       parent);
 			g_free (primary);
 		}
 		g_error_free (error);
@@ -2680,10 +2864,10 @@ scan_dir (GFile *dir,
 			details = NULL;
 			
 			if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-				secondary = f (_("Files in the folder \"%B\" cannot be handled because you do "
+				secondary = f (_("Files in the folder “%B” cannot be handled because you do "
 						 "not have permissions to see them."), dir);
 			} else {
-				secondary = f (_("There was an error getting information about the files in the folder \"%B\"."), dir);
+				secondary = f (_("There was an error getting information about the files in the folder “%B”."), dir);
 				details = error->message;
 			}
 			
@@ -2692,7 +2876,7 @@ scan_dir (GFile *dir,
 						secondary,
 						details,
 						FALSE,
-						GTK_STOCK_CANCEL, RETRY, SKIP,
+						CANCEL, RETRY, SKIP,
 						NULL);
 
 			g_error_free (error);
@@ -2719,10 +2903,10 @@ scan_dir (GFile *dir,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be handled because you do not have "
+			secondary = f (_("The folder “%B” cannot be handled because you do not have "
 					 "permissions to read it."), dir);
 		} else {
-			secondary = f (_("There was an error reading the folder \"%B\"."), dir);
+			secondary = f (_("There was an error reading the folder “%B”."), dir);
 			details = error->message;
 		}
 		/* set show_all to TRUE here, as we don't know how many
@@ -2733,7 +2917,7 @@ scan_dir (GFile *dir,
 					secondary,
 					details,
 					TRUE,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP, RETRY,
+					CANCEL, SKIP_ALL, SKIP, RETRY,
 					NULL);
 		
 		g_error_free (error);
@@ -2796,10 +2980,10 @@ scan_file (GFile *file,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The file \"%B\" cannot be handled because you do not have "
+			secondary = f (_("The file “%B” cannot be handled because you do not have "
 					 "permissions to read it."), file);
 		} else {
-			secondary = f (_("There was an error getting information about \"%B\"."), file);
+			secondary = f (_("There was an error getting information about “%B”."), file);
 			details = error->message;
 		}
 		/* set show_all to TRUE here, as we don't know how many
@@ -2810,7 +2994,7 @@ scan_file (GFile *file,
 					secondary,
 					details,
 					TRUE,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP, RETRY,
+					CANCEL, SKIP_ALL, SKIP, RETRY,
 					NULL);
 		
 		g_error_free (error);
@@ -2879,6 +3063,7 @@ verify_destination (CommonJob *job,
 	char *primary, *secondary, *details;
 	int response;
 	GFileType file_type;
+	gboolean dest_is_symlink = FALSE;
 
 	if (dest_fs_id) {
 		*dest_fs_id = NULL;
@@ -2890,7 +3075,7 @@ verify_destination (CommonJob *job,
 	info = g_file_query_info (dest, 
 				  G_FILE_ATTRIBUTE_STANDARD_TYPE","
 				  G_FILE_ATTRIBUTE_ID_FILESYSTEM,
-				  0,
+				  dest_is_symlink ? G_FILE_QUERY_INFO_NONE : G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
 				  job->cancellable,
 				  &error);
 
@@ -2900,7 +3085,7 @@ verify_destination (CommonJob *job,
 			return;
 		}
 		
-		primary = f (_("Error while copying to \"%B\"."), dest);
+		primary = f (_("Error while copying to “%B”."), dest);
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
@@ -2915,7 +3100,7 @@ verify_destination (CommonJob *job,
 				      secondary,
 				      details,
 				      FALSE,
-				      GTK_STOCK_CANCEL, RETRY,
+				      CANCEL, RETRY,
 				      NULL);
 		
 		g_error_free (error);
@@ -2932,6 +3117,12 @@ verify_destination (CommonJob *job,
 	}
 
 	file_type = g_file_info_get_file_type (info);
+	if (!dest_is_symlink && file_type == G_FILE_TYPE_SYMBOLIC_LINK) {
+		/* Record that destination is a symlink and do real stat() once again */
+		dest_is_symlink = TRUE;
+		g_object_unref (info);
+		goto retry;
+	}
 
 	if (dest_fs_id) {
 		*dest_fs_id =
@@ -2942,18 +3133,23 @@ verify_destination (CommonJob *job,
 	g_object_unref (info);
 	
 	if (file_type != G_FILE_TYPE_DIRECTORY) {
-		primary = f (_("Error while copying to \"%B\"."), dest);
+		primary = f (_("Error while copying to “%B”."), dest);
 		secondary = f (_("The destination is not a folder."));
 
-		response = run_error (job,
-				      primary,
-				      secondary,
-				      NULL,
-				      FALSE,
-				      GTK_STOCK_CANCEL,
-				      NULL);
+		run_error (job,
+			   primary,
+			   secondary,
+			   NULL,
+			   FALSE,
+			   CANCEL,
+			   NULL);
 		
 		abort_job (job);
+		return;
+	}
+	
+	if (dest_is_symlink) {
+		/* We can't reliably statfs() destination if it's a symlink, thus not doing any further checks. */
 		return;
 	}
 	
@@ -2976,7 +3172,7 @@ verify_destination (CommonJob *job,
 		
 		if (free_size < required_size) {
 			size_difference = required_size - free_size;
-			primary = f (_("Error while copying to \"%B\"."), dest);
+			primary = f (_("Error while copying to “%B”."), dest);
 			secondary = f (_("There is not enough space on the destination. Try to remove files to make space."));
 			
 			details = f (_("%S more space is required to copy to the destination."), size_difference);
@@ -2986,7 +3182,7 @@ verify_destination (CommonJob *job,
 						secondary,
 						details,
 						FALSE,
-						GTK_STOCK_CANCEL,
+						CANCEL,
 						COPY_FORCE,
 						RETRY,
 						NULL);
@@ -3006,16 +3202,16 @@ verify_destination (CommonJob *job,
 	if (!job_aborted (job) &&
 	    g_file_info_get_attribute_boolean (fsinfo,
 					       G_FILE_ATTRIBUTE_FILESYSTEM_READONLY)) {
-		primary = f (_("Error while copying to \"%B\"."), dest);
+		primary = f (_("Error while copying to “%B”."), dest);
 		secondary = f (_("The destination is read-only."));
 
-		response = run_error (job,
-				      primary,
-				      secondary,
-				      NULL,
-				      FALSE,
-				      GTK_STOCK_CANCEL,
-				      NULL);
+		run_error (job,
+			   primary,
+			   secondary,
+			   NULL,
+			   FALSE,
+			   CANCEL,
+			   NULL);
 		
 		g_error_free (error);
 
@@ -3066,15 +3262,15 @@ report_copy_progress (CopyMoveJob *copy_job,
 			if (copy_job->destination != NULL) {
 				nemo_progress_info_take_status (job->progress,
 								    f (is_move ?
-								       _("Moving \"%B\" to \"%B\""):
-								       _("Copying \"%B\" to \"%B\""),
+								       _("Moving “%B” to “%B”"):
+								       _("Copying “%B” to “%B”"),
 								       copy_job->fake_display_source != NULL ?
 								       copy_job->fake_display_source :
 								       (GFile *)copy_job->files->data,
 								       copy_job->destination));
 			} else {
 				nemo_progress_info_take_status (job->progress,
-								    f (_("Duplicating \"%B\""),
+								    f (_("Duplicating “%B”"),
 								       (GFile *)copy_job->files->data));
 			}
 		} else if (copy_job->files != NULL &&
@@ -3082,16 +3278,16 @@ report_copy_progress (CopyMoveJob *copy_job,
 			if (copy_job->destination != NULL) {
 				nemo_progress_info_take_status (job->progress,
 								    f (is_move ?
-								       _("Moving file %'d of %'d (in \"%B\") to \"%B\"")
+								       _("Moving file %'d of %'d (in “%B”) to “%B”")
 								       :
-								       _("Copying file %'d of %'d (in \"%B\") to \"%B\""),
+								       _("Copying file %'d of %'d (in “%B”) to “%B”"),
 								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       (GFile *)copy_job->files->data,
 								       copy_job->destination));
 			} else {
 				nemo_progress_info_take_status (job->progress,
-								    f (_("Duplicating file %'d of %'d (in \"%B\")"),
+								    f (_("Duplicating file %'d of %'d (in “%B”)"),
 								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       (GFile *)copy_job->files->data));
@@ -3100,9 +3296,9 @@ report_copy_progress (CopyMoveJob *copy_job,
 			if (copy_job->destination != NULL) {
 				nemo_progress_info_take_status (job->progress,
 								    f (is_move ?
-								       _("Moving file %'d of %'d to \"%B\"")
+								       _("Moving file %'d of %'d to “%B”")
 								       :
-								       _ ("Copying file %'d of %'d to \"%B\""),
+								       _ ("Copying file %'d of %'d to “%B”"),
 								       transfer_info->num_files + 1,
 								       source_info->num_files,
 								       copy_job->destination));
@@ -3192,16 +3388,16 @@ get_max_name_length (GFile *file_dir)
 #define FAT_FORBIDDEN_CHARACTERS "/:;*?\"<>"
 
 static gboolean
-str_replace (char *str,
-	     const char *chars_to_replace,
-	     char replacement)
+fat_str_replace (char *str,
+		 char replacement)
 {
 	gboolean success;
 	int i;
 
 	success = FALSE;
 	for (i = 0; str[i] != '\0'; i++) {
-		if (strchr (chars_to_replace, str[i])) {
+		if (strchr (FAT_FORBIDDEN_CHARACTERS, str[i]) ||
+		    str[i] < 32) {
 			success = TRUE;
 			str[i] = replacement;
 		}
@@ -3222,7 +3418,7 @@ make_file_name_valid_for_dest_fs (char *filename,
 			gboolean ret;
 			int i, old_len;
 
-			ret = str_replace (filename, FAT_FORBIDDEN_CHARACTERS, '_');
+			ret = fat_str_replace (filename, '_');
 
 			old_len = strlen (filename);
 			for (i = 0; i < old_len; i++) {
@@ -3382,18 +3578,28 @@ get_target_file_with_custom_name (GFile *src,
 
 	if (dest == NULL && !same_fs) {
 		info = g_file_query_info (src,
-					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME,
+					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME ","
+					  G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
 					  0, NULL, NULL);
 		
 		if (info) {
-			copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			copyname = NULL;
+
+			/* if file is being restored from trash make sure it uses its original name */
+			if (g_file_has_uri_scheme (src, "trash")) {
+				copyname = g_strdup (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+			}
+
+			if (copyname == NULL) {
+				copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			}
 
 			if (copyname) {
 				make_file_name_valid_for_dest_fs (copyname, dest_fs_type);
 				dest = g_file_get_child_for_display_name (dest_dir, copyname, NULL);
 				g_free (copyname);
 			}
-			
+
 			g_object_unref (info);
 		}
 	}
@@ -3535,10 +3741,10 @@ create_dest_dir (CommonJob *job,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be copied because you do not have "
+			secondary = f (_("The folder “%B” cannot be copied because you do not have "
 					 "permissions to create it in the destination."), src);
 		} else {
-			secondary = f (_("There was an error creating the folder \"%B\"."), src);
+			secondary = f (_("There was an error creating the folder “%B”."), src);
 			details = error->message;
 		}
 		
@@ -3547,7 +3753,7 @@ create_dest_dir (CommonJob *job,
 					secondary,
 					details,
 					FALSE,
-					GTK_STOCK_CANCEL, SKIP, RETRY,
+					CANCEL, SKIP, RETRY,
 					NULL);
 
 		g_error_free (error);
@@ -3668,10 +3874,10 @@ copy_move_directory (CopyMoveJob *copy_job,
 			details = NULL;
 			
 			if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-				secondary = f (_("Files in the folder \"%B\" cannot be copied because you do "
+				secondary = f (_("Files in the folder “%B” cannot be copied because you do "
 						 "not have permissions to see them."), src);
 			} else {
-				secondary = f (_("There was an error getting information about the files in the folder \"%B\"."), src);
+				secondary = f (_("There was an error getting information about the files in the folder “%B”."), src);
 				details = error->message;
 			}
 			
@@ -3680,7 +3886,7 @@ copy_move_directory (CopyMoveJob *copy_job,
 						secondary,
 						details,
 						FALSE,
-						GTK_STOCK_CANCEL, _("_Skip files"),
+						CANCEL, _("_Skip files"),
 						NULL);
 			
 			g_error_free (error);
@@ -3713,10 +3919,10 @@ copy_move_directory (CopyMoveJob *copy_job,
 		details = NULL;
 		
 		if (IS_IO_ERROR (error, PERMISSION_DENIED)) {
-			secondary = f (_("The folder \"%B\" cannot be copied because you do not have "
+			secondary = f (_("The folder “%B” cannot be copied because you do not have "
 					 "permissions to read it."), src);
 		} else {
-			secondary = f (_("There was an error reading the folder \"%B\"."), src);
+			secondary = f (_("There was an error reading the folder “%B”."), src);
 			details = error->message;
 		}
 		
@@ -3725,7 +3931,7 @@ copy_move_directory (CopyMoveJob *copy_job,
 					secondary,
 					details,
 					FALSE,
-					GTK_STOCK_CANCEL, SKIP, RETRY,
+					CANCEL, SKIP, RETRY,
 					NULL);
 
 		g_error_free (error);
@@ -3758,18 +3964,17 @@ copy_move_directory (CopyMoveJob *copy_job,
 			if (job->skip_all_error) {
 				goto skip;
 			}
-			primary = f (_("Error while moving \"%B\"."), src);
+			primary = f (_("Error while moving “%B”."), src);
 			secondary = f (_("Could not remove the source folder."));
 			details = error->message;
 			
-			response = run_warning (job,
-						primary,
-						secondary,
-						details,
-						(source_info->num_files - transfer_info->num_files) > 1,
-						GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
-						NULL);
-			
+			response = run_cancel_or_skip_warning (job,
+			                                       primary,
+			                                       secondary,
+			                                       details,
+			                                       source_info->num_files,
+			                                       source_info->num_files - transfer_info->num_files);
+
 			if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 				abort_job (job);
 			} else if (response == 1) { /* skip all */
@@ -3844,7 +4049,7 @@ remove_target_recursively (CommonJob *job,
 			goto skip1;
 		}
 		
-		primary = f (_("Error while copying \"%B\"."), src);
+		primary = f (_("Error while copying “%B”."), src);
 		secondary = f (_("Could not remove files from the already existing folder %F."), file);
 		details = error->message;
 
@@ -3856,7 +4061,7 @@ remove_target_recursively (CommonJob *job,
 					secondary,
 					details,
 					TRUE,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
+					CANCEL, SKIP_ALL, SKIP,
 					NULL);
 		
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
@@ -3885,7 +4090,7 @@ remove_target_recursively (CommonJob *job,
 		    IS_IO_ERROR (error, CANCELLED)) {
 			goto skip2;
 		}
-		primary = f (_("Error while copying \"%B\"."), src);
+		primary = f (_("Error while copying “%B”."), src);
 		secondary = f (_("Could not remove the already existing file %F."), file);
 		details = error->message;
 
@@ -3897,7 +4102,7 @@ remove_target_recursively (CommonJob *job,
 					secondary,
 					details,
 					TRUE,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
+					CANCEL, SKIP_ALL, SKIP,
 					NULL);
 		
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
@@ -4210,13 +4415,12 @@ copy_move_file (CopyMoveJob *copy_job,
 					    : g_strdup (_("You cannot copy a folder into itself."));
 		secondary = g_strdup (_("The destination folder is inside the source folder."));
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					NULL,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       NULL,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 			abort_job (job);
@@ -4243,13 +4447,12 @@ copy_move_file (CopyMoveJob *copy_job,
 					    : g_strdup (_("You cannot copy a file over itself."));
 		secondary = g_strdup (_("The source file would be overwritten by the destination."));
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					NULL,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       NULL,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
 			abort_job (job);
@@ -4451,9 +4654,9 @@ copy_move_file (CopyMoveJob *copy_job,
 					goto out;
 				}
 				if (copy_job->is_move) {
-					primary = f (_("Error while moving \"%B\"."), src);
+					primary = f (_("Error while moving “%B”."), src);
 				} else {
-					primary = f (_("Error while copying \"%B\"."), src);
+					primary = f (_("Error while copying “%B”."), src);
 				}
 				secondary = f (_("Could not remove the already existing file with the same name in %F."), dest_dir);
 				details = error->message;
@@ -4466,7 +4669,7 @@ copy_move_file (CopyMoveJob *copy_job,
 							secondary,
 							details,
 							TRUE,
-							GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
+							CANCEL, SKIP_ALL, SKIP,
 							NULL);
 				
 				g_error_free (error);
@@ -4524,17 +4727,16 @@ copy_move_file (CopyMoveJob *copy_job,
 			g_error_free (error);
 			goto out;
 		}
-		primary = f (_("Error while copying \"%B\"."), src);
+		primary = f (_("Error while copying “%B”."), src);
 		secondary = f (_("There was an error copying the file into %F."), dest_dir);
 		details = error->message;
 		
-		response = run_warning (job,
-					primary,
-					secondary,
-					details,
-					(source_info->num_files - transfer_info->num_files) > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
-					NULL);
+		response = run_cancel_or_skip_warning (job,
+		                                       primary,
+		                                       secondary,
+		                                       details,
+		                                       source_info->num_files,
+		                                       source_info->num_files - transfer_info->num_files);
 
 		g_error_free (error);
 		
@@ -4644,6 +4846,24 @@ copy_job_done (gpointer user_data)
 				    !job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
+
+#ifdef BUILD_ZEITGEIST	
+	// Send event to Zeitgeist
+	GHashTableIter iter;
+	GFile *file;
+	gpointer done;
+	g_hash_table_iter_init (&iter, job->debuting_files);
+	while (g_hash_table_iter_next (&iter, (gpointer *) &file, &done)) {
+		if (GPOINTER_TO_INT (done)) {
+		// operation was completed successfully for this file
+		g_object_ref (file);
+		// FIXME: Set event origin to the original file URI, if we
+		//        can somehow figure out which one it is.
+		log_zeitgeist_event_for_file_no_reply (
+			ZEITGEIST_ZG_CREATE_EVENT, file, NULL);
+		}
+	}
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 	if (job->destination) {
@@ -4815,7 +5035,7 @@ report_move_progress (CopyMoveJob *move_job, int total, int left)
 	job = (CommonJob *)move_job;
 	
 	nemo_progress_info_take_status (job->progress,
-					    f (_("Preparing to Move to \"%B\""),
+					    f (_("Preparing to Move to “%B”"),
 					       move_job->destination));
 
 	nemo_progress_info_take_details (job->progress,
@@ -4914,7 +5134,7 @@ move_file_prepare (CopyMoveJob *move_job,
 					secondary,
 					NULL,
 					files_left > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
+					CANCEL, SKIP_ALL, SKIP,
 					NULL);
 		
 		if (response == 0 || response == GTK_RESPONSE_DELETE_EVENT) {
@@ -4968,6 +5188,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	if (IS_IO_ERROR (error, INVALID_FILENAME) &&
 	    !handled_invalid_filename) {
 		g_error_free (error);
+
 		handled_invalid_filename = TRUE;
 
 		g_assert (*dest_fs_type == NULL);
@@ -5058,9 +5279,10 @@ move_file_prepare (CopyMoveJob *move_job,
 	/* Other error */
 	else {
 		if (job->skip_all_error) {
+			g_error_free (error);
 			goto out;
 		}
-		primary = f (_("Error while moving \"%B\"."), src);
+		primary = f (_("Error while moving “%B”."), src);
 		secondary = f (_("There was an error moving the file into %F."), dest_dir);
 		details = error->message;
 		
@@ -5069,7 +5291,7 @@ move_file_prepare (CopyMoveJob *move_job,
 					secondary,
 					details,
 					files_left > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
+					CANCEL, SKIP_ALL, SKIP,
 					NULL);
 
 		g_error_free (error);
@@ -5204,6 +5426,20 @@ move_job_done (gpointer user_data)
 				    !job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
+
+#ifdef BUILD_ZEITGEIST
+	// Send event to Zeitgeist for moved files (not renaming)
+	GList *file_iter = job->files;
+	while (file_iter != NULL) {
+		char *basename = g_file_get_basename (file_iter->data);
+		GFile *new_file = g_file_get_child (job->destination, basename);
+		g_free (basename);
+
+		log_zeitgeist_event_for_file_no_reply (ZEITGEIST_ZG_MOVE_EVENT,
+		new_file, g_file_get_uri (file_iter->data));
+		file_iter = g_list_next (file_iter);
+	}
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 	g_object_unref (job->destination);
@@ -5356,7 +5592,7 @@ report_link_progress (CopyMoveJob *link_job, int total, int left)
 	job = (CommonJob *)link_job;
 	
 	nemo_progress_info_take_status (job->progress,
-					    f (_("Creating links in \"%B\""),
+					    f (_("Creating links in “%B”"),
 					       link_job->destination));
 
 	nemo_progress_info_take_details (job->progress,
@@ -5368,12 +5604,12 @@ report_link_progress (CopyMoveJob *link_job, int total, int left)
 }
 
 static char *
-get_abs_path_for_symlink (GFile *file)
+get_abs_path_for_symlink (GFile *file, GFile *destination)
 {
 	GFile *root, *parent;
 	char *relative, *abs;
 	
-	if (g_file_is_native (file)) {
+	if (g_file_is_native (file) || g_file_is_native (destination)) {
 		return g_file_get_path (file);
 	}
 
@@ -5427,7 +5663,7 @@ link_file (CopyMoveJob *job,
 	error = NULL;
 	not_local = FALSE;
 	
-	path = get_abs_path_for_symlink (src);
+	path = get_abs_path_for_symlink (src, dest);
 	if (path == NULL) {
 		not_local = TRUE;
 	} else if (g_file_make_symbolic_link (dest,
@@ -5491,7 +5727,7 @@ link_file (CopyMoveJob *job,
 	}
 	
 	/* Other error */
-	else {
+	else if (error != NULL) {
 		if (common->skip_all_error) {
 			goto out;
 		}
@@ -5512,7 +5748,7 @@ link_file (CopyMoveJob *job,
 					secondary,
 					details,
 					files_left > 1,
-					GTK_STOCK_CANCEL, SKIP_ALL, SKIP,
+					CANCEL, SKIP_ALL, SKIP,
 					NULL);
 
 		if (error) {
@@ -5545,6 +5781,24 @@ link_job_done (gpointer user_data)
 				    !job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
+
+#ifdef BUILD_ZEITGEIST
+	// Send event to Zeitgeist
+	GHashTableIter iter;
+	GFile *file;
+	gpointer done;
+	g_hash_table_iter_init (&iter, job->debuting_files);
+	while (g_hash_table_iter_next (&iter, (gpointer *) &file, &done)) {
+		if (GPOINTER_TO_INT (done)) {
+			// operation was completed successfully for this file
+			g_object_ref (file);
+			// FIXME: Set event origin to the original file URI, if we
+			//        can somehow figure out which one it is.
+			log_zeitgeist_event_for_file_no_reply (
+				ZEITGEIST_ZG_CREATE_EVENT, file, NULL);
+		}
+	}
+#endif // BUILD_ZEITGEIST
 
 	g_list_free_full (job->files, g_object_unref);
 	g_object_unref (job->destination);
@@ -5717,7 +5971,16 @@ set_permissions_job_done (gpointer user_data)
 		job->done_callback (!job_aborted ((CommonJob *) job),
 				    job->done_callback_data);
 	}
-	
+
+#ifdef BUILD_ZEITGEIST
+	// Send event to Zeitgeist
+	if (job->file) {
+		g_object_ref (job->file);
+		log_zeitgeist_event_for_file_no_reply (
+		ZEITGEIST_ZG_CREATE_EVENT, job->file, NULL);
+	}
+#endif // BUILD_ZEITGEIST
+
 	finalize_common ((CommonJob *)job);
 	return FALSE;
 }
@@ -6197,8 +6460,6 @@ create_job (GIOSchedulerJob *io_job,
 			g_assert (dest_fs_type == NULL);
 			dest_fs_type = query_fs_type (job->dest_dir, common->cancellable);
 
-			g_object_unref (dest);
-
 			if (count == 1) {
 				new_filename = g_strdup (filename);
 			} else {
@@ -6236,7 +6497,9 @@ create_job (GIOSchedulerJob *io_job,
 				goto retry;
 			}
 			g_free (new_filename);
-		} else if (IS_IO_ERROR (error, EXISTS)) {
+		}
+
+		if (IS_IO_ERROR (error, EXISTS)) {
 			g_object_unref (dest);
 			dest = NULL;
 			filename_base = eel_filename_strip_extension (filename);
@@ -6285,7 +6548,7 @@ create_job (GIOSchedulerJob *io_job,
 						secondary,
 						details,
 						FALSE,
-						GTK_STOCK_CANCEL, SKIP,
+						CANCEL, SKIP,
 						NULL);
 			
 			g_error_free (error);
@@ -6582,7 +6845,7 @@ mark_desktop_file_trusted (CommonJob *common,
 					      error->message,
 					      NULL,
 					      FALSE,
-					      GTK_STOCK_CANCEL, RETRY,
+					      CANCEL, RETRY,
 					      NULL);
 		} else {
 			response = 0;
@@ -6623,7 +6886,7 @@ mark_desktop_file_trusted (CommonJob *common,
 						      error->message,
 						      NULL,
 						      FALSE,
-						      GTK_STOCK_CANCEL, RETRY,
+						      CANCEL, RETRY,
 						      NULL);
 			} else {
 				response = 0;
@@ -6658,7 +6921,7 @@ mark_desktop_file_trusted (CommonJob *common,
 					      error->message,
 					      NULL,
 					      FALSE,
-					      GTK_STOCK_CANCEL, RETRY,
+					      CANCEL, RETRY,
 					      NULL);
 		} else {
 			response = 0;
@@ -6693,7 +6956,7 @@ mark_desktop_file_trusted (CommonJob *common,
 							      error->message,
 							      NULL,
 							      FALSE,
-							      GTK_STOCK_CANCEL, RETRY,
+							      CANCEL, RETRY,
 							      NULL);
 				} else {
 					response = 0;

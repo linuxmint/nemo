@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Darin Adler <darin@eazel.com>
 */
@@ -133,7 +132,7 @@ timed_wait_free (TimedWait *wait)
 						      wait);
 
 		/* compute time up in milliseconds */
-		time_up = (eel_get_system_time () - wait->dialog_creation_time) / 1000;
+		time_up = (g_get_monotonic_time () - wait->dialog_creation_time) / 1000;
 		
 		if (time_up < TIMED_WAIT_MIN_TIME_UP) {
 			delayed_close_handler_id = g_timeout_add (TIMED_WAIT_MIN_TIME_UP - time_up,
@@ -193,7 +192,7 @@ timed_wait_callback (gpointer callback_data)
 	wait = callback_data;
 
 	/* Put up the timed wait window. */
-	button = wait->cancel_callback != NULL ? GTK_STOCK_CANCEL : GTK_STOCK_OK;
+	button = wait->cancel_callback != NULL ? _("_Cancel") : ("_OK");
 	dialog = GTK_DIALOG (gtk_message_dialog_new (wait->parent_window,
 						     0,
 						     GTK_MESSAGE_INFO,
@@ -216,7 +215,7 @@ timed_wait_callback (gpointer callback_data)
 	gtk_window_set_default_size (GTK_WINDOW (dialog),
 				     TIMED_WAIT_MINIMUM_DIALOG_WIDTH,
 				     -1);
-	wait->dialog_creation_time = eel_get_system_time ();
+	wait->dialog_creation_time = g_get_monotonic_time ();
 	gtk_widget_show (GTK_WIDGET (dialog));
 
 	/* FIXME bugzilla.eazel.com 2441: 
@@ -380,6 +379,8 @@ create_message_dialog (const char *primary_text,
 					 type,
 					 buttons_type,
 					 NULL);
+	if (parent)
+		gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
 
 	g_object_set (dialog,
 		      "text", primary_text,

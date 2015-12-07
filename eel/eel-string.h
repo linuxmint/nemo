@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Darin Adler <darin@eazel.com>
 */
@@ -37,13 +36,6 @@
 #define THOU_TO_STR(c) g_strdup_printf ("%'d", c);
 
 /* NULL is allowed for all the str parameters to these functions. */
-
-/* Other basic string operations. */
-gboolean eel_str_is_empty                  (const char    *str_or_null);
-gboolean eel_str_is_equal                  (const char    *str_a,
-					    const char    *str_b);
-gboolean eel_istr_has_prefix               (const char    *target,
-					    const char    *prefix);
 
 /* Escape function for '_' character. */
 char *   eel_str_double_underscores        (const char    *str);

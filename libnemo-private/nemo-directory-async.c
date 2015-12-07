@@ -15,9 +15,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Darin Adler <darin@bentspoon.com>
 */
@@ -32,6 +30,7 @@
 #include "nemo-signaller.h"
 #include "nemo-global-preferences.h"
 #include "nemo-link.h"
+#include "nemo-profile.h"
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
 #include <libxml/parser.h>
@@ -134,6 +133,7 @@ struct DeepCountState {
 	GFile *deep_count_location;
 	GList *deep_count_subdirectories;
 	GArray *seen_deep_count_inodes;
+	char *fs_id;
 };
 
 
@@ -177,9 +177,6 @@ static GHashTable *waiting_directories;
 static GHashTable *async_jobs;
 #endif
 
-/* Hide kde trashcan directory */
-static char *kde_trash_dir_name = NULL;
-
 /* Forward declarations for functions that need them. */
 static void     deep_count_load                               (DeepCountState         *state,
 							       GFile                  *location);
@@ -202,13 +199,6 @@ static void     move_file_to_extension_queue                  (NemoDirectory    
 							       NemoFile           *file);
 static void     nemo_directory_invalidate_file_attributes (NemoDirectory      *directory,
 							       NemoFileAttributes  file_attributes);
-
-void
-nemo_set_kde_trash_name (const char *trash_dir)
-{
-	g_free (kde_trash_dir_name);
-	kde_trash_dir_name = g_strdup (trash_dir);
-}
 
 /* Some helpers for case-insensitive strings.
  * Move to nemo-glib-extensions?
@@ -743,8 +733,18 @@ nemo_directory_monitor_add_internal (NemoDirectory *directory,
 {
 	Monitor *monitor;
 	GList *file_list;
-		
+	char *file_uri = NULL;
+	char *dir_uri = NULL;
+
 	g_assert (NEMO_IS_DIRECTORY (directory));
+
+	if (file != NULL)
+		file_uri = nemo_file_get_uri (file);
+	if (directory != NULL)
+		dir_uri = nemo_directory_get_uri (directory);
+	nemo_profile_start ("uri %s file-uri %s client %p", dir_uri, file_uri, client);
+	g_free (dir_uri);
+	g_free (file_uri);
 
 	/* Replace any current monitor for this client/file pair. */
 	remove_monitor (directory, file, client);
@@ -784,7 +784,7 @@ nemo_directory_monitor_add_internal (NemoDirectory *directory,
 	    directory->details->mime_db_monitor == 0) {
 		directory->details->mime_db_monitor =
 			g_signal_connect_object (nemo_signaller_get_current (),
-						 "mime_data_changed",
+						 "mime-data-changed",
 						 G_CALLBACK (mime_db_changed_callback), directory, 0);
 	}
 
@@ -797,6 +797,7 @@ nemo_directory_monitor_add_internal (NemoDirectory *directory,
 
 	/* Kick off I/O. */
 	nemo_directory_async_state_changed (directory);
+	nemo_profile_end (NULL);
 }
 
 static void
@@ -825,7 +826,7 @@ static gboolean show_hidden_files = TRUE;
 static void
 show_hidden_files_changed_callback (gpointer callback_data)
 {
-	show_hidden_files = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
+	show_hidden_files = g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN);
 }
 
 static gboolean
@@ -835,8 +836,8 @@ should_skip_file (NemoDirectory *directory, GFileInfo *info)
 
 	/* Add the callback once for the life of our process */
 	if (!show_hidden_files_changed_callback_installed) {
-		g_signal_connect_swapped (nemo_preferences,
-					  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN_FILES,
+		g_signal_connect_swapped (gtk_filechooser_preferences,
+					  "changed::" NEMO_PREFERENCES_SHOW_HIDDEN,
 					  G_CALLBACK(show_hidden_files_changed_callback),
 					  NULL);
 
@@ -848,10 +849,7 @@ should_skip_file (NemoDirectory *directory, GFileInfo *info)
 
 	if (!show_hidden_files &&
 	    (g_file_info_get_is_hidden (info) ||
-	     g_file_info_get_is_backup (info) ||
-	     (directory != NULL && directory->details->hidden_file_hash != NULL &&
-	      g_hash_table_lookup (directory->details->hidden_file_hash,
-				   g_file_info_get_name (info)) != NULL))) {
+	     g_file_info_get_is_backup (info))) {
 		return TRUE;
 	}
 
@@ -873,6 +871,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	directory = NEMO_DIRECTORY (callback_data);
 
 	nemo_directory_ref (directory);
+
+	nemo_profile_start ("nitems %d", g_list_length (directory->details->pending_file_info));
 
 	directory->details->dequeue_pending_idle_id = 0;
 
@@ -1000,6 +1000,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	/* Get the state machine running again. */
 	nemo_directory_async_state_changed (directory);
 
+	nemo_profile_end (NULL);
+
 	nemo_directory_unref (directory);
 	return FALSE;
 }
@@ -1059,12 +1061,6 @@ directory_load_cancel (NemoDirectory *directory)
 	}
 }
 
-static gboolean
-remove_callback (gpointer key, gpointer value, gpointer user_data)
-{
-	return TRUE;
-}
-
 static void
 file_list_cancel (NemoDirectory *directory)
 {
@@ -1079,10 +1075,6 @@ file_list_cancel (NemoDirectory *directory)
 		g_list_free_full (directory->details->pending_file_info, g_object_unref);
 		directory->details->pending_file_info = NULL;
 	}
-
-	if (directory->details->hidden_file_hash) {
-		g_hash_table_foreach_remove (directory->details->hidden_file_hash, remove_callback, NULL);
-	}
 }
 
 static void
@@ -1090,6 +1082,8 @@ directory_load_done (NemoDirectory *directory,
 		     GError *error)
 {
 	GList *node;
+
+	nemo_profile_start (NULL);
 
 	directory->details->directory_loaded = TRUE;
 	directory->details->directory_loaded_sent_notification = FALSE;
@@ -1116,6 +1110,8 @@ directory_load_done (NemoDirectory *directory,
 	dequeue_pending_idle_callback (directory);
 
 	directory_load_cancel (directory);
+
+	nemo_profile_end (NULL);
 }
 
 void
@@ -1970,78 +1966,6 @@ mark_all_files_unconfirmed (NemoDirectory *directory)
 }
 
 static void
-read_dot_hidden_file (NemoDirectory *directory)
-{
-	gsize file_size;
-	char *file_contents;
-	GFile *child;
-	GFileInfo *info;
-	GFileType type;
-	int i;
-
-
-	/* FIXME: We only support .hidden on file: uri's for the moment.
-	 * Need to figure out if we should do this async or sync to extend
-	 * it to all types of uris.
-	 */
-	if (directory->details->location == NULL ||
-	    !g_file_is_native (directory->details->location)) {
-		return;
-	}
-	
-	child = g_file_get_child (directory->details->location, ".hidden");
-
-	type = G_FILE_TYPE_UNKNOWN;
-	
-	info = g_file_query_info (child, G_FILE_ATTRIBUTE_STANDARD_TYPE, 0, NULL, NULL);
-	if (info != NULL) {
-		type = g_file_info_get_file_type (info);
-		g_object_unref (info);
-	}
-	
-	if (type != G_FILE_TYPE_REGULAR) {
-		g_object_unref (child);
-		return;
-	}
-
-	if (!g_file_load_contents (child, NULL, &file_contents, &file_size, NULL, NULL)) {
-		g_object_unref (child);
-		return;
-	}
-
-	g_object_unref (child);
-
-	if (directory->details->hidden_file_hash == NULL) {
-		directory->details->hidden_file_hash =
-			g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-	}
-	
-	/* Now parse the data */
-	i = 0;
-	while (i < file_size) {
-		int start;
-
-		start = i;
-		while (i < file_size && file_contents[i] != '\n') {
-			i++;
-		}
-
-		if (i > start) {
-			char *hidden_filename;
-		
-			hidden_filename = g_strndup (file_contents + start, i - start);
-			g_hash_table_insert (directory->details->hidden_file_hash,
-					     hidden_filename, hidden_filename);
-		}
-
-		i++;
-		
-	}
-
-	g_free (file_contents);
-}
-
-static void
 directory_load_state_free (DirectoryLoadState *state)
 {
 	if (state->enumerator) {
@@ -2187,23 +2111,7 @@ start_monitoring_file_list (NemoDirectory *directory)
 		nemo_directory_get_corresponding_file (directory);
 	state->load_directory_file->details->loading_directory = TRUE;
 
-	read_dot_hidden_file (directory);
-	
-	/* Hack to work around kde trash dir */
-	if (kde_trash_dir_name != NULL && nemo_directory_is_desktop_directory (directory)) {
-		char *fn;
 
-		if (directory->details->hidden_file_hash == NULL) {
-			directory->details->hidden_file_hash =
-				g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-		}
-		
-		fn = g_strdup (kde_trash_dir_name);
-		g_hash_table_insert (directory->details->hidden_file_hash,
-				     fn, fn);
-	}
-
-	
 #ifdef DEBUG_LOAD_DIRECTORY
 	g_message ("load_directory called to monitor file list of %p", directory->details->location);
 #endif
@@ -2298,6 +2206,8 @@ void
 nemo_directory_force_reload_internal (NemoDirectory     *directory,
 					  NemoFileAttributes file_attributes)
 {
+	nemo_profile_start (NULL);
+
 	/* invalidate attributes that are getting reloaded for all files */
 	nemo_directory_invalidate_file_attributes (directory, file_attributes);
 
@@ -2310,6 +2220,8 @@ nemo_directory_force_reload_internal (NemoDirectory     *directory,
 
 	add_all_files_to_work_queue (directory);
 	nemo_directory_async_state_changed (directory);
+
+	nemo_profile_end (NULL);
 }
 
 static gboolean
@@ -2666,6 +2578,7 @@ deep_count_one (DeepCountState *state,
 	NemoFile *file;
 	GFile *subdir;
 	gboolean is_seen_inode;
+	const char *fs_id;
     gboolean hidden;
 	is_seen_inode = seen_inode (state, info);
 	if (!is_seen_inode) {
@@ -2684,10 +2597,13 @@ deep_count_one (DeepCountState *state,
             file->details->deep_directory_count += 1;
         }
 		/* Record the fact that we have to descend into this directory. */
-
-		subdir = g_file_get_child (state->deep_count_location, g_file_info_get_name (info));
-		state->deep_count_subdirectories = g_list_prepend
-			(state->deep_count_subdirectories, subdir);
+		fs_id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+		if (g_strcmp0 (fs_id, state->fs_id) == 0) {
+			/* only if it is on the same filesystem */
+			subdir = g_file_get_child (state->deep_count_location, g_file_info_get_name (info));
+			state->deep_count_subdirectories = g_list_prepend
+				(state->deep_count_subdirectories, subdir);
+		}
 	} else {
 		/* Even non-regular files count as files. */
         if (hidden) {
@@ -2719,6 +2635,7 @@ deep_count_state_free (DeepCountState *state)
 	}
 	g_list_free_full (state->deep_count_subdirectories, g_object_unref);
 	g_array_free (state->seen_deep_count_inodes, TRUE);
+	g_free (state->fs_id);
 	g_free (state);
 }
 
@@ -2865,6 +2782,7 @@ deep_count_load (DeepCountState *state, GFile *location)
 					 G_FILE_ATTRIBUTE_STANDARD_SIZE ","
 					 G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
 					 G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
+					 G_FILE_ATTRIBUTE_ID_FILESYSTEM ","
 					 G_FILE_ATTRIBUTE_UNIX_INODE,
 					 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, /* flags */
 					 G_PRIORITY_LOW, /* prio */
@@ -2893,6 +2811,25 @@ deep_count_stop (NemoDirectory *directory)
 		/* The count is not wanted, so stop it. */
 		deep_count_cancel (directory);
 	}
+}
+
+static void
+deep_count_got_info (GObject *source_object,
+		     GAsyncResult *res,
+		     gpointer user_data)
+{
+	GFileInfo *info;
+	const char *id;
+	GFile *file = (GFile *)source_object;
+	DeepCountState *state = (DeepCountState *)user_data;
+
+	info = g_file_query_info_finish (file, res, NULL);
+	if (info != NULL) {
+		id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+		state->fs_id = g_strdup (id);
+		g_object_unref (info);
+	}
+	deep_count_load (state, file);
 }
 
 static void
@@ -2939,11 +2876,18 @@ deep_count_start (NemoDirectory *directory,
 	state->directory = directory;
 	state->cancellable = g_cancellable_new ();
 	state->seen_deep_count_inodes = g_array_new (FALSE, TRUE, sizeof (guint64));
+	state->fs_id = NULL;
 
 	directory->details->deep_count_in_progress = state;
 	
 	location = nemo_file_get_location (file);
-	deep_count_load (state, location);
+	g_file_query_info_async (location,
+				 G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+				 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+				 G_PRIORITY_DEFAULT,
+				 NULL,
+				 deep_count_got_info,
+				 state);
 	g_object_unref (location);
 }
 
@@ -3891,7 +3835,7 @@ get_pixbuf_for_content (goffset file_len,
 	res = TRUE;
 	while (res && file_len > 0) {
 		chunk_len = file_len;
-		res = gdk_pixbuf_loader_write (loader, file_contents, chunk_len, NULL);
+		res = gdk_pixbuf_loader_write (loader, (guchar *) file_contents, chunk_len, NULL);
 		file_contents += chunk_len;
 		file_len -= chunk_len;
 	}
