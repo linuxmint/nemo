@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Anders Carlsson <andersca@imendio.com>
  *
@@ -25,7 +24,10 @@
 #define NEMO_SEARCH_ENGINE_H
 
 #include <glib-object.h>
-#include <libnemo-private/nemo-query.h>
+
+#include <libnemo-private/nemo-directory.h>
+#include <libnemo-private/nemo-search-engine-model.h>
+#include <libnemo-private/nemo-search-engine-simple.h>
 
 #define NEMO_TYPE_SEARCH_ENGINE		(nemo_search_engine_get_type ())
 #define NEMO_SEARCH_ENGINE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE, NemoSearchEngine))
@@ -43,31 +45,19 @@ typedef struct NemoSearchEngine {
 
 typedef struct {
 	GObjectClass parent_class;
-	
-	/* VTable */
-	void (*set_query) (NemoSearchEngine *engine, NemoQuery *query);
-	void (*start) (NemoSearchEngine *engine);
-	void (*stop) (NemoSearchEngine *engine);
-
-	/* Signals */
-	void (*hits_added) (NemoSearchEngine *engine, GList *hits);
-	void (*hits_subtracted) (NemoSearchEngine *engine, GList *hits);
-	void (*finished) (NemoSearchEngine *engine);
-	void (*error) (NemoSearchEngine *engine, const char *error_message);
 } NemoSearchEngineClass;
 
-GType          nemo_search_engine_get_type  (void);
-gboolean       nemo_search_engine_enabled (void);
+GType                 nemo_search_engine_get_type           (void);
 
-NemoSearchEngine* nemo_search_engine_new       (void);
+NemoSearchEngine *nemo_search_engine_new                (void);
+NemoSearchEngineModel *
+                      nemo_search_engine_get_model_provider (NemoSearchEngine *engine);
 
-void           nemo_search_engine_set_query (NemoSearchEngine *engine, NemoQuery *query);
-void	       nemo_search_engine_start (NemoSearchEngine *engine);
-void	       nemo_search_engine_stop (NemoSearchEngine *engine);
+#ifndef NEMO_SEARCH_ENGINE_SIMPLE_H
+#error no hallo
+#endif
 
-void	       nemo_search_engine_hits_added (NemoSearchEngine *engine, GList *hits);
-void	       nemo_search_engine_hits_subtracted (NemoSearchEngine *engine, GList *hits);
-void	       nemo_search_engine_finished (NemoSearchEngine *engine);
-void	       nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message);
+NemoSearchEngineSimple *
+                      nemo_search_engine_get_simple_provider (NemoSearchEngine *engine);
 
 #endif /* NEMO_SEARCH_ENGINE_H */

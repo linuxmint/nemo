@@ -15,6 +15,8 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "nemo-widget-menu-item.h"
 #include "nemo-widget-action.h"
 

@@ -17,9 +17,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
   
    Author: Alexander Larsson <alexl@redhat.com>
 */
@@ -477,11 +475,11 @@ update_desktop_directory (NemoDesktopDirectory *desktop)
 	g_free (desktop_uri);
 	g_free (desktop_path);
 
-	g_signal_connect_object (real_directory, "done_loading",
+	g_signal_connect_object (real_directory, "done-loading",
 				 G_CALLBACK (done_loading_callback), desktop, 0);
-	g_signal_connect_object (real_directory, "files_added",
+	g_signal_connect_object (real_directory, "files-added",
 				 G_CALLBACK (forward_files_added_cover), desktop, 0);
-	g_signal_connect_object (real_directory, "files_changed",
+	g_signal_connect_object (real_directory, "files-changed",
 				 G_CALLBACK (forward_files_changed_cover), desktop, 0);
 
 	desktop->details->real_directory = real_directory;
@@ -506,10 +504,6 @@ nemo_desktop_directory_init (NemoDesktopDirectory *desktop)
 							    NULL, (GDestroyNotify)merged_monitor_destroy);
 
 	update_desktop_directory (NEMO_DESKTOP_DIRECTORY (desktop));
-
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK(desktop_directory_changed_callback),
-				  desktop);
 }
 
 static void

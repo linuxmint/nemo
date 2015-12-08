@@ -16,8 +16,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Cosimo Cecchi <cosimoc@redhat.com>
  */
@@ -37,7 +36,7 @@ enum {
 
 static NemoProgressInfoManager *singleton = NULL;
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (NemoProgressInfoManager, nemo_progress_info_manager,
                G_TYPE_OBJECT);

@@ -17,9 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * License along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ettore Perazzoli
  * 	    Darin Adler <darin@bentspoon.com>
@@ -58,6 +56,8 @@ void nemo_view_handle_raw_drop          (NemoView  *view,
 					     GdkDragAction  action,
 					     int            x,
 					     int            y);
+void nemo_view_handle_hover             (NemoView  *view,
+					     const char    *target_uri);
 
 void nemo_view_drop_proxy_received_uris (NemoView  *view,
 					     const GList   *uris,

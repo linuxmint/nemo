@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  *
@@ -54,22 +53,21 @@ typedef struct {
 			  NemoQuery        *query,
 			  gboolean              reload);
 	void (* cancel)   (NemoQueryEditor *editor);
+	void (* activated) (NemoQueryEditor *editor);
 } NemoQueryEditorClass;
 
 #include "nemo-window-slot.h"
 
 GType      nemo_query_editor_get_type     	   (void);
 GtkWidget* nemo_query_editor_new          	   (void);
-void       nemo_query_editor_set_default_query (NemoQueryEditor *editor);
 
-void	   nemo_query_editor_grab_focus (NemoQueryEditor *editor);
-void       nemo_query_editor_clear_query (NemoQueryEditor *editor);
+gboolean       nemo_query_editor_handle_event (NemoQueryEditor *editor,
+						   GdkEventKey         *event);
 
 NemoQuery *nemo_query_editor_get_query   (NemoQueryEditor *editor);
 void           nemo_query_editor_set_query   (NemoQueryEditor *editor,
 						  NemoQuery       *query);
 GFile *        nemo_query_editor_get_location (NemoQueryEditor *editor);
-void           nemo_query_editor_set_visible (NemoQueryEditor *editor,
-						  gboolean             visible);
-
+void           nemo_query_editor_set_location (NemoQueryEditor *editor,
+						   GFile               *location);
 #endif /* NEMO_QUERY_EDITOR_H */

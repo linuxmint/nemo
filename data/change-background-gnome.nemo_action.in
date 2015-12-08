@@ -1,0 +1,18 @@
+[Nemo Action]
+
+Name=Change Desktop _Background
+
+Comment=Change the Gnome desktop background
+
+Exec=gnome-control-center background
+
+Selection=None
+
+Icon-Name=gnome-settings-background
+
+Extensions=any;
+
+Dependencies=gnome-control-center;
+
+Conditions=desktop;dbus org.gnome.Shell.Screencast;
+

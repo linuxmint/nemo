@@ -16,9 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Amos Brocco <amos.brocco@gmail.com>
  *          Cosimo Cecchi <cosimoc@redhat.com>
@@ -258,8 +256,8 @@ nemo_file_undo_info_get_strings (NemoFileUndoInfo *self,
 				     gchar **redo_description)
 {
 	return NEMO_FILE_UNDO_INFO_CLASS (G_OBJECT_GET_CLASS (self))->strings_func (self,
-											undo_label, undo_description,
-											redo_label, redo_description);
+										 undo_label, undo_description,
+										 redo_label, redo_description);
 }
 
 static void
@@ -446,10 +444,10 @@ ext_strings_func (NemoFileUndoInfo *info,
 		}
 	} else if (op_type == NEMO_FILE_UNDO_OP_CREATE_LINK) {
 		if (count > 1) {
-			*undo_description = g_strdup_printf (ngettext ("Delete links to %d item",
+			*undo_description = g_strdup_printf (ngettext ("Delete link to %d item",
 								       "Delete links to %d items", count),
 							     count);
-			*redo_description = g_strdup_printf (ngettext ("Create links to %d item",
+			*redo_description = g_strdup_printf (ngettext ("Create link to %d item",
 								       "Create links to %d items", count),
 							     count);
 		} else {
@@ -1104,11 +1102,9 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 		GFileInfo *info;
 		gpointer lookupvalue;
 		GFile *item;
-		GTimeVal timeval;
 		glong trash_time, orig_trash_time;
 		const char *origpath;
 		GFile *origfile;
-		const char *time_string;
 
 		while ((info = g_file_enumerator_next_file (enumerator, NULL, &error)) != NULL) {
 			/* Retrieve the original file uri */
@@ -1119,13 +1115,21 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 
 			if (lookupvalue) {
 				orig_trash_time = GPOINTER_TO_SIZE (lookupvalue);
-				time_string = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
+				trash_time = 0;
+#if GLIB_CHECK_VERSION (2, 36, 0)
+				GDateTime *date = g_file_info_get_deletion_date (info);
+				if (date) {
+					trash_time = g_date_time_to_unix (date);
+					g_date_time_unref (date);
+				}
+#else
+				const char *time_string = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
 				if (time_string != NULL) {
+					GTimeVal timeval;
 					g_time_val_from_iso8601 (time_string, &timeval);
 					trash_time = timeval.tv_sec;
-				} else {
-					trash_time = 0;
 				}
+#endif 
 
 				if (trash_time == orig_trash_time) {
 					/* File in the trash */

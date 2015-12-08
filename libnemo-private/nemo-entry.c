@@ -19,9 +19,7 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -29,20 +27,17 @@
 
 #include <string.h>
 #include "nemo-global-preferences.h"
-#include "nemo-undo-signal-handlers.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
 struct NemoEntryDetails {
-	gboolean user_edit;
 	gboolean special_tab_handling;
 
 	guint select_idle_id;
 };
 
 enum {
-	USER_CHANGED,
 	SELECTION_CHANGED,
 	LAST_SIGNAL
 };
@@ -60,10 +55,6 @@ static void
 nemo_entry_init (NemoEntry *entry)
 {
 	entry->details = g_new0 (NemoEntryDetails, 1);
-	
-	entry->details->user_edit = TRUE;
-
-	nemo_undo_set_up_nemo_entry_for_undo (entry);
 }
 
 GtkWidget *
@@ -249,10 +240,7 @@ nemo_entry_set_text (NemoEntry *entry, const gchar *text)
 {
 	g_return_if_fail (NEMO_IS_ENTRY (entry));
 
-	entry->details->user_edit = FALSE;
 	gtk_entry_set_text (GTK_ENTRY (entry), text);
-	entry->details->user_edit = TRUE;
-	
 	g_signal_emit (entry, signals[SELECTION_CHANGED], 0);
 }
 
@@ -300,15 +288,6 @@ static void
 nemo_entry_insert_text (GtkEditable *editable, const gchar *text,
 			    int length, int *position)
 {
-	NemoEntry *entry;
-
-	entry = NEMO_ENTRY(editable);
-
-	/* Fire off user changed signals */
-	if (entry->details->user_edit) {
-		g_signal_emit (editable, signals[USER_CHANGED], 0);
-	}
-
 	parent_editable_interface->insert_text (editable, text, length, position);
 
 	g_signal_emit (editable, signals[SELECTION_CHANGED], 0);
@@ -317,15 +296,6 @@ nemo_entry_insert_text (GtkEditable *editable, const gchar *text,
 static void 
 nemo_entry_delete_text (GtkEditable *editable, int start_pos, int end_pos)
 {
-	NemoEntry *entry;
-	
-	entry = NEMO_ENTRY (editable);
-
-	/* Fire off user changed signals */
-	if (entry->details->user_edit) {
-		g_signal_emit (editable, signals[USER_CHANGED], 0);
-	}
-
 	parent_editable_interface->delete_text (editable, start_pos, end_pos);
 
 	g_signal_emit (editable, signals[SELECTION_CHANGED], 0);
@@ -385,16 +355,8 @@ nemo_entry_class_init (NemoEntryClass *class)
 	gobject_class->finalize = nemo_entry_finalize;
 
 	/* Set up signals */
-	signals[USER_CHANGED] = g_signal_new
-		("user_changed",
-		 G_TYPE_FROM_CLASS (class),
-		 G_SIGNAL_RUN_LAST,
-		 G_STRUCT_OFFSET (NemoEntryClass, user_changed),
-		 NULL, NULL,
-		 g_cclosure_marshal_VOID__VOID,
-		 G_TYPE_NONE, 0);
 	signals[SELECTION_CHANGED] = g_signal_new
-		("selection_changed",
+		("selection-changed",
 		 G_TYPE_FROM_CLASS (class),
 		 G_SIGNAL_RUN_LAST,
 		 G_STRUCT_OFFSET (NemoEntryClass, selection_changed),

@@ -12,8 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Akshay Gupta <kitallis@gmail.com>
  *          Federico Mena Quintero <federico@gnome.org>
@@ -24,6 +23,10 @@
 #define __NEMO_FREEDESKTOP_DBUS_H__
 
 #include <glib-object.h>
+
+#define NEMO_FDO_DBUS_IFACE "org.freedesktop.FileManager1"
+#define NEMO_FDO_DBUS_NAME  "org.freedesktop.FileManager1"
+#define NEMO_FDO_DBUS_PATH  "/org/freedesktop/FileManager1"
 
 #define NEMO_TYPE_FREEDESKTOP_DBUS nemo_freedesktop_dbus_get_type()
 #define NEMO_FREEDESKTOP_DBUS(obj) \

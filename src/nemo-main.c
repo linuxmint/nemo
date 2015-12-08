@@ -17,8 +17,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Elliot Lee <sopwith@redhat.com>,
  *          Darin Adler <darin@bentspoon.com>,
@@ -75,7 +74,9 @@ main (int argc, char *argv[])
 	mallopt (M_MMAP_THRESHOLD, 128 *1024);
 #endif
 
+#if !GLIB_CHECK_VERSION (2, 35, 1)
 	g_type_init ();
+#endif
 
 	/* This will be done by gtk+ later, but for now, force it to GNOME */
 	g_desktop_app_info_set_desktop_env ("GNOME");
@@ -95,13 +96,13 @@ main (int argc, char *argv[])
 	xmp_init();
 #endif
 
-	/* Run the nemo application. */
-	application = nemo_application_get_singleton ();
+	/* Run the nautilus application. */
+	application = nemo_application_new ();
 
-    /* hold indefinitely if we're asked to persist */
-    if (g_getenv ("NEMO_PERSIST") != NULL) {
-        g_application_hold (G_APPLICATION (application));
-    }
+	/* hold indefinitely if we're asked to persist */
+	if (g_getenv ("NEMO_PERSIST") != NULL) {
+		g_application_hold (G_APPLICATION (application));
+	}
 
 	retval = g_application_run (G_APPLICATION (application),
 				    argc, argv);

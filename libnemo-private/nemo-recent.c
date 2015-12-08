@@ -13,11 +13,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, 
- * Boston, MA 02110-1335, USA. 
+ * along with this program; if not, see <http://www.gnu.org/licenses/>. 
  */
 
+#include "config.h"
 #include "nemo-recent.h"
 
 #include <eel/eel-vfs-extensions.h>
@@ -43,15 +42,15 @@ nemo_recent_add_file (NemoFile *file,
 	GtkRecentData recent_data;
 	char *uri;
 
-    uri = nemo_file_get_activation_uri (file);
-    if (uri == NULL) {
-        uri = nemo_file_get_uri (file);
-    }
+	uri = nemo_file_get_activation_uri (file);
+	if (uri == NULL) {
+		uri = nemo_file_get_uri (file);
+	}
 
 	/* do not add trash:// etc */
 	if (eel_uri_is_trash (uri)  ||
 	    eel_uri_is_search (uri) ||
-        eel_uri_is_recent (uri) ||
+	    eel_uri_is_recent (uri) ||
 	    eel_uri_is_desktop (uri)) {
 		g_free (uri);
 		return;

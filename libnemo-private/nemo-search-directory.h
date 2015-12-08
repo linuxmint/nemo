@@ -17,9 +17,7 @@
    General Public License for more details.
   
    You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef NEMO_SEARCH_DIRECTORY_H
@@ -55,16 +53,23 @@ GType   nemo_search_directory_get_type             (void);
 
 char   *nemo_search_directory_generate_new_uri     (void);
 
-NemoSearchDirectory *nemo_search_directory_new_from_saved_search (const char *uri);
-
+void           nemo_search_directory_set_saved_search (NemoSearchDirectory *search,
+							   GFile                   *saved_search);
 gboolean       nemo_search_directory_is_saved_search (NemoSearchDirectory *search);
 gboolean       nemo_search_directory_is_modified     (NemoSearchDirectory *search);
 void           nemo_search_directory_save_search     (NemoSearchDirectory *search);
 void           nemo_search_directory_save_to_file    (NemoSearchDirectory *search,
 							  const char              *save_file_uri);
+void    nemo_search_directory_stop_search (NemoSearchDirectory *search);
+gboolean nemo_search_directory_get_finished (NemoSearchDirectory *search);
 
 NemoQuery *nemo_search_directory_get_query       (NemoSearchDirectory *search);
 void           nemo_search_directory_set_query       (NemoSearchDirectory *search,
 							  NemoQuery           *query);
+
+NemoDirectory *
+               nemo_search_directory_get_base_model (NemoSearchDirectory  *search);
+void           nemo_search_directory_set_base_model (NemoSearchDirectory  *search,
+							 NemoDirectory        *base_model);
 
 #endif /* NEMO_SEARCH_DIRECTORY_H */

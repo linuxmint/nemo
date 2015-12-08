@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: John Sullivan <sullivan@eazel.com>
  */
@@ -61,10 +60,8 @@ struct NemoBookmarkListClass {
 };
 
 GType                   nemo_bookmark_list_get_type            (void);
-NemoBookmarkList *  nemo_bookmark_list_get_default                 (void);
+NemoBookmarkList *  nemo_bookmark_list_new                 (void);
 void                    nemo_bookmark_list_append              (NemoBookmarkList   *bookmarks,
-								    NemoBookmark *bookmark);
-gboolean                nemo_bookmark_list_contains            (NemoBookmarkList   *bookmarks,
 								    NemoBookmark *bookmark);
 void                    nemo_bookmark_list_delete_item_at      (NemoBookmarkList   *bookmarks,
 								    guint                   index);
@@ -78,12 +75,14 @@ GList *                 nemo_bookmark_list_get_for_uri         (NemoBookmarkList
 guint                   nemo_bookmark_list_length              (NemoBookmarkList   *bookmarks);
 NemoBookmark *      nemo_bookmark_list_item_at             (NemoBookmarkList   *bookmarks,
 								    guint                   index);
+NemoBookmark *      nemo_bookmark_list_item_with_location  (NemoBookmarkList *bookmarks,
+								    GFile                *location,
+								    guint                *index);
 void                    nemo_bookmark_list_move_item           (NemoBookmarkList *bookmarks,
 								    guint                 index,
 								    guint                 destination);
 void                    nemo_bookmark_list_sort_ascending           (NemoBookmarkList *bookmarks);
-void                    nemo_bookmark_list_set_window_geometry (NemoBookmarkList   *bookmarks,
-								    const char             *geometry);
-const char *            nemo_bookmark_list_get_window_geometry (NemoBookmarkList   *bookmarks);
+gboolean                nemo_bookmark_list_can_bookmark_location (NemoBookmarkList *list,
+								      GFile                *location);
 
 #endif /* NEMO_BOOKMARK_LIST_H */

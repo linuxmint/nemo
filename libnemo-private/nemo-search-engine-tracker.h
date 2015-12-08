@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Jamie McCracken (jamiemcc@gnome.org)
  *
@@ -36,16 +35,16 @@
 typedef struct NemoSearchEngineTrackerDetails NemoSearchEngineTrackerDetails;
 
 typedef struct NemoSearchEngineTracker {
-	NemoSearchEngine parent;
+	GObject parent;
 	NemoSearchEngineTrackerDetails *details;
 } NemoSearchEngineTracker;
 
 typedef struct {
-	NemoSearchEngineClass parent_class;
+	GObjectClass parent_class;
 } NemoSearchEngineTrackerClass;
 
 GType nemo_search_engine_tracker_get_type (void);
 
-NemoSearchEngine* nemo_search_engine_tracker_new (void);
+NemoSearchEngineTracker* nemo_search_engine_tracker_new (void);
 
 #endif /* NEMO_SEARCH_ENGINE_TRACKER_H */

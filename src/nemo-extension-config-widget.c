@@ -131,48 +131,55 @@ on_check_toggled(GtkWidget *button, ExtensionProxy *proxy)
 static void
 detect_extensions (NemoExtensionConfigWidget *widget)
 {
-    gchar *out = NULL;
+	gchar *out = NULL;
 
-    if (g_spawn_command_line_sync (LIBEXECDIR "/nemo-extensions-list",
-                                   &out,
-                                   NULL,
-                                   NULL,
-                                   NULL)) {
-        if (out) {
-            gchar **lines = g_strsplit (out, "\n", -1);
+	if (!g_spawn_command_line_sync (LIBEXECDIR "/nemo-extensions-list",
+		                        &out,
+		                        NULL,
+		                        NULL,
+		                        NULL)) {
+		// check if we where started by src/nemo from the source tree
+		if (!g_spawn_command_line_sync ("src/nemo-extensions-list",
+				                &out,
+				                NULL,
+				                NULL,
+				                NULL)) {
+			g_printerr ("oops could not run " LIBEXECDIR "/nemo-extensions-list\n");
+		}
+	}
 
-            g_free (out);
+	if (out) {
+	    gchar **lines = g_strsplit (out, "\n", -1);
 
-            int i;
-            for (i = 0; i < g_strv_length (lines); i++) {
-                if (g_str_has_prefix (lines[i], LINE_PREFIX)) {
-                    ExtensionProxy *p = g_slice_new0 (ExtensionProxy);
+	    g_free (out);
 
-                    gchar **split = g_strsplit (lines[i] + LINE_PREFIX_LEN, ":::", -1);
-                    gint len = g_strv_length (split);
+	    int i;
+	    for (i = 0; i < g_strv_length (lines); i++) {
+		if (g_str_has_prefix (lines[i], LINE_PREFIX)) {
+		    ExtensionProxy *p = g_slice_new0 (ExtensionProxy);
 
-                    if (len > 0) {
-                        p->name = g_strdup (split[0]);
-                    }
+		    gchar **split = g_strsplit (lines[i] + LINE_PREFIX_LEN, ":::", -1);
+		    gint len = g_strv_length (split);
 
-                    if (len == 3) {
-                        p->display_name = g_strdup (split[1]);
-                        p->desc = g_strdup (split[2]);
-                    } else {
-                        p->display_name = NULL;
-                        p->desc = NULL;
-                    }
+		    if (len > 0) {
+		        p->name = g_strdup (split[0]);
+		    }
 
-                    p->widget = widget;
-                    widget->current_extensions = g_list_append (widget->current_extensions, p);
-                    g_strfreev (split);
-                }
-            }
-            g_strfreev (lines);
-        }
-    } else {
-        g_printerr ("oops could not run nemo-extensions-list\n");
-    }
+		    if (len == 3) {
+		        p->display_name = g_strdup (split[1]);
+		        p->desc = g_strdup (split[2]);
+		    } else {
+		        p->display_name = NULL;
+		        p->desc = NULL;
+		    }
+
+		    p->widget = widget;
+		    widget->current_extensions = g_list_append (widget->current_extensions, p);
+		    g_strfreev (split);
+		}
+	    }
+	    g_strfreev (lines);
+	}
 }
 
 static void
@@ -191,7 +198,7 @@ refresh_widget (NemoExtensionConfigWidget *widget)
         GtkWidget *empty_label = gtk_label_new (NULL);
         gchar *markup = NULL;
 
-        markup = g_strdup_printf ("<i>%s</i>", _("No extensions found"));
+        markup = g_strdup_printf ("<i>%s " NEMO_EXTENSIONDIR "</i>", _("No extensions found in"));
 
         gtk_label_set_markup (GTK_LABEL (empty_label), markup);
         g_free (markup);

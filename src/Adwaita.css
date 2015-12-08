@@ -1,0 +1,58 @@
+.nemo-canvas-item {
+    border-radius: 5px;
+}
+
+.nemo-desktop.nemo-canvas-item {
+    color: @theme_selected_fg_color;
+    text-shadow: 1px 1px black;
+}
+
+.nemo-desktop.nemo-canvas-item:active {
+    color: @theme_text_color;
+}
+
+.nemo-desktop.nemo-canvas-item:selected {
+    color: @theme_selected_fg_color;
+}
+
+.nemo-desktop.nemo-canvas-item:active,
+.nemo-desktop.nemo-canvas-item:prelight,
+.nemo-desktop.nemo-canvas-item:selected {
+    text-shadow: none;
+}
+
+.nemo-desktop.nemo-canvas-item:selected:backdrop {
+    color: @theme_unfocused_selected_fg_color;
+}
+
+/* Floating status bar */
+.floating-bar {
+  padding: 2px;
+  background-color: @theme_base_color;
+  border-width: 1px;
+  border-style: solid solid none;
+  border-color: @borders;
+  border-radius: 3px 3px 0 0;
+}
+
+.floating-bar.bottom.left { /* axes left border and border radius */
+  border-left-style: none;
+  border-top-left-radius: 0;
+}
+.floating-bar.bottom.right { /* axes right border and border radius */
+  border-right-style: none;
+  border-top-right-radius: 0;
+}
+
+.floating-bar:backdrop {
+  background-color: @theme_unfocused_base_color;
+  border-color: @unfocused_borders;
+}
+
+.floating-bar .button {
+    padding: 4px;
+}
+
+.search-bar {
+    box-shadow: none;
+}

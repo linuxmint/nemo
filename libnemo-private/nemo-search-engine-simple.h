@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU General Public
  * License along with this program; see the file COPYING.  If not,
- * write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
- * Boston, MA 02110-1335, USA.
+ * see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  *
@@ -23,8 +22,6 @@
 
 #ifndef NEMO_SEARCH_ENGINE_SIMPLE_H
 #define NEMO_SEARCH_ENGINE_SIMPLE_H
-
-#include <libnemo-private/nemo-search-engine.h>
 
 #define NEMO_TYPE_SEARCH_ENGINE_SIMPLE		(nemo_search_engine_simple_get_type ())
 #define NEMO_SEARCH_ENGINE_SIMPLE(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SEARCH_ENGINE_SIMPLE, NemoSearchEngineSimple))
@@ -36,16 +33,16 @@
 typedef struct NemoSearchEngineSimpleDetails NemoSearchEngineSimpleDetails;
 
 typedef struct NemoSearchEngineSimple {
-	NemoSearchEngine parent;
+	GObject parent;
 	NemoSearchEngineSimpleDetails *details;
 } NemoSearchEngineSimple;
 
 typedef struct {
-	NemoSearchEngineClass parent_class;
+	GObjectClass parent_class;
 } NemoSearchEngineSimpleClass;
 
 GType          nemo_search_engine_simple_get_type  (void);
 
-NemoSearchEngine* nemo_search_engine_simple_new       (void);
+NemoSearchEngineSimple* nemo_search_engine_simple_new       (void);
 
 #endif /* NEMO_SEARCH_ENGINE_SIMPLE_H */

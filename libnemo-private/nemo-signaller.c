@@ -16,8 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, Boston, MA  02110-1335  USA
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: John Sullivan <sullivan@eazel.com>
  */
@@ -37,7 +36,6 @@ typedef GObjectClass NemoSignallerClass;
 enum {
 	HISTORY_LIST_CHANGED,
 	POPUP_MENU_CHANGED,
-	USER_DIRS_CHANGED,
 	MIME_DATA_CHANGED,
 	LAST_SIGNAL
 };
@@ -69,7 +67,7 @@ static void
 nemo_signaller_class_init (NemoSignallerClass *class)
 {
 	signals[HISTORY_LIST_CHANGED] =
-		g_signal_new ("history_list_changed",
+		g_signal_new ("history-list-changed",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              0,
@@ -77,15 +75,7 @@ nemo_signaller_class_init (NemoSignallerClass *class)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[POPUP_MENU_CHANGED] =
-		g_signal_new ("popup_menu_changed",
-		              G_TYPE_FROM_CLASS (class),
-		              G_SIGNAL_RUN_LAST,
-		              0,
-		              NULL, NULL,
-		              g_cclosure_marshal_VOID__VOID,
-		              G_TYPE_NONE, 0);
-	signals[USER_DIRS_CHANGED] =
-		g_signal_new ("user_dirs_changed",
+		g_signal_new ("popup-menu-changed",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              0,
@@ -93,7 +83,7 @@ nemo_signaller_class_init (NemoSignallerClass *class)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 	signals[MIME_DATA_CHANGED] =
-		g_signal_new ("mime_data_changed",
+		g_signal_new ("mime-data-changed",
 		              G_TYPE_FROM_CLASS (class),
 		              G_SIGNAL_RUN_LAST,
 		              0,

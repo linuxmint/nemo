@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the column COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: Dave Camp <dave@ximian.com>
 */
@@ -30,6 +29,22 @@
 #include <glib/gi18n.h>
 #include <libnemo-extension/nemo-column-provider.h>
 #include <libnemo-private/nemo-module.h>
+
+static const char *default_column_order[] = {
+	"name",
+	"size",
+	"type",
+	"date_modified",
+	"date_accessed",
+	"owner",
+	"group",
+	"permissions",
+	"octal_permissions",
+	"mime_type",
+	"selinux_context",
+	"where",
+	NULL
+};
 
 static GList *
 get_builtin_columns (void)
@@ -65,20 +80,23 @@ get_builtin_columns (void)
                            "label", _("Detailed Type"),
                            "description", _("The specific type of the file."),
                            NULL));
+
 	columns = g_list_append (columns,
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "date_modified",
 					       "attribute", "date_modified",
-					       "label", _("Date Modified"),
+					       "label", _("Modified"),
 					       "description", _("The date the file was modified."),
+					       "default-sort-order", GTK_SORT_DESCENDING,
 					       NULL));
 
 	columns = g_list_append (columns,
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "date_accessed",
 					       "attribute", "date_accessed",
-					       "label", _("Date Accessed"),
+					       "label", _("Accessed"),
 					       "description", _("The date the file was accessed."),
+					       "default-sort-order", GTK_SORT_DESCENDING,
 					       NULL));
 
 	columns = g_list_append (columns,
@@ -125,8 +143,8 @@ get_builtin_columns (void)
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "selinux_context",
 					       "attribute", "selinux_context",
-					       "label", _("SELinux Context"),
-					       "description", _("The SELinux security context of the file."),
+					       "label", _("Security Context"),
+					       "description", _("The security context of the file."),
 					       NULL));
 #endif
 	columns = g_list_append (columns,
@@ -190,6 +208,24 @@ get_trash_columns (void)
 	return nemo_column_list_copy (columns);
 }
 
+static GList *
+get_search_columns (void)
+{
+	static GList *columns = NULL;
+
+	if (columns == NULL) {
+		columns = g_list_append (columns,
+					 g_object_new (NEMO_TYPE_COLUMN,
+						       "name", "search_relevance",
+						       "attribute", "search_relevance",
+						       "label", _("Relevance"),
+						       "description", _("Relevance rank for search"),
+						       NULL));
+	}
+
+	return nemo_column_list_copy (columns);
+}
+
 GList *
 nemo_get_common_columns (void)
 {
@@ -210,6 +246,8 @@ nemo_get_all_columns (void)
 
 	columns = g_list_concat (nemo_get_common_columns (),
 	                         get_trash_columns ());
+	columns = g_list_concat (columns,
+				 get_search_columns ());
 
 	return columns;
 }
@@ -274,47 +312,63 @@ column_compare (NemoColumn *a, NemoColumn *b, char **column_order)
 {
 	int index_a;
 	int index_b;
-	char *name;
-	
-	g_object_get (G_OBJECT (a), "name", &name, NULL);
-	index_a = strv_index (column_order, name);
-	g_free (name);
+	char *name_a;
+	char *name_b;
+	int ret;
 
-	g_object_get (G_OBJECT (b), "name", &name, NULL);
-	index_b = strv_index (column_order, name);
-	g_free (name);
+	g_object_get (G_OBJECT (a), "name", &name_a, NULL);
+	index_a = strv_index (column_order, name_a);
+
+	g_object_get (G_OBJECT (b), "name", &name_b, NULL);
+	index_b = strv_index (column_order, name_b);
 
 	if (index_a == index_b) {
-		int ret;
-		char *label_a;
-		char *label_b;
+		int pos_a;
+		int pos_b;
+
+		pos_a = strv_index ((char **)default_column_order, name_a);
+		pos_b = strv_index ((char **)default_column_order, name_b);
+
+		if (pos_a == pos_b) {
+			char *label_a;
+			char *label_b;
 		
-		g_object_get (G_OBJECT (a), "label", &label_a, NULL);
-		g_object_get (G_OBJECT (b), "label", &label_b, NULL);
-		ret = strcmp (label_a, label_b);
-		g_free (label_a);
-		g_free (label_b);
-		
-		return ret;
+			g_object_get (G_OBJECT (a), "label", &label_a, NULL);
+			g_object_get (G_OBJECT (b), "label", &label_b, NULL);
+			ret = strcmp (label_a, label_b);
+			g_free (label_a);
+			g_free (label_b);
+		} else if (pos_a == -1) {
+			ret = 1;
+		} else if (pos_b == -1) {
+			ret = -1;
+		} else {
+			ret = index_a - index_b;
+		}
 	} else if (index_a == -1) {
-		return 1;
+		ret = 1;
 	} else if (index_b == -1) {
-		return -1;
+		ret = -1;
 	} else {
-		return index_a - index_b;
+		ret = index_a - index_b;
 	}
+
+	g_free (name_a);
+	g_free (name_b);
+
+	return ret;
 }
 
 GList *
 nemo_sort_columns (GList  *columns, 
 		       char  **column_order)
 {
-	if (!column_order) {
-		return NULL;
+	if (column_order == NULL) {
+		return columns;
 	}
 
 	return g_list_sort_with_data (columns,
 				      (GCompareDataFunc)column_compare,
 				      column_order);
 }
-		       
+

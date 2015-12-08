@@ -16,8 +16,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Suite 500, MA 02110-1335, USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: John Sullivan <sullivan@eazel.com>
  */
@@ -36,12 +35,10 @@
 #include "nemo-file-management-properties.h"
 #include "nemo-navigation-action.h"
 #include "nemo-notebook.h"
-#include "nemo-window-manage-views.h"
-#include "nemo-window-bookmarks.h"
 #include "nemo-window-private.h"
 #include "nemo-desktop-window.h"
-#include "nemo-location-bar.h"
-#include "nemo-icon-view.h"
+#include "nemo-location-entry.h"
+#include "nemo-canvas-view.h"
 #include "nemo-list-view.h"
 #include "nemo-toolbar.h"
 #include "nemo-plugin-manager.h"
@@ -59,7 +56,6 @@
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-module.h>
-#include <libnemo-private/nemo-undo-manager.h>
 #include <libnemo-private/nemo-program-choosing.h>
 #include <libnemo-private/nemo-search-directory.h>
 #include <libnemo-private/nemo-search-engine.h>
@@ -78,12 +74,14 @@ action_close_window_slot_callback (GtkAction *action,
 				   gpointer user_data)
 {
 	NemoWindow *window;
+	NemoWindowPane *pane;
 	NemoWindowSlot *slot;
 
 	window = NEMO_WINDOW (user_data);
 	slot = nemo_window_get_active_slot (window);
+	pane = nemo_window_slot_get_pane (slot);
 
-	nemo_window_pane_close_slot (slot->pane, slot);
+	nemo_window_pane_close_slot (pane, slot);
 }
 
 static void
@@ -91,11 +89,8 @@ action_connect_to_server_callback (GtkAction *action,
 				   gpointer user_data)
 {
 	NemoWindow *window = NEMO_WINDOW (user_data);
-	GtkWidget *dialog;
-
-	dialog = nemo_connect_server_dialog_new (window);
-
-	gtk_widget_show (dialog);
+    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+    nemo_application_connect_server (app, window);
 }
 
 static void
@@ -118,7 +113,7 @@ action_undo_callback (GtkAction *action,
 {
 	NemoApplication *app;
 
-	app = nemo_application_get_singleton ();
+	app = NEMO_APPLICATION (g_application_get_default ());
 	nemo_undo_manager_undo (app->undo_manager);
 }
 #endif
@@ -215,7 +210,7 @@ action_reload_callback (GtkAction *action,
 	NemoWindowSlot *slot;
 
 	slot = nemo_window_get_active_slot (NEMO_WINDOW (user_data));
-	nemo_window_slot_reload (slot);
+	nemo_window_slot_queue_reload (slot);
 }
 
 static NemoView *
@@ -345,31 +340,39 @@ action_nemo_manual_callback (GtkAction *action,
 	NemoWindow *window;
 	GError *error;
 	GtkWidget *dialog;
-	const char* helpuri;
+	char* helpuri;
+	char* helpprefix;
 	const char* name = gtk_action_get_name (action);
 
 	error = NULL;
 	window = NEMO_WINDOW (user_data);
+	
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity"))
+		helpprefix = "ubuntu-help";
+	else
+		helpprefix = "gnome-help";
 
 	if (g_str_equal (name, "NemoHelpSearch")) {
-		helpuri = "help:gnome-help/files-search";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-search", NULL);
 	} else if (g_str_equal (name,"NemoHelpSort")) {
-		helpuri = "help:gnome-help/files-sort";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-sort", NULL);
 	} else if (g_str_equal (name, "NemoHelpLost")) {
-		helpuri = "help:gnome-help/files-lost";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-lost", NULL);
 	} else if (g_str_equal (name, "NemoHelpShare")) {
-		helpuri = "help:gnome-help/files-share";
+		helpuri = g_strconcat ("help:", helpprefix, "/files-share", NULL);
 	} else {
-		helpuri = "help:gnome-help/files";
+		helpuri = g_strconcat ("help:", helpprefix, "/files", NULL);
 	}
 
 	if (NEMO_IS_DESKTOP_WINDOW (window)) {
-		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), "gnome-help", FALSE, NULL);
+		nemo_launch_application_from_command (gtk_window_get_screen (GTK_WINDOW (window)), helpprefix, FALSE, NULL);
 	} else {
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (window)),
 			      helpuri,
 			      gtk_get_current_event_time (), &error);
 	}
+	
+	g_free(helpuri);
 
 	if (error) {
 		dialog = gtk_message_dialog_new (GTK_WINDOW (window),
@@ -472,7 +475,7 @@ static void
 action_close_all_windows_callback (GtkAction *action, 
 				   gpointer user_data)
 {
-	nemo_application_close_all_windows (nemo_application_get_singleton ());
+	nemo_application_close_all_windows (NEMO_APPLICATION (g_application_get_default ()));
 }
 
 static void
@@ -516,7 +519,6 @@ action_split_view_same_location_callback (GtkAction *action,
 	if (location) {
 		nemo_window_slot_open_location (nemo_window_get_active_slot (window),
 						    location, 0);
-		g_object_unref (location);
 	}
 }
 
@@ -556,7 +558,7 @@ action_split_view_callback (GtkAction *action,
 
 		slot = nemo_window_get_active_slot (window);
 		if (slot != NULL) {
-			nemo_view_update_menus (slot->content_view);
+			nemo_view_update_menus (nemo_window_slot_get_view(slot));
 		}
 	}
 }
@@ -601,10 +603,6 @@ nemo_window_update_split_view_actions_sensitivity (NemoWindow *window)
 	/* same location */
 	action = gtk_action_group_get_action (action_group, "SplitViewSameLocation");
 	gtk_action_set_sensitive (action, have_multiple_panes && !next_pane_is_in_same_location);
-
-	/* clean up */
-	g_clear_object (&active_pane_location);
-	g_clear_object (&next_pane_location);
 }
 
 static void
@@ -675,14 +673,21 @@ static void
 action_add_bookmark_callback (GtkAction *action,
 			      gpointer user_data)
 {
-        nemo_window_add_bookmark_for_current_location (NEMO_WINDOW (user_data));
+	NemoWindow *window = user_data;
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	NemoWindowSlot *slot;
+
+	slot = nemo_window_get_active_slot (window);
+	nemo_bookmark_list_append (nemo_application_get_bookmarks (app),
+				       nemo_window_slot_get_bookmark (slot));
 }
 
 static void
 action_edit_bookmarks_callback (GtkAction *action, 
 				gpointer user_data)
 {
-        nemo_window_edit_bookmarks (NEMO_WINDOW (user_data));
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	nemo_application_edit_bookmarks (app, NEMO_WINDOW (user_data));
 }
 
 static void
@@ -757,7 +762,7 @@ action_new_window_callback (GtkAction *action,
     uri = nemo_window_slot_get_current_uri (nemo_window_get_active_slot (current_window));
     GFile *loc = g_file_new_for_uri (uri);
 
-	application = nemo_application_get_singleton ();
+	application = NEMO_APPLICATION (g_application_get_default ());
 
 	new_window = nemo_application_create_window (
 				application,
@@ -794,7 +799,7 @@ toggle_location_entry_setting (NemoWindow     *window,
     temp_toolbar_visible = pane->temporary_navigation_bar;
     default_toolbar_visible = g_settings_get_boolean (nemo_window_state,
                                                       NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
-    already_has_focus = nemo_location_bar_has_focus (NEMO_LOCATION_BAR (pane->location_bar));
+    already_has_focus = gtk_widget_has_focus (GTK_WIDGET (pane->location_entry));
 
     grab_focus_only = from_accel_or_menu && (pane->last_focus_widget == NULL || !already_has_focus) && current_view;
 
@@ -809,7 +814,7 @@ toggle_location_entry_setting (NemoWindow     *window,
         gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (button_action), !current_view);
         g_signal_handlers_unblock_by_func (button_action, action_toggle_location_entry_callback, window);
     } else {
-        nemo_window_pane_ensure_location_bar (pane);
+        nemo_window_pane_ensure_location_entry (pane);
     }
 }
 
@@ -857,7 +862,7 @@ action_icon_view_callback (GtkAction *action,
     NemoWindowSlot *slot;
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, NEMO_ICON_VIEW_ID);
+    nemo_window_slot_set_content_view (slot, NEMO_CANVAS_VIEW_ID);
     toolbar_set_view_button (ICON_VIEW, nemo_window_get_active_pane(window));
 }
 
@@ -883,18 +888,18 @@ action_compact_view_callback (GtkAction *action,
     NemoWindowSlot *slot;
     window = NEMO_WINDOW (user_data);
     slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, FM_COMPACT_VIEW_ID);
+    nemo_window_slot_set_content_view (slot, NEMO_COMPACT_VIEW_ID);
     toolbar_set_view_button (COMPACT_VIEW, nemo_window_get_active_pane(window));
 }
 
 guint
 toolbar_action_for_view_id (const char *view_id)
 {
-    if (g_strcmp0(view_id, NEMO_ICON_VIEW_ID) == 0) {
+    if (g_strcmp0(view_id, NEMO_CANVAS_VIEW_ID) == 0) {
         return ICON_VIEW;
     } else if (g_strcmp0(view_id, NEMO_LIST_VIEW_ID) == 0) {
         return LIST_VIEW;
-    } else if (g_strcmp0(view_id, FM_COMPACT_VIEW_ID) == 0) {
+    } else if (g_strcmp0(view_id, NEMO_COMPACT_VIEW_ID) == 0) {
         return COMPACT_VIEW;
     } else {
         return NULL_VIEW;
@@ -990,7 +995,7 @@ action_tabs_previous_callback (GtkAction *action,
 	NemoWindow *window = user_data;
 
 	pane = nemo_window_get_active_pane (window);
-	nemo_notebook_set_current_page_relative (NEMO_NOTEBOOK (pane->notebook), -1);
+	nemo_notebook_prev_page (NEMO_NOTEBOOK (pane->notebook));
 }
 
 static void
@@ -1001,7 +1006,7 @@ action_tabs_next_callback (GtkAction *action,
 	NemoWindow *window = user_data;
 
 	pane = nemo_window_get_active_pane (window);
-	nemo_notebook_set_current_page_relative (NEMO_NOTEBOOK (pane->notebook), 1);
+	nemo_notebook_next_page (NEMO_NOTEBOOK (pane->notebook));
 }
 
 static void
@@ -1060,7 +1065,7 @@ action_new_folder_callback (GtkAction *action,
     NemoWindow *window = user_data;
     NemoView *view = get_current_view (window);
 
-    nemo_view_new_folder (view);
+    nemo_view_new_folder (view, FALSE);
 }
 
 static void
@@ -1098,7 +1103,7 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Edit", NULL, N_("_Edit") },
   /* name, stock id, label */  { "View", NULL, N_("_View") },
   /* name, stock id, label */  { "Help", NULL, N_("_Help") },
-  /* name, stock id */         { "Close", GTK_STOCK_CLOSE,
+  /* name, stock id */         { NEMO_ACTION_CLOSE, GTK_STOCK_CLOSE,
   /* label, accelerator */       N_("_Close"), "<control>W",
   /* tooltip */                  N_("Close this folder"),
                                  G_CALLBACK (action_close_window_slot_callback) },
@@ -1115,17 +1120,14 @@ static const GtkActionEntry main_entries[] = {
                                  "<control>Z", N_("Undo the last text change"),
                                  G_CALLBACK (action_undo_callback) },
 #endif
-  /* name, stock id, label */  { "Up", GTK_STOCK_GO_UP, N_("Open _Parent"),
+  /* name, stock id, label */  { NEMO_ACTION_UP, GTK_STOCK_GO_UP, N_("Open _Parent"),
                                  "<alt>Up", N_("Open the parent folder"),
                                  G_CALLBACK (action_up_callback) },
-  /* name, stock id, label */  { "UpAccel", NULL, "UpAccel",
-                                 "", NULL,
-                                 G_CALLBACK (action_up_callback) },
-  /* name, stock id */         { "Stop", GTK_STOCK_STOP,
+  /* name, stock id */         { NEMO_ACTION_STOP, GTK_STOCK_STOP,
   /* label, accelerator */       N_("_Stop"), NULL,
   /* tooltip */                  N_("Stop loading the current location"),
                                  G_CALLBACK (action_stop_callback) },
-  /* name, stock id */         { "Reload", GTK_STOCK_REFRESH,
+  /* name, stock id */         { NEMO_ACTION_RELOAD, GTK_STOCK_REFRESH,
   /* label, accelerator */       N_("_Reload"), "<control>R",
   /* tooltip */                  N_("Reload the current location"),
                                  G_CALLBACK (action_reload_callback) },
@@ -1153,7 +1155,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_About"), NULL,
   /* tooltip */                  N_("Display credits for the creators of Nemo"),
                                  G_CALLBACK (action_about_nemo_callback) },
-  /* name, stock id */         { "Zoom In", GTK_STOCK_ZOOM_IN,
+  /* name, stock id */         { NEMO_ACTION_ZOOM_IN, GTK_STOCK_ZOOM_IN,
   /* label, accelerator */       N_("Zoom _In"), "<control>plus",
   /* tooltip */                  N_("Increase the view size"),
                                  G_CALLBACK (action_zoom_in_callback) },
@@ -1165,7 +1167,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       "ZoomInAccel2", "<control>KP_Add",
   /* tooltip */                  NULL,
                                  G_CALLBACK (action_zoom_in_callback) },
-  /* name, stock id */         { "Zoom Out", GTK_STOCK_ZOOM_OUT,
+  /* name, stock id */         { NEMO_ACTION_ZOOM_OUT, GTK_STOCK_ZOOM_OUT,
   /* label, accelerator */       N_("Zoom _Out"), "<control>minus",
   /* tooltip */                  N_("Decrease the view size"),
                                  G_CALLBACK (action_zoom_out_callback) },
@@ -1173,12 +1175,12 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       "ZoomOutAccel", "<control>KP_Subtract",
   /* tooltip */                  NULL,
                                  G_CALLBACK (action_zoom_out_callback) },
-  /* name, stock id */         { "Zoom Normal", GTK_STOCK_ZOOM_100,
+  /* name, stock id */         { NEMO_ACTION_ZOOM_NORMAL, GTK_STOCK_ZOOM_100,
   /* label, accelerator */       N_("Normal Si_ze"), "<control>0",
   /* tooltip */                  N_("Use the normal view size"),
                                  G_CALLBACK (action_zoom_normal_callback) },
   /* name, stock id */         { "Connect to Server", NULL, 
-  /* label, accelerator */       N_("Connect to _Server..."), NULL,
+  /* label, accelerator */       N_("Connect to _Server…"), NULL,
   /* tooltip */                  N_("Connect to a remote computer or shared disk"),
                                  G_CALLBACK (action_connect_to_server_callback) },
   /* name, stock id */         { "Home", NEMO_ICON_HOME,
@@ -1207,10 +1209,10 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "New Window", "window-new", N_("New _Window"),
                                  "<control>N", N_("Open another Nemo window for the displayed location"),
                                  G_CALLBACK (action_new_window_callback) },
-  /* name, stock id, label */  { "New Tab", "tab-new", N_("New _Tab"),
+  /* name, stock id, label */  { NEMO_ACTION_NEW_TAB, "tab-new", N_("New _Tab"),
                                  "<control>T", N_("Open another tab for the displayed location"),
                                  G_CALLBACK (action_new_tab_callback) },
-  /* name, stock id, label */  { "Close All Windows", NULL, N_("Close _All Windows"),
+  /* name, stock id, label */  { NEMO_ACTION_CLOSE_ALL_WINDOWS, NULL, N_("Close _All Windows"),
                                  "<control>Q", N_("Close all Navigation windows"),
                                  G_CALLBACK (action_close_all_windows_callback) },
   /* name, stock id, label */  { NEMO_ACTION_BACK, GTK_STOCK_GO_BACK, N_("_Back"),
@@ -1228,10 +1230,10 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "SplitViewSameLocation", NULL, N_("Sa_me Location as Other Pane"),
 				 NULL, N_("Go to the same location as in the extra pane"),
 				 G_CALLBACK (action_split_view_same_location_callback) },
-  /* name, stock id, label */  { "Add Bookmark", GTK_STOCK_ADD, N_("_Add Bookmark"),
+  /* name, stock id, label */  { NEMO_ACTION_ADD_BOOKMARK, GTK_STOCK_ADD, N_("_Add Bookmark"),
                                  "<control>d", N_("Add a bookmark for the current location to this menu"),
                                  G_CALLBACK (action_add_bookmark_callback) },
-  /* name, stock id, label */  { "Edit Bookmarks", NULL, N_("_Edit Bookmarks..."),
+  /* name, stock id, label */  { NEMO_ACTION_EDIT_BOOKMARKS, NULL, N_("_Edit Bookmarks…"),
                                  "<control>b", N_("Display a window that allows editing the bookmarks in this menu"),
                                  G_CALLBACK (action_edit_bookmarks_callback) },
   { "TabsPrevious", NULL, N_("_Previous Tab"), "<control>Page_Up",
@@ -1250,7 +1252,7 @@ static const GtkActionEntry main_entries[] = {
 };
 
 static const GtkToggleActionEntry main_toggle_entries[] = {
-  /* name, stock id */         { "Show Hidden Files", NULL,
+  /* name, stock id */         { NEMO_ACTION_SHOW_HIDDEN_FILES, NULL,
   /* label, accelerator */       N_("Show _Hidden Files"), "<control>H",
   /* tooltip */                  N_("Toggle the display of hidden files in the current window"),
                                  G_CALLBACK (action_show_hidden_files_callback),
@@ -1276,7 +1278,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
                              NULL,
   /* is_active */            TRUE },
   /* name, stock id */     { "Search", "edit-find",
-  /* label, accelerator */   N_("_Search for Files..."), "<control>f",
+  /* label, accelerator */   N_("_Search for Files…"), "<control>f",
   /* tooltip */              N_("Search documents and folders by name"),
 			     NULL,
   /* is_active */            FALSE },
@@ -1596,7 +1598,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
 	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+				      g_settings_get_boolean (gtk_filechooser_preferences, NEMO_PREFERENCES_SHOW_HIDDEN));
 	g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
 
     g_signal_connect_object ( NEMO_WINDOW (window), "notify::sidebar-view-id",
@@ -1631,7 +1633,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	gtk_window_add_accel_group (GTK_WINDOW (window),
 				    gtk_ui_manager_get_accel_group (ui_manager));
 	
-	g_signal_connect (ui_manager, "connect_proxy",
+	g_signal_connect (ui_manager, "connect-proxy",
 			  G_CALLBACK (connect_proxy_cb), window);
 	g_signal_connect (ui_manager, "disconnect_proxy",
 			  G_CALLBACK (disconnect_proxy_cb), window);
@@ -1653,6 +1655,7 @@ nemo_window_finalize_menus (NemoWindow *window)
 static GList *
 get_extension_menus (NemoWindow *window)
 {
+	NemoFile *file;
 	NemoWindowSlot *slot;
 	GList *providers;
 	GList *items;
@@ -1662,6 +1665,7 @@ get_extension_menus (NemoWindow *window)
 	items = NULL;
 
 	slot = nemo_window_get_active_slot (window);
+	file = nemo_window_slot_get_file (slot);
 
 	for (l = providers; l != NULL; l = l->next) {
 		NemoMenuProvider *provider;
@@ -1670,7 +1674,7 @@ get_extension_menus (NemoWindow *window)
 		provider = NEMO_MENU_PROVIDER (l->data);
 		file_items = nemo_menu_provider_get_background_items (provider,
 									  GTK_WIDGET (window),
-									  slot->viewed_file);
+									  file);
 		items = g_list_concat (items, file_items);
 	}
 
@@ -1741,6 +1745,8 @@ add_extension_menu_items (NemoWindow *window,
 			nemo_menu_item_list_free (children);
 			g_free (subdir);
 		}			
+
+                g_object_unref (action);
 	}
 }
 
