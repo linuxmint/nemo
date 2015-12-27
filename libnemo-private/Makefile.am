@@ -75,6 +75,8 @@ libnemo_private_la_SOURCES = \
 	nemo-column-chooser.h \
 	nemo-column-utilities.c \
 	nemo-column-utilities.h \
+	nemo-context-menu-menu-item.c \
+	nemo-context-menu-menu-item.h \
 	nemo-dbus-manager.c \
 	nemo-dbus-manager.h \
 	nemo-debug.c \
