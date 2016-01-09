@@ -41,6 +41,7 @@ typedef struct {
 	GFile *to;
 	GdkPoint point;
 	int screen;
+    int monitor;
 } NemoFileChange;
 
 typedef struct {
@@ -147,7 +148,8 @@ nemo_file_changes_queue_file_moved (GFile *from,
 void
 nemo_file_changes_queue_schedule_position_set (GFile *location, 
 						   GdkPoint point,
-						   int screen)
+						   int screen,
+                           int monitor)
 {
 	NemoFileChange *new_item;
 	NemoFileChangesQueue *queue;
@@ -159,6 +161,7 @@ nemo_file_changes_queue_schedule_position_set (GFile *location,
 	new_item->from = g_object_ref (location);
 	new_item->point = point;
 	new_item->screen = screen;
+    new_item->monitor = monitor;
 	nemo_file_changes_queue_add_common (queue, new_item);
 }
 
@@ -374,6 +377,7 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 			position_set->set = TRUE;
 			position_set->point = change->point;
 			position_set->screen = change->screen;
+            position_set->monitor = change->monitor;
 			position_set_requests = g_list_prepend (position_set_requests,
 								position_set);
 			break;

@@ -33,6 +33,8 @@
 #include "nemo-view-dnd.h"
 #include "nemo-view-factory.h"
 #include "nemo-window.h"
+#include "nemo-desktop-window.h"
+#include "nemo-desktop-manager.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -54,6 +56,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_ICON_VIEW
 #include <libnemo-private/nemo-debug.h>
@@ -71,7 +74,7 @@ enum
 {
 	PROP_COMPACT = 1,
 	PROP_SUPPORTS_AUTO_LAYOUT,
-	PROP_SUPPORTS_SCALING,
+	PROP_IS_DESKTOP,
 	PROP_SUPPORTS_KEEP_ALIGNED,
 	PROP_SUPPORTS_LABELS_BESIDE_ICONS,
 	NUM_PROPERTIES
@@ -105,8 +108,6 @@ struct NemoIconViewDetails
 
 	GtkActionGroup *icon_action_group;
 	guint icon_merge_id;
-	
-	gboolean filter_by_screen;
 
 	gboolean compact;
 
@@ -115,7 +116,7 @@ struct NemoIconViewDetails
 	GtkWidget *icon_container;
 
 	gboolean supports_auto_layout;
-	gboolean supports_scaling;
+	gboolean is_desktop;
 	gboolean supports_keep_aligned;
 	gboolean supports_labels_beside_icons;
 };
@@ -181,7 +182,7 @@ static void                 nemo_icon_view_update_click_to_rename_mode  (NemoIco
 static void                 nemo_icon_view_set_directory_tighter_layout (NemoIconView           *icon_view,
                                         NemoFile         *file,
                                         gboolean              tighter_layout);
-static gboolean             nemo_icon_view_supports_scaling	      (NemoIconView           *icon_view);
+static gboolean             nemo_icon_view_is_desktop      (NemoIconView           *icon_view);
 static void                 nemo_icon_view_reveal_selection       (NemoView               *view);
 static const SortCriterion *get_sort_criterion_by_sort_type           (NemoFileSortType  sort_type);
 static void                 set_sort_criterion_by_sort_type           (NemoIconView           *icon_view,
@@ -260,7 +261,7 @@ get_stored_icon_position_callback (NemoIconContainer *container,
 	g_assert (position != NULL);
 	g_assert (NEMO_IS_ICON_VIEW (icon_view));
 
-	if (!nemo_icon_view_supports_manual_layout (icon_view)) {
+	if (!nemo_icon_view_supports_manual_layout (icon_view) || nemo_file_get_is_desktop_orphan (file)) {
 		return FALSE;
 	}
 
@@ -275,7 +276,7 @@ get_stored_icon_position_callback (NemoIconContainer *container,
 	/* If it is the desktop directory, maybe the gnome-libs metadata has information about it */
 
 	/* Disable scaling if not on the desktop */
-	if (nemo_icon_view_supports_scaling (icon_view)) {
+	if (nemo_icon_view_is_desktop (icon_view)) {
 		/* Get the scale of the icon from the metadata. */
 		scale_string = nemo_file_get_metadata
 			(file, NEMO_METADATA_KEY_ICON_SCALE, "1");
@@ -526,6 +527,31 @@ nemo_icon_view_remove_file (NemoView *view, NemoFile *file, NemoDirectory *direc
 	}
 }
 
+static gboolean
+should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
+{
+    gint current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (view));
+    gint file_monitor = nemo_file_get_monitor_number (file);
+
+    NemoDesktopManager *dm = nemo_desktop_manager_get ();
+
+    if (current_monitor == file_monitor) {
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+        return TRUE;
+    }
+
+    if (!g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS))
+        return FALSE;
+
+    if (!nemo_desktop_manager_get_monitor_is_active (dm, file_monitor)) {
+        nemo_file_set_is_desktop_orphan (file, TRUE);
+        if (nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
 static void
 nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
 {
@@ -537,10 +563,11 @@ nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 	icon_view = NEMO_ICON_VIEW (view);
 	icon_container = get_icon_container (icon_view);
 
-	if (icon_view->details->filter_by_screen &&
-	    !should_show_file_on_screen (view, file)) {
-		return;
-	}
+    if (icon_view->details->is_desktop &&
+        (!should_show_file_on_screen (view, file) ||
+         !should_show_file_on_current_monitor (view, file))) {
+        return;
+    }
 
     if (nemo_file_has_thumbnail_access_problem (file)) {
         nemo_application_set_cache_flag (nemo_application_get_singleton ());
@@ -568,14 +595,15 @@ nemo_icon_view_file_changed (NemoView *view, NemoFile *file, NemoDirectory *dire
 	g_return_if_fail (view != NULL);
 	icon_view = NEMO_ICON_VIEW (view);
 
-	if (!icon_view->details->filter_by_screen) {
+	if (!icon_view->details->is_desktop) {
 		nemo_icon_container_request_update
 			(get_icon_container (icon_view),
 			 NEMO_ICON_CONTAINER_ICON_DATA (file));
 		return;
 	}
 	
-	if (!should_show_file_on_screen (view, file)) {
+	if (!should_show_file_on_screen (view, file) ||
+        !should_show_file_on_current_monitor (view, file)) {
 		nemo_icon_view_remove_file (view, file, directory);
 	} else {
 
@@ -594,11 +622,11 @@ nemo_icon_view_supports_auto_layout (NemoIconView *view)
 }
 
 static gboolean
-nemo_icon_view_supports_scaling (NemoIconView *view)
+nemo_icon_view_is_desktop (NemoIconView *view)
 {
 	g_return_val_if_fail (NEMO_IS_ICON_VIEW (view), FALSE);
 
-	return view->details->supports_scaling;
+	return view->details->is_desktop;
 }
 
 static gboolean
@@ -678,7 +706,7 @@ update_layout_menus (NemoIconView *view)
 					      NEMO_ACTION_CLEAN_UP);
 	gtk_action_set_sensitive (action, !is_auto_layout);	
 
-	if (NEMO_IS_DESKTOP_ICON_VIEW (view)) {
+	if (nemo_icon_view_is_desktop (view)) {
 		gtk_action_set_label (action, _("_Organize Desktop by Name"));
 	}
 
@@ -1517,7 +1545,7 @@ nemo_icon_view_merge_menus (NemoView *view)
 		gtk_action_set_visible (action, FALSE);
 	}
 
-	if (nemo_icon_view_supports_scaling (icon_view)) {
+	if (nemo_icon_view_is_desktop (icon_view)) {
 		gtk_ui_manager_add_ui (ui_manager,
 				       icon_view->details->icon_merge_id,
 				       POPUP_PATH_ICON_APPEARANCE,
@@ -1579,7 +1607,7 @@ nemo_icon_view_update_menus (NemoView *view)
 				  && !nemo_icon_container_has_stretch_handles (icon_container));
 
 	gtk_action_set_visible (action,
-				nemo_icon_view_supports_scaling (icon_view));
+				nemo_icon_view_is_desktop (icon_view));
 
 	action = gtk_action_group_get_action (icon_view->details->icon_action_group,
 					      NEMO_ACTION_UNSTRETCH);
@@ -1593,7 +1621,7 @@ nemo_icon_view_update_menus (NemoView *view)
 				  && nemo_icon_container_is_stretched (icon_container));
 
 	gtk_action_set_visible (action,
-				nemo_icon_view_supports_scaling (icon_view));
+				nemo_icon_view_is_desktop (icon_view));
 
 	editable = nemo_view_is_editable (view);
 	action = gtk_action_group_get_action (icon_view->details->icon_action_group,
@@ -1843,14 +1871,6 @@ compare_files (NemoView   *icon_view,
 	return nemo_icon_view_compare_files ((NemoIconView *)icon_view, a, b);
 }
 
-
-void
-nemo_icon_view_filter_by_screen (NemoIconView *icon_view,
-				     gboolean filter)
-{
-	icon_view->details->filter_by_screen = filter;
-}
-
 static void
 nemo_icon_view_screen_changed (GtkWidget *widget,
 				   GdkScreen *previous_screen)
@@ -1866,7 +1886,7 @@ nemo_icon_view_screen_changed (GtkWidget *widget,
 	}
 
 	view = NEMO_VIEW (widget);
-	if (NEMO_ICON_VIEW (view)->details->filter_by_screen) {
+	if (NEMO_ICON_VIEW (view)->details->is_desktop) {
 		icon_container = get_icon_container (NEMO_ICON_VIEW (view));
 
 		directory = nemo_view_get_model (view);
@@ -2019,7 +2039,7 @@ icon_position_changed_callback (NemoIconContainer *container,
 	}
 
 	/* Store the new position of the icon in the metadata. */
-	if (!nemo_icon_view_using_auto_layout (icon_view)) {
+	if (!nemo_icon_view_using_auto_layout (icon_view) && !nemo_file_get_is_desktop_orphan (file)) {
 		position_string = g_strdup_printf
 			("%d,%d", position->x, position->y);
 		nemo_file_set_metadata
@@ -2597,8 +2617,8 @@ nemo_icon_view_set_property (GObject         *object,
 	case PROP_SUPPORTS_AUTO_LAYOUT:
 		icon_view->details->supports_auto_layout = g_value_get_boolean (value);
 		break;
-	case PROP_SUPPORTS_SCALING:
-		icon_view->details->supports_scaling = g_value_get_boolean (value);
+	case PROP_IS_DESKTOP:
+		icon_view->details->is_desktop = g_value_get_boolean (value);
 		break;
 	case PROP_SUPPORTS_KEEP_ALIGNED:
 		icon_view->details->supports_keep_aligned = g_value_get_boolean (value);
@@ -2723,10 +2743,10 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 				      TRUE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);
-	properties[PROP_SUPPORTS_SCALING] =
-		g_param_spec_boolean ("supports-scaling",
-				      "Supports scaling",
-				      "Whether this view supports scaling",
+	properties[PROP_IS_DESKTOP] =
+		g_param_spec_boolean ("is-desktop",
+				      "Is a desktop view",
+				      "Whether this view is on a desktop",
 				      FALSE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);
@@ -2757,7 +2777,6 @@ nemo_icon_view_init (NemoIconView *icon_view)
 
 	icon_view->details = g_new0 (NemoIconViewDetails, 1);
 	icon_view->details->sort = &sort_criteria[0];
-	icon_view->details->filter_by_screen = FALSE;
 
 	icon_container = create_icon_container (icon_view);
 

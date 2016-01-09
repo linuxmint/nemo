@@ -84,6 +84,8 @@ nemo_SOURCES = \
     nemo-action-config-widget.h         \
 	nemo-application.c			\
 	nemo-application.h			\
+    nemo-blank-desktop-window.c \
+    nemo-blank-desktop-window.h \
 	nemo-bookmark-list.c		\
 	nemo-bookmark-list.h		\
 	nemo-bookmarks-window.c		\
@@ -99,6 +101,8 @@ nemo_SOURCES = \
 	nemo-desktop-icon-view.h		\
 	nemo-desktop-item-properties.c	\
 	nemo-desktop-item-properties.h	\
+    nemo-desktop-manager.c \
+    nemo-desktop-manager.h \
 	nemo-desktop-window.c		\
 	nemo-desktop-window.h		\
 	nemo-error-reporting.c		\

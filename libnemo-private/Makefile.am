@@ -95,6 +95,8 @@ libnemo_private_la_SOURCES = \
 	nemo-desktop-link.h \
 	nemo-desktop-metadata.c \
 	nemo-desktop-metadata.h \
+    nemo-desktop-utils.c \
+    nemo-desktop-utils.h \
 	nemo-directory-async.c \
 	nemo-directory-notify.h \
 	nemo-directory-private.h \

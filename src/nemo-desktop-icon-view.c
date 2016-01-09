@@ -97,144 +97,6 @@ desktop_directory_changed_callback (gpointer callback_data)
 	desktop_directory = nemo_get_desktop_directory ();
 }
 
-static void
-icon_container_set_workarea (NemoIconContainer *icon_container,
-			     GdkScreen             *screen,
-			     long                  *workareas,
-			     int                    n_items)
-{
-	int left, right, top, bottom;
-	int screen_width, screen_height;
-	int i;
-    int ui_scale;
-
-	left = right = top = bottom = 0;
-
-	screen_width  = gdk_screen_get_width (screen);
-	screen_height = gdk_screen_get_height (screen);
-
-    ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_container));
-
-    for (i = 0; i < n_items; i += 4) {
-        int x      = workareas [i] / ui_scale;
-        int y      = workareas [i + 1] / ui_scale;
-        int width  = workareas [i + 2] / ui_scale;
-        int height = workareas [i + 3] / ui_scale;
-        if ((x + width) > screen_width || (y + height) > screen_height)
-            continue;
-
-		left   = MAX (left, x);
-		right  = MAX (right, screen_width - width - x);
-		top    = MAX (top, y);
-		bottom = MAX (bottom, screen_height - height - y);
-	}
-
-	nemo_icon_container_set_margins (icon_container,
-					     left, right, top, bottom);
-}
-
-static void
-net_workarea_changed (NemoDesktopIconView *icon_view,
-		      GdkWindow         *window)
-{
-	long *nworkareas = NULL;
-	long *workareas = NULL;
-    Atom type_returned;
-	int format_returned;
-    unsigned long length_returned;
-    unsigned long length_after_returned;
-	NemoIconContainer *icon_container;
-	GdkScreen *screen;
-    GdkDisplay *display = gdk_window_get_display (window);
-
-	g_return_if_fail (NEMO_IS_DESKTOP_ICON_VIEW (icon_view));
-
-	icon_container = get_icon_container (icon_view);
-
-	/* Find the number of desktops so we know how long the
-	 * workareas array is going to be (each desktop will have four
-	 * elements in the workareas array describing
-	 * x,y,width,height) */
-	gdk_error_trap_push ();
-    if (XGetWindowProperty (gdk_x11_display_get_xdisplay (display),
-                            gdk_x11_window_get_xid (window),
-                            gdk_x11_atom_to_xatom (gdk_atom_intern ("_NET_NUMBER_OF_DESKTOPS", FALSE)),
-                            0, 4, False,
-                            XA_CARDINAL,
-                            &type_returned,
-                            &format_returned,
-                            &length_returned,
-                            &length_after_returned,
-                            (guchar **) &nworkareas
-                            ) != Success) {
-		g_warning("Can not calculate _NET_NUMBER_OF_DESKTOPS");
-	}
-
-	if (gdk_error_trap_pop()
-	    || nworkareas == NULL
-        || type_returned != XA_CARDINAL
-	    || format_returned != 32)
-		g_warning("Can not calculate _NET_NUMBER_OF_DESKTOPS");
-
-	gdk_error_trap_push ();
-
-	if (nworkareas == NULL || (*nworkareas < 1) 
-        || XGetWindowProperty (gdk_x11_display_get_xdisplay (display),
-                               gdk_x11_window_get_xid (window),
-                               gdk_x11_atom_to_xatom (gdk_atom_intern ("_NET_WORKAREA", FALSE)),
-                               0, ((*nworkareas) * 4 * 4), False,
-                               XA_CARDINAL,
-                               &type_returned,
-                               &format_returned,
-                               &length_returned,
-                               &length_after_returned,
-                               (guchar **) &workareas
-                               ) != Success) {
-		g_warning("Can not get _NET_WORKAREA");
-		workareas = NULL;
-	}
-
-    if (gdk_error_trap_pop ()
-        || workareas == NULL
-        || type_returned != XA_CARDINAL
-        || ((*nworkareas) * 4 != length_returned)
-        || format_returned != 32) {
-        g_warning("Can not determine workarea, guessing at layout");
-        nemo_icon_container_set_margins (icon_container, 0, 0, 0, 0);
-	} else {
-		screen = gdk_window_get_screen (window);
-        icon_container_set_workarea (icon_container, screen, workareas, length_returned);
-	}
-
-	if (nworkareas != NULL)
-		g_free (nworkareas);
-
-	if (workareas != NULL)
-		g_free (workareas);
-}
-
-static GdkFilterReturn
-desktop_icon_view_property_filter (GdkXEvent *gdk_xevent,
-				   GdkEvent *event,
-				   gpointer data)
-{
-	XEvent *xevent = gdk_xevent;
-	NemoDesktopIconView *icon_view;
-
-	icon_view = NEMO_DESKTOP_ICON_VIEW (data);
-  
-	switch (xevent->type) {
-	case PropertyNotify:
-		if (xevent->xproperty.atom == gdk_x11_get_xatom_by_name ("_NET_WORKAREA"))
-			net_workarea_changed (icon_view, event->any.window);
-		break;
-	default:
-		break;
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
 static const char *
 real_get_id (NemoView *view)
 {
@@ -364,56 +226,6 @@ nemo_desktop_icon_view_handle_middle_click (NemoIconContainer *icon_container,
 	/* Send it to the root window, the window manager will handle it. */
 	XSendEvent (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), True,
 		    ButtonPressMask, (XEvent *) &x_event);
-}
-
-static void
-unrealized_callback (GtkWidget *widget, NemoDesktopIconView *desktop_icon_view)
-{
-	g_return_if_fail (desktop_icon_view->details->root_window != NULL);
-
-	/* Remove the property filter */
-	gdk_window_remove_filter (desktop_icon_view->details->root_window,
-				  desktop_icon_view_property_filter,
-				  desktop_icon_view);
-	desktop_icon_view->details->root_window = NULL;
-}
-
-static void
-realized_callback (GtkWidget *widget, NemoDesktopIconView *desktop_icon_view)
-{
-	GdkWindow *root_window;
-	GdkScreen *screen;
-	GtkAllocation allocation;
-
-	g_return_if_fail (desktop_icon_view->details->root_window == NULL);
-
-	screen = gtk_widget_get_screen (widget);
-
-	/* Ugly HACK for the problem that the views realize at the
-	 * wrong size and then get resized. (This is a problem with
-	 * BonoboPlug.) This was leading to problems where initial
-	 * layout was done at 60x60 stacking all desktop icons in
-	 * the top left corner.
-	 */
-	allocation.x = 0;
-	allocation.y = 0;
-	allocation.width = gdk_screen_get_width (screen);
-	allocation.height = gdk_screen_get_height (screen);
-	gtk_widget_size_allocate (GTK_WIDGET(get_icon_container(desktop_icon_view)),
-				  &allocation);
-	
-	root_window = gdk_screen_get_root_window (screen);
-
-	desktop_icon_view->details->root_window = root_window;
-
-	/* Read out the workarea geometry and update the icon container accordingly */
-	net_workarea_changed (desktop_icon_view, root_window);
-
-	/* Setup the property filter */
-	gdk_window_set_events (root_window, GDK_PROPERTY_CHANGE_MASK);
-	gdk_window_add_filter (root_window,
-			       desktop_icon_view_property_filter,
-			       desktop_icon_view);
 }
 
 static void
@@ -557,7 +369,6 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 		desktop_directory_changed_callback (NULL);
 	}
 
-	nemo_icon_view_filter_by_screen (NEMO_ICON_VIEW (desktop_icon_view), TRUE);
 	icon_container = get_icon_container (desktop_icon_view);
 	nemo_icon_container_set_use_drop_shadows (icon_container, TRUE);
 	nemo_icon_view_container_set_sort_desktop (NEMO_ICON_VIEW_CONTAINER (icon_container), TRUE);
@@ -609,10 +420,6 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 				 G_CALLBACK (nemo_desktop_icon_view_handle_middle_click), desktop_icon_view, 0);
     g_signal_connect_object (icon_container, "realize",
                  G_CALLBACK (desktop_icon_container_realize), desktop_icon_view, 0);
-	g_signal_connect_object (desktop_icon_view, "realize",
-				 G_CALLBACK (realized_callback), desktop_icon_view, 0);
-	g_signal_connect_object (desktop_icon_view, "unrealize",
-				 G_CALLBACK (unrealized_callback), desktop_icon_view, 0);
 
 	g_signal_connect_swapped (nemo_icon_view_preferences,
 				  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
@@ -747,7 +554,7 @@ nemo_desktop_icon_view_create (NemoWindowSlot *slot)
 			     "window-slot", slot,
 			     "supports-zooming", FALSE,
 			     "supports-auto-layout", FALSE,
-			     "supports-scaling", TRUE,
+			     "is-desktop", TRUE,
 			     "supports-keep-aligned", TRUE,
 			     "supports-labels-beside-icons", FALSE,
 			     NULL);

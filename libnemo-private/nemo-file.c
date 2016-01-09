@@ -492,6 +492,8 @@ nemo_file_clear_info (NemoFile *file)
 	eel_ref_str_unref (file->details->filesystem_id);
 	file->details->filesystem_id = NULL;
 
+    file->details->is_desktop_orphan = FALSE;
+
 	clear_metadata (file);
 }
 
@@ -7618,6 +7620,25 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     g_string_free (string, FALSE);
 
     return ret;
+}
+
+gint
+nemo_file_get_monitor_number (NemoFile *file)
+{
+    return nemo_file_get_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0);
+}
+
+gboolean
+nemo_file_get_is_desktop_orphan (NemoFile *file)
+{
+    return file->details->is_desktop_orphan;
+}
+
+void
+nemo_file_set_is_desktop_orphan (NemoFile *file,
+                                 gboolean  is_desktop_orphan)
+{
+    file->details->is_desktop_orphan = is_desktop_orphan;
 }
 
 gboolean

@@ -214,7 +214,9 @@ typedef enum
 #define NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE         "disable-command-line"
 
 /* Desktop background */
-#define NEMO_PREFERENCES_SHOW_DESKTOP		   "show-desktop-icons"
+#define NEMO_PREFERENCES_DESKTOP_LAYOUT "desktop-layout"
+#define NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS "show-orphaned-desktop-icons"
+#define NEMO_PREFERENCES_SHOW_DESKTOP   "show-desktop-icons"    /* DEPRECATED */
 
 /* File size unit prefix */
 #define NEMO_PREFERENCES_SIZE_PREFIXES			"size-prefixes"

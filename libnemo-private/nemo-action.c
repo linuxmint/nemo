@@ -46,6 +46,8 @@ static void     nemo_action_constructed (GObject *object);
 
 static void     nemo_action_finalize (GObject *gobject);
 
+static gchar   *find_token_type (const gchar *str, TokenType *token_type);
+
 static gpointer parent_class;
 
 enum 
@@ -100,6 +102,7 @@ nemo_action_init (NemoAction *action)
     action->dbus_satisfied = TRUE;
     action->escape_underscores = FALSE;
     action->escape_space = FALSE;
+    action->show_in_blank_desktop = FALSE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -434,6 +437,8 @@ nemo_action_constructed (GObject *object)
                                            KEY_WHITESPACE,
                                            NULL);
 
+    gboolean is_desktop;
+
     if (conditions && condition_count > 0) {
         int j;
         gchar *condition;
@@ -441,6 +446,10 @@ nemo_action_constructed (GObject *object)
             condition = conditions[j];
             if (g_str_has_prefix (condition, "dbus")) {
                 setup_dbus_condition (action, condition);
+            }
+
+            if (g_strcmp0 (condition, "desktop") == 0) {
+                is_desktop = TRUE;
             }
         }
     }
@@ -450,6 +459,12 @@ nemo_action_constructed (GObject *object)
 
     strip_custom_modifier (exec_raw, &use_parent_dir, &exec);
     g_free (exec_raw);
+
+    TokenType token_type;
+
+    action->show_in_blank_desktop = is_desktop &&
+                                    type == SELECTION_NONE &&
+                                    find_token_type (exec, &token_type) == NULL;
 
     GFile *file = g_file_new_for_path (action->key_file_path);
     GFile *parent = g_file_get_parent (file);

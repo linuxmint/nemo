@@ -469,10 +469,19 @@
       <_summary>Desktop font</_summary>
       <_description>The font _description used for the icons on the desktop.</_description>
     </key>
+    <key name="desktop-layout" type="s">
+      <default>"true::false"</default>
+      <_summary>Desktop layout</_summary>
+      <_description>Format bool:bool, show desktop folder on primary monitor:show desktop on remaining monitors</_description>
+    </key>
+    <key name="show-orphaned-desktop-icons" type="b">
+      <default>true</default>
+      <_summary>Whether to show icons from inactive monitors on another monitor</_summary>
+    </key>
     <key name="show-desktop-icons" type="b">
       <default>true</default>
-      <_summary>Allow Nemo to manage the desktop</_summary>
-      <_description>If this is set to true, Nemo will autostart and manage the desktop</_description>
+      <_summary>Deprecated: Allow Nemo to manage the desktop</_summary>
+      <_description>Deprecated: If this is set to true, Nemo will autostart and manage the desktop</_description>
     </key>
     <key name="home-icon-visible" type="b">
       <default>false</default>

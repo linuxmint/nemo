@@ -1447,6 +1447,14 @@ nemo_directory_schedule_position_set (GList *position_setting_list)
 			 NULL,
 			 str);
 		
+        if (item->set) {
+            g_snprintf (str, sizeof (str), "%d", item->monitor);
+        } else {
+            str[0] = 0;
+        }
+
+        nemo_file_set_metadata (file, NEMO_METADATA_KEY_MONITOR, NULL, str);
+
 		nemo_file_unref (file);
 	}
 }
