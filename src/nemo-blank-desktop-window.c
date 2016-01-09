@@ -33,20 +33,32 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 
+#include "nemo-plugin-manager.h"
+
+#define DEBUG_FLAG NEMO_DEBUG_DESKTOP
+#include <libnemo-private/nemo-debug.h>
+
 enum {
     PROP_MONITOR = 1,
     NUM_PROPERTIES
 };
 
-struct NemoBlankDesktopWindowDetails {
-    gint monitor;
-    GtkWidget *popup_menu;
+enum {
+    PLUGIN_MANAGER,
+    LAST_SIGNAL
 };
 
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
+static guint signals[LAST_SIGNAL] = { 0 };
+
+struct NemoBlankDesktopWindowDetails {
+    gint monitor;
+    GtkWidget *popup_menu;
+    gulong actions_changed_id;
+};
 
 G_DEFINE_TYPE (NemoBlankDesktopWindow, nemo_blank_desktop_window, 
-	       GTK_TYPE_WINDOW);
+               GTK_TYPE_WINDOW);
 
 static void
 action_activated_callback (GtkMenuItem *item, NemoAction *action)
@@ -59,6 +71,12 @@ action_activated_callback (GtkMenuItem *item, NemoAction *action)
 }
 
 static void
+actions_changed_cb (NemoBlankDesktopWindow *window)
+{
+    g_clear_pointer (&window->details->popup_menu, gtk_widget_destroy);
+}
+
+static void
 build_menu (NemoBlankDesktopWindow *window)
 {
     if (window->details->popup_menu) {
@@ -66,6 +84,13 @@ build_menu (NemoBlankDesktopWindow *window)
     }
 
     NemoActionManager *desktop_action_manager = nemo_desktop_manager_get_action_manager ();
+
+    if (window->details->actions_changed_id == 0) {
+        window->details->actions_changed_id = g_signal_connect_swapped (desktop_action_manager,
+                                                                        "changed",
+                                                                        G_CALLBACK (actions_changed_cb),
+                                                                        window);
+    }
 
     GList *action_list = nemo_action_manager_list_actions (desktop_action_manager);
 
@@ -144,7 +169,15 @@ on_button_press (GtkWidget *widget, GdkEventButton *event, NemoBlankDesktopWindo
 static void
 nemo_blank_desktop_window_dispose (GObject *obj)
 {
-	G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->dispose (obj);
+    NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (obj);
+
+    if (window->details->actions_changed_id > 0) {
+        g_signal_handler_disconnect (nemo_desktop_manager_get_action_manager (),
+                             window->details->actions_changed_id);
+        window->details->actions_changed_id = 0;
+    }
+
+    G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->dispose (obj);
 }
 
 static void
@@ -152,7 +185,6 @@ nemo_blank_desktop_window_finalize (GObject *obj)
 {
     G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->finalize (obj);
 }
-
 
 static void
 nemo_blank_desktop_window_constructed (GObject *obj)
@@ -173,7 +205,10 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 
     nemo_desktop_utils_get_monitor_work_rect (window->details->monitor, &rect);
 
-    g_printerr ("NemoBlankDesktopWindow monitor:%d: x:%d, y:%d, w:%d, h:%d\n", window->details->monitor, rect.x, rect.y, rect.width, rect.height);
+    DEBUG ("NemoBlankDesktopWindow monitor:%d: x:%d, y:%d, w:%d, h:%d",
+           window->details->monitor,
+           rect.x, rect.y,
+           rect.width, rect.height);
 
     gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
     gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
@@ -230,6 +265,7 @@ nemo_blank_desktop_window_init (NemoBlankDesktopWindow *window)
 						       NemoBlankDesktopWindowDetails);
 
     window->details->popup_menu = NULL;
+    window->details->actions_changed_id = 0;
 }
 
 static gint
@@ -306,10 +342,17 @@ realize (GtkWidget *widget)
 }
 
 static void
+nemo_blank_desktop_window_open_plugin_manager (NemoBlankDesktopWindow *window)
+{
+    nemo_plugin_manager_show ();
+}
+
+static void
 nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 {
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (klass);
 	GObjectClass *oclass = G_OBJECT_CLASS (klass);
+    GtkBindingSet *binding_set;
 
 	oclass->constructed = nemo_blank_desktop_window_constructed;
     oclass->dispose = nemo_blank_desktop_window_dispose;
@@ -328,7 +371,22 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
                           G_MININT, G_MAXINT, 0,
                           G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+    signals[PLUGIN_MANAGER] =
+        g_signal_new ("plugin-manager",
+                      G_TYPE_FROM_CLASS (klass),
+                      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                      G_STRUCT_OFFSET (NemoBlankDesktopWindowClass, plugin_manager),
+                      NULL, NULL,
+                      g_cclosure_marshal_generic,
+                      G_TYPE_NONE, 0);
+
 	g_type_class_add_private (klass, sizeof (NemoBlankDesktopWindowDetails));
 
     g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
+
+    binding_set = gtk_binding_set_by_class (klass);
+    gtk_binding_entry_add_signal (binding_set, GDK_KEY_p, GDK_MOD1_MASK,
+                                  "plugin-manager", 0);
+
+    klass->plugin_manager = nemo_blank_desktop_window_open_plugin_manager;
 }
