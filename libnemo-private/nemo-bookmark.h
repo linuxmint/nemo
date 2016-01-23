@@ -50,6 +50,14 @@ struct NemoBookmark {
 	NemoBookmarkDetails *details;	
 };
 
+typedef struct
+{
+  gchar  *bookmark_name;
+  gchar  *icon_name;
+  gchar  *icon_uri;
+  gchar **emblems;
+} NemoBookmarkMetadata;
+
 struct NemoBookmarkClass {
 	GObjectClass parent_class;
 
@@ -66,9 +74,10 @@ struct NemoBookmarkClass {
 typedef struct NemoBookmarkClass NemoBookmarkClass;
 
 GType                 nemo_bookmark_get_type               (void);
-NemoBookmark *    nemo_bookmark_new                    (GFile *location,
-                                                                const char *custom_name,
-                                                                GIcon *icon);
+NemoBookmark *    nemo_bookmark_new                    (GFile                *location,
+                                                        const char           *custom_name,
+                                                        GIcon                *icon,
+                                                        NemoBookmarkMetadata *md);
 NemoBookmark *    nemo_bookmark_copy                   (NemoBookmark      *bookmark);
 const char *          nemo_bookmark_get_name               (NemoBookmark      *bookmark);
 GFile *               nemo_bookmark_get_location           (NemoBookmark      *bookmark);
@@ -92,5 +101,13 @@ char *                nemo_bookmark_get_scroll_pos         (NemoBookmark      *b
 GtkWidget *           nemo_bookmark_menu_item_new          (NemoBookmark      *bookmark);
 
 void                  nemo_bookmark_connect                (NemoBookmark *bookmark);
+
+void                  nemo_bookmark_get_metadata           (NemoBookmark  *bookmark,
+                                                            gchar        **icon_uri,
+                                                            gchar        **icon_name,
+                                                            GList        **emblems);
+NemoBookmarkMetadata *nemo_bookmark_metadata_new           (void);
+NemoBookmarkMetadata *nemo_bookmark_metadata_copy          (NemoBookmarkMetadata *meta);
+void                  nemo_bookmark_metadata_free          (NemoBookmarkMetadata *metadata);
 
 #endif /* NEMO_BOOKMARK_H */

@@ -124,7 +124,7 @@ set_displayed_location (NemoWindowSlot *slot, GFile *location)
 
         slot->last_location_bookmark = slot->current_location_bookmark;
         slot->current_location_bookmark = (location == NULL) ?
-                            NULL : nemo_bookmark_new (location, NULL, NULL);
+                            NULL : nemo_bookmark_new (location, NULL, NULL, NULL);
     }
 }
 
