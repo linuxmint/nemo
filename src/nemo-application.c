@@ -397,6 +397,10 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 	/* Construct a list of windows to be closed. Do not add the non-closable windows to the list. */
 	for (node = window_list; node != NULL; node = node->next) {
+        /* Skip blank desktop windows */
+        if (!NEMO_IS_WINDOW (node->data))
+            continue;
+
 		window = NEMO_WINDOW (node->data);
 		if (window != NULL && window_can_be_closed (window)) {
 			GList *l;
