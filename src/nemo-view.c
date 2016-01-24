@@ -3311,6 +3311,16 @@ done_loading (NemoView *view,
 
 	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
 
+    if (g_getenv("NEMO_TIME_STARTUP")) {
+        gint64 current = g_get_monotonic_time ();
+        gint64 diff = (current - nemo_startup_time) / 1000;
+
+        gint64 milli_remainder = diff % 1000;
+        gint64 seconds = diff / 1000;
+
+        g_printerr ("Nemo startup time: %d.%d seconds\n", seconds, milli_remainder);
+    }
+
 	view->details->loading = FALSE;
 }
 
