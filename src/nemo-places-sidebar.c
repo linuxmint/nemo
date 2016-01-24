@@ -689,7 +689,7 @@ get_gicon (const gchar *uri)
 {
     NemoFile *file = nemo_file_get_by_uri (uri);
 
-    return nemo_file_get_gicon (file, NEMO_FILE_ICON_FLAGS_NONE);
+    return nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE);
 }
 
 static void
