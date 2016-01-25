@@ -5141,6 +5141,29 @@ reset_move_copy_to_menu (NemoView *view)
         g_free (id);
     }
 
+    GtkAction *action;
+
+    mount_uri = nemo_get_home_directory_uri ();
+    file = nemo_file_get_existing_by_uri (mount_uri);
+    g_free (mount_uri);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_HOME);
+    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_HOME);
+    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+
+    g_object_unref (file);
+    mount_uri = nemo_get_desktop_directory_uri ();
+    file = nemo_file_get_existing_by_uri (mount_uri);
+    g_free (mount_uri);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_DESKTOP);
+    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_DESKTOP);
+    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+
+    g_object_unref (file);
+
     if (view->details->showing_bookmarks_in_to_menus) {
         bookmark_count = nemo_bookmark_list_length (view->details->bookmarks);
         for (index = 0; index < bookmark_count; ++index) {
