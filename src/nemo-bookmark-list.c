@@ -856,49 +856,32 @@ save_bookmark_metadata_file (NemoBookmarkList *list)
     for (ptr = list->list; ptr != NULL; ptr = ptr->next) {
         NemoBookmark *bookmark = NEMO_BOOKMARK (ptr->data);
 
-        gchar *icon_uri = NULL;
-        gchar *icon_name = NULL;
-        GList *emblems = NULL;
+        NemoBookmarkMetadata *data = nemo_bookmark_get_updated_metadata (bookmark);
 
-        nemo_bookmark_get_metadata (bookmark, &icon_uri, &icon_name, &emblems);
+        if (data == NULL)
+            continue;
 
-        if (icon_uri)
+        if (data->icon_uri)
             g_key_file_set_string (kfile,
                                    nemo_bookmark_get_name (bookmark),
                                    KEY_ICON_URI,
-                                   icon_uri);
+                                   data->icon_uri);
 
-        if (icon_name)
+        if (data->icon_name)
             g_key_file_set_string (kfile,
                                    nemo_bookmark_get_name (bookmark),
                                    KEY_ICON_NAME,
-                                   icon_name);
+                                   data->icon_name);
 
-        if (emblems) {
-            GList *iter;
-
-            GPtrArray *emblem_array = g_ptr_array_new ();
-
-            for (iter = emblems; iter != NULL; iter = iter->next) {
-                g_ptr_array_add (emblem_array, g_strdup (iter->data));
-            }
-
-            g_ptr_array_add (emblem_array, NULL);
-
-            gchar **strv = (char **) g_ptr_array_free (emblem_array, FALSE);
-
+        if (data->emblems) {
             g_key_file_set_string_list (kfile,
                                         nemo_bookmark_get_name (bookmark),
                                         KEY_ICON_EMBLEMS,
-                                        (const gchar * const *) strv,
-                                        g_strv_length (strv));
-
-            g_strfreev (strv);
+                                        (const gchar * const *) data->emblems,
+                                        g_strv_length (data->emblems));
         }
 
-        g_free (icon_uri);
-        g_free (icon_name);
-        g_list_free_full (emblems, g_free);
+        nemo_bookmark_metadata_free (data);
     }
 
     if (g_key_file_save_to_file (kfile,
@@ -1016,7 +999,7 @@ save_files_async (NemoBookmarkList    *self,
     GTask *task;
 
     g_object_ref (self);
-
+    // G_BREAKPOINT ();
     task = g_task_new (self, NULL, callback, self);
     g_task_run_in_thread (task, save_files_thread);
 

@@ -102,10 +102,12 @@ GtkWidget *           nemo_bookmark_menu_item_new          (NemoBookmark      *b
 
 void                  nemo_bookmark_connect                (NemoBookmark *bookmark);
 
-void                  nemo_bookmark_get_metadata           (NemoBookmark  *bookmark,
-                                                            gchar        **icon_uri,
-                                                            gchar        **icon_name,
-                                                            GList        **emblems);
+/* Bookmark metadata struct functions */
+
+NemoBookmarkMetadata *nemo_bookmark_get_updated_metadata   (NemoBookmark  *bookmark);
+NemoBookmarkMetadata *nemo_bookmark_get_current_metadata   (NemoBookmark  *bookmark);
+gboolean              nemo_bookmark_metadata_compare       (NemoBookmarkMetadata *d1,
+                                                            NemoBookmarkMetadata *d2);
 NemoBookmarkMetadata *nemo_bookmark_metadata_new           (void);
 NemoBookmarkMetadata *nemo_bookmark_metadata_copy          (NemoBookmarkMetadata *meta);
 void                  nemo_bookmark_metadata_free          (NemoBookmarkMetadata *metadata);
