@@ -1593,7 +1593,7 @@ drag_data_received_callback (GtkWidget *widget,
                                  location,
                                  p,
                                  gdk_screen_get_number (gtk_widget_get_screen (widget)),
-                                 get_monitor_number (widget));
+                                 nemo_desktop_utils_get_monitor_for_widget (widget));
 				g_object_unref (location);
 				nemo_file_changes_consume_changes (TRUE);
 				success = TRUE;
