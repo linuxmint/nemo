@@ -39,6 +39,14 @@
     <value nick="trash-time" value="7"/>
   </enum>
 
+  <enum id="org.nemo.IconWidth">
+    <value nick="shorter" value="0"/>
+    <value nick="short" value="1"/>
+    <value nick="normal" value="2"/>
+    <value nick="long" value="3"/>
+    <value nick="longer" value="4"/>
+  </enum>
+
   <enum id="org.nemo.ZoomLevel">
     <value nick="smallest" value="0"/>
     <value nick="smaller" value="1"/>
@@ -381,7 +389,16 @@
       <_summary>Use tighter layout in new windows</_summary>
       <_description>If true, icons will be laid out tighter by default in new windows.</_description>
     </key>
-    <key name="labels-beside-icons" type="b">
+    <key name="icon-width" enum="org.nemo.IconWidth">
+      <default>'normal'</default>
+      <_summary>Icon Width</_summary>
+      <_description>Adjusts the width of each displayed icons.
+	     However, Desktop and folders in other views will remain unaffected
+	     including Compact Layout and that "text beside icon". This may   
+	     remind you of an another open source file manager.
+	     Posible values are  "shorter", "short", "normal", "long", and "longer"</_description>
+    </key>
+     <key name="labels-beside-icons" type="b">
       <default>false</default>
       <_summary>Put labels beside icons</_summary>
       <_description>If true, labels will be placed beside icons rather than underneath them.</_description>

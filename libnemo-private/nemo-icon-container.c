@@ -98,6 +98,10 @@
 #define CONTAINER_PAD_BOTTOM 4
 
 #define STANDARD_ICON_GRID_WIDTH 155
+#define SHORTER_ICON_GRID_WIDTH 42
+#define SHORT_ICON_GRID_WIDTH 125
+#define LONG_ICON_GRID_WIDTH 200
+#define LONGER_ICON_GRID_WIDTH 256
 
 #define TEXT_BESIDE_ICON_GRID_WIDTH 205
 
@@ -137,6 +141,15 @@ enum {
 	ACTION_ACTIVATE,
 	ACTION_MENU,
 	LAST_ACTION
+};
+
+/* Icon Width */
+enum {
+	SHORTER,
+	SHORT,
+	STANDARD,
+    	LONG,
+	LONGER
 };
 
 typedef struct {
@@ -1367,7 +1380,23 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 
 		grid_width = max_icon_width + max_text_width + ICON_PAD_LEFT + ICON_PAD_RIGHT;
 	} else {
-		grid_width = STANDARD_ICON_GRID_WIDTH;
+	        switch (nemo_icon_container_get_icon_width (container)){
+			case SHORTER: 
+			   grid_width = SHORTER_ICON_GRID_WIDTH;
+			break;
+			case SHORT: 
+			   grid_width = SHORT_ICON_GRID_WIDTH;
+			break;
+			case STANDARD: 
+			   grid_width = STANDARD_ICON_GRID_WIDTH;
+			break;
+			case LONG: 
+			   grid_width = LONG_ICON_GRID_WIDTH;
+			break;
+			case LONGER: 
+			   grid_width = LONGER_ICON_GRID_WIDTH;
+			break;
+		}
 	}
 
     gridded_layout = !nemo_icon_container_is_tighter_layout (container);
@@ -8176,6 +8205,27 @@ nemo_icon_container_set_tighter_layout (NemoIconContainer *container,
    }
 }
 
+void
+nemo_icon_container_set_icon_width (NemoIconContainer *container,
+                                        gint icon_width)
+{
+   g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+   if (container->details->icon_width == icon_width) {
+       return;
+   }
+
+   container->details->icon_width = icon_width;
+
+   if (container->details->auto_layout) {
+       invalidate_label_sizes (container);
+       redo_layout (container);
+       g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
+   } else {
+       invalidate_label_sizes (container); 
+       nemo_icon_container_request_update_all (container); 
+   }
+}
+
 gboolean
 nemo_icon_container_is_keep_aligned (NemoIconContainer *container)
 {
@@ -8321,6 +8371,15 @@ nemo_icon_container_is_tighter_layout (NemoIconContainer *container)
    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
 
    return container->details->tighter_layout;
+}
+
+/* Icon Width */
+gint
+nemo_icon_container_get_icon_width (NemoIconContainer *container)
+{
+   g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
+
+   return container->details->icon_width;
 }
 
 static void
