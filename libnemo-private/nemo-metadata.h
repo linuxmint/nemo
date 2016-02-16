@@ -40,6 +40,7 @@
 #define NEMO_METADATA_KEY_LOCATION_BACKGROUND_IMAGE 	"folder-background-image"
 
 #define NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL       	"nemo-icon-view-zoom-level"
+#define NEMO_METADATA_KEY_ICON_VIEW_ICON_WIDTH		"nemo-icon-view-icon-width"
 #define NEMO_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT      	"nemo-icon-view-auto-layout"
 #define NEMO_METADATA_KEY_ICON_VIEW_TIGHTER_LAYOUT      "nemo-icon-view-tighter-layout"
 #define NEMO_METADATA_KEY_ICON_VIEW_SORT_BY          	"nemo-icon-view-sort-by"

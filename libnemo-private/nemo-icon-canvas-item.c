@@ -53,6 +53,10 @@
 
 #define MAX_TEXT_WIDTH_STANDARD 135
 #define MAX_TEXT_WIDTH_TIGHTER 80
+#define MAX_TEXT_WIDTH_SHORTER 64
+#define MAX_TEXT_WIDTH_SHORT 105
+#define MAX_TEXT_WIDTH_LONG 176
+#define MAX_TEXT_WIDTH_LONGER 235
 #define MAX_TEXT_WIDTH_BESIDE 90
 #define MAX_TEXT_WIDTH_BESIDE_TOP_TO_BOTTOM 150
 
@@ -153,6 +157,14 @@ enum {
     	PROP_HIGHLIGHTED_AS_KEYBOARD_FOCUS,
     	PROP_HIGHLIGHTED_FOR_DROP,
 	PROP_HIGHLIGHTED_FOR_CLIPBOARD
+};
+
+enum {
+	SHORTER,
+	SHORT,
+	NORMAL,
+    	LONG,
+	LONGER
 };
 
 typedef enum {
@@ -2094,8 +2106,22 @@ nemo_icon_canvas_item_get_max_text_width (NemoIconCanvasItem *item)
             } else {
                 return MAX_TEXT_WIDTH_BESIDE * canvas_item->canvas->pixels_per_unit;
             }
-        } else {
-           return MAX_TEXT_WIDTH_STANDARD * canvas_item->canvas->pixels_per_unit;
+        } else if (container->details->is_desktop){ 
+	   /*Do not Touch the Desktop Font*/
+	    return MAX_TEXT_WIDTH_STANDARD * canvas_item->canvas->pixels_per_unit;
+	} else {
+	   switch (nemo_icon_container_get_icon_width (container)){
+		case SHORTER: 
+		   return MAX_TEXT_WIDTH_SHORTER * canvas_item->canvas->pixels_per_unit;
+		case SHORT: 
+	           return MAX_TEXT_WIDTH_SHORT * canvas_item->canvas->pixels_per_unit;
+		case NORMAL: 
+		   return MAX_TEXT_WIDTH_STANDARD * canvas_item->canvas->pixels_per_unit;
+		case LONG: 
+	           return MAX_TEXT_WIDTH_LONG * canvas_item->canvas->pixels_per_unit;
+		case LONGER:
+		   return MAX_TEXT_WIDTH_LONGER * canvas_item->canvas->pixels_per_unit;
+	   }
         }
 	}
 }
