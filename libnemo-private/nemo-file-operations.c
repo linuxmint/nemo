@@ -3382,18 +3382,28 @@ get_target_file_with_custom_name (GFile *src,
 
 	if (dest == NULL && !same_fs) {
 		info = g_file_query_info (src,
-					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME,
+					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME ","
+					  G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
 					  0, NULL, NULL);
 		
 		if (info) {
-			copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			copyname = NULL;
+
+			/* if file is being restored from trash make sure it uses its original name */
+			if (g_file_has_uri_scheme (src, "trash")) {
+				copyname = g_strdup (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+			}
+
+			if (copyname == NULL) {
+				copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			}
 
 			if (copyname) {
 				make_file_name_valid_for_dest_fs (copyname, dest_fs_type);
 				dest = g_file_get_child_for_display_name (dest_dir, copyname, NULL);
 				g_free (copyname);
 			}
-			
+
 			g_object_unref (info);
 		}
 	}
