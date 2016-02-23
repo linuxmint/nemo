@@ -7297,17 +7297,13 @@ nemo_file_get_trash_original_file (NemoFile *file)
 {
 	GFile *location;
 	NemoFile *original_file;
-	char *filename;
 
 	original_file = NULL;
 
 	if (file->details->trash_orig_path != NULL) {
-		/* file name is stored in URL encoding */
-		filename = g_uri_unescape_string (file->details->trash_orig_path, "");
-		location = g_file_new_for_path (filename);
+		location = g_file_new_for_path (file->details->trash_orig_path);
 		original_file = nemo_file_get (location);
-		g_object_unref (G_OBJECT (location));
-		g_free (filename);
+		g_object_unref (location);
 	}
 
 	return original_file;
