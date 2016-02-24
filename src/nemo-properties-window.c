@@ -4935,6 +4935,7 @@ create_properties_window (StartupData *startup_data)
 	gtk_widget_set_margin_left (frame, 6);
 	gtk_widget_set_margin_right (frame, 6);
 	gtk_widget_set_margin_top (frame, 8);
+	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (window))), 0);
 	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_action_area (GTK_DIALOG (window))), 5);
 
 	/* Update from initial state */
