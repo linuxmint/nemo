@@ -60,6 +60,7 @@
 
 #define NEMO_ACTION_OPEN "Open"
 #define NEMO_ACTION_OPEN_WITH "Open With"
+#define NEMO_ACTION_OPEN_TOGGLE "OpenToggle"
 #define NEMO_ACTION_OPEN_ALTERNATE "OpenAlternate"
 #define NEMO_ACTION_OPEN_IN_NEW_TAB "OpenInNewTab"
 #define NEMO_ACTION_LOCATION_OPEN_ALTERNATE "LocationOpenAlternate"

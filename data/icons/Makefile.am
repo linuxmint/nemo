@@ -19,7 +19,9 @@ public_icons = \
 	hicolor_actions_scalable_sidebar-tree-symbolic.svg \
 	hicolor_actions_scalable_sidebar-places-symbolic.svg \
 	hicolor_actions_scalable_expand-menu-symbolic.svg \
+	hicolor_actions_scalable_expand-menu-hover-symbolic.svg \
 	hicolor_actions_scalable_collapse-menu-symbolic.svg \
+	hicolor_actions_scalable_collapse-menu-hover-symbolic.svg \
 	hicolor_status_48x48_progress-0.png \
 	hicolor_status_48x48_progress-10.png \
 	hicolor_status_48x48_progress-20.png \

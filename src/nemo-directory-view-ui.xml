@@ -152,7 +152,7 @@
 		<separator name="new folder with selection separator"/>
 	</placeholder>
 	<placeholder name="Open Placeholder">
-		<menuitem name="Open" action="Open"/>
+		<menuitem name="OpenToggle" action="OpenToggle"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 		<menuitem name="OpenAlternate" action="OpenAlternate"/>
 		<separator name="applications separator"/>

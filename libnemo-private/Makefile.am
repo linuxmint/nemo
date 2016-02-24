@@ -66,6 +66,8 @@ libnemo_private_la_SOURCES = \
 	nemo-column-chooser.h \
 	nemo-column-utilities.c \
 	nemo-column-utilities.h \
+	nemo-context-menu-menu-item.c \
+	nemo-context-menu-menu-item.h \
 	nemo-debug.c \
 	nemo-debug.h \
 	nemo-default-file-icon.c \
