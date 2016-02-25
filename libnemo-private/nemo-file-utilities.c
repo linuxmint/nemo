@@ -1248,15 +1248,92 @@ locations_from_file_list (GList *file_list)
 	return g_list_reverse (ret);
 }
 
+typedef struct {
+	GHashTable *original_dirs_hash;
+	GtkWindow  *parent_window;
+} RestoreFilesData;
+
+static void
+ensure_dirs_task_ready_cb (GObject *_source,
+			   GAsyncResult *res,
+			   gpointer user_data)
+{
+	NemoFile *original_dir;
+	GFile *original_dir_location;
+	GList *original_dirs, *files, *locations, *l;
+	RestoreFilesData *data = user_data;
+
+	original_dirs = g_hash_table_get_keys (data->original_dirs_hash);
+	for (l = original_dirs; l != NULL; l = l->next) {
+		original_dir = NEMO_FILE (l->data);
+		original_dir_location = nemo_file_get_location (original_dir);
+
+		files = g_hash_table_lookup (data->original_dirs_hash, original_dir);
+		locations = locations_from_file_list (files);
+
+		nemo_file_operations_move
+			(locations, NULL,
+			 original_dir_location,
+			 data->parent_window,
+			 NULL, NULL);
+
+		g_list_free_full (locations, g_object_unref);
+		g_object_unref (original_dir_location);
+	}
+
+	g_list_free (original_dirs);
+
+	g_hash_table_unref (data->original_dirs_hash);
+	g_slice_free (RestoreFilesData, data);
+}
+
+static void
+ensure_dirs_task_thread_func (GTask *task,
+			      gpointer source,
+			      gpointer task_data,
+			      GCancellable *cancellable)
+{
+	RestoreFilesData *data = task_data;
+	NemoFile *original_dir;
+	GFile *original_dir_location;
+	GList *original_dirs, *l;
+
+	original_dirs = g_hash_table_get_keys (data->original_dirs_hash);
+	for (l = original_dirs; l != NULL; l = l->next) {
+		original_dir = NEMO_FILE (l->data);
+		original_dir_location = nemo_file_get_location (original_dir);
+
+		g_file_make_directory_with_parents (original_dir_location, cancellable, NULL);
+		g_object_unref (original_dir_location);
+	}
+
+	g_task_return_pointer (task, NULL, NULL);
+}
+
+static void
+restore_files_ensure_parent_directories (GHashTable *original_dirs_hash,
+					 GtkWindow  *parent_window)
+{
+	RestoreFilesData *data;
+	GTask *ensure_dirs_task;
+
+	data = g_slice_new0 (RestoreFilesData);
+	data->parent_window = parent_window;
+	data->original_dirs_hash = g_hash_table_ref (original_dirs_hash);
+
+	ensure_dirs_task = g_task_new (NULL, NULL, ensure_dirs_task_ready_cb, data);
+	g_task_set_task_data (ensure_dirs_task, data, NULL);
+	g_task_run_in_thread (ensure_dirs_task, ensure_dirs_task_thread_func);
+	g_object_unref (ensure_dirs_task);
+}
+
 void
 nemo_restore_files_from_trash (GList *files,
 				   GtkWindow *parent_window)
 {
-	NemoFile *file, *original_dir;
+	NemoFile *file;
 	GHashTable *original_dirs_hash;
-	GList *original_dirs, *unhandled_files;
-	GFile *original_dir_location;
-	GList *locations, *l;
+	GList *unhandled_files, *l;
 	char *message, *file_name;
 
 	original_dirs_hash = nemo_trashed_files_get_original_directories (files, &unhandled_files);
@@ -1274,26 +1351,8 @@ nemo_restore_files_from_trash (GList *files,
 	}
 
 	if (original_dirs_hash != NULL) {
-		original_dirs = g_hash_table_get_keys (original_dirs_hash);
-		for (l = original_dirs; l != NULL; l = l->next) {
-			original_dir = NEMO_FILE (l->data);
-			original_dir_location = nemo_file_get_location (original_dir);
-
-			files = g_hash_table_lookup (original_dirs_hash, original_dir);
-			locations = locations_from_file_list (files);
-
-			nemo_file_operations_move
-				(locations, NULL, 
-				 original_dir_location,
-				 parent_window,
-				 NULL, NULL);
-
-			g_list_free_full (locations, g_object_unref);
-			g_object_unref (original_dir_location);
-		}
-
-		g_list_free (original_dirs);
-		g_hash_table_destroy (original_dirs_hash);
+		restore_files_ensure_parent_directories (original_dirs_hash, parent_window);
+		g_hash_table_unref (original_dirs_hash);
 	}
 
 	nemo_file_list_unref (unhandled_files);
