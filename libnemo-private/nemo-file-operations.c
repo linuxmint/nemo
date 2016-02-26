@@ -6472,6 +6472,7 @@ delete_trash_file (CommonJob *job,
 
 	if (!job_aborted (job) && del_file) {
 		g_file_delete (file, job->cancellable, NULL);
+		nemo_progress_info_pulse_progress (job->progress);
 	}
 }
 
@@ -6514,6 +6515,9 @@ empty_trash_job (GIOSchedulerJob *io_job,
 		confirmed = TRUE;
 	}
 	if (confirmed) {
+		nemo_progress_info_set_status (common->progress, _("Emptying Trash"));
+		nemo_progress_info_set_details (common->progress, _("Emptying Trash"));
+
 		for (l = job->trash_dirs;
 		     l != NULL && !job_aborted (common);
 		     l = l->next) {
