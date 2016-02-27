@@ -104,9 +104,10 @@ nemo_trash_bar_dispose (GObject *obj)
     NemoTrashBar *bar;
 
     bar = NEMO_TRASH_BAR (obj);
-    if (bar->priv->selection_handler_id != 0) {
-        g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
-        bar->priv->selection_handler_id = 0;
+    if (bar->priv->selection_handler_id != 0 &&
+        bar->priv->selection_handler_id != NULL) {
+            g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
+            bar->priv->selection_handler_id = 0;
     }
 
     G_OBJECT_CLASS (nemo_trash_bar_parent_class)->dispose (obj);
