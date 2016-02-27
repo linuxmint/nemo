@@ -279,10 +279,12 @@ nemo_application_close_all_windows (NemoApplication *self)
 	
 	list_copy = g_list_copy (gtk_application_get_windows (GTK_APPLICATION (self)));
 	for (l = list_copy; l != NULL; l = l->next) {
-		NemoWindow *window;
-		
-		window = NEMO_WINDOW (l->data);
-		nemo_window_close (window);
+		if (NEMO_IS_WINDOW (l->data)) {
+			NemoWindow *window;
+
+			window = NEMO_WINDOW (l->data);
+			nemo_window_close (window);
+		}
 	}
 	g_list_free (list_copy);
 }
