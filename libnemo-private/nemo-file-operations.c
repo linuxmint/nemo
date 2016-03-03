@@ -1070,7 +1070,9 @@ init_common (gsize job_size,
 
 	if (parent_window) {
 		common->parent_window = parent_window;
-		eel_add_weak_pointer (&common->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (common->parent_window),
+					   (gpointer *) &common->parent_window);
+
 	}
 	common->progress = nemo_progress_info_new ();
 	common->cancellable = nemo_progress_info_get_cancellable (common->progress);
@@ -1098,7 +1100,12 @@ finalize_common (CommonJob *common)
 
 	common->inhibit_cookie = -1;
 	g_timer_destroy (common->time);
-	eel_remove_weak_pointer (&common->parent_window);
+
+	if (common->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (common->parent_window),
+					      (gpointer *) &common->parent_window);
+	}
+
 	if (common->skip_files) {
 		g_hash_table_destroy (common->skip_files);
 	}
@@ -2220,7 +2227,7 @@ unmount_mount_callback (GObject *source_object,
 	if (error != NULL) {
 		g_error_free (error);
 	}
-	
+
 	unmount_data_free (data);
 }
 
@@ -2419,7 +2426,8 @@ nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_
 	data->callback_data = callback_data;
 	if (parent_window) {
 		data->parent_window = parent_window;
-		eel_add_weak_pointer (&data->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (data->parent_window),
+					   (gpointer *) &data->parent_window);
 		
 	}
 

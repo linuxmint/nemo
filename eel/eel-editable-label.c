@@ -1175,7 +1175,7 @@ eel_editable_label_size_allocate (GtkWidget     *widget,
   EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
 
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->size_allocate) (widget, allocation);
-  
+
   gdk_window_move_resize (label->text_area, allocation->x, allocation->y,
                           allocation->width, allocation->height);
 }
@@ -1648,13 +1648,11 @@ eel_editable_label_realize (GtkWidget *widget)
   label->text_area = gdk_window_new (gtk_widget_get_parent_window (widget),
                                      &attributes, attributes_mask);
   gdk_window_set_user_data (label->text_area, widget);
-
-  gtk_im_context_set_client_window (label->im_context,  label->text_area);
+  gtk_im_context_set_client_window (label->im_context, label->text_area);
   g_object_unref (attributes.cursor);
 
   style = gtk_widget_get_style_context (widget);
   gtk_style_context_set_background (style, gtk_widget_get_window (widget));
-  
 }
 
 static void
@@ -1664,9 +1662,8 @@ eel_editable_label_unrealize (GtkWidget *widget)
 
   label = EEL_EDITABLE_LABEL (widget);
 
-  /* Strange. Copied from GtkEntry, should be NULL? */
   gtk_im_context_set_client_window (label->im_context, NULL);
-  
+
   if (label->text_area)
     {
       gdk_window_set_user_data (label->text_area, NULL);
@@ -1679,8 +1676,8 @@ eel_editable_label_unrealize (GtkWidget *widget)
 
 static void
 eel_editable_label_map (GtkWidget *widget)
-{	
-   EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
+{
+  EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
 
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->map) (widget);
 
@@ -1693,7 +1690,7 @@ eel_editable_label_unmap (GtkWidget *widget)
   EelEditableLabel *label = EEL_EDITABLE_LABEL (widget);
 
   gdk_window_hide (label->text_area);
-  
+
   (* GTK_WIDGET_CLASS (eel_editable_label_parent_class)->unmap) (widget);
 }
 
@@ -1977,7 +1974,7 @@ eel_editable_label_select_region_index (EelEditableLabel *label,
     {
       GtkTargetList *list;
       GtkTargetEntry *targets;
-      guint n_targets;
+      gint n_targets;
 
       list = gtk_target_list_new (NULL, 0);
       gtk_target_list_add_text_targets (list, 0);
@@ -4282,4 +4279,3 @@ eel_editable_label_get_accessible (GtkWidget *widget)
 
   return eel_accessibility_set_atk_object_return (widget, accessible);
 }
-

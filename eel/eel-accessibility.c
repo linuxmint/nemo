@@ -24,7 +24,6 @@
 */
 #include <config.h>
 #include <gtk/gtk.h>
-#include <atk/atkrelationset.h>
 #include <eel/eel-accessibility.h>
 
 void
