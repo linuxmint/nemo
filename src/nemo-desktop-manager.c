@@ -89,7 +89,7 @@ layout_changed (NemoDesktopManager *manager)
     close_all_windows (manager);
 
     NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
-    if (!emo_application_get_show_desktop (app)) {
+    if (!nemo_application_get_show_desktop (app)) {
         return;
     } 
 
