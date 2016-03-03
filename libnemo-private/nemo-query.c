@@ -87,7 +87,7 @@ void
 nemo_query_set_text (NemoQuery *query, const char *text)
 {
 	g_free (query->details->text);
-	query->details->text = g_strdup (text);
+	query->details->text = g_strstrip (g_strdup (text));
 }
 
 char *
@@ -126,7 +126,7 @@ nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 char *
 nemo_query_to_readable_string (NemoQuery *query)
 {
-	if (!query || !query->details->text) {
+	if (!query || !query->details->text || query->details->text[0] == '\0') {
 		return g_strdup (_("Search"));
 	}
 
