@@ -68,11 +68,24 @@ selection_changed_cb (NemoView *view,
 }
 
 static void
+disconnect_view (NemoTrashBar *bar)
+{
+    if (bar->priv->selection_handler_id != 0) {
+        g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
+        bar->priv->selection_handler_id = 0;
+    }
+}
+
+static void
 connect_view_and_update_button (NemoTrashBar *bar)
 {
-	bar->priv->selection_handler_id =
-		g_signal_connect (bar->priv->view, "selection-changed",
-				  G_CALLBACK (selection_changed_cb), bar);
+    bar->priv->selection_handler_id =
+    g_signal_connect (bar->priv->view, "selection-changed",
+                      G_CALLBACK (selection_changed_cb), bar);
+
+    g_signal_connect_object (bar->priv->view, "destroy",
+                             G_CALLBACK (disconnect_view), bar,
+                             G_CONNECT_SWAPPED);
 
 	selection_changed_cb (bar->priv->view, bar);
 }
@@ -104,10 +117,8 @@ nemo_trash_bar_dispose (GObject *obj)
     NemoTrashBar *bar;
 
     bar = NEMO_TRASH_BAR (obj);
-    if (bar->priv->selection_handler_id != 0) {
-        g_signal_handler_disconnect (bar->priv->view, bar->priv->selection_handler_id);
-        bar->priv->selection_handler_id = 0;
-    }
+
+    disconnect_view (bar);
 
     G_OBJECT_CLASS (nemo_trash_bar_parent_class)->dispose (obj);
 }
