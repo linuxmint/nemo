@@ -84,14 +84,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	
 	*has_window_open = nemo_file_has_open_window (file);
 
-	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
-	if (!nemo_icon_view_is_compact (icon_view) ||
-	    nemo_icon_container_get_zoom_level (container) > NEMO_ZOOM_LEVEL_STANDARD) {
-		flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
-		if (nemo_icon_view_is_compact (icon_view)) {
-			flags |= NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
-		}
-	}
+	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
+			NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
 
 	if (use_embedding) {
 		flags |= NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT;
