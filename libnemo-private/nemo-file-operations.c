@@ -6445,6 +6445,7 @@ nemo_file_operations_new_file (GtkWidget *parent_view,
 static void
 delete_trash_file (CommonJob *job,
 		   GFile *file,
+		   int *deletions_since_progress,
 		   gboolean del_file,
 		   gboolean del_children)
 {
@@ -6468,7 +6469,7 @@ delete_trash_file (CommonJob *job,
 			       (info = g_file_enumerator_next_file (enumerator, job->cancellable, NULL)) != NULL) {
 				child = g_file_get_child (file,
 							  g_file_info_get_name (info));
-				delete_trash_file (job, child, TRUE,
+				delete_trash_file (job, child, deletions_since_progress, TRUE,
 						   g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY);
 				g_object_unref (child);
 				g_object_unref (info);
@@ -6480,6 +6481,11 @@ delete_trash_file (CommonJob *job,
 
 	if (!job_aborted (job) && del_file) {
 		g_file_delete (file, job->cancellable, NULL);
+
+		if ((*deletions_since_progress)++ > 100) {
+			nemo_progress_info_pulse_progress (job->progress);
+			*deletions_since_progress = 0;
+		}
 	}
 }
 
@@ -6510,6 +6516,7 @@ empty_trash_job (GIOSchedulerJob *io_job,
 	CommonJob *common;
 	GList *l;
 	gboolean confirmed;
+	int deletions_since_progress = 0;
 	
 	common = (CommonJob *)job;
 	common->io_job = io_job;
@@ -6522,10 +6529,13 @@ empty_trash_job (GIOSchedulerJob *io_job,
 		confirmed = TRUE;
 	}
 	if (confirmed) {
+		nemo_progress_info_set_status (common->progress, _("Emptying Trash"));
+		nemo_progress_info_set_details (common->progress, _("Emptying Trash"));
+
 		for (l = job->trash_dirs;
 		     l != NULL && !job_aborted (common);
 		     l = l->next) {
-			delete_trash_file (common, l->data, FALSE, TRUE);
+			delete_trash_file (common, l->data, &deletions_since_progress, FALSE, TRUE);
 		}
 	}
 
