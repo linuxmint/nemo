@@ -81,6 +81,8 @@
 
 #define PREVIEW_IMAGE_WIDTH 96
 
+#define STACK_INNER_BORDER 12
+
 #define ROW_PAD 6
 
 static GHashTable *windows;
@@ -90,7 +92,7 @@ struct NemoPropertiesWindowDetails {
 	GList *original_files;
 	GList *target_files;
 	
-	GtkNotebook *notebook;
+	GtkStack *stack;
 	
 	GtkGrid *basic_grid;
 
@@ -359,13 +361,13 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 {
 	NemoIconInfo *icon, *new_icon;
 	GList *l;
-    gint icon_scale;
-	
+	gint icon_scale;
+
 	icon = NULL;
-    icon_scale = gtk_widget_get_scale_factor (GTK_WIDGET (window->details->notebook));
+	icon_scale = gtk_widget_get_scale_factor(GTK_WIDGET(window->details->stack));
 	for (l = window->details->original_files; l != NULL; l = l->next) {
 		NemoFile *file;
-		
+
 		file = NEMO_FILE (l->data);
 		
 		if (!icon) {
@@ -851,26 +853,18 @@ update_properties_window_title (NemoPropertiesWindow *window)
 }
 
 static void
+clear_extension_callback (GtkWidget *page, gpointer data) {
+	if (g_object_get_data (G_OBJECT (page), "is-extension-page")) {
+		gtk_widget_destroy (page);
+	}
+}
+
+static void
 clear_extension_pages (NemoPropertiesWindow *window)
 {
-	int i;
-	int num_pages;
-	GtkWidget *page;
-
-	num_pages = gtk_notebook_get_n_pages
-				(GTK_NOTEBOOK (window->details->notebook));
-
-	for (i = 0; i < num_pages; i++) {
-		page = gtk_notebook_get_nth_page
-				(GTK_NOTEBOOK (window->details->notebook), i);
-
-		if (g_object_get_data (G_OBJECT (page), "is-extension-page")) {
-			gtk_notebook_remove_page
-				(GTK_NOTEBOOK (window->details->notebook), i);
-			num_pages--;
-			i--;
-		}
-	}
+	gtk_container_foreach (GTK_CONTAINER (window->details->stack),
+                       clear_extension_callback,
+                       NULL);
 }
 
 static void
@@ -2277,39 +2271,42 @@ append_directory_contents_fields (NemoPropertiesWindow *window,
 }
 
 static GtkWidget *
-create_page_with_hbox (GtkNotebook *notebook,
+create_page_with_hbox (GtkStack *stack,
+		       const char *name,
 		       const char *title,
 		       const char *help_uri)
 {
 	GtkWidget *hbox;
 
-	g_assert (GTK_IS_NOTEBOOK (notebook));
+	g_assert (GTK_IS_STACK (stack));
+	g_assert (name != NULL);
 	g_assert (title != NULL);
 
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_widget_show (hbox);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), STACK_INNER_BORDER);
 	gtk_box_set_spacing (GTK_BOX (hbox), 12);
-	gtk_notebook_append_page (notebook, hbox, gtk_label_new (title));
+	gtk_stack_add_titled(stack, hbox, name, title);
 	g_object_set_data_full (G_OBJECT (hbox), "help-uri", g_strdup (help_uri), g_free);
 
 	return hbox;
 }
 
 static GtkWidget *
-create_page_with_vbox (GtkNotebook *notebook,
+create_page_with_vbox (GtkStack *stack,
+		       const char *name,
 		       const char *title,
 		       const char *help_uri)
 {
 	GtkWidget *vbox;
-
-	g_assert (GTK_IS_NOTEBOOK (notebook));
+	g_assert (GTK_IS_STACK (stack));
+	g_assert (name != NULL);
 	g_assert (title != NULL);
 
 	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_show (vbox);
-	gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-	gtk_notebook_append_page (notebook, vbox, gtk_label_new (title));
+	gtk_container_set_border_width (GTK_CONTAINER (vbox), STACK_INNER_BORDER);
+	gtk_stack_add_titled(stack, vbox, name, title);
 	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup (help_uri), g_free);
 
 	return vbox;
@@ -2609,7 +2606,7 @@ paint_pie_chart (GtkWidget *widget,
 	double free, used;
 	double angle1, angle2, split, xc, yc, radius;
 	GtkAllocation allocation;
-	GtkStyleContext *notebook_ctx;
+	GtkStyleContext *stack_ctx;
 	GdkRGBA bg_color;
 
 	window = NEMO_PROPERTIES_WINDOW (data);
@@ -2618,9 +2615,9 @@ paint_pie_chart (GtkWidget *widget,
 	width  = allocation.width;
   	height = allocation.height;
 
-	notebook_ctx = gtk_widget_get_style_context (GTK_WIDGET (window->details->notebook));
-	gtk_style_context_get_background_color (notebook_ctx,
-						gtk_widget_get_state_flags (GTK_WIDGET (window->details->notebook)),
+	stack_ctx = gtk_widget_get_style_context (GTK_WIDGET (window->details->stack));
+	gtk_style_context_get_background_color (stack_ctx,
+						gtk_widget_get_state_flags (GTK_WIDGET (window->details->stack)),
 						&bg_color);
 
 	cairo_save (cr);
@@ -3040,8 +3037,7 @@ create_basic_page (NemoPropertiesWindow *window)
 	GtkWidget *icon_pixmap_widget;
 	GtkWidget *volume_usage;
 	GtkWidget *hbox, *vbox;
-
-	hbox = create_page_with_hbox (window->details->notebook, _("Basic"),
+	hbox = create_page_with_hbox (window->details->stack, "basic", _("Basic"),
 				      "help:gnome-help/nemo-file-properties-basic");
 	
 	/* Icon pixmap */
@@ -4489,7 +4485,7 @@ create_permissions_page (NemoPropertiesWindow *window)
 	char *file_name, *prompt_text;
 	GList *file_list;
 
-	vbox = create_page_with_vbox (window->details->notebook,
+	vbox = create_page_with_vbox (window->details->stack, "permissions",
 				      _("Permissions"),
 				      "help:gnome-help/nemo-file-properties-permissions");
 
@@ -4583,7 +4579,7 @@ append_extension_pages (NemoPropertiesWindow *window)
 		for (l = pages; l != NULL; l = l->next) {
 			NemoPropertyPage *page;
 			GtkWidget *page_widget;
-			GtkWidget *label;
+			GtkLabel *label;
 			
 			page = NEMO_PROPERTY_PAGE (l->data);
 
@@ -4591,8 +4587,12 @@ append_extension_pages (NemoPropertiesWindow *window)
 				      "page", &page_widget, "label", &label, 
 				      NULL);
 			
-			gtk_notebook_append_page (window->details->notebook, 
-						  page_widget, label);
+			gtk_container_set_border_width (GTK_CONTAINER (page_widget),
+					                STACK_INNER_BORDER);
+			gtk_stack_add_titled(window->details->stack,
+					     page_widget,
+					     gtk_label_get_text(label),
+					     gtk_label_get_text(label));
 
 			g_object_set_data (G_OBJECT (page_widget), 
 					   "is-extension-page",
@@ -4787,8 +4787,9 @@ create_open_with_page (NemoPropertiesWindow *window)
 	g_free (mime_type);
 
 	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup ("help:gnome-help/files-open"), g_free);
-	gtk_notebook_append_page (window->details->notebook, 
-				  vbox, gtk_label_new (_("Open With")));
+	gtk_container_set_border_width (GTK_CONTAINER (vbox), STACK_INNER_BORDER);
+	gtk_stack_add_titled (window->details->stack,
+				  vbox, "open_with", _("Open With"));
 }
 
 
@@ -4806,7 +4807,7 @@ create_properties_window (StartupData *startup_data)
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "file_properties", "Nemo");
 
-    gtk_window_set_default_size (GTK_WINDOW (window), 500, -1);
+	gtk_window_set_default_size (GTK_WINDOW (window), 500, -1);
 
 	if (startup_data->parent_widget) {
 		gtk_window_set_screen (GTK_WINDOW (window),
@@ -4874,12 +4875,42 @@ create_properties_window (StartupData *startup_data)
 					 0);
 	}
 
-	/* Create the notebook tabs. */
-	window->details->notebook = GTK_NOTEBOOK (gtk_notebook_new ());
-	gtk_widget_show (GTK_WIDGET (window->details->notebook));
+	/* Create the stack and the stack switcher. */
+	GtkWidget *toolbar = gtk_toolbar_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (toolbar), "primary-toolbar");
+	gtk_widget_show (toolbar);
+	gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area(GTK_DIALOG (window))),
+			    toolbar,
+			    FALSE, FALSE, 0);
+
+	GtkToolItem * tool_item = gtk_tool_item_new ();
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (tool_item)), "raised");
+	gtk_tool_item_set_expand (tool_item, 1);
+	gtk_widget_show (GTK_WIDGET (tool_item));
+	gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
+
+	window->details->stack = GTK_STACK (gtk_stack_new ());
+	GtkStackSwitcher *stack_switcher;
+	stack_switcher = GTK_STACK_SWITCHER (gtk_stack_switcher_new ());
+	gtk_stack_switcher_set_stack (stack_switcher,
+                              window->details->stack);
+
+	gtk_stack_set_transition_type (window->details->stack,
+                               GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
+	gtk_widget_set_halign (GTK_WIDGET (stack_switcher), GTK_ALIGN_CENTER);
+
+	gtk_widget_show (GTK_WIDGET (window->details->stack));
+	gtk_widget_show (GTK_WIDGET (stack_switcher));
+	gtk_container_add(GTK_CONTAINER (tool_item), GTK_WIDGET (stack_switcher));
+
+	GtkWidget * frame = gtk_frame_new (NULL);
+	gtk_widget_show (frame);
+	gtk_style_context_add_class (gtk_widget_get_style_context (frame), "view");
 	gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (window))),
-			    GTK_WIDGET (window->details->notebook),
+			    GTK_WIDGET (frame),
 			    TRUE, TRUE, 0);
+
+	gtk_container_add (GTK_CONTAINER (frame), GTK_WIDGET (window->details->stack));
 
 	/* Create the pages. */
 	create_basic_page (window);
@@ -4901,10 +4932,11 @@ create_properties_window (StartupData *startup_data)
 				NULL);
 
 	/* FIXME - HIGificiation, should be done inside GTK+ */
-	gtk_container_set_border_width (GTK_CONTAINER (window), 12);
-	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (window))), 12);
-	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_action_area (GTK_DIALOG (window))), 0);
-	gtk_box_set_spacing (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (window))), 12);
+	gtk_widget_set_margin_left (frame, 6);
+	gtk_widget_set_margin_right (frame, 6);
+	gtk_widget_set_margin_top (frame, 8);
+	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (window))), 0);
+	gtk_container_set_border_width (GTK_CONTAINER (gtk_dialog_get_action_area (GTK_DIALOG (window))), 5);
 
 	/* Update from initial state */
 	properties_window_update (window, NULL);
@@ -5138,8 +5170,7 @@ real_response (GtkDialog *dialog,
 
 	switch (response) {
 	case GTK_RESPONSE_HELP:
-		curpage = gtk_notebook_get_nth_page (window->details->notebook,
-						     gtk_notebook_get_current_page (window->details->notebook));
+		curpage = gtk_stack_get_visible_child (window->details->stack);
 		helpuri = g_object_get_data (G_OBJECT (curpage), "help-uri");
 		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
 			      helpuri ? helpuri : "help:gnome-help/files",
