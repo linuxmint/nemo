@@ -51,11 +51,13 @@ static int  nemo_notebook_insert_page	 (GtkNotebook *notebook,
 static void nemo_notebook_remove	 (GtkContainer *container,
 					  GtkWidget *tab_widget);
 
+#if 0
 static const GtkTargetEntry url_drag_types[] =
 {
 	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
 	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
 };
+#endif
 
 enum
 {
