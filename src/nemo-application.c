@@ -116,6 +116,7 @@ struct _NemoApplicationPriv {
     NemoDesktopManager *desktop_manager;
 
 	gboolean no_desktop;
+	gboolean force_desktop;
 	gchar *geometry;
 
     gboolean cache_problem;
@@ -279,10 +280,12 @@ nemo_application_close_all_windows (NemoApplication *self)
 	
 	list_copy = g_list_copy (gtk_application_get_windows (GTK_APPLICATION (self)));
 	for (l = list_copy; l != NULL; l = l->next) {
-		NemoWindow *window;
-		
-		window = NEMO_WINDOW (l->data);
-		nemo_window_close (window);
+		if (NEMO_IS_WINDOW (l->data)) {
+			NemoWindow *window;
+
+			window = NEMO_WINDOW (l->data);
+			nemo_window_close (window);
+		}
 	}
 	g_list_free (list_copy);
 }
@@ -695,9 +698,11 @@ nemo_application_local_command_line (GApplication *application,
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
 		{ "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->no_desktop,
-		  N_("Do not manage the desktop (ignore the preference set in the preferences dialog)."), NULL },
-        { "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
-          N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
+		  N_("Never manage the desktop (ignore the GSettings preference)."), NULL },
+		{ "force-desktop", '\0', 0, G_OPTION_ARG_NONE, &self->priv->force_desktop,
+		  N_("Always manage the desktop (ignore the GSettings preference)."), NULL },
+		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
+		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
@@ -823,6 +828,17 @@ nemo_application_local_command_line (GApplication *application,
 	return TRUE;	
 }
 
+gboolean 
+nemo_application_get_show_desktop (NemoApplication *self) {
+	if (self->priv->force_desktop) {
+		return TRUE;
+	} 
+	if (self->priv->no_desktop) {
+		return FALSE;
+	}
+	return g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP);
+}
+
 static gboolean
 css_provider_load_from_resource (GtkCssProvider *provider,
                      const char     *resource_path,
@@ -907,8 +923,6 @@ init_icons_and_styles (void)
 static void
 init_desktop (NemoApplication *self)
 {
-	GdkScreen *screen;
-	screen = gdk_display_get_default_screen (gdk_display_get_default ());
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
 

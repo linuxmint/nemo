@@ -134,6 +134,7 @@ struct DeepCountState {
 	GFile *deep_count_location;
 	GList *deep_count_subdirectories;
 	GArray *seen_deep_count_inodes;
+	char *fs_id;
 };
 
 
@@ -2666,6 +2667,7 @@ deep_count_one (DeepCountState *state,
 	NemoFile *file;
 	GFile *subdir;
 	gboolean is_seen_inode;
+	const char *id;
     gboolean hidden;
 	is_seen_inode = seen_inode (state, info);
 	if (!is_seen_inode) {
@@ -2684,10 +2686,13 @@ deep_count_one (DeepCountState *state,
             file->details->deep_directory_count += 1;
         }
 		/* Record the fact that we have to descend into this directory. */
-
-		subdir = g_file_get_child (state->deep_count_location, g_file_info_get_name (info));
-		state->deep_count_subdirectories = g_list_prepend
-			(state->deep_count_subdirectories, subdir);
+		id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+		if (g_strcmp0 (id, state->fs_id) == 0) {
+			/* only if it is on the same filesystem */
+			subdir = g_file_get_child (state->deep_count_location, g_file_info_get_name (info));
+			state->deep_count_subdirectories = g_list_prepend
+				(state->deep_count_subdirectories, subdir);
+		}
 	} else {
 		/* Even non-regular files count as files. */
         if (hidden) {
@@ -2719,6 +2724,7 @@ deep_count_state_free (DeepCountState *state)
 	}
 	g_list_free_full (state->deep_count_subdirectories, g_object_unref);
 	g_array_free (state->seen_deep_count_inodes, TRUE);
+	g_free (state->fs_id);
 	g_free (state);
 }
 
@@ -2865,6 +2871,7 @@ deep_count_load (DeepCountState *state, GFile *location)
 					 G_FILE_ATTRIBUTE_STANDARD_SIZE ","
 					 G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN ","
 					 G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP ","
+					 G_FILE_ATTRIBUTE_ID_FILESYSTEM ","
 					 G_FILE_ATTRIBUTE_UNIX_INODE,
 					 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, /* flags */
 					 G_PRIORITY_LOW, /* prio */
@@ -2893,6 +2900,27 @@ deep_count_stop (NemoDirectory *directory)
 		/* The count is not wanted, so stop it. */
 		deep_count_cancel (directory);
 	}
+}
+
+static void
+deep_count_got_info (GObject *source_object,
+		     GAsyncResult *res,
+		     gpointer user_data)
+{
+	GFileInfo *info;
+	const char *id;
+	GFile *file = (GFile *)source_object;
+	DeepCountState *state = (DeepCountState *)user_data;
+
+	info = g_file_query_info_finish (file,
+					 res,
+					 NULL);
+	if (info) {
+		id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+		state->fs_id = g_strdup (id);
+		g_object_unref (info);
+	}
+	deep_count_load (state, file);
 }
 
 static void
@@ -2943,7 +2971,14 @@ deep_count_start (NemoDirectory *directory,
 	directory->details->deep_count_in_progress = state;
 	
 	location = nemo_file_get_location (file);
-	deep_count_load (state, location);
+	state->fs_id = NULL;
+	g_file_query_info_async (location,
+				 G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+				 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+				 G_PRIORITY_DEFAULT,
+				 NULL,
+				 deep_count_got_info,
+				 state);
 	g_object_unref (location);
 }
 

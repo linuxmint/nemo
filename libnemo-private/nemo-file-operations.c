@@ -1070,7 +1070,9 @@ init_common (gsize job_size,
 
 	if (parent_window) {
 		common->parent_window = parent_window;
-		eel_add_weak_pointer (&common->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (common->parent_window),
+					   (gpointer *) &common->parent_window);
+
 	}
 	common->progress = nemo_progress_info_new ();
 	common->cancellable = nemo_progress_info_get_cancellable (common->progress);
@@ -1098,7 +1100,12 @@ finalize_common (CommonJob *common)
 
 	common->inhibit_cookie = -1;
 	g_timer_destroy (common->time);
-	eel_remove_weak_pointer (&common->parent_window);
+
+	if (common->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (common->parent_window),
+					      (gpointer *) &common->parent_window);
+	}
+
 	if (common->skip_files) {
 		g_hash_table_destroy (common->skip_files);
 	}
@@ -2220,7 +2227,7 @@ unmount_mount_callback (GObject *source_object,
 	if (error != NULL) {
 		g_error_free (error);
 	}
-	
+
 	unmount_data_free (data);
 }
 
@@ -2419,7 +2426,8 @@ nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_
 	data->callback_data = callback_data;
 	if (parent_window) {
 		data->parent_window = parent_window;
-		eel_add_weak_pointer (&data->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (data->parent_window),
+					   (gpointer *) &data->parent_window);
 		
 	}
 
@@ -3385,18 +3393,28 @@ get_target_file_with_custom_name (GFile *src,
 
 	if (dest == NULL && !same_fs) {
 		info = g_file_query_info (src,
-					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME,
+					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME ","
+					  G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
 					  0, NULL, NULL);
 		
 		if (info) {
-			copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			copyname = NULL;
+
+			/* if file is being restored from trash make sure it uses its original name */
+			if (g_file_has_uri_scheme (src, "trash")) {
+				copyname = g_strdup (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+			}
+
+			if (copyname == NULL) {
+				copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			}
 
 			if (copyname) {
 				make_file_name_valid_for_dest_fs (copyname, dest_fs_type);
 				dest = g_file_get_child_for_display_name (dest_dir, copyname, NULL);
 				g_free (copyname);
 			}
-			
+
 			g_object_unref (info);
 		}
 	}
@@ -6427,6 +6445,7 @@ nemo_file_operations_new_file (GtkWidget *parent_view,
 static void
 delete_trash_file (CommonJob *job,
 		   GFile *file,
+		   int *deletions_since_progress,
 		   gboolean del_file,
 		   gboolean del_children)
 {
@@ -6450,7 +6469,7 @@ delete_trash_file (CommonJob *job,
 			       (info = g_file_enumerator_next_file (enumerator, job->cancellable, NULL)) != NULL) {
 				child = g_file_get_child (file,
 							  g_file_info_get_name (info));
-				delete_trash_file (job, child, TRUE,
+				delete_trash_file (job, child, deletions_since_progress, TRUE,
 						   g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY);
 				g_object_unref (child);
 				g_object_unref (info);
@@ -6462,6 +6481,11 @@ delete_trash_file (CommonJob *job,
 
 	if (!job_aborted (job) && del_file) {
 		g_file_delete (file, job->cancellable, NULL);
+
+		if ((*deletions_since_progress)++ > 100) {
+			nemo_progress_info_pulse_progress (job->progress);
+			*deletions_since_progress = 0;
+		}
 	}
 }
 
@@ -6492,6 +6516,7 @@ empty_trash_job (GIOSchedulerJob *io_job,
 	CommonJob *common;
 	GList *l;
 	gboolean confirmed;
+	int deletions_since_progress = 0;
 	
 	common = (CommonJob *)job;
 	common->io_job = io_job;
@@ -6504,10 +6529,13 @@ empty_trash_job (GIOSchedulerJob *io_job,
 		confirmed = TRUE;
 	}
 	if (confirmed) {
+		nemo_progress_info_set_status (common->progress, _("Emptying Trash"));
+		nemo_progress_info_set_details (common->progress, _("Emptying Trash"));
+
 		for (l = job->trash_dirs;
 		     l != NULL && !job_aborted (common);
 		     l = l->next) {
-			delete_trash_file (common, l->data, FALSE, TRUE);
+			delete_trash_file (common, l->data, &deletions_since_progress, FALSE, TRUE);
 		}
 	}
 

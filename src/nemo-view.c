@@ -7245,6 +7245,15 @@ invoke_external_bulk_rename_utility (NemoView *view,
 		g_free (quoted_parameter);
 	}
 
+    gint i = 0;
+
+	// Escape percents
+	for (i = 0; i < strlen(cmd->str); i++) {
+		if (cmd->str[i] == '%') {
+			g_string_insert_c(cmd, i++, '%');
+		}
+	}
+
 	/* spawning and error handling */
 	nemo_launch_application_from_command (gtk_widget_get_screen (GTK_WIDGET (view)),
 						  cmd->str, FALSE, NULL);

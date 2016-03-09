@@ -35,36 +35,6 @@
 #include "eel-lib-self-check-functions.h"
 #endif
 
-gboolean
-eel_str_is_empty (const char *string_or_null)
-{
-	return g_strcmp0 (string_or_null, NULL) == 0;
-}
-
-gboolean
-eel_istr_has_prefix (const char *haystack, const char *needle)
-{
-	const char *h, *n;
-	char hc, nc;
-
-	/* Eat one character at a time. */
-	h = haystack == NULL ? "" : haystack;
-	n = needle == NULL ? "" : needle;
-	do {
-		if (*n == '\0') {
-			return TRUE;
-		}
-		if (*h == '\0') {
-			return FALSE;
-		}
-		hc = *h++;
-		nc = *n++;
-		hc = g_ascii_tolower (hc);
-		nc = g_ascii_tolower (nc);
-	} while (hc == nc);
-	return FALSE;
-}
-
 char *
 eel_str_double_underscores (const char *string)
 {
@@ -867,6 +837,8 @@ eel_self_check_string (void)
 	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("something_odd", 13), "something_odd");
 	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("something_even", 14), "something_even");
 	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("something_odd", 13), "something_odd");
+	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("ääääääääää", 5), "ä...ä");
+	EEL_CHECK_STRING_RESULT (eel_str_middle_truncate ("あぃいぅうぇえぉ", 7), "あぃ...えぉ");
 
 	EEL_CHECK_STRING_RESULT (eel_str_strip_substring_and_after (NULL, "bar"), NULL);
 	EEL_CHECK_STRING_RESULT (eel_str_strip_substring_and_after ("", "bar"), "");
