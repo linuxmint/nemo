@@ -932,7 +932,7 @@ get_sort_criterion_by_metadata_text (const char *metadata_text)
 
 	/* Figure out what the new sort setting should be. */
 	for (i = 0; i < G_N_ELEMENTS (sort_criteria); i++) {
-		if (strcmp (sort_criteria[i].metadata_text, metadata_text) == 0) {
+		if (g_strcmp0 (sort_criteria[i].metadata_text, metadata_text) == 0) {
 			return &sort_criteria[i];
 		}
 	}
