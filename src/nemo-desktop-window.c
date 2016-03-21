@@ -37,14 +37,22 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-global-preferences.h>
+#include <libnemo-private/nemo-desktop-utils.h>
+
+enum {
+    PROP_MONITOR = 1,
+    NUM_PROPERTIES
+};
 
 struct NemoDesktopWindowDetails {
 	gulong size_changed_id;
-
+    gint monitor;
 	gboolean loaded;
 
 	GtkWidget *desktop_selection;
 };
+
+static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 G_DEFINE_TYPE (NemoDesktopWindow, nemo_desktop_window, 
 	       NEMO_TYPE_WINDOW);
@@ -180,13 +188,17 @@ nemo_desktop_window_constructed (GObject *obj)
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
 
-	gtk_window_move (GTK_WINDOW (window), 0, 0);
+    GdkRectangle rect;
 
-	/* shouldn't really be needed given our semantic type
-	 * of _NET_WM_TYPE_DESKTOP, but why not
-	 */
-	gtk_window_set_resizable (GTK_WINDOW (window),
-				  FALSE);
+    nemo_desktop_utils_get_monitor_work_rect (window->details->monitor, &rect);
+
+    g_printerr ("NemoDesktopWindow monitor:%d: x:%d, y:%d, w:%d, h:%d\n", window->details->monitor, rect.x, rect.y, rect.width, rect.height);
+
+    gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
+    gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
+
+    gtk_window_set_resizable (GTK_WINDOW (window),
+                  FALSE);
 	gtk_window_set_decorated (GTK_WINDOW (window),
 				  FALSE);
 
@@ -210,15 +222,43 @@ nemo_desktop_window_constructed (GObject *obj)
 	 * Note that nemo_desktop_window_init is too early to do this.
 	 */
 	nemo_desktop_window_update_directory (window);
-        gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
+	gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
+}
 
-	/* We realize it immediately so that the NEMO_DESKTOP_WINDOW_ID
-	 * property is set so gnome-settings-daemon doesn't try to set
-	 * background. And we do a gdk_flush() to be sure X gets it.
-	 */
-	gtk_widget_realize (GTK_WIDGET (window));
-	gdk_flush ();
+static void
+nemo_desktop_window_get_property (GObject *object,
+                                     guint property_id,
+                                   GValue *value,
+                               GParamSpec *pspec)
+{
+    NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (object);
 
+    switch (property_id) {
+    case PROP_MONITOR:
+        g_value_set_int (value, window->details->monitor);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        break;
+    }
+}
+
+static void
+nemo_desktop_window_set_property (GObject *object,
+                                     guint property_id,
+                             const GValue *value,
+                               GParamSpec *pspec)
+{
+    NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (object);
+
+    switch (property_id) {
+    case PROP_MONITOR:
+        window->details->monitor = g_value_get_int (value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        break;
+    }
 }
 
 static void
@@ -228,62 +268,21 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 						       NemoDesktopWindowDetails);
 }
 
-static void
-nemo_desktop_window_screen_size_changed (GdkScreen             *screen,
-					     NemoDesktopWindow *window)
+NemoDesktopWindow *
+nemo_desktop_window_new (gint monitor)
 {
-	int width_request, height_request;
-
-	width_request = gdk_screen_get_width (screen);
-	height_request = gdk_screen_get_height (screen);
-	
-	g_object_set (window,
-		      "width_request", width_request,
-		      "height_request", height_request,
-		      NULL);
-}
-
-static NemoDesktopWindow *
-nemo_desktop_window_new (void)
-{
-	GdkScreen *screen;
 	GApplication *application;
 	NemoDesktopWindow *window;
-	int width_request, height_request;
 
 	application = g_application_get_default ();
-	screen = gdk_screen_get_default ();
-	width_request = gdk_screen_get_width (screen);
-	height_request = gdk_screen_get_height (screen);
 
-	window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
-			       "application", application,
-			       "disable-chrome", TRUE,
-			       "width_request", width_request,
-			       "height_request", height_request,
-			       NULL);
+    window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
+			               "application", application,                           
+                           "disable-chrome", TRUE,
+                           "monitor", monitor,
+                           NULL);
 
 	return window;
-}
-
-static NemoDesktopWindow *the_desktop_window = NULL;
-
-void
-nemo_desktop_window_ensure (void)
-{
-	NemoDesktopWindow *window;
-
-	if (!the_desktop_window) {
-		window = nemo_desktop_window_new ();
-		g_object_add_weak_pointer (G_OBJECT (window), (gpointer *) &the_desktop_window);
-		the_desktop_window = window;
-	}
-}
-
-GtkWidget *
-nemo_desktop_window_get (void)
-{
-	return GTK_WIDGET (the_desktop_window);
 }
 
 static gboolean
@@ -311,12 +310,6 @@ unrealize (GtkWidget *widget)
 	window = NEMO_DESKTOP_WINDOW (widget);
 	details = window->details;
 
-	if (details->size_changed_id != 0) {
-		g_signal_handler_disconnect (gtk_window_get_screen (GTK_WINDOW (window)),
-					     details->size_changed_id);
-		details->size_changed_id = 0;
-	}
-
 	if (window->details->desktop_selection) { 
 		gtk_widget_destroy (details->desktop_selection);
 	}
@@ -340,12 +333,6 @@ set_wmspec_desktop_hint (GdkWindow *window)
 static void
 realize (GtkWidget *widget)
 {
-	NemoDesktopWindow *window;
-	NemoDesktopWindowDetails *details;
-
-	window = NEMO_DESKTOP_WINDOW (widget);
-	details = window->details;
-
 	/* Make sure we get keyboard events */
 	gtk_widget_set_events (widget, gtk_widget_get_events (widget) 
 			      | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
@@ -353,12 +340,9 @@ realize (GtkWidget *widget)
 	/* Do the work of realizing. */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->realize (widget);
 
+	return;
 	/* This is the new way to set up the desktop window */
 	set_wmspec_desktop_hint (gtk_widget_get_window (widget));
-
-	details->size_changed_id =
-		g_signal_connect (gtk_window_get_screen (GTK_WINDOW (window)), "size-changed",
-				  G_CALLBACK (nemo_desktop_window_screen_size_changed), window);
 }
 
 static void
@@ -385,6 +369,8 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 
 	oclass->constructed = nemo_desktop_window_constructed;
 	oclass->finalize = nemo_desktop_window_finalize;
+    oclass->set_property = nemo_desktop_window_set_property;
+    oclass->get_property = nemo_desktop_window_get_property;
 
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
@@ -394,11 +380,25 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	nclass->sync_title = real_sync_title;
 	nclass->close = real_window_close;
 
-	g_type_class_add_private (klass, sizeof (NemoDesktopWindowDetails));
+    properties[PROP_MONITOR] =
+        g_param_spec_int ("monitor",
+                          "Monitor number",
+                          "The monitor number this window is assigned to",
+                          G_MININT, G_MAXINT, 0,
+                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+    g_type_class_add_private (klass, sizeof (NemoDesktopWindowDetails));
+    g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 gboolean
 nemo_desktop_window_loaded (NemoDesktopWindow *window)
 {
 	return window->details->loaded;
+}
+
+gint
+nemo_desktop_window_get_monitor (NemoDesktopWindow *window)
+{
+    return window->details->monitor;
 }

@@ -453,6 +453,11 @@
       <_summary>Desktop font</_summary>
       <_description>The font description used for the icons on the desktop.</_description>
     </key>
+    <key name="desktop-layout" type="s">
+      <default>"true::false"</default>
+      <_summary>Desktop layout</_summary>
+      <_description>Format bool:bool, show desktop folder on primary monitor:show desktop on remaining monitors</_description>
+    </key>
     <key name="show-desktop-icons" type="b">
       <default>true</default>
       <_summary>Allow Nemo to manage the desktop</_summary>

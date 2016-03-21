@@ -508,6 +508,8 @@ gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileToolt
 
 gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
 
+gint     nemo_file_get_monitor_number             (NemoFile *file);
+
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

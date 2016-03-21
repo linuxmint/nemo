@@ -7835,6 +7835,12 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     return ret;
 }
 
+gint
+nemo_file_get_monitor_number (NemoFile *file)
+{
+    return nemo_file_get_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0);
+}
+
 gboolean
 nemo_file_has_thumbnail_access_problem   (NemoFile *file)
 {

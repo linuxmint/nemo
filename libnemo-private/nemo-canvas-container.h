@@ -53,6 +53,7 @@ typedef struct {
 	int x;
 	int y;
 	double scale;
+    int monitor;
 } NemoCanvasPosition;
 
 typedef enum {

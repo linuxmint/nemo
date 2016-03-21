@@ -100,6 +100,7 @@ nemo_action_init (NemoAction *action)
     action->dbus_satisfied = TRUE;
     action->escape_underscores = FALSE;
     action->escape_space = FALSE;
+    action->is_desktop_no_selection = FALSE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -441,6 +442,10 @@ nemo_action_constructed (GObject *object)
             condition = conditions[j];
             if (g_str_has_prefix (condition, "dbus")) {
                 setup_dbus_condition (action, condition);
+            }
+
+            if (g_strcmp0 (condition, "desktop") == 0) {
+                action->is_desktop_no_selection = (type == SELECTION_NONE);
             }
         }
     }

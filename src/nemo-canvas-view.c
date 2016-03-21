@@ -32,6 +32,8 @@
 #include "nemo-view-dnd.h"
 #include "nemo-view-factory.h"
 #include "nemo-window.h"
+#include "nemo-desktop-window.h"
+#include "nemo-application.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -53,6 +55,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_CANVAS_VIEW
 #include <libnemo-private/nemo-debug.h>
@@ -68,7 +71,7 @@ enum
 {
 	PROP_COMPACT = 1,
 	PROP_SUPPORTS_AUTO_LAYOUT,
-	PROP_SUPPORTS_SCALING,
+	PROP_IS_DESKTOP,
 	PROP_SUPPORTS_KEEP_ALIGNED,
 	PROP_SUPPORTS_MANUAL_LAYOUT,
 	PROP_SUPPORTS_LABELS_BESIDE_ICONS,
@@ -110,7 +113,7 @@ struct NemoCanvasViewDetails
 
 	gboolean supports_auto_layout;
 	gboolean supports_manual_layout;
-	gboolean supports_scaling;
+	gboolean is_desktop;
 	gboolean supports_keep_aligned;
 	gboolean supports_labels_beside_icons;
 };
@@ -174,7 +177,7 @@ static void                 nemo_canvas_view_update_click_to_rename_mode  (NemoC
 static void                 nemo_canvas_view_set_directory_tighter_layout (NemoCanvasView           *canvas_view,
                                         NemoFile         *file,
                                         gboolean              tighter_layout);
-static gboolean             nemo_canvas_view_supports_scaling	      (NemoCanvasView           *canvas_view);
+static gboolean             nemo_canvas_view_is_desktop      (NemoCanvasView           *canvas_view);
 static void                 nemo_canvas_view_reveal_selection       (NemoView               *view);
 static const SortCriterion *get_sort_criterion_by_sort_type           (NemoFileSortType  sort_type);
 static void                 set_sort_criterion_by_sort_type           (NemoCanvasView           *canvas_view,
@@ -268,8 +271,8 @@ get_stored_icon_position_callback (NemoCanvasContainer *container,
 	/* If it is the desktop directory, maybe the gnome-libs metadata has information about it */
 
 	/* Disable scaling if not on the desktop */
-	if (nemo_canvas_view_supports_scaling (canvas_view)) {
-		/* Get the scale of the canvas from the metadata. */
+	if (nemo_canvas_view_is_desktop (canvas_view)) {
+		/* Get the scale of the icon from the metadata. */
 		scale_string = nemo_file_get_metadata
 			(file, NEMO_METADATA_KEY_ICON_SCALE, "1");
 		position->scale = g_ascii_strtod (scale_string, NULL);
@@ -479,6 +482,18 @@ nemo_canvas_view_remove_file (NemoView *view, NemoFile *file, NemoDirectory *dir
 	}
 }
 
+static gboolean
+should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
+{
+	if (!nemo_view_should_show_file (view, file)) {
+		return FALSE;
+	}	
+
+	gint current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (view));
+
+    return current_monitor == nemo_file_get_monitor_number (file);
+}
+
 static void
 nemo_canvas_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
 {
@@ -489,6 +504,16 @@ nemo_canvas_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *direct
 	
 	canvas_view = NEMO_CANVAS_VIEW (view);
 	canvas_container = get_canvas_container (canvas_view);
+
+    if (canvas_view->details->is_desktop &&
+        !should_show_file_on_current_monitor (view, file)) {
+        return;
+    }
+
+    if (nemo_file_has_thumbnail_access_problem (file)) {
+        nemo_application_set_cache_flag (NEMO_APPLICATION (g_application_get_default ()));
+        nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
+    }
 
 	/* Reset scroll region for the first canvas added when loading a directory. */
 	if (nemo_view_get_loading (view) && nemo_canvas_container_is_empty (canvas_container)) {
@@ -511,9 +536,18 @@ nemo_canvas_view_file_changed (NemoView *view, NemoFile *file, NemoDirectory *di
 	g_return_if_fail (view != NULL);
 	canvas_view = NEMO_CANVAS_VIEW (view);
 
-	nemo_canvas_container_request_update
-		(get_canvas_container (canvas_view),
-		 NEMO_CANVAS_ICON_DATA (file));
+	if (!canvas_view->details->is_desktop) {
+		nemo_canvas_container_request_update(get_canvas_container (canvas_view),
+			 NEMO_CANVAS_ICON_DATA (file));
+		return;
+	}
+	
+	if (!should_show_file_on_current_monitor (view, file)) {
+		nemo_canvas_view_remove_file (view, file, directory);
+	} else {
+		nemo_canvas_container_request_update(get_canvas_container (canvas_view),
+			 NEMO_CANVAS_ICON_DATA (file));
+	}
 }
 
 static gboolean
@@ -525,11 +559,11 @@ nemo_canvas_view_supports_auto_layout (NemoCanvasView *view)
 }
 
 static gboolean
-nemo_canvas_view_supports_scaling (NemoCanvasView *view)
+nemo_canvas_view_is_desktop (NemoCanvasView *view)
 {
 	g_return_val_if_fail (NEMO_IS_CANVAS_VIEW (view), FALSE);
 
-	return view->details->supports_scaling;
+	return view->details->is_desktop;
 }
 
 static gboolean
@@ -2462,8 +2496,8 @@ nemo_canvas_view_set_property (GObject         *object,
 	case PROP_SUPPORTS_MANUAL_LAYOUT:
 		canvas_view->details->supports_manual_layout = g_value_get_boolean (value);
 		break;
-	case PROP_SUPPORTS_SCALING:
-		canvas_view->details->supports_scaling = g_value_get_boolean (value);
+	case PROP_IS_DESKTOP:
+		canvas_view->details->is_desktop = g_value_get_boolean (value);
 		break;
 	case PROP_SUPPORTS_KEEP_ALIGNED:
 		canvas_view->details->supports_keep_aligned = g_value_get_boolean (value);
@@ -2595,10 +2629,10 @@ nemo_canvas_view_class_init (NemoCanvasViewClass *klass)
 				      FALSE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);
-	properties[PROP_SUPPORTS_SCALING] =
-		g_param_spec_boolean ("supports-scaling",
-				      "Supports scaling",
-				      "Whether this view supports scaling",
+	properties[PROP_IS_DESKTOP] =
+		g_param_spec_boolean ("is-desktop",
+				      "Is a desktop view",
+				      "Whether this view is on a desktop",
 				      FALSE,
 				      G_PARAM_WRITABLE |
 				      G_PARAM_CONSTRUCT_ONLY);

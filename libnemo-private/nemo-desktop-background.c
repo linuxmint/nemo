@@ -62,7 +62,7 @@ enum {
 struct NemoDesktopBackgroundDetails {
 
 	GtkWidget *widget;
-        GnomeBG *bg;
+	GnomeBG *bg;
 
 	/* Realized data: */
 	cairo_surface_t *background_surface;
@@ -117,6 +117,11 @@ nemo_desktop_background_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
 					      background_settings_change_event_cb,
 					      self);
+
+	if (self->details->change_idle_id != 0) {
+		g_source_remove (self->details->change_idle_id);
+		self->details->change_idle_id = 0;
+	}
 
 	free_background_surface (self);
 	free_fade (self);
@@ -334,9 +339,9 @@ static void
 nemo_desktop_background_changed (GnomeBG *bg,
                                      gpointer user_data)
 {
-        NemoDesktopBackground *self;
+	NemoDesktopBackground *self;
 
-        self = user_data;
+	self = user_data;
 	init_fade (self);
 	queue_background_change (self);
 }
@@ -345,9 +350,9 @@ static void
 nemo_desktop_background_transitioned (GnomeBG *bg,
                                           gpointer user_data)
 {
-        NemoDesktopBackground *self;
+	NemoDesktopBackground *self;
 
-        self = user_data;
+	self = user_data;
 	free_fade (self);
 	queue_background_change (self);
 }
@@ -454,7 +459,7 @@ nemo_desktop_background_constructed (GObject *obj)
 
         widget = self->details->widget;
 
-        g_assert (widget != NULL);
+        g_assert (GTK_IS_WIDGET (widget));
 
  	g_signal_connect_object (widget, "destroy",
                                  G_CALLBACK (on_widget_destroyed), self, 0);
@@ -558,7 +563,7 @@ nemo_desktop_background_init (NemoDesktopBackground *self)
 NemoDesktopBackground *
 nemo_desktop_background_new (NemoCanvasContainer *container)
 {
-        return g_object_new (NEMO_TYPE_DESKTOP_BACKGROUND,
+	return g_object_new (NEMO_TYPE_DESKTOP_BACKGROUND,
                              "widget", container,
                              NULL);
 }

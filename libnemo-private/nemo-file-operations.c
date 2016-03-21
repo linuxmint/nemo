@@ -58,6 +58,7 @@
 #include "nemo-desktop-link-monitor.h"
 #include "nemo-global-preferences.h"
 #include "nemo-link.h"
+#include "nemo-desktop-utils.h"
 #include "nemo-trash-monitor.h"
 #include "nemo-file-utilities.h"
 #include "nemo-file-conflict-dialog.h"
@@ -89,6 +90,7 @@ typedef struct {
 	GTimer *time;
 	GtkWindow *parent_window;
 	int screen_num;
+    int monitor_num;
 	guint inhibit_cookie;
 	NemoProgressInfo *progress;
 	GCancellable *cancellable;
@@ -1185,9 +1187,11 @@ init_common (gsize job_size,
 	common->time = g_timer_new ();
 	common->inhibit_cookie = 0;
 	common->screen_num = 0;
+    common->monitor_num = 0;
 	if (parent_window) {
 		screen = gtk_widget_get_screen (GTK_WIDGET (parent_window));
 		common->screen_num = gdk_screen_get_number (screen);
+        common->monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (parent_window));
 	}
 	
 	return common;
@@ -4506,7 +4510,7 @@ copy_move_file (CopyMoveJob *copy_job,
 
 		if (debuting_files) {
 			if (position) {
-				nemo_file_changes_queue_schedule_position_set (dest, *position, job->screen_num);
+				nemo_file_changes_queue_schedule_position_set (dest, *position, job->screen_num, job->monitor_num);
 			} else {
 				nemo_file_changes_queue_schedule_position_remove (dest);
 			}
@@ -5172,7 +5176,7 @@ move_file_prepare (CopyMoveJob *move_job,
 		nemo_file_changes_queue_file_moved (src, dest);
 
 		if (position) {
-			nemo_file_changes_queue_schedule_position_set (dest, *position, job->screen_num);
+			nemo_file_changes_queue_schedule_position_set (dest, *position, job->screen_num, job->monitor_num);
 		} else {
 			nemo_file_changes_queue_schedule_position_remove (dest);
 		}
@@ -5683,7 +5687,7 @@ link_file (CopyMoveJob *job,
 		
 		nemo_file_changes_queue_file_added (dest);
 		if (position) {
-			nemo_file_changes_queue_schedule_position_set (dest, *position, common->screen_num);
+			nemo_file_changes_queue_schedule_position_set (dest, *position, common->screen_num, common->monitor_num);
 		} else {
 			nemo_file_changes_queue_schedule_position_remove (dest);
 		}
@@ -6446,7 +6450,7 @@ create_job (GIOSchedulerJob *io_job,
 		job->created_file = g_object_ref (dest);
 		nemo_file_changes_queue_file_added (dest);
 		if (job->has_position) {
-			nemo_file_changes_queue_schedule_position_set (dest, job->position, common->screen_num);
+			nemo_file_changes_queue_schedule_position_set (dest, job->position, common->screen_num, common->monitor_num);
 		} else {
 			nemo_file_changes_queue_schedule_position_remove (dest);
 		}

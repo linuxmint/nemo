@@ -1444,6 +1444,9 @@ load_view_as_menus_callback (NemoFile *file,
 	NemoWindowSlot *slot;
 
 	slot = callback_data;
+	if (!NEMO_IS_WINDOW_SLOT (slot)) {
+		return;
+	}
 	window = nemo_window_slot_get_window (slot);
 
 	if (slot == nemo_window_get_active_slot (window)) {

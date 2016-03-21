@@ -38,6 +38,7 @@
 #include "nemo-dbus-manager.h"
 #include "nemo-desktop-canvas-view.h"
 #include "nemo-desktop-window.h"
+#include "nemo-desktop-manager.h"
 #include "nemo-freedesktop-dbus.h"
 #include "nemo-canvas-view.h"
 #include "nemo-image-properties-page.h"
@@ -50,6 +51,7 @@
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-statusbar.h"
+#include "nemo-blank-desktop-window.h"
 
 #include <libnemo-private/nemo-directory-private.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
@@ -99,18 +101,16 @@
 /* The saving of the accelerator map was requested  */
 static gboolean save_of_accel_map_requested = FALSE;
 
-static void     nemo_application_open_desktop (NemoApplication *application);
-static void     nemo_application_close_desktop (void);
-
-
 G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 
 struct _NemoApplicationPriv {
 	NemoProgressUIHandler *progress_handler;
 	NemoDBusManager *dbus_manager;
 	NemoFreedesktopDBus *fdb_manager;
+    NemoDesktopManager *desktop_manager;
 
-	gboolean desktop_override;
+	gboolean no_desktop;
+	gboolean force_desktop;
 
     gboolean cache_problem;
     gboolean ignore_cache_problem;
@@ -642,6 +642,8 @@ nemo_application_finalize (GObject *object)
 	g_clear_object (&application->priv->fdb_manager);
 	g_clear_object (&application->priv->search_provider);
 
+    g_clear_object (&application->priv->desktop_manager);
+
 	notify_uninit ();
 
         G_OBJECT_CLASS (nemo_application_parent_class)->finalize (object);
@@ -915,14 +917,10 @@ nemo_application_handle_local_options (GApplication *application,
 
 	if (g_variant_dict_contains (options, "force-desktop")) {
 		DEBUG ("Forcing desktop, as requested");
-		self->priv->desktop_override = TRUE;
-		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"open-desktop", NULL);
+		self->priv->force_desktop = TRUE;
 	} else if (g_variant_dict_contains (options, "no-desktop")) {
 		DEBUG ("Forcing desktop off, as requested");
-		self->priv->desktop_override = TRUE;
-		g_action_group_activate_action (G_ACTION_GROUP (application),
-						"close-desktop", NULL);
+		self->priv->no_desktop = TRUE;
 	}
 
 	if (g_variant_dict_contains (options, "no-default-window")) {
@@ -939,6 +937,17 @@ nemo_application_handle_local_options (GApplication *application,
 	nemo_profile_end (NULL);
 
 	return retval;
+}
+
+gboolean 
+nemo_application_get_show_desktop (NemoApplication *self) {
+	if (self->priv->force_desktop) {
+		return TRUE;
+	} 
+	if (self->priv->no_desktop) {
+		return TRUE;
+	}
+	return g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP);
 }
 
 static void
@@ -960,8 +969,6 @@ static void
 nemo_application_init (NemoApplication *application)
 {
 	GSimpleAction *action_quit;
-	GSimpleAction *action_open_desktop;
-	GSimpleAction *action_close_desktop;
 
 	application->priv =
 		G_TYPE_INSTANCE_GET_PRIVATE (application, NEMO_TYPE_APPLICATION,
@@ -972,19 +979,6 @@ nemo_application_init (NemoApplication *application)
 	g_signal_connect_swapped (action_quit, "activate",
 				  G_CALLBACK (nemo_application_quit), application);
 	g_object_unref (action_quit);
-
-	action_open_desktop = g_simple_action_new ("open-desktop", NULL);
-	g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_open_desktop));
-	g_signal_connect_swapped (action_open_desktop, "activate",
-				  G_CALLBACK (nemo_application_open_desktop), application);
-	g_object_unref (action_open_desktop);
-
-
-	action_close_desktop = g_simple_action_new ("close-desktop", NULL);
-	g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action_close_desktop));
-	g_signal_connect_swapped (action_close_desktop, "activate",
-				  G_CALLBACK (nemo_application_close_desktop), application);
-	g_object_unref (action_close_desktop);
 
 	g_application_add_main_option_entries (G_APPLICATION (application), options);
 }
@@ -1071,70 +1065,9 @@ init_icons_and_styles (void)
 }
 
 static void
-nemo_application_open_desktop (NemoApplication *application)
-{
-	nemo_desktop_window_ensure ();	
-}
-
-static void
-nemo_application_close_desktop (void)
-{
-	GtkWidget *desktop_window;
-
-	desktop_window = nemo_desktop_window_get ();
-	if (desktop_window != NULL) {
-		gtk_widget_destroy (desktop_window);
-	}
-}
-
-static void
-monitors_changed_callback (GdkScreen *screen, NemoApplication *application)
-{
-    if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_DESKTOP)) {
-        nemo_application_close_desktop ();
-        nemo_application_open_desktop (application);
-    } else {
-        nemo_application_close_desktop ();
-    }
-}
-
-static void
-nemo_application_set_desktop_visible (NemoApplication *self,
-					  gboolean             visible)
-{
-	const gchar *action_name;
-
-	action_name = visible ? "open-desktop" : "close-desktop";
-	g_action_group_activate_action (G_ACTION_GROUP (self),
-					action_name, NULL);
-}
-
-static void
-update_desktop_from_gsettings (NemoApplication *self)
-{
-	/* desktop GSetting was overridden - don't do anything */
-	if (self->priv->desktop_override) {
-		return;
-	}
-
-	nemo_application_set_desktop_visible (self, g_settings_get_boolean (nemo_desktop_preferences,
-										NEMO_PREFERENCES_SHOW_DESKTOP));
-}
-
-static void
 init_desktop (NemoApplication *self)
 {
-	GdkScreen *screen;
-	screen = gdk_display_get_default_screen (gdk_display_get_default ());
-	
-	update_desktop_from_gsettings (self);
-	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
-				  G_CALLBACK (update_desktop_from_gsettings),
-				  self);
-
-	g_signal_connect (screen, "monitors-changed",
-				  G_CALLBACK (monitors_changed_callback),
-				  self);
+    self->priv->desktop_manager = nemo_desktop_manager_new ();
 }
 
 static gboolean 
@@ -1606,7 +1539,7 @@ nemo_application_window_added (GtkApplication *app,
 	/* chain to parent */
 	GTK_APPLICATION_CLASS (nemo_application_parent_class)->window_added (app, window);
 
-	if (!NEMO_IS_BOOKMARKS_WINDOW (window)) {
+	if (!NEMO_IS_BOOKMARKS_WINDOW (window) && !NEMO_IS_BLANK_DESKTOP_WINDOW(window)) {
 		g_signal_connect (window, "slot-added", G_CALLBACK (on_slot_added), app);
 		g_signal_connect (window, "slot-removed", G_CALLBACK (on_slot_removed), app);
 	}

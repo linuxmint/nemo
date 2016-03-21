@@ -62,8 +62,6 @@ GType   nemo_canvas_view_get_type      (void);
 int     nemo_canvas_view_compare_files (NemoCanvasView   *canvas_view,
 					  NemoFile *a,
 					  NemoFile *b);
-void    nemo_canvas_view_filter_by_screen (NemoCanvasView *canvas_view,
-					     gboolean filter);
 gboolean nemo_canvas_view_is_compact   (NemoCanvasView *icon_view);
 void    nemo_canvas_view_clean_up_by_name (NemoCanvasView *canvas_view);
 
