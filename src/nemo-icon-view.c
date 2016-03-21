@@ -34,6 +34,8 @@
 #include "nemo-view-factory.h"
 #include "nemo-window.h"
 #include "nemo-desktop-window.h"
+#include "nemo-desktop-window.h"
+#include "nemo-application.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -55,6 +57,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 #include <libnemo-private/nemo-desktop-utils.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_ICON_VIEW

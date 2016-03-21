@@ -33,6 +33,8 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 
+#include <eel/eel-gtk-extensions.h>
+
 enum {
     PROP_MONITOR = 1,
     NUM_PROPERTIES
@@ -88,7 +90,7 @@ build_menu (NemoBlankDesktopWindow *window)
     for (l = action_list; l != NULL; l = l->next) {
         action = l->data;
 
-        if (action->is_desktop_no_selection) {
+        if (action->is_desktop_no_selection && action->dbus_satisfied) {
             gchar *label = nemo_action_get_label (action, NULL, NULL);
             item = gtk_image_menu_item_new_with_mnemonic (label);
             g_free (label);
@@ -112,7 +114,7 @@ build_menu (NemoBlankDesktopWindow *window)
 }
 
 static void
-do_popup_menu (NemoBlankDesktopWindow *window, GdkEvent *event)
+do_popup_menu (NemoBlankDesktopWindow *window, GdkEventButton *event)
 {
     build_menu (window);
     eel_pop_up_context_menu (GTK_MENU(window->details->popup_menu),
@@ -135,7 +137,7 @@ on_button_press (GtkWidget *widget, GdkEventButton *event, NemoBlankDesktopWindo
     }
 
     if (event->button == 3) {
-        do_popup_menu (window, (GdkEvent *) event);
+        do_popup_menu (window, event);
     }
 
     return FALSE;
@@ -292,13 +294,6 @@ set_wmspec_desktop_hint (GdkWindow *window)
 static void
 realize (GtkWidget *widget)
 {
-    GdkVisual *visual;
-
-    visual = gdk_screen_get_rgba_visual (gtk_widget_get_screen (widget));
-    if (visual) {
-        gtk_widget_set_visual (widget, visual);
-    }
-
 	GTK_WIDGET_CLASS (nemo_blank_desktop_window_parent_class)->realize (widget);
 
 	/* This is the new way to set up the desktop window */
