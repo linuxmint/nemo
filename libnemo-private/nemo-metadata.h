@@ -74,6 +74,7 @@
 #define NEMO_METADATA_KEY_CUSTOM_ICON_NAME                	"custom-icon-name"
 #define NEMO_METADATA_KEY_SCREEN				"screen"
 #define NEMO_METADATA_KEY_EMBLEMS				"emblems"
+#define NEMO_METADATA_KEY_MONITOR               "monitor"
 
 guint nemo_metadata_get_id (const char *metadata);
 

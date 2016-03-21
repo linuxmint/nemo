@@ -40,6 +40,7 @@ typedef struct {
 	gboolean set;
 	GdkPoint point;
 	int screen;
+    int monitor;
 } NemoFileChangesQueuePosition;
 
 /* Almost-public change notification calls */

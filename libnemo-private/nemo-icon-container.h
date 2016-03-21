@@ -54,6 +54,7 @@ typedef struct {
 	int x;
 	int y;
 	double scale;
+    int monitor;
 } NemoIconPosition;
 
 typedef enum {

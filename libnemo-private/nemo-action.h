@@ -117,6 +117,7 @@ struct _NemoAction {
     gboolean dbus_satisfied;
     gboolean escape_underscores;
     gboolean escape_space;
+    gboolean is_desktop_no_selection;
 };
 
 struct _NemoActionClass {

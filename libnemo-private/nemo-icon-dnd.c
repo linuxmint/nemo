@@ -40,6 +40,7 @@
 #include "nemo-link.h"
 #include "nemo-metadata.h"
 #include "nemo-selection-canvas-item.h"
+#include "nemo-desktop-utils.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gnome-extensions.h>
 #include <eel/eel-graphic-effects.h>
@@ -787,9 +788,10 @@ handle_local_move (NemoIconContainer *container,
 	GList *moved_icons, *p;
 	NemoDragSelectionItem *item;
 	NemoIcon *icon;
-	NemoFile *file;
+	NemoFile *file = NULL;
 	char screen_string[32];
 	GdkScreen *screen;
+    gint monitor;
 	time_t now;
 
 	if (container->details->auto_layout) {
@@ -827,6 +829,11 @@ handle_local_move (NemoIconContainer *container,
 			icon = nemo_icon_container_get_icon_by_uri
 				(container, item->uri);
 		}
+
+        if (file == NULL)
+            file = NEMO_FILE (icon->data);
+        monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
+        nemo_file_set_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0, monitor);
 
 		if (item->got_icon_position) {
 			nemo_icon_container_move_icon
@@ -1580,11 +1587,11 @@ drag_data_received_callback (GtkWidget *widget,
 
 				nemo_file_changes_queue_file_added (location);
 				p.x = x; p.y = y;
-				nemo_file_changes_queue_schedule_position_set (
-				                 location,
-				                 p,
-				                 gdk_screen_get_number (
-				                             gtk_widget_get_screen (widget)));
+                nemo_file_changes_queue_schedule_position_set (
+                                 location,
+                                 p,
+                                 gdk_screen_get_number (gtk_widget_get_screen (widget)),
+                                 get_monitor_number (widget));
 				g_object_unref (location);
 				nemo_file_changes_consume_changes (TRUE);
 				success = TRUE;

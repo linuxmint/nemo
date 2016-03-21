@@ -62,8 +62,6 @@ GType   nemo_icon_view_get_type      (void);
 int     nemo_icon_view_compare_files (NemoIconView   *icon_view,
 					  NemoFile *a,
 					  NemoFile *b);
-void    nemo_icon_view_filter_by_screen (NemoIconView *icon_view,
-					     gboolean filter);
 gboolean nemo_icon_view_is_compact   (NemoIconView *icon_view);
 
 void    nemo_icon_view_register         (void);
