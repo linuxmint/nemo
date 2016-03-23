@@ -103,14 +103,12 @@ desktop_directory_changed_callback (gpointer callback_data)
 static void
 real_begin_loading (NemoView *object)
 {
-	NemoIconContainer *icon_container;
-	NemoDesktopIconView *view;
-
-	view = NEMO_DESKTOP_ICON_VIEW (object);
-
-	icon_container = get_icon_container (view);
-	if (view->details->background == NULL) {
-		view->details->background = nemo_desktop_background_new (icon_container);
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity")) {
+		NemoDesktopIconView *view = NEMO_DESKTOP_ICON_VIEW (object);		
+		NemoIconContainer *icon_container = get_icon_container (view);
+		if (view->details->background == NULL) {
+			view->details->background = nemo_desktop_background_new (icon_container);
+		}
 	}
 
 	NEMO_VIEW_CLASS (nemo_desktop_icon_view_parent_class)->begin_loading (object);
@@ -252,6 +250,17 @@ nemo_desktop_icon_view_handle_middle_click (NemoIconContainer *icon_container,
 	/* Send it to the root window, the window manager will handle it. */
 	XSendEvent (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), True,
 		    ButtonPressMask, (XEvent *) &x_event);
+}
+
+static void
+desktop_icon_container_realize (GtkWidget *widget,
+                                NemoDesktopIconView *desktop_icon_view)
+{
+    GdkWindow *bin_window;
+    GdkRGBA transparent = { 0, 0, 0, 0 };
+
+    bin_window = gtk_layout_get_bin_window (GTK_LAYOUT (widget));
+    gdk_window_set_background_rgba (bin_window, &transparent);
 }
 
 static NemoZoomLevel
@@ -433,6 +442,8 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 
 	g_signal_connect_object (icon_container, "middle_click",
 				 G_CALLBACK (nemo_desktop_icon_view_handle_middle_click), desktop_icon_view, 0);
+    g_signal_connect_object (icon_container, "realize",
+                 G_CALLBACK (desktop_icon_container_realize), desktop_icon_view, 0);
 
 	g_signal_connect_swapped (nemo_icon_view_preferences,
 				  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
