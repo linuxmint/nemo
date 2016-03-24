@@ -1,3 +1,18 @@
+nemo (2.8.7) rosa; urgency=medium
+
+  [ Michael Webster ]
+  * improve context menu toggle: - shows separate distinct regions of the menu item now - tooltip manifests as right-justified text next to the toggle icon
+
+  [ monsta ]
+  * use g_strcmp0 instead of unsafe strcmp
+
+  [ itzexor ]
+  * file: don't crash when the original file path has reserved characters https://git.gnome.org/browse/nautilus/commit/?id=d69885bd67edc1fae76c790f6162807817d63b2f
+  * file-operations: Make sure to use correct filename when restoring from Trash https://git.gnome.org/browse/nautilus/commit/libnautilus-private/nautilus-file-operations.c?id=ecee8be850b8342c804de2ecc3e613b99a20a010
+  * file-utils: ensure directories exist before restoring from trash https://git.gnome.org/browse/nautilus/commit/?id=f1cb32831df32009f7e8bd5fcc35c5ccdf64eee4
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 07 Mar 2016 17:19:06 +0000
+
 nemo (2.8.6) rosa; urgency=medium
 
   [ Michael Webster ]
