@@ -2084,6 +2084,11 @@ nemo_window_init (NemoWindow *window)
 	window->details->ignore_meta_sort_column = NULL;
 	window->details->ignore_meta_sort_direction = SORT_NULL;
 	window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
+	
+	/* This makes it possible for GTK+ themes to apply styling that is specific to Nemo
+	 * without affecting other GTK+ applications.
+	 */
+	gtk_style_context_add_class (gtk_widget_get_style_context (window), "nemo-window");
 
 	window_group = gtk_window_group_new ();
 	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
