@@ -2062,28 +2062,28 @@ use_extra_mouse_buttons_changed (gpointer callback_data)
 static void
 nemo_window_init (NemoWindow *window)
 {
-    GtkWindowGroup *window_group;
+	GtkWindowGroup *window_group;
 
 	window->details = G_TYPE_INSTANCE_GET_PRIVATE (window, NEMO_TYPE_WINDOW, NemoWindowDetails);
 
 	window->details->panes = NULL;
 	window->details->active_pane = NULL;
 
-    gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
+	gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
 
-    window->details->show_hidden_files_mode = show_hidden ? NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE :
-                                                            NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE;
+	window->details->show_hidden_files_mode = show_hidden
+		? NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE
+		: NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE;
 
-    window->details->show_sidebar = g_settings_get_boolean (nemo_window_state,
-                                                            NEMO_WINDOW_STATE_START_WITH_SIDEBAR);
+	window->details->show_sidebar = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_SIDEBAR);
 
-    window->details->ignore_meta_view_id = NULL;
-    window->details->ignore_meta_zoom_level = -1;
-    window->details->ignore_meta_visible_columns = NULL;
-    window->details->ignore_meta_column_order = NULL;
-    window->details->ignore_meta_sort_column = NULL;
-    window->details->ignore_meta_sort_direction = SORT_NULL;
-    window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
+	window->details->ignore_meta_view_id = NULL;
+	window->details->ignore_meta_zoom_level = -1;
+	window->details->ignore_meta_visible_columns = NULL;
+	window->details->ignore_meta_column_order = NULL;
+	window->details->ignore_meta_sort_column = NULL;
+	window->details->ignore_meta_sort_direction = SORT_NULL;
+	window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
 
 	window_group = gtk_window_group_new ();
 	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
@@ -2095,12 +2095,14 @@ nemo_window_init (NemoWindow *window)
 
 static NemoIconInfo *
 real_get_icon (NemoWindow *window,
-               NemoWindowSlot *slot)
+		NemoWindowSlot *slot)
 {
-        return nemo_file_get_icon (slot->viewed_file, 48,
-                       gtk_widget_get_scale_factor (GTK_WIDGET (window)),
-				       NEMO_FILE_ICON_FLAGS_IGNORE_VISITING |
-				       NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON);
+	return nemo_file_get_icon (
+		slot->viewed_file, 48,
+		gtk_widget_get_scale_factor (GTK_WIDGET (window)),
+		NEMO_FILE_ICON_FLAGS_IGNORE_VISITING |
+		NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON
+	);
 }
 
 static void
@@ -2131,7 +2133,7 @@ nemo_window_class_init (NemoWindowClass *class)
 	wclass->get_preferred_height = nemo_window_get_preferred_height;
 	wclass->realize = nemo_window_realize;
 	wclass->key_press_event = nemo_window_key_press_event;
-    wclass->key_release_event = nemo_window_key_release_event;
+	wclass->key_release_event = nemo_window_key_release_event;
 	wclass->window_state_event = nemo_window_state_event;
 	wclass->button_press_event = nemo_window_button_press_event;
 	wclass->delete_event = nemo_window_delete_event;
