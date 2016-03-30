@@ -316,6 +316,9 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 		G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
 	);
 
+	/* Make it easier for themes authors to style the desktop window separately */
+	gtk_style_context_add_class (gtk_widget_get_style_context (window), "desktop-window");
+
 	g_type_class_add_private (klass, sizeof (NemoDesktopWindowDetails));
 	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
