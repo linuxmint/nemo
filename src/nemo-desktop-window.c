@@ -194,15 +194,12 @@ nemo_desktop_window_new (gint monitor)
 {
 	NemoDesktopWindow *window;
 
-    window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
-                           "disable-chrome", TRUE,
-                           "monitor", monitor,
-                           NULL);
+	window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW, "disable-chrome", TRUE, "monitor", monitor, NULL);
 
-    g_signal_connect (window, "delete_event", G_CALLBACK (nemo_desktop_window_delete_event), NULL);
+	g_signal_connect (window, "delete_event", G_CALLBACK (nemo_desktop_window_delete_event), NULL);
 
-    GdkRGBA transparent = {0, 0, 0, 0};
-    gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
+	GdkRGBA transparent = {0, 0, 0, 0};
+	gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	/* Point window at the desktop folder.
 	 * Note that nemo_desktop_window_init is too early to do this.
@@ -298,8 +295,8 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 
 	oclass->constructed = nemo_desktop_window_constructed;
 	oclass->dispose = nemo_desktop_window_dispose;
-    oclass->set_property = nemo_desktop_window_set_property;
-    oclass->get_property = nemo_desktop_window_get_property;
+	oclass->set_property = nemo_desktop_window_set_property;
+	oclass->get_property = nemo_desktop_window_get_property;
 
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
@@ -309,15 +306,18 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	nclass->get_icon = real_get_icon;
 	nclass->close = real_window_close;
 
-    properties[PROP_MONITOR] =
-        g_param_spec_int ("monitor",
-                          "Monitor number",
-                          "The monitor number this window is assigned to",
-                          G_MININT, G_MAXINT, 0,
-                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_MONITOR] = g_param_spec_int (
+		"monitor",
+		"Monitor number",
+		"The monitor number this window is assigned to",
+		G_MININT,
+		G_MAXINT,
+		0,
+		G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+	);
 
-    g_type_class_add_private (klass, sizeof (NemoDesktopWindowDetails));
-    g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
+	g_type_class_add_private (klass, sizeof (NemoDesktopWindowDetails));
+	g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
 gboolean
