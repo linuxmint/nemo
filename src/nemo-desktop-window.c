@@ -179,6 +179,8 @@ nemo_desktop_window_constructed (GObject *obj)
 	NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (obj);
 	GdkRGBA transparent = {0, 0, 0, 0};
 
+    gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
+
 	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->constructed (obj);
 
 	NemoWindow *nwindow = NEMO_WINDOW (obj);
@@ -218,11 +220,7 @@ nemo_desktop_window_constructed (GObject *obj)
 	/* Special sawmill setting */
 	gtk_window_set_wmclass (GTK_WINDOW (window), "desktop_window", "Nemo");
 
-	/* Point window at the desktop folder.
-	 * Note that nemo_desktop_window_init is too early to do this.
-	 */
 	nemo_desktop_window_update_directory (window);
-	gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 }
 
 static void
@@ -281,7 +279,6 @@ nemo_desktop_window_new (gint monitor)
                            "disable-chrome", TRUE,
                            "monitor", monitor,
                            NULL);
-
 	return window;
 }
 
@@ -299,6 +296,12 @@ map (GtkWidget *widget)
 	/* Chain up to realize our children */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->map (widget);
 	gdk_window_lower (gtk_widget_get_window (widget));
+
+    GdkWindow *window;
+    GdkRGBA transparent = { 0, 0, 0, 0 };
+
+    window = gtk_widget_get_window (widget);
+    gdk_window_set_background_rgba (window, &transparent);
 }
 
 static void
@@ -333,14 +336,20 @@ set_wmspec_desktop_hint (GdkWindow *window)
 static void
 realize (GtkWidget *widget)
 {
+	GdkVisual *visual;
+
 	/* Make sure we get keyboard events */
 	gtk_widget_set_events (widget, gtk_widget_get_events (widget) 
 			      | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
+    visual = gdk_screen_get_rgba_visual (gtk_widget_get_screen (widget));
+    if (visual) {
+        gtk_widget_set_visual (widget, visual);
+    }
+
 	/* Do the work of realizing. */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->realize (widget);
 
-	return;
 	/* This is the new way to set up the desktop window */
 	set_wmspec_desktop_hint (gtk_widget_get_window (widget));
 }

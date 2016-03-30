@@ -559,6 +559,7 @@ nemo_window_constructed (GObject *self)
 	NemoWindowPane *pane;
 	NemoWindowSlot *slot;
 	NemoApplication *application;
+    GdkRGBA transparent = {0, 0, 0, 0};
 
 	window = NEMO_WINDOW (self);
 
@@ -575,6 +576,7 @@ nemo_window_constructed (GObject *self)
 	gtk_application_window_set_show_menubar (GTK_APPLICATION_WINDOW (self), FALSE);
 
 	grid = gtk_grid_new ();
+    gtk_widget_override_background_color (GTK_WIDGET (grid), 0, &transparent);
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (grid);
 	gtk_container_add (GTK_CONTAINER (window), grid);
@@ -621,6 +623,7 @@ nemo_window_constructed (GObject *self)
 			 G_CALLBACK (nemo_window_load_extension_menus), window, G_CONNECT_SWAPPED);
 
 	window->details->content_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_override_background_color (GTK_WIDGET (window->details->content_paned), 0, &transparent);
 	gtk_widget_set_hexpand (window->details->content_paned, TRUE);
 	gtk_widget_set_vexpand (window->details->content_paned, TRUE);
 
@@ -633,6 +636,7 @@ nemo_window_constructed (GObject *self)
 	gtk_widget_show (vbox);
 
 	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_override_background_color (GTK_WIDGET (hpaned), 0, &transparent);
 	gtk_box_pack_start (GTK_BOX (vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show (hpaned);
 	window->details->split_view_hpane = hpaned;
@@ -653,6 +657,7 @@ nemo_window_constructed (GObject *self)
     GtkWidget *eb;
 
     eb = gtk_event_box_new ();
+    gtk_widget_override_background_color (GTK_WIDGET (eb), 0, &transparent);
     gtk_container_add (GTK_CONTAINER (eb), nemo_statusbar);
     gtk_container_add (GTK_CONTAINER (grid), eb);
     gtk_widget_show (eb);
