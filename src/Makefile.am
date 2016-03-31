@@ -88,6 +88,8 @@ nemo_SOURCES = \
     nemo-action-config-widget.h         \
 	nemo-application.c			\
 	nemo-application.h			\
+    nemo-background-window.c \
+    nemo-background-window.h \
     nemo-blank-desktop-window.c \
     nemo-blank-desktop-window.h \
 	nemo-bookmark-list.c		\

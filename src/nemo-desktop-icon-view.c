@@ -41,7 +41,6 @@
 #include <fcntl.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
-#include <libnemo-private/nemo-desktop-background.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-directory-notify.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
@@ -76,8 +75,6 @@ struct NemoDesktopIconViewDetails
 	gulong delayed_init_signal;
 	guint reload_desktop_timeout;
 	gboolean pending_rescan;
-
-	NemoDesktopBackground *background;
 };
 
 static void     default_zoom_level_changed                        (gpointer                user_data);
@@ -103,17 +100,8 @@ desktop_directory_changed_callback (gpointer callback_data)
 static void
 real_begin_loading (NemoView *object)
 {
-	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity")) {
-		NemoDesktopIconView *view = NEMO_DESKTOP_ICON_VIEW (object);		
-		NemoIconContainer *icon_container = get_icon_container (view);
-		if (view->details->background == NULL) {
-			view->details->background = nemo_desktop_background_new (icon_container);
-		}
-	}
-
 	NEMO_VIEW_CLASS (nemo_desktop_icon_view_parent_class)->begin_loading (object);
 }
-
 
 static const char *
 real_get_id (NemoView *view)
@@ -156,11 +144,6 @@ nemo_desktop_icon_view_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
 					      nemo_view_update_menus,
 					      icon_view);
-
-	if (icon_view->details->background != NULL) {
-		g_object_unref (icon_view->details->background);
-		icon_view->details->background = NULL;
-	}
 
 	G_OBJECT_CLASS (nemo_desktop_icon_view_parent_class)->dispose (object);
 }

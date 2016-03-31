@@ -26,6 +26,7 @@
 #include "nemo-desktop-window.h"
 #include "nemo-window-private.h"
 #include "nemo-actions.h"
+#include "nemo-background-window.h"
 
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
@@ -111,6 +112,8 @@ nemo_desktop_window_constructed (GObject *obj)
 
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);
+    gtk_window_set_decorated (GTK_WINDOW (window),
+    			  FALSE);
 
     gtk_widget_show (GTK_WIDGET (window));
 }
@@ -211,12 +214,16 @@ map (GtkWidget *widget)
 {
 	/* Chain up to realize our children */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->map (widget);
-	gdk_window_lower (gtk_widget_get_window (widget));
 
-    GdkWindow *window;
+    GdkWindow *window = gtk_widget_get_window (widget);
+    GdkWindow *background_window = gtk_widget_get_window (nemo_background_window_get ());
+    if (background_window) {
+    	gdk_window_restack (window, background_window, TRUE);
+    } else {
+    	gdk_window_lower (window);
+    }
+
     GdkRGBA transparent = { 0, 0, 0, 0 };
-
-    window = gtk_widget_get_window (widget);
     gdk_window_set_background_rgba (window, &transparent);
 }
 
@@ -242,7 +249,7 @@ set_wmspec_desktop_hint (GdkWindow *window)
 static void
 realize (GtkWidget *widget)
 {
-    GdkVisual *visual;
+	GdkVisual *visual;
 
 	/* Make sure we get keyboard events */
 	gtk_widget_set_events (widget, gtk_widget_get_events (widget) 

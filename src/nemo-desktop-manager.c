@@ -1,6 +1,7 @@
 /* nemo-desktop-manager.c */
 
 #include "nemo-desktop-manager.h"
+#include "nemo-background-window.h"
 #include "nemo-blank-desktop-window.h"
 #include "nemo-desktop-window.h"
 #include "nemo-application.h"
@@ -44,12 +45,31 @@ close_all_windows (NemoDesktopManager *manager)
 }
 
 static void
+ensure_background_window (void)
+{
+	if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "Unity")) {
+		nemo_background_window_ensure ();
+	}
+}
+
+static void
+close_background_window (void)
+{
+	GtkWidget *background_window;
+
+	background_window = nemo_background_window_get ();
+	if (background_window != NULL) {
+		gtk_widget_destroy (background_window);
+	}
+}
+
+static void
 create_new_desktop_window (NemoDesktopManager *manager,
                                          gint  monitor,
                                      gboolean  primary,
                                      gboolean  show_desktop)
 {
-    GtkWidget *window;
+	GtkWidget *window;
 
     DesktopInfo *info = g_slice_new0 (DesktopInfo);
 
@@ -88,6 +108,8 @@ layout_changed (NemoDesktopManager *manager)
 
     close_all_windows (manager);
 
+    ensure_background_window ();
+ 
     gchar *pref = g_settings_get_string (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_LAYOUT);
 
     if (g_strcmp0 (pref, "") == 0) {
@@ -228,6 +250,7 @@ nemo_desktop_manager_dispose (GObject *object)
     NemoDesktopManager *manager = NEMO_DESKTOP_MANAGER (object);
 
     close_all_windows (manager);
+    close_background_window ();
 
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->setting_changed_id);
     g_signal_handler_disconnect (manager->screen, manager->size_changed_id);
