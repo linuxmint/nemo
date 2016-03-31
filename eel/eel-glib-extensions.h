@@ -37,16 +37,7 @@ typedef guint eel_boolean_bit;
 typedef gboolean (* EelPredicateFunction) (gpointer data,
 					   gpointer callback_data);
 
-/* Date & time functions. */
-GDate *     eel_g_date_new_tm                           (struct tm             *time_pieces);
-char *      eel_strdup_strftime                         (const char            *format,
-							 struct tm             *time_pieces);
-
 /* GList functions. */
-gboolean    eel_g_list_exactly_one_item                 (GList                 *list);
-gboolean    eel_g_list_more_than_one_item               (GList                 *list);
-gboolean    eel_g_list_equal                            (GList                 *list_a,
-							 GList                 *list_b);
 gboolean    eel_g_lists_sort_and_check_for_intersection (GList                **list_a,
 							 GList                **list_b);
 GList *     eel_g_list_partition                        (GList                 *list,
@@ -58,12 +49,8 @@ GList *     eel_g_list_partition                        (GList                 *
 gboolean    eel_g_str_list_equal                        (GList                 *str_list_a,
 							 GList                 *str_list_b);
 GList *     eel_g_str_list_copy                         (GList                 *str_list);
-GList *     eel_g_str_list_alphabetize                  (GList                 *str_list);
-int         eel_g_str_list_index                        (GList                 *str_list,
-							 const char            *str);
 
 /* List functions for lists of objects */
-GList *     eel_g_object_list_ref                       (GList                 *list);
 GList *     eel_g_object_list_copy                      (GList                 *list);
 
 /* GHashTable functions */
@@ -72,23 +59,7 @@ void        eel_g_hash_table_safe_for_each              (GHashTable            *
 							 gpointer               callback_data);
 
 /* NULL terminated string arrays (strv). */
-int         eel_g_strv_find                             (char                 **strv,
-							 const char            *find_me);
 gboolean    eel_g_strv_equal                            (char                 **a,
 							 char                 **b);
-
-/* return the time in microseconds since the machine was started */
-gint64      eel_get_system_time                         (void);
-
-/* math */
-int         eel_round                                   (double                 d);
-
-/* Better weak pointer functions */
-void        eel_add_weak_pointer                        (gpointer               pointer_location);
-void        eel_remove_weak_pointer                     (gpointer               pointer_location);
-
-void        eel_g_settings_add_auto_strv_as_quarks      (GSettings *settings,
-							 const char *key,
-							 GQuark **storage);
 
 #endif /* EEL_GLIB_EXTENSIONS_H */

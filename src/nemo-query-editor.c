@@ -67,7 +67,6 @@ struct NemoQueryEditorDetails {
 	guint typing_timeout_id;
 	gboolean is_visible;
 	GtkWidget *vbox;
-    GtkWidget *search_bar_revealer;
 
 	GtkWidget *search_current_button;
 	GtkWidget *search_all_button;
@@ -75,6 +74,7 @@ struct NemoQueryEditorDetails {
 
 	GList *rows;
 	char *last_set_query_text;
+	gboolean got_preedit;
 };
 
 enum {
@@ -113,6 +113,119 @@ static NemoQueryEditorRowOps row_type[] = {
 
 G_DEFINE_TYPE (NemoQueryEditor, nemo_query_editor, GTK_TYPE_BOX);
 
+/* taken from gtk/gtktreeview.c */
+static void
+send_focus_change (GtkWidget *widget,
+                   GdkDevice *device,
+		   gboolean   in)
+{
+	GdkDeviceManager *device_manager;
+	GList *devices, *d;
+
+	device_manager = gdk_display_get_device_manager (gtk_widget_get_display (widget));
+	devices = gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_MASTER);
+	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_SLAVE));
+	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_FLOATING));
+
+	for (d = devices; d; d = d->next) {
+		GdkDevice *dev = d->data;
+		GdkEvent *fevent;
+		GdkWindow *window;
+
+		if (gdk_device_get_source (dev) != GDK_SOURCE_KEYBOARD)
+			continue;
+
+		window = gtk_widget_get_window (widget);
+
+		/* Skip non-master keyboards that haven't
+		 * selected for events from this window
+		 */
+		if (gdk_device_get_device_type (dev) != GDK_DEVICE_TYPE_MASTER &&
+		    !gdk_window_get_device_events (window, dev))
+			continue;
+
+		fevent = gdk_event_new (GDK_FOCUS_CHANGE);
+
+		fevent->focus_change.type = GDK_FOCUS_CHANGE;
+		fevent->focus_change.window = g_object_ref (window);
+		fevent->focus_change.in = in;
+		gdk_event_set_device (fevent, device);
+
+		gtk_widget_send_focus_change (widget, fevent);
+
+		gdk_event_free (fevent);
+	}
+
+	g_list_free (devices);
+}
+
+static void
+entry_focus_hack (GtkWidget *entry,
+		  GdkDevice *device)
+{
+	GtkEntryClass *entry_class;
+	GtkWidgetClass *entry_parent_class;
+
+	/* Grab focus will select all the text.  We don't want that to happen, so we
+	 * call the parent instance and bypass the selection change.  This is probably
+	 * really non-kosher. */
+	entry_class = g_type_class_peek (GTK_TYPE_ENTRY);
+	entry_parent_class = g_type_class_peek_parent (entry_class);
+	(entry_parent_class->grab_focus) (entry);
+
+	/* send focus-in event */
+	send_focus_change (entry, device, TRUE);
+}
+
+static void
+entry_preedit_changed_cb (GtkEntry            *entry,
+			  gchar               *preedit,
+			  NemoQueryEditor *editor)
+{
+	editor->details->got_preedit = TRUE;
+}
+
+gboolean
+nemo_query_editor_handle_event (NemoQueryEditor *editor,
+				    GdkEventKey         *event)
+{
+	GdkEvent *new_event;
+	gboolean handled = FALSE;
+	gulong id;
+	gboolean retval;
+	gboolean text_changed;
+	char *old_text;
+	const char *new_text;
+
+	editor->details->got_preedit = FALSE;
+	if (!gtk_widget_get_realized (editor->details->entry)) {
+		gtk_widget_realize (editor->details->entry);
+	}
+
+	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
+
+	id = g_signal_connect (editor->details->entry, "preedit-changed",
+			       G_CALLBACK (entry_preedit_changed_cb), editor);
+
+	new_event = gdk_event_copy ((GdkEvent *) event);
+	g_object_unref (((GdkEventKey *) new_event)->window);
+	((GdkEventKey *) new_event)->window = g_object_ref
+		(gtk_widget_get_window (editor->details->entry));
+	retval = gtk_widget_event (editor->details->entry, new_event);
+	gdk_event_free (new_event);
+
+	g_signal_handler_disconnect (editor->details->entry, id);
+
+	new_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
+	text_changed = strcmp (old_text, new_text) != 0;
+	g_free (old_text);
+
+	handled = (editor->details->got_preedit) || (retval && text_changed);
+	editor->details->got_preedit = FALSE;
+
+	return handled;
+}
+
 static void
 nemo_query_editor_dispose (GObject *object)
 {
@@ -149,6 +262,16 @@ nemo_query_editor_draw (GtkWidget *widget,
 }
 
 static void
+nemo_query_editor_grab_focus (GtkWidget *widget)
+{
+	NemoQueryEditor *editor = NEMO_QUERY_EDITOR (widget);
+
+	if (gtk_widget_get_visible (widget)) {
+		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
+	}
+}
+
+static void
 nemo_query_editor_class_init (NemoQueryEditorClass *class)
 {
 	GObjectClass *gobject_class;
@@ -160,6 +283,7 @@ nemo_query_editor_class_init (NemoQueryEditorClass *class)
 
 	widget_class = GTK_WIDGET_CLASS (class);
 	widget_class->draw = nemo_query_editor_draw;
+	widget_class->grab_focus = nemo_query_editor_grab_focus;
 
 	signals[CHANGED] =
 		g_signal_new ("changed",
@@ -218,7 +342,7 @@ typing_timeout_cb (gpointer user_data)
 	return FALSE;
 }
 
-#define TYPING_TIMEOUT 750
+#define TYPING_TIMEOUT 250
 
 static void
 entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
@@ -457,7 +581,8 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 		dialog = gtk_dialog_new_with_buttons (_("Select type"),
 						      GTK_WINDOW (toplevel),
 						      0,
-						      GTK_STOCK_OK, GTK_RESPONSE_OK,
+						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						      _("Select"), GTK_RESPONSE_OK,
 						      NULL);
 		gtk_window_set_default_size (GTK_WINDOW (dialog), 400, 600);
 			
@@ -852,8 +977,6 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 {
 	editor->details = G_TYPE_INSTANCE_GET_PRIVATE (editor, NEMO_TYPE_QUERY_EDITOR,
 						       NemoQueryEditorDetails);
-	editor->details->is_visible = FALSE;
-    editor->details->search_bar_revealer = gtk_revealer_new ();
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (editor)),
 				     GTK_STYLE_CLASS_TOOLBAR);
@@ -863,18 +986,10 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
 	editor->details->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-    gtk_container_add (GTK_CONTAINER (editor->details->search_bar_revealer), editor->details->vbox);
-    gtk_widget_show_all (editor->details->search_bar_revealer);
-	gtk_widget_set_no_show_all (editor->details->vbox, TRUE);
 	gtk_container_set_border_width (GTK_CONTAINER (editor->details->vbox), 6);
-	gtk_box_pack_start (GTK_BOX (editor), editor->details->search_bar_revealer,
+	gtk_box_pack_start (GTK_BOX (editor), editor->details->vbox,
 			    FALSE, FALSE, 0);
-}
-
-void
-nemo_query_editor_set_default_query (NemoQueryEditor *editor)
-{
-	nemo_query_editor_changed (editor);
+	gtk_widget_show (editor->details->vbox);
 }
 
 static void
@@ -940,16 +1055,16 @@ setup_widgets (NemoQueryEditor *editor)
 #if GTK_CHECK_VERSION(3,6,0)
 	editor->details->entry = gtk_search_entry_new ();
 #else
-    GtkWidget *label = gtk_label_new ("");
-    char *label_markup = g_strconcat ("<b>", _("_Search for:"), "</b>", NULL);
-    gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), label_markup);
-    g_free (label_markup);
-    gtk_widget_show (label);
+	GtkWidget *label = gtk_label_new ("");
+	char *label_markup = g_strconcat ("  <b>", _("_Search for:"), "</b>", NULL);
+	gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), label_markup);
+	g_free (label_markup);
+	gtk_widget_show (label);
 
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
-    editor->details->entry = gtk_entry_new ();
-    gtk_label_set_mnemonic_widget (GTK_LABEL (label), editor->details->entry);
+	editor->details->entry = gtk_entry_new ();
+	gtk_label_set_mnemonic_widget (GTK_LABEL (label), editor->details->entry);
 #endif
 	gtk_box_pack_start (GTK_BOX (hbox), editor->details->entry, TRUE, TRUE, 0);
 
@@ -962,28 +1077,6 @@ setup_widgets (NemoQueryEditor *editor)
 	finish_first_line (editor, hbox, TRUE);
 }
 
-void
-nemo_query_editor_set_visible (NemoQueryEditor *editor,
-				   gboolean visible)
-{
-	editor->details->is_visible = visible;
-	if (visible) {
-		gtk_revealer_set_reveal_child (GTK_REVEALER (editor->details->search_bar_revealer), TRUE);
-	} else {
-		gtk_revealer_set_reveal_child (GTK_REVEALER (editor->details->search_bar_revealer), FALSE);
-	}
-}
-
-static gboolean
-query_is_valid (NemoQueryEditor *editor)
-{
-	const char *text;
-
-	text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-
-	return text != NULL && text[0] != '\0';
-}
-
 static void
 nemo_query_editor_changed_force (NemoQueryEditor *editor, gboolean force_reload)
 {
@@ -992,27 +1085,17 @@ nemo_query_editor_changed_force (NemoQueryEditor *editor, gboolean force_reload)
 	if (editor->details->change_frozen) {
 		return;
 	}
-	
-	if (query_is_valid (editor)) {
-		query = nemo_query_editor_get_query (editor);
-		g_signal_emit (editor, signals[CHANGED], 0,
-			       query, force_reload);
-		g_object_unref (query);
-	}
+
+	query = nemo_query_editor_get_query (editor);
+	g_signal_emit (editor, signals[CHANGED], 0,
+		       query, force_reload);
+	g_object_unref (query);
 }
 
 static void
 nemo_query_editor_changed (NemoQueryEditor *editor)
 {
 	nemo_query_editor_changed_force (editor, TRUE);
-}
-
-void
-nemo_query_editor_grab_focus (NemoQueryEditor *editor)
-{
-	if (editor->details->is_visible) {
-		gtk_widget_grab_focus (editor->details->entry);
-	}
 }
 
 static void
@@ -1046,11 +1129,6 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 
 	query_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
 
-	/* Empty string is a NULL query */
-	if (query_text && query_text[0] == '\0') {
-		return NULL;
-	}
-	
 	query = nemo_query_new ();
 	nemo_query_set_text (query, query_text);
 
@@ -1065,18 +1143,6 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 	return query;
 }
 
-void
-nemo_query_editor_clear_query (NemoQueryEditor *editor)
-{
-	editor->details->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), "");
-
-	g_free (editor->details->last_set_query_text);
-	editor->details->last_set_query_text = g_strdup ("");
-
-	editor->details->change_frozen = FALSE;
-}
-
 GtkWidget *
 nemo_query_editor_new (void)
 {
@@ -1089,19 +1155,11 @@ nemo_query_editor_new (void)
 }
 
 static void
-update_location (NemoQueryEditor *editor,
-		 NemoQuery       *query)
+update_location (NemoQueryEditor *editor)
 {
-	char *uri;
 	NemoFile *file;
 
-	uri = nemo_query_get_location (query);
-	if (uri == NULL) {
-		return;
-	}
-	g_free (editor->details->current_uri);
-	editor->details->current_uri = uri;
-	file = nemo_file_get_by_uri (uri);
+	file = nemo_file_get_by_uri (editor->details->current_uri);
 
 	if (file != NULL) {
 		char *name;
@@ -1122,17 +1180,24 @@ update_location (NemoQueryEditor *editor,
 }
 
 void
-nemo_query_editor_set_query (NemoQueryEditor *editor, NemoQuery *query)
+nemo_query_editor_set_location (NemoQueryEditor *editor,
+				    GFile               *location)
+{
+	g_free (editor->details->current_uri);
+	editor->details->current_uri = g_file_get_uri (location);
+	update_location (editor);
+}
+
+void
+nemo_query_editor_set_query (NemoQueryEditor	*editor,
+				 NemoQuery		*query)
 {
 	NemoQueryEditorRowType type;
-	char *text;
+	char *text = NULL;
 
-	if (!query) {
-		nemo_query_editor_clear_query (editor);
-		return;
+	if (query != NULL) {
+		text = nemo_query_get_text (query);
 	}
-
-	text = nemo_query_get_text (query);
 
 	if (!text) {
 		text = g_strdup ("");
@@ -1141,14 +1206,21 @@ nemo_query_editor_set_query (NemoQueryEditor *editor, NemoQuery *query)
 	editor->details->change_frozen = TRUE;
 	gtk_entry_set_text (GTK_ENTRY (editor->details->entry), text);
 
-        update_location (editor, query);
+	g_free (editor->details->current_uri);
+	editor->details->current_uri = NULL;
 
-	for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
-		row_type[type].add_rows_from_query (editor, query);
+	if (query != NULL) {
+		editor->details->current_uri = nemo_query_get_location (query);
+		update_location (editor);
+
+
+		for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
+			row_type[type].add_rows_from_query (editor, query);
+		}
 	}
-	
-	editor->details->change_frozen = FALSE;
 
 	g_free (editor->details->last_set_query_text);
 	editor->details->last_set_query_text = text;
+
+	editor->details->change_frozen = FALSE;
 }

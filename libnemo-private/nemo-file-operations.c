@@ -1172,7 +1172,9 @@ init_common (gsize job_size,
 
 	if (parent_window) {
 		common->parent_window = parent_window;
-		eel_add_weak_pointer (&common->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (common->parent_window),
+					   (gpointer *) &common->parent_window);
+
 	}
 	common->progress = nemo_progress_info_new ();
 	common->cancellable = nemo_progress_info_get_cancellable (common->progress);
@@ -1200,7 +1202,12 @@ finalize_common (CommonJob *common)
 
 	common->inhibit_cookie = -1;
 	g_timer_destroy (common->time);
-	eel_remove_weak_pointer (&common->parent_window);
+
+	if (common->parent_window) {
+		g_object_remove_weak_pointer (G_OBJECT (common->parent_window),
+					      (gpointer *) &common->parent_window);
+	}
+
 	if (common->skip_files) {
 		g_hash_table_destroy (common->skip_files);
 	}
@@ -2352,7 +2359,7 @@ unmount_mount_callback (GObject *source_object,
 	if (error != NULL) {
 		g_error_free (error);
 	}
-	
+
 	unmount_data_free (data);
 }
 
@@ -2551,7 +2558,8 @@ nemo_file_operations_unmount_mount_full (GtkWindow                      *parent_
 	data->callback_data = callback_data;
 	if (parent_window) {
 		data->parent_window = parent_window;
-		eel_add_weak_pointer (&data->parent_window);
+		g_object_add_weak_pointer (G_OBJECT (data->parent_window),
+					   (gpointer *) &data->parent_window);
 		
 	}
 
@@ -3517,18 +3525,28 @@ get_target_file_with_custom_name (GFile *src,
 
 	if (dest == NULL && !same_fs) {
 		info = g_file_query_info (src,
-					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME,
+					  G_FILE_ATTRIBUTE_STANDARD_COPY_NAME ","
+					  G_FILE_ATTRIBUTE_TRASH_ORIG_PATH,
 					  0, NULL, NULL);
 		
 		if (info) {
-			copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			copyname = NULL;
+
+			/* if file is being restored from trash make sure it uses its original name */
+			if (g_file_has_uri_scheme (src, "trash")) {
+				copyname = g_strdup (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+			}
+
+			if (copyname == NULL) {
+				copyname = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+			}
 
 			if (copyname) {
 				make_file_name_valid_for_dest_fs (copyname, dest_fs_type);
 				dest = g_file_get_child_for_display_name (dest_dir, copyname, NULL);
 				g_free (copyname);
 			}
-			
+
 			g_object_unref (info);
 		}
 	}

@@ -96,7 +96,7 @@ void nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 					  NemoWindowSlot *slot);
 
 void nemo_window_pane_sync_location_widgets (NemoWindowPane *pane);
-void nemo_window_pane_sync_search_widgets  (NemoWindowPane *pane);
+void nemo_window_pane_sync_search_widgets (NemoWindowPane *pane);
 void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_close_slot (NemoWindowPane *pane, NemoWindowSlot *slot);
 GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pane);

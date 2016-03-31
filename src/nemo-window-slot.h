@@ -92,6 +92,9 @@ struct NemoWindowSlot {
 	gboolean allow_stop;
 
 	NemoQueryEditor *query_editor;
+	GtkWidget *query_editor_revealer;
+	gulong qe_changed_id;
+	gulong qe_cancel_id;
 
 	/* New location. */
 	NemoLocationChangeType location_change_type;
@@ -124,6 +127,8 @@ void    nemo_window_slot_update_title		   (NemoWindowSlot *slot);
 void    nemo_window_slot_update_icon		   (NemoWindowSlot *slot);
 void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
 							    gboolean            visible);
+gboolean nemo_window_slot_handle_event       	   (NemoWindowSlot *slot,
+							    GdkEventKey        *event);
 
 GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
 char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);

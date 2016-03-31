@@ -28,21 +28,6 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libnemo-private/nemo-file.h>
 
-typedef struct NemoThumbnailAsyncLoadHandle NemoThumbnailAsyncLoadHandle;
-
-typedef void (* NemoThumbnailAsyncLoadFunc) (NemoThumbnailAsyncLoadHandle *handle,
-						 const char *path,
-						 GdkPixbuf  *pixbuf,
-						 double      scale_x,
-						 double      scale_y,
-						 gpointer    user_data);
-
-
-#define NEMO_THUMBNAIL_FRAME_LEFT 3
-#define NEMO_THUMBNAIL_FRAME_TOP 3
-#define NEMO_THUMBNAIL_FRAME_RIGHT 3
-#define NEMO_THUMBNAIL_FRAME_BOTTOM 3
-
 /* Cool-off period between last file modification time and thumbnail creation */
 #define THUMBNAIL_CREATION_DELAY_SECS 3
 
@@ -53,30 +38,9 @@ gboolean   nemo_can_thumbnail_internally        (NemoFile *file);
 gboolean   nemo_thumbnail_is_mimetype_limited_by_size
 						    (const char *mime_type);
 void       nemo_thumbnail_frame_image           (GdkPixbuf **pixbuf);
-GdkPixbuf *nemo_thumbnail_unframe_image         (GdkPixbuf  *pixbuf);
-GdkPixbuf *nemo_thumbnail_load_image            (const char *path,
-						     guint       base_size,
-						     guint       nominal_size,
-						     gboolean    force_nominal,
-						     double     *scale_x_out,
-						     double     *scale_y_out);
-NemoThumbnailAsyncLoadHandle *
-	   nemo_thumbnail_load_image_async	    (const char *path,
-						     guint       base_size,
-						     guint       nominal_size,
-						     gboolean    force_nominal,
-						     NemoThumbnailAsyncLoadFunc load_func,
-						     gpointer    load_func_user_data);
-void       nemo_thumbnail_load_image_cancel     (NemoThumbnailAsyncLoadHandle *handle);
-void       nemo_update_thumbnail_file_copied    (const char   *source_file_uri,
-						     const char   *destination_file_uri);
-void       nemo_update_thumbnail_file_renamed   (const char   *source_file_uri,
-						     const char   *destination_file_uri);
-void       nemo_remove_thumbnail_for_file       (const char   *file_uri);
 
 /* Queue handling: */
 void       nemo_thumbnail_remove_from_queue     (const char   *file_uri);
-void       nemo_thumbnail_remove_all_from_queue (void);
 void       nemo_thumbnail_prioritize            (const char   *file_uri);
 
 gboolean   nemo_thumbnail_factory_check_status          (void);
