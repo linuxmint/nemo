@@ -53,6 +53,8 @@ struct NemoBookmarkList {
 	GFileMonitor *monitor;
 	GQueue *pending_ops;
     GVolumeMonitor *volume_monitor;
+
+    guint idle_notify_id;
 };
 
 struct NemoBookmarkListClass {

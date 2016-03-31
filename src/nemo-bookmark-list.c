@@ -37,13 +37,16 @@
     #include <libcinnamon-desktop/gnome-desktop-utils.h>
 #endif
 
-
 #include <gio/gio.h>
 #include <string.h>
 
 #define MAX_BOOKMARK_LENGTH 80
 #define LOAD_JOB 1
 #define SAVE_JOB 2
+
+#define KEY_ICON_URI    "IconUri"
+#define KEY_ICON_NAME    "IconName"
+#define KEY_ICON_EMBLEMS "IconEmblems"
 
 enum {
 	CHANGED,
@@ -59,10 +62,31 @@ static NemoBookmarkList *singleton = NULL;
 static void        nemo_bookmark_list_load_file     (NemoBookmarkList *bookmarks);
 static void        nemo_bookmark_list_save_file     (NemoBookmarkList *bookmarks);
 
-G_DEFINE_TYPE(NemoBookmarkList, nemo_bookmark_list, G_TYPE_OBJECT)
+G_DEFINE_TYPE(NemoBookmarkList, nemo_bookmark_list, G_TYPE_OBJECT);
+
+#ifndef GNOME_BUILD
+static void
+ensure_proper_file_permissions (GFile *file)
+{
+    if (geteuid () == 0) {
+        struct passwd *pwent;
+        pwent = gnome_desktop_get_session_user_pwent ();
+
+        gchar *path = g_file_get_path (file);
+
+        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
+            G_GNUC_UNUSED int res;
+
+            res = chown (path, pwent->pw_uid, pwent->pw_gid);
+        }
+
+        g_free (path);
+    }
+}
+#endif // GNOME_BUILD
 
 static NemoBookmark *
-new_bookmark_from_uri (const char *uri, const char *label)
+new_bookmark_from_uri (const char *uri, const char *label, NemoBookmarkMetadata *md)
 {
 	NemoBookmark *new_bookmark;
 	GFile *location;
@@ -75,7 +99,7 @@ new_bookmark_from_uri (const char *uri, const char *label)
 	new_bookmark = NULL;
 
 	if (location) {
-		new_bookmark = nemo_bookmark_new (location, label, NULL);
+		new_bookmark = nemo_bookmark_new (location, label, NULL, md);
 		g_object_unref (location);
 	}
 
@@ -123,9 +147,17 @@ bookmark_in_list_changed_callback (NemoBookmark     *bookmark,
 {
 	g_assert (NEMO_IS_BOOKMARK (bookmark));
 	g_assert (NEMO_IS_BOOKMARK_LIST (bookmarks));
-
 	/* save changes to the list */
 	nemo_bookmark_list_save_file (bookmarks);
+}
+
+static gboolean
+idle_notify (NemoBookmarkList *bookmarks)
+{
+    g_signal_emit (bookmarks, signals[CHANGED], 0);
+
+    bookmarks->idle_notify_id = 0;
+    return FALSE;
 }
 
 static void
@@ -134,7 +166,13 @@ bookmark_in_list_notify (GObject *object,
 			 NemoBookmarkList *bookmarks)
 {
 	/* emit the changed signal without saving, as only appearance properties changed */
-	g_signal_emit (bookmarks, signals[CHANGED], 0);
+
+    if (bookmarks->idle_notify_id > 0) {
+        g_source_remove (bookmarks->idle_notify_id);
+        bookmarks->idle_notify_id = 0;
+    }
+
+    bookmarks->idle_notify_id = g_idle_add ((GSourceFunc) idle_notify, bookmarks);
 }
 
 static gboolean
@@ -195,11 +233,11 @@ stop_monitoring_one (gpointer data, gpointer user_data)
 }
 
 static void
-clear_bookmarks (NemoBookmarkList *bookmarks)
+clear_bookmarks (NemoBookmarkList *bookmarks, GList *list)
 {
-	g_list_foreach (bookmarks->list, stop_monitoring_one, bookmarks);
-	g_list_free_full (bookmarks->list, g_object_unref);
-	bookmarks->list = NULL;
+	g_list_foreach (list, stop_monitoring_one, bookmarks);
+	g_list_free_full (list, g_object_unref);
+	list = NULL;
 }
 
 static void
@@ -212,7 +250,7 @@ do_finalize (GObject *object)
 
 	g_queue_free (NEMO_BOOKMARK_LIST (object)->pending_ops);
 
-	clear_bookmarks (NEMO_BOOKMARK_LIST (object));
+	clear_bookmarks (NEMO_BOOKMARK_LIST (object), NEMO_BOOKMARK_LIST (object)->list);
 
     g_object_unref (NEMO_BOOKMARK_LIST (object)->volume_monitor);
 
@@ -239,6 +277,13 @@ do_constructor (GType type,
 	return retval;
 }
 
+static void
+do_constructed (GObject *object)
+{
+    G_OBJECT_CLASS (nemo_bookmark_list_parent_class)->constructed (object);
+
+    nemo_bookmark_list_load_file (NEMO_BOOKMARK_LIST (object));
+}
 
 static void
 nemo_bookmark_list_class_init (NemoBookmarkListClass *class)
@@ -247,6 +292,7 @@ nemo_bookmark_list_class_init (NemoBookmarkListClass *class)
 
 	object_class->finalize = do_finalize;
 	object_class->constructor = do_constructor;
+    object_class->constructed = do_constructed;
 
 	signals[CHANGED] =
 		g_signal_new ("changed",
@@ -286,16 +332,18 @@ nemo_bookmark_list_init (NemoBookmarkList *bookmarks)
 {
 	GFile *file;
 
-	bookmarks->pending_ops = g_queue_new ();
+    bookmarks->list = NULL;
+    bookmarks->idle_notify_id = 0;
 
-	nemo_bookmark_list_load_file (bookmarks);
+	bookmarks->pending_ops = g_queue_new ();
 
 	file = nemo_bookmark_list_get_file ();
 	bookmarks->monitor = g_file_monitor_file (file, 0, NULL, NULL);
 	g_file_monitor_set_rate_limit (bookmarks->monitor, 1000);
 
 	g_signal_connect (bookmarks->monitor, "changed",
-			  G_CALLBACK (bookmark_monitor_changed_cb), bookmarks);
+                      G_CALLBACK (bookmark_monitor_changed_cb),
+                      bookmarks);
 
 	g_object_unref (file);
 
@@ -310,22 +358,29 @@ nemo_bookmark_list_init (NemoBookmarkList *bookmarks)
 }
 
 static void
+connect_bookmark_signals (NemoBookmark     *bookmark,
+                          NemoBookmarkList *bookmarks)
+{
+    g_signal_connect_object (bookmark, "location-mounted",
+                 G_CALLBACK (bookmark_location_mounted_callback), bookmarks, 0);
+    g_signal_connect_object (bookmark, "contents-changed",
+                 G_CALLBACK (bookmark_in_list_changed_callback), bookmarks, 0);
+    g_signal_connect_object (bookmark, "notify::icon",
+                 G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
+    g_signal_connect_object (bookmark, "notify::name",
+                 G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
+
+    nemo_bookmark_connect (bookmark);
+}
+
+static void
 insert_bookmark_internal (NemoBookmarkList *bookmarks,
 			  NemoBookmark     *bookmark,
 			  int                   index)
 {
 	bookmarks->list = g_list_insert (bookmarks->list, bookmark, index);
 
-    g_signal_connect_object (bookmark, "location-mounted",
-                 G_CALLBACK (bookmark_location_mounted_callback), bookmarks, 0);
-	g_signal_connect_object (bookmark, "contents-changed",
-				 G_CALLBACK (bookmark_in_list_changed_callback), bookmarks, 0);
-	g_signal_connect_object (bookmark, "notify::icon",
-				 G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
-	g_signal_connect_object (bookmark, "notify::name",
-				 G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
-
-    nemo_bookmark_connect (bookmark);
+    connect_bookmark_signals (bookmark, bookmarks);
 }
 
 /**
@@ -601,185 +656,372 @@ nemo_bookmark_list_length (NemoBookmarkList *bookmarks)
 	return g_list_length (bookmarks->list);
 }
 
-static void
-load_file_finish (NemoBookmarkList *bookmarks,
-		  GObject *source,
-		  GAsyncResult *res)
-{
-	GError *error = NULL;
-	gchar *contents = NULL;
+static GList *
+load_bookmark_metadata_file (NemoBookmarkList *list)
+{   /* Part of load_files thread */
+    GError *error = NULL;
+    GKeyFile *kfile = g_key_file_new ();
+    GList *ret = NULL;
 
-	g_file_load_contents_finish (G_FILE (source),
-				     res, &contents, NULL, NULL, &error);
+    gchar *filename;
 
-	if (error == NULL) {
-        	char **lines;
-      		int i;
+    filename = g_build_filename (g_get_user_config_dir (),
+                                 "nemo",
+                                 "bookmark-metadata",
+                                 NULL);
 
-		lines = g_strsplit (contents, "\n", -1);
-      	 	for (i = 0; lines[i]; i++) {
-			/* Ignore empty or invalid lines that cannot be parsed properly */
-	  		if (lines[i][0] != '\0' && lines[i][0] != ' ') {
-				/* gtk 2.7/2.8 might have labels appended to bookmarks which are separated by a space */
-				/* we must seperate the bookmark uri and the potential label */
- 				char *space, *label;
+    if (g_key_file_load_from_file (kfile,
+                                   filename,
+                                   G_KEY_FILE_NONE,
+                                   &error)) {
+        gchar **items = g_key_file_get_groups (kfile, NULL);
 
-				label = NULL;
-      				space = strchr (lines[i], ' ');
-      				if (space) {
-					*space = '\0';
-					label = g_strdup (space + 1);
-				}
-				insert_bookmark_internal (bookmarks, 
-						          new_bookmark_from_uri (lines[i], label), 
-						          -1);
+        gint i;
+        for (i = 0; i < g_strv_length (items); i++) {
+            NemoBookmarkMetadata *meta = nemo_bookmark_metadata_new ();
 
-				g_free (label);
-			}
-		}
-      		g_free (contents);
-       		g_strfreev (lines);
+            meta->bookmark_name = g_strdup (items[i]);
+            meta->icon_uri = g_key_file_get_string (kfile,
+                                                    items[i],
+                                                    KEY_ICON_URI,
+                                                    NULL);
+            meta->icon_name = g_key_file_get_string (kfile,
+                                                     items[i],
+                                                     KEY_ICON_NAME,
+                                                     NULL);
+            meta->emblems = g_key_file_get_string_list (kfile,
+                                                        items[i],
+                                                        KEY_ICON_EMBLEMS,
+                                                        NULL,
+                                                        NULL);
 
-		g_signal_emit (bookmarks, signals[CHANGED], 0);
-	} else if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
-		g_warning ("Could not load bookmark file: %s\n", error->message);
-		g_error_free (error);
-	}
-}
-
-static void
-load_file_async (NemoBookmarkList *self,
-		 GAsyncReadyCallback callback)
-{
-	GFile *file;
-
-	file = nemo_bookmark_list_get_file ();
-	if (!g_file_query_exists (file, NULL)) {
-		g_object_unref (file);
-		file = nemo_bookmark_list_get_legacy_file ();
-	}
-
-	/* Wipe out old list. */
-	clear_bookmarks (self);
-
-	/* keep the bookmark list alive */
-	g_object_ref (self);
-	g_file_load_contents_async (file, NULL, callback, self);
-
-	g_object_unref (file);
-}
-
-static void
-save_file_finish (NemoBookmarkList *bookmarks,
-		  GObject *source,
-		  GAsyncResult *res)
-{
-	GError *error = NULL;
-	GFile *file;
-
-	g_file_replace_contents_finish (G_FILE (source),
-					res, NULL, &error);
-
-	if (error != NULL) {
-		g_warning ("Unable to replace contents of the bookmarks file: %s",
-			   error->message);
-		g_error_free (error);
-	}
-
-#ifndef GNOME_BUILD
-    if (geteuid () == 0) {
-        struct passwd *pwent;
-        pwent = gnome_desktop_get_session_user_pwent ();
-
-        gchar *bookmarks_path = g_file_get_path (G_FILE (source));
-
-        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
-            G_GNUC_UNUSED int res;
-
-            res = chown (bookmarks_path, pwent->pw_uid, pwent->pw_gid);
+            ret = g_list_append (ret, meta);
         }
+
+        g_strfreev (items);
+    } else if (!g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NOENT)) {
+        g_warning ("Could not load bookmark metadata file: %s\n", error->message);
+        g_error_free (error);
     }
-#endif
 
-	file = nemo_bookmark_list_get_file ();
+    g_key_file_free (kfile);
 
-	/* re-enable bookmark file monitoring */
-	bookmarks->monitor = g_file_monitor_file (file, 0, NULL, NULL);
-	g_file_monitor_set_rate_limit (bookmarks->monitor, 1000);
-	g_signal_connect (bookmarks->monitor, "changed",
-			  G_CALLBACK (bookmark_monitor_changed_cb), bookmarks);
-
-	g_object_unref (file);
+    return ret;
 }
 
 static void
-save_file_async (NemoBookmarkList *bookmarks,
-		 GAsyncReadyCallback callback)
+load_files_finish (NemoBookmarkList *bookmarks,
+                   GObject          *source,
+                   GAsyncResult     *res)
 {
-	GFile *file;
-	GList *l;
-	GString *bookmark_string;
-	GFile *parent;
-	char *path;
+    GError *error = NULL;
 
-	/* temporarily disable bookmark file monitoring when writing file */
-	if (bookmarks->monitor != NULL) {
-		g_file_monitor_cancel (bookmarks->monitor);
-		bookmarks->monitor = NULL;
-	}
+    GList *new_list = g_task_propagate_pointer (G_TASK (res), &error);
 
-	file = nemo_bookmark_list_get_file ();
-	/* FIXME: `bookmark_string` is currently leaked as `g_string_free()` is
-	 * 	  never called.
-	 */
-	bookmark_string = g_string_new (NULL);
+    if (error != NULL && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
+        g_warning ("Could not load bookmarks: %s\n", error->message);
+        g_error_free (error);
+        return;
+    }
 
-	for (l = bookmarks->list; l; l = l->next) {
-		NemoBookmark *bookmark;
+    GList *old_list = bookmarks->list;
+    bookmarks->list = new_list;
 
-		bookmark = NEMO_BOOKMARK (l->data);
+    clear_bookmarks (bookmarks, old_list);
 
-		/* make sure we save label if it has one for compatibility with GTK 2.7 and 2.8 */
-		if (nemo_bookmark_get_has_custom_name (bookmark)) {
-			const char *label;
-			char *uri;
-			label = nemo_bookmark_get_name (bookmark);
-			uri = nemo_bookmark_get_uri (bookmark);
-			g_string_append_printf (bookmark_string,
-						"%s %s\n", uri, label);
-			g_free (uri);
-		} else {
-			char *uri;
-			uri = nemo_bookmark_get_uri (bookmark);
-			g_string_append_printf (bookmark_string, "%s\n", uri);
-			g_free (uri);
-		}
-	}
+    g_list_foreach (bookmarks->list, (GFunc) connect_bookmark_signals, bookmarks);
+    g_signal_emit (bookmarks, signals[CHANGED], 0);
+}
 
-	/* keep the bookmark list alive */
-	g_object_ref (bookmarks);
+static gint
+find_meta_func (gconstpointer a,
+                gconstpointer b)
+{
+    return g_strcmp0 (((NemoBookmarkMetadata *) a)->bookmark_name, (gchar *) b);
+}
 
-	parent = g_file_get_parent (file);
-	path = g_file_get_path (parent);
-	g_mkdir_with_parents (path, 0700);
-	g_free (path);
-	g_object_unref (parent);
+static void
+load_files_thread (GTask        *task,
+                   gpointer      source_object,
+                   gpointer      task_data,
+                   GCancellable *cancellable)
+{
+    NemoBookmarkList *list = NEMO_BOOKMARK_LIST (source_object);
 
-	g_file_replace_contents_async (file, bookmark_string->str,
-				       bookmark_string->len, NULL,
-				       FALSE, 0, NULL, callback,
-				       bookmarks);
+    GError *error = NULL;
+    GFile *file;
 
-	g_object_unref (file);
+    file = nemo_bookmark_list_get_file ();
+
+    if (!g_file_query_exists (file, NULL)) {
+        g_object_unref (file);
+        file = nemo_bookmark_list_get_legacy_file ();
+    }
+
+    gchar *contents = NULL;
+
+    GList *new_list = NULL;
+
+    if (g_file_load_contents (file,
+                              cancellable,
+                              &contents,
+                              NULL,
+                              NULL,
+                              &error)) {
+
+        GList *metadata = load_bookmark_metadata_file (list);
+
+        gchar **lines;
+        gint i;
+
+        lines = g_strsplit (contents, "\n", -1);
+        for (i = 0; lines[i]; i++) {
+            /* Ignore empty or invalid lines that cannot be parsed properly */
+            if (lines[i][0] != '\0' && lines[i][0] != ' ') {
+                /* gtk 2.7/2.8 might have labels appended to bookmarks which are separated by a space */
+                /* we must seperate the bookmark uri and the potential label */
+                gchar *space, *label;
+
+                label = NULL;
+                space = strchr (lines[i], ' ');
+                if (space) {
+                    *space = '\0';
+                    label = g_strdup (space + 1);
+                }
+
+                GList *meta_ptr = g_list_find_custom (metadata, label, (GCompareFunc) find_meta_func);
+
+                NemoBookmarkMetadata *md = NULL;
+
+                if (meta_ptr) {
+                    metadata = g_list_remove_link (metadata, meta_ptr);
+                    md = (NemoBookmarkMetadata *) meta_ptr->data;
+                    g_list_free (meta_ptr);
+                }
+
+                new_list = g_list_insert (new_list,
+                                          new_bookmark_from_uri (lines[i], label, md),
+                                          -1);
+
+                g_free (label);
+            }
+        }
+
+        g_list_free_full (metadata, (GDestroyNotify) nemo_bookmark_metadata_free);
+
+        g_free (contents);
+        g_strfreev (lines);
+
+        g_task_return_pointer (task, new_list, NULL);
+    } else {
+        g_task_return_error (task, error);
+    }
+
+    g_object_unref (file);
+}
+
+static void
+load_files_async (NemoBookmarkList    *self,
+                  GAsyncReadyCallback  callback)
+{
+    GTask *task;
+
+    g_object_ref (self);
+
+    task = g_task_new (self, NULL, callback, self);
+    g_task_run_in_thread (task, load_files_thread);
+
+    g_object_unref (task);
+}
+
+static void
+save_bookmark_metadata_file (NemoBookmarkList *list)
+{   /* Part of save_files thread */
+    GError *error = NULL;
+    GKeyFile *kfile = g_key_file_new ();
+
+    gchar *filename;
+
+    filename = g_build_filename (g_get_user_config_dir (),
+                                 "nemo",
+                                 "bookmark-metadata",
+                                 NULL);
+
+    GFile *file = g_file_new_for_path (filename);
+    GFile *parent = g_file_get_parent (file);
+
+    gchar *path = g_file_get_path (parent);
+    g_mkdir_with_parents (path, 0700);
+
+    g_free (path);
+    g_object_unref (parent);
+
+    GList *ptr;
+
+    for (ptr = list->list; ptr != NULL; ptr = ptr->next) {
+        NemoBookmark *bookmark = NEMO_BOOKMARK (ptr->data);
+
+        NemoBookmarkMetadata *data = nemo_bookmark_get_updated_metadata (bookmark);
+
+        if (data == NULL)
+            continue;
+
+        if (data->icon_uri)
+            g_key_file_set_string (kfile,
+                                   nemo_bookmark_get_name (bookmark),
+                                   KEY_ICON_URI,
+                                   data->icon_uri);
+
+        if (data->icon_name)
+            g_key_file_set_string (kfile,
+                                   nemo_bookmark_get_name (bookmark),
+                                   KEY_ICON_NAME,
+                                   data->icon_name);
+
+        if (data->emblems) {
+            g_key_file_set_string_list (kfile,
+                                        nemo_bookmark_get_name (bookmark),
+                                        KEY_ICON_EMBLEMS,
+                                        (const gchar * const *) data->emblems,
+                                        g_strv_length (data->emblems));
+        }
+
+        nemo_bookmark_metadata_free (data);
+    }
+
+    if (g_key_file_save_to_file (kfile,
+                                 filename,
+                                 &error)) {
+#ifndef GNOME_BUILD
+        ensure_proper_file_permissions (file);
+#endif
+    } else {
+        g_warning ("Could not save bookmark metadata file: %s\n", error->message);
+        g_error_free (error);
+    }
+
+    g_key_file_free (kfile);
+    g_object_unref (file);
+}
+
+static void
+save_files_finish (NemoBookmarkList *bookmarks,
+                   GObject          *source,
+                   GAsyncResult     *res)
+{
+    GError *error = NULL;
+
+    g_task_propagate_boolean (G_TASK (res), &error);
+
+    if (error != NULL) {
+        g_warning ("Unable to replace contents of the bookmarks file: %s",
+        error->message);
+        g_error_free (error);
+    }
+
+    GFile *file = nemo_bookmark_list_get_file ();
+
+    /* re-enable bookmark file monitoring */
+    bookmarks->monitor = g_file_monitor_file (file, 0, NULL, NULL);
+    g_file_monitor_set_rate_limit (bookmarks->monitor, 1000);
+    g_signal_connect (bookmarks->monitor, "changed",
+                      G_CALLBACK (bookmark_monitor_changed_cb),
+                      bookmarks);
+
+    g_object_unref (file);
+}
+
+static void
+save_files_thread (GTask        *task,
+                   gpointer      source_object,
+                   gpointer      task_data,
+                   GCancellable *cancellable)
+{
+    NemoBookmarkList *bookmarks = NEMO_BOOKMARK_LIST (source_object);
+
+    GFile *file;
+    GList *l;
+    GString *bookmark_string;
+    GFile *parent;
+    char *path;
+
+    /* temporarily disable bookmark file monitoring when writing file */
+    if (bookmarks->monitor != NULL) {
+        g_file_monitor_cancel (bookmarks->monitor);
+        bookmarks->monitor = NULL;
+    }
+
+    file = nemo_bookmark_list_get_file ();
+
+    bookmark_string = g_string_new (NULL);
+
+    for (l = bookmarks->list; l; l = l->next) {
+        NemoBookmark *bookmark;
+
+        bookmark = NEMO_BOOKMARK (l->data);
+
+        const char *label;
+        char *uri;
+        label = nemo_bookmark_get_name (bookmark);
+        uri = nemo_bookmark_get_uri (bookmark);
+        g_string_append_printf (bookmark_string,
+                    "%s %s\n", uri, label);
+        g_free (uri);
+    }
+
+    parent = g_file_get_parent (file);
+    path = g_file_get_path (parent);
+    g_mkdir_with_parents (path, 0700);
+    g_free (path);
+    g_object_unref (parent);
+
+    GError *error = NULL;
+
+    if (g_file_replace_contents (file,
+                                 bookmark_string->str,
+                                 bookmark_string->len,
+                                 NULL,
+                                 FALSE,
+                                 0,
+                                 NULL,
+                                 NULL,
+                                 &error)) {
+#ifndef GNOME_BUILD
+        ensure_proper_file_permissions (file);
+#endif
+        g_task_return_boolean (task, TRUE);
+    } else {
+        g_task_return_error (task, error);
+    }
+
+    g_string_free (bookmark_string, TRUE);
+
+    g_object_unref (file);
+
+    save_bookmark_metadata_file (bookmarks);
+}
+
+static void
+save_files_async (NemoBookmarkList    *self,
+                  GAsyncReadyCallback  callback)
+{
+    GTask *task;
+
+    g_object_ref (self);
+    // G_BREAKPOINT ();
+    task = g_task_new (self, NULL, callback, self);
+    g_task_run_in_thread (task, save_files_thread);
+
+    g_object_unref (task);
 }
 
 static void
 process_next_op (NemoBookmarkList *bookmarks);
 
 static void
-op_processed_cb (GObject *source,
-		 GAsyncResult *res,
-		 gpointer user_data)
+op_processed_cb (GObject      *source,
+                 GAsyncResult *res,
+                 gpointer      user_data)
 {
 	NemoBookmarkList *self = user_data;
 	int op;
@@ -787,9 +1029,9 @@ op_processed_cb (GObject *source,
 	op = GPOINTER_TO_INT (g_queue_pop_tail (self->pending_ops));
 
 	if (op == LOAD_JOB) {
-		load_file_finish (self, source, res);
+		load_files_finish (self, source, res);
 	} else {
-		save_file_finish (self, source, res);
+		save_files_finish (self, source, res);
 	}
 
 	if (!g_queue_is_empty (self->pending_ops)) {
@@ -808,9 +1050,9 @@ process_next_op (NemoBookmarkList *bookmarks)
 	op = GPOINTER_TO_INT (g_queue_peek_tail (bookmarks->pending_ops));
 
 	if (op == LOAD_JOB) {
-		load_file_async (bookmarks, op_processed_cb);
+		load_files_async (bookmarks, op_processed_cb);
 	} else {
-		save_file_async (bookmarks, op_processed_cb);
+		save_files_async (bookmarks, op_processed_cb);
 	}
 }
 
@@ -888,4 +1130,5 @@ nemo_bookmark_list_set_window_geometry (NemoBookmarkList *bookmarks,
 
 	nemo_bookmark_list_save_file (bookmarks);
 }
+
 

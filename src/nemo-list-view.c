@@ -1867,10 +1867,12 @@ column_header_clicked (GtkWidget *column_button,
 		if (g_hash_table_lookup (visible_columns_hash, lowercase) != NULL) {
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item),
 			                                TRUE);
-        /*  Don't allow hiding the only visible column */
-            if (g_hash_table_size (visible_columns_hash) == 1)
-                gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
 		}
+
+        /* Don't allow hiding the filename */
+        if (g_strcmp0 (lowercase, "name") == 0) {
+            gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
+        }
 
 		g_signal_connect (menu_item,
 		                  "toggled",

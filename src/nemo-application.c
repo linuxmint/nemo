@@ -405,6 +405,10 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 	/* Construct a list of windows to be closed. Do not add the non-closable windows to the list. */
 	for (node = window_list; node != NULL; node = node->next) {
+        /* Skip blank desktop windows */
+        if (!NEMO_IS_WINDOW (node->data))
+            continue;
+
 		window = NEMO_WINDOW (node->data);
 		if (window != NULL && window_can_be_closed (window)) {
 			GList *l;
@@ -566,6 +570,9 @@ nemo_application_init (NemoApplication *application)
 	application->priv =
 		G_TYPE_INSTANCE_GET_PRIVATE (application, NEMO_TYPE_APPLICATION,
 					     NemoApplicationPriv);
+
+    if (g_getenv("NEMO_TIME_STARTUP"))
+        nemo_startup_time = g_get_monotonic_time ();
 
 	action = g_simple_action_new ("quit", NULL);
 

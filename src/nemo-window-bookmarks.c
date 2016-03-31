@@ -374,6 +374,7 @@ update_bookmarks (NemoWindow *window)
 
 	/* append new set of bookmarks */
 	bookmark_count = nemo_bookmark_list_length (bookmarks);
+
 	for (index = 0; index < bookmark_count; ++index) {
 		bookmark = nemo_bookmark_list_item_at (bookmarks, index);
 
