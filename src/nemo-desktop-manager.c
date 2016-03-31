@@ -102,7 +102,7 @@ static void
 layout_changed (NemoDesktopManager *manager)
 {
     gint n_monitors = 0;
-    gint primary = 0;
+    gint x_primary = 0;
     gboolean show_desktop_on_primary = FALSE;
     gboolean show_desktop_on_remaining = FALSE;
 
@@ -128,18 +128,23 @@ layout_changed (NemoDesktopManager *manager)
     }
 
     n_monitors = gdk_screen_get_n_monitors (manager->screen);
-    primary = gdk_screen_get_primary_monitor (manager->screen);
+    x_primary = gdk_screen_get_primary_monitor (manager->screen);
 
     show_desktop_on_primary = g_strcmp0 (pref_split[0], "true") == 0;
     show_desktop_on_remaining = g_strcmp0 (pref_split[1], "true") == 0;
 
     gint i = 0;
+    gboolean primary_set = FALSE;
 
     for (i = 0; i < n_monitors; i++) {
-        if (i == primary)
-            create_new_desktop_window (manager, i, TRUE, show_desktop_on_primary);
-        else
-            create_new_desktop_window (manager, i, FALSE, show_desktop_on_remaining);
+        if (i == x_primary) {
+            create_new_desktop_window (manager, i, show_desktop_on_primary, show_desktop_on_primary);
+            primary_set = primary_set || show_desktop_on_primary;
+        } else {
+            gboolean set_layout_primary = !primary_set && !show_desktop_on_primary && show_desktop_on_remaining;
+            create_new_desktop_window (manager, i, set_layout_primary, show_desktop_on_remaining);
+            primary_set = primary_set || set_layout_primary;
+        }
     }
 
     g_free (pref);
@@ -239,6 +244,11 @@ nemo_desktop_manager_constructed (GObject *object)
                                                              G_CALLBACK (layout_changed),
                                                              manager);
 
+    manager->orphaned_icon_handling_id = g_signal_connect_swapped (nemo_preferences,
+                                                                   "changed::" NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS,
+                                                                   G_CALLBACK (layout_changed),
+                                                                   manager);
+
     add_workarea_filter (manager);
 
     layout_changed (manager);
@@ -255,6 +265,7 @@ nemo_desktop_manager_dispose (GObject *object)
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->setting_changed_id);
     g_signal_handler_disconnect (manager->screen, manager->size_changed_id);
     g_signal_handler_disconnect (manager->screen, manager->home_dir_changed_id);
+    g_signal_handler_disconnect (manager->screen, manager->orphaned_icon_handling_id);
 
     remove_workarea_filter (manager);
 
@@ -293,7 +304,7 @@ nemo_desktop_manager_init (NemoDesktopManager *self)
 }
 
 NemoDesktopManager*
-nemo_desktop_manager_new (void)
+nemo_desktop_manager_get (void)
 {
     if (_manager == NULL) {
         _manager = g_object_new (NEMO_TYPE_DESKTOP_MANAGER, NULL);
@@ -315,6 +326,48 @@ nemo_desktop_manager_has_desktop_windows (NemoDesktopManager *manager)
 
         if (info->shows_desktop) {
             ret = TRUE;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+gboolean
+nemo_desktop_manager_get_monitor_is_active (NemoDesktopManager *manager,
+                                                          gint  monitor)
+{
+    GList *iter;
+    gboolean ret = FALSE;
+
+    g_return_val_if_fail (manager != NULL, FALSE);
+
+    for (iter = manager->desktops; iter != NULL; iter = iter->next) {
+        DesktopInfo *info = iter->data;
+
+        if (info->monitor_num == monitor) {
+            ret = info->shows_desktop;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+gboolean
+nemo_desktop_manager_get_monitor_is_primary (NemoDesktopManager *manager,
+                                                           gint  monitor)
+{
+    GList *iter;
+    gboolean ret = FALSE;
+
+    g_return_val_if_fail (manager != NULL, FALSE);
+
+    for (iter = manager->desktops; iter != NULL; iter = iter->next) {
+        DesktopInfo *info = iter->data;
+
+        if (info->monitor_num == monitor) {
+            ret = info->is_primary;
             break;
         }
     }

@@ -34,8 +34,8 @@
 #include "nemo-view-factory.h"
 #include "nemo-window.h"
 #include "nemo-desktop-window.h"
-#include "nemo-desktop-window.h"
 #include "nemo-application.h"
+#include "nemo-desktop-manager.h"
 
 #include <stdlib.h>
 #include <eel/eel-vfs-extensions.h>
@@ -263,7 +263,7 @@ get_stored_icon_position_callback (NemoIconContainer *container,
 	g_assert (position != NULL);
 	g_assert (NEMO_IS_ICON_VIEW (icon_view));
 
-	if (!nemo_icon_view_supports_manual_layout (icon_view)) {
+	if (!nemo_icon_view_supports_manual_layout (icon_view) || nemo_file_get_is_desktop_orphan (file)) {
 		return FALSE;
 	}
 
@@ -533,8 +533,25 @@ static gboolean
 should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
 {
     gint current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (view));
+    gint file_monitor = nemo_file_get_monitor_number (file);
 
-    return current_monitor == nemo_file_get_monitor_number (file);
+    NemoDesktopManager *dm = nemo_desktop_manager_get ();
+
+    if (current_monitor == file_monitor) {
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+        return TRUE;
+    }
+
+    if (!g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS))
+        return FALSE;
+
+    if (!nemo_desktop_manager_get_monitor_is_active (dm, file_monitor)) {
+        nemo_file_set_is_desktop_orphan (file, TRUE);
+        if (nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor))
+            return TRUE;
+    }
+
+    return FALSE;
 }
 
 static void
@@ -2024,7 +2041,7 @@ icon_position_changed_callback (NemoIconContainer *container,
 	}
 
 	/* Store the new position of the icon in the metadata. */
-	if (!nemo_icon_view_using_auto_layout (icon_view)) {
+	if (!nemo_icon_view_using_auto_layout (icon_view) && !nemo_file_get_is_desktop_orphan (file)) {
 		position_string = g_strdup_printf
 			("%d,%d", position->x, position->y);
 		nemo_file_set_metadata

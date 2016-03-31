@@ -43,6 +43,7 @@ typedef struct {
   gulong setting_changed_id;
   gulong home_dir_changed_id;
   gulong cinnamon_panel_layout_changed_id;
+  gulong orphaned_icon_handling_id;
 
   NemoActionManager *action_manager;
 
@@ -56,8 +57,12 @@ typedef struct {
 
 GType nemo_desktop_manager_get_type (void);
 
-NemoDesktopManager* nemo_desktop_manager_new (void);
+NemoDesktopManager* nemo_desktop_manager_get (void);
 gboolean nemo_desktop_manager_has_desktop_windows (NemoDesktopManager *manager);
+gboolean nemo_desktop_manager_get_monitor_is_active (NemoDesktopManager *manager,
+                                                                   gint  monitor);
+gboolean nemo_desktop_manager_get_monitor_is_primary (NemoDesktopManager *manager,
+                                                                   gint  monitor);
 
 G_END_DECLS
 

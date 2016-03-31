@@ -50,6 +50,8 @@ typedef struct {
 
 typedef struct {
 	GtkWindowClass parent_spot;
+
+    void   (* plugin_manager)  (NemoBlankDesktopWindow *window);
 } NemoBlankDesktopWindowClass;
 
 GType                  nemo_blank_desktop_window_get_type            (void);

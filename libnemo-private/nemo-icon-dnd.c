@@ -832,6 +832,9 @@ handle_local_move (NemoIconContainer *container,
 
         if (file == NULL)
             file = NEMO_FILE (icon->data);
+
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+
         monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
         nemo_file_set_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0, monitor);
 

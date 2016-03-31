@@ -474,6 +474,10 @@
       <_summary>Desktop layout</_summary>
       <_description>Format bool:bool, show desktop folder on primary monitor:show desktop on remaining monitors</_description>
     </key>
+    <key name="show-orphaned-desktop-icons" type="b">
+      <default>true</default>
+      <_summary>Whether to show icons from inactive monitors on another monitor</_summary>
+    </key>
     <key name="show-desktop-icons" type="b">
       <default>true</default>
       <_summary>Deprecated: Allow Nemo to manage the desktop</_summary>

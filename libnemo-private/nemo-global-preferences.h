@@ -215,6 +215,7 @@ typedef enum
 
 /* Desktop background */
 #define NEMO_PREFERENCES_DESKTOP_LAYOUT "desktop-layout"
+#define NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS "show-orphaned-desktop-icons"
 #define NEMO_PREFERENCES_SHOW_DESKTOP   "show-desktop-icons"    /* DEPRECATED */
 
 /* File size unit prefix */
