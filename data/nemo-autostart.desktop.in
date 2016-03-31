@@ -4,4 +4,5 @@ Name=Nemo
 Comment=Start Nemo desktop at log in
 Exec=nemo -n
 OnlyShowIn=X-Cinnamon;
+AutostartCondition=GSettings org.nemo.desktop show-desktop-icons
 NoDisplay=true
