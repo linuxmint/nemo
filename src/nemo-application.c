@@ -50,6 +50,7 @@
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-statusbar.h"
+#include "nemo-blank-desktop-window.h"
 
 #include <libnemo-private/nemo-dbus-manager.h>
 #include <libnemo-private/nemo-desktop-link-monitor.h>
