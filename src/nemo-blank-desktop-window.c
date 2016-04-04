@@ -115,7 +115,7 @@ build_menu (NemoBlankDesktopWindow *window)
     for (l = action_list; l != NULL; l = l->next) {
         action = l->data;
 
-        if (action->show_in_blank_desktop) {
+        if (action->show_in_blank_desktop && action->dbus_satisfied) {
             gchar *label = nemo_action_get_label (action, NULL, NULL);
             item = gtk_image_menu_item_new_with_mnemonic (label);
             g_free (label);
