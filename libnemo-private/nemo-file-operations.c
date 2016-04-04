@@ -60,6 +60,7 @@
 #include "nemo-desktop-link-monitor.h"
 #include "nemo-global-preferences.h"
 #include "nemo-link.h"
+#include "nemo-desktop-utils.h"
 #include "nemo-trash-monitor.h"
 #include "nemo-file-utilities.h"
 #include "nemo-file-conflict-dialog.h"

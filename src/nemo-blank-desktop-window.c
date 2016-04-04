@@ -33,6 +33,8 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 
+#include <eel/eel-gtk-extensions.h>
+
 #include "nemo-plugin-manager.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_DESKTOP
@@ -137,7 +139,7 @@ build_menu (NemoBlankDesktopWindow *window)
 }
 
 static void
-do_popup_menu (NemoBlankDesktopWindow *window, GdkEvent *event)
+do_popup_menu (NemoBlankDesktopWindow *window, GdkEventButton *event)
 {
     build_menu (window);
     eel_pop_up_context_menu (GTK_MENU(window->details->popup_menu),
@@ -160,7 +162,7 @@ on_button_press (GtkWidget *widget, GdkEventButton *event, NemoBlankDesktopWindo
     }
 
     if (event->button == 3) {
-        do_popup_menu (window, (GdkEvent *) event);
+        do_popup_menu (window, event);
     }
 
     return FALSE;
