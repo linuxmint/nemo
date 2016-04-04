@@ -31,8 +31,11 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-names.h>
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libcinnamon-desktop/gnome-desktop-utils.h>
+
+#ifndef GNOME_BUILD
+	#define GNOME_DESKTOP_USE_UNSTABLE_API
+    #include <libcinnamon-desktop/gnome-desktop-utils.h>
+#endif
 
 #include <gio/gio.h>
 #include <string.h>
@@ -61,6 +64,7 @@ static void        nemo_bookmark_list_save_file     (NemoBookmarkList *bookmarks
 
 G_DEFINE_TYPE(NemoBookmarkList, nemo_bookmark_list, G_TYPE_OBJECT);
 
+#ifndef GNOME_BUILD
 static void
 ensure_proper_file_permissions (GFile *file)
 {
@@ -79,6 +83,7 @@ ensure_proper_file_permissions (GFile *file)
         g_free (path);
     }
 }
+#endif // GNOME_BUILD
 
 static NemoBookmark *
 new_bookmark_from_uri (const char *uri, const char *label, NemoBookmarkMetadata *md)
@@ -887,7 +892,9 @@ save_bookmark_metadata_file (NemoBookmarkList *list)
     if (g_key_file_save_to_file (kfile,
                                  filename,
                                  &error)) {
+#ifndef GNOME_BUILD
         ensure_proper_file_permissions (file);
+#endif
     } else {
         g_warning ("Could not save bookmark metadata file: %s\n", error->message);
         g_error_free (error);
@@ -979,7 +986,9 @@ save_files_thread (GTask        *task,
                                  NULL,
                                  NULL,
                                  &error)) {
+#ifndef GNOME_BUILD
         ensure_proper_file_permissions (file);
+#endif
         g_task_return_boolean (task, TRUE);
     } else {
         g_task_return_error (task, error);

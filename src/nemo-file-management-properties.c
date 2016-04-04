@@ -233,9 +233,9 @@ nemo_file_management_properties_dialog_response_cb (GtkDialog *parent,
 							int response_id,
 							GtkBuilder *builder)
 {
-    if (response_id == GTK_RESPONSE_CLOSE) {
-        gtk_widget_destroy (GTK_WIDGET (parent));
-    }
+	if (response_id == GTK_RESPONSE_CLOSE) {
+		gtk_widget_destroy (GTK_WIDGET (parent));
+	}
 }
 
 static void

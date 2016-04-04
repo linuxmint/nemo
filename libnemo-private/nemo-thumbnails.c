@@ -44,7 +44,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
+#ifdef GNOME_BUILD
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#else
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include "nemo-file-private.h"
 
@@ -623,5 +627,9 @@ thumbnail_thread_start (gpointer data)
 gboolean
 nemo_thumbnail_factory_check_status (void)
 {
+#ifdef GNOME_BUILD 
+    return TRUE; 
+#else 
     return gnome_desktop_thumbnail_cache_check_permissions (get_thumbnail_factory (), TRUE);
+#endif
 }

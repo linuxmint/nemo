@@ -18,7 +18,8 @@ AM_CPPFLAGS =							\
 	-I$(top_builddir)/libnemo-private 			\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\
-	$(NEMO_CFLAGS)					\
+	$(NEMO_CFLAGS)						\
+	$(DESKTOP_CFLAGS)					\
 	$(WARNING_CFLAGS)					\
 	$(EXIF_CFLAGS)						\
 	$(EXEMPI_CFLAGS)                                        \
@@ -33,6 +34,7 @@ AM_CPPFLAGS =							\
 	-DVERSION="\"$(VERSION)\"" 				\
     -DNEMO_EXTENSIONDIR=\""$(libdir)/nemo/extensions-3.0"\" \
 	$(DISABLE_DEPRECATED_CFLAGS)                            \
+	$(UNITY_CFLAGS)                            \
 	$(NULL)
 
 LDADD =\
@@ -40,10 +42,12 @@ LDADD =\
 	$(BASE_LIBS) \
 	$(COMMON_LIBS) \
 	$(NEMO_LIBS) \
+	$(DESKTOP_LIBS) \
 	$(CORE_LIBS) \
 	$(EXIF_LIBS) \
 	$(EXEMPI_LIBS) \
 	$(POPT_LIBS) \
+	$(UNITY_LIBS) \
 	$(NULL)
 
 dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
@@ -84,6 +88,8 @@ nemo_SOURCES = \
     nemo-action-config-widget.h         \
 	nemo-application.c			\
 	nemo-application.h			\
+    nemo-background-window.c \
+    nemo-background-window.h \
     nemo-blank-desktop-window.c \
     nemo-blank-desktop-window.h \
 	nemo-bookmark-list.c		\
@@ -198,6 +204,17 @@ nemo_SOURCES = \
 	nemo-x-content-bar.c		\
 	nemo-x-content-bar.h		\
 	$(NULL)
+
+UNITY_SOURCES = \
+	unity-quicklist-handler.c	\
+	unity-quicklist-handler.h	\
+	unity-bookmarks-handler.c	\
+	unity-bookmarks-handler.h	\
+	$(NULL)
+
+if HAVE_UNITY
+nemo_SOURCES += $(UNITY_SOURCES)
+endif
 
 nodist_nemo_SOURCES = \
 	$(BUILT_SOURCES) \

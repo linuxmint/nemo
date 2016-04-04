@@ -97,6 +97,12 @@ desktop_directory_changed_callback (gpointer callback_data)
 	desktop_directory = nemo_get_desktop_directory ();
 }
 
+static void
+real_begin_loading (NemoView *object)
+{
+	NEMO_VIEW_CLASS (nemo_desktop_icon_view_parent_class)->begin_loading (object);
+}
+
 static const char *
 real_get_id (NemoView *view)
 {
@@ -151,6 +157,7 @@ nemo_desktop_icon_view_class_init (NemoDesktopIconViewClass *class)
 
 	G_OBJECT_CLASS (class)->dispose = nemo_desktop_icon_view_dispose;
 
+	vclass->begin_loading = real_begin_loading;
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
