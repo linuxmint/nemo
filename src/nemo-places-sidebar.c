@@ -3972,250 +3972,246 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	GtkCellRenderer   *cell;
 	GtkTreeSelection  *selection;
 
-    sidebar->action_manager = nemo_action_manager_new ();
-
-    sidebar->action_items = NULL;
-
-    sidebar->in_drag = FALSE;
-
+	sidebar->action_manager = nemo_action_manager_new ();
+	sidebar->action_items = NULL;
+	sidebar->in_drag = FALSE;
 	sidebar->volume_monitor = g_volume_monitor_get ();
 
-    sidebar->update_places_on_idle_id = 0;
+	sidebar->update_places_on_idle_id = 0;
 
-    sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
-                                                            NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED);
-    sidebar->bookmarks_expanded = g_settings_get_boolean (nemo_window_state,
-                                                             NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED);
-    sidebar->devices_expanded = g_settings_get_boolean (nemo_window_state,
-                                                        NEMO_WINDOW_STATE_DEVICES_EXPANDED);
-    sidebar->network_expanded = g_settings_get_boolean (nemo_window_state,
-                                                        NEMO_WINDOW_STATE_NETWORK_EXPANDED);
+	sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED);
+	sidebar->bookmarks_expanded = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED);
+	sidebar->devices_expanded = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_DEVICES_EXPANDED);
+	sidebar->network_expanded = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_NETWORK_EXPANDED);
 
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sidebar),
-					GTK_POLICY_NEVER,
-					GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sidebar), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (sidebar), NULL);
 	gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (sidebar), NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sidebar), GTK_SHADOW_IN);
 
-	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (sidebar)),
-					      GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT);
+	gtk_style_context_set_junction_sides (
+		gtk_widget_get_style_context (GTK_WIDGET (sidebar)),
+		GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT
+	);
 
-  	/* tree view */
+	/* Make it easier for theme authors to style the sidebar */
+	gtk_style_context_add_class (gtk_widget_get_style_context (sidebar), "places-sidebar");
+
+	/* tree view */
 	tree_view = GTK_TREE_VIEW (nemo_places_tree_view_new ());
 
 	gtk_tree_view_set_headers_visible (tree_view, FALSE);
 
 	col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
-    expander_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
-    eject_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
-    expander_pad_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new());
+	expander_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+	eject_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+	expander_pad_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new());
 
 	/* initial padding */
 	cell = gtk_cell_renderer_text_new ();
+
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 
 	/* headings */
 	cell = gtk_cell_renderer_text_new ();
+
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (col, cell,
-					     "text", PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
-					     NULL);
-	g_object_set (cell,
-		      "weight", PANGO_WEIGHT_BOLD,
-		      "weight-set", TRUE,
-		      "ypad", 6,
-		      "xpad", 0,
-		      NULL);
-	gtk_tree_view_column_set_cell_data_func (col, cell,
-						 heading_cell_renderer_func,
-						 sidebar, NULL);
+	gtk_tree_view_column_set_attributes (col, cell, "text", PLACES_SIDEBAR_COLUMN_HEADING_TEXT, NULL);
+	g_object_set (cell, "weight", PANGO_WEIGHT_BOLD, "weight-set", TRUE, "ypad", 6, "xpad", 0, NULL);
+	gtk_tree_view_column_set_cell_data_func (col, cell, heading_cell_renderer_func, sidebar, NULL);
 
 	/* icon padding */
 	cell = gtk_cell_renderer_text_new ();
+
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_cell_data_func (col, cell,
-						 padding_cell_renderer_func,
-						 sidebar, NULL);
+	gtk_tree_view_column_set_cell_data_func (col, cell, padding_cell_renderer_func, sidebar, NULL);
 
 	/* icon renderer */
 	cell = gtk_cell_renderer_pixbuf_new ();
-    g_object_set (cell,
-                  "follow-state", TRUE,
-                  NULL);
+
+	g_object_set (cell, "follow-state", TRUE, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (col, cell,
-					     "gicon", PLACES_SIDEBAR_COLUMN_ICON,
-					     NULL);
-	gtk_tree_view_column_set_cell_data_func (col, cell,
-						 icon_cell_renderer_func,
-						 sidebar, NULL);
+	gtk_tree_view_column_set_attributes (col, cell, "gicon", PLACES_SIDEBAR_COLUMN_ICON, NULL);
+	gtk_tree_view_column_set_cell_data_func (col, cell, icon_cell_renderer_func, sidebar, NULL);
 
 	/* eject text renderer */
 	cell = nemo_cell_renderer_disk_new ();
+
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
-	gtk_tree_view_column_set_attributes (col, cell,
-					     "text", PLACES_SIDEBAR_COLUMN_NAME,
-					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-                         "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
-                         "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
-					     NULL);
-	g_object_set (cell,
-		      "ellipsize", PANGO_ELLIPSIZE_END,
-		      "ellipsize-set", TRUE,
-		      NULL);
+	gtk_tree_view_column_set_attributes (
+		col,
+		cell,
+		"text", PLACES_SIDEBAR_COLUMN_NAME,
+		"visible", PLACES_SIDEBAR_COLUMN_EJECT,
+		"disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
+		"show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
+		NULL
+	);
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END,"ellipsize-set", TRUE, NULL);
 
 	/* eject icon renderer */
 	cell = gtk_cell_renderer_pixbuf_new ();
 	sidebar->eject_icon_cell_renderer = cell;
-	g_object_set (cell,
-		      "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
-		      "yalign", 0.8,
-		      NULL);
+
+	g_object_set (cell, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, "yalign", 0.8, NULL);
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (eject_col, cell,
-					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-					     "surface", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
-					     NULL);
+	gtk_tree_view_column_set_attributes (
+		eject_col,
+		cell,
+		"visible", PLACES_SIDEBAR_COLUMN_EJECT,
+		"surface", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+		NULL
+	);
 
 	/* normal text renderer */
 	cell = nemo_cell_renderer_disk_new ();
+
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	g_object_set (G_OBJECT (cell), "editable", FALSE, NULL);
-	gtk_tree_view_column_set_attributes (col, cell,
-					     "text", PLACES_SIDEBAR_COLUMN_NAME,
-					     "visible", PLACES_SIDEBAR_COLUMN_NO_EJECT,
-					     "editable-set", PLACES_SIDEBAR_COLUMN_BOOKMARK,
-                         "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
-                         "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
-					     NULL);
-	g_object_set (cell,
-		      "ellipsize", PANGO_ELLIPSIZE_END,
-		      "ellipsize-set", TRUE,
-		      NULL);
+	gtk_tree_view_column_set_attributes (
+		col,
+		cell,
+		"text", PLACES_SIDEBAR_COLUMN_NAME,
+		"visible", PLACES_SIDEBAR_COLUMN_NO_EJECT,
+		"editable-set", PLACES_SIDEBAR_COLUMN_BOOKMARK,
+		"disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
+		"show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
+		NULL
+	);
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, "ellipsize-set", TRUE, NULL);
 
-	g_signal_connect (cell, "edited", 
-			  G_CALLBACK (bookmarks_edited), sidebar);
-	g_signal_connect (cell, "editing-canceled", 
-			  G_CALLBACK (bookmarks_editing_canceled), sidebar);
+	g_signal_connect (cell, "edited", G_CALLBACK (bookmarks_edited), sidebar);
+	g_signal_connect (cell, "editing-canceled", G_CALLBACK (bookmarks_editing_canceled), sidebar);
 
 	/* this is required to align the eject buttons to the right */
 	gtk_tree_view_column_set_max_width (GTK_TREE_VIEW_COLUMN (col), NEMO_ICON_SIZE_SMALLER);
 
-    gtk_tree_view_column_set_sizing (expander_pad_col, GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_column_set_fixed_width (expander_pad_col, EXPANDER_PAD_COLUMN_WIDTH);
+	gtk_tree_view_column_set_sizing (expander_pad_col, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width (expander_pad_col, EXPANDER_PAD_COLUMN_WIDTH);
 
-    gtk_tree_view_column_set_sizing (expander_col, GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_column_set_fixed_width (expander_col, EXPANDER_COLUMN_WIDTH);
+	gtk_tree_view_column_set_sizing (expander_col, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width (expander_col, EXPANDER_COLUMN_WIDTH);
 
-    gtk_tree_view_column_set_sizing (eject_col, GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_column_set_fixed_width (eject_col, EJECT_COLUMN_WIDTH);
+	gtk_tree_view_column_set_sizing (eject_col, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width (eject_col, EJECT_COLUMN_WIDTH);
 
-    gtk_tree_view_column_set_expand (col, TRUE);
+	gtk_tree_view_column_set_expand (col, TRUE);
 
-    gtk_tree_view_append_column (tree_view, expander_pad_col);
-    gtk_tree_view_append_column (tree_view, expander_col);
+	gtk_tree_view_append_column (tree_view, expander_pad_col);
+	gtk_tree_view_append_column (tree_view, expander_col);
 	gtk_tree_view_append_column (tree_view, col);
-    gtk_tree_view_append_column (tree_view, eject_col);
+	gtk_tree_view_append_column (tree_view, eject_col);
 
-    gtk_tree_view_set_expander_column (tree_view, expander_col);
+	gtk_tree_view_set_expander_column (tree_view, expander_col);
 
 	sidebar->store = nemo_shortcuts_model_new (sidebar);
+
 	gtk_tree_view_set_tooltip_column (tree_view, PLACES_SIDEBAR_COLUMN_TOOLTIP);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (sidebar->store),
-                                          GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
-                                          GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (
+		GTK_TREE_SORTABLE (sidebar->store),
+		GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
+		GTK_SORT_ASCENDING
+	);
 
-    sidebar->store_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (sidebar->store), NULL);
+	sidebar->store_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (sidebar->store), NULL);
 
-    gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
-                                            (GtkTreeModelFilterVisibleFunc) row_visibility_function,
-                                            sidebar, NULL);
+	gtk_tree_model_filter_set_visible_func (
+		GTK_TREE_MODEL_FILTER (sidebar->store_filter),
+		(GtkTreeModelFilterVisibleFunc) row_visibility_function,
+		sidebar,
+		NULL
+	);
 
-    gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store_filter));
+	gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store_filter));
 
-    GtkWidget *stupid = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_visible (stupid, TRUE);
-    gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (tree_view), TRUE, TRUE, 0);
+	GtkWidget *stupid = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 
-    GtkWidget *filler = gtk_drawing_area_new ();
-    gtk_widget_set_visible (filler, TRUE);
-    gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (filler), TRUE, TRUE, 0);
+	gtk_widget_set_visible (stupid, TRUE);
+	gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (tree_view), TRUE, TRUE, 0);
 
-    GtkStyleContext *context = gtk_widget_get_style_context (filler);
-    gtk_style_context_add_class (context, "view");
+	GtkWidget *filler = gtk_drawing_area_new ();
 
+	gtk_widget_set_visible (filler, TRUE);
+	gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (filler), TRUE, TRUE, 0);
+
+	GtkStyleContext *context = gtk_widget_get_style_context (filler);
+
+	gtk_style_context_add_class (context, "view");
 	gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (stupid));
-
 	gtk_widget_show (GTK_WIDGET (tree_view));
-
 	gtk_widget_show (GTK_WIDGET (sidebar));
+
 	sidebar->tree_view = tree_view;
 
 	gtk_tree_view_set_search_column (tree_view, PLACES_SIDEBAR_COLUMN_NAME);
+
 	selection = gtk_tree_view_get_selection (tree_view);
+
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
+	gtk_tree_selection_set_select_function (selection, tree_selection_func, sidebar, NULL);
 
-	gtk_tree_selection_set_select_function (selection,
-						tree_selection_func,
-						sidebar,
-						NULL);
+	gtk_tree_view_enable_model_drag_source (
+		GTK_TREE_VIEW (tree_view),
+		GDK_BUTTON1_MASK,
+		nemo_shortcuts_source_targets,
+		G_N_ELEMENTS (nemo_shortcuts_source_targets),
+		GDK_ACTION_MOVE
+	);
 
-	gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (tree_view),
-						GDK_BUTTON1_MASK,
-						nemo_shortcuts_source_targets,
-						G_N_ELEMENTS (nemo_shortcuts_source_targets),
-						GDK_ACTION_MOVE);
-	gtk_drag_dest_set (GTK_WIDGET (tree_view),
-			   0,
-			   nemo_shortcuts_drop_targets, G_N_ELEMENTS (nemo_shortcuts_drop_targets),
-			   GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK);
+	gtk_drag_dest_set (
+		GTK_WIDGET (tree_view),
+		0,
+		nemo_shortcuts_drop_targets,
+		G_N_ELEMENTS (nemo_shortcuts_drop_targets),
+		GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK
+	);
 
-	g_signal_connect (tree_view, "key-press-event",
-			  G_CALLBACK (bookmarks_key_press_event_cb), sidebar);
+	g_signal_connect (tree_view, "key-press-event", G_CALLBACK (bookmarks_key_press_event_cb), sidebar);
 
-	g_signal_connect (tree_view, "drag-motion",
-			  G_CALLBACK (drag_motion_callback), sidebar);
-	g_signal_connect (tree_view, "drag-leave",
-			  G_CALLBACK (drag_leave_callback), sidebar);
-	g_signal_connect (tree_view, "drag-data-received",
-			  G_CALLBACK (drag_data_received_callback), sidebar);
-	g_signal_connect (tree_view, "drag-drop",
-			  G_CALLBACK (drag_drop_callback), sidebar);
+	g_signal_connect (tree_view, "drag-motion", G_CALLBACK (drag_motion_callback), sidebar);
+	g_signal_connect (tree_view, "drag-leave", G_CALLBACK (drag_leave_callback), sidebar);
+	g_signal_connect (tree_view, "drag-data-received", G_CALLBACK (drag_data_received_callback), sidebar);
+	g_signal_connect (tree_view, "drag-drop", G_CALLBACK (drag_drop_callback), sidebar);
 
-	g_signal_connect (selection, "changed",
-			  G_CALLBACK (bookmarks_selection_changed_cb), sidebar);
-	g_signal_connect (tree_view, "popup-menu",
-			  G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
-	g_signal_connect (tree_view, "button-press-event",
-			  G_CALLBACK (bookmarks_button_press_event_cb), sidebar);
-	g_signal_connect (tree_view, "motion-notify-event",
-			  G_CALLBACK (bookmarks_motion_event_cb), sidebar);
-	g_signal_connect (tree_view, "button-release-event",
-			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
-    g_signal_connect (tree_view, "row-expanded",
-              G_CALLBACK (row_expanded_cb), sidebar);
-    g_signal_connect (tree_view, "row-collapsed",
-              G_CALLBACK (row_collapsed_cb), sidebar);
-    g_signal_connect (tree_view, "row-activated",
-              G_CALLBACK (row_activated_cb), sidebar);
+	g_signal_connect (selection, "changed", G_CALLBACK (bookmarks_selection_changed_cb), sidebar);
+	g_signal_connect (tree_view, "popup-menu", G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
 
-	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-				  G_CALLBACK(desktop_setting_changed_callback),
-				  sidebar);
+	g_signal_connect (tree_view, "button-press-event", G_CALLBACK (bookmarks_button_press_event_cb), sidebar);
+	g_signal_connect (tree_view, "motion-notify-event", G_CALLBACK (bookmarks_motion_event_cb), sidebar);
+	g_signal_connect (tree_view, "button-release-event", G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
 
-	g_signal_connect_swapped (nemo_desktop_preferences, "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
-				  G_CALLBACK(desktop_setting_changed_callback),
-				  sidebar);
+	g_signal_connect (tree_view, "row-expanded", G_CALLBACK (row_expanded_cb), sidebar);
+	g_signal_connect (tree_view, "row-collapsed", G_CALLBACK (row_collapsed_cb), sidebar);
+	g_signal_connect (tree_view, "row-activated", G_CALLBACK (row_activated_cb), sidebar);
 
-    g_signal_connect_swapped (cinnamon_privacy_preferences, "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
-                  G_CALLBACK(desktop_setting_changed_callback),
-                  sidebar);
+	g_signal_connect_swapped (
+		nemo_preferences,
+		"changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
+		G_CALLBACK(desktop_setting_changed_callback),
+		sidebar
+	);
 
-	g_signal_connect_object (nemo_trash_monitor_get (),
-				 "trash_state_changed",
-				 G_CALLBACK (trash_state_changed_cb),
-				 sidebar, 0);
+	g_signal_connect_swapped (
+		nemo_desktop_preferences,
+		"changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
+		G_CALLBACK(desktop_setting_changed_callback),
+		sidebar
+	);
+
+	g_signal_connect_swapped (
+		cinnamon_privacy_preferences,
+		"changed::" NEMO_PREFERENCES_RECENT_ENABLED,
+		G_CALLBACK(desktop_setting_changed_callback),
+		sidebar
+	);
+
+	g_signal_connect_object (
+		nemo_trash_monitor_get (),
+		"trash_state_changed",
+		G_CALLBACK (trash_state_changed_cb),
+		sidebar,
+		0
+	);
 }
 
 static void
