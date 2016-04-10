@@ -1,6 +1,6 @@
 /* For Places Sidebar diskfull indicators */
 
-NemoPlacesTreeView {
+.places-treeview {
     -NemoPlacesTreeView-disk-full-bg-color: shade(@theme_bg_color, .65);
     -NemoPlacesTreeView-disk-full-fg-color: shade(@theme_selected_bg_color, 1.0);
     -NemoPlacesTreeView-disk-full-bar-width: 2px;
@@ -9,13 +9,13 @@ NemoPlacesTreeView {
     -NemoPlacesTreeView-disk-full-max-length: 70px;
 }
 
-NemoPlacesTreeView:selected {
+.places-treeview:selected {
     -NemoPlacesTreeView-disk-full-bg-color: shade(@theme_bg_color, 2.0);
     -NemoPlacesTreeView-disk-full-fg-color: shade(@theme_fg_color, 2.0);
 }
 
-NemoPlacesTreeView:hover {
+.places-treeview:hover {
 }
 
-NemoPlacesTreeView:selected:hover {
+.places-treeview:selected:hover {
 }

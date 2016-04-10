@@ -34,7 +34,7 @@ static gpointer parent_class;
 static void
 nemo_places_tree_view_init (NemoPlacesTreeView *tree_view)
 {
-
+    gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (tree_view)), "places-treeview");
 }
 
 static void
