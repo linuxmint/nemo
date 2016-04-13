@@ -3318,7 +3318,7 @@ done_loading (NemoView *view,
         gint64 milli_remainder = diff % 1000;
         gint64 seconds = diff / 1000;
 
-        g_printerr ("Nemo startup time: %d.%d seconds\n", seconds, milli_remainder);
+        g_printerr ("Nemo startup time: %ld.%ld seconds\n", seconds, milli_remainder);
     }
 
 	view->details->loading = FALSE;
