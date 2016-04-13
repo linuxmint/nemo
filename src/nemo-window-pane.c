@@ -983,6 +983,11 @@ nemo_window_pane_init (NemoWindowPane *pane)
 	pane->active_slot = NULL;
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (pane), GTK_ORIENTATION_VERTICAL);
+
+	GtkStyleContext *context;
+
+	context = gtk_widget_get_style_context (GTK_WIDGET (pane));
+	gtk_style_context_add_class (context, "nemo-window-pane");
 }
 
 NemoWindowPane *
