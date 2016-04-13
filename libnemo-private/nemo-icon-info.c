@@ -439,7 +439,7 @@ nemo_icon_info_lookup (GIcon *icon,
                                                                           icon,
                                                                           size,
                                                                           scale,
-                                                                          GTK_ICON_LOOKUP_GENERIC_FALLBACK);
+                                                                          0);
                 if (gtk_icon_info != NULL) {
                         pixbuf = gtk_icon_info_load_icon (gtk_icon_info, NULL);
                         g_object_unref (gtk_icon_info);
