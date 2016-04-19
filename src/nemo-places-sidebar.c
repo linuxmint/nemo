@@ -4002,7 +4002,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 					      GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT);
 
 	/* Make it easier for theme authors to style the sidebar */
-	gtk_style_context_add_class (gtk_widget_get_style_context (sidebar), "places-sidebar");
+	gtk_style_context_add_class (gtk_widget_get_style_context (sidebar), "nemo-places-sidebar");
 
   	/* tree view */
 	tree_view = GTK_TREE_VIEW (nemo_places_tree_view_new ());
