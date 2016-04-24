@@ -1,3 +1,41 @@
+nemo (3.0.0) sarah; urgency=medium
+
+  [ lukefromdc ]
+  * GTK 3.20-fix wrong desktop size
+
+  [ Daniel Schürmann ]
+  * Added missing includes
+  * Fix pointer types, to avoid warning
+  * Respect dbus_satisfied flag for menu enties on blank desktops
+  * Fix printf format specifier
+  * Don't draw the desktop on a cloned monitor
+  * Fix some missing cast warnings
+
+  [ Balló György ]
+  * Fix fallback style for GTK 3.20
+
+  [ raveit65 ]
+  * add style class nemo-window-pane
+  * add style class nemo-properties-dialog to glade file
+
+  [ Dustin Falgout ]
+  * add style class in nemo_desktop_window_init (same as nautilus)
+  * add style class to places sidebar
+  * add style class to nemo-window
+  * use more specific class name for places sidebar
+
+  [ Michael Webster ]
+  * nemo-icon-info.c: remove invalid GTK_ICON_LOOKUP_GENERIC_FALLBACK flag (triggers warnings in gtk 3.20.x). (credit to @itzexor)
+
+  [ itzexor ]
+  * nemo-window: add new flag NEMO_WINDOW_OPEN_FLAG_SEARCH and use the same slot if this flag is passed to nemo_window_slot_open_location_full to avoid opening a new window (and a crash) when starting a search with the open in new window preference enabled
+  * fix typo
+
+  [ Clement Lefebvre ]
+  * Updated makepot and pot file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 24 Apr 2016 12:41:50 +0100
+
 nemo (2.8.7) rosa; urgency=medium
 
   [ Michael Webster ]
