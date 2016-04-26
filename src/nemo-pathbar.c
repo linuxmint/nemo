@@ -599,7 +599,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     gboolean needs_reorder = FALSE;
     gint button_count = 0;
 
-    need_sliders = FALSE;
+    need_sliders = TRUE;
     up_slider_offset = 0;
     down_slider_offset = 0;
     path_bar = NEMO_PATH_BAR (widget);
@@ -636,7 +636,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
     largest_width = allocation->width;
 
-    if (width <= allocation->width) {
+    if (width <= allocation->width && !need_sliders) {
         if (path_bar->priv->fake_root) {
             pathbar_root_button = path_bar->priv->fake_root;
         } else {
