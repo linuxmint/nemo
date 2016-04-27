@@ -437,7 +437,7 @@ nemo_action_constructed (GObject *object)
                                            KEY_WHITESPACE,
                                            NULL);
 
-    gboolean is_desktop;
+    gboolean is_desktop = FALSE;
 
     if (conditions && condition_count > 0) {
         int j;
