@@ -1,13 +1,13 @@
-#! /usr/bin/python2 -OOt
+#! /usr/bin/python3 -OOt
 
 import sys
 
 command = sys.argv[0]
-print "Running " + command
-print "With the following arguments:"
+print("Running " + command)
+print("With the following arguments:")
 for arg in sys.argv:
     if command == arg:
         continue
     else:
-        print arg
+        print(arg)
 
