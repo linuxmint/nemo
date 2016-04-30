@@ -1,0 +1,18 @@
+[Nemo Action]
+
+Name=Desktop _Settings
+
+Comment=Change how your desktop works
+
+Exec=cinnamon-settings desktop
+
+Selection=None
+
+Icon-Name=cs-desktop
+
+Extensions=any;
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;
+
