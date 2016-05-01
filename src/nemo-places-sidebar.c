@@ -3992,6 +3992,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
     sidebar->network_expanded = g_settings_get_boolean (nemo_window_state,
                                                         NEMO_WINDOW_STATE_NETWORK_EXPANDED);
 
+    gtk_widget_set_size_request (GTK_WIDGET (sidebar), 140, -1);
+
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sidebar),
 					GTK_POLICY_NEVER,
 					GTK_POLICY_AUTOMATIC);
