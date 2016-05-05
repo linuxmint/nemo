@@ -1009,6 +1009,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 		gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen(window));
 	}
 
+	gint width, height;
+	gtk_window_get_default_size (GTK_WINDOW (dialog), &width, &height);
+	gtk_widget_set_size_request (dialog, width, height);
+
 	preferences_dialog = dialog;
 	g_object_add_weak_pointer (G_OBJECT (dialog), (gpointer *) &preferences_dialog);
 	gtk_widget_show (dialog);
