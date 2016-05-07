@@ -2008,7 +2008,7 @@ apply_columns_settings (NemoListView *list_view,
 	old_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
 	for (l = old_view_columns; l != NULL; l = l->next) {
 		if (g_list_find (view_columns, l->data) == NULL) {
-			gtk_tree_view_remove_column (list_view->details->tree_view, l->data);
+			gtk_tree_view_column_set_visible (l->data, FALSE);
 		}
 	}
 	g_list_free (old_view_columns);
@@ -2024,6 +2024,7 @@ apply_columns_settings (NemoListView *list_view,
                              G_CALLBACK (column_header_clicked),
                              list_view);
         }
+        gtk_tree_view_column_set_visible (l->data, TRUE);
 	}
     g_list_free (old_view_columns);
 
