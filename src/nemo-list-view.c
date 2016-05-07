@@ -2013,20 +2013,10 @@ apply_columns_settings (NemoListView *list_view,
 	}
 	g_list_free (old_view_columns);
 
-
-    old_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
 	/* show new columns from the configuration */
 	for (l = view_columns; l != NULL; l = l->next) {
-        if (g_list_find (old_view_columns, l->data) == NULL) {
-            gtk_tree_view_append_column (list_view->details->tree_view, l->data);
-            g_signal_connect (gtk_tree_view_column_get_button (l->data),
-                             "button-press-event",
-                             G_CALLBACK (column_header_clicked),
-                             list_view);
-        }
         gtk_tree_view_column_set_visible (l->data, TRUE);
 	}
-    g_list_free (old_view_columns);
 
 	/* place columns in the correct order */
 	prev_view_column = NULL;
@@ -2225,12 +2215,18 @@ create_and_set_up_tree_view (NemoListView *view)
 			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
 			
 			view->details->file_name_column = gtk_tree_view_column_new ();
-            g_object_ref_sink (view->details->file_name_column);
+            gtk_tree_view_append_column (view->details->tree_view,
+                                         view->details->file_name_column);
 			view->details->file_name_column_num = column_num;
 			
 			g_hash_table_insert (view->details->columns,
 					     g_strdup ("name"), 
 					     view->details->file_name_column);
+
+            g_signal_connect (gtk_tree_view_column_get_button (view->details->file_name_column),
+                              "button-press-event",
+                              G_CALLBACK (column_header_clicked),
+                              view);
 
 			gtk_tree_view_set_search_column (view->details->tree_view, column_num);
 
@@ -2277,15 +2273,19 @@ create_and_set_up_tree_view (NemoListView *view)
 									   cell,
 									   "text", column_num,
 									   NULL);
+            gtk_tree_view_append_column (view->details->tree_view, column);
             gtk_tree_view_column_set_min_width (column, 30);
-            g_object_ref_sink (column);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
 			g_hash_table_insert (view->details->columns, 
 					     g_strdup (name), 
 					     column);
 
+            g_signal_connect (gtk_tree_view_column_get_button (column),
+                              "button-press-event",
+                              G_CALLBACK (column_header_clicked),
+                              view);
+
 			gtk_tree_view_column_set_resizable (column, TRUE);
-            gtk_tree_view_column_set_visible (column, TRUE);
             gtk_tree_view_column_set_reorderable (column, TRUE);
 		}
 		g_free (name);
