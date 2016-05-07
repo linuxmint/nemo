@@ -2234,7 +2234,6 @@ create_and_set_up_tree_view (NemoListView *view)
 			gtk_tree_view_column_set_title (view->details->file_name_column, _("Name"));
 			gtk_tree_view_column_set_resizable (view->details->file_name_column, TRUE);
             gtk_tree_view_column_set_min_width (view->details->file_name_column, 100);
-            gtk_tree_view_column_set_sizing (view->details->file_name_column, GTK_TREE_VIEW_COLUMN_FIXED);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
             gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
 
@@ -2249,6 +2248,7 @@ create_and_set_up_tree_view (NemoListView *view)
             g_object_set (cell,
                           "xpad", 5,
                           "ellipsize", PANGO_ELLIPSIZE_END,
+                          "width-chars", 40,
                           NULL);
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
