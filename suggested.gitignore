@@ -13,6 +13,7 @@ autom4te.cache/
 aclocal.m4
 config.guess
 config.h
+config.h.in~
 config.log
 config.status
 config.sub
@@ -60,7 +61,7 @@ po/POTFILES
 po/stamp-it
 
 data/org.Nemo.service
-data/org.freedesktop.NemoFileManager1.service
+data/org.nemo.freedesktop.FileManager1.service
 data/nemo.xml
 data/nemo.desktop.in
 data/nemo.desktop
@@ -74,11 +75,19 @@ src/nemo
 src/nemo-autorun-software
 src/nemo-connect-server
 src/nemo-convert-metadata
+src/nemo-extensions-list
 src/nemo-freedesktop-generated.c
 src/nemo-freedesktop-generated.h
+src/nemo-open-with
 src/nemo-resources.c
 src/nemo-resources.h
+src/org.nemo.root.policy
 test/test-eel-editable-label
 test/test-nemo-copy
 test/test-nemo-directory-async
 test/test-nemo-search-engine
+
+compile
+install-sh
+missing
+test-driver
