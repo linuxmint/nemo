@@ -26,7 +26,7 @@ Build-Depends: debhelper (>= 8),
                libgirepository1.0-dev (>= 0.9.12),
                libglib2.0-doc,
                libgtk-3-doc,
-               python-polib,
+               python3-polib,
                python-gi
 Homepage: http://www.github.com/linuxmint/nemo/
 Standards-Version: 3.9.5
