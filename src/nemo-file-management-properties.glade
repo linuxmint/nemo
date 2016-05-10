@@ -251,7 +251,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">File Management Preferences</property>
     <property name="window_position">center</property>
-    <property name="default_width">800</property>
+    <property name="default_width">850</property>
     <property name="default_height">600</property>
     <style>
       <class name="nemo-properties-dialog"/>
