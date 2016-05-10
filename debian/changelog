@@ -1,3 +1,39 @@
+nemo (3.0.1) sarah; urgency=medium
+
+  [ JosephMcc ]
+  * pathbar: Always show the pathbar up and down arrows. Dynamically adding and removing these buttons was causing the visual style of buttons in the pathbar to break
+
+  [ Igor ]
+  * Fix segfault on changing the number of colums when in list view
+  * Fix uninitialized is_desktop flag
+
+  [ Michal Cyprian ]
+  * Port python scripts to Python 3 - /data/extract_action_strings - /data/merge_action_strings - /files/usr/share/nemo/actions/myaction.py - all Python 2-3 compatible
+
+  [ Michael Webster ]
+  * nemo-list-view.c:  Fix initial column sizing - expand the filename column only to fill available space.  Other columns will start with their natural size.
+  * update m4 files
+
+  [ itzexor ]
+  * nemo-view: switch to nemo_get_file_by_uri so we don't get a NULL pointer if the file isn't already loaded internally.
+
+  [ Michael Webster ]
+  * Add desktop settings action
+  * nemo-places-sidebar.c: ensure a minimum useable sidebar width when resizing windows or panes.
+
+  [ Igor ]
+  * Set minimum size for File Management Preferences window
+  * Increase default width of File Management Preferences window
+
+  [ Michael Webster ]
+  * nemo-list-view.c: Clean up column changes - only add columns and connect to them once, remove some unnecessary checks.
+  * nemo-list-view.c: give the name column a default width that the column-double-click autosize action can use.  Otherwise it makes the name column as small as possible (the opposite what it's supposed to do, or what the other columns do)
+
+  [ Igor ]
+  * Update suggested.gitignore
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 10 May 2016 16:36:23 +0100
+
 nemo (3.0.0) sarah; urgency=medium
 
   [ lukefromdc ]
