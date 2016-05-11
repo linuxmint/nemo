@@ -3,6 +3,7 @@
 import os
 import glob
 import polib
+import codecs
 from gi.repository import GLib
 
 GROUP = "Nemo Action"
@@ -44,7 +45,7 @@ class Main:
             outstring, length = self.in_keyfiles[fn].to_data()
             if os.path.exists(action_path):
                 os.remove(action_path)
-            outfile = open(action_path, 'w')
+            outfile = codecs.open(action_path, 'w', 'utf-8')
             outfile.write(outstring)
             outfile.close()
 
