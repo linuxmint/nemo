@@ -2103,7 +2103,7 @@ create_and_set_up_tree_view (NemoListView *view)
 	view->details->columns = g_hash_table_new_full (g_str_hash, 
 							g_str_equal,
 							(GDestroyNotify) g_free,
-							(GDestroyNotify) g_object_unref);
+							NULL);
 
 	gtk_tree_view_set_enable_search (view->details->tree_view, TRUE);
 
