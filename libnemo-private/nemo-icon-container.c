@@ -4927,20 +4927,25 @@ nemo_icon_container_search_position_func (NemoIconContainer *container,
 
 	gtk_widget_get_preferred_size (search_dialog, &requisition, NULL);
 
-    if (cont_x + cont_width > monitor.x + monitor.width) {
-        x = monitor.x + monitor.width - requisition.width;
-    } else if (cont_x + cont_width - requisition.width < 0) {
-        x = 0;
-    } else {
+    if (nemo_icon_container_get_is_desktop (container)) {
         x = cont_x + cont_width - requisition.width;
-    }
-
-    if (cont_y + cont_height + requisition.height > monitor.y + monitor.height) {
-        y = monitor.y + monitor.height - requisition.height;
-    } else if (cont_y + cont_height < 0) {
-        y = 0;
+        y = cont_y + cont_height - requisition.height;
     } else {
-        y = cont_y + cont_height;
+        if (cont_x + cont_width > monitor.x + monitor.width) {
+            x = monitor.x + monitor.width - requisition.width;
+        } else if (cont_x + cont_width - requisition.width < 0) {
+            x = 0;
+        } else {
+            x = cont_x + cont_width - requisition.width;
+        }
+
+        if (cont_y + cont_height + requisition.height > monitor.y + monitor.height) {
+            y = monitor.y + monitor.height - requisition.height;
+        } else if (cont_y + cont_height < 0) {
+            y = 0;
+        } else {
+            y = cont_y + cont_height;
+        }
     }
 
 	gdk_window_move (gtk_widget_get_window (search_dialog), x, y);
