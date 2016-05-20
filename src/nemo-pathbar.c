@@ -129,7 +129,7 @@ struct _NemoPathBarDetails {
 	GtkWidget *down_slider_button;
 	guint settings_signal_id;
 	gint icon_size;
-	gint16 slider_width;
+	gint slider_width;
 	gint16 spacing;
 	gint16 button_offset;
 	guint timer;
