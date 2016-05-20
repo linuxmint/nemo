@@ -858,6 +858,12 @@ nemo_window_view_visible (NemoWindow *window,
 	gtk_widget_show (GTK_WIDGET (window));
 }
 
+static gboolean
+nemo_window_is_desktop (NemoWindow *window)
+{
+    return window->details->disable_chrome;
+}
+
 static void
 nemo_window_save_geometry (NemoWindow *window)
 {
@@ -866,7 +872,7 @@ nemo_window_save_geometry (NemoWindow *window)
 
 	g_assert (NEMO_IS_WINDOW (window));
 
-	if (gtk_widget_get_window (GTK_WIDGET (window))) {
+	if (gtk_widget_get_window (GTK_WIDGET (window)) && !nemo_window_is_desktop (window)) {
 		geometry_string = eel_gtk_window_get_geometry_string (GTK_WINDOW (window));
 		is_maximized = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)))
 				& GDK_WINDOW_STATE_MAXIMIZED;
@@ -1977,7 +1983,8 @@ static gboolean
 nemo_window_state_event (GtkWidget *widget,
 			     GdkEventWindowState *event)
 {
-	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED &&
+        !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
 		g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED,
 					event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
 	}
