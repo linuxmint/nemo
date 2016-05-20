@@ -1983,8 +1983,7 @@ static gboolean
 nemo_window_state_event (GtkWidget *widget,
 			     GdkEventWindowState *event)
 {
-	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED &&
-        !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
+	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED && !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
 		g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED,
 					event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
 	}
