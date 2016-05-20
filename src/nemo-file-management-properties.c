@@ -107,6 +107,8 @@
 
 #define W(s) (gtk_builder_get_object (builder, s))
 
+#define TOOLBAR_PADDING 20
+
 static const char * const default_view_values[] = {
 	"icon-view",
 	"list-view",
@@ -765,6 +767,7 @@ static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *window)
 {
 	GtkWidget *dialog;
+    GtkWidget *stack_switcher;
 
 	/* setup UI */
 	nemo_file_management_properties_size_group_create (builder,
@@ -1009,9 +1012,11 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 		gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen(window));
 	}
 
-	gint width, height;
-	gtk_window_get_default_size (GTK_WINDOW (dialog), &width, &height);
-	gtk_widget_set_size_request (dialog, width, height);
+    stack_switcher = GTK_WIDGET (gtk_builder_get_object (builder, "stack-switcher"));
+
+    gint min_width, nat_width;
+    gtk_widget_get_preferred_width (stack_switcher, &min_width, &nat_width);
+    gtk_widget_set_size_request (dialog, nat_width + TOOLBAR_PADDING, -1);
 
 	preferences_dialog = dialog;
 	g_object_add_weak_pointer (G_OBJECT (dialog), (gpointer *) &preferences_dialog);
