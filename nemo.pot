@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-24 12:31+0100\n"
+"POT-Creation-Date: 2016-05-20 13:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -471,194 +471,194 @@ msgstr ""
 msgid "Extensions changed.  Restart required."
 msgstr ""
 
-#: src/nemo-file-management-properties.c:280 src/nemo-properties-window.c:3941
+#: src/nemo-file-management-properties.c:282 src/nemo-properties-window.c:3941
 #: src/nemo-properties-window.c:3952
 msgid "None"
 msgstr ""
 
-#: src/nemo-file-management-properties.c:461 libnemo-private/nemo-file.c:4494
+#: src/nemo-file-management-properties.c:463 libnemo-private/nemo-file.c:4494
 msgid "today at %-I:%M:%S %p"
 msgstr ""
 
-#: src/nemo-icon-view.c:134
+#: src/nemo-icon-view.c:135
 msgid "by _Name"
 msgstr ""
 
-#: src/nemo-icon-view.c:135 src/nemo-icon-view.c:1477
+#: src/nemo-icon-view.c:136 src/nemo-icon-view.c:1478
 msgid "Keep icons sorted by name in rows"
 msgstr ""
 
-#: src/nemo-icon-view.c:141
+#: src/nemo-icon-view.c:142
 msgid "by _Size"
 msgstr ""
 
-#: src/nemo-icon-view.c:142 src/nemo-icon-view.c:1481
+#: src/nemo-icon-view.c:143 src/nemo-icon-view.c:1482
 msgid "Keep icons sorted by size in rows"
 msgstr ""
 
-#: src/nemo-icon-view.c:148
+#: src/nemo-icon-view.c:149
 msgid "by _Type"
 msgstr ""
 
-#: src/nemo-icon-view.c:149 src/nemo-icon-view.c:1485
+#: src/nemo-icon-view.c:150 src/nemo-icon-view.c:1486
 msgid "Keep icons sorted by type in rows"
 msgstr ""
 
-#: src/nemo-icon-view.c:155
+#: src/nemo-icon-view.c:156
 msgid "by _Detailed Type"
 msgstr ""
 
-#: src/nemo-icon-view.c:156 src/nemo-icon-view.c:1489
+#: src/nemo-icon-view.c:157 src/nemo-icon-view.c:1490
 msgid "Keep icons sorted by detailed type in rows"
 msgstr ""
 
-#: src/nemo-icon-view.c:162
+#: src/nemo-icon-view.c:163
 msgid "by Modification _Date"
 msgstr ""
 
-#: src/nemo-icon-view.c:163 src/nemo-icon-view.c:1493
+#: src/nemo-icon-view.c:164 src/nemo-icon-view.c:1494
 msgid "Keep icons sorted by modification date in rows"
 msgstr ""
 
-#: src/nemo-icon-view.c:169
+#: src/nemo-icon-view.c:170
 msgid "by T_rash Time"
 msgstr ""
 
-#: src/nemo-icon-view.c:170 src/nemo-icon-view.c:1497
+#: src/nemo-icon-view.c:171 src/nemo-icon-view.c:1498
 msgid "Keep icons sorted by trash time in rows"
 msgstr ""
 
-#: src/nemo-icon-view.c:710
+#: src/nemo-icon-view.c:711
 msgid "_Organize Desktop by Name"
 msgstr ""
 
-#: src/nemo-icon-view.c:1436
+#: src/nemo-icon-view.c:1437
 msgid "Arran_ge Items"
 msgstr ""
 
-#: src/nemo-icon-view.c:1438
+#: src/nemo-icon-view.c:1439
 msgid "Resize Icon..."
 msgstr ""
 
-#: src/nemo-icon-view.c:1439
+#: src/nemo-icon-view.c:1440
 msgid "Make the selected icon resizable"
 msgstr ""
 
-#: src/nemo-icon-view.c:1442 src/nemo-icon-view.c:1616
+#: src/nemo-icon-view.c:1443 src/nemo-icon-view.c:1617
 msgid "Restore Icons' Original Si_zes"
 msgstr ""
 
-#: src/nemo-icon-view.c:1443
+#: src/nemo-icon-view.c:1444
 msgid "Restore each selected icon to its original size"
 msgstr ""
 
-#: src/nemo-icon-view.c:1446
+#: src/nemo-icon-view.c:1447
 msgid "_Organize by Name"
 msgstr ""
 
-#: src/nemo-icon-view.c:1447
+#: src/nemo-icon-view.c:1448
 msgid "Reposition icons to better fit in the window and avoid overlapping"
 msgstr ""
 
-#: src/nemo-icon-view.c:1454
+#: src/nemo-icon-view.c:1455
 msgid "Compact _Layout"
 msgstr ""
 
-#: src/nemo-icon-view.c:1455
+#: src/nemo-icon-view.c:1456
 msgid "Toggle using a tighter layout scheme"
 msgstr ""
 
-#: src/nemo-icon-view.c:1459
+#: src/nemo-icon-view.c:1460
 msgid "Re_versed Order"
 msgstr ""
 
-#: src/nemo-icon-view.c:1460
+#: src/nemo-icon-view.c:1461
 msgid "Display icons in the opposite order"
 msgstr ""
 
-#: src/nemo-icon-view.c:1464
+#: src/nemo-icon-view.c:1465
 msgid "_Keep Aligned"
 msgstr ""
 
-#: src/nemo-icon-view.c:1465
+#: src/nemo-icon-view.c:1466
 msgid "Keep icons lined up on a grid"
 msgstr ""
 
-#: src/nemo-icon-view.c:1472
+#: src/nemo-icon-view.c:1473
 msgid "_Manually"
 msgstr ""
 
-#: src/nemo-icon-view.c:1473
+#: src/nemo-icon-view.c:1474
 msgid "Leave icons wherever they are dropped"
 msgstr ""
 
-#: src/nemo-icon-view.c:1476
+#: src/nemo-icon-view.c:1477
 msgid "By _Name"
 msgstr ""
 
-#: src/nemo-icon-view.c:1480
+#: src/nemo-icon-view.c:1481
 msgid "By _Size"
 msgstr ""
 
-#: src/nemo-icon-view.c:1484
+#: src/nemo-icon-view.c:1485
 msgid "By _Type"
 msgstr ""
 
-#: src/nemo-icon-view.c:1488
+#: src/nemo-icon-view.c:1489
 msgid "By _Detailed Type"
 msgstr ""
 
-#: src/nemo-icon-view.c:1492
+#: src/nemo-icon-view.c:1493
 msgid "By Modification _Date"
 msgstr ""
 
-#: src/nemo-icon-view.c:1496
+#: src/nemo-icon-view.c:1497
 msgid "By T_rash Time"
 msgstr ""
 
-#: src/nemo-icon-view.c:1617
+#: src/nemo-icon-view.c:1618
 msgid "Restore Icon's Original Si_ze"
 msgstr ""
 
-#: src/nemo-icon-view.c:2900 src/nemo-icon-view-container.c:610
+#: src/nemo-icon-view.c:2901 src/nemo-icon-view-container.c:610
 #: src/nemo-window-menus.c:1439 src/nemo-file-management-properties.glade:12
 msgid "Icon View"
 msgstr ""
 
-#: src/nemo-icon-view.c:2902
+#: src/nemo-icon-view.c:2903
 msgid "_Icons"
 msgstr ""
 
-#: src/nemo-icon-view.c:2903
+#: src/nemo-icon-view.c:2904
 msgid "The icon view encountered an error."
 msgstr ""
 
-#: src/nemo-icon-view.c:2904
+#: src/nemo-icon-view.c:2905
 msgid "The icon view encountered an error while starting up."
 msgstr ""
 
-#: src/nemo-icon-view.c:2905
+#: src/nemo-icon-view.c:2906
 msgid "Display this location with the icon view."
 msgstr ""
 
-#: src/nemo-icon-view.c:2914 src/nemo-window-menus.c:1462
+#: src/nemo-icon-view.c:2915 src/nemo-window-menus.c:1462
 #: src/nemo-file-management-properties.glade:18
 msgid "Compact View"
 msgstr ""
 
-#: src/nemo-icon-view.c:2916
+#: src/nemo-icon-view.c:2917
 msgid "_Compact"
 msgstr ""
 
-#: src/nemo-icon-view.c:2917
+#: src/nemo-icon-view.c:2918
 msgid "The compact view encountered an error."
 msgstr ""
 
-#: src/nemo-icon-view.c:2918
+#: src/nemo-icon-view.c:2919
 msgid "The compact view encountered an error while starting up."
 msgstr ""
 
-#: src/nemo-icon-view.c:2919
+#: src/nemo-icon-view.c:2920
 msgid "Display this location with the compact view."
 msgstr ""
 
@@ -832,28 +832,28 @@ msgstr ""
 msgid "Temporarily disable auto-sort"
 msgstr ""
 
-#: src/nemo-list-view.c:2211 libnemo-private/nemo-column-utilities.c:43
+#: src/nemo-list-view.c:2234 libnemo-private/nemo-column-utilities.c:43
 msgid "Name"
 msgstr ""
 
-#: src/nemo-list-view.c:2285 src/nemo-list-view.c:3845
+#: src/nemo-list-view.c:2312 src/nemo-list-view.c:3872
 #: src/nemo-window-menus.c:1450 src/nemo-file-management-properties.glade:15
 msgid "List View"
 msgstr ""
 
-#: src/nemo-list-view.c:3847
+#: src/nemo-list-view.c:3874
 msgid "_List"
 msgstr ""
 
-#: src/nemo-list-view.c:3848
+#: src/nemo-list-view.c:3875
 msgid "The list view encountered an error."
 msgstr ""
 
-#: src/nemo-list-view.c:3849
+#: src/nemo-list-view.c:3876
 msgid "The list view encountered an error while starting up."
 msgstr ""
 
-#: src/nemo-list-view.c:3850
+#: src/nemo-list-view.c:3877
 msgid "Display this location with the list view."
 msgstr ""
 
@@ -2540,12 +2540,12 @@ msgstr ""
 msgid "Go to the location specified by this bookmark"
 msgstr ""
 
-#: src/nemo-window.c:1588
+#: src/nemo-window.c:1594
 #, c-format
 msgid "%s - File Browser"
 msgstr ""
 
-#: src/nemo-window.c:2098 src/nemo-window-menus.c:316
+#: src/nemo-window.c:2104 src/nemo-window-menus.c:316
 msgid "Nemo"
 msgstr ""
 
@@ -4730,7 +4730,7 @@ msgstr ""
 msgid "The item cannot be restored from trash"
 msgstr ""
 
-#: libnemo-private/nemo-icon-container.c:2741
+#: libnemo-private/nemo-icon-container.c:2742
 msgid "The selection rectangle"
 msgstr ""
 
@@ -4932,68 +4932,76 @@ msgstr ""
 msgid " (invalid Unicode)"
 msgstr ""
 
-#: data/action_i18n_strings.py:7
+#: data/action_i18n_strings.py:8
 msgid "Add Desklets"
 msgstr ""
 
-#: data/action_i18n_strings.py:8
+#: data/action_i18n_strings.py:9
 msgid "Add Cinamon desklets"
 msgstr ""
 
-#: data/action_i18n_strings.py:9
+#: data/action_i18n_strings.py:10
 msgid "Set as Wallpaper..."
 msgstr ""
 
-#: data/action_i18n_strings.py:10
+#: data/action_i18n_strings.py:11
 msgid "Set the selected image as your Cinnamon desktop wallpaper"
 msgstr ""
 
-#: data/action_i18n_strings.py:11
+#: data/action_i18n_strings.py:12
 msgid "Change Desktop _Background"
 msgstr ""
 
-#: data/action_i18n_strings.py:12
+#: data/action_i18n_strings.py:13
 msgid "Change the Cinnamon desktop background"
 msgstr ""
 
-#: data/action_i18n_strings.py:13
+#: data/action_i18n_strings.py:14
 msgid "Create a new l_auncher here..."
 msgstr ""
 
-#: data/action_i18n_strings.py:14
+#: data/action_i18n_strings.py:15
 msgid "Create a new launcher in this folder"
 msgstr ""
 
-#: data/action_i18n_strings.py:15
+#: data/action_i18n_strings.py:16
 msgid "Manage workspaces (Expo)"
 msgstr ""
 
-#: data/action_i18n_strings.py:16
+#: data/action_i18n_strings.py:17
 msgid "Open Expo to add, remove, or organize workspaces"
 msgstr ""
 
-#: data/action_i18n_strings.py:17
+#: data/action_i18n_strings.py:18
 msgid "Mount archive"
 msgstr ""
 
-#: data/action_i18n_strings.py:18
+#: data/action_i18n_strings.py:19
 #, python-format
 msgid "Mount %f to browse its contents"
 msgstr ""
 
-#: data/action_i18n_strings.py:19
+#: data/action_i18n_strings.py:20
 msgid "Jump to new workspace"
 msgstr ""
 
-#: data/action_i18n_strings.py:20
+#: data/action_i18n_strings.py:21
 msgid "Create a new workspace and activate it"
 msgstr ""
 
-#: data/action_i18n_strings.py:21
+#: data/action_i18n_strings.py:22
+msgid "Desktop _Settings"
+msgstr ""
+
+#: data/action_i18n_strings.py:23
+msgid "Change how your desktop works"
+msgstr ""
+
+#: data/action_i18n_strings.py:24
 msgid "Remove workspace"
 msgstr ""
 
-#: data/action_i18n_strings.py:22
+#: data/action_i18n_strings.py:25
 msgid "Remove the currently active workspace"
 msgstr ""
 
