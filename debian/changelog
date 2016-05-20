@@ -1,3 +1,32 @@
+nemo (3.0.2) sarah; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Fixed build
+
+  [ Michael Webster ]
+  * debian/control: depend on python3-gi
+  * fix action i18n scripts to write utf-8
+
+  [ itzexor ]
+  * nemo-icon-view: include nemo-application.h needed in nemo_icon_view_add_file for: nemo_application_set_cache_flag nemo_application_get_singleton
+  * nemo-pathbar: use gint for slider_width instead of gint16 silences an incorrect pointer type warning.
+
+  [ Michael Webster ]
+  * nemo-list-view.c: don't explicitly unref columns anymore - they'll get handled when the tree view is destroyed.
+  * nemo-icon-container.c: Re-enable desktop type-to-select feature. Also make a couple fixes on the positioning logic for this little popup.  Where possible, it will avoid overlapping panels.
+  * desktop windows: maximize instead of relying on gdk for monitor workarea - it's inaccurate for anything but the primary monitor.
+  * nemo-icon-container.c: special case desktop windows for search popup - now that we can rely on the window being the correct size to account for panels, we can reliably position this popup off of those panels.
+
+  [ JosephMcc ]
+  * prefs: Don't try to hardcode a minimum size for the preferences dialog
+
+  [ Michael Webster ]
+  * Use g_themed_icon_new instead of g_themed_icon_new_with_default_fallbacks.
+  * nemo-window.c: As of 9cb9c48f59baa we maximize the desktop containers to make sure they use the correct work area as set by muffin.  This started causing the window state 'maximized' key to be set to true when opening a new nemo window.  This corrects that issue, using disable_chrome as an indicator to ignore the window - only the desktop windows set this true.
+  * nemo-window.c: fix formatting
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 20 May 2016 12:26:51 +0100
+
 nemo (3.0.1) sarah; urgency=medium
 
   [ JosephMcc ]
