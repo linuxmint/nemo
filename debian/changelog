@@ -1,3 +1,13 @@
+nemo (3.0.3) sarah; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Updated pot file
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: When gtk overlay scrolling is in effect, add some padding right of the sidebar eject icons, otherwise they are covered by the scrollbar when it pops up.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 23 May 2016 12:52:58 +0100
+
 nemo (3.0.2) sarah; urgency=medium
 
   [ Clement Lefebvre ]
