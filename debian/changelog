@@ -1,3 +1,13 @@
+nemo (3.0.4) sarah; urgency=medium
+
+  [ raveit65 ]
+  * add standard settings for EelEditableLabel
+
+  [ Clement Lefebvre ]
+  * Build-depend on cinnamon-l10n
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 31 May 2016 11:31:11 +0100
+
 nemo (3.0.3) sarah; urgency=medium
 
   [ Clement Lefebvre ]
