@@ -1,0 +1,93 @@
+[Nemo Action]
+
+Name=Jump to new workspace
+
+Comment=Create a new workspace and activate it
+
+Exec=sh -c 'dbus-send --dest=org.Cinnamon --print-reply /org/Cinnamon org.Cinnamon.JumpToNewWorkspace >/dev/null'
+
+Selection=None
+
+Extensions=any;
+
+Conditions=desktop;dbus org.Cinnamon;
+
+Active=false
+
+Name[zh_HK]=跳至新工作區
+Name[pt]=Ir para nova área de trabalho
+Name[ro]=Sari la un spaţiu de lucru nou
+Name[cy]=Neidio i weithle newydd
+Name[ru]=Перейти на новое рабочее место
+Name[ms]=Lompat ke kawasan kerja baru
+Name[da]=Hop til nyt arbejdsområde
+Name[is]=Hoppa á nýtt vinnusvæði
+Name[hr]=Skoči u novi radni prostor
+Name[tr]=Yeni çalışma alanına git
+Name[uk]=Перейти на новий робочий простір
+Name[sk]=Skočiť na novú plochu
+Name[fi]=Siirry uuteen työtilaan
+Name[ca]=Vés a un espai de treball nou
+Name[el]=Μετάβαση σε νέο χώρο εργασίας
+Name[cs]=Přejít na novou pracovní plochu.
+Name[sv]=Hoppa till ny arbetsyta
+Name[ia]=Saltar a un nove spatio de labor
+Name[th]=ข้ามไปพื้นที่ทำงานใหม่
+Name[nl]=Spring naar nieuw werkblad
+Name[en_GB]=Jump to new workspace
+Name[gl]=Cambiar a un espazo de traballo novo
+Name[it]=Salta a nuovo spazio di lavoro
+Name[pt_BR]=Ir para nova área de trabalho
+Name[es]=Saltar a un espacio de trabajo nuevo
+Name[eu]=Joan laneko area berrira
+Name[gd]=Gearr leum tu rum-obrach ùr
+Name[lt]=Pereiti į naują darbo sritį
+Name[zh_TW]=跳至新工作區
+Name[sr]=Пређи у нови радни простор
+Name[fr]=Aller vers un nouvel espace de travail
+Name[hu]=Ugrás az új munkaterületre
+Name[bg]=Върви на ново работно място
+Name[de]=Zu neuer Arbeitsfläche wechseln
+Name[ko]=새 작업 공간으로 가기
+Name[zh_CN]=跳到新的工作区
+Name[pl]=Przejdź do nowej przestrzeni roboczej
+Name[ta]=புதிய பணிதளத்திற்கு தாவு
+Name[vi]=Chuyển qua vùng làm việc mới
+Comment[zh_HK]=建立新工作區並將其啟動
+Comment[pt]=Criar uma nova área de trabalho e activá-la
+Comment[ro]=Creează un spaţiu de lucru nou şi activează-l
+Comment[cy]=Creu gweithle newydd a'i roi ar waith
+Comment[ru]=Создать рабочее место и сделать активным
+Comment[ms]=Cipta kawasan kerja baru dan aktifkan ia.
+Comment[da]=Opret et nyt arbejdsområde og aktivér det
+Comment[is]=Búa til nýtt vinnusvæði og virkja það
+Comment[hr]=Stvori novi radni prostor i aktiviraj ga
+Comment[tr]=Yeni bir çalışma alanı oluştur ve etkinleştir
+Comment[uk]=Створити й активувати новий робочий простір
+Comment[sk]=Vytvoriť novú pracovnú plochu a aktivovať ju
+Comment[fi]=Luo uusi työtila ja aktivoi se
+Comment[ca]=Crea un nou espai de treball i activa'l
+Comment[el]=Δημιουργία νέου χώρου εργασίας και ενεργοποίηση
+Comment[cs]=Vytvořit novou pracovní plochu a aktivovat ji
+Comment[sv]=Skapa en ny arbetsyta och aktivera den
+Comment[ia]=Crear un nove spatio de labor e activar lo
+Comment[th]=สร้างพื้นที่ทำงานใหม่และใช้งานพื้นที่ทำงานนั้น
+Comment[nl]=Maak een nieuw werkblad en activeer het
+Comment[en_GB]=Create a new workspace and activate it
+Comment[gl]=Crear un novo espazo de traballo e activalo
+Comment[it]=Crea un nuovo spazio di lavoro e attivalo
+Comment[pt_BR]=Criar um novo espaço de trabalho e ativá-lo
+Comment[es]=Crear un nuevo espacio de trabajo y activarlo
+Comment[eu]=Laneko area berri bat sortu eta aktibatzen du
+Comment[gd]=Cruthaich rum-obrach ùr is gnìomhaich e
+Comment[lt]=Sukurti naują darbo sritį ir ją aktyvuoti
+Comment[zh_TW]=建立新工作區並啟用
+Comment[sr]=Направите нови радни простор и активирајте га
+Comment[fr]=Créer et activer un nouvel espace de travail
+Comment[hu]=Új munkaterület létrehozása és aktiválása
+Comment[bg]=Създаване и активиране на ново работно място
+Comment[de]=Eine neue Arbeitsfläche erstellen und diese aktivieren
+Comment[ko]=새로운 작업 공간을 만들고 사용합니다
+Comment[zh_CN]=创建新的工作区并激活它
+Comment[pl]=Utwórz nową przestrzeń roboczą i aktywuj ją
+Comment[vi]=Tạo và kích hoạt vùng làm việc mới
