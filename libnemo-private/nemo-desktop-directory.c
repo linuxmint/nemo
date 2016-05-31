@@ -461,8 +461,8 @@ update_desktop_directory (NemoDesktopDirectory *desktop)
 
 	real_directory = desktop->details->real_directory;
 	if (real_directory != NULL) {
-		g_hash_table_foreach_remove (desktop->details->callbacks, (GHRFunc) gtk_true, NULL);
-		g_hash_table_foreach_remove (desktop->details->monitors, (GHRFunc) gtk_true, NULL);
+		g_hash_table_remove_all (desktop->details->callbacks);
+		g_hash_table_remove_all (desktop->details->monitors);
 
 		g_signal_handlers_disconnect_by_func (real_directory, done_loading_callback, desktop);
 		g_signal_handlers_disconnect_by_func (real_directory, forward_files_added_cover, desktop);
