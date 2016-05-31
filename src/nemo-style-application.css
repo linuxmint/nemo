@@ -20,11 +20,7 @@
 .nemo-desktop.view .entry,
 .nemo-desktop.view .entry:active,
 .nemo-desktop.view .entry:focus,
-.nemo-desktop.view .entry:backdrop,
-.nemo-window .nemo-window-pane .view .entry,
-.nemo-window .nemo-window-pane .view .entry:active,
-.nemo-window .nemo-window-pane .view .entry:focus,
-.nemo-window .nemo-window-pane .view .entry:backdrop {
+.nemo-desktop.view .entry:backdrop {
     border-image: none;
     border-style: solid;
     border-width: 1px;
@@ -42,11 +38,7 @@
 
 .nemo-desktop.view .entry:selected,
 .nemo-desktop.view .entry:focus:selected,
-.nemo-desktop.view .entry:backdrop:selected
-.nemo-window .nemo-window-pane .view .entry:active,
-.nemo-window .nemo-window-pane .view .entry:selected,
-.nemo-window .nemo-window-pane .view .entry:focus:selected,
-.nemo-window .nemo-window-pane .view .entry:backdrop:selected {
+.nemo-desktop.view .entry:backdrop:selected {
     background-color: @theme_selected_bg_color;
     color: @theme_selected_fg_color;
     text-shadow: none;
