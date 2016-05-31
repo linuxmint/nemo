@@ -1,3 +1,13 @@
+nemo (3.0.5) sarah; urgency=medium
+
+  [ leigh123linux ]
+  * use g_hash_table_remove_all and get rid of some callbacks
+
+  [ JosephMcc ]
+  * Partially revert c082595 by limiting it to only affecting desktop items
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 31 May 2016 13:20:18 +0100
+
 nemo (3.0.4) sarah; urgency=medium
 
   [ raveit65 ]
