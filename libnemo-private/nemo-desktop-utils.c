@@ -49,6 +49,9 @@ nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget)
 
     GdkWindow *window = gtk_widget_get_window (widget);
 
+    if (window == NULL)
+        return 0;
+
     gint monitor = gdk_screen_get_monitor_at_window (default_screen, window);
 
     return monitor;
