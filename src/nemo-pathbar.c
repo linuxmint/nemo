@@ -491,7 +491,11 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
         *minimum = MAX (*minimum, child_min);
         *natural = MAX (*natural, child_nat);
     }
-    path_bar->priv->slider_width = MIN (height * 2 / 3 + 5, height);
+
+    gtk_widget_get_preferred_width (path_bar->priv->down_slider_button,
+                                    &path_bar->priv->slider_width,
+                                    NULL);
+
     *minimum += path_bar->priv->slider_width * 2;
     *natural += path_bar->priv->slider_width * 2;
 }
