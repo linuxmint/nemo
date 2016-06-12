@@ -618,6 +618,10 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     }
     direction = gtk_widget_get_direction (widget);
 
+    gtk_widget_get_preferred_width (path_bar->priv->up_slider_button,
+                                    &path_bar->priv->slider_width,
+                                    NULL);
+
     gtk_widget_get_preferred_size (BUTTON_DATA (path_bar->priv->button_list->data)->button,
                        NULL, &child_requisition);
     width = child_requisition.width;
