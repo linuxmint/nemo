@@ -1030,45 +1030,6 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 }
 
 static void
-nemo_window_get_preferred_width (GtkWidget *widget,
-				     gint *minimal_width,
-				     gint *natural_width)
-{
-	GdkScreen *screen;
-	gint max_w, min_w, default_w;
-
-	screen = gtk_window_get_screen (GTK_WINDOW (widget));	
-
-	max_w = get_max_forced_width (screen);
-	min_w = NEMO_WINDOW_MIN_WIDTH;
-
-	default_w = NEMO_WINDOW_DEFAULT_WIDTH;
-
-	*minimal_width = MIN (min_w, max_w);
-	*natural_width = MIN (default_w, max_w);
-}
-
-static void
-nemo_window_get_preferred_height (GtkWidget *widget,
-				      gint *minimal_height,
-				      gint *natural_height)
-{
-	GdkScreen *screen;
-	gint max_h, min_h, default_h;
-
-	screen = gtk_window_get_screen (GTK_WINDOW (widget));	
-
-	max_h = get_max_forced_height (screen);
-
-	min_h = NEMO_WINDOW_MIN_HEIGHT;
-
-	default_h = NEMO_WINDOW_DEFAULT_HEIGHT;
-
-	*minimal_height = MIN (min_h, max_h);
-	*natural_height = MIN (default_h, max_h);
-}
-
-static void
 nemo_window_realize (GtkWidget *widget)
 {
 	GTK_WIDGET_CLASS (nemo_window_parent_class)->realize (widget);
@@ -2138,8 +2099,6 @@ nemo_window_class_init (NemoWindowClass *class)
 
 	wclass->destroy = nemo_window_destroy;
 	wclass->show = nemo_window_show;
-	wclass->get_preferred_width = nemo_window_get_preferred_width;
-	wclass->get_preferred_height = nemo_window_get_preferred_height;
 	wclass->realize = nemo_window_realize;
 	wclass->key_press_event = nemo_window_key_press_event;
     wclass->key_release_event = nemo_window_key_release_event;
