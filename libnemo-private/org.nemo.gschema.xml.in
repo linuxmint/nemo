@@ -175,12 +175,6 @@
       <_summary>Whether to swap the hotkeys for Trash and Delete</_summary>
       <_description>If set to true, the Delete key will permanently delete a file, and the Shift-Delete key will only trash a file.</_description>
     </key>
-    <key name="show-icon-text" enum="org.nemo.SpeedTradeoff">
-      <aliases><alias value='local_only' target='local-only'/></aliases>
-      <default>'local-only'</default>
-      <_summary>When to show preview text in icons</_summary>
-      <_description>Speed tradeoff for when to show a preview of text file contents in the file's icon. If set to "always" then always show previews,  even if the folder is on a remote server. If set to "local-only" then only show previews for local file systems. If set to "never" then never bother to read preview data.</_description>
-    </key>
     <key name="show-directory-item-counts"  enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>

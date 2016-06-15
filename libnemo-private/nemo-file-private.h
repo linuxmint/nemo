@@ -32,14 +32,6 @@
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-string.h>
 
-#define NEMO_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE 80
-#define NEMO_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_LINES               24
-#define NEMO_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_BYTES               10000
-
-#define NEMO_FILE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE 10
-#define NEMO_FILE_TOP_LEFT_TEXT_MAXIMUM_LINES               5
-#define NEMO_FILE_TOP_LEFT_TEXT_MAXIMUM_BYTES               1024
-
 #define NEMO_FILE_DEFAULT_ATTRIBUTES				\
 	"standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*"
 
@@ -111,7 +103,6 @@ struct NemoFileDetails
     double thumbnail_scale;
 
 	GList *mime_list; /* If this is a directory, the list of MIME types in it. */
-	char *top_left_text;
 
 	/* Info you might get from a link (.desktop, .directory or nemo link) */
 	GIcon *custom_icon;
@@ -177,10 +168,6 @@ struct NemoFileDetails
 	eel_boolean_bit mime_list_is_up_to_date       : 1;
 
 	eel_boolean_bit mount_is_up_to_date           : 1;
-	
-	eel_boolean_bit got_top_left_text             : 1;
-	eel_boolean_bit got_large_top_left_text       : 1;
-	eel_boolean_bit top_left_text_is_up_to_date   : 1;
 
 	eel_boolean_bit got_link_info                 : 1;
 	eel_boolean_bit link_info_is_up_to_date       : 1;
@@ -250,9 +237,7 @@ NemoFile *nemo_file_new_from_info                  (NemoDirectory      *director
 							    GFileInfo              *info);
 void          nemo_file_emit_changed                   (NemoFile           *file);
 void          nemo_file_mark_gone                      (NemoFile           *file);
-char *        nemo_extract_top_left_text               (const char             *text,
-							    gboolean                large,
-							    int                     length);
+
 void          nemo_file_set_directory                  (NemoFile           *file,
 							    NemoDirectory      *directory);
 gboolean      nemo_file_get_date                       (NemoFile           *file,
@@ -282,11 +267,6 @@ gboolean      nemo_file_set_display_name               (NemoFile           *file
 							    gboolean                custom);
 void          nemo_file_set_mount                      (NemoFile           *file,
 							    GMount                 *mount);
-
-/* Return true if the top lefts of files in this directory should be
- * fetched, according to the preference settings.
- */
-gboolean      nemo_file_should_get_top_left_text       (NemoFile           *file);
 
 /* Mark specified attributes for this file out of date without canceling current
  * I/O or kicking off new I/O.

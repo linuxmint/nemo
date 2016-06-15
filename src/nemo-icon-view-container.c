@@ -48,6 +48,7 @@ get_icon_view (NemoIconContainer *container)
 	return ((NemoIconViewContainer *)container)->view;
 }
 
+
 static NemoIconInfo *
 nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 					      NemoIconData      *data,
@@ -61,7 +62,6 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	NemoIconView *icon_view;
 	char **emblems_to_ignore;
 	NemoFile *file;
-	gboolean use_embedding;
 	NemoFileIconFlags flags;
 	NemoIconInfo *icon_info;
 	GdkPixbuf *pixbuf;
@@ -75,21 +75,12 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	g_assert (NEMO_IS_FILE (file));
 	icon_view = get_icon_view (container);
 	g_return_val_if_fail (icon_view != NULL, NULL);
-
-	use_embedding = FALSE;
-	if (embedded_text) {
-		*embedded_text = nemo_file_peek_top_left_text (file, need_large_embeddded_text, embedded_text_needs_loading);
-		use_embedding = *embedded_text != NULL;
-	}
 	
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
 			NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
 
-	if (use_embedding) {
-		flags |= NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT;
-	}
 	if (for_drag_accept) {
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
