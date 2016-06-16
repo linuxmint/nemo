@@ -7061,15 +7061,23 @@ paste_into (NemoView *view,
 }
 
 static void
+cb_open_as_root_watch (GPid pid, gint status, gpointer user_data)
+{
+    g_spawn_close_pid(pid);
+}
+
+static void
 open_as_root (const gchar *path)
-{	
+{
     gchar *argv[4];
     argv[0] = "pkexec";
     argv[1] = "nemo";
     argv[2] = g_strdup (path);
     argv[3] = NULL;
+    GPid pid;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
-                  NULL, NULL, NULL, NULL);
+                  NULL, NULL, &pid, NULL);
+    g_child_watch_add(pid, (GChildWatchFunc)cb_open_as_root_watch, NULL);
     g_free (argv[2]);
 }
 
