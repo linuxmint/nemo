@@ -99,16 +99,13 @@ toolbar_update_appearance (NemoToolbar *self)
 {
 	GtkWidget *widgetitem;
 	gboolean icon_toolbar;
-	gboolean show_location_entry;
 
     nemo_toolbar_update_root_state (self);
-
-	show_location_entry = self->priv->show_location_entry;
 
 	gtk_widget_set_visible (GTK_WIDGET(self->priv->toolbar),
 				self->priv->show_main_bar);
 
-    if (show_location_entry) {
+    if (self->priv->show_location_entry) {
         gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "location_bar");
     } else {
         gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), "path_bar");
@@ -284,8 +281,6 @@ nemo_toolbar_constructed (GObject *obj)
 
 	gtk_style_context_set_junction_sides (gtk_widget_get_style_context (GTK_WIDGET (self)),
 					      GTK_JUNCTION_BOTTOM);
-
-    self->priv->show_location_entry = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
 
 	/* add the UI */
 	self->priv->ui_manager = gtk_ui_manager_new ();
@@ -474,7 +469,8 @@ nemo_toolbar_init (NemoToolbar *self)
 {
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, NEMO_TYPE_TOOLBAR,
 						  NemoToolbarPriv);
-	self->priv->show_main_bar = TRUE;	
+	self->priv->show_main_bar = TRUE;
+	self->priv->show_location_entry = FALSE;
 }
 
 static void
