@@ -1814,12 +1814,15 @@ column_header_clicked (GtkWidget *column_button,
                        NemoListView *list_view)
 {
     GList *current_view_columns, *l;
+    NemoFile *file;
     GtkWidget *menu;
     GtkWidget *menu_item;
 
 	if (event->button != GDK_BUTTON_SECONDARY) {
 		return FALSE;
 	}
+
+    file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
     menu = gtk_menu_new ();
 
@@ -1833,12 +1836,18 @@ column_header_clicked (GtkWidget *column_button,
 
         GtkTreeViewColumn *c = GTK_TREE_VIEW_COLUMN (l->data);
 
+        name = g_object_get_data (G_OBJECT (c), "column-id");
+
+        if (!nemo_file_is_in_trash (file)) {
+            if (g_strcmp0 (name, "trashed_on") == 0 ||
+                g_strcmp0 (name, "trash_orig_path") == 0)
+                continue;
+        }
+
         g_object_get (G_OBJECT (c),
                       "title", &label,
                       "visible", &visible,
                       NULL);
-
-        name = g_object_get_data (G_OBJECT (c), "column-id");
 
         lowercase = g_ascii_strdown (name, -1);
 
