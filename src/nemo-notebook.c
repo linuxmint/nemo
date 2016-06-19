@@ -51,14 +51,6 @@ static int  nemo_notebook_insert_page	 (GtkNotebook *notebook,
 static void nemo_notebook_remove	 (GtkContainer *container,
 					  GtkWidget *tab_widget);
 
-#if 0
-static const GtkTargetEntry url_drag_types[] =
-{
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
-};
-#endif
-
 enum
 {
 	TAB_CLOSE_REQUEST,
@@ -259,19 +251,6 @@ nemo_notebook_init (NemoNotebook *notebook)
 			  G_CALLBACK(control_key_checker_cb), GINT_TO_POINTER (TRUE));
 	g_signal_connect (notebook, "key-release-event",
 			  G_CALLBACK(control_key_checker_cb), GINT_TO_POINTER (FALSE));
-
-	/* Set up drag-and-drop target */
-	/* TODO this would be used for opening a new tab.
-	 * It will only work properly as soon as GtkNotebook
-	 * supports to find out whether a particular point
-	 * is on a tab button or not.
-	 */
-#if 0
-	gtk_drag_dest_set (GTK_WIDGET (notebook), 0,
-			   url_drag_types, G_N_ELEMENTS (url_drag_types),
-			   GDK_ACTION_LINK);
-	gtk_drag_dest_set_track_motion (GTK_WIDGET (notebook), TRUE);
-#endif
 }
 
 void
