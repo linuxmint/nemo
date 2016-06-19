@@ -97,7 +97,7 @@ struct NemoListViewDetails {
 	gboolean row_selected_on_button_down;
 	gboolean menus_ready;
 	gboolean active;
-	
+
 	GHashTable *columns;
 	GtkWidget *column_editor;
 
@@ -1709,28 +1709,31 @@ column_header_menu_toggled (GtkCheckMenuItem *menu_item,
                             NemoListView *list_view)
 {
 	NemoFile *file;
-	char **visible_columns;
-	char **column_order;
-	const char *column;
+    char **visible_columns;
+    const char *menu_item_column_id;
 	GList *list = NULL;
-	GList *l;
+    GList *l, *current_view_columns;
 	int i;
 
-	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
-	visible_columns = get_visible_columns (list_view);
-	column_order = get_column_order (list_view);
-	column = g_object_get_data (G_OBJECT (menu_item), "column-name");
+    file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
+    menu_item_column_id = g_object_get_data (G_OBJECT (menu_item), "column-name");
 
-	for (i = 0; visible_columns[i] != NULL; ++i) {
-		list = g_list_prepend (list, visible_columns[i]);
-	}
+    current_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
 
-	if (gtk_check_menu_item_get_active (menu_item)) {
-		list = g_list_prepend (list, g_strdup (column));
-	} else {
-		l = g_list_find_custom (list, column, (GCompareFunc) g_strcmp0);
-		list = g_list_delete_link (list, l);
-	}
+    for (l = current_view_columns; l != NULL; l = l->next) {
+        GtkTreeViewColumn *c = GTK_TREE_VIEW_COLUMN (l->data);
+
+        const char *current_id = g_object_get_data (G_OBJECT (c), "column-id");
+
+        if (g_strcmp0 (current_id, menu_item_column_id) == 0) {
+            if (gtk_check_menu_item_get_active (menu_item)) {
+                list = g_list_prepend (list, g_strdup (current_id));
+            }
+        } else {
+            if (gtk_tree_view_column_get_visible (c))
+                list = g_list_prepend (list, g_strdup (current_id));
+        }
+    }
 
 	list = g_list_reverse (list);
 
@@ -1741,8 +1744,6 @@ column_header_menu_toggled (GtkCheckMenuItem *menu_item,
                                      NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS,
                                      list);
 
-	g_free (visible_columns);
-
 	visible_columns = g_new0 (char *, g_list_length (list) + 1);
 	for (i = 0, l = list; l != NULL; ++i, l = l->next) {
 		visible_columns[i] = l->data;
@@ -1751,10 +1752,10 @@ column_header_menu_toggled (GtkCheckMenuItem *menu_item,
 	/* set view values ourselves, as new metadata could not have been
 	 * updated yet.
 	 */
-	apply_columns_settings (list_view, column_order, visible_columns);
+    apply_columns_settings (list_view, visible_columns, visible_columns);
 
 	g_list_free (list);
-	g_strfreev (column_order);
+    g_list_free (current_view_columns);
 	g_strfreev (visible_columns);
 }
 
@@ -1812,78 +1813,56 @@ column_header_clicked (GtkWidget *column_button,
                        GdkEventButton *event,
                        NemoListView *list_view)
 {
-	NemoFile *file;
-	char **visible_columns;
-	char **column_order;
-	GList *all_columns;
-	GHashTable *visible_columns_hash;
-	int i;
-	GList *l;
-	GtkWidget *menu;
-	GtkWidget *menu_item;
+    GList *current_view_columns, *l;
+    GtkWidget *menu;
+    GtkWidget *menu_item;
 
 	if (event->button != GDK_BUTTON_SECONDARY) {
 		return FALSE;
 	}
 
-	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
+    menu = gtk_menu_new ();
 
-	visible_columns = get_visible_columns (list_view);
-	column_order = get_column_order (list_view);
+    current_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
 
-	all_columns = nemo_get_columns_for_file (file);
-	all_columns = nemo_sort_columns (all_columns, column_order);
+    for (l = current_view_columns; l != NULL; l = l->next) {
+        const char *name;
+        char *label;
+        char *lowercase;
+        gboolean visible;
 
-	/* hash table to lookup if a given column should be visible */
-	visible_columns_hash = g_hash_table_new_full (g_str_hash,
-	                                              g_str_equal,
-	                                              (GDestroyNotify) g_free,
-	                                              (GDestroyNotify) g_free);
-	if (visible_columns != NULL) {
-		for (i = 0; visible_columns[i] != NULL; ++i) {
-			g_hash_table_insert (visible_columns_hash,
-			                     g_ascii_strdown (visible_columns[i], -1),
-			                     g_ascii_strdown (visible_columns[i], -1));
-		}
-	}
+        GtkTreeViewColumn *c = GTK_TREE_VIEW_COLUMN (l->data);
 
-	menu = gtk_menu_new ();
+        g_object_get (G_OBJECT (c),
+                      "title", &label,
+                      "visible", &visible,
+                      NULL);
 
-	for (l = all_columns; l != NULL; l = l->next) {
-		char *name;
-		char *label;
-		char *lowercase;
+        name = g_object_get_data (G_OBJECT (c), "column-id");
 
-		g_object_get (G_OBJECT (l->data),
-		              "name", &name,
-		              "label", &label,
-		              NULL);
-		lowercase = g_ascii_strdown (name, -1);
+        lowercase = g_ascii_strdown (name, -1);
 
-		menu_item = gtk_check_menu_item_new_with_label (label);
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+        menu_item = gtk_check_menu_item_new_with_label (label);
+        gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 
-		g_object_set_data_full (G_OBJECT (menu_item),
-		                        "column-name", name, g_free);
+        g_object_set_data_full (G_OBJECT (menu_item),
+                                "column-name", g_strdup (name), g_free);
 
-		if (g_hash_table_lookup (visible_columns_hash, lowercase) != NULL) {
-			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item),
-			                                TRUE);
-		}
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), visible);
 
         /* Don't allow hiding the filename */
         if (g_strcmp0 (lowercase, "name") == 0) {
             gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
         }
 
-		g_signal_connect (menu_item,
-		                  "toggled",
-		                  G_CALLBACK (column_header_menu_toggled),
-		                  list_view);
+        g_signal_connect (menu_item,
+                          "toggled",
+                          G_CALLBACK (column_header_menu_toggled),
+                          list_view);
 
-		g_free (lowercase);
-		g_free (label);
-	}
+        g_clear_pointer (&lowercase, g_free);
+        g_clear_pointer (&label, g_free);
+    }
 
 	menu_item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
@@ -1915,11 +1894,6 @@ column_header_clicked (GtkWidget *column_button,
 	                           gdk_event_get_device ((GdkEvent *) event),
 	                           NULL, NULL, NULL, NULL, NULL,
 	                           event->button, event->time);
-
-	g_hash_table_destroy (visible_columns_hash);
-	nemo_column_list_free (all_columns);
-	g_strfreev (column_order);
-	g_strfreev (visible_columns);
 
 	return TRUE;
 }
@@ -2217,6 +2191,11 @@ create_and_set_up_tree_view (NemoListView *view)
 			view->details->file_name_column = gtk_tree_view_column_new ();
             gtk_tree_view_append_column (view->details->tree_view,
                                          view->details->file_name_column);
+
+            g_object_set_data_full (G_OBJECT (view->details->file_name_column),
+                                    "column-id", g_strdup (name),
+                                    g_free);
+
 			view->details->file_name_column_num = column_num;
 			
 			g_hash_table_insert (view->details->columns,
@@ -2269,16 +2248,25 @@ create_and_set_up_tree_view (NemoListView *view)
                           NULL);
 			view->details->cells = g_list_append (view->details->cells,
 							      cell);
-			column = gtk_tree_view_column_new_with_attributes (label,
-									   cell,
-									   "text", column_num,
-									   NULL);
+            column = gtk_tree_view_column_new ();
+
+            g_object_set_data_full (G_OBJECT (column),
+                                    "column-id", g_strdup (name),
+                                    g_free);
+
+            gtk_tree_view_column_set_title (column, label);
+            gtk_tree_view_column_pack_start (column, cell, TRUE);
+            gtk_tree_view_column_set_attributes (column, cell,
+                                                 "text", column_num,
+                                                 NULL);
+
             gtk_tree_view_append_column (view->details->tree_view, column);
             gtk_tree_view_column_set_min_width (column, 30);
 			gtk_tree_view_column_set_sort_column_id (column, column_num);
-			g_hash_table_insert (view->details->columns, 
-					     g_strdup (name), 
-					     column);
+
+            g_hash_table_insert (view->details->columns,
+                                 g_strdup (name),
+                                 column);
 
             g_signal_connect (gtk_tree_view_column_get_button (column),
                               "button-press-event",
