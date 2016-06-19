@@ -450,6 +450,11 @@
       <_summary>Default column order in the list view</_summary>
       <_description>Default column order in the list view.</_description>
     </key>
+    <key name="search-visible-columns" type="as">
+      <default>[ 'name', 'size', 'type', 'where' ]</default>
+      <_summary>Default list of columns visible in the search view.</_summary>
+      <_description>Default list of columns visible in the search view.</_description>
+    </key>
   </schema>
 
   <schema id="org.nemo.sidebar-panels" path="/org/nemo/sidebar-panels/" gettext-domain="nemo">

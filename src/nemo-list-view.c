@@ -169,14 +169,6 @@ static void   set_columns_settings_from_metadata_and_preferences (NemoListView *
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
-static const char * default_search_visible_columns[] = {
-   "name", "size", "type", "where", NULL
-};
-
-static const char * default_search_columns_order[] = {
-   "name", "size", "type", "where", NULL
-};
-
 static const char * default_trash_visible_columns[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
 };
@@ -192,6 +184,26 @@ static const char * default_recent_visible_columns[] = {
 static const char * default_recent_columns_order[] = {
     "name", "size", "type", "date_accessed", NULL
 };
+
+static gchar **
+string_array_from_string_glist (GList *list)
+{
+    GPtrArray *res;
+    GList *l;
+    gchar **ret;
+
+    res = g_ptr_array_new ();
+
+    for (l = list; l != NULL; l = l->next) {
+        g_ptr_array_add (res, g_strdup (l->data));
+    }
+
+    g_ptr_array_add (res, NULL);
+
+    ret = (char **) g_ptr_array_free (res, FALSE);
+
+    return ret;
+}
 
 static const gchar*
 get_default_sort_order (NemoFile *file, gboolean *reversed)
@@ -732,8 +744,8 @@ static void
 columns_reordered_callback (AtkObject *atk,
                             gpointer user_data)
 {
-
     NemoListView *view = NEMO_LIST_VIEW (user_data);
+    NemoDirectory *directory;
 
     gchar **columns;
     GList *vis_columns = NULL;
@@ -759,14 +771,25 @@ columns_reordered_callback (AtkObject *atk,
                 list = g_list_prepend (list, (gchar *)l->data);
         }
     }
+
     list = g_list_reverse (list);
 
-    if (nemo_global_preferences_get_ignore_view_metadata ())
+    directory = nemo_view_get_model (NEMO_VIEW (view));
+
+    if (nemo_global_preferences_get_ignore_view_metadata ()) {
         nemo_window_set_ignore_meta_column_order (nemo_view_get_nemo_window (NEMO_VIEW (view)), list);
-    else
+    } else if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+        gchar **column_array = string_array_from_string_glist (list);
+        g_settings_set_strv (nemo_list_view_preferences,
+                             NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS,
+                             (const gchar **) column_array);
+
+        g_strfreev (column_array);
+    } else {
         nemo_file_set_metadata_list (file,
                                      NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER,
                                      list);
+    }
     g_list_free_full (list, g_free);
     g_free (columns);
     g_list_free (vis_columns);
@@ -1709,6 +1732,7 @@ column_header_menu_toggled (GtkCheckMenuItem *menu_item,
                             NemoListView *list_view)
 {
 	NemoFile *file;
+    NemoDirectory *directory;
     char **visible_columns;
     const char *menu_item_column_id;
 	GList *list = NULL;
@@ -1735,11 +1759,20 @@ column_header_menu_toggled (GtkCheckMenuItem *menu_item,
         }
     }
 
+    directory = nemo_view_get_model (NEMO_VIEW (list_view));
+
 	list = g_list_reverse (list);
 
     if (nemo_global_preferences_get_ignore_view_metadata ())
         nemo_window_set_ignore_meta_visible_columns (nemo_view_get_nemo_window (NEMO_VIEW (list_view)), list);
-    else
+    else if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+        gchar **column_array = string_array_from_string_glist (list);
+        g_settings_set_strv (nemo_list_view_preferences,
+                             NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS,
+                             (const gchar **) column_array);
+
+        g_strfreev (column_array);
+    } else
         nemo_file_set_metadata_list (file,
                                      NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS,
                                      list);
@@ -1764,6 +1797,7 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
                                 NemoListView *list_view)
 {
 	NemoFile *file;
+    NemoDirectory *directory;
 	char **default_columns;
 	char **default_order;
 
@@ -1781,6 +1815,11 @@ column_header_menu_use_default (GtkMenuItem *menu_item,
         nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER, NULL);
         nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
     }
+
+    directory = nemo_view_get_model (NEMO_VIEW (list_view));
+
+    if (NEMO_IS_SEARCH_DIRECTORY (directory))
+        g_settings_reset (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS);
 
     default_columns = get_default_visible_columns (list_view);
 
@@ -2346,7 +2385,7 @@ get_default_visible_columns (NemoListView *list_view)
 
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
     if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
-        return g_strdupv ((gchar **) default_search_visible_columns);
+        return g_settings_get_strv (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS);
     }
 
     return g_settings_get_strv (nemo_list_view_preferences,
@@ -2372,17 +2411,8 @@ get_visible_columns (NemoListView *list_view)
     }
 
 	if (visible_columns) {
-		GPtrArray *res;
-		GList *l;
-
-		res = g_ptr_array_new ();
-		for (l = visible_columns; l != NULL; l = l->next) {
-			g_ptr_array_add (res, l->data);
-		}
-		g_ptr_array_add (res, NULL);
-
-		ret = (char **) g_ptr_array_free (res, FALSE);
-		g_list_free (visible_columns);
+        ret = string_array_from_string_glist (visible_columns);
+        g_list_free_full (visible_columns, g_free);
 	}
 
 	if (ret != NULL) {
@@ -2410,7 +2440,7 @@ get_default_column_order (NemoListView *list_view)
 
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
     if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
-        return g_strdupv ((gchar **) default_search_columns_order);
+        return g_settings_get_strv (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS);
     }
 
     return g_settings_get_strv (nemo_list_view_preferences,
@@ -2435,19 +2465,10 @@ get_column_order (NemoListView *list_view)
                                                     NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER);
     }
 
-	if (column_order) {
-		GPtrArray *res;
-		GList *l;
-
-		res = g_ptr_array_new ();
-		for (l = column_order; l != NULL; l = l->next) {
-			g_ptr_array_add (res, l->data);
-		}
-		g_ptr_array_add (res, NULL);
-
-		ret = (char **) g_ptr_array_free (res, FALSE);
-		g_list_free (column_order);
-	}
+    if (column_order) {
+        ret = string_array_from_string_glist (column_order);
+        g_list_free_full (column_order, g_free);
+    }
 
 	if (ret != NULL) {
 		return ret;
@@ -3128,6 +3149,7 @@ static void
 nemo_list_view_reset_to_defaults (NemoView *view)
 {
 	NemoFile *file;
+    NemoDirectory *directory;
 
 	file = nemo_view_get_directory_as_file (view);
 
@@ -3149,6 +3171,11 @@ nemo_list_view_reset_to_defaults (NemoView *view)
         nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_COLUMN_ORDER, NULL);
         nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
     }
+
+    directory = nemo_view_get_model (view);
+
+    if (NEMO_IS_SEARCH_DIRECTORY (directory))
+        g_settings_reset (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS);
 
     char **default_columns, **default_order;
 
