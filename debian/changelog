@@ -1,3 +1,24 @@
+nemo (3.0.6) sarah; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Generate action files manually (as opposed to during the build)
+
+  [ Michael Webster ]
+  * nemo-desktop-utils.c: return 0 for monitor index if a widget isn't realized (this can happen during configuration changes and during session startup).
+  * nemo-desktop-icon-view.c: disconnect from the same gsettings instance we connected to.
+  * nemo-desktop-manager, nemo-application: Fix some cleanup issues - disconnect from the correct objects when disposing of the desktop manager, and destroy the desktop manager earlier in nemo's destruction so there are no issues freeing the DesktopInfos.
+
+  [ leigh123linux ]
+  * notebook: removed unused ifdef code
+
+  [ Michael Webster ]
+  * nemo-list-view.c: detach the column header menu from metadata when setting it up.  Use the actual view's layout instead.  When reacting to visible columns being changed, simplify things by iterating through the treeview column to build a new metadata list.
+  * nemo-list-view.c: Don't show trash-specific columns in the header menu.
+  * list view: Make changes to the search results view persistent. gvfs can't save metadata for the search 'folder' so we store it ourselves.
+  * eel-canvas.c: Fix touchscreen selection in icon views.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 23 Jun 2016 13:32:32 +0100
+
 nemo (3.0.5) sarah; urgency=medium
 
   [ leigh123linux ]
