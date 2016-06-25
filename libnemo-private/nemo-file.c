@@ -4506,7 +4506,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
                               NemoDateCompactFormat  date_format)
 {
 	time_t file_time_raw;
-  	GDateTime *file_date, *now;
+	GDateTime *file_date_time, *now;
         GDateTime *today_midnight;
 	gint days_ago;
 	gboolean use_24;
@@ -4518,24 +4518,31 @@ nemo_file_get_date_as_string (NemoFile       *file,
   	if (!nemo_file_get_date (file, date_type, &file_time_raw))
 		return NULL;
 
-  	file_date = g_date_time_new_from_unix_local (file_time_raw);
+  	file_date_time = g_date_time_new_from_unix_local (file_time_raw);
 	date_format_pref = g_settings_get_enum (nemo_preferences,
 						NEMO_PREFERENCES_DATE_FORMAT);
 
 	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
-		result = g_date_time_format (file_date, "%c");
+		result = g_date_time_format (file_date_time, "%c");
 		goto out;
 	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
-		result = g_date_time_format (file_date, "%Y-%m-%d %H:%M:%S");
+		result = g_date_time_format (file_date_time, "%Y-%m-%d %H:%M:%S");
 		goto out;
 	}
-  	file_date = g_date_time_new_from_unix_local (file_time_raw);
+
 	if (date_format != NEMO_DATE_FORMAT_FULL) {
+		GDateTime *file_date;
+
 		now = g_date_time_new_now_local ();
                 today_midnight = g_date_time_new_local (g_date_time_get_year (now),
                                                         g_date_time_get_month (now),
                                                         g_date_time_get_day_of_month (now),
-                                                        0, 1, 0);
+                                                        0, 0, 0);
+
+		file_date = g_date_time_new_local (g_date_time_get_year (file_date_time),
+                                                   g_date_time_get_month (file_date_time),
+                                                   g_date_time_get_day_of_month (file_date_time),
+                                                   0, 0, 0);
 
 		days_ago = g_date_time_difference (today_midnight, file_date) / G_TIME_SPAN_DAY;
 
@@ -4632,6 +4639,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 			}
 		}
 
+		g_date_time_unref (file_date);
 		g_date_time_unref (now);
 		g_date_time_unref (today_midnight);
 	} else {
@@ -4639,10 +4647,10 @@ nemo_file_get_date_as_string (NemoFile       *file,
 		format = _("%c");
 	}
 
-	result = g_date_time_format (file_date, format);
+	result = g_date_time_format (file_date_time, format);
 
  out:
-	g_date_time_unref (file_date);
+	g_date_time_unref (file_date_time);
 
 	/* Replace ":" with ratio. Replacement is done afterward because g_date_time_format
 	 * may fail with utf8 chars in some locales */
