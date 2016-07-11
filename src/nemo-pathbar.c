@@ -491,7 +491,11 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
         *minimum = MAX (*minimum, child_min);
         *natural = MAX (*natural, child_nat);
     }
-    path_bar->priv->slider_width = MIN (height * 2 / 3 + 5, height);
+
+    gtk_widget_get_preferred_width (path_bar->priv->down_slider_button,
+                                    &path_bar->priv->slider_width,
+                                    NULL);
+
     *minimum += path_bar->priv->slider_width * 2;
     *natural += path_bar->priv->slider_width * 2;
 }
@@ -617,6 +621,10 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         return;
     }
     direction = gtk_widget_get_direction (widget);
+
+    gtk_widget_get_preferred_width (path_bar->priv->up_slider_button,
+                                    &path_bar->priv->slider_width,
+                                    NULL);
 
     gtk_widget_get_preferred_size (BUTTON_DATA (path_bar->priv->button_list->data)->button,
                        NULL, &child_requisition);
