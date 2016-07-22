@@ -34,6 +34,7 @@
 #include "nemo-icon-private.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-selection-canvas-item.h"
+#include "nemo-desktop-utils.h"
 #include <atk/atkaction.h>
 #include <eel/eel-accessibility.h>
 #include <eel/eel-vfs-extensions.h>
@@ -4905,41 +4906,47 @@ nemo_icon_container_search_position_func (NemoIconContainer *container,
 	gint cont_x, cont_y;
 	gint cont_width, cont_height;
 	GdkWindow *cont_window;
-	GdkScreen *screen;
 	GtkRequisition requisition;
 	gint monitor_num;
 	GdkRectangle monitor;
 
-
 	cont_window = gtk_widget_get_window (GTK_WIDGET (container));
-	screen = gdk_window_get_screen (cont_window);
 
-	monitor_num = gdk_screen_get_monitor_at_window (screen, cont_window);
-	gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
+    monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
+
+    /* FIXME?? _NET_WORKAREA hint only provides accurate workarea geometry for the
+     * primary monitor. Non-primary will return the full monitor geometry instead.
+     */
+    nemo_desktop_utils_get_monitor_work_rect (monitor_num, &monitor);
 
 	gtk_widget_realize (search_dialog);
 
-	gdk_window_get_origin (cont_window, &cont_x, &cont_y);
-        cont_width = gdk_window_get_width (cont_window);
-        cont_height = gdk_window_get_height (cont_window);
+    gdk_window_get_origin (cont_window, &cont_x, &cont_y);
+    cont_width = gdk_window_get_width (cont_window);
+    cont_height = gdk_window_get_height (cont_window);
 
 	gtk_widget_get_preferred_size (search_dialog, &requisition, NULL);
 
-	if (cont_x + cont_width > gdk_screen_get_width (screen)) {
-		x = gdk_screen_get_width (screen) - requisition.width;
-	} else if (cont_x + cont_width - requisition.width < 0) {
-		x = 0;
-	} else {
-		x = cont_x + cont_width - requisition.width;
-	}
+    if (nemo_icon_container_get_is_desktop (container)) {
+        x = cont_x + cont_width - requisition.width;
+        y = cont_y + cont_height - requisition.height;
+    } else {
+        if (cont_x + cont_width > monitor.x + monitor.width) {
+            x = monitor.x + monitor.width - requisition.width;
+        } else if (cont_x + cont_width - requisition.width < 0) {
+            x = 0;
+        } else {
+            x = cont_x + cont_width - requisition.width;
+        }
 
-	if (cont_y + cont_height + requisition.height > gdk_screen_get_height (screen)) {
-		y = gdk_screen_get_height (screen) - requisition.height;
-	} else if (cont_y + cont_height < 0) { /* isn't really possible ... */
-		y = 0;
-	} else {
-		y = cont_y + cont_height;
-	}
+        if (cont_y + cont_height + requisition.height > monitor.y + monitor.height) {
+            y = monitor.y + monitor.height - requisition.height;
+        } else if (cont_y + cont_height < 0) {
+            y = 0;
+        } else {
+            y = cont_y + cont_height;
+        }
+    }
 
 	gdk_window_move (gtk_widget_get_window (search_dialog), x, y);
 }
@@ -5589,7 +5596,7 @@ key_press_event (GtkWidget *widget,
 	/* We pass the event to the search_entry.  If its text changes, then we
 	 * start the typeahead find capabilities.
 	 * Copied from NemoIconContainer */
-	if (!handled && !nemo_icon_container_get_is_desktop (container) &&
+	if (!handled &&
 		event->keyval != GDK_KEY_asciitilde &&
 		event->keyval != GDK_KEY_KP_Divide &&
 	    event->keyval != GDK_KEY_slash /* don't steal slash key events, used for "go to" */ &&
@@ -5600,7 +5607,6 @@ key_press_event (GtkWidget *widget,
 		char *old_text;
 		const char *new_text;
 		gboolean retval;
-		GdkScreen *screen;
 		gboolean text_modified;
 		gulong popup_menu_id;
 
@@ -5616,11 +5622,6 @@ key_press_event (GtkWidget *widget,
 		popup_menu_id = g_signal_connect (container->details->search_entry, 
 						  "popup_menu", G_CALLBACK (gtk_true), NULL);
 
-		/* Move the entry off screen */
-		screen = gtk_widget_get_screen (GTK_WIDGET (container));
-		gtk_window_move (GTK_WINDOW (container->details->search_window),
-		gdk_screen_get_width (screen) + 1,
-		gdk_screen_get_height (screen) + 1);
 		gtk_widget_show (container->details->search_window);
 
 		/* Send the event to the window.  If the preedit_changed signal is emitted

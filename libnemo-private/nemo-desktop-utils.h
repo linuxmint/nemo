@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 
 void nemo_desktop_utils_get_monitor_work_rect (gint monitor, GdkRectangle *rect);
 gint nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget);
+gboolean nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary);
 
 G_END_DECLS
 

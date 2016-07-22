@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+
+import os
+
+os.chdir("data")
+os.system("./merge_action_strings")

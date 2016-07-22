@@ -70,7 +70,7 @@ update_toggle_state (NemoContextMenuMenuItem *item,
 {
     gboolean complex_mode = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS);
 
-    /* const */ gchar *tip_text = complex_mode ? _("Show less actions") :
+    /* const */ gchar *tip_text = complex_mode ? _("Show fewer actions") :
                                                  _("Show more actions");
 
     gchar *markup = g_strdup_printf ("<small><i>%s</i></small>", tip_text);

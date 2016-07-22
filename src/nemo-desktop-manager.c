@@ -8,6 +8,7 @@
 #include <gdk/gdkx.h>
 
 #include <libnemo-private/nemo-global-preferences.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 
 G_DEFINE_TYPE (NemoDesktopManager, nemo_desktop_manager, G_TYPE_OBJECT);
 
@@ -123,7 +124,7 @@ layout_changed (NemoDesktopManager *manager)
         if (i == x_primary) {
             create_new_desktop_window (manager, i, show_desktop_on_primary, show_desktop_on_primary);
             primary_set = primary_set || show_desktop_on_primary;
-        } else {
+        } else if (!nemo_desktop_utils_get_monitor_cloned (i, x_primary)) {
             gboolean set_layout_primary = !primary_set && !show_desktop_on_primary && show_desktop_on_remaining;
             create_new_desktop_window (manager, i, set_layout_primary, show_desktop_on_remaining);
             primary_set = primary_set || set_layout_primary;
@@ -211,8 +212,8 @@ nemo_desktop_manager_constructed (GObject *object)
 
     manager->show_desktop_changed_id = g_signal_connect_swapped (nemo_desktop_preferences, 
                                                                  "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
-				  				 G_CALLBACK (layout_changed),
-				                                 manager);
+                                                                 G_CALLBACK (layout_changed),
+                                                                 manager);
 
     manager->desktop_layout_changed_id = g_signal_connect_swapped (nemo_desktop_preferences,
                                                                    "changed::" NEMO_PREFERENCES_DESKTOP_LAYOUT,
@@ -252,8 +253,8 @@ nemo_desktop_manager_dispose (GObject *object)
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->show_desktop_changed_id);
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->desktop_layout_changed_id);
     g_signal_handler_disconnect (manager->screen, manager->size_changed_id);
-    g_signal_handler_disconnect (manager->screen, manager->home_dir_changed_id);
-    g_signal_handler_disconnect (manager->screen, manager->orphaned_icon_handling_id);
+    g_signal_handler_disconnect (nemo_preferences, manager->home_dir_changed_id);
+    g_signal_handler_disconnect (nemo_preferences, manager->orphaned_icon_handling_id);
 
     remove_workarea_filter (manager);
 

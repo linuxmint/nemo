@@ -15,3 +15,32 @@
     color: #f5f5f5;
     text-shadow: none;
 }
+
+/* EelEditableLabel (icon labels) */
+.nemo-desktop.view .entry,
+.nemo-desktop.view .entry:active,
+.nemo-desktop.view .entry:focus,
+.nemo-desktop.view .entry:backdrop {
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #000000;
+    border-radius: 3px;
+    color: #000000;
+    text-shadow: none;
+    background-image: -gtk-gradient(linear,
+                                    left top, left bottom,
+                                    from       (shade(rgba(255,255,255,1), 0.86)),
+                                    color-stop (0.15, shade(rgba(255,255,255,1), 0.96)),
+                                    color-stop (0.50, shade(rgba(255,255,255,1), 0.98)),
+                                    to         (shade(rgba(255,255,255,1), 1.00)));
+}
+
+.nemo-desktop.view .entry:selected,
+.nemo-desktop.view .entry:focus:selected,
+.nemo-desktop.view .entry:backdrop:selected {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+    text-shadow: none;
+}
+

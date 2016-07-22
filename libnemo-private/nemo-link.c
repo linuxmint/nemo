@@ -458,7 +458,7 @@ nemo_link_get_link_icon_from_desktop (GKeyFile *key_file)
 		}
 	}
 
-	icon = g_themed_icon_new_with_default_fallbacks (icon_str);
+	icon = g_themed_icon_new (icon_str);
 
 	/* apply a link emblem if it's a link */
 	if (g_strcmp0 (type, "Link") == 0) {

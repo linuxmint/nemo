@@ -858,6 +858,12 @@ nemo_window_view_visible (NemoWindow *window,
 	gtk_widget_show (GTK_WIDGET (window));
 }
 
+static gboolean
+nemo_window_is_desktop (NemoWindow *window)
+{
+    return window->details->disable_chrome;
+}
+
 static void
 nemo_window_save_geometry (NemoWindow *window)
 {
@@ -866,7 +872,7 @@ nemo_window_save_geometry (NemoWindow *window)
 
 	g_assert (NEMO_IS_WINDOW (window));
 
-	if (gtk_widget_get_window (GTK_WIDGET (window))) {
+	if (gtk_widget_get_window (GTK_WIDGET (window)) && !nemo_window_is_desktop (window)) {
 		geometry_string = eel_gtk_window_get_geometry_string (GTK_WINDOW (window));
 		is_maximized = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)))
 				& GDK_WINDOW_STATE_MAXIMIZED;
@@ -1021,45 +1027,6 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		/* inform slot & view */
                 g_signal_emit_by_name (new_slot, "active");
 	}
-}
-
-static void
-nemo_window_get_preferred_width (GtkWidget *widget,
-				     gint *minimal_width,
-				     gint *natural_width)
-{
-	GdkScreen *screen;
-	gint max_w, min_w, default_w;
-
-	screen = gtk_window_get_screen (GTK_WINDOW (widget));	
-
-	max_w = get_max_forced_width (screen);
-	min_w = NEMO_WINDOW_MIN_WIDTH;
-
-	default_w = NEMO_WINDOW_DEFAULT_WIDTH;
-
-	*minimal_width = MIN (min_w, max_w);
-	*natural_width = MIN (default_w, max_w);
-}
-
-static void
-nemo_window_get_preferred_height (GtkWidget *widget,
-				      gint *minimal_height,
-				      gint *natural_height)
-{
-	GdkScreen *screen;
-	gint max_h, min_h, default_h;
-
-	screen = gtk_window_get_screen (GTK_WINDOW (widget));	
-
-	max_h = get_max_forced_height (screen);
-
-	min_h = NEMO_WINDOW_MIN_HEIGHT;
-
-	default_h = NEMO_WINDOW_DEFAULT_HEIGHT;
-
-	*minimal_height = MIN (min_h, max_h);
-	*natural_height = MIN (default_h, max_h);
 }
 
 static void
@@ -1977,7 +1944,7 @@ static gboolean
 nemo_window_state_event (GtkWidget *widget,
 			     GdkEventWindowState *event)
 {
-	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED && !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
 		g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED,
 					event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
 	}
@@ -2085,6 +2052,11 @@ nemo_window_init (NemoWindow *window)
     window->details->ignore_meta_sort_direction = SORT_NULL;
     window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
 
+	/* This makes it possible for GTK+ themes to apply styling that is specific to Nemo
+	 * without affecting other GTK+ applications.
+	 */
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-window");
+
 	window_group = gtk_window_group_new ();
 	gtk_window_group_add_window (window_group, GTK_WINDOW (window));
 	g_object_unref (window_group);
@@ -2127,8 +2099,6 @@ nemo_window_class_init (NemoWindowClass *class)
 
 	wclass->destroy = nemo_window_destroy;
 	wclass->show = nemo_window_show;
-	wclass->get_preferred_width = nemo_window_get_preferred_width;
-	wclass->get_preferred_height = nemo_window_get_preferred_height;
 	wclass->realize = nemo_window_realize;
 	wclass->key_press_event = nemo_window_key_press_event;
     wclass->key_release_event = nemo_window_key_release_event;

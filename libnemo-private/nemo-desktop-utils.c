@@ -49,7 +49,35 @@ nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget)
 
     GdkWindow *window = gtk_widget_get_window (widget);
 
+    if (window == NULL)
+        return 0;
+
     gint monitor = gdk_screen_get_monitor_at_window (default_screen, window);
 
     return monitor;
 }
+
+gboolean
+nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary)
+{
+    GdkRectangle rect_primary;
+    GdkRectangle rect_test;
+
+    ensure_screen ();
+
+    gint n_monitors = gdk_screen_get_n_monitors (default_screen);
+
+	g_return_val_if_fail (monitor >= 0 && monitor < n_monitors, FALSE);
+	g_return_val_if_fail (x_primary >= 0 && x_primary < n_monitors, FALSE);
+
+    gdk_screen_get_monitor_geometry(default_screen, x_primary, &rect_primary);
+    gdk_screen_get_monitor_geometry(default_screen, monitor, &rect_test);
+
+    if (rect_primary.x == rect_test.x &&
+    		rect_primary.y == rect_test.y) {
+    	return TRUE;
+    }
+    return FALSE;
+}
+
+

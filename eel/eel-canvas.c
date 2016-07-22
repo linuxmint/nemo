@@ -3032,9 +3032,11 @@ eel_canvas_button (GtkWidget *widget, GdkEventButton *event)
 		/* Pick the current item as if the button were not pressed, and
 		 * then process the event.
 		 */
+		event->state ^= mask;
 		canvas->state = event->state;
 		pick_current_item (canvas, (GdkEvent *) event);
-		canvas->state ^= mask;
+		event->state ^= mask;
+		canvas->state = event->state;
 		retval = emit_event (canvas, (GdkEvent *) event);
 		break;
 

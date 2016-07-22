@@ -129,7 +129,7 @@ struct _NemoPathBarDetails {
 	GtkWidget *down_slider_button;
 	guint settings_signal_id;
 	gint icon_size;
-	gint16 slider_width;
+	gint slider_width;
 	gint16 spacing;
 	gint16 button_offset;
 	guint timer;
@@ -491,7 +491,11 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
         *minimum = MAX (*minimum, child_min);
         *natural = MAX (*natural, child_nat);
     }
-    path_bar->priv->slider_width = MIN (height * 2 / 3 + 5, height);
+
+    gtk_widget_get_preferred_width (path_bar->priv->down_slider_button,
+                                    &path_bar->priv->slider_width,
+                                    NULL);
+
     *minimum += path_bar->priv->slider_width * 2;
     *natural += path_bar->priv->slider_width * 2;
 }
@@ -599,7 +603,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
     gboolean needs_reorder = FALSE;
     gint button_count = 0;
 
-    need_sliders = FALSE;
+    need_sliders = TRUE;
     up_slider_offset = 0;
     down_slider_offset = 0;
     path_bar = NEMO_PATH_BAR (widget);
@@ -617,6 +621,10 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
         return;
     }
     direction = gtk_widget_get_direction (widget);
+
+    gtk_widget_get_preferred_width (path_bar->priv->up_slider_button,
+                                    &path_bar->priv->slider_width,
+                                    NULL);
 
     gtk_widget_get_preferred_size (BUTTON_DATA (path_bar->priv->button_list->data)->button,
                        NULL, &child_requisition);
@@ -636,7 +644,7 @@ nemo_path_bar_size_allocate (GtkWidget     *widget,
 
     largest_width = allocation->width;
 
-    if (width <= allocation->width) {
+    if (width <= allocation->width && !need_sliders) {
         if (path_bar->priv->fake_root) {
             pathbar_root_button = path_bar->priv->fake_root;
         } else {

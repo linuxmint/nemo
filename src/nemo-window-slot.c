@@ -31,6 +31,7 @@
 #include "nemo-floating-bar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
+#include "nemo-window-types.h"
 
 #include <glib/gi18n.h>
 
@@ -102,7 +103,7 @@ create_new_search (NemoWindowSlot *slot)
 	directory = nemo_directory_get (location);
 	g_assert (NEMO_IS_SEARCH_DIRECTORY (directory));
 
-	nemo_window_slot_open_location_full (slot, location, 0, NULL, sync_search_location_cb, slot);
+	nemo_window_slot_open_location_full (slot, location, NEMO_WINDOW_OPEN_FLAG_SEARCH, NULL, sync_search_location_cb, slot);
 
 	nemo_directory_unref (directory);
 	g_object_unref (location);

@@ -127,7 +127,7 @@ nemo_desktop_icon_view_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
 					      default_zoom_level_changed,
 					      icon_view);
-	g_signal_handlers_disconnect_by_func (nemo_preferences,
+	g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
 					      font_changed_callback,
 					      icon_view);
 

@@ -4014,7 +4014,7 @@ get_custom_icon (NemoFile *file)
 		custom_icon_name = get_custom_icon_metadata_name (file);
 
 		if (custom_icon_name != NULL) {
-			icon = g_themed_icon_new_with_default_fallbacks (custom_icon_name);
+			icon = g_themed_icon_new (custom_icon_name);
 			g_free (custom_icon_name);
 		}
 	}

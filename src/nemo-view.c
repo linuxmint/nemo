@@ -3318,7 +3318,7 @@ done_loading (NemoView *view,
         gint64 milli_remainder = diff % 1000;
         gint64 seconds = diff / 1000;
 
-        g_printerr ("Nemo startup time: %d.%d seconds\n", seconds, milli_remainder);
+        g_printerr ("Nemo startup time: %ld.%ld seconds\n", seconds, milli_remainder);
     }
 
 	view->details->loading = FALSE;
@@ -5144,7 +5144,7 @@ reset_move_copy_to_menu (NemoView *view)
     GtkAction *action;
 
     mount_uri = nemo_get_home_directory_uri ();
-    file = nemo_file_get_existing_by_uri (mount_uri);
+    file = nemo_file_get_by_uri (mount_uri);
     g_free (mount_uri);
 
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_HOME);
@@ -5154,7 +5154,7 @@ reset_move_copy_to_menu (NemoView *view)
 
     g_object_unref (file);
     mount_uri = nemo_get_desktop_directory_uri ();
-    file = nemo_file_get_existing_by_uri (mount_uri);
+    file = nemo_file_get_by_uri (mount_uri);
     g_free (mount_uri);
 
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_DESKTOP);
@@ -10484,12 +10484,6 @@ nemo_view_select_file (NemoView *view, NemoFile *file)
 	nemo_view_call_set_selection (view, &file_list);
 }
 
-static gboolean
-remove_all (gpointer key, gpointer value, gpointer callback_data)
-{
-	return TRUE;
-}
-
 /**
  * nemo_view_stop_loading:
  * 
@@ -10512,7 +10506,7 @@ nemo_view_stop_loading (NemoView *view)
 	file_and_directory_list_free (view->details->new_changed_files);
 	view->details->new_changed_files = NULL;
 
-	g_hash_table_foreach_remove (view->details->non_ready_files, remove_all, NULL);
+	g_hash_table_remove_all (view->details->non_ready_files);
 
 	file_and_directory_list_free (view->details->old_added_files);
 	view->details->old_added_files = NULL;

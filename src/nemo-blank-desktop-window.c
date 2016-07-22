@@ -33,6 +33,8 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 
+#include <eel/eel-gtk-extensions.h>
+
 #include "nemo-plugin-manager.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_DESKTOP
@@ -113,7 +115,7 @@ build_menu (NemoBlankDesktopWindow *window)
     for (l = action_list; l != NULL; l = l->next) {
         action = l->data;
 
-        if (action->show_in_blank_desktop) {
+        if (action->show_in_blank_desktop && action->dbus_satisfied) {
             gchar *label = nemo_action_get_label (action, NULL, NULL);
             item = gtk_image_menu_item_new_with_mnemonic (label);
             g_free (label);
@@ -137,7 +139,7 @@ build_menu (NemoBlankDesktopWindow *window)
 }
 
 static void
-do_popup_menu (NemoBlankDesktopWindow *window, GdkEvent *event)
+do_popup_menu (NemoBlankDesktopWindow *window, GdkEventButton *event)
 {
     build_menu (window);
     eel_pop_up_context_menu (GTK_MENU(window->details->popup_menu),
@@ -160,7 +162,7 @@ on_button_press (GtkWidget *widget, GdkEventButton *event, NemoBlankDesktopWindo
     }
 
     if (event->button == 3) {
-        do_popup_menu (window, (GdkEvent *) event);
+        do_popup_menu (window, event);
     }
 
     return FALSE;
@@ -211,7 +213,7 @@ nemo_blank_desktop_window_constructed (GObject *obj)
            rect.width, rect.height);
 
     gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
-    gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
+    gtk_window_maximize (GTK_WINDOW (window));
 
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);

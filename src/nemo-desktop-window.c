@@ -113,7 +113,7 @@ nemo_desktop_window_constructed (GObject *obj)
            rect.width, rect.height);
 
     gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
-    gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
+    gtk_window_maximize (GTK_WINDOW (window));
 
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);
@@ -165,6 +165,9 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 
 	g_object_set_data (G_OBJECT (window), "is_desktop_window", 
 			   GINT_TO_POINTER (1));
+
+	/* Make it easier for themes authors to style the desktop window separately */
+	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
 }
 
 static gint
@@ -198,6 +201,13 @@ nemo_desktop_window_new (gint monitor)
                            "disable-chrome", TRUE,
                            "monitor", monitor,
                            NULL);
+
+    /* Stop wrong desktop window size in GTK 3.20*/
+    /* We don't want to set a default size, which the parent does, since this */
+    /* will cause the desktop window to open at the wrong size in gtk 3.20 */
+#if GTK_CHECK_VERSION (3, 19, 0) 
+    gtk_window_set_default_size (GTK_WINDOW (window), -1, -1);
+#endif
 
     g_signal_connect (window, "delete_event", G_CALLBACK (nemo_desktop_window_delete_event), NULL);
 

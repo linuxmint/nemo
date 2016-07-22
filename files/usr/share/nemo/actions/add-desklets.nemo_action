@@ -1,0 +1,106 @@
+[Nemo Action]
+
+Name=Add Desklets
+
+Comment=Add Cinamon desklets
+
+Exec=cinnamon-settings desklets
+
+Selection=None
+
+Extensions=any;
+
+Icon-Name=cs-desklets
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;
+Name[zh_HK]=新增桌面小工具
+Name[pt]=Adicionar Mini-Aplicações
+Name[ro]=Adaugă deskleturi
+Name[sl]=Dodaj aplete namizja
+Name[cy]=Ychwanegu Desgynau
+Name[nb]=Legg til skrivebordsprogrammer
+Name[ru]=Добавить десклеты
+Name[ms]=Tambah Desklet
+Name[ga]=Cuir le Deiscíní
+Name[da]=Tilføj skrivebordsprogrammer
+Name[is]=Bæta við skjáborðsgræjum (desklets)
+Name[en_AU]=Add Desklets
+Name[hr]=Dodaj desklete
+Name[be]=Дадаць дэсклеты
+Name[tr]=Masaüstü Uygulamacıkları Ekle
+Name[uk]=Додати десклети
+Name[sk]=Pridať Desklet
+Name[fi]=Lisää työpöytäsovelmia
+Name[tg]=Илова кардани барномаҳои мизи корӣ
+Name[ca]=Afegir Desklets
+Name[el]=Προσθήκη εφαρμογών οθόνης
+Name[he]=Add Desklets
+Name[cs]=Přidej Desklet
+Name[sv]=Lägg till skrivbordsprogram
+Name[ia]=Adder desklets
+Name[ja]=デスクレットを追加
+Name[af]=Voeg Desklets By
+Name[th]=เพิ่มเดสก์เล็ต
+Name[nl]=Minitoepassingen toevoegen
+Name[id]=Tambah Desklet
+Name[en_GB]=Add Desklets
+Name[et]=Lisa Desklet
+Name[gl]=Engadir trebellos
+Name[it]=Aggiungi Desklet
+Name[bs]=Dodaj Desklet-e
+Name[pt_BR]=Adicionar Desklets
+Name[es]=Añadir Desklets
+Name[eu]=Gehitu desklet-ak
+Name[gd]=Cuir desktlets ris
+Name[lt]=Pridėti ekrano programėlių
+Name[zh_TW]=加入桌面小程式
+Name[sr]=Додај справице
+Name[fr]=Ajouter des desklets
+Name[am]=ዴስክሌትስ መጨመሪያ
+Name[jv]=Kabeh Desklet
+Name[hu]=Asztalkalmazások hozzáadása
+Name[bn]=ডেস্কলেট যুক্ত করুন
+Name[bg]=Добавяне на десклети
+Name[de]=Desklets hinzufügen
+Name[ko]=데스크릿 추가
+Name[zh_CN]=添加桌面小工具
+Name[pl]=Dodaj desklety
+Name[vi]=Thêm Tiểu trình màn hình
+Comment[zh_HK]=新增 Cinnamon 桌面小工具
+Comment[pt]=Adicionar desklets Cinnamon
+Comment[ro]=Adaugă deskleturi Cinnamon
+Comment[cy]=Ychwanegu desgledi Cinnamon
+Comment[ru]=Добавить десклеты Cinnamon
+Comment[ms]=Tambah desklet Cinamon
+Comment[da]=Tilføj Cinnamon-skrivebordsprogrammer
+Comment[is]=Bæta við Cinnamon skjáborðsgræjum (desklets)
+Comment[hr]=Dodaj Cinnamon desklete
+Comment[tr]=Cinnamon masaüstü uygulamacıkları ekle
+Comment[uk]=Додати десклети Cinnamon
+Comment[sk]=Pridať desklety prostredia Cinnamon
+Comment[fi]=Lisää Cinnamon työpöytäsovelmia
+Comment[ca]=Afegeix desklets de Cinnamon
+Comment[el]=Προσθήκη μικροεφαρμογής στην επιφάνεια εργασίας
+Comment[cs]=Přidat Cinnamon desklety
+Comment[sv]=Lägg till Cinnamon skrivbordsprogram
+Comment[ia]=Adder le desklets de Cinamon
+Comment[ja]=Cinnamonデスクレットを追加
+Comment[th]=เพิ่มเดสก์เล็ต Cinnamon
+Comment[nl]=Minitoepassingen toevoegen aan Cinnamon
+Comment[en_GB]=Add Cinamon desklets
+Comment[it]=Aggiungi desklets di Cinnamon
+Comment[pt_BR]=Adicionar desklets do Cinnamon
+Comment[es]=Añadir desklets de Cinnamon
+Comment[eu]=Gehitu Cinnamon desklet-ak
+Comment[zh_TW]=加入 Cinamon 桌面小程式
+Comment[sr]=Додајте Циметове справице на радну површ
+Comment[fr]=Ajouter des desklets Cinnamon
+Comment[hu]=Cinnamon Asztalkalmazások hozzáadása
+Comment[bg]=Добави десклети на Cinnamon
+Comment[de]=Cinamon-Desklets hinzufügen
+Comment[ko]=시나몬 데스크릿 더하기
+Comment[zh_CN]=添加 Cinamon 桌面小工具
+Comment[pl]=Dodaj desklety Cinnamon
+Comment[vi]=Thêm tiểu dụng màn hình Cinnamon

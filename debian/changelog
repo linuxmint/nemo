@@ -1,3 +1,157 @@
+nemo (3.0.6) sarah; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Generate action files manually (as opposed to during the build)
+
+  [ Michael Webster ]
+  * nemo-desktop-utils.c: return 0 for monitor index if a widget isn't realized (this can happen during configuration changes and during session startup).
+  * nemo-desktop-icon-view.c: disconnect from the same gsettings instance we connected to.
+  * nemo-desktop-manager, nemo-application: Fix some cleanup issues - disconnect from the correct objects when disposing of the desktop manager, and destroy the desktop manager earlier in nemo's destruction so there are no issues freeing the DesktopInfos.
+
+  [ leigh123linux ]
+  * notebook: removed unused ifdef code
+
+  [ Michael Webster ]
+  * nemo-list-view.c: detach the column header menu from metadata when setting it up.  Use the actual view's layout instead.  When reacting to visible columns being changed, simplify things by iterating through the treeview column to build a new metadata list.
+  * nemo-list-view.c: Don't show trash-specific columns in the header menu.
+  * list view: Make changes to the search results view persistent. gvfs can't save metadata for the search 'folder' so we store it ourselves.
+  * eel-canvas.c: Fix touchscreen selection in icon views.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 23 Jun 2016 13:32:32 +0100
+
+nemo (3.0.5) sarah; urgency=medium
+
+  [ leigh123linux ]
+  * use g_hash_table_remove_all and get rid of some callbacks
+
+  [ JosephMcc ]
+  * Partially revert c082595 by limiting it to only affecting desktop items
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 31 May 2016 13:20:18 +0100
+
+nemo (3.0.4) sarah; urgency=medium
+
+  [ raveit65 ]
+  * add standard settings for EelEditableLabel
+
+  [ Clement Lefebvre ]
+  * Build-depend on cinnamon-l10n
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 31 May 2016 11:31:11 +0100
+
+nemo (3.0.3) sarah; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Updated pot file
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: When gtk overlay scrolling is in effect, add some padding right of the sidebar eject icons, otherwise they are covered by the scrollbar when it pops up.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 23 May 2016 12:52:58 +0100
+
+nemo (3.0.2) sarah; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Fixed build
+
+  [ Michael Webster ]
+  * debian/control: depend on python3-gi
+  * fix action i18n scripts to write utf-8
+
+  [ itzexor ]
+  * nemo-icon-view: include nemo-application.h needed in nemo_icon_view_add_file for: nemo_application_set_cache_flag nemo_application_get_singleton
+  * nemo-pathbar: use gint for slider_width instead of gint16 silences an incorrect pointer type warning.
+
+  [ Michael Webster ]
+  * nemo-list-view.c: don't explicitly unref columns anymore - they'll get handled when the tree view is destroyed.
+  * nemo-icon-container.c: Re-enable desktop type-to-select feature. Also make a couple fixes on the positioning logic for this little popup.  Where possible, it will avoid overlapping panels.
+  * desktop windows: maximize instead of relying on gdk for monitor workarea - it's inaccurate for anything but the primary monitor.
+  * nemo-icon-container.c: special case desktop windows for search popup - now that we can rely on the window being the correct size to account for panels, we can reliably position this popup off of those panels.
+
+  [ JosephMcc ]
+  * prefs: Don't try to hardcode a minimum size for the preferences dialog
+
+  [ Michael Webster ]
+  * Use g_themed_icon_new instead of g_themed_icon_new_with_default_fallbacks.
+  * nemo-window.c: As of 9cb9c48f59baa we maximize the desktop containers to make sure they use the correct work area as set by muffin.  This started causing the window state 'maximized' key to be set to true when opening a new nemo window.  This corrects that issue, using disable_chrome as an indicator to ignore the window - only the desktop windows set this true.
+  * nemo-window.c: fix formatting
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 20 May 2016 12:26:51 +0100
+
+nemo (3.0.1) sarah; urgency=medium
+
+  [ JosephMcc ]
+  * pathbar: Always show the pathbar up and down arrows. Dynamically adding and removing these buttons was causing the visual style of buttons in the pathbar to break
+
+  [ Igor ]
+  * Fix segfault on changing the number of colums when in list view
+  * Fix uninitialized is_desktop flag
+
+  [ Michal Cyprian ]
+  * Port python scripts to Python 3 - /data/extract_action_strings - /data/merge_action_strings - /files/usr/share/nemo/actions/myaction.py - all Python 2-3 compatible
+
+  [ Michael Webster ]
+  * nemo-list-view.c:  Fix initial column sizing - expand the filename column only to fill available space.  Other columns will start with their natural size.
+  * update m4 files
+
+  [ itzexor ]
+  * nemo-view: switch to nemo_get_file_by_uri so we don't get a NULL pointer if the file isn't already loaded internally.
+
+  [ Michael Webster ]
+  * Add desktop settings action
+  * nemo-places-sidebar.c: ensure a minimum useable sidebar width when resizing windows or panes.
+
+  [ Igor ]
+  * Set minimum size for File Management Preferences window
+  * Increase default width of File Management Preferences window
+
+  [ Michael Webster ]
+  * nemo-list-view.c: Clean up column changes - only add columns and connect to them once, remove some unnecessary checks.
+  * nemo-list-view.c: give the name column a default width that the column-double-click autosize action can use.  Otherwise it makes the name column as small as possible (the opposite what it's supposed to do, or what the other columns do)
+
+  [ Igor ]
+  * Update suggested.gitignore
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 10 May 2016 16:36:23 +0100
+
+nemo (3.0.0) sarah; urgency=medium
+
+  [ lukefromdc ]
+  * GTK 3.20-fix wrong desktop size
+
+  [ Daniel Schürmann ]
+  * Added missing includes
+  * Fix pointer types, to avoid warning
+  * Respect dbus_satisfied flag for menu enties on blank desktops
+  * Fix printf format specifier
+  * Don't draw the desktop on a cloned monitor
+  * Fix some missing cast warnings
+
+  [ Balló György ]
+  * Fix fallback style for GTK 3.20
+
+  [ raveit65 ]
+  * add style class nemo-window-pane
+  * add style class nemo-properties-dialog to glade file
+
+  [ Dustin Falgout ]
+  * add style class in nemo_desktop_window_init (same as nautilus)
+  * add style class to places sidebar
+  * add style class to nemo-window
+  * use more specific class name for places sidebar
+
+  [ Michael Webster ]
+  * nemo-icon-info.c: remove invalid GTK_ICON_LOOKUP_GENERIC_FALLBACK flag (triggers warnings in gtk 3.20.x). (credit to @itzexor)
+
+  [ itzexor ]
+  * nemo-window: add new flag NEMO_WINDOW_OPEN_FLAG_SEARCH and use the same slot if this flag is passed to nemo_window_slot_open_location_full to avoid opening a new window (and a crash) when starting a search with the open in new window preference enabled
+  * fix typo
+
+  [ Clement Lefebvre ]
+  * Updated makepot and pot file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 24 Apr 2016 12:41:50 +0100
+
 nemo (2.8.7) rosa; urgency=medium
 
   [ Michael Webster ]

@@ -1,8 +1,9 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os
 import glob
 import polib
+import codecs
 from gi.repository import GLib
 
 GROUP = "Nemo Action"
@@ -28,7 +29,7 @@ class Main:
                         try:
                             self.mo_files[locale] = polib.mofile(os.path.join(root, file))
                         except:
-                            print "merge_action_strings - Failed to load .mo file: %s" % (os.path.join(root, file))
+                            print("merge_action_strings - Failed to load .mo file: %s" % (os.path.join(root, file)))
 
         if len(self.mo_files) > 0:
             for locale in self.mo_files.keys():
@@ -44,11 +45,11 @@ class Main:
             outstring, length = self.in_keyfiles[fn].to_data()
             if os.path.exists(action_path):
                 os.remove(action_path)
-            outfile = open(action_path, 'w')
+            outfile = codecs.open(action_path, 'w', 'utf-8')
             outfile.write(outstring)
             outfile.close()
 
-        print "Merge complete - .nemo_action files in ../files/usr/share/nemo/actions should contain translations now."
+        print("Merge complete - .nemo_action files in ../files/usr/share/nemo/actions should contain translations now.")
 
     def check_name(self, locale, entry):
         if entry.msgstr != '':

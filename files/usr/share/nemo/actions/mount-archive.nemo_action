@@ -1,0 +1,109 @@
+[Nemo Action]
+
+Name=Mount archive
+
+Comment=Mount %f to browse its contents
+
+Exec=/usr/lib/gvfs/gvfsd-archive file="%U"
+
+Selection=s
+
+Mimetypes=application/x-cd-image;application/x-bzip-compressed-tar;application/x-compressed-tar;application/x-tar;application/x-cpio;application/zip;
+
+Stock-Id=gtk-directory
+
+Dependencies=/usr/lib/gvfs/gvfsd-archive;
+
+Selection=s
+Name[zh_HK]=掛載壓縮檔
+Name[pt]=Montar arquivo
+Name[ro]=Montează arhiva
+Name[sl]=Priklopi arhiv
+Name[cy]=Arosod Archif
+Name[ast]=Montar archivu
+Name[ru]=Подключить архив
+Name[ms]=Pautkan arkib
+Name[ga]=Feistigh an Cartlann
+Name[da]=Montér arkiv
+Name[is]=Tengja safnskrá
+Name[hr]=Montiraj arhivu
+Name[be]=Падключыць архіў
+Name[tr]=Arşivi bağla
+Name[uk]=Змонтувати архів
+Name[sk]=Pripojiť archív
+Name[fi]=Liitä arkisto
+Name[ca]=Muntar arxiu
+Name[el]=Αρχείο προσάρτησης
+Name[he]=עגן ארכיון
+Name[cs]=Připojit archiv
+Name[sv]=Montera arkiv
+Name[ia]=Montar le archivo
+Name[th]=เมานท์แฟ้มจัดเก็บ
+Name[nl]=Archiefbestand aankoppelen
+Name[id]=Pasang archive
+Name[en_GB]=Mount archive
+Name[et]=Haagi arhiiv
+Name[gl]=Montar o ficheiro
+Name[it]=Monta l'archivio
+Name[bs]=Montiraj arhivu
+Name[pt_BR]=Montar arquivo
+Name[es]=Montar archivo
+Name[eu]=Muntatu fitxategia
+Name[gd]=Munntaich tasglann
+Name[lt]=Prijungti archyvą
+Name[zh_TW]=掛載壓縮檔
+Name[sr]=Прикачи архиву
+Name[fr]=Monter l'archive
+Name[hu]=Archívum csatolása
+Name[bg]=Монтиране на архив
+Name[de]=Archive einhängen
+Name[ko]=마운트 기록
+Name[zh_CN]=挂载档案
+Name[pl]=Zamontuj archiwum
+Name[vi]=Gắn kết bộ lưu trữ
+Comment[zh_HK]=掛載 %f 以瀏覽其內容
+Comment[pt]=Montar %f para navegar no seu conteúdo
+Comment[ro]=Montează %f pentru a-i răsfoi conținutul
+Comment[sl]=Priklopi %f za brskanje po vsebini
+Comment[cy]=Arosod %f i bori ei gynnwys
+Comment[ast]=Montar %f pa restolar el so conteníu
+Comment[ru]=Подключить %f для просмотра
+Comment[ms]=Pautkan %f untuk layari kandungan
+Comment[ga]=Feistigh %f chun féachaint ar inneachar
+Comment[da]=Montér %f for at gennemse indholdet
+Comment[is]=Tengja %f til að skoða innihald hennar
+Comment[hr]=Montiraj %f za pregled sadržaja
+Comment[be]=Падключыць %f, чтобы просмотреть его содержимое
+Comment[tr]=İçeriğini açmak için %f öğesini bağla
+Comment[uk]=Змонтувати %f щоб переглядати вміст
+Comment[sk]=Pripojiť %f pre prehliadnutie jeho obsahu
+Comment[fi]=Liitä %f selataksesi sen sisältöä
+Comment[ca]=Muntar %f per examinar-ne el contingut
+Comment[el]=Προσαρτήστε το %f για να περιηγηθείτε στα περιεχόμενά του
+Comment[he]=עגן את %f לעיון בתוכנו
+Comment[cs]=Připojit %f k prohlížení jeho obsahu
+Comment[sv]=Montera %f för att se dess innehåll
+Comment[ia]=Montar %f pro explorar su contento
+Comment[th]=เมานท์ %f เพื่อเรียกดูเนื้อหาของมัน
+Comment[nl]=Koppel %f aan om zijn inhoud te verkennen
+Comment[id]=Pasang %f untuk menelusuri isinya
+Comment[en_GB]=Mount %f to browse its contents
+Comment[et]=%f haakimine sisu sirvimiseks
+Comment[gl]=Montar %f para examinar o seu contido
+Comment[it]=Monta %f per sfogliarne i contenuti
+Comment[bs]=Montirajte %f da pregledate njen sadržaj
+Comment[pt_BR]=Montar %f para navegar em seu conteúdo
+Comment[es]=Montar %f para examinar su contenido
+Comment[eu]=Muntatu %f bere edukiak arakatzeko
+Comment[gd]=Munntaich %f gus an susbaint aice a bhrabhsadh
+Comment[lt]=Prijungti %f naršyti po jo turinį
+Comment[zh_TW]=掛載 %f 以瀏覽其內容
+Comment[sr]=Прикачите „%f“ да бисте видели садржај
+Comment[fr]=Monter %f pour parcourir son contenu
+Comment[hu]=„%f” archívum csatolása a tartalom böngészéséhez
+Comment[bg]=Монтиране на %f за преглед на съдържанието
+Comment[de]=%f einhängen, um den Inhalt zu durchsuchen
+Comment[ko]=내용을 보기위해 %f를 마운트 합니다
+Comment[zh_CN]=挂载 %f 以浏览其内容
+Comment[pl]=Zamontuj %f, aby móc przeglądać jego zawartość
+Comment[vi]=Gắn kết %f để duyệt xem nội dung

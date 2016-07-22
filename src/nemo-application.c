@@ -50,6 +50,7 @@
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-statusbar.h"
+#include "nemo-blank-desktop-window.h"
 
 #include <libnemo-private/nemo-dbus-manager.h>
 #include <libnemo-private/nemo-desktop-link-monitor.h>
@@ -597,8 +598,6 @@ nemo_application_finalize (GObject *object)
 	g_clear_object (&application->priv->dbus_manager);
 	g_clear_object (&application->priv->fdb_manager);
 
-    g_clear_object (&application->priv->desktop_manager);
-
 	notify_uninit ();
 
         G_OBJECT_CLASS (nemo_application_parent_class)->finalize (object);
@@ -660,6 +659,9 @@ void
 nemo_application_quit (NemoApplication *self)
 {
 	GApplication *app = G_APPLICATION (self);
+
+    g_clear_object (&self->priv->desktop_manager);
+
 	GList *windows;
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
