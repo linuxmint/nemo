@@ -569,7 +569,7 @@ nemo_desktop_icon_view_create (NemoWindowSlot *slot)
                                       "}",-1, NULL);
     gtk_style_context_add_provider_for_screen (gdk_screen_get_default(), 
     GTK_STYLE_PROVIDER(cssProvider),  
-    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION); /*don't let themes bring the flashes back*/
+    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION); 
 	return NEMO_VIEW (view);
 }
 
