@@ -558,6 +558,18 @@ nemo_desktop_icon_view_create (NemoWindowSlot *slot)
 			     "supports-keep-aligned", TRUE,
 			     "supports-labels-beside-icons", FALSE,
 			     NULL);
+    gtk_widget_set_name(view, "nemodesktopiconview");
+    GtkCssProvider  *cssProvider;
+    cssProvider = gtk_css_provider_new ();
+    gtk_css_provider_load_from_data (cssProvider,
+                                     "#nemodesktopiconview, \n"
+                                     "#nemodesktopiconview>.view,  \n"
+                                     "#nemodesktopiconview>.view:backdrop {\n"                                       
+                                     "background-color:transparent;\n"
+                                      "}",-1, NULL);
+    gtk_style_context_add_provider_for_screen (gdk_screen_get_default(), 
+    GTK_STYLE_PROVIDER(cssProvider),  
+    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION); /*don't let themes bring the flashes back*/
 	return NEMO_VIEW (view);
 }
 
