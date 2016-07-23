@@ -1,5 +1,10 @@
 /* Desktop text stuff */
 
+.nemo-window.nemo-desktop-window notebook,
+.nemo-window.nemo-desktop-window paned {
+	background-color: transparent;
+}
+
 .nemo-canvas-item {
     border-radius: 3px;
 }
