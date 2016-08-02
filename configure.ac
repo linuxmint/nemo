@@ -25,6 +25,8 @@ dnl ===========================================================================
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIR([m4])
+AC_SUBST([ACLOCAL_AMFLAGS], ["-I $ac_macro_dir \${ACLOCAL_FLAGS}"])
+AX_IS_RELEASE([git-directory])
 
 AM_INIT_AUTOMAKE([foreign 1.11 dist-xz no-dist-gzip tar-ustar])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -170,50 +172,7 @@ AM_CONDITIONAL(ENABLE_EMPTY_VIEW, test "x$ENABLE_EMPTY_VIEW" = "x1")
 
 dnl ==========================================================================
 
-dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.
-
-WARNING_CFLAGS=""
-
-AC_ARG_ENABLE(more-warnings,
-AC_HELP_STRING([--enable-more-warnings], [Maximum compiler warnings]),
-set_more_warnings="$enableval",[
-if test -f $srcdir/.git; then
-	set_more_warnings=yes
-else
-	set_more_warnings=no
-fi
-])
-AC_MSG_CHECKING(for more warnings, including -Werror)
-if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
-	AC_MSG_RESULT(yes)
-	WARNING_CFLAGS="\
-	-Wall \
-	-Wmissing-declarations -Wmissing-prototypes \
-	-Wnested-externs -Wpointer-arith \
-	-Wcast-align \
-	-Werror"
-
-	for option in -Wstrict-aliasing=0 -Wno-pointer-sign; do
-		SAVE_CFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS $option"
-		AC_MSG_CHECKING([whether gcc understands $option])
-		AC_TRY_COMPILE([], [],
-			has_option=yes,
-			has_option=no,)
-		if test $has_option = yes; then
-		   	WARNING_CFLAGS="$WARNING_CFLAGS $option"
-		fi
-		AC_MSG_RESULT($has_option)
-		CFLAGS="$SAVE_CFLAGS"
-		unset has_option
-		unset SAVE_CFLAGS
-	done
-	unset option
-else
-	AC_MSG_RESULT(no)
-fi
-
-AC_SUBST(WARNING_CFLAGS)
+AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS])
 
 dnl ===========================================================================
 dnl Check for Tracker

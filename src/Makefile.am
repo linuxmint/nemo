@@ -19,7 +19,7 @@ AM_CPPFLAGS =							\
 	$(BASE_CFLAGS) 						\
 	$(COMMON_CFLAGS)					\
 	$(NEMO_CFLAGS)					\
-	$(WARNING_CFLAGS)					\
+	$(WARN_CFLAGS)					\
 	$(EXIF_CFLAGS)						\
 	$(EXEMPI_CFLAGS)                                        \
 	-DDATADIR=\""$(datadir)"\" 				\

@@ -8,13 +8,14 @@ AM_CPPFLAGS =\
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	$(BASE_CFLAGS) \
-	$(WARNING_CFLAGS) \
+	$(WARN_CFLAGS) \
 	$(DISABLE_DEPRECATED_CFLAGS) \
     -DLIBEXECDIR=\""$(libexecdir)"\" \
 	-DDATADIR=\""$(datadir)"\" \
 	$(NULL)
 
 libnemo_extension_la_LDFLAGS=\
+	$(WARN_LDFLAGS) \
 	-version-info @NEMO_EXTENSION_VERSION_INFO@ \
 	-no-undefined \
 	$(NULL)
@@ -77,11 +78,13 @@ introspection_files =					\
 Nemo-3.0.gir: libnemo-extension.la Makefile
 Nemo_3_0_gir_INCLUDES = Gtk-3.0 Gio-2.0 GLib-2.0
 Nemo_3_0_gir_CFLAGS = \
+	$(WARN_CFLAGS) \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	$(BASE_CFLAGS)
 Nemo_3_0_gir_LIBS = libnemo-extension.la
 Nemo_3_0_gir_FILES = $(addprefix $(srcdir)/, $(introspection_files))
+Nemo_3_0_gir_SCANNERFLAGS = $(AM_SCANNERFLAGS) $(WARN_SCANNERFLAGS)
 INTROSPECTION_GIRS += Nemo-3.0.gir
 
 girdir = @INTROSPECTION_GIRDIR@

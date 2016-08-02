@@ -8,13 +8,14 @@ AM_CPPFLAGS =						\
 	-I$(top_builddir)				\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
-	$(WARNING_CFLAGS)				\
+	$(WARN_CFLAGS)				\
 	$(DISABLE_DEPRECATED_CFLAGS)			\
 	-DDATADIR=\""$(datadir)"\"			\
 	-DSOURCE_DATADIR=\""$(top_srcdir)/data"\"	\
 	$(NULL)
 
 libeel_2_la_LDFLAGS =				\
+	$(WARN_LDFLAGS)				\
 	-no-undefined				\
 	$(NULL)
 
@@ -68,7 +69,7 @@ noinst_PROGRAMS = check-program
 check_program_SOURCES = check-program.c
 check_program_DEPENDENCIES = libeel-2.la
 check_program_LDADD = $(EEL_LIBS)
-check_program_LDFLAGS =	$(check_program_DEPENDENCIES) -lm
+check_program_LDFLAGS =	$(WARN_LDFLAGS) $(check_program_DEPENDENCIES) -lm
 
 TESTS = check-eel
 
