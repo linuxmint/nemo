@@ -362,7 +362,7 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
 								 NULL,
 								 NULL);
 
-		gtk_icon_info_free (icon_info);
+		g_object_unref (icon_info);
 	} else {
 		GtkIconSet *icon_set;
 
