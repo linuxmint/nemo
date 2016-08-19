@@ -1370,6 +1370,8 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 		grid_width = max_icon_width + max_text_width + ICON_PAD_LEFT + ICON_PAD_RIGHT;
 	} else {
 		num_columns = floor(canvas_width / STANDARD_ICON_GRID_WIDTH);
+		num_columns = fmax(num_columns, 1);
+		/* Minimum of one column */
 		grid_width = canvas_width / num_columns - 1;
 		/* -1 prevents jitter */
 	}
