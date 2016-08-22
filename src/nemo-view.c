@@ -10653,7 +10653,7 @@ nemo_view_move_copy_items (NemoView *view,
 		   nemo_is_file_roller_installed () &&
 		   target_file != NULL &&
 		   nemo_file_is_archive (target_file)) {
-		char *command, *quoted_uri, *tmp;
+		char *command, *quoted_uri, *unescaped, *tmp;
 		const GList *l;
 		GdkScreen  *screen;
 
@@ -10661,18 +10661,24 @@ nemo_view_move_copy_items (NemoView *view,
 
 		nemo_file_unref (target_file);
 
-		quoted_uri = g_shell_quote (target_uri);
+        unescaped = g_uri_unescape_string (target_uri, "");
+		quoted_uri = g_shell_quote (unescaped);
+
 		command = g_strconcat ("file-roller -a ", quoted_uri, NULL);
-		g_free (quoted_uri);
+
+        g_clear_pointer (&quoted_uri, g_free);
+        g_clear_pointer (&unescaped, g_free);
 
 		for (l = item_uris; l != NULL; l = l->next) {
-			quoted_uri = g_shell_quote ((char *) l->data);
+            unescaped = g_uri_unescape_string ((char *) l->data, "");
+            quoted_uri = g_shell_quote (unescaped);
 
 			tmp = g_strconcat (command, " ", quoted_uri, NULL);
 			g_free (command);
 			command = tmp;
 
-			g_free (quoted_uri);
+            g_clear_pointer (&quoted_uri, g_free);
+            g_clear_pointer (&unescaped, g_free);
 		} 
 
 		screen = gtk_widget_get_screen (GTK_WIDGET (view));
