@@ -7433,14 +7433,15 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
 
     if (nemo_file_is_directory (file)) {
         gint item_count;
-        nemo_file_get_directory_item_count (file, &item_count, NULL);
-        gchar *launchpad_sucks = THOU_TO_STR (item_count);
-        gchar *count = g_strdup_printf (ngettext ("%s item", "%s items", item_count), launchpad_sucks);
-        g_free (launchpad_sucks);
-        nice = g_strdup_printf (_("Contains: %s"), count);
-        string = add_line (string, nice, TRUE);
-        g_free (count);
-        g_free (nice);
+        if (nemo_file_get_directory_item_count (file, &item_count, NULL)) {
+            gchar *launchpad_sucks = THOU_TO_STR (item_count);
+            gchar *count = g_strdup_printf (ngettext ("%s item", "%s items", item_count), launchpad_sucks);
+            g_free (launchpad_sucks);
+            nice = g_strdup_printf (_("Contains: %s"), count);
+            string = add_line (string, nice, TRUE);
+            g_free (count);
+            g_free (nice);
+        }
     } else {
         gchar *size_string;
         gint prefix;
