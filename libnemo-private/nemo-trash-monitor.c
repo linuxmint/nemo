@@ -90,51 +90,63 @@ nemo_trash_monitor_class_init (NemoTrashMonitorClass *klass)
 }
 
 static void
-update_info_cb (GObject *source_object,
-		GAsyncResult *res,
-		gpointer user_data)
+update_icon (NemoTrashMonitor *trash_monitor)
 {
-	NemoTrashMonitor *trash_monitor;
-	GFileInfo *info;
-	GIcon *icon;
-	const char * const *names;
-	gboolean empty;
-	int i;
+	g_clear_object (&trash_monitor->details->icon);
 
-	trash_monitor = NEMO_TRASH_MONITOR (user_data);
-	
-	info = g_file_query_info_finish (G_FILE (source_object),
-					 res, NULL);
-
-	if (info != NULL) {
-		icon = g_file_info_get_icon (info);
-
-		if (icon) {
-			g_object_unref (trash_monitor->details->icon);
-			trash_monitor->details->icon = g_object_ref (icon);
-			empty = TRUE;
-			if (G_IS_THEMED_ICON (icon)) {
-				names = g_themed_icon_get_names (G_THEMED_ICON (icon));
-				for (i = 0; names[i] != NULL; i++) {
-					if (strcmp (names[i], NEMO_ICON_TRASH_FULL) == 0) {
-						empty = FALSE;
-						break;
-					}
-				}
-			}
-			if (trash_monitor->details->empty != empty) {
-				trash_monitor->details->empty = empty;
-
-				/* trash got empty or full, notify everyone who cares */
-				g_signal_emit (trash_monitor, 
-					       signals[TRASH_STATE_CHANGED], 0,
-					       trash_monitor->details->empty);
-			}
-		}
-		g_object_unref (info);
+	if (trash_monitor->details->empty) {
+		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH);
+	} else {
+		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH_FULL);
 	}
+}
 
-	g_object_unref (trash_monitor);
+static void
+update_empty_info (NemoTrashMonitor *trash_monitor,
+		   gboolean is_empty)
+{
+	if (trash_monitor->details->empty == is_empty) {
+		return;
+	}
+	
+	trash_monitor->details->empty = is_empty;
+	update_icon (trash_monitor);
+
+	/* trash got empty or full, notify everyone who cares */
+	g_signal_emit (trash_monitor,
+		       signals[TRASH_STATE_CHANGED], 0,
+		       trash_monitor->details->empty);
+}
+
+/* Use G_FILE_ATTRIBUTE_TRASH_ITEM_COUNT since we only want to know whether the
+ * trash is empty or not, not access its children. This is available for the
+ * trash backend since it uses a cache. In this way we prevent flooding the
+ * trash backend with enumeration requests when trashing > 1000 files
+ */
+static void
+trash_query_info_cb (GObject *source,
+                     GAsyncResult *res,
+                     gpointer user_data)
+{
+        NemoTrashMonitor *trash_monitor = user_data;
+        GFileInfo *info;
+        guint32 item_count;
+        gboolean is_empty = TRUE;
+
+        info = g_file_query_info_finish (G_FILE (source), res, NULL);
+
+        if (info != NULL) {
+                item_count = g_file_info_get_attribute_uint32 (info,
+                                                               G_FILE_ATTRIBUTE_TRASH_ITEM_COUNT);
+                is_empty = item_count == 0;
+
+                g_object_unref (info);
+
+        }
+
+        update_empty_info (trash_monitor, is_empty);
+
+        g_object_unref (trash_monitor);
 }
 
 static void
@@ -143,11 +155,11 @@ schedule_update_info (NemoTrashMonitor *trash_monitor)
 	GFile *location;
 
 	location = g_file_new_for_uri ("trash:///");
-
-	g_file_query_info_async (location,
-				 G_FILE_ATTRIBUTE_STANDARD_ICON,
-				 0, 0, NULL,
-				 update_info_cb, g_object_ref (trash_monitor));
+        g_file_query_info_async (location,
+                                 G_FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 G_PRIORITY_DEFAULT, NULL,
+                                 trash_query_info_cb, g_object_ref (trash_monitor));
 	
 	g_object_unref (location);
 }
@@ -176,7 +188,7 @@ nemo_trash_monitor_init (NemoTrashMonitor *trash_monitor)
 							      NemoTrashMonitorDetails);
 
 	trash_monitor->details->empty = TRUE;
-	trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH);
+	update_icon (trash_monitor);
 
 	location = g_file_new_for_uri ("trash:///");
 
