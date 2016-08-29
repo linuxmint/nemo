@@ -184,7 +184,7 @@ typedef struct {
 	int last_reported_files_left;
 } TransferInfo;
 
-#define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 15
+#define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
 #define NSEC_PER_MICROSEC 1000
 
 #define MAXIMUM_DISPLAYED_FILE_NAME_LENGTH 50

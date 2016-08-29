@@ -2850,6 +2850,9 @@ nemo_icon_view_create (NemoWindowSlot *slot)
 			     "window-slot", slot,
 			     "compact", FALSE,
 			     NULL);
+#if GTK_CHECK_VERSION (3, 20, 0)
+	gtk_style_context_add_class (gtk_widget_get_style_context (view), GTK_STYLE_CLASS_VIEW);
+#endif
 	return NEMO_VIEW (view);
 }
 
@@ -2862,6 +2865,9 @@ nemo_compact_view_create (NemoWindowSlot *slot)
 			     "window-slot", slot,
 			     "compact", TRUE,
 			     NULL);
+#if GTK_CHECK_VERSION (3, 20, 0)
+	gtk_style_context_add_class (gtk_widget_get_style_context (view), GTK_STYLE_CLASS_VIEW);
+#endif
 	return NEMO_VIEW (view);
 }
 

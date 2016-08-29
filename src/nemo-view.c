@@ -7061,15 +7061,23 @@ paste_into (NemoView *view,
 }
 
 static void
+cb_open_as_root_watch (GPid pid, gint status, gpointer user_data)
+{
+    g_spawn_close_pid(pid);
+}
+
+static void
 open_as_root (const gchar *path)
-{	
+{
     gchar *argv[4];
     argv[0] = "pkexec";
     argv[1] = "nemo";
     argv[2] = g_strdup (path);
     argv[3] = NULL;
+    GPid pid;
     g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
-                  NULL, NULL, NULL, NULL);
+                  NULL, NULL, &pid, NULL);
+    g_child_watch_add(pid, (GChildWatchFunc)cb_open_as_root_watch, NULL);
     g_free (argv[2]);
 }
 
@@ -10645,7 +10653,7 @@ nemo_view_move_copy_items (NemoView *view,
 		   nemo_is_file_roller_installed () &&
 		   target_file != NULL &&
 		   nemo_file_is_archive (target_file)) {
-		char *command, *quoted_uri, *tmp;
+		char *command, *quoted_uri, *unescaped, *tmp;
 		const GList *l;
 		GdkScreen  *screen;
 
@@ -10653,18 +10661,24 @@ nemo_view_move_copy_items (NemoView *view,
 
 		nemo_file_unref (target_file);
 
-		quoted_uri = g_shell_quote (target_uri);
+        unescaped = g_uri_unescape_string (target_uri, "");
+		quoted_uri = g_shell_quote (unescaped);
+
 		command = g_strconcat ("file-roller -a ", quoted_uri, NULL);
-		g_free (quoted_uri);
+
+        g_clear_pointer (&quoted_uri, g_free);
+        g_clear_pointer (&unescaped, g_free);
 
 		for (l = item_uris; l != NULL; l = l->next) {
-			quoted_uri = g_shell_quote ((char *) l->data);
+            unescaped = g_uri_unescape_string ((char *) l->data, "");
+            quoted_uri = g_shell_quote (unescaped);
 
 			tmp = g_strconcat (command, " ", quoted_uri, NULL);
 			g_free (command);
 			command = tmp;
 
-			g_free (quoted_uri);
+            g_clear_pointer (&quoted_uri, g_free);
+            g_clear_pointer (&unescaped, g_free);
 		} 
 
 		screen = gtk_widget_get_screen (GTK_WIDGET (view));

@@ -806,7 +806,6 @@ finalize (GObject *object)
 	eel_ref_str_unref (file->details->group);
 	g_free (file->details->selinux_context);
 	g_free (file->details->description);
-	g_free (file->details->top_left_text);
 	g_free (file->details->activation_uri);
 	g_clear_object (&file->details->custom_icon);
 
@@ -4108,7 +4107,7 @@ nemo_file_get_gicon (NemoFile *file,
 	GIcon *icon, *mount_icon = NULL, *emblemed_icon;
 	GEmblem *emblem;
 	int i;
-	gboolean is_folder = FALSE, is_preview = FALSE, is_inode_directory = FALSE;
+	gboolean is_folder = FALSE, is_inode_directory = FALSE;
 
 	if (file == NULL) {
 		return NULL;
@@ -4134,8 +4133,7 @@ nemo_file_get_gicon (NemoFile *file,
 			}
 		}
 
-		if (((flags & NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT) ||
-		     (flags & NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
+		if (((flags & NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT) ||
 		     (flags & NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER) ||
 		     (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON) ||
 		     (flags & NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM) ||
@@ -4154,18 +4152,11 @@ nemo_file_get_gicon (NemoFile *file,
 				if (strcmp (name, "inode-directory") == 0) {
 					is_inode_directory = TRUE;
 				}
-				if (strcmp (name, "text-x-generic") == 0 &&
-				    (flags & NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT)) {
-					is_preview = TRUE;
-				}
 			}
 
 			/* Here, we add icons in reverse order of precedence,
 			 * because they are later prepended */
-			if (is_preview) {
-				g_ptr_array_add (prepend_array, "text-x-preview");
-			}
-			
+
 			/* "folder" should override "inode-directory", not the other way around */
 			if (is_inode_directory) {
 				g_ptr_array_add (prepend_array, "folder");
@@ -4259,23 +4250,6 @@ nemo_file_get_emblemed_icon (NemoFile *file,
     g_list_free_full (emblem_icons, g_object_unref);
 
     return emblemed_icon;
-}
-
-static GIcon *
-get_default_file_icon (NemoFileIconFlags flags)
-{
-	static GIcon *fallback_icon = NULL;
-	static GIcon *fallback_icon_preview = NULL;
-	if (fallback_icon == NULL) {
-		fallback_icon = g_themed_icon_new ("text-x-generic");
-		fallback_icon_preview = g_themed_icon_new ("text-x-preview");
-		g_themed_icon_append_name (G_THEMED_ICON (fallback_icon_preview), "text-x-generic");
-	}
-	if (flags & NEMO_FILE_ICON_FLAGS_EMBEDDING_TEXT) {
-		return fallback_icon_preview;
-	} else {
-		return fallback_icon;
-	}
 }
 
 static gint
@@ -4408,12 +4382,12 @@ nemo_file_get_icon (NemoFile *file,
 		icon = nemo_icon_info_lookup (gicon, size, scale);
 		if (nemo_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
-			icon = nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
+			icon = nemo_icon_info_lookup (g_themed_icon_new ("text-x-generic"), size, scale);
 		}
 		g_object_unref (gicon);
 		return icon;
 	} else {
-		return nemo_icon_info_lookup (get_default_file_icon (flags), size, scale);
+		return nemo_icon_info_lookup (g_themed_icon_new ("text-x-generic"), size, scale);
 	}
 }
 
@@ -4728,13 +4702,6 @@ nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type)
 }
 
 static NemoSpeedTradeoffValue show_directory_item_count;
-static NemoSpeedTradeoffValue show_text_in_icons;
-
-static void
-show_text_in_icons_changed_callback (gpointer callback_data)
-{
-	show_text_in_icons = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS);
-}
 
 static void
 show_directory_item_count_changed_callback (gpointer callback_data)
@@ -4819,36 +4786,6 @@ nemo_file_should_show_type (NemoFile *file)
 	g_free (uri);
 
 	return ret;
-}
-
-gboolean
-nemo_file_should_get_top_left_text (NemoFile *file)
-{
-	static gboolean show_text_in_icons_callback_added = FALSE;
-	
-	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-
-	/* Add the callback once for the life of our process */
-	if (!show_text_in_icons_callback_added) {
-		g_signal_connect_swapped (nemo_preferences,
-					  "changed::" NEMO_PREFERENCES_SHOW_TEXT_IN_ICONS,
-					  G_CALLBACK (show_text_in_icons_changed_callback),
-					  NULL);
-		show_text_in_icons_callback_added = TRUE;
-
-		/* Peek for the first time */
-		show_text_in_icons_changed_callback (NULL);
-	}
-	
-	if (show_text_in_icons == NEMO_SPEED_TRADEOFF_ALWAYS) {
-		return TRUE;
-	}
-	
-	if (show_text_in_icons == NEMO_SPEED_TRADEOFF_NEVER) {
-		return FALSE;
-	}
-
-	return get_speed_tradeoff_preference_for_file (file, show_text_in_icons);
 }
 
 /**
@@ -7226,66 +7163,6 @@ nemo_file_is_executable (NemoFile *file)
 	return file->details->can_execute;
 }
 
-/**
- * nemo_file_peek_top_left_text
- * 
- * Peek at the text from the top left of the file.
- * @file: NemoFile representing the file in question.
- * 
- * Returns: NULL if there is no text readable, otherwise, the text.
- *          This string is owned by the file object and should not
- *          be kept around or freed.
- * 
- **/
-char *
-nemo_file_peek_top_left_text (NemoFile *file,
-				  gboolean  need_large_text,
-				  gboolean *needs_loading)
-{
-	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
-
-	if (!nemo_file_should_get_top_left_text (file)) {
-		if (needs_loading) {
-			*needs_loading = FALSE;
-		}
-		return NULL;
-	}
-	
-	if (needs_loading) {
-		*needs_loading = !file->details->top_left_text_is_up_to_date;
-		if (need_large_text) {
-			*needs_loading |= file->details->got_top_left_text != file->details->got_large_top_left_text;
-		}
-	}
-
-	/* Show " ..." in the file until we read the contents in. */
-	if (!file->details->got_top_left_text) {
-		
-		if (nemo_file_contains_text (file)) {
-			return " ...";
-		}
-		return NULL;
-	}
-	
-	/* Show what we read in. */
-	return file->details->top_left_text;
-}
-
-/**
- * nemo_file_get_top_left_text
- * 
- * Get the text from the top left of the file.
- * @file: NemoFile representing the file in question.
- * 
- * Returns: NULL if there is no text readable, otherwise, the text.
- * 
- **/
-char *
-nemo_file_get_top_left_text (NemoFile *file)
-{
-	return g_strdup (nemo_file_peek_top_left_text (file, FALSE, NULL));
-}
-
 char *
 nemo_file_get_filesystem_id (NemoFile *file)
 {
@@ -7556,14 +7433,15 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
 
     if (nemo_file_is_directory (file)) {
         gint item_count;
-        nemo_file_get_directory_item_count (file, &item_count, NULL);
-        gchar *launchpad_sucks = THOU_TO_STR (item_count);
-        gchar *count = g_strdup_printf (ngettext ("%s item", "%s items", item_count), launchpad_sucks);
-        g_free (launchpad_sucks);
-        nice = g_strdup_printf (_("Contains: %s"), count);
-        string = add_line (string, nice, TRUE);
-        g_free (count);
-        g_free (nice);
+        if (nemo_file_get_directory_item_count (file, &item_count, NULL)) {
+            gchar *launchpad_sucks = THOU_TO_STR (item_count);
+            gchar *count = g_strdup_printf (ngettext ("%s item", "%s items", item_count), launchpad_sucks);
+            g_free (launchpad_sucks);
+            nice = g_strdup_printf (_("Contains: %s"), count);
+            string = add_line (string, nice, TRUE);
+            g_free (count);
+            g_free (nice);
+        }
     } else {
         gchar *size_string;
         gint prefix;
@@ -7660,12 +7538,6 @@ invalidate_mime_list (NemoFile *file)
 }
 
 static void
-invalidate_top_left_text (NemoFile *file)
-{
-	file->details->top_left_text_is_up_to_date = FALSE;
-}
-
-static void
 invalidate_file_info (NemoFile *file)
 {
 	file->details->file_info_is_up_to_date = FALSE;
@@ -7730,9 +7602,6 @@ nemo_file_invalidate_attributes_internal (NemoFile *file,
 	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		invalidate_file_info (file);
-	}
-	if (REQUEST_WANTS_TYPE (request, REQUEST_TOP_LEFT_TEXT)) {
-		invalidate_top_left_text (file);
 	}
 	if (REQUEST_WANTS_TYPE (request, REQUEST_LINK_INFO)) {
 		invalidate_link_info (file);
@@ -7820,8 +7689,6 @@ nemo_file_get_all_attributes (void)
 		NEMO_FILE_ATTRIBUTE_DEEP_COUNTS |
 		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT | 
 		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_MIME_TYPES | 
-		NEMO_FILE_ATTRIBUTE_TOP_LEFT_TEXT | 
-		NEMO_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT |
 		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO |
 		NEMO_FILE_ATTRIBUTE_THUMBNAIL |
 		NEMO_FILE_ATTRIBUTE_MOUNT;
@@ -8182,136 +8049,6 @@ nemo_file_list_cancel_call_when_ready (NemoFileListHandle *handle)
 
 		file_list_ready_data_free (data);
 	}
-}
-
-static char *
-try_to_make_utf8 (const char *text, int *length)
-{
-	static const char *encodings_to_try[2];
-	static int n_encodings_to_try = 0;
-        gsize converted_length;
-        GError *conversion_error;
-	char *utf8_text;
-	int i;
-	
-	if (n_encodings_to_try == 0) {
-		const char *charset;
-		gboolean charset_is_utf8;
-		
-		charset_is_utf8 = g_get_charset (&charset);
-		if (!charset_is_utf8) {
-			encodings_to_try[n_encodings_to_try++] = charset;
-		}
-        
-		if (g_ascii_strcasecmp (charset, "ISO-8859-1") != 0) {
-			encodings_to_try[n_encodings_to_try++] = "ISO-8859-1";
-		}
-	}
-
-        utf8_text = NULL;
-	for (i = 0; i < n_encodings_to_try; i++) {
-		conversion_error = NULL;
-		utf8_text = g_convert (text, *length, 
-					   "UTF-8", encodings_to_try[i],
-					   NULL, &converted_length, &conversion_error);
-		if (utf8_text != NULL) {
-			*length = converted_length;
-			break;
-		}
-		g_error_free (conversion_error);
-	}
-	
-	return utf8_text;
-}
-
-
-
-/* Extract the top left part of the read-in text. */
-char *
-nemo_extract_top_left_text (const char *text,
-				gboolean large,
-				int length)
-{
-        GString* buffer;
-	const gchar *in;
-	const gchar *end;
-	int line, i;
-	gunichar c;
-	char *text_copy;
-	const char *utf8_end;
-	gboolean validated;
-	int max_bytes, max_lines, max_cols;
-
-	if (large) {
-		max_bytes = NEMO_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_BYTES;
-		max_lines = NEMO_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_LINES;
-		max_cols = NEMO_FILE_LARGE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE;
-	} else {
-		max_bytes = NEMO_FILE_TOP_LEFT_TEXT_MAXIMUM_BYTES;
-		max_lines = NEMO_FILE_TOP_LEFT_TEXT_MAXIMUM_LINES;
-		max_cols = NEMO_FILE_TOP_LEFT_TEXT_MAXIMUM_CHARACTERS_PER_LINE;
-	}
-			
-	
-
-        text_copy = NULL;
-        if (text != NULL) {
-		/* Might be a partial utf8 character at the end if we didn't read whole file */
-		validated = g_utf8_validate (text, length, &utf8_end);
-		if (!validated &&
-		    !(length >= max_bytes &&
-		      text + length - utf8_end < 6)) {
-			text_copy = try_to_make_utf8 (text, &length);
-			text = text_copy;
-		} else if (!validated) {
-			length = utf8_end - text;
-		}
-        }
-
-	if (text == NULL || length == 0) {
-		return NULL;
-	}
-
-	buffer = g_string_new ("");
-	end = text + length; in = text;
-
-	for (line = 0; line < max_lines; line++) {
-		/* Extract one line. */
-		for (i = 0; i < max_cols; ) {
-			if (*in == '\n') {
-				break;
-			}
-			
-			c = g_utf8_get_char (in);
-			
-			if (g_unichar_isprint (c)) {
-				g_string_append_unichar (buffer, c);
-				i++;
-			}
-			
-			in = g_utf8_next_char (in);
-			if (in == end) {
-				goto done;
-			}
-		}
-
-		/* Skip the rest of the line. */
-		while (*in != '\n') {
-			if (++in == end) {
-				goto done;
-			}
-		}
-		if (++in == end) {
-			goto done;
-		}
-
-		/* Put a new-line separator in. */
-		g_string_append_c(buffer, '\n');
-	}
- done:
-	g_free (text_copy);
-
-	return g_string_free(buffer, FALSE);
 }
 
 static void
