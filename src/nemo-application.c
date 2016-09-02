@@ -527,24 +527,13 @@ static void
 nemo_application_open (GApplication *app,
 			   GFile **files,
 			   gint n_files,
-			   const gchar *hint)
+			   const gchar *geometry)
 {
 	NemoApplication *self = NEMO_APPLICATION (app);
 
 	DEBUG ("Open called on the GApplication instance; %d files", n_files);
 
-	/*Get any geometry string passed by a local (2nd) invocation*/
-	if (strcmp(hint,"") != 0 ){
-        	self->priv->geometry = hint;
-	}
-	open_windows (self, files, n_files,
-		      gdk_screen_get_default (),
-		      self->priv->geometry);
-
-	/*Reset this or 3ed and later invocations will use same  
-	 *geometry even if the user has resized open window
-         */
-	self->priv->geometry = NULL;
+	open_windows (self, files, n_files, gdk_screen_get_default (), geometry);
 }
 
 static GObject *
@@ -692,7 +681,6 @@ nemo_application_local_command_line (GApplication *application,
 	gboolean no_default_window = FALSE;
 	gboolean fix_cache = FALSE;
 	gchar **remaining = NULL;
-	const gchar *hint = "";
 	NemoApplication *self = NEMO_APPLICATION (application);
 
 	const GOptionEntry options[] = {
@@ -823,13 +811,9 @@ nemo_application_local_command_line (GApplication *application,
 		files[0] = g_file_new_for_path (g_get_home_dir ());
 		files[1] = NULL;
 	}
-	/* */
-    	    if (self->priv->geometry != NULL) {
-		hint = (g_strdup (self->priv->geometry));
-	}
 	/* Invoke "Open" to create new windows */
 	if (len > 0) {
-		g_application_open (application, files, len, hint);
+		g_application_open (application, files, len, self->priv->geometry);
 	}
 
 	for (idx = 0; idx < len; idx++) {
