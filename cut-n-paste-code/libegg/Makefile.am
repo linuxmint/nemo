@@ -2,7 +2,7 @@ NULL=
 
 noinst_LTLIBRARIES = libegg.la
 
-AM_CPPFLAGS = $(BASE_CFLAGS)
+AM_CPPFLAGS = $(WARN_CFLAGS) $(BASE_CFLAGS)
 
 EGG_TREE_DND_FILES = 		\
 	eggtreemultidnd.c	\
@@ -15,7 +15,7 @@ libegg_la_SOURCES = 		\
 
 libegg_la_CFLAGS =				\
 	$(BASE_CFLAGS)			\
-	$(WARNING_CFLAGS)			\
+	$(WARN_CFLAGS)			\
 	$(DISABLE_DEPRECATED)
 
 libegg_la_LIBADD = 	\

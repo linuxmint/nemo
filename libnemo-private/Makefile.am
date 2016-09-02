@@ -9,7 +9,7 @@ AM_CPPFLAGS = 						\
 	$(BASE_CFLAGS)					\
 	$(COMMON_CFLAGS)				\
 	$(NEMO_CFLAGS)				\
-	$(WARNING_CFLAGS)				\
+	$(WARN_CFLAGS)				\
 	$(DISABLE_DEPRECATED_CFLAGS)			\
 	$(TRACKER_CFLAGS)				\
 	-DDATADIR=\""$(datadir)"\" 			\
@@ -43,6 +43,7 @@ dependency_static_libs = \
 	$(NULL)
 
 libnemo_private_la_LDFLAGS =	\
+	$(WARN_LDFLAGS)			\
 	-no-undefined			\
 	$(NULL)
 
