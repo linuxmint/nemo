@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends: debhelper (>= 8),
                dh-autoreconf,
+               autoconf-archive,
                gnome-pkg-tools (>= 0.13),
                libglib2.0-dev (>= 2.37.3),
                libatk1.0-dev (>= 1.32.0),
