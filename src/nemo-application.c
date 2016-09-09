@@ -750,6 +750,11 @@ nemo_application_constructor (GType type,
         return retval;
 }
 
+
+// SGM2015
+#include "sessionmgr.c"
+
+
 static void
 nemo_application_init (NemoApplication *application)
 {
@@ -848,6 +853,8 @@ nemo_application_quit (NemoApplication *self)
 {
 	GApplication *app = G_APPLICATION (self);
 	GList *windows;
+
+	//if(SESSION_MGR) sessionmgr_save_state();  // sgm 2015
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
@@ -985,6 +992,8 @@ nemo_application_local_command_line (GApplication *application,
 		g_application_open (application, files, len, "");
 	}
 
+	sessionmgr_load_state();
+	
 	for (idx = 0; idx < len; idx++) {
 		g_object_unref (files[idx]);
 	}

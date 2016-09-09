@@ -87,4 +87,15 @@ void nemo_application_notify_unmount_show (NemoApplication *application,
 void nemo_application_notify_unmount_done (NemoApplication *application,
                                                const gchar *message);
 
+// SGM 2015
+void sessionmgr_win_close();
+void sessionmgr_save_state();
+void sessionmgr_load_state();
+
+
+
 #endif /* __NEMO_APPLICATION_H__ */
+
+
+
+

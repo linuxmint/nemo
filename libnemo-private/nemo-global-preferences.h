@@ -103,6 +103,8 @@ typedef enum
 #define NEMO_WINDOW_STATE_BOOKMARKS_EXPANDED    "bookmarks-expanded"
 #define NEMO_WINDOW_STATE_DEVICES_EXPANDED      "devices-expanded"
 #define NEMO_WINDOW_STATE_NETWORK_EXPANDED      "network-expanded"
+// SGM2015
+#define  NEMO_HISTORY_STATE                     "history-state"
 
 /* Sorting order */
 #define NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST		"sort-directories-first"
