@@ -392,7 +392,7 @@ side_pane_size_allocate_callback (GtkWidget *widget,
 		window->details->side_pane_width = allocation->width;
 
 		window->details->sidebar_width_handler_id =
-			g_idle_add (save_sidebar_width_cb, window);
+			g_timeout_add (100, save_sidebar_width_cb, window);
 	}
 }
 
