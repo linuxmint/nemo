@@ -1946,29 +1946,6 @@ column_header_clicked (GtkWidget *column_button,
 	return TRUE;
 }
 
-#if !GTK_CHECK_VERSION(3, 12, 0)
-ellipsize_columns (GList *list)
-{
-    g_printerr ("ellipse\n");
-    GList *l = list;
-    while (l != NULL) {
-        GtkWidget *child = GTK_IS_WIDGET (l->data) ?
-                               GTK_WIDGET (l->data) :
-                               gtk_tree_view_column_get_button (GTK_TREE_VIEW_COLUMN (l->data));
-
-        if (GTK_IS_LABEL (child)) {
-            gtk_label_set_ellipsize (GTK_LABEL (child), PANGO_ELLIPSIZE_END);
-        } else if (GTK_IS_CONTAINER (child)) {
-            GList *child_list = gtk_container_get_children (GTK_CONTAINER (child));
-            ellipsize_columns (child_list);
-            g_list_free (child_list);
-        }
-
-        l = l->next;
-    }
-}
-#endif
-
 static void
 apply_columns_settings (NemoListView *list_view,
 			char **column_order,
@@ -2046,10 +2023,6 @@ apply_columns_settings (NemoListView *list_view,
 		gtk_tree_view_move_column_after (list_view->details->tree_view, l->data, prev_view_column);
 		prev_view_column = l->data;
 	}
-
-#if !GTK_CHECK_VERSION(3, 12, 0)
-    ellipsize_columns (view_columns);
-#endif
 
 	g_list_free (view_columns);
 }
@@ -2289,9 +2262,6 @@ create_and_set_up_tree_view (NemoListView *view)
 			cell = gtk_cell_renderer_text_new ();
             g_object_set (cell,
                           "xalign", xalign,
-#if !GTK_CHECK_VERSION(3, 12, 0)
-                          "ellipsize", PANGO_ELLIPSIZE_END,
-#endif
                           "xpad", 5,
                           NULL);
 			view->details->cells = g_list_append (view->details->cells,
