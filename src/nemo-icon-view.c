@@ -2431,7 +2431,8 @@ button_press_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_da
     }
 
     /* double left click on blank will go to parent folder */
-    if ((event_button->button == 1) && (event_button->type == GDK_2BUTTON_PRESS)) {
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER) &&
+        (event_button->button == 1) && (event_button->type == GDK_2BUTTON_PRESS)) {
         selection_count = nemo_view_get_selection_count (view);
         if (selection_count == 0) {
             NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
