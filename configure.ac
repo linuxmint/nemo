@@ -26,7 +26,8 @@ AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AC_SUBST([ACLOCAL_AMFLAGS], ["-I $ac_macro_dir \${ACLOCAL_FLAGS}"])
-AX_IS_RELEASE([always])
+
+m4_ifdef([AX_IS_RELEASE], [AX_IS_RELEASE([git-directory])])
 
 AM_INIT_AUTOMAKE([foreign 1.11 dist-xz no-dist-gzip tar-ustar])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -172,7 +173,8 @@ AM_CONDITIONAL(ENABLE_EMPTY_VIEW, test "x$ENABLE_EMPTY_VIEW" = "x1")
 
 dnl ==========================================================================
 
-AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS])
+m4_ifdef([AX_COMPILER_FLAGS],
+	 [AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS])])
 
 dnl ===========================================================================
 dnl Check for Tracker
