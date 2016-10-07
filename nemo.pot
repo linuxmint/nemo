@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-01 19:34+0200\n"
+"POT-Creation-Date: 2016-10-07 12:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4933,76 +4933,76 @@ msgid " (invalid Unicode)"
 msgstr ""
 
 #: data/action_i18n_strings.py:8
-msgid "Set as Wallpaper..."
+msgid "Add Desklets"
 msgstr ""
 
 #: data/action_i18n_strings.py:9
-msgid "Set the selected image as your Cinnamon desktop wallpaper"
+msgid "Add Cinamon desklets"
 msgstr ""
 
 #: data/action_i18n_strings.py:10
-msgid "Mount archive"
+msgid "Set as Wallpaper..."
 msgstr ""
 
 #: data/action_i18n_strings.py:11
+msgid "Set the selected image as your Cinnamon desktop wallpaper"
+msgstr ""
+
+#: data/action_i18n_strings.py:12
+msgid "Change Desktop _Background"
+msgstr ""
+
+#: data/action_i18n_strings.py:13
+msgid "Change the Cinnamon desktop background"
+msgstr ""
+
+#: data/action_i18n_strings.py:14
+msgid "Create a new l_auncher here..."
+msgstr ""
+
+#: data/action_i18n_strings.py:15
+msgid "Create a new launcher in this folder"
+msgstr ""
+
+#: data/action_i18n_strings.py:16
+msgid "Manage workspaces (Expo)"
+msgstr ""
+
+#: data/action_i18n_strings.py:17
+msgid "Open Expo to add, remove, or organize workspaces"
+msgstr ""
+
+#: data/action_i18n_strings.py:18
+msgid "Mount archive"
+msgstr ""
+
+#: data/action_i18n_strings.py:19
 #, python-format
 msgid "Mount %f to browse its contents"
 msgstr ""
 
-#: data/action_i18n_strings.py:12
-msgid "Manage workspaces (Expo)"
-msgstr ""
-
-#: data/action_i18n_strings.py:13
-msgid "Open Expo to add, remove, or organize workspaces"
-msgstr ""
-
-#: data/action_i18n_strings.py:14
-msgid "Remove workspace"
-msgstr ""
-
-#: data/action_i18n_strings.py:15
-msgid "Remove the currently active workspace"
-msgstr ""
-
-#: data/action_i18n_strings.py:16
-msgid "Add Desklets"
-msgstr ""
-
-#: data/action_i18n_strings.py:17
-msgid "Add Cinamon desklets"
-msgstr ""
-
-#: data/action_i18n_strings.py:18
-msgid "Desktop _Settings"
-msgstr ""
-
-#: data/action_i18n_strings.py:19
-msgid "Change how your desktop works"
-msgstr ""
-
 #: data/action_i18n_strings.py:20
-msgid "Change Desktop _Background"
-msgstr ""
-
-#: data/action_i18n_strings.py:21
-msgid "Change the Cinnamon desktop background"
-msgstr ""
-
-#: data/action_i18n_strings.py:22
-msgid "Create a new l_auncher here..."
-msgstr ""
-
-#: data/action_i18n_strings.py:23
-msgid "Create a new launcher in this folder"
-msgstr ""
-
-#: data/action_i18n_strings.py:24
 msgid "Jump to new workspace"
 msgstr ""
 
-#: data/action_i18n_strings.py:25
+#: data/action_i18n_strings.py:21
 msgid "Create a new workspace and activate it"
+msgstr ""
+
+#: data/action_i18n_strings.py:22
+msgid "Desktop _Settings"
+msgstr ""
+
+#: data/action_i18n_strings.py:23
+msgid "Change how your desktop works"
+msgstr ""
+
+#: data/action_i18n_strings.py:24
+msgid "Remove workspace"
+msgstr ""
+
+#: data/action_i18n_strings.py:25
+msgid "Remove the currently active workspace"
 msgstr ""
 
 #: src/nemo-bookmarks-window.glade:8
@@ -5269,7 +5269,7 @@ msgid "Disable file operation queueing"
 msgstr ""
 
 #: src/nemo-file-management-properties.glade:1119
-msgid "Go to parent folder with double click on blank area"
+msgid "Double-click on a blank area to go to the parent folder"
 msgstr ""
 
 #: src/nemo-file-management-properties.glade:1172

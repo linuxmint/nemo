@@ -1116,7 +1116,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="click_double_parent_folder_checkbutton">
-                                            <property name="label" translatable="yes">Go to parent folder with double click on blank area</property>
+                                            <property name="label" translatable="yes">Double-click on a blank area to go to the parent folder</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
