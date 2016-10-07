@@ -358,6 +358,10 @@
       <default>false</default>
       <_summary>If true, all file operations will start immediately</_summary>
     </key>
+    <key name="click-double-parent-folder" type="b">
+      <default>false</default>
+      <_summary>If true, double click left on blank area will go to parent folder</_summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

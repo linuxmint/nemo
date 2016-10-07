@@ -2421,11 +2421,24 @@ static gboolean
 button_press_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
     NemoIconView *view = NEMO_ICON_VIEW (user_data);
+    GdkEventButton *event_button = (GdkEventButton *)event;
+    int selection_count;
 
     if (!nemo_view_get_active (NEMO_VIEW (view))) {
         NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
         nemo_window_slot_make_hosting_pane_active (slot);
         return TRUE;
+    }
+
+    /* double left click on blank will go to parent folder */
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER) &&
+        (event_button->button == 1) && (event_button->type == GDK_2BUTTON_PRESS)) {
+        selection_count = nemo_view_get_selection_count (view);
+        if (selection_count == 0) {
+            NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+            nemo_window_slot_go_up (slot, 0);
+            return TRUE;
+        }
     }
 
     return FALSE;

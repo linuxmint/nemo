@@ -252,6 +252,8 @@ typedef enum
 /* File operations queue */
 #define NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS          "never-queue-file-ops"
 
+#define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
+
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
 gboolean nemo_global_preferences_get_ignore_view_metadata (void);
