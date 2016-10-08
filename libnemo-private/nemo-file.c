@@ -1949,8 +1949,14 @@ nemo_file_rename (NemoFile *file,
 			g_error_free (error);
 			return;
 		}
-		new_file_name = g_strdup_printf ("%s.desktop", new_name);
-		new_file_name = g_strdelimit (new_file_name, "/", '-');
+
+        if (g_str_has_suffix (new_name, ".desktop")) {
+            new_file_name = g_strdup (new_name);
+        } else {
+            new_file_name = g_strdup_printf ("%s.desktop", new_name);
+        }
+
+        new_file_name = g_strdelimit (new_file_name, "/", '-');
 
 		if (name_is (file, new_file_name)) {
 			if (name_changed) {
