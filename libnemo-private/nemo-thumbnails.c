@@ -171,9 +171,7 @@ thumbnail_thread_starter_cb (gpointer data)
 	pthread_attr_init (&thread_attributes);
 	pthread_attr_setdetachstate (&thread_attributes,
 				     PTHREAD_CREATE_DETACHED);
-#ifdef _POSIX_THREAD_ATTR_STACKSIZE
-	pthread_attr_setstacksize (&thread_attributes, 128*1024);
-#endif
+
 #ifdef DEBUG_THUMBNAILS
 	g_message ("(Main Thread) Creating thumbnails thread\n");
 #endif
