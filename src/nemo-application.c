@@ -1025,6 +1025,37 @@ menu_state_changed_callback (NemoApplication *self)
 
 }
 
+static gboolean
+desktop_already_managed (void)
+{
+    GdkScreen *screen;
+    GList *windows, *iter;
+    gboolean ret;
+
+    screen = gdk_screen_get_default ();
+
+    windows = gdk_screen_get_window_stack (screen);
+
+    ret = FALSE;
+
+    for (iter = windows; iter != NULL; iter = iter->next) {
+        GdkWindow *window = GDK_WINDOW (iter->data);
+
+        if (gdk_window_get_type_hint (window) == GDK_WINDOW_TYPE_HINT_DESKTOP) {
+            ret = TRUE;
+            break;
+        }
+    }
+
+    g_list_free_full (windows, (GDestroyNotify) g_object_unref);
+
+    if (ret) {
+        g_warning ("Desktop already managed by another application, skipping desktop setup.\n");
+    }
+
+    return ret;
+}
+
 static void
 nemo_application_startup (GApplication *app)
 {
@@ -1103,7 +1134,9 @@ nemo_application_startup (GApplication *app)
             self->priv->cache_problem = TRUE;
     }
 
-    if (geteuid() != 0)
+    self->priv->desktop_manager = NULL;
+
+    if (geteuid () != 0 && !desktop_already_managed ())
         init_desktop (self);
 }
 
