@@ -483,10 +483,6 @@ nemo_icon_view_clear (NemoView *view)
 static gboolean
 should_show_file_on_screen (NemoView *view, NemoFile *file)
 {
-	NemoIconView *icon_view;
-
-	icon_view = NEMO_ICON_VIEW (view);
-
 	if (!nemo_view_should_show_file (view, file)) {
 		return FALSE;
 	}	

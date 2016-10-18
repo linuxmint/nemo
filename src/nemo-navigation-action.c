@@ -283,6 +283,9 @@ nemo_navigation_action_set_property (GObject *object,
 		case PROP_WINDOW:
 			nav->priv->window = g_value_get_object (value);
 			break;
+		default:
+			g_assert_not_reached ();
+			break;
 	}
 }
 
@@ -306,6 +309,9 @@ nemo_navigation_action_get_property (GObject *object,
 			break;
 		case PROP_WINDOW:
 			g_value_set_object (value, nav->priv->window);
+			break;
+		default:
+			g_assert_not_reached ();
 			break;
 	}
 }

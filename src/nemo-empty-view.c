@@ -348,11 +348,5 @@ static NemoViewInfo nemo_empty_view = {
 void
 nemo_empty_view_register (void)
 {
-	nemo_empty_view.id = nemo_empty_view.id;
-	nemo_empty_view.view_combo_label = nemo_empty_view.view_combo_label;
-	nemo_empty_view.view_menu_label_with_mnemonic = nemo_empty_view.view_menu_label_with_mnemonic;
-	nemo_empty_view.error_label = nemo_empty_view.error_label;
-	nemo_empty_view.display_location_label = nemo_empty_view.display_location_label;
-
 	nemo_view_factory_register (&nemo_empty_view);
 }

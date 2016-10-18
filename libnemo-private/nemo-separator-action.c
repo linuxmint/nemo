@@ -22,8 +22,6 @@
 G_DEFINE_TYPE (NemoSeparatorAction, nemo_separator_action,
 	           GTK_TYPE_ACTION);
 
-static void     nemo_separator_action_init       (NemoSeparatorAction      *action);
-static void     nemo_separator_action_class_init (NemoSeparatorActionClass *klass);
 static GtkWidget *create_menu_item    (GtkAction *action);
 static GtkWidget *create_tool_item    (GtkAction *action);
 

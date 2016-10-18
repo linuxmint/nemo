@@ -184,13 +184,10 @@ eel_accessibility_get_gobject (AtkObject *object)
 }
 
 static void
-eel_accessibility_destroy (gpointer data,
-			   GObject *where_the_object_was)
+eel_accessibility_destroy (gpointer data)
 {
-	g_object_set_qdata
-		(G_OBJECT (data), get_quark_gobject (), NULL);
-	atk_object_notify_state_change
-		(ATK_OBJECT (data), ATK_STATE_DEFUNCT, TRUE);
+	g_object_set_qdata (G_OBJECT (data), get_quark_gobject (), NULL);
+	atk_object_notify_state_change (ATK_OBJECT (data), ATK_STATE_DEFUNCT, TRUE);
 	g_object_unref (data);
 }
 
@@ -211,8 +208,7 @@ eel_accessibility_set_atk_object_return (gpointer   object,
 
 	if (!ATK_IS_GOBJECT_ACCESSIBLE (atk_object)) {
 		g_object_set_qdata_full
-			(object, get_quark_accessible (), atk_object,
-			 (GDestroyNotify)eel_accessibility_destroy);
+			(object, get_quark_accessible (), atk_object, eel_accessibility_destroy);
 		g_object_set_qdata
 			(G_OBJECT (atk_object), get_quark_gobject (), object);
 	}

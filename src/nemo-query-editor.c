@@ -380,8 +380,8 @@ type_separator_func (GtkTreeModel      *model,
 }
 
 struct {
-	char *name;
-	char *mimetypes[20];
+	const char *name;
+	const char *mimetypes[20];
 } mime_type_groups[] = {
 	{ N_("Documents"),
 	  { "application/rtf",
@@ -555,7 +555,7 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 
 		store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 		for (l = mime_infos; l != NULL; l = l->next) {
-			GtkTreeIter iter;
+			GtkTreeIter iter2;
 			char *mime_type = l->data;
 			char *description;
 
@@ -564,8 +564,8 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 				description = g_strdup (mime_type);
 			}
 			
-			gtk_list_store_append (store, &iter);
-			gtk_list_store_set (store, &iter,
+			gtk_list_store_append (store, &iter2);
+			gtk_list_store_set (store, &iter2,
 					    0, description,
 					    1, mime_type,
 					    -1);
@@ -647,7 +647,7 @@ type_row_create_widgets (NemoQueryEditorRow *row)
 	GtkCellRenderer *cell;
 	GtkListStore *store;
 	GtkTreeIter iter;
-	int i;
+	size_t i;
 
 	store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	combo = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
@@ -728,10 +728,10 @@ type_row_free_data (NemoQueryEditorRow *row)
 }
 
 static gboolean
-all_group_types_in_list (char **group_types, GList *mime_types)
+all_group_types_in_list (const char **group_types, GList *mime_types)
 {
 	GList *l;
-	char **group_type;
+	const char **group_type;
 	char *mime_type;
 	gboolean found;
 
@@ -757,10 +757,10 @@ all_group_types_in_list (char **group_types, GList *mime_types)
 }
 
 static GList *
-remove_group_types_from_list (char **group_types, GList *mime_types)
+remove_group_types_from_list (const char **group_types, GList *mime_types)
 {
 	GList *l, *next;
-	char **group_type;
+	const char **group_type;
 	char *mime_type;
 
 	group_type = group_types;
@@ -791,7 +791,7 @@ type_add_rows_from_query (NemoQueryEditor    *editor,
 	const char *desc;
 	NemoQueryEditorRow *row;
 	GtkTreeIter iter;
-	int i;
+	size_t i;
 	GtkTreeModel *model;
 	GList *l;
 

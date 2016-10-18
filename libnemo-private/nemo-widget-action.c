@@ -24,10 +24,6 @@
 G_DEFINE_TYPE (NemoWidgetAction, nemo_widget_action,
 	       GTK_TYPE_ACTION);
 
-static void     nemo_widget_action_init       (NemoWidgetAction      *action);
-
-static void     nemo_widget_action_class_init (NemoWidgetActionClass *klass);
-
 static void     nemo_widget_action_get_property  (GObject                    *object,
                                            guint                       param_id,
                                            GValue                     *value,

@@ -84,8 +84,8 @@
 
 /* Forward and back buttons on the mouse */
 static gboolean mouse_extra_buttons = TRUE;
-static int mouse_forward_button = 9;
-static int mouse_back_button = 8;
+static guint mouse_forward_button = 9;
+static guint mouse_back_button = 8;
 
 static void mouse_back_button_changed		     (gpointer                  callback_data);
 static void mouse_forward_button_changed	     (gpointer                  callback_data);
@@ -727,6 +727,9 @@ nemo_window_get_property (GObject *object,
         case PROP_SHOW_SIDEBAR:
             g_value_set_boolean (value, window->details->show_sidebar);
             break;
+        default:
+        	g_assert_not_reached ();
+        	break;
 	}
 }
 
@@ -1071,7 +1074,7 @@ nemo_window_key_press_event (GtkWidget *widget,
 	NemoWindowSlot *active_slot;
 	NemoView *view;
 	GtkWidget *focus_widget;
-	int i;
+	size_t i;
 
 	window = NEMO_WINDOW (widget);
 
@@ -1944,7 +1947,7 @@ static gboolean
 nemo_window_state_event (GtkWidget *widget,
 			     GdkEventWindowState *event)
 {
-	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED && !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
+	if ((event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) && !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
 		g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED,
 					event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
 	}

@@ -59,8 +59,6 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 static void     eel_editable_label_editable_init           (GtkEditableInterface  *iface);
-static void     eel_editable_label_class_init              (EelEditableLabelClass *klass);
-static void     eel_editable_label_init                    (EelEditableLabel      *label);
 static void     eel_editable_label_set_property            (GObject               *object,
 							    guint                  prop_id,
 							    const GValue          *value,
@@ -1015,7 +1013,7 @@ eel_editable_label_ensure_layout (EelEditableLabel *label,
 	  pango_layout_set_justify (label->layout, TRUE);
 	  break;
 	default:
-	  g_assert_not_reached();
+	  g_assert_not_reached ();
 	}
 
       pango_layout_set_alignment (label->layout, align);
@@ -2721,6 +2719,7 @@ eel_editable_label_move_cursor (EelEditableLabel    *label,
 	  break;
 	case GTK_MOVEMENT_PARAGRAPHS:
 	case GTK_MOVEMENT_PAGES:
+	case GTK_MOVEMENT_HORIZONTAL_PAGES:
 	  break;
 	default:
 	  g_assert_not_reached ();
@@ -2761,6 +2760,7 @@ eel_editable_label_move_cursor (EelEditableLabel    *label,
 	  break;
 	case GTK_MOVEMENT_PARAGRAPHS:
 	case GTK_MOVEMENT_PAGES:
+	case GTK_MOVEMENT_HORIZONTAL_PAGES:
 	  break;
 	default:
 	  g_assert_not_reached ();
@@ -2858,6 +2858,9 @@ eel_editable_label_delete_from_cursor (EelEditableLabel *label,
     case GTK_DELETE_WHITESPACE:
       /* TODO eel_editable_label_delete_whitespace (label); */
       break;
+	default:
+	  g_assert_not_reached ();
+	  break;
     }
   
   eel_editable_label_pend_cursor_blink (label);
@@ -3368,7 +3371,7 @@ typedef struct {
 	GailTextUtil *textutil;
         gint         selection_anchor;
         gint         selection_end;
-        gchar        *signal_name;
+        const gchar *signal_name;
         gint         position;
         gint         length;
 } EelEditableLabelAccessiblePrivate;

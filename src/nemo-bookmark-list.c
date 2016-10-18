@@ -671,7 +671,7 @@ load_bookmark_metadata_file (NemoBookmarkList *list)
                                    &error)) {
         gchar **items = g_key_file_get_groups (kfile, NULL);
 
-        gint i;
+        guint i;
         for (i = 0; i < g_strv_length (items); i++) {
             NemoBookmarkMetadata *meta = nemo_bookmark_metadata_new ();
 

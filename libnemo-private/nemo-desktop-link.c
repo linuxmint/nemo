@@ -152,7 +152,7 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 
 	default:
 	case NEMO_DESKTOP_LINK_MOUNT:
-		g_assert_not_reached();
+		g_assert_not_reached ();
 	}
 
 	create_icon_file (link);

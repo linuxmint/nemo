@@ -167,13 +167,14 @@ construct_default_icon_from_metadata (NemoBookmark *bookmark)
     } else if (md->icon_uri) {
         GFile *file = g_file_new_for_uri (md->icon_uri);
         ret = g_file_icon_new (file);
+
         g_object_unref (file);
     } else {
         ret = get_default_folder_icon (bookmark);
     }
 
     if (ret != NULL && md->emblems != NULL) {
-        gint i = 0;
+        guint i = 0;
 
         GIcon *emb_icon;
         GEmblem *emblem;
@@ -893,8 +894,7 @@ nemo_bookmark_metadata_compare (NemoBookmarkMetadata *d1,
         (g_strv_length (d1->emblems) != g_strv_length (d2->emblems)))
         return FALSE;
 
-    gint i;
-
+    guint i;
     for (i = 0; i < g_strv_length (d1->emblems); i++) {
         if (g_strcmp0 (d1->emblems[i], d2->emblems[i]) != 0)
             return FALSE;

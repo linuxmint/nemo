@@ -189,9 +189,9 @@ static GHashTable *loadable_icon_cache = NULL;
 static GHashTable *themed_icon_cache = NULL;
 static guint reap_cache_timeout = 0;
 
-#define MICROSEC_PER_SEC ((guint64)1000000L)
+#define MICROSEC_PER_SEC ((gint64) 1000000)
 
-static guint time_now;
+static gint time_now;
 
 static gboolean
 reap_old_icon (gpointer  key,
@@ -432,20 +432,18 @@ nemo_icon_info_lookup (GIcon *icon,
 
 		return g_object_ref (icon_info);
 	} else {
-                GdkPixbuf *pixbuf;
-                GtkIconInfo *gtk_icon_info;
-
-                gtk_icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (gtk_icon_theme_get_default (),
-                                                                          icon,
-                                                                          size,
-                                                                          scale,
-                                                                          0);
-                if (gtk_icon_info != NULL) {
-                        pixbuf = gtk_icon_info_load_icon (gtk_icon_info, NULL);
-                        g_object_unref (gtk_icon_info);
-                } else {
-                        pixbuf = NULL;
-                }
+		GtkIconInfo *gtk_icon_info;
+		gtk_icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (gtk_icon_theme_get_default (),
+		                                                          icon,
+		                                                          size,
+		                                                          scale,
+		                                                          0);
+		if (gtk_icon_info != NULL) {
+			pixbuf = gtk_icon_info_load_icon (gtk_icon_info, NULL);
+			g_object_unref (gtk_icon_info);
+		} else {
+			pixbuf = NULL;
+        }
 
 		icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
 
@@ -454,7 +452,7 @@ nemo_icon_info_lookup (GIcon *icon,
 		}
 
 		return icon_info;
-        }
+	}
 }
 
 NemoIconInfo *
@@ -533,7 +531,7 @@ nemo_icon_info_get_pixbuf (NemoIconInfo *icon)
 
 GdkPixbuf *
 nemo_icon_info_get_pixbuf_nodefault_at_size (NemoIconInfo  *icon,
-						 gsize              forced_size)
+						 int             forced_size)
 {
 	GdkPixbuf *pixbuf, *scaled_pixbuf;
 	int w, h, s;
@@ -562,7 +560,7 @@ nemo_icon_info_get_pixbuf_nodefault_at_size (NemoIconInfo  *icon,
 
 GdkPixbuf *
 nemo_icon_info_get_pixbuf_at_size (NemoIconInfo  *icon,
-				       gsize              forced_size)
+				       int              forced_size)
 {
 	GdkPixbuf *pixbuf, *scaled_pixbuf;
 	int w, h, s;
@@ -639,6 +637,7 @@ nemo_get_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 		return NEMO_ICON_SIZE_LARGER;
 	case NEMO_ZOOM_LEVEL_LARGEST:
 		return NEMO_ICON_SIZE_LARGEST;
+	case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
 	}
@@ -662,6 +661,7 @@ nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
         return NEMO_ICON_SIZE_LARGE;
     case NEMO_ZOOM_LEVEL_LARGEST:
         return NEMO_ICON_SIZE_LARGER;
+    case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
     }
@@ -679,7 +679,7 @@ nemo_get_icon_size_for_stock_size (GtkIconSize size)
 }
 
 
-guint
+gint
 nemo_icon_get_emblem_size_for_icon_size (guint size)
 {
 	if (size >= 96)
@@ -735,6 +735,7 @@ nemo_user_special_directory_get_gicon (GUserDirectory directory)
 		ICON_CASE (TEMPLATES);
 		ICON_CASE (VIDEOS);
 
+	case G_USER_N_DIRECTORIES:
 	default:
 		return g_themed_icon_new ("folder");
 	}

@@ -31,6 +31,31 @@
 #include <string.h>
 #include <eel-glib-extensions.h>
 
+#if    __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#define EEL_GNUC_BEGIN_IGNORE_SUGGESTED_ATTRIBUTE		\
+  _Pragma ("GCC diagnostic push")			\
+  _Pragma ("GCC diagnostic ignored \"-Wsuggest-attribute=format\"")
+#define EEL_GNUC_END_IGNORE_SUGGESTED_ATTRIBUTE			\
+  _Pragma ("GCC diagnostic pop")
+#elif defined (_MSC_VER) && (_MSC_VER >= 1500)
+#define EEL_GNUC_BEGIN_IGNORE_SUGGESTED_ATTRIBUTE		\
+  __pragma (warning (push))  \
+  // TODO
+#define EEL_GNUC_END_IGNORE_SUGGESTED_ATTRIBUTE			\
+  __pragma (warning (pop))
+#elif defined (__clang__)
+#define EEL_GNUC_BEGIN_IGNORE_SUGGESTED_ATTRIBUTE \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Wsuggest-attribute=format\"")
+#define EEL_GNUC_END_IGNORE_SUGGESTED_ATTRIBUTE \
+  _Pragma("clang diagnostic pop")
+#else
+#define EEL_GNUC_BEGIN_IGNORE_SUGGESTED_ATTRIBUTE
+#define EEL_GNUC_END_IGNORE_SUGGESTED_ATTRIBUTE
+#endif
+
+
+
 #if !defined (EEL_OMIT_SELF_CHECK)
 #include "eel-lib-self-check-functions.h"
 #endif
@@ -365,6 +390,9 @@ get_arg_type_from_format (EelPrintfHandler *custom_handlers,
 	case 'p':
 	case 'n':
 		return ARG_TYPE_POINTER;
+	default:
+		g_assert_not_reached ();
+		break;
 	}
 	return ARG_TYPE_INVALID;
 }
@@ -420,6 +448,7 @@ skip_to_arg (va_list *va,
 	}
 }
 
+EEL_GNUC_BEGIN_IGNORE_SUGGESTED_ATTRIBUTE
 char *
 eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 				const char *format,
@@ -601,6 +630,7 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 	
 	return g_string_free (str, FALSE);
 }
+EEL_GNUC_END_IGNORE_SUGGESTED_ATTRIBUTE;
 
 char *
 eel_strdup_printf_with_custom (EelPrintfHandler *handlers,
@@ -702,10 +732,10 @@ eel_ref_str_unref (eel_ref_str str)
 	old_ref = g_atomic_int_get (count);
 	if (old_ref == 1) {
 		g_free ((char *)count);
-	} else if (old_ref == 0x80000001) {
+	} else if ((unsigned) old_ref == 0x80000001) {
 		G_LOCK (unique_ref_strs);
 		/* Need to recheck after taking lock to avoid races with _get_unique() */
-		if (g_atomic_int_add (count, -1) == 0x80000001) {
+		if ((unsigned) g_atomic_int_add (count, -1) == 0x80000001) {
 			g_hash_table_remove (unique_ref_strs, (char *)str);
 			g_free ((char *)count);
 		} 
@@ -719,6 +749,7 @@ eel_ref_str_unref (eel_ref_str str)
 
 #if !defined (EEL_OMIT_SELF_CHECK)
 
+EEL_GNUC_BEGIN_IGNORE_SUGGESTED_ATTRIBUTE
 static void
 verify_printf (const char *format, ...)
 {
@@ -737,6 +768,8 @@ verify_printf (const char *format, ...)
 	
 	g_free (orig);
 }
+EEL_GNUC_END_IGNORE_SUGGESTED_ATTRIBUTE;
+
 
 static char *
 custom1_to_string (char *format, va_list va)

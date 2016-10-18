@@ -338,6 +338,9 @@ vfs_file_get_date (NemoFile *file,
 			*date = file->details->ctime;
 		}
 		return TRUE;
+	default:
+		g_assert_not_reached ();
+		break;
 	}
 	return FALSE;
 }

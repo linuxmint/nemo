@@ -88,7 +88,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	emblems_to_ignore = nemo_view_get_emblem_names_to_exclude 
 		(NEMO_VIEW (icon_view));
 	emblem_icons = nemo_file_get_emblem_icons (file,
-						       emblems_to_ignore);
+			(const char **) emblems_to_ignore);
 	g_strfreev (emblems_to_ignore);
 
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));

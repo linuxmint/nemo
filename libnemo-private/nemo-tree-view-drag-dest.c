@@ -83,12 +83,12 @@ G_DEFINE_TYPE (NemoTreeViewDragDest, nemo_tree_view_drag_dest,
 	       G_TYPE_OBJECT);
 
 static const GtkTargetEntry drag_types [] = {
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	{ (gchar *) NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
 	/* prefer "_NETSCAPE_URL" over "text/uri-list" to satisfy web browsers. */
-	{ NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
-	{ NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
-	{ NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
+	{ (gchar *) NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
+	{ (gchar *) NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
+	{ (gchar *) NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
+	{ (gchar *) NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
 };
 
 
@@ -442,7 +442,9 @@ get_drop_action (NemoTreeViewDragDest *dest,
 	case NEMO_ICON_DND_RAW:
 	case NEMO_ICON_DND_XDNDDIRECTSAVE:
 		return GDK_ACTION_COPY;
-
+	default:
+		g_assert_not_reached ();
+		break;
 	}
 
 	return 0;
@@ -841,6 +843,9 @@ drag_data_received_callback (GtkWidget *widget,
 		case NEMO_ICON_DND_XDNDDIRECTSAVE:
 			finished = receive_xds (dest, widget, time, context, x, y);
 			success = TRUE;
+			break;
+		default:
+			g_assert_not_reached ();
 			break;
 		}
 

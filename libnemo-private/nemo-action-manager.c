@@ -28,10 +28,6 @@ G_DEFINE_TYPE (NemoActionManager, nemo_action_manager, G_TYPE_OBJECT);
 
 static void     set_up_actions                 (NemoActionManager *action_manager);
 
-static void     nemo_action_manager_init       (NemoActionManager      *action_manager);
-
-static void     nemo_action_manager_class_init (NemoActionManagerClass *klass);
-
 static void     nemo_action_manager_constructed (GObject *object);
 
 static void     nemo_action_manager_dispose (GObject *gobject);

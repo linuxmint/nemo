@@ -41,8 +41,6 @@
 #define AFTER_ALL_TABS -1
 #define NOT_IN_APP_WINDOWS -2
 
-static void nemo_notebook_init		 (NemoNotebook *notebook);
-static void nemo_notebook_class_init	 (NemoNotebookClass *klass);
 static int  nemo_notebook_insert_page	 (GtkNotebook *notebook,
 					  GtkWidget *child,
 					  GtkWidget *tab_label,

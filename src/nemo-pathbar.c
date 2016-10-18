@@ -901,6 +901,9 @@ nemo_path_bar_scroll (GtkWidget      *widget,
             return TRUE;
         case GDK_SCROLL_SMOOTH:
             break;
+		default:
+			g_assert_not_reached ();
+			break;
     }
 
     return FALSE;
@@ -1470,11 +1473,13 @@ get_type_icon_info (ButtonData *button_data, gint scale)
                                    scale,
                                    NEMO_FILE_ICON_FLAGS_NONE);
             }
-        default:
             return NULL;
+        case MOUNT_BUTTON:
+        case DEFAULT_LOCATION_BUTTON:
+		default:
+			g_assert_not_reached ();
+			return NULL;
         }
-  
-    return NULL;
 }
 
 static void
@@ -1763,7 +1768,7 @@ setup_button_drag_source (ButtonData *button_data)
 {
     GtkTargetList *target_list;
     const GtkTargetEntry targets[] = {
-        { NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST }
+        { (gchar *) NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST }
     };
 
         gtk_drag_source_set (button_data->button,
@@ -2057,7 +2062,6 @@ nemo_path_bar_update_path (NemoPathBar *path_bar,
     fake_root = NULL;
     result = TRUE;
     first_directory = TRUE;
-    last_directory;
     new_buttons = NULL;
     current_button_data = NULL;
 

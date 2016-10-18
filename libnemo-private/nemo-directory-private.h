@@ -214,8 +214,6 @@ FileMonitors *     nemo_directory_remove_file_monitors            (NemoDirectory
 void               nemo_directory_add_file_monitors               (NemoDirectory         *directory,
 								       NemoFile              *file,
 								       FileMonitors              *monitors);
-void               nemo_directory_add_file                        (NemoDirectory         *directory,
-								       NemoFile              *file);
 GList *            nemo_directory_begin_file_name_change          (NemoDirectory         *directory,
 								       NemoFile              *file);
 void               nemo_directory_end_file_name_change            (NemoDirectory         *directory,
