@@ -53,6 +53,7 @@
 #include <libnemo-private/nemo-monitor.h>
 #include <libnemo-private/nemo-program-choosing.h>
 #include <libnemo-private/nemo-trash-monitor.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -97,10 +98,101 @@ desktop_directory_changed_callback (gpointer callback_data)
 	desktop_directory = nemo_get_desktop_directory ();
 }
 
+static void
+update_margins (NemoDesktopIconView *icon_view)
+{
+    NemoIconContainer *icon_container;
+    gint current_monitor;
+
+    icon_container = get_icon_container (icon_view);
+    current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (icon_view));
+
+    /* _NET_WORKAREA only applies to the primary monitor - use it to adjust
+       container margins on the primary icon container only.  For any others,
+       add a sane amount of padding for any likely chrome. */
+
+    if (current_monitor != nemo_desktop_utils_get_primary_monitor ()) {
+        nemo_icon_container_set_margins (icon_container, 50, 50, 50, 50);
+        return;
+    }
+
+    GdkRectangle geometry, work_rect;
+
+    nemo_desktop_utils_get_monitor_geometry (current_monitor, &geometry);
+    nemo_desktop_utils_get_monitor_work_rect (current_monitor, &work_rect);
+
+    gint l, r, t, b;
+
+    l = work_rect.x - geometry.x;
+    r = (geometry.x + geometry.width) - (work_rect.x + work_rect.width);
+    t = work_rect.y - geometry.y;
+    b = (geometry.y + geometry.height) - (work_rect.y + work_rect.height);
+
+    nemo_icon_container_set_margins (icon_container, l, r, t, b);
+}
+
+static GdkFilterReturn
+gdk_filter_func (GdkXEvent *gdk_xevent,
+                 GdkEvent  *event,
+                 gpointer   data)
+{
+    XEvent *xevent = gdk_xevent;
+    NemoDesktopIconView *icon_view;
+
+    icon_view = NEMO_DESKTOP_ICON_VIEW (data);
+
+    switch (xevent->type) {
+        case PropertyNotify:
+            if (xevent->xproperty.atom == gdk_x11_get_xatom_by_name ("_NET_WORKAREA")) {
+                update_margins (icon_view);
+            }
+            break;
+        default:
+            break;
+    }
+
+    return GDK_FILTER_CONTINUE;
+}
+
 static const char *
 real_get_id (NemoView *view)
 {
 	return NEMO_DESKTOP_ICON_VIEW_ID;
+}
+
+static void
+unrealized_callback (GtkWidget *widget, NemoDesktopIconView *desktop_icon_view)
+{
+  g_return_if_fail (desktop_icon_view->details->root_window != NULL);
+
+  gdk_window_remove_filter (desktop_icon_view->details->root_window,
+                            gdk_filter_func,
+                            desktop_icon_view);
+
+  desktop_icon_view->details->root_window = NULL;
+}
+
+static void
+realized_callback (GtkWidget *widget, NemoDesktopIconView *desktop_icon_view)
+{
+  GdkWindow *root_window;
+  GdkScreen *screen;
+
+  g_return_if_fail (desktop_icon_view->details->root_window == NULL);
+
+  screen = gtk_widget_get_screen (widget);
+
+  root_window = gdk_screen_get_root_window (screen);
+
+  desktop_icon_view->details->root_window = root_window;
+
+  update_margins (desktop_icon_view);
+
+  /* Setup the property filter */
+  gdk_window_set_events (root_window, GDK_PROPERTY_CHANGE_MASK);
+  gdk_window_add_filter (root_window,
+                         gdk_filter_func,
+                         desktop_icon_view);
 }
 
 static void
@@ -429,6 +521,11 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 				  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
 				  G_CALLBACK (default_zoom_level_changed),
 				  desktop_icon_view);
+
+    g_signal_connect_object (desktop_icon_view, "realize",
+                             G_CALLBACK (realized_callback), desktop_icon_view, 0);
+    g_signal_connect_object (desktop_icon_view, "unrealize",
+                             G_CALLBACK (unrealized_callback), desktop_icon_view, 0);
 
 	g_signal_connect_swapped (nemo_desktop_preferences,
 				  "changed::" NEMO_PREFERENCES_DESKTOP_FONT,

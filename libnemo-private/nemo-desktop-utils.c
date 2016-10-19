@@ -40,6 +40,24 @@ nemo_desktop_utils_get_monitor_work_rect (gint monitor, GdkRectangle *rect)
     gdk_screen_get_monitor_workarea (default_screen, monitor, rect);
 }
 
+void
+nemo_desktop_utils_get_monitor_geometry (gint monitor, GdkRectangle *rect)
+{
+    ensure_screen ();
+
+    g_return_if_fail (monitor >= 0 && monitor < gdk_screen_get_n_monitors (default_screen));
+
+    gdk_screen_get_monitor_geometry (default_screen, monitor, rect);
+}
+
+gboolean
+nemo_desktop_utils_get_primary_monitor (void)
+{
+    ensure_screen ();
+
+    return gdk_screen_get_primary_monitor (default_screen);
+}
+
 gint
 nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget)
 {

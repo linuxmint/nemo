@@ -205,7 +205,7 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 
     GdkRectangle rect;
 
-    nemo_desktop_utils_get_monitor_work_rect (window->details->monitor, &rect);
+    nemo_desktop_utils_get_monitor_geometry (window->details->monitor, &rect);
 
     DEBUG ("NemoBlankDesktopWindow monitor:%d: x:%d, y:%d, w:%d, h:%d",
            window->details->monitor,
@@ -213,7 +213,7 @@ nemo_blank_desktop_window_constructed (GObject *obj)
            rect.width, rect.height);
 
     gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
-    gtk_window_maximize (GTK_WINDOW (window));
+    gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
 
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);

@@ -135,50 +135,6 @@ layout_changed (NemoDesktopManager *manager)
     g_strfreev (pref_split);
 }
 
-static GdkFilterReturn
-gdk_filter_func (GdkXEvent *gdk_xevent,
-                  GdkEvent *event,
-                   gpointer data)
-{
-    XEvent *xevent = gdk_xevent;
-    NemoDesktopManager *manager;
-
-    manager = NEMO_DESKTOP_MANAGER (data);
-
-    switch (xevent->type) {
-        case PropertyNotify:
-            if (xevent->xproperty.atom == gdk_x11_get_xatom_by_name ("_NET_WORKAREA"))
-                layout_changed (manager);
-            break;
-        default:
-            break;
-    }
-
-    return GDK_FILTER_CONTINUE;
-}
-
-static void
-remove_workarea_filter (NemoDesktopManager *manager)
-{
-    gdk_window_remove_filter (manager->root_window,
-                              gdk_filter_func,
-                              manager);
-    manager->root_window = NULL;
-}
-
-static void
-add_workarea_filter (NemoDesktopManager *manager)
-{
-    GdkWindow *root_window = gdk_screen_get_root_window (manager->screen);
-
-    manager->root_window = root_window;
-
-    gdk_window_set_events (root_window, GDK_PROPERTY_CHANGE_MASK);
-    gdk_window_add_filter (root_window,
-                           gdk_filter_func,
-                           manager);
-}
-
 static void
 nemo_desktop_manager_get_property (GObject *object, guint property_id,
                               GValue *value, GParamSpec *pspec)
@@ -238,8 +194,6 @@ nemo_desktop_manager_constructed (GObject *object)
                                                                    G_CALLBACK (layout_changed),
                                                                    manager);
 
-    add_workarea_filter (manager);
-
     layout_changed (manager);
 }
 
@@ -255,8 +209,6 @@ nemo_desktop_manager_dispose (GObject *object)
     g_signal_handler_disconnect (manager->screen, manager->size_changed_id);
     g_signal_handler_disconnect (nemo_preferences, manager->home_dir_changed_id);
     g_signal_handler_disconnect (nemo_preferences, manager->orphaned_icon_handling_id);
-
-    remove_workarea_filter (manager);
 
     G_OBJECT_CLASS (nemo_desktop_manager_parent_class)->dispose (object);
 }
