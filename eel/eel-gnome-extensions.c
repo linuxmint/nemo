@@ -32,18 +32,96 @@
 
 #include <gtk/gtk.h>
 
+/* Adapted from gio - gdesktopappinfo.c - prepend_terminal_to_vector */
+static char *
+prepend_terminal_to_command_line (const char *command_line)
+{
+    GSettings *settings;
+    gchar *prefix = NULL;
+    gchar *terminal = NULL;
+    gchar *ret = NULL;
+
+    g_return_val_if_fail (command_line != NULL, g_strdup (command_line));
+
+    settings = g_settings_new ("org.cinnamon.desktop.default-applications.terminal");
+    terminal = g_settings_get_string (settings, "exec");
+
+    if (terminal != NULL) {
+        gchar *term_path = NULL;
+
+        term_path = g_find_program_in_path (terminal);
+
+        if (term_path != NULL) {
+            gchar *exec_flag = NULL;
+
+            exec_flag = g_settings_get_string (settings, "exec-arg");
+
+            if (exec_flag == NULL) {
+                prefix = g_strdup (term_path);
+            } else {
+                prefix = g_strdup_printf ("%s %s", term_path, exec_flag);
+            }
+
+            g_free (exec_flag);
+        }
+
+        g_free (term_path);
+    }
+
+    g_object_unref (settings);
+    g_free (terminal);
+
+    if (prefix == NULL) {
+        gchar *check = NULL;
+
+        check = g_find_program_in_path ("gnome-terminal");
+        if (check != NULL) {
+            /* Note that gnome-terminal takes -x and
+             * as -e in gnome-terminal is broken we use that. */
+            prefix = g_strdup_printf ("gnome-terminal -x");
+        } else {
+            check = g_find_program_in_path ("nxterm");
+
+            if (check == NULL)
+                check = g_find_program_in_path ("color-xterm");
+            if (check == NULL)
+                check = g_find_program_in_path ("rxvt");
+            if (check == NULL)
+                check = g_find_program_in_path ("xterm");
+            if (check == NULL)
+                check = g_find_program_in_path ("dtterm");
+            if (check == NULL) {
+                check = g_strdup ("xterm");
+                g_warning ("couldn't find a terminal, falling back to xterm");
+            }
+
+            prefix = g_strdup_printf ("%s -e", check);
+        }
+
+        g_free (check);
+    }
+
+    ret = g_strdup_printf ("%s %s", prefix, command_line);
+    g_free (prefix);
+
+    return ret;
+}
+
 /* Return a command string containing the path to a terminal on this system. */
 
 void
-eel_gnome_open_terminal_on_screen (const char *command,
-				   GdkScreen  *screen)
+eel_gnome_open_terminal_on_screen (const gchar *command,
+                                   GdkScreen   *screen)
 {
-	GAppInfo *app;
-	GdkAppLaunchContext *ctx;
-	GError *error = NULL;
-	GdkDisplay *display;
+    gchar *command_line;
+    GAppInfo *app;
+    GdkAppLaunchContext *ctx;
+    GError *error = NULL;
+    GdkDisplay *display;
 
-	app = g_app_info_create_from_commandline (command, NULL, G_APP_INFO_CREATE_NEEDS_TERMINAL, &error);
+    command_line = prepend_terminal_to_command_line (command);
+
+    app = g_app_info_create_from_commandline (command_line, NULL, 0, &error);
 
 	if (app != NULL && screen != NULL) {
 		display = gdk_screen_get_display (screen);
