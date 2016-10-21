@@ -10,6 +10,8 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-desktop-utils.h>
 
+static void layout_changed (NemoDesktopManager *manager);
+
 G_DEFINE_TYPE (NemoDesktopManager, nemo_desktop_manager, G_TYPE_OBJECT);
 
 #define DESKTOPS_ON_PRIMARY "true::false"
@@ -45,6 +47,16 @@ close_all_windows (NemoDesktopManager *manager)
 }
 
 static void
+on_window_scale_changed (GtkWidget          *window,
+                         GParamSpec         *pspec,
+                         NemoDesktopManager *manager)
+{
+    manager->scale_factor_changed_id = 0;
+
+    layout_changed (manager);
+}
+
+static void
 create_new_desktop_window (NemoDesktopManager *manager,
                                          gint  monitor,
                                      gboolean  primary,
@@ -72,6 +84,13 @@ create_new_desktop_window (NemoDesktopManager *manager,
 
     gtk_widget_realize (GTK_WIDGET (window));
     gdk_flush ();
+
+    if (manager->scale_factor_changed_id == 0) {
+        manager->scale_factor_changed_id = g_signal_connect (window,
+                                                             "notify::scale-factor",
+                                                             G_CALLBACK (on_window_scale_changed),
+                                                             manager);
+    }
 
     gtk_application_add_window (GTK_APPLICATION (nemo_application_get_singleton ()),
                                 GTK_WINDOW (window));
@@ -239,6 +258,10 @@ nemo_desktop_manager_init (NemoDesktopManager *self)
     self->size_changed_id = 0;
     self->desktop_layout_changed_id = 0;
     self->show_desktop_changed_id = 0;
+    self->home_dir_changed_id = 0;
+    self->cinnamon_panel_layout_changed_id = 0;
+    self->orphaned_icon_handling_id = 0;
+    self->scale_factor_changed_id = 0;
 
     self->desktops = NULL;
 
