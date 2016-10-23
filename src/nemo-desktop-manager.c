@@ -10,7 +10,7 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-desktop-utils.h>
 
-static void layout_changed (NemoDesktopManager *manager);
+static gboolean layout_changed (NemoDesktopManager *manager);
 
 G_DEFINE_TYPE (NemoDesktopManager, nemo_desktop_manager, G_TYPE_OBJECT);
 
@@ -47,13 +47,24 @@ close_all_windows (NemoDesktopManager *manager)
 }
 
 static void
+queue_update_layout (NemoDesktopManager *manager)
+{
+    if (manager->update_layout_idle_id > 0) {
+        g_source_remove (manager->update_layout_idle_id);
+        manager->update_layout_idle_id = 0;
+    }
+
+    manager->update_layout_idle_id = g_idle_add ((GSourceFunc) layout_changed, manager);
+}
+
+static void
 on_window_scale_changed (GtkWidget          *window,
                          GParamSpec         *pspec,
                          NemoDesktopManager *manager)
 {
     manager->scale_factor_changed_id = 0;
 
-    layout_changed (manager);
+    queue_update_layout (manager);
 }
 
 static void
@@ -98,7 +109,7 @@ create_new_desktop_window (NemoDesktopManager *manager,
     manager->desktops = g_list_append (manager->desktops, info);
 }
 
-static void
+static gboolean
 layout_changed (NemoDesktopManager *manager)
 {
     gint n_monitors = 0;
@@ -106,11 +117,13 @@ layout_changed (NemoDesktopManager *manager)
     gboolean show_desktop_on_primary = FALSE;
     gboolean show_desktop_on_remaining = FALSE;
 
+    manager->update_layout_idle_id = 0;
+
     close_all_windows (manager);
 
     NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
     if (!nemo_application_get_show_desktop (app)) {
-        return;
+        return FALSE;
     } 
 
     gchar *pref = g_settings_get_string (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_LAYOUT);
@@ -152,6 +165,8 @@ layout_changed (NemoDesktopManager *manager)
 
     g_free (pref);
     g_strfreev (pref_split);
+
+    return FALSE;
 }
 
 static void
@@ -184,20 +199,21 @@ nemo_desktop_manager_constructed (GObject *object)
     NemoDesktopManager *manager = NEMO_DESKTOP_MANAGER (object);
 
     manager->screen = gdk_screen_get_default ();
+    manager->update_layout_idle_id = 0;
 
     manager->show_desktop_changed_id = g_signal_connect_swapped (nemo_desktop_preferences, 
                                                                  "changed::" NEMO_PREFERENCES_SHOW_DESKTOP,
-                                                                 G_CALLBACK (layout_changed),
+                                                                 G_CALLBACK (queue_update_layout),
                                                                  manager);
 
     manager->desktop_layout_changed_id = g_signal_connect_swapped (nemo_desktop_preferences,
                                                                    "changed::" NEMO_PREFERENCES_DESKTOP_LAYOUT,
-                                                                   G_CALLBACK (layout_changed),
+                                                                   G_CALLBACK (queue_update_layout),
                                                                    manager);
 
     manager->size_changed_id = g_signal_connect_swapped (manager->screen,
                                                          "size_changed",
-                                                         G_CALLBACK (layout_changed),
+                                                         G_CALLBACK (queue_update_layout),
                                                          manager);
 
     /* Monitor the preference to have the desktop */
@@ -205,12 +221,12 @@ nemo_desktop_manager_constructed (GObject *object)
 
     manager->home_dir_changed_id = g_signal_connect_swapped (nemo_preferences,
                                                              "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-                                                             G_CALLBACK (layout_changed),
+                                                             G_CALLBACK (queue_update_layout),
                                                              manager);
 
     manager->orphaned_icon_handling_id = g_signal_connect_swapped (nemo_preferences,
                                                                    "changed::" NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS,
-                                                                   G_CALLBACK (layout_changed),
+                                                                   G_CALLBACK (queue_update_layout),
                                                                    manager);
 
     layout_changed (manager);

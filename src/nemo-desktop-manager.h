@@ -47,6 +47,8 @@ typedef struct {
   gulong orphaned_icon_handling_id;
   gulong scale_factor_changed_id;
 
+  guint update_layout_idle_id;
+
   NemoActionManager *action_manager;
 
   GList *desktops;
