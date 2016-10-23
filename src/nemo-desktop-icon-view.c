@@ -102,6 +102,7 @@ static void
 update_margins (NemoDesktopIconView *icon_view)
 {
     NemoIconContainer *icon_container;
+    GdkRectangle geometry, work_rect;
     gint current_monitor;
 
     icon_container = get_icon_container (icon_view);
@@ -115,8 +116,6 @@ update_margins (NemoDesktopIconView *icon_view)
         nemo_icon_container_set_margins (icon_container, 50, 50, 50, 50);
         return;
     }
-
-    GdkRectangle geometry, work_rect;
 
     nemo_desktop_utils_get_monitor_geometry (current_monitor, &geometry);
     nemo_desktop_utils_get_monitor_work_rect (current_monitor, &work_rect);
