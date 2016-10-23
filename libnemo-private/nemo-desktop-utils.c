@@ -30,32 +30,72 @@ ensure_screen (void)
         default_screen = gdk_screen_get_default ();
 }
 
-void
-nemo_desktop_utils_get_monitor_work_rect (gint monitor, GdkRectangle *rect)
+#if GTK_CHECK_VERSION (3, 22, 0)
+static GdkDisplay *default_display = NULL;
+
+static void
+ensure_display (void)
 {
+    if (!default_display)
+        default_display = gdk_display_get_default ();
+}
+#endif
+
+void
+nemo_desktop_utils_get_monitor_work_rect (gint num, GdkRectangle *rect)
+{
+#if GTK_CHECK_VERSION (3, 22, 0)
+    ensure_display ();
+    g_return_if_fail (num >= 0 && num < gdk_display_get_n_monitors (default_display));
+
+    GdkMonitor *monitor = gdk_display_get_monitor (default_display, num);
+
+    gdk_monitor_get_workarea (monitor, rect);
+#else
     ensure_screen ();
-
-    g_return_if_fail (monitor >= 0 && monitor < gdk_screen_get_n_monitors (default_screen));
-
-    gdk_screen_get_monitor_workarea (default_screen, monitor, rect);
+    g_return_if_fail (num >= 0 && num < gdk_screen_get_n_monitors (default_screen));
+    gdk_screen_get_monitor_workarea (default_screen, num, rect);
+#endif
 }
 
 void
-nemo_desktop_utils_get_monitor_geometry (gint monitor, GdkRectangle *rect)
+nemo_desktop_utils_get_monitor_geometry (gint num, GdkRectangle *rect)
 {
+#if GTK_CHECK_VERSION (3, 22, 0)
+    ensure_display ();
+    g_return_if_fail (num >= 0 && num < gdk_display_get_n_monitors (default_display));
+
+    GdkMonitor *monitor = gdk_display_get_monitor (default_display, num);
+
+    gdk_monitor_get_geometry (monitor, rect);
+#else
     ensure_screen ();
+    g_return_if_fail (num >= 0 && num < gdk_screen_get_n_monitors (default_screen));
 
-    g_return_if_fail (monitor >= 0 && monitor < gdk_screen_get_n_monitors (default_screen));
-
-    gdk_screen_get_monitor_geometry (default_screen, monitor, rect);
+    gdk_screen_get_monitor_geometry (default_screen, num, rect);
+#endif
 }
 
-gboolean
+gint
 nemo_desktop_utils_get_primary_monitor (void)
 {
+#if GTK_CHECK_VERSION (3, 22, 0)
+    ensure_display ();
+
+    gint n_mon = gdk_display_get_n_monitors (default_display);
+    gint i;
+
+    for (i = 0; i < n_mon; i ++) {
+        GdkMonitor *monitor = gdk_display_get_monitor (default_display, i);
+        if (gdk_monitor_is_primary (monitor)) {
+            return i;
+        }
+    }
+#else
     ensure_screen ();
 
     return gdk_screen_get_primary_monitor (default_screen);
+#endif
 }
 
 gint
