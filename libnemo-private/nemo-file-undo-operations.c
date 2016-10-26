@@ -35,6 +35,14 @@
 #include "nemo-file.h"
 #include "nemo-file-undo-manager.h"
 
+/* Since we use g_get_current_time for setting "orig_trash_time" in the undo
+ * info, there are situations where the difference between this value and the
+ * real deletion time can differ enough to make the rounding a difference of 1
+ * second, failing the equality check. To make sure we avoid this, and to be
+ * preventive, use 2 seconds epsilon.
+ */
+#define TRASH_TIME_EPSILON 2
+
 G_DEFINE_TYPE (NemoFileUndoInfo, nemo_file_undo_info, G_TYPE_OBJECT)
 
 enum {
@@ -1127,7 +1135,7 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 					trash_time = 0;
 				}
 
-				if (trash_time == orig_trash_time) {
+				if (abs (orig_trash_time - trash_time) <= TRASH_TIME_EPSILON) {
 					/* File in the trash */
 					item = g_file_get_child (trash, g_file_info_get_name (info));
 					g_hash_table_insert (to_restore, item, g_object_ref (origfile));
