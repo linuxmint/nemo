@@ -1,3 +1,110 @@
+nemo (3.2.0) serena; urgency=medium
+
+  [ leigh123linux ]
+  * fix GCC pointer signedness warnings
+
+  [ raveit65 ]
+  * add .view style class on icon view scrolled window
+
+  [ itzexor ]
+  * window: remove custom get_preferred_width/height implementation We already take care of the default size when we create the window, and these only break assumptions of the default GtkWindow's handlers.
+  * pathbar: avoid gtk+ warnings
+  * pathbar: remove hardcoded width for sliders
+
+  [ Maximiliano Curia ]
+  * Close open_as_root child on child exit
+
+  [ Michael Webster ]
+  * nemo-context-menu-menu-item.c: use correct grammar in the context menu toggle.
+
+  [ leigh123linux ]
+  * Fix GTK 3.21.3 desktop redraw issue (#1231)
+
+  [ Maximiliano Curia ]
+  * Migrate away from gnome-common deprecated vars and macros
+
+  [ brownsr ]
+  * replace deprecated gtk_icon_info_free with g_object_unref
+  * remove deprecated and no longer necessary g_type_init
+
+  [ itzexor ]
+  * file-operations: reduce the time for reliable transfer rate
+  * remove "Show text in icon" preference
+
+  [ Michael Webster ]
+  * nemo-view.c: unescape uris being passed to file-roller during drag-and-drop (replaces %20 with spaces).
+
+  [ Chris Allan ]
+  * Expand grid width to canvas
+  * Minimum of one column
+
+  [ xenopeek ]
+  * Update nemo-file.c
+
+  [ leigh123linux ]
+  * trash-monitor: change trash monitoring process
+
+  [ lukefromdc ]
+  * Fix --geometry option when Nemo is already running
+
+  [ Maximiliano Curia ]
+  * Keep warnings as warnings when building the packages
+
+  [ Clement Lefebvre ]
+  * Clean up previous PR
+
+  [ JosephMcc ]
+  * nemo-file-management-properties: Fix an accidental removal
+
+  [ leigh123linux ]
+  * Add missing build dep
+
+  [ Clement Lefebvre ]
+  * Fixed build
+
+  [ Maximiliano Curia ]
+  * Make AX_ macros optional
+
+  [ itzexor ]
+  * nemo-window.c: save sidebar width 100ms after last change
+  * nemo-application.c: fix maximized window state preservation
+
+  [ Daniel Schürmann ]
+  * Remove conditional ellipsis code for GTK < 3.12.0 builds.
+
+  [ darealshinji ]
+  * Add link to Launchpad translations to README
+
+  [ claudetete ]
+  * bind double left click on blank to go to parent folder
+  * add option to manage double cick in blank area (off by default) because it changes previous behavior
+
+  [ Clement Lefebvre ]
+  * Rephrased feature introduced in previous commit and regenerated pot file
+
+  [ Michael Webster ]
+  * nemo-file.c: Only append .desktop to desktop files when they actually need it.  Trusted desktop files (ones that typically get made and placed on the desktop) don't show their extension, so when you try to rename them, the new name needs .desktop appended to it.
+  * nemo-file-management-properties.glade: improve the description of the click-to-rename feature.
+  * nemo-thumbnails.c: Don't set a stack size - see:
+  * nemo-application.c: Look for already-existing desktop windows before attempting to manage the desktop.
+  * desktop: Don't rebuild the desktop any time _NET_WORKAREA changes - this can happen fairly frequently in some situations, causing crashes due to the asynchronous nature of nemo's directory loading back-end.
+  * eel-gnome-extensions.c: Use preferred terminal emulator when using "Run in terminal" to execute something.  This more or less reverts a75c26d50bba3fec1dc242b9efc03f37a06e7093 but simplifies it somewhat, adapting the function that is used in GDesktopAppInfo and adding a check for our user setting.
+  * nemo-desktop-manager.c: run layout_changed when the widget scale factor changes.  This (hopefully) handles regressions with hidpi support due to https://github.com/linuxmint/nemo/commit/c5a513468ee8c3497f0673e3ca019ccd3f409f8b.
+
+  [ leigh123linux ]
+  * file-undo-operations: change trashed files matching condition
+
+  [ Michael Webster ]
+  * icon view: Use the correct container size for applying margins to the icon container.  Also, make sure icon data is fully loaded before positioning items - desktop pseudo-items don't necessarily have the correct bounding boxes defined by the time layout occurs. Load this data just before trying to position the icon, rather than just after.
+  * nemo-desktop-utils: Adjustments for Gtk 3.22 changes in monitor management.  gdk_screen_get_monitor_workarea() no longer returns a valid workarea, it simply returns the geometry - see commit:
+  * nemo-desktop-manager.c: reload the desktop in an idle callback
+  * nemo-application.c: Add a whitelist for ignoring existing desktop handlers by WM_CLASS match.  By default 'conky' is in the list
+
+  [ Clement Lefebvre ]
+  * Generate additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 07 Nov 2016 13:19:34 +0000
+
 nemo (3.0.6) sarah; urgency=medium
 
   [ Clement Lefebvre ]
