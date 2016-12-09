@@ -89,6 +89,8 @@ main (int argc, char *argv[])
 
 	g_set_prgname ("nemo");
 
+	gdk_set_allowed_backends ("x11");
+
 #ifdef HAVE_EXEMPI
 	xmp_init();
 #endif
