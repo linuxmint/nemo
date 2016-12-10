@@ -1,3 +1,24 @@
+nemo (3.2.1) serena; urgency=medium
+
+  [ Tomasz Sterna ]
+  * Add missing "Desktop" DEBUG flag
+
+  [ leigh123linux ]
+  * Add space to Name[en_GB]
+  * file-operations: don't recurse for trash operations
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT file
+
+  [ leigh123linux ]
+  * Force X11 backend
+
+  [ Michael Webster ]
+  * remove screen metadata (we only ever have one screen)
+  * nemo-file-operations.c: Don't update position metadata on most file operations - it's costly, and can cause lockups.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 10 Dec 2016 12:19:48 +0000
+
 nemo (3.2.0) serena; urgency=medium
 
   [ leigh123linux ]
