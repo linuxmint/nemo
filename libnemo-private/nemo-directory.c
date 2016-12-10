@@ -1430,17 +1430,6 @@ nemo_directory_schedule_position_set (GList *position_setting_list)
 				 UNDEFINED_TIME);
 		}
 
-		if (item->set) {
-			g_snprintf (str, sizeof (str), "%d", item->screen);
-		} else {
-			str[0] = 0;
-		}
-		nemo_file_set_metadata
-			(file,
-			 NEMO_METADATA_KEY_SCREEN,
-			 NULL,
-			 str);
-		
         if (item->set) {
             g_snprintf (str, sizeof (str), "%d", item->monitor);
         } else {

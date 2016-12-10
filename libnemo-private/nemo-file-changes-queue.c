@@ -40,7 +40,6 @@ typedef struct {
 	GFile *from;
 	GFile *to;
 	GdkPoint point;
-	int screen;
     int monitor;
 } NemoFileChange;
 
@@ -148,7 +147,6 @@ nemo_file_changes_queue_file_moved (GFile *from,
 void
 nemo_file_changes_queue_schedule_position_set (GFile *location, 
 						   GdkPoint point,
-						   int screen,
                            int monitor)
 {
 	NemoFileChange *new_item;
@@ -160,7 +158,6 @@ nemo_file_changes_queue_schedule_position_set (GFile *location,
 	new_item->kind = CHANGE_POSITION_SET;
 	new_item->from = g_object_ref (location);
 	new_item->point = point;
-	new_item->screen = screen;
     new_item->monitor = monitor;
 	nemo_file_changes_queue_add_common (queue, new_item);
 }
@@ -338,6 +335,7 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 				changes = NULL;
 			}
 			if (position_set_requests != NULL) {
+                g_printerr ("length: %d\n", g_list_length (position_set_requests));
 				position_set_requests = g_list_reverse (position_set_requests);
 				nemo_directory_schedule_position_set (position_set_requests);
 				position_set_list_free (position_set_requests);
@@ -376,7 +374,6 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 			position_set->location = change->from;
 			position_set->set = TRUE;
 			position_set->point = change->point;
-			position_set->screen = change->screen;
             position_set->monitor = change->monitor;
 			position_set_requests = g_list_prepend (position_set_requests,
 								position_set);

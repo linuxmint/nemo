@@ -72,7 +72,6 @@
 #define NEMO_METADATA_KEY_ICON_SCALE                 	"icon-scale"
 #define NEMO_METADATA_KEY_CUSTOM_ICON                	"custom-icon"
 #define NEMO_METADATA_KEY_CUSTOM_ICON_NAME                	"custom-icon-name"
-#define NEMO_METADATA_KEY_SCREEN				"screen"
 #define NEMO_METADATA_KEY_EMBLEMS				"emblems"
 #define NEMO_METADATA_KEY_MONITOR               "monitor"
 

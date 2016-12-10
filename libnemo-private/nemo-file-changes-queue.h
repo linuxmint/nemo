@@ -33,7 +33,6 @@ void nemo_file_changes_queue_file_moved                      (GFile      *from,
 								  GFile      *to);
 void nemo_file_changes_queue_schedule_position_set           (GFile      *location,
 								  GdkPoint    point,
-								  int         screen,
                                   int         monitor);
 void nemo_file_changes_queue_schedule_position_remove        (GFile      *location);
 

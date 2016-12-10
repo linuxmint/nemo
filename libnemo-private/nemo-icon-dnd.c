@@ -788,8 +788,6 @@ handle_local_move (NemoIconContainer *container,
 	NemoDragSelectionItem *item;
 	NemoIcon *icon;
 	NemoFile *file = NULL;
-	char screen_string[32];
-	GdkScreen *screen;
     gint monitor;
 	time_t now;
 
@@ -814,12 +812,6 @@ handle_local_move (NemoIconContainer *container,
 
 			file = nemo_file_get_by_uri (item->uri);
 
-			screen = gtk_widget_get_screen (GTK_WIDGET (container));
-			g_snprintf (screen_string, sizeof (screen_string), "%d",
-				    gdk_screen_get_number (screen));
-			nemo_file_set_metadata (file,
-					NEMO_METADATA_KEY_SCREEN,
-					NULL, screen_string);
 			nemo_file_set_time_metadata (file,
 							 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP, now);
 
@@ -1592,7 +1584,6 @@ drag_data_received_callback (GtkWidget *widget,
                 nemo_file_changes_queue_schedule_position_set (
                                  location,
                                  p,
-                                 gdk_screen_get_number (gtk_widget_get_screen (widget)),
                                  nemo_desktop_utils_get_monitor_for_widget (widget));
 				g_object_unref (location);
 				nemo_file_changes_consume_changes (TRUE);

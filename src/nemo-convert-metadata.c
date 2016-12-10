@@ -119,7 +119,6 @@ static struct {
 	{"icon_position_timestamp", "metadata::" NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP},
 	{"icon_scale", "metadata::" NEMO_METADATA_KEY_ICON_SCALE},
 	{"custom_icon", "metadata::" NEMO_METADATA_KEY_CUSTOM_ICON},
-	{"screen", "metadata::" NEMO_METADATA_KEY_SCREEN},
 	{"keyword", "metadata::" NEMO_METADATA_KEY_EMBLEMS},
 };
 

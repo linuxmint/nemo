@@ -1960,10 +1960,6 @@ new_folder_done (GFile *new_folder,
 
 	
 	file = nemo_file_get (new_folder);
-	nemo_file_set_metadata
-		(file, NEMO_METADATA_KEY_SCREEN,
-		 NULL,
-		 screen_string);
 
 	if (g_hash_table_lookup_extended (data->added_locations, new_folder, NULL, NULL)) {
 		/* The file was already added */
