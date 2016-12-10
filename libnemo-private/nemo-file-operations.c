@@ -2788,7 +2788,10 @@ scan_file (GFile *file,
 	if (info) {
 		count_file (info, job, source_info);
 
-		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
+    		/* trashing operation doesn't recurse */
+    		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY &&
+        		source_info->op != OP_KIND_TRASH)
+     		{
 			g_queue_push_head (dirs, g_object_ref (file));
 		}
 		
