@@ -1,3 +1,9 @@
+nemo (3.2.2) serena; urgency=medium
+
+  * l10n: Generate additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 12 Dec 2016 14:25:13 +0000
+
 nemo (3.2.1) serena; urgency=medium
 
   [ Tomasz Sterna ]
