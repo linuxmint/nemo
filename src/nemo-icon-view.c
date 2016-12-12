@@ -2420,12 +2420,12 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 static gboolean
 button_press_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
-    NemoIconView *view = NEMO_ICON_VIEW (user_data);
+    NemoView *view = NEMO_VIEW (user_data);
     GdkEventButton *event_button = (GdkEventButton *)event;
     int selection_count;
 
-    if (!nemo_view_get_active (NEMO_VIEW (view))) {
-        NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+    if (!nemo_view_get_active (view)) {
+        NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (view);
         nemo_window_slot_make_hosting_pane_active (slot);
         return TRUE;
     }
@@ -2435,7 +2435,7 @@ button_press_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_da
         (event_button->button == 1) && (event_button->type == GDK_2BUTTON_PRESS)) {
         selection_count = nemo_view_get_selection_count (view);
         if (selection_count == 0) {
-            NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+            NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (view);
             nemo_window_slot_go_up (slot, 0);
             return TRUE;
         }
