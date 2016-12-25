@@ -386,6 +386,50 @@ custom_app_set_cb (GtkFileChooserButton *button,
     g_free (escaped);
 }
 
+static gchar *
+escape_spaces(const gchar *path)
+{
+    int spaces;
+    char *pathPointer;
+    char *escapedPointer;
+    char *escaped;
+
+    if (path == NULL) {
+        return NULL:
+    }
+
+    spaces = char_frequency(' ', path);
+
+    if (spaces == 0) {
+        return path;
+    }
+
+    escaped = g_new (char, strlen (path) + (spaces * 2) + 1);
+    for (pathPointer = path, escapedPointer = escaped; *pathPointer != '\0'; pathPointer++, escapedPointer++) {
+        if (*pathPointer == ' ') {
+            *escapedPointer++ = '\\';
+        }
+        *escapedPointer = *pathPointer;
+    }
+    *escapedPointer = '\0';
+    
+    return escaped;
+}
+
+static int *
+char_frequency(const char needle, const gchar *haystack)
+{
+    int i = 0;
+    char *pointer=strchr(haystack,needle);
+    
+    while (pointer!=NULL) {
+        i++;
+        pointer=strchr(pointer+1,needle);
+    }
+
+    return i;
+}
+
 static char *
 get_extension (const char *basename)
 {
