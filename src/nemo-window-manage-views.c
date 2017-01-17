@@ -1868,6 +1868,13 @@ nemo_window_slot_reload (NemoWindowSlot *slot)
 		return;
 	}
 
+	if (slot->pending_location != NULL
+	    || slot->content_view == NULL
+	    || nemo_view_get_loading (slot->content_view)) {
+		/* there is a reload in flight */
+		return;
+	}
+
 	/* peek_slot_field (window, location) can be free'd during the processing
 	 * of begin_location_change, so make a copy
 	 */
