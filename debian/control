@@ -47,7 +47,8 @@ Depends: ${shlibs:Depends},
 Recommends: eject,
             librsvg2-common,
             gvfs-backends,
-            nemo-fileroller
+            nemo-fileroller,
+            app-install-data
 Suggests: eog,
           evince | pdf-viewer,
           totem | mp3-decoder,
