@@ -3342,12 +3342,14 @@ link_info_done (NemoDirectory *directory,
 		gboolean is_foreign)
 {
 	gboolean is_trusted;
+	gboolean show_filename;
 	
 	file->details->link_info_is_up_to_date = TRUE;
 
 	is_trusted = is_link_trusted (file, is_launcher);
+	show_filename = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LINK_FILENAME);
 
-	if (is_trusted) {
+	if (is_trusted && !show_filename) {
 		nemo_file_set_display_name (file, name, name, TRUE);
 	} else {
 		nemo_file_set_display_name (file, NULL, NULL, TRUE);
