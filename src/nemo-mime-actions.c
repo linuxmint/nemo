@@ -778,10 +778,6 @@ get_activation_action (NemoFile *file)
 	ActivationAction action;
 	char *activation_uri;
 
-	if (nemo_file_is_nemo_link (file)) {
-		return ACTIVATION_ACTION_LAUNCH_DESKTOP_FILE;
-	}
-	
 	activation_uri = nemo_file_get_activation_uri (file);
 	if (activation_uri == NULL) {
 		activation_uri = nemo_file_get_uri (file);
@@ -1418,6 +1414,11 @@ activate_files (ActivateParameters *parameters)
 			pause_activation_timed_cancel (parameters);
 			action = get_executable_text_file_action (parameters->parent_window, file);
 			unpause_activation_timed_cancel (parameters);
+		}
+
+		if (action == ACTIVATION_ACTION_LAUNCH
+		    && nemo_file_is_nemo_link(file)) {
+			action = ACTIVATION_ACTION_LAUNCH_DESKTOP_FILE;
 		}
 
 		switch (action) {
