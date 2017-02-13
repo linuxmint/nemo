@@ -713,7 +713,7 @@ connect_dialog_cleanup (NemoConnectServerDialog *dialog)
 
 	/* set the connect button label back to 'Connect' */
 	gtk_button_set_label (GTK_BUTTON (dialog->details->connect_button),
-			      _("C_onnect"));
+			      _("Connect"));
 
 	/* if there was a pending mount operation, cancel it. */
 	connect_dialog_abort_mount_operation (dialog);
@@ -1110,7 +1110,7 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 			       GTK_STOCK_CANCEL,
 			       GTK_RESPONSE_CANCEL);
 	connect_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
-						_("C_onnect"),
+						_("Connect"),
 						RESPONSE_CONNECT);
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog),
 					 RESPONSE_CONNECT);
