@@ -1376,6 +1376,11 @@ trash_or_delete_selected_files (NemoView *view)
 	 */
 	if (!view->details->selection_was_removed) {
 		selection = nemo_view_get_selection_for_file_transfer (view);
+
+        if (selection == NULL) {
+            return;
+        }
+
 		trash_or_delete_files (nemo_view_get_containing_window (view),
 				       selection, TRUE,
 				       view);
