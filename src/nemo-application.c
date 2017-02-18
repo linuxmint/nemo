@@ -914,6 +914,56 @@ out_b:
 }
 
 static void
+theme_changed (GtkSettings *settings)
+{
+	static GtkCssProvider *adwaita_provider = NULL;
+	gchar *theme;
+	GdkScreen *screen;
+
+	g_object_get (settings, "gtk-theme-name", &theme, NULL);
+	screen = gdk_screen_get_default ();
+
+	if (g_str_equal (theme, "Adwaita"))
+	{
+		if (adwaita_provider == NULL)
+		{
+			GFile *file;
+
+			adwaita_provider = gtk_css_provider_new ();
+			file = g_file_new_for_uri ("resource:///org/nemo/Adwaita.css");
+			gtk_css_provider_load_from_file (adwaita_provider, file, NULL);
+			g_object_unref (file);
+		}
+
+		gtk_style_context_add_provider_for_screen (screen,
+							   GTK_STYLE_PROVIDER (adwaita_provider),
+							   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	}
+	else if (adwaita_provider != NULL)
+	{
+		gtk_style_context_remove_provider_for_screen (screen,
+							      GTK_STYLE_PROVIDER (adwaita_provider));
+		g_clear_object (&adwaita_provider);
+	}
+
+	g_free (theme);
+}
+
+static void
+setup_theme_extensions (void)
+{
+	GtkSettings *settings;
+
+	/* Set up a handler to load our custom css for Adwaita.
+	 * See https://bugzilla.gnome.org/show_bug.cgi?id=732959
+	 * for a more automatic solution that is still under discussion.
+	 */
+	settings = gtk_settings_get_default ();
+	g_signal_connect (settings, "notify::gtk-theme-name", G_CALLBACK (theme_changed), NULL);
+	theme_changed (settings);
+}
+
+static void
 init_icons_and_styles (void)
 {
 	/* initialize search path for custom icons */
@@ -925,6 +975,8 @@ init_icons_and_styles (void)
                             NEMO_STATUSBAR_ICON_SIZE);
 
     nemo_application_add_app_css_provider ();
+
+    setup_theme_extensions ();
 }
 
 static void

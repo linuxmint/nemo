@@ -11,6 +11,7 @@
     <file>nemo-statusbar-ui.xml</file>
     <file alias="icons/thumbnail_frame.png">../icons/thumbnail_frame.png</file>
     <file alias="icons/knob.png">../icons/knob.png</file>
+    <file>Adwaita.css</file>
     <file>nemo-style-fallback.css</file>
     <file>nemo-style-application.css</file>
   </gresource>
