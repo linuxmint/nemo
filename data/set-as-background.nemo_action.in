@@ -8,6 +8,8 @@ Exec=gsettings set org.cinnamon.desktop.background picture-uri "%U"
 
 Selection=s
 
+Icon-Name=cs-backgrounds-symbolic
+
 Mimetypes=image/*;
 
 Conditions=dbus org.Cinnamon;
