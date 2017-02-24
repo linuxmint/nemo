@@ -297,6 +297,8 @@ struct NemoViewDetails
     gboolean showing_places_in_to_menus;
 
     GVolumeMonitor *volume_monitor;
+
+    GTimer *load_timer;
 };
 
 typedef struct {
@@ -2678,6 +2680,8 @@ nemo_view_init (NemoView *view)
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NEMO_TYPE_VIEW,
 						     NemoViewDetails);
 
+    view->details->load_timer = g_timer_new ();
+
 	/* Default to true; desktop-icon-view sets to false */
 	view->details->show_foreign_files = TRUE;
 
@@ -3313,17 +3317,16 @@ done_loading (NemoView *view,
 	view->details->loading = FALSE;
 	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
 
-    if (g_getenv("NEMO_TIME_STARTUP")) {
-        gint64 current = g_get_monotonic_time ();
-        gint64 diff = (current - nemo_startup_time) / 1000;
+    if (g_getenv("NEMO_BENCHMARK_LOADING")) {
+        if (nemo_startup_timer != NULL) {
+            g_printerr ("Nemo startup time: %f seconds\n", g_timer_elapsed (nemo_startup_timer, NULL));
+            g_clear_pointer (&nemo_startup_timer, g_timer_destroy);
+        }
 
-        gint64 milli_remainder = diff % 1000;
-        gint64 seconds = diff / 1000;
-
-        g_printerr ("Nemo startup time: %ld.%ld seconds\n", seconds, milli_remainder);
+        g_timer_stop (view->details->load_timer);
+        g_printerr ("Folder load time: %f seconds\n", g_timer_elapsed (view->details->load_timer, NULL));
     }
 }
-
 
 typedef struct {
 	GHashTable *debuting_files;
@@ -10338,6 +10341,8 @@ finish_loading (NemoView *view)
 
 	nemo_window_report_load_underway (view->details->window,
 					      NEMO_VIEW (view));
+
+    g_timer_start (view->details->load_timer);
 
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.

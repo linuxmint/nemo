@@ -569,12 +569,12 @@ nemo_application_init (NemoApplication *application)
 		G_TYPE_INSTANCE_GET_PRIVATE (application, NEMO_TYPE_APPLICATION,
 					     NemoApplicationPriv);
 
-    if (g_getenv("NEMO_TIME_STARTUP"))
-        nemo_startup_time = g_get_monotonic_time ();
+    if (g_getenv("NEMO_BENCHMARK_LOADING"))
+        nemo_startup_timer = g_timer_new ();
 
-	action = g_simple_action_new ("quit", NULL);
+    action = g_simple_action_new ("quit", NULL);
 
-        g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action));
+    g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action));
 
 	g_signal_connect_swapped (action, "activate",
 				  G_CALLBACK (nemo_application_quit), application);
