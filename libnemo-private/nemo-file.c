@@ -4581,39 +4581,39 @@ nemo_file_get_date_as_string (NemoFile       *file,
 		else if (days_ago < 7) {
 			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
 				// xgettext:no-c-format
-				format = _("%a");
+				format = _("%A");
 			} else {
 				if (use_24) {
 					/* Translators: this is the name of the week day followed by
 					 * a time in 24h format. i.e. "Monday 23:04" */
 					// xgettext:no-c-format
-					format = _("%a %H:%M");
+					format = _("%A %H:%M");
 				} else {
 					/* Translators: this is the week day name followed by
 					 * a time in 12h format. i.e. "Monday 9:04 PM" */
 					// xgettext:no-c-format
-					format = _("%a %l:%M %p");
+					format = _("%A %l:%M %p");
 				}
 			}
 		} else if (g_date_time_get_year (file_date) == g_date_time_get_year (now)) {
 			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
 				/* Translators: this is the day of the month followed
-				 * by the abbreviated month name i.e. "3 Feb" */
+				 * by the abbreviated month name i.e. "3 February" */
 				// xgettext:no-c-format
-				format = _("%-e %b");
+				format = _("%-e %B");
 			} else {
 				if (use_24) {
 					/* Translators: this is the day of the month followed
 					 * by the abbreviated month name followed by a time in
-					 * 24h format i.e. "3 Feb 23:04" */
+					 * 24h format i.e. "3 February 23:04" */
 					// xgettext:no-c-format
-					format = _("%-e %b %H:%M");
+					format = _("%-e %B %H:%M");
 				} else {
 					/* Translators: this is the day of the month followed
 					 * by the abbreviated month name followed by a time in
-					 * 12h format i.e. "3 Feb 9:04" */
+					 * 12h format i.e. "3 February 9:04" */
 					// xgettext:no-c-format
-					format = _("%-e %b %l:%M %p");
+					format = _("%-e %B %l:%M %p");
 				}
 			}
 		} else {
