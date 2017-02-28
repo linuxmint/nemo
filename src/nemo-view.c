@@ -3263,6 +3263,18 @@ reveal_selection_idle_callback (gpointer data)
 	return FALSE;
 }
 
+static gboolean
+idle_timer_report (gpointer user_data)
+{
+    g_return_val_if_fail (NEMO_IS_VIEW (user_data), G_SOURCE_REMOVE);
+
+    NemoView *view = NEMO_VIEW (user_data);
+
+    g_printerr ("Idle...Folder load time: %f seconds\n", g_timer_elapsed (view->details->load_timer, NULL));
+
+    return G_SOURCE_REMOVE;
+}
+
 static void
 done_loading (NemoView *view,
 	      gboolean all_files_seen)
@@ -3323,8 +3335,9 @@ done_loading (NemoView *view,
             g_clear_pointer (&nemo_startup_timer, g_timer_destroy);
         }
 
-        g_timer_stop (view->details->load_timer);
         g_printerr ("Folder load time: %f seconds\n", g_timer_elapsed (view->details->load_timer, NULL));
+
+        g_idle_add_full (1000, (GSourceFunc) idle_timer_report, view, NULL);
     }
 }
 
