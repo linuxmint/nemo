@@ -692,3 +692,65 @@ nemo_desktop_icon_view_register (void)
 	
 	nemo_view_factory_register (&nemo_desktop_icon_view);
 }
+
+
+
+/*
+static gboolean
+should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
+{
+    gint current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (view));
+    gint file_monitor = nemo_file_get_monitor_number (file);
+
+    NemoDesktopManager *dm = nemo_desktop_manager_get ();
+
+    if (current_monitor == file_monitor) {
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+        return TRUE;
+    }
+
+    if (!g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS))
+        return FALSE;
+
+    if (!nemo_desktop_manager_get_monitor_is_active (dm, file_monitor)) {
+        nemo_file_set_is_desktop_orphan (file, TRUE);
+        if (nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void
+nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
+{
+    NemoIconView *icon_view;
+    NemoIconContainer *icon_container;
+
+    g_assert (directory == nemo_view_get_model (view));
+    
+    icon_view = NEMO_ICON_VIEW (view);
+    icon_container = get_icon_container (icon_view);
+
+    if (icon_view->details->is_desktop &&
+        (!should_show_file_on_screen (view, file) ||
+         !should_show_file_on_current_monitor (view, file))) {
+        return;
+    }
+
+    if (nemo_file_has_thumbnail_access_problem (file)) {
+        nemo_application_set_cache_flag (nemo_application_get_singleton ());
+        nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
+    }
+
+    /* Reset scroll region for the first icon added when loading a directory.
+    if (nemo_view_get_loading (view) && nemo_icon_container_is_empty (icon_container)) {
+        nemo_icon_container_reset_scroll_region (icon_container);
+    }
+
+    if (nemo_icon_container_add (icon_container,
+                     NEMO_ICON_CONTAINER_ICON_DATA (file))) {
+        nemo_file_ref (file);
+    }
+}
+*/

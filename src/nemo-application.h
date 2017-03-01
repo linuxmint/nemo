@@ -32,26 +32,17 @@
 
 #include "nemo-window.h"
 
-#define NEMO_DESKTOP_ICON_VIEW_IID	"OAFIID:Nemo_File_Manager_Desktop_Icon_View"
-
 #define NEMO_TYPE_APPLICATION nemo_application_get_type()
-#define NEMO_APPLICATION(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_APPLICATION, NemoApplication))
-#define NEMO_APPLICATION_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_APPLICATION, NemoApplicationClass))
-#define NEMO_IS_APPLICATION(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_APPLICATION))
-#define NEMO_IS_APPLICATION_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_APPLICATION))
-#define NEMO_APPLICATION_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_APPLICATION, NemoApplicationClass))
+#define NEMO_APPLICATION(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_APPLICATION, NemoApplication))
+#define NEMO_APPLICATION_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_APPLICATION, NemoApplicationClass))
+#define NEMO_IS_APPLICATION(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_APPLICATION))
+#define NEMO_IS_APPLICATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_APPLICATION))
+#define NEMO_APPLICATION_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_APPLICATION, NemoApplicationClass))
 
-#ifndef NEMO_SPATIAL_WINDOW_DEFINED
-#define NEMO_SPATIAL_WINDOW_DEFINED
-typedef struct _NemoSpatialWindow NemoSpatialWindow;
-#endif
+#define NEMO_DESKTOP_ICON_VIEW_IID  "OAFIID:Nemo_File_Manager_Desktop_Icon_View"
 
 typedef struct _NemoApplicationPriv NemoApplicationPriv;
+typedef struct NemoApplicationClass NemoApplicationClass;
 
 typedef struct {
 	GtkApplication parent;
@@ -61,24 +52,42 @@ typedef struct {
 	NemoApplicationPriv *priv;
 } NemoApplication;
 
-typedef struct {
+struct NemoApplicationClass {
 	GtkApplicationClass parent_class;
-} NemoApplicationClass;
+
+    void         (* continue_startup) (NemoApplication *application);
+    void         (* continue_quit) (NemoApplication *application);
+
+    void         (* open_location) (NemoApplication *application,
+                                    GFile *location,
+                                    GFile *selection,
+                                    const char *startup_id);
+
+    NemoWindow * (* create_window) (NemoApplication *application,
+                                    GdkScreen       *screen);
+
+    void         (* notify_unmount_done) (NemoApplication *application,
+                                          const gchar *message);
+
+    void         (* notify_unmount_show) (NemoApplication *application,
+                                          const gchar *message);
+
+    void         (* close_all_windows)   (NemoApplication *application);
+
+};
 
 GType nemo_application_get_type (void);
-
+NemoApplication *nemo_application_initialize_singleton (GType object_type,
+                                                        const gchar *first_property_name,
+                                                        ...);
 NemoApplication *nemo_application_get_singleton (void);
-
 void nemo_application_quit (NemoApplication *self);
-
 NemoWindow *     nemo_application_create_window (NemoApplication *application,
-							 GdkScreen           *screen);
-
+                                                 GdkScreen           *screen);
 void nemo_application_open_location (NemoApplication *application,
-					 GFile *location,
-					 GFile *selection,
-					 const char *startup_id);
-
+                                     GFile *location,
+                                     GFile *selection,
+                                     const char *startup_id);
 void nemo_application_close_all_windows (NemoApplication *self);
 
 void nemo_application_notify_unmount_show (NemoApplication *application,

@@ -466,19 +466,33 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		use_same = FALSE;
 	}
 
-	old_location = nemo_window_slot_get_location (slot);
-
 	/* now get/create the window */
 	if (use_same) {
 		target_window = window;
 	} else {
 		app = nemo_application_get_singleton ();
-		target_window = nemo_application_create_window
-			(app,
-			 gtk_window_get_screen (GTK_WINDOW (window)));
+        if (is_desktop) {
+            gchar *uri = g_file_get_uri (location);
+            gchar *argv[3] = { "xdg-open", uri, NULL };
+            g_spawn_async (NULL,
+                           argv,
+                           NULL,
+                           G_SPAWN_SEARCH_PATH,
+                           NULL,
+                           NULL,
+                           NULL,
+                           NULL);
+            g_free (uri);
+            return;
+        } else {
+            target_window = nemo_application_create_window (app,
+                                                            gtk_window_get_screen (GTK_WINDOW (window)));
+        }
 	}
 
-        g_assert (target_window != NULL);
+    old_location = nemo_window_slot_get_location (slot);
+
+    g_assert (target_window != NULL);
 
 	/* if the flags say we want a new tab, open a slot in the current window */
 	if ((flags & NEMO_WINDOW_OPEN_FLAG_NEW_TAB) != 0) {
@@ -977,18 +991,21 @@ create_content_view (NemoWindowSlot *slot,
 
 	window = nemo_window_slot_get_window (slot);
 
- 	/* FIXME bugzilla.gnome.org 41243: 
-	 * We should use inheritance instead of these special cases
-	 * for the desktop window.
-	 */
-        if (NEMO_IS_DESKTOP_WINDOW (window)) {
-        	/* We force the desktop to use a desktop_icon_view. It's simpler
-        	 * to fix it here than trying to make it pick the right view in
-        	 * the first place.
-        	 */
-		view_id = NEMO_DESKTOP_ICON_VIEW_IID;
-	} 
-        
+       /* FIXME bugzilla.gnome.org 41243: 
+        * We should use inheritance instead of these special cases
+        * for the desktop window.
+        */
+           if (NEMO_IS_DESKTOP_WINDOW (window)) {
+               /* We force the desktop to use a desktop_icon_view. It's simpler
+                * to fix it here than trying to make it pick the right view in
+                * the first place.
+                */
+           view_id = NEMO_DESKTOP_ICON_VIEW_IID;
+       } 
+
+
+
+
         if (slot->content_view != NULL &&
 	    g_strcmp0 (nemo_view_get_view_id (slot->content_view),
 			view_id) == 0) {

@@ -30,7 +30,7 @@
 
 #include <config.h>
 
-#include "nemo-main-application.h"
+#include "nemo-desktop-application.h"
 
 #include <libnemo-private/nemo-debug.h>
 #include <eel/eel-debug.h>
@@ -60,7 +60,7 @@ main (int argc, char *argv[])
 {
 	gint retval;
 	NemoApplication *application;
-	
+
 #if defined (HAVE_MALLOPT) && defined(M_MMAP_THRESHOLD)
 	/* Nemo uses lots and lots of small and medium size allocations,
 	 * and then a few large ones for the desktop background. By default
@@ -87,7 +87,7 @@ main (int argc, char *argv[])
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	g_set_prgname ("nemo");
+	g_set_prgname ("nemo-desktop");
 
 	gdk_set_allowed_backends ("x11");
 
@@ -95,20 +95,15 @@ main (int argc, char *argv[])
 	xmp_init();
 #endif
 
-	/* Run the nemo application. */
-	application = nemo_main_application_get_singleton ();
+	/* Run the nemo-desktop application. */
+	application = nemo_desktop_application_get_singleton ();
 
-    /* hold indefinitely if we're asked to persist */
-    if (g_getenv ("NEMO_PERSIST") != NULL) {
-        g_application_hold (G_APPLICATION (application));
-    }
+    retval = g_application_run (G_APPLICATION (application),
+                                argc, argv);
 
-	retval = g_application_run (G_APPLICATION (application),
-				    argc, argv);
+    g_object_unref (application);
 
-	g_object_unref (application);
+    eel_debug_shut_down ();
 
- 	eel_debug_shut_down ();
-
-	return retval;
+    return retval;
 }

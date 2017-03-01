@@ -3,7 +3,7 @@
 #include "nemo-desktop-manager.h"
 #include "nemo-blank-desktop-window.h"
 #include "nemo-desktop-window.h"
-#include "nemo-application.h"
+#include "nemo-desktop-application.h"
 
 #include <gdk/gdkx.h>
 
@@ -120,11 +120,6 @@ layout_changed (NemoDesktopManager *manager)
     manager->update_layout_idle_id = 0;
 
     close_all_windows (manager);
-
-    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
-    if (!nemo_application_get_show_desktop (app)) {
-        return FALSE;
-    } 
 
     gchar *pref = g_settings_get_string (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_LAYOUT);
 
