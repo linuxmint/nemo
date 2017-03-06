@@ -109,6 +109,8 @@ struct NemoWindowSlot {
 	NemoWindowGoToCallback open_callback;
 	gpointer open_callback_user_data;
 
+	gboolean needs_reload;
+
 	GCancellable *find_mount_cancellable;
 
 	gboolean visible;
@@ -133,7 +135,8 @@ gboolean nemo_window_slot_handle_event       	   (NemoWindowSlot *slot,
 GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
 char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
 
-void    nemo_window_slot_reload			   (NemoWindowSlot *slot);
+void nemo_window_slot_queue_reload (NemoWindowSlot *slot);
+void nemo_window_slot_force_reload (NemoWindowSlot *slot);
 
 /* convenience wrapper without selection and callback/user_data */
 #define nemo_window_slot_open_location(slot, location, flags)\

@@ -75,7 +75,7 @@ sync_search_directory (NemoWindowSlot *slot)
 	nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory),
 					     query);
 	g_object_unref (query);
-	nemo_window_slot_reload (slot);
+	nemo_window_slot_force_reload (slot);
 
 	nemo_directory_unref (directory);
 }
@@ -295,6 +295,17 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
 	slot->title = g_strdup (_("Loading..."));
+}
+
+static void
+view_end_loading_cb (NemoView       *view,
+		     		 gboolean        all_files_seen,
+		     		 NemoWindowSlot *slot)
+{
+	if (slot->needs_reload) {
+		nemo_window_slot_queue_reload (slot);
+		slot->needs_reload = FALSE;
+	}
 }
 
 static void
@@ -544,6 +555,8 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
+		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
 		widget = GTK_WIDGET (slot->content_view);
@@ -559,6 +572,8 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 		slot->content_view = new_view;
 		g_object_ref (slot->content_view);
+
+		g_signal_connect (new_view, "end_loading", G_CALLBACK (view_end_loading_cb), slot);
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
