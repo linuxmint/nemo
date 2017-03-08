@@ -149,18 +149,19 @@ dnl ==========================================================================
 dnl ****************************
 dnl *** Check for libselinux ***
 dnl ****************************
-    
-SELINUX_LIBS=
+
 msg_selinux=no
-AC_CHECK_LIB(selinux, is_selinux_enabled,
-   [AC_CHECK_HEADERS(selinux/selinux.h,
-     [AC_SEARCH_LIBS(selinux_raw_to_trans_context, selinux, 
-       [AC_DEFINE(HAVE_SELINUX, 1, [Define to 1 if libselinux is available])
-        SELINUX_LIBS="-lselinux"
-        msg_selinux=yes])
-     ])
-   ])
-AC_SUBST(SELINUX_LIBS)
+
+AC_ARG_ENABLE([selinux],
+              [AS_HELP_STRING([--enable-selinux],
+                              [Enable selinux support])])
+AS_IF([test "$enable_selinux" != "no"],
+      [PKG_CHECK_MODULES([SELINUX], [libselinux >= 2.0],
+                         [
+                           AC_DEFINE([HAVE_SELINUX], [1], [Define to 1 if libselinux is available])
+                           msg_selinux=yes
+                         ])
+      ])
 
 
 AC_ARG_ENABLE(empty_view,
