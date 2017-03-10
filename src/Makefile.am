@@ -84,6 +84,8 @@ nemo_SOURCES = \
     nemo-action-config-widget.h         \
 	nemo-application.c			\
 	nemo-application.h			\
+    nemo-blank-desktop-window.c \
+    nemo-blank-desktop-window.h \
 	nemo-bookmark-list.c		\
 	nemo-bookmark-list.h		\
 	nemo-bookmarks-window.c		\
@@ -95,10 +97,12 @@ nemo_SOURCES = \
 	nemo-connect-server-dialog-nonmain.c \
 	nemo-connect-server-operation.c	\
 	nemo-connect-server-operation.h	\
+    nemo-desktop-icon-grid-view.c \
+    nemo-desktop-icon-grid-view.h \
 	nemo-desktop-item-properties.c	\
 	nemo-desktop-item-properties.h	\
-    nemo-desktop-icon-view.c       \
-    nemo-desktop-icon-view.h       \
+    nemo-desktop-manager.c \
+    nemo-desktop-manager.h \
     nemo-desktop-window.c       \
     nemo-desktop-window.h       \
 	nemo-error-reporting.c		\
@@ -113,6 +117,8 @@ nemo_SOURCES = \
 	nemo-freedesktop-dbus.h		\
 	nemo-icon-view.c			\
 	nemo-icon-view.h			\
+    nemo-icon-view-grid-container.c      \
+    nemo-icon-view-grid-container.h      \
 	nemo-icon-view-container.c		\
 	nemo-icon-view-container.h		\
 	nemo-image-properties-page.c	\
@@ -232,6 +238,8 @@ nemo_desktop_SOURCES = \
     nemo-desktop-application.h          \
     nemo-desktop-item-properties.c  \
     nemo-desktop-item-properties.h  \
+    nemo-desktop-icon-grid-view.c       \
+    nemo-desktop-icon-grid-view.h       \
     nemo-desktop-icon-view.c       \
     nemo-desktop-icon-view.h       \
     nemo-desktop-main.c \
@@ -253,6 +261,8 @@ nemo_desktop_SOURCES = \
     nemo-icon-view.h            \
     nemo-icon-view-container.c      \
     nemo-icon-view-container.h      \
+    nemo-icon-view-grid-container.c      \
+    nemo-icon-view-grid-container.h      \
     nemo-image-properties-page.c    \
     nemo-image-properties-page.h    \
     nemo-interesting-folder-bar.c  \

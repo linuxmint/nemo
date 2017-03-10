@@ -487,6 +487,11 @@
       <_summary>Deprecated: Allow Nemo to manage the desktop</_summary>
       <_description>Deprecated: If this is set to true, Nemo will autostart and manage the desktop</_description>
     </key>
+    <key name="use-desktop-grid" type="b">
+      <default>true</default>
+      <_summary>Which desktop view type to use</_summary>
+      <_description>If true, the new desktop grid view will be used by nemo-desktop, otherwise the legacy view will be used.</_description>
+    </key>
     <key name="home-icon-visible" type="b">
       <default>false</default>
       <_summary>Home icon visible on desktop</_summary>

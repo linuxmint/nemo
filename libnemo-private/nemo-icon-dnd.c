@@ -37,10 +37,12 @@
 
 #include "nemo-file-dnd.h"
 #include "nemo-icon-private.h"
+#include "libnemo-private/nemo-icon.h"
 #include "nemo-link.h"
 #include "nemo-metadata.h"
 #include "nemo-selection-canvas-item.h"
 #include "nemo-desktop-utils.h"
+#include "nemo-global-preferences.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gnome-extensions.h>
 #include <eel/eel-graphic-effects.h>
@@ -806,15 +808,18 @@ handle_local_move (NemoIconContainer *container,
 			(container, item->uri);
 
 		if (icon == NULL) {
-			/* probably dragged from another screen.  Add it to
+			/* probably dragged from another monitor or screen.  Add it to
 			 * this screen
 			 */
-
+            g_printerr ("icon null\n");
 			file = nemo_file_get_by_uri (item->uri);
 
 			nemo_file_set_time_metadata (file,
 							 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP, now);
 
+            nemo_file_set_is_desktop_orphan (file, FALSE);
+            nemo_file_set_monitor_number (file, monitor);
+            nemo_file_set_position (file, world_x + item->icon_x, world_y + item->icon_y);
 			nemo_icon_container_add (container, NEMO_ICON_CONTAINER_ICON_DATA (file));
 			
 			icon = nemo_icon_container_get_icon_by_uri
@@ -827,14 +832,13 @@ handle_local_move (NemoIconContainer *container,
         nemo_file_set_is_desktop_orphan (file, FALSE);
 
         monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
-        nemo_file_set_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0, monitor);
-
+        g_printerr ("monitor: %d  wx wy %f %f     icon: %d %d\n", monitor, world_x, world_y, item->icon_x, item->icon_y);
 		if (item->got_icon_position) {
-			nemo_icon_container_move_icon
-				(container, icon,
-				 world_x + item->icon_x, world_y + item->icon_y,
-				 icon->scale,
-				 TRUE, TRUE, TRUE);
+			nemo_icon_container_move_icon (container, icon,
+                                           world_x + item->icon_x,
+                                           world_y + item->icon_y,
+                                           icon->scale,
+                                           TRUE, TRUE, TRUE);
 		}
 		moved_icons = g_list_prepend (moved_icons, icon);
 	}		
@@ -899,7 +903,7 @@ handle_nonlocal_move (NemoIconContainer *container,
 
 	if (is_rtl) {
 		gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
-		x = CANVAS_WIDTH (container, allocation) - x;
+		x = nemo_icon_container_get_canvas_width (container, allocation) - x;
 	}
 
 	/* start the copy */

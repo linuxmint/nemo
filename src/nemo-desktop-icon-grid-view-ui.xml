@@ -1,0 +1,33 @@
+<ui>
+<popup name="background">
+    <placeholder name="Before Zoom Items">
+        <placeholder name="View Items">
+            <menu action="Desktop Submenu">
+                <menuitem name="Desktop Align to Grid" action="Desktop Align to Grid"/>
+                <menuitem name="Desktop Autoarrange" action="Desktop Autoarrange"/>
+                <separator name="Desktop layout separator"/>
+                <menuitem name="Desktop Sort by Name" action="Desktop Sort by Name"/>
+                <menuitem name="Desktop Sort by Size" action="Desktop Sort by Size"/>
+                <menuitem name="Desktop Sort by Type" action="Desktop Sort by Type"/>
+                <menuitem name="Desktop Sort by Date" action="Desktop Sort by Date"/>
+                <separator name="Desktop layout separator 2"/>
+                <menuitem name="Horizonal" action="Horizontal Layout"/>
+                <menuitem name="Vertical" action="Vertical Layout"/>
+            </menu>
+        </placeholder>
+        <placeholder name="New Window Items">
+        </placeholder>
+        <placeholder name="New Object Items">
+        </placeholder>
+    </placeholder>
+    <placeholder name="After Zoom Items">
+        <placeholder name="Background Items">
+        </placeholder>
+    </placeholder>
+</popup>
+<popup name="selection">
+    <placeholder name="Empty Trash Holder">
+        <menuitem name="Empty Trash" action="Empty Trash Conditional"/>
+    </placeholder>
+</popup>
+</ui>

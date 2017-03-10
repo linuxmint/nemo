@@ -40,6 +40,7 @@
 #define NEMO_APPLICATION_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_APPLICATION, NemoApplicationClass))
 
 #define NEMO_DESKTOP_ICON_VIEW_IID  "OAFIID:Nemo_File_Manager_Desktop_Icon_View"
+#define NEMO_DESKTOP_ICON_GRID_VIEW_IID  "OAFIID:Nemo_File_Manager_Desktop_Icon_Grid_View"
 
 typedef struct _NemoApplicationPriv NemoApplicationPriv;
 typedef struct NemoApplicationClass NemoApplicationClass;

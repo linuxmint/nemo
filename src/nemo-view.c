@@ -1128,6 +1128,19 @@ get_view_directory (NemoView *view)
 	return path;
 }
 
+static gboolean
+get_is_desktop_view (NemoView *view)
+{
+    gchar *uri;
+    gboolean ret;
+
+    uri = nemo_directory_get_uri (view->details->model);
+    ret = eel_uri_is_desktop (uri);
+    g_free (uri);
+
+    return ret;
+}
+
 void
 nemo_view_preview_files (NemoView *view,
 			     GList *files,
@@ -9710,7 +9723,7 @@ real_update_menus (NemoView *view)
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER) &&
-		!NEMO_IS_DESKTOP_ICON_VIEW (view);
+		!get_is_desktop_view (view);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN_ALTERNATE);
@@ -9816,7 +9829,7 @@ real_update_menus (NemoView *view)
 				selection_count),
 		      NULL);
 	
-	show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
+	show_properties = (!get_is_desktop_view (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);

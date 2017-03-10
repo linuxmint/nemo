@@ -174,8 +174,6 @@ static void     draw_label_text                      (NemoIconCanvasItem        
 						      cairo_t                       *cr,
 						      EelIRect                       icon_rect);
 static void     measure_label_text                   (NemoIconCanvasItem        *item);
-static void     get_icon_canvas_rectangle            (NemoIconCanvasItem        *item,
-						      EelIRect                      *rect);
 static void     draw_pixbuf                          (GdkPixbuf                     *pixbuf,
 						      cairo_t                       *cr,
 						      int                            x,
@@ -743,7 +741,7 @@ nemo_icon_canvas_item_update_bounds (NemoIconCanvasItem *item,
 	}
 	
 	/* Update canvas and text rect cache */
-	get_icon_canvas_rectangle (item, &item->details->canvas_rect);
+	nemo_icon_canvas_item_get_icon_canvas_rectangle (item, &item->details->canvas_rect);
 	item->details->text_rect = compute_text_rectangle (item, item->details->canvas_rect,
 							   TRUE, BOUNDS_USAGE_FOR_DISPLAY);
 
@@ -1932,9 +1930,9 @@ nemo_icon_canvas_item_get_text_rectangle (NemoIconCanvasItem *item,
 
 
 /* Get the rectangle of the icon only, in canvas coordinates. */
-static void
-get_icon_canvas_rectangle (NemoIconCanvasItem *item,
-			   EelIRect *rect)
+void
+nemo_icon_canvas_item_get_icon_canvas_rectangle (NemoIconCanvasItem *item,
+                                                 EelIRect *rect)
 {
     gint width, height;
 

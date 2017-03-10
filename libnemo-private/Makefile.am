@@ -68,6 +68,8 @@ libnemo_private_la_SOURCES = \
 	nemo-bookmark.h \
     nemo-cell-renderer-disk.c \
     nemo-cell-renderer-disk.h \
+    nemo-centered-placement-grid.c \
+    nemo-centered-placement-grid.h \
 	nemo-clipboard-monitor.c \
 	nemo-clipboard-monitor.h \
 	nemo-clipboard.c \
@@ -127,6 +129,7 @@ libnemo_private_la_SOURCES = \
 	nemo-generated.h \
 	nemo-global-preferences.c \
 	nemo-global-preferences.h \
+    nemo-icon.h \
 	nemo-icon-canvas-item.c \
 	nemo-icon-canvas-item.h \
 	nemo-icon-container.c \
@@ -153,6 +156,8 @@ libnemo_private_la_SOURCES = \
 	nemo-module.h \
 	nemo-monitor.c \
 	nemo-monitor.h \
+    nemo-placement-grid.h \
+    nemo-placement-grid.c \
     nemo-places-tree-view.c \
     nemo-places-tree-view.h \
 	nemo-progress-info.c \

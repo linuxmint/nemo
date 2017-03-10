@@ -55,6 +55,8 @@ struct NemoIconView {
 
 struct NemoIconViewClass {
 	NemoViewClass parent_class;
+
+    gboolean use_grid_container;
 };
 
 /* GObject support */
@@ -69,4 +71,12 @@ void    nemo_icon_view_compact_register (void);
 
 NemoIconContainer * nemo_icon_view_get_icon_container (NemoIconView *view);
 
+void    nemo_icon_view_set_sort_criterion_by_sort_type (NemoIconView     *icon_view,
+                                                        NemoFileSortType  sort_type);
+void    nemo_icon_view_set_directory_keep_aligned (NemoIconView *icon_view,
+                                                   NemoFile *file,
+                                                   gboolean keep_aligned);
+gchar  *nemo_icon_view_get_directory_sort_by      (NemoIconView *icon_view, NemoFile *file);
+gboolean nemo_icon_view_get_directory_sort_reversed (NemoIconView *icon_view, NemoFile *file);
+void    nemo_icon_view_flip_sort_reversed (NemoIconView *icon_view);
 #endif /* NEMO_ICON_VIEW_H */

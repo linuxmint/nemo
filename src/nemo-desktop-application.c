@@ -31,6 +31,7 @@
 #include "nemo-desktop-application.h"
 
 #include "nemo-desktop-icon-view.h"
+#include "nemo-desktop-icon-grid-view.h"
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 
@@ -78,10 +79,6 @@ nemo_desktop_application_init (NemoDesktopApplication *application)
 static void
 nemo_desktop_application_finalize (GObject *object)
 {
-	NemoDesktopApplication *application;
-
-	application = NEMO_DESKTOP_APPLICATION (object);
-
     G_OBJECT_CLASS (nemo_desktop_application_parent_class)->finalize (object);
 }
 
@@ -286,10 +283,6 @@ nemo_desktop_application_local_command_line (GApplication *application,
         goto out;
     }
 
-    if (desktop_already_managed ()) {
-        goto out;
-    }
-
     g_application_register (application, NULL, &error);
 
     if (error != NULL) {
@@ -304,6 +297,10 @@ nemo_desktop_application_local_command_line (GApplication *application,
         g_printerr ("Killing nemo-desktop, as requested\n");
         g_action_group_activate_action (G_ACTION_GROUP (application),
                         "quit", NULL);
+        goto out;
+    }
+
+    if (desktop_already_managed ()) {
         goto out;
     }
 
@@ -325,9 +322,8 @@ nemo_desktop_application_continue_startup (NemoApplication *app)
 {
 	/* register views */
 	nemo_desktop_icon_view_register ();
+    nemo_desktop_icon_grid_view_register ();
     nemo_icon_view_register ();
-    nemo_list_view_register ();
-    nemo_icon_view_compact_register ();
 }
 
 static void

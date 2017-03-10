@@ -991,20 +991,22 @@ create_content_view (NemoWindowSlot *slot,
 
 	window = nemo_window_slot_get_window (slot);
 
-       /* FIXME bugzilla.gnome.org 41243: 
-        * We should use inheritance instead of these special cases
-        * for the desktop window.
+    /* FIXME bugzilla.gnome.org 41243: 
+    * We should use inheritance instead of these special cases
+    * for the desktop window.
+    */
+
+    if (NEMO_IS_DESKTOP_WINDOW (window)) {
+       /* We force the desktop to use a desktop_icon_view. It's simpler
+        * to fix it here than trying to make it pick the right view in
+        * the first place.
         */
-           if (NEMO_IS_DESKTOP_WINDOW (window)) {
-               /* We force the desktop to use a desktop_icon_view. It's simpler
-                * to fix it here than trying to make it pick the right view in
-                * the first place.
-                */
-           view_id = NEMO_DESKTOP_ICON_VIEW_IID;
-       } 
-
-
-
+        if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_USE_DESKTOP_GRID)) {
+            view_id = NEMO_DESKTOP_ICON_GRID_VIEW_IID;
+        } else {
+            view_id = NEMO_DESKTOP_ICON_VIEW_IID;
+        }
+    }
 
         if (slot->content_view != NULL &&
 	    g_strcmp0 (nemo_view_get_view_id (slot->content_view),
