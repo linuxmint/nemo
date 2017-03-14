@@ -29,6 +29,10 @@
       <arg type='as' name='SourceFilesURIList' direction='in'/>
       <arg type='s' name='DestinationDirectoryURI' direction='in'/>
     </method>
+    <method name='MoveURIs'>
+      <arg type='as' name='SourceFilesURIList' direction='in'/>
+      <arg type='s' name='DestinationDirectoryURI' direction='in'/>
+    </method>
     <method name='EmptyTrash'>
     </method>"
     <method name='CopyFile'>

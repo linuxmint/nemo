@@ -123,6 +123,33 @@ handle_copy_uris (NemoDBusFileOperations *object,
 }
 
 static gboolean
+handle_move_uris (NemoDBusFileOperations *object,
+		  GDBusMethodInvocation *invocation,
+		  const gchar **sources,
+		  const gchar *destination)
+{
+  GList *source_files = NULL;
+  GFile *dest_dir;
+  gint idx;
+
+  dest_dir = g_file_new_for_uri (destination);
+
+  for (idx = 0; sources[idx] != NULL; idx++)
+    source_files = g_list_prepend (source_files,
+                                   g_file_new_for_uri (sources[idx]));
+
+  nemo_file_operations_move (source_files, NULL,
+                                 dest_dir,
+                                 NULL, NULL, NULL);
+
+  g_list_free_full (source_files, g_object_unref);
+  g_object_unref (dest_dir);
+
+  nemo_dbus_file_operations_complete_move_uris (object, invocation);
+  return TRUE; /* invocation was handled */
+}
+
+static gboolean
 handle_empty_trash (NemoDBusFileOperations *object,
 		    GDBusMethodInvocation *invocation)
 {
@@ -149,6 +176,10 @@ nemo_dbus_manager_init (NemoDBusManager *self)
   g_signal_connect (self->file_operations,
 		    "handle-copy-file",
 		    G_CALLBACK (handle_copy_file),
+		    self);
+  g_signal_connect (self->file_operations,
+		    "handle-move-uris",
+		    G_CALLBACK (handle_move_uris),
 		    self);
   g_signal_connect (self->file_operations,
 		    "handle-empty-trash",
