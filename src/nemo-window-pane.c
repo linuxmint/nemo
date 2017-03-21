@@ -229,18 +229,14 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 
 static void
 navigation_bar_location_changed_callback (GtkWidget *widget,
-                                        const gchar *uri,
-                                     NemoWindowPane *pane)
+                                          GFile *location,
+                                          NemoWindowPane *pane)
 {
-    GFile *location;
-
     nemo_window_pane_hide_temporary_bars (pane);
 
     restore_focus_widget (pane);
 
-    location = g_file_new_for_uri (uri);
     nemo_window_slot_open_location (pane->active_slot, location, 0);
-    g_object_unref (location);
 }
 
 static gboolean
