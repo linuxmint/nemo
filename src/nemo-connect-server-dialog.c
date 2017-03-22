@@ -279,6 +279,13 @@ check_uri_entry (NemoConnectServerDialog *dialog)
 	gboolean icon_active = FALSE;
 	const char *text = NULL;
 
+#if	GTK_CHECK_VERSION(3,13,2)
+	// gtk 3.13.2 supports RTL icons in GtkIconTheme
+    const gboolean rtl = FALSE;
+#else 
+	const gboolean rtl = gtk_widget_get_direction (GTK_WIDGET (dialog)) == GTK_TEXT_DIR_RTL;
+#endif	
+
 	length = gtk_entry_get_text_length (GTK_ENTRY (dialog->details->uri_entry));
 	if (length > 0) {
 		GError *error = NULL;
@@ -297,7 +304,8 @@ check_uri_entry (NemoConnectServerDialog *dialog)
 	gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, button_active);
 
 	g_object_set (dialog->details->uri_entry,
-		      "secondary-icon-name", icon_active ? "edit-clear-symbolic" : NULL,
+		      "secondary-icon-name", icon_active ? (rtl ? "edit-clear-rtl-symbolic" :
+								  "edit-clear-symbolic") : NULL,
 		      "secondary-icon-activatable", icon_active,
 		      "secondary-icon-sensitive", icon_active,
 		      NULL);
