@@ -91,11 +91,8 @@ action_connect_to_server_callback (GtkAction *action,
 				   gpointer user_data)
 {
 	NemoWindow *window = NEMO_WINDOW (user_data);
-	GtkWidget *dialog;
-
-	dialog = nemo_connect_server_dialog_new (window);
-
-	gtk_widget_show (dialog);
+	NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
+	nemo_application_connect_server (app, window);
 }
 
 static void
