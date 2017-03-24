@@ -4,3 +4,29 @@ import os
 
 os.chdir("data")
 os.system("./merge_action_strings")
+os.chdir("..")
+
+DOMAIN = "nemo"
+PATH = "/usr/share/locale"
+
+import os, gettext, sys
+sys.path.append('/usr/lib/linuxmint/common')
+import additionalfiles
+
+os.environ['LANG'] = "en_US.UTF-8"
+gettext.install(DOMAIN, PATH)
+
+prefix = """[Desktop Entry]
+"""
+
+suffix = """Exec=nemo %U
+Icon=folder
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=GNOME;GTK;Utility;Core;
+MimeType=inode/directory;application/x-gnome-saved-search;
+"""
+
+additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop.in.in", prefix, _("Files"), _("Access and organize files"), suffix)
+
