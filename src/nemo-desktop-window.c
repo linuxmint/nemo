@@ -59,6 +59,21 @@ G_DEFINE_TYPE (NemoDesktopWindow, nemo_desktop_window,
 	       NEMO_TYPE_WINDOW);
 
 static void
+nemo_desktop_window_update_directory (NemoDesktopWindow *window)
+{
+	GFile *location;
+
+	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
+
+	window->details->loaded = FALSE;
+	location = g_file_new_for_uri (EEL_DESKTOP_URI);
+	nemo_window_go_to (NEMO_WINDOW (window), location);
+	window->details->loaded = TRUE;
+
+	g_object_unref (location);
+}
+
+static void
 nemo_desktop_window_dispose (GObject *obj)
 {
 	NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (obj);
@@ -170,28 +185,6 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
 }
 
-static gint
-nemo_desktop_window_delete_event (NemoDesktopWindow *window)
-{
-	/* Returning true tells GTK+ not to delete the window. */
-	return TRUE;
-}
-
-void
-nemo_desktop_window_update_directory (NemoDesktopWindow *window)
-{
-	GFile *location;
-
-	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
-
-	window->details->loaded = FALSE;
-	location = g_file_new_for_uri (EEL_DESKTOP_URI);
-	nemo_window_go_to (NEMO_WINDOW (window), location);
-	window->details->loaded = TRUE;
-
-	g_object_unref (location);
-}
-
 NemoDesktopWindow *
 nemo_desktop_window_new (gint monitor)
 {
@@ -209,8 +202,6 @@ nemo_desktop_window_new (gint monitor)
     gtk_window_set_default_size (GTK_WINDOW (window), -1, -1);
 #endif
 
-    g_signal_connect (window, "delete_event", G_CALLBACK (nemo_desktop_window_delete_event), NULL);
-
     GdkRGBA transparent = {0, 0, 0, 0};
     gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
@@ -220,6 +211,14 @@ nemo_desktop_window_new (gint monitor)
 	nemo_desktop_window_update_directory (window);
 
 	return window;
+}
+
+static gboolean
+nemo_desktop_window_delete_event (GtkWidget *widget,
+                                  GdkEventAny *event)
+{
+	/* Returning true tells GTK+ not to delete the window. */
+	return TRUE;
 }
 
 static void
@@ -314,6 +313,7 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+	wclass->delete_event = nemo_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
 	nclass->get_icon = real_get_icon;
