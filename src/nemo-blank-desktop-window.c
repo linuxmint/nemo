@@ -270,13 +270,6 @@ nemo_blank_desktop_window_init (NemoBlankDesktopWindow *window)
     window->details->actions_changed_id = 0;
 }
 
-static gint
-nemo_blank_desktop_window_delete_event (NemoBlankDesktopWindow *window)
-{
-	/* Returning true tells GTK+ not to delete the window. */
-	return TRUE;
-}
-
 NemoBlankDesktopWindow *
 nemo_blank_desktop_window_new (gint monitor)
 {
@@ -286,12 +279,18 @@ nemo_blank_desktop_window_new (gint monitor)
                            "monitor", monitor,
                            NULL);
 
-	g_signal_connect (window, "delete_event", G_CALLBACK (nemo_blank_desktop_window_delete_event), NULL);
-
     GdkRGBA transparent = {0, 0, 0, 0};
     gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	return window;
+}
+
+static gboolean
+nemo_blank_desktop_window_delete_event (GtkWidget *widget,
+                                        GdkEventAny *event)
+{
+	/* Returning true tells GTK+ not to delete the window. */
+	return TRUE;
 }
 
 static void
@@ -365,6 +364,7 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+	wclass->delete_event = nemo_blank_desktop_window_delete_event;
 
     properties[PROP_MONITOR] =
         g_param_spec_int ("monitor",
