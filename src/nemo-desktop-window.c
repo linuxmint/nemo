@@ -195,9 +195,13 @@ nemo_desktop_window_update_directory (NemoDesktopWindow *window)
 NemoDesktopWindow *
 nemo_desktop_window_new (gint monitor)
 {
+	GApplication *application;
 	NemoDesktopWindow *window;
 
+	application = g_application_get_default ();
+
     window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
+			               "application", application,                           
                            "disable-chrome", TRUE,
                            "monitor", monitor,
                            NULL);
