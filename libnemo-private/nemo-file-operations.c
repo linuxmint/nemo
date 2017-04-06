@@ -6093,7 +6093,10 @@ create_job (GIOSchedulerJob *io_job,
 		} else {
 			if (job->src != NULL) {
 				basename = g_file_get_basename (job->src);
-				/* localizers: the initial name of a new template document */
+				/* localizers: the initial name of a new template document
+				 * the %s placeholder MUST be at the end of the string for
+				 * this to work properly.
+				 */
 				filename = g_strdup_printf (_("Untitled %s"), basename);
 
 				g_free (basename);
