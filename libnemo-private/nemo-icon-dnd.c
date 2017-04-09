@@ -811,7 +811,6 @@ handle_local_move (NemoIconContainer *container,
 			/* probably dragged from another monitor or screen.  Add it to
 			 * this screen
 			 */
-            g_printerr ("icon null\n");
 			file = nemo_file_get_by_uri (item->uri);
 
 			nemo_file_set_time_metadata (file,
@@ -832,7 +831,7 @@ handle_local_move (NemoIconContainer *container,
         nemo_file_set_is_desktop_orphan (file, FALSE);
 
         monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
-        g_printerr ("monitor: %d  wx wy %f %f     icon: %d %d\n", monitor, world_x, world_y, item->icon_x, item->icon_y);
+
 		if (item->got_icon_position) {
 			nemo_icon_container_move_icon (container, icon,
                                            world_x + item->icon_x,

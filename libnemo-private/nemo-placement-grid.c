@@ -42,8 +42,6 @@ nemo_placement_grid_new (NemoIconContainer *container, gboolean tight)
     num_columns = width / GET_VIEW_CONSTANT (container, snap_size_x);
     num_rows = height / GET_VIEW_CONSTANT (container, snap_size_y);
 
-    g_printerr ("width:%d, height: %d, columns: %d, rows: %d\n", width, height, num_columns, num_rows);
-
     if (num_columns == 0 || num_rows == 0) {
         return NULL;
     }
@@ -152,6 +150,6 @@ nemo_placement_grid_mark_icon (NemoPlacementGrid *grid, NemoIcon *icon)
     nemo_placement_grid_canvas_position_to_grid_position (grid, 
                       icon_pos,
                       &grid_pos);
-    g_printerr ("%d, %d, %d, %d\n", grid_pos.x0, grid_pos.y0, grid_pos.x1, grid_pos.y1);
+
     nemo_placement_grid_mark (grid, grid_pos);
 }

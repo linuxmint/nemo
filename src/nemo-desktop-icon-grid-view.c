@@ -226,7 +226,7 @@ should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
     return FALSE;
 }
 
-void
+static void
 nemo_desktop_icon_grid_view_remove_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
 {
     NemoIconView *icon_view;
@@ -273,8 +273,6 @@ nemo_desktop_icon_grid_view_add_file (NemoView *view, NemoFile *file, NemoDirect
     }
 
     if (nemo_icon_container_add (icon_container, NEMO_ICON_CONTAINER_ICON_DATA (file))) {
-        g_printerr ("%p add\n", view);
-
         nemo_file_ref (file);
     }
 }
@@ -291,7 +289,6 @@ nemo_desktop_icon_grid_view_file_changed (NemoView *view, NemoFile *file, NemoDi
 
     
     if (!should_show_file_on_current_monitor (view, file)) {
-        g_printerr ("%p remove\n", view);
         nemo_icon_view_remove_file (view, file, directory);
     } else {
         nemo_icon_container_request_update (get_icon_container (icon_view),
@@ -703,6 +700,22 @@ action_empty_trash_conditional_callback (GtkAction *action,
 }
 
 static void
+clear_orphan_states (NemoDesktopIconGridView *view)
+{
+    GList *icons;
+
+    for (icons = get_icon_container (view)->details->icons; icons != NULL; icons = icons->next) {
+        NemoFile *file;
+        NemoIcon *icon;
+
+        icon = icons->data;
+
+        file = NEMO_FILE (icon->data);
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+    }
+}
+
+static void
 action_align_grid_callback (GtkAction *action,
                             NemoDesktopIconGridView *view)
 {
@@ -738,6 +751,8 @@ action_auto_arrange_callback (GtkAction *action,
 
     new = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
+    clear_orphan_states (view);
+
     nemo_icon_container_set_auto_layout (get_icon_container (view), new);
 }
 
@@ -762,6 +777,8 @@ action_direction_radio_changed (GtkAction               *action,
 
     horizontal = (value == DESKTOP_ARRANGE_HORIZONTAL);
 
+    clear_orphan_states (view);
+
     nemo_file_set_boolean_metadata (file,
                                     NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
                                     FALSE,
@@ -780,9 +797,10 @@ set_sort_type (NemoDesktopIconGridView *view,
     gboolean reverse;
 
     if (view->details->updating_menus) {
-        g_printerr ("updating\n");
         return;
     }
+
+    clear_orphan_states (view);
 
     file = nemo_view_get_directory_as_file (NEMO_VIEW (view));
 
@@ -812,7 +830,7 @@ set_sort_type (NemoDesktopIconGridView *view,
     }
 
     g_free (old_sort_name);
-g_printerr ("should not see\n");
+
     nemo_icon_view_set_sort_criterion_by_sort_type (NEMO_ICON_VIEW (view), type);
 
     nemo_view_update_menus (NEMO_VIEW (view));

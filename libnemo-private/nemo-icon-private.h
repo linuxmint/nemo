@@ -196,6 +196,7 @@ struct NemoIconContainerDetails {
 	/* Mode settings. */
 	gboolean single_click_mode;
 	gboolean auto_layout;
+    gboolean stored_auto_layout;
 	gboolean tighter_layout;
     gboolean click_to_rename;
 

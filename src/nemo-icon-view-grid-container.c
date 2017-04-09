@@ -34,6 +34,7 @@
 #include <eel/eel-glib-extensions.h>
 #include "nemo-icon-private.h"
 #include <libnemo-private/nemo-centered-placement-grid.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-metadata.h>
@@ -595,6 +596,22 @@ get_stored_icon_position (NemoIconContainer *container,
 }
 
 static void
+store_new_icon_position (NemoIconContainer *container,
+                         NemoIcon          *icon,
+                         NemoIconPosition   position)
+{
+    gboolean dummy;
+    time_t now;
+
+    now = time (NULL);
+
+    g_signal_emit_by_name (container, "icon_position_changed",
+                           icon->data, &position);
+    g_signal_emit_by_name (container, "store_layout_timestamp",
+                           icon->data, &now, &dummy);
+}
+
+static void
 snap_position (NemoIconContainer         *container,
                NemoCenteredPlacementGrid *grid,
                NemoIcon                  *icon,
@@ -631,6 +648,9 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
     int total, new_length, placed;
     NemoIcon *icon;
     int x, y;
+    gint current_monitor;
+
+    current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
     /* Determine which icons have and have not been placed */
     placed_icons = NULL;
@@ -680,11 +700,12 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
         g_list_free (unplaced_icons);
     } else {
         NemoCenteredPlacementGrid *grid;
-        /* There are no placed icons.  Just lay them down using our rules */        
-        g_printerr ("auto layout shit\n");
+        /* There are no placed icons, or we have auto layout enabled */        
         grid = nemo_centered_placement_grid_new (container, FALSE);
 
         while (icons != NULL) {
+            NemoIconPosition position;
+
             icon = icons->data;
 
             nemo_centered_placement_grid_get_next_position (grid, icon, &x, &y);
@@ -696,17 +717,18 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
             icon->saved_ltr_x = icon->x;
 
             icons = icons->next;
+
+            position.x = icon->x;
+            position.y = icon->y;
+            position.scale = 1.0;
+            position.monitor = current_monitor;
+            store_new_icon_position (container, icon, position);
         }
     }
 
-    /* These modes are special. We freeze all of our positions
-     * after we do the layout.
-     */
-    /* FIXME bugzilla.gnome.org 42478: 
-     * This should not be tied to the direction of layout.
-     * It should be a separate switch.
-     */
-    // nemo_icon_container_freeze_icon_positions (container);
+    if (!container->details->stored_auto_layout) {
+        nemo_icon_container_freeze_icon_positions (container);
+    }
 }
 
 static void
@@ -825,23 +847,23 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
     NemoIconPosition position;
     
     details = container->details;
-    g_printerr ("move to: %d, %d....%f  %f\n", x, y,  icon->x, icon->y);
+
     emit_signal = FALSE;
     
     if (icon == nemo_icon_container_get_icon_being_renamed (container)) {
         nemo_icon_container_end_renaming_mode (container, TRUE);
     }
-g_printerr ("scale %f,  icon %f\n", scale, icon->scale);
+
     if (scale != icon->scale) {
-        g_printerr ("wwwwww\n");
         icon->scale = scale;
+
         nemo_icon_container_update_icon (container, icon);
+
         if (update_position) {
             nemo_icon_container_redo_layout (container); 
             emit_signal = TRUE;
         }
     }
-    g_printerr ("move to furhterr: %d, %d....%f  %f\n", x, y,  icon->x, icon->y);
 
     if (!details->auto_layout) {
         if (details->keep_aligned && snap) {
@@ -867,6 +889,7 @@ g_printerr ("scale %f,  icon %f\n", scale, icon->scale);
         position.x = icon->saved_ltr_x;
         position.y = icon->y;
         position.scale = scale;
+        position.monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
         g_signal_emit_by_name (container, "icon_position_changed", icon->data, &position);
     }
     
@@ -981,22 +1004,6 @@ nemo_icon_view_grid_container_reload_icon_positions (NemoIconContainer *containe
 }
 
 static void
-store_new_icon_position (NemoIconContainer *container,
-                         NemoIcon          *icon,
-                         NemoIconPosition   position)
-{
-    gboolean dummy;
-    time_t now;
-
-    now = time (NULL);
-
-    g_signal_emit_by_name (container, "icon_position_changed",
-                           icon->data, &position);
-    g_signal_emit_by_name (container, "store_layout_timestamp",
-                           icon->data, &now, &dummy);
-}
-
-static void
 nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *container)
 {
     NemoCenteredPlacementGrid *grid;
@@ -1024,14 +1031,15 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
         /* Get the stored position. */
         have_stored_position = FALSE;
         position.scale = 1.0;
+        position.monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
         have_stored_position = get_stored_icon_position (container,
                                                          icon->data,
                                                          &position);
-        g_printerr ("have stored: %d\n", have_stored_position);
+
         icon->scale = position.scale;
 
-        if (!container->details->auto_layout) {
+        if (!container->details->auto_layout && have_stored_position) {
             if (have_stored_position) {
                 gint old_x, old_y;
 

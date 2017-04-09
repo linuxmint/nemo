@@ -1894,16 +1894,13 @@ icon_position_changed_callback (NemoIconContainer *container,
 	}
 
 	/* Store the new position of the icon in the metadata. */
-	if (!nemo_icon_view_using_auto_layout (icon_view) && !nemo_file_get_is_desktop_orphan (file)) {
-        g_printerr ("set position........ %s\n", nemo_file_get_uri (file));
+	if (!nemo_file_get_is_desktop_orphan (file)) {
 		nemo_file_set_position (file, position->x, position->y);
+        nemo_file_set_monitor_number (file, position->monitor);
 	}
 
-
 	g_ascii_dtostr (scale_string, sizeof (scale_string), position->scale);
-	nemo_file_set_metadata
-		(file, NEMO_METADATA_KEY_ICON_SCALE,
-		 "1.0", scale_string);
+	nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_SCALE, "1.0", scale_string);
 }
 
 /* Attempt to change the filename to the new text.  Notify user if operation fails. */

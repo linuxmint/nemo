@@ -1704,7 +1704,7 @@ nemo_icon_view_container_finish_adding_new_icons (NemoIconContainer *container)
     GList *p, *new_icons, *no_position_icons, *semi_position_icons;
     NemoIcon *icon;
     double bottom;
-g_printerr("there we go\n");
+
     new_icons = container->details->new_icons;
     container->details->new_icons = NULL;
 

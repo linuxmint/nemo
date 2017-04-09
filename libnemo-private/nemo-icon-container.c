@@ -1016,11 +1016,9 @@ redo_layout_internal (NemoIconContainer *container)
 	 * the stretched icon, but if we do it we want it to be fast
 	 * and only re-lay-out when it's really needed.
 	 */
-    g_printerr ("neeeeed resort????\n");
+
     if (container->details->auto_layout && container->details->drag_state != DRAG_STATE_STRETCH) {
         if (container->details->needs_resort) {
-    g_printerr ("YES  neeeeed resort????\n");
-
             nemo_icon_container_resort (container);
             container->details->needs_resort = FALSE;
         }
@@ -6765,6 +6763,8 @@ nemo_icon_container_set_auto_layout (NemoIconContainer *container,
 	}
 
 	reset_scroll_region_if_not_empty (container);
+
+    container->details->stored_auto_layout = auto_layout;
 	container->details->auto_layout = auto_layout;
 
 	if (!auto_layout) {
@@ -6909,12 +6909,12 @@ nemo_icon_container_freeze_icon_positions (NemoIconContainer *container)
 		position.x = icon->saved_ltr_x;
 		position.y = icon->y;
 		position.scale = icon->scale;
+        position.monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 		g_signal_emit (container, signals[ICON_POSITION_CHANGED], 0,
 				 icon->data, &position);
 	}
 
 	if (changed) {
-        g_printerr ("CHANGED\n");
 		g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
 	}
 }
@@ -6924,7 +6924,9 @@ void
 nemo_icon_container_sort (NemoIconContainer *container)
 {
 	gboolean changed;
-g_printerr ("sort....\n");
+
+    container->details->stored_auto_layout = container->details->auto_layout;
+
 	changed = !container->details->auto_layout;
 	container->details->auto_layout = TRUE;
 
