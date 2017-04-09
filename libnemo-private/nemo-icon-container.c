@@ -4362,61 +4362,15 @@ draw_canvas_background (EelCanvas *canvas,
                         cairo_t   *cr)
 {
     NemoIconContainer *container;
-    GdkRGBA color = { 0, 0, 0, 1.0};
-    gint x, y, max_x, max_y, num_rows, num_columns;
-    gint total_width, total_height;
-    GtkAllocation allocation;
-    GtkBorder *borders;
 
     container = NEMO_ICON_CONTAINER (canvas);
 
-    cairo_save (cr);
-
-    gdk_cairo_set_source_rgba (cr, &color);
-    cairo_set_line_width (cr, 2.0);
-
-    gtk_widget_get_allocation (GTK_WIDGET (canvas), &allocation);
-    total_width = nemo_icon_container_get_canvas_width (container, allocation);
-    total_height = nemo_icon_container_get_canvas_height (container, allocation);
-
-    num_columns = total_width / GET_VIEW_CONSTANT (canvas, snap_size_x);
-    num_rows = total_height / GET_VIEW_CONSTANT (canvas, snap_size_y);
-
-    borders = gtk_border_new ();
-
-    borders->left = (total_width - (num_columns * GET_VIEW_CONSTANT (canvas, snap_size_x))) / 2;
-    borders->right = (total_width - (num_columns * GET_VIEW_CONSTANT (canvas, snap_size_x))) / 2;
-    borders->top = (total_height - (num_rows * GET_VIEW_CONSTANT (canvas, snap_size_y))) / 2;
-    borders->bottom = (total_height - (num_rows * GET_VIEW_CONSTANT (canvas, snap_size_y))) / 2;
-
-    x = borders->left + container->details->left_margin;
-    max_x = container->details->left_margin + total_width - borders->right;
-
-    y = borders->top + container->details->top_margin;
-    max_y = container->details->top_margin + total_height - borders->bottom;
-
-    gint i = 0;
-
-    while (i <= num_columns) {
-        cairo_move_to (cr, x, borders->top + container->details->top_margin);
-        cairo_line_to (cr, x, max_y);
-        cairo_stroke (cr);
-        x = x + GET_VIEW_CONSTANT (canvas, snap_size_x);
-        i = i + 1;
+    if (NEMO_ICON_CONTAINER_GET_CLASS (container)->draw_debug_grid != NULL) {
+        NEMO_ICON_CONTAINER_GET_CLASS (container)->draw_debug_grid (container, cr);
     }
 
-    i = 0;
-    while (i <= num_rows) {
-        cairo_move_to (cr, borders->left + container->details->left_margin, y);
-        cairo_line_to (cr, max_x, y);
-        cairo_stroke (cr);
-        y = y + GET_VIEW_CONSTANT (canvas, snap_size_y);
-        i = i + 1;
-    }
-
-    gtk_border_free (borders);
-    cairo_restore (cr);
-	/* Don't chain up to the parent to avoid clearing and redrawing */
+    /* Don't chain up to the parent to avoid clearing and redrawing */
+    return;
 }
 
 
@@ -4555,6 +4509,7 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
     class->align_icons = real_align_icons;
     class->finish_adding_new_icons = NULL;
     class->icon_get_bounding_box = real_icon_get_bounding_box;
+    class->draw_debug_grid = NULL;
 
 	/* Signals.  */
 

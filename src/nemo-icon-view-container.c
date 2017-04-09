@@ -1808,7 +1808,7 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 	ic_class = &klass->parent_class;
 
 	attribute_none_q = g_quark_from_static_string ("none");
-	
+
 	ic_class->get_icon_text = nemo_icon_view_container_get_icon_text;
 	ic_class->get_icon_images = nemo_icon_view_container_get_icon_images;
 	ic_class->get_icon_description = nemo_icon_view_container_get_icon_description;
@@ -1826,6 +1826,7 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
     ic_class->reload_icon_positions = nemo_icon_view_container_reload_icon_positions;
     ic_class->finish_adding_new_icons = nemo_icon_view_container_finish_adding_new_icons;
     ic_class->icon_get_bounding_box = nemo_icon_view_container_icon_get_bounding_box;
+    ic_class->draw_debug_grid = NULL;
 }
 
 static void

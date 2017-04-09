@@ -34,6 +34,10 @@
 #include <eel/eel-glib-extensions.h>
 #include "nemo-icon-private.h"
 #include <libnemo-private/nemo-centered-placement-grid.h>
+
+#define DEBUG_FLAG NEMO_DEBUG_DESKTOP
+#include <libnemo-private/nemo-debug.h>
+
 #include <libnemo-private/nemo-desktop-utils.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-file-attributes.h>
@@ -1088,6 +1092,64 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
 }
 
 static void
+nemo_icon_view_grid_container_draw_debug_grid (NemoIconContainer *container,
+                                               cairo_t           *cr)
+{
+    GdkRGBA color = { 0, 0, 0, 1.0};
+    gint x, y, max_x, max_y, num_rows, num_columns;
+    gint total_width, total_height;
+    GtkAllocation allocation;
+    GtkBorder *borders;
+
+    cairo_save (cr);
+
+    gdk_cairo_set_source_rgba (cr, &color);
+    cairo_set_line_width (cr, 2.0);
+
+    gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
+    total_width = nemo_icon_container_get_canvas_width (container, allocation);
+    total_height = nemo_icon_container_get_canvas_height (container, allocation);
+
+    num_columns = total_width / GET_VIEW_CONSTANT (container, snap_size_x);
+    num_rows = total_height / GET_VIEW_CONSTANT (container, snap_size_y);
+
+    borders = gtk_border_new ();
+
+    borders->left = (total_width - (num_columns * GET_VIEW_CONSTANT (container, snap_size_x))) / 2;
+    borders->right = (total_width - (num_columns * GET_VIEW_CONSTANT (container, snap_size_x))) / 2;
+    borders->top = (total_height - (num_rows * GET_VIEW_CONSTANT (container, snap_size_y))) / 2;
+    borders->bottom = (total_height - (num_rows * GET_VIEW_CONSTANT (container, snap_size_y))) / 2;
+
+    x = borders->left + container->details->left_margin;
+    max_x = container->details->left_margin + total_width - borders->right;
+
+    y = borders->top + container->details->top_margin;
+    max_y = container->details->top_margin + total_height - borders->bottom;
+
+    gint i = 0;
+
+    while (i <= num_columns) {
+        cairo_move_to (cr, x, borders->top + container->details->top_margin);
+        cairo_line_to (cr, x, max_y);
+        cairo_stroke (cr);
+        x = x + GET_VIEW_CONSTANT (container, snap_size_x);
+        i = i + 1;
+    }
+
+    i = 0;
+    while (i <= num_rows) {
+        cairo_move_to (cr, borders->left + container->details->left_margin, y);
+        cairo_line_to (cr, max_x, y);
+        cairo_stroke (cr);
+        y = y + GET_VIEW_CONSTANT (container, snap_size_y);
+        i = i + 1;
+    }
+
+    gtk_border_free (borders);
+    cairo_restore (cr);
+}
+
+static void
 nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
 {
 	NemoIconContainerClass *ic_class;
@@ -1113,6 +1175,13 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
     ic_class->reload_icon_positions = nemo_icon_view_grid_container_reload_icon_positions;
     ic_class->finish_adding_new_icons = nemo_icon_view_grid_container_finish_adding_new_icons;
     ic_class->icon_get_bounding_box = nemo_icon_view_grid_container_icon_get_bounding_box;
+
+    if (DEBUGGING) {
+        ic_class->draw_debug_grid = nemo_icon_view_grid_container_draw_debug_grid;
+    } else {
+        ic_class->draw_debug_grid = NULL;
+    }
+
 }
 
 static void

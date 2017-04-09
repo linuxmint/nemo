@@ -128,6 +128,8 @@ typedef struct {
 						   int x,
 						   int y);
 
+    void         (* draw_debug_grid) (NemoIconContainer *container, cairo_t *cr);
+
 	/* Queries on the container for subclass/client.
 	 * These must be implemented. The default "do nothing" is not good enough.
 	 */
