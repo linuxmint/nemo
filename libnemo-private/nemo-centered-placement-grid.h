@@ -38,10 +38,10 @@ typedef struct {
     int num_rows;
     int num_columns;
     GtkBorder *borders;
-    gboolean tight;
+    gboolean horizontal;
 } NemoCenteredPlacementGrid;
 
-NemoCenteredPlacementGrid *nemo_centered_placement_grid_new               (NemoIconContainer *container, gboolean tight);
+NemoCenteredPlacementGrid *nemo_centered_placement_grid_new               (NemoIconContainer *container, gboolean horizontal);
 void               nemo_centered_placement_grid_free              (NemoCenteredPlacementGrid *grid);
 gboolean           nemo_centered_placement_grid_position_is_free  (NemoCenteredPlacementGrid *grid, gint grid_x, gint grid_y);
 void               nemo_centered_placement_grid_mark              (NemoCenteredPlacementGrid *grid, gint grid_x, gint grid_y);

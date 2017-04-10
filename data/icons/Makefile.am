@@ -11,6 +11,7 @@ public_icons = \
 	hicolor_apps_32x32_nemo.png \
 	hicolor_apps_scalable_nemo.svg \
 	hicolor_actions_16x16_nemo-eject.png \
+    hicolor_actions_16x16_menu-bullet.png \
     hicolor_actions_16x16_menu-sort-up.png \
     hicolor_actions_16x16_menu-sort-up-free.png \
     hicolor_actions_16x16_menu-sort-down.png \
@@ -19,7 +20,7 @@ public_icons = \
     hicolor_actions_16x16_menu-sort-right-free.png \
     hicolor_actions_16x16_menu-sort-left.png \
     hicolor_actions_16x16_menu-sort-left-free.png \
-    hicolor_actions_16x16_menu-sort-none.png \
+    hicolor_actions_16x16_menu-none.png \
 	hicolor_actions_32x32_nemo-eject.png \
 	hicolor_actions_scalable_view-compact-symbolic.svg \
 	hicolor_actions_scalable_location-symbolic.svg \

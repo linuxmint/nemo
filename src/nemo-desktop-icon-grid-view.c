@@ -604,6 +604,7 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
     NemoIconContainer *icon_container;
     GtkAllocation allocation;
     GtkAdjustment *hadj, *vadj;
+    gboolean horizontal;
 
     G_OBJECT_CLASS (nemo_desktop_icon_grid_view_parent_class)->constructed (G_OBJECT (desktop_icon_grid_view));
 
@@ -629,6 +630,9 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
     
     nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
     nemo_icon_container_set_is_desktop (icon_container, TRUE);
+
+    NEMO_ICON_VIEW_GRID_CONTAINER (icon_container)->horizontal = FALSE;
+    NEMO_ICON_VIEW_GRID_CONTAINER (icon_container)->manual_sort_dirty = TRUE;
 
     nemo_icon_container_set_store_layout_timestamps (icon_container, TRUE);
 
@@ -728,6 +732,12 @@ action_align_grid_callback (GtkAction *action,
         return;
     }
 
+    clear_orphan_states (view);
+
+    if (!nemo_icon_container_is_auto_layout (get_icon_container (view))) {
+        NEMO_ICON_VIEW_GRID_CONTAINER (get_icon_container (view))->manual_sort_dirty = TRUE;
+    }
+
     keep_aligned = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
     file = nemo_view_get_directory_as_file (NEMO_VIEW (view));
@@ -752,37 +762,9 @@ action_auto_arrange_callback (GtkAction *action,
     new = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
     clear_orphan_states (view);
+    nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
 
     nemo_icon_container_set_auto_layout (get_icon_container (view), new);
-}
-
-static void
-action_direction_radio_changed (GtkAction               *action,
-                                GtkRadioAction          *current,
-                                NemoDesktopIconGridView *view)
-{
-    NemoFile *file;
-    gboolean horizontal;
-    gint value;
-
-    g_assert (NEMO_IS_VIEW (view));
-
-    if (view->details->updating_menus) {
-        return;
-    }
-
-    file = nemo_view_get_directory_as_file (NEMO_VIEW (view));
-
-    value = gtk_radio_action_get_current_value (current);
-
-    horizontal = (value == DESKTOP_ARRANGE_HORIZONTAL);
-
-    clear_orphan_states (view);
-
-    nemo_file_set_boolean_metadata (file,
-                                    NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
-                                    FALSE,
-                                    horizontal);
 }
 
 static void
@@ -806,31 +788,36 @@ set_sort_type (NemoDesktopIconGridView *view,
 
     old_sort_name = nemo_icon_view_get_directory_sort_by (NEMO_ICON_VIEW (view), file);
 
-    for (i = 0; i < G_N_ELEMENTS (sort_criteria); i++) {
-        if (sort_criteria[i].sort_type == type &&
-            g_strcmp0 (sort_criteria[i].metadata_text, old_sort_name) == 0) {
-            GList *selection;
+    if (!NEMO_ICON_VIEW_GRID_CONTAINER (get_icon_container (view))->manual_sort_dirty) {
+        for (i = 0; i < G_N_ELEMENTS (sort_criteria); i++) {
+            if (sort_criteria[i].sort_type == type &&
+                g_strcmp0 (sort_criteria[i].metadata_text, old_sort_name) == 0) {
+                GList *selection;
 
-            nemo_icon_view_flip_sort_reversed (NEMO_ICON_VIEW (view));
+                nemo_icon_view_flip_sort_reversed (NEMO_ICON_VIEW (view));
 
-            nemo_icon_container_sort (get_icon_container (view));
+                nemo_icon_container_sort (get_icon_container (view));
 
-            selection = nemo_view_get_selection (view);
+                selection = nemo_view_get_selection (view);
 
-            /* Make sure at least one of the selected items is scrolled into view */
-            if (selection != NULL) {
-                nemo_icon_container_reveal (get_icon_container (NEMO_ICON_VIEW (view)), selection->data);
+                /* Make sure at least one of the selected items is scrolled into view */
+                if (selection != NULL) {
+                    nemo_icon_container_reveal (get_icon_container (NEMO_ICON_VIEW (view)), selection->data);
+                }
+
+                nemo_file_list_free (selection);
+
+                nemo_view_update_menus (NEMO_VIEW (view));
+                return;
             }
-
-            nemo_file_list_free (selection);
-
-            nemo_view_update_menus (NEMO_VIEW (view));
-            return;
         }
     }
 
     g_free (old_sort_name);
 
+    NEMO_ICON_VIEW_GRID_CONTAINER (get_icon_container (view))->manual_sort_dirty = FALSE;
+
+    nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
     nemo_icon_view_set_sort_criterion_by_sort_type (NEMO_ICON_VIEW (view), type);
 
     nemo_view_update_menus (NEMO_VIEW (view));
@@ -872,6 +859,59 @@ action_sort_date (GtkAction               *action,
     set_sort_type (view, action, NEMO_FILE_SORT_BY_MTIME);
 }
 
+static void
+set_direction (NemoDesktopIconGridView *view,
+               gboolean                 horizontal)
+{
+    NemoFile *file;
+    NemoIconContainer *container;
+
+    if (view->details->updating_menus) {
+        return;
+    }
+
+    clear_orphan_states (view);
+
+    container = get_icon_container (view);
+    file = nemo_view_get_directory_as_file (NEMO_VIEW (view));
+
+    NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal = horizontal;
+    container->details->needs_resort = TRUE;
+
+    nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
+    nemo_icon_container_sort (get_icon_container (view));
+    nemo_icon_container_redo_layout (get_icon_container (view));
+
+    if (!nemo_icon_container_is_auto_layout (container)) {
+        NEMO_ICON_VIEW_GRID_CONTAINER (get_icon_container (view))->manual_sort_dirty = TRUE;
+    }
+
+    nemo_file_set_boolean_metadata (file,
+                                    NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
+                                    FALSE,
+                                    horizontal);
+
+    nemo_view_update_menus (NEMO_VIEW (view));
+}
+
+static void
+action_horizontal_layout (GtkAction               *action,
+                          NemoDesktopIconGridView *view)
+{
+    g_assert (NEMO_IS_VIEW (view));
+
+    set_direction (view, TRUE);
+}
+
+static void
+action_vertical_layout (GtkAction               *action,
+                        NemoDesktopIconGridView *view)
+{
+    g_assert (NEMO_IS_VIEW (view));
+
+    set_direction (view, FALSE);
+}
+
 static gboolean
 trash_link_is_selection (NemoView *view)
 {
@@ -905,6 +945,7 @@ static void
 real_update_menus (NemoView *view)
 {
 	NemoDesktopIconGridView *desktop_view;
+    NemoIconContainer *container;
     NemoFile *file;
 	char *label;
 	gboolean include_empty_trash;
@@ -916,6 +957,8 @@ real_update_menus (NemoView *view)
     GList *groups, *l;
 
 	g_assert (NEMO_IS_DESKTOP_ICON_GRID_VIEW (view));
+
+    container = get_icon_container (view);
 
     desktop_view = NEMO_DESKTOP_ICON_GRID_VIEW (view);
     desktop_view->details->updating_menus = TRUE;
@@ -937,21 +980,27 @@ real_update_menus (NemoView *view)
 
     file = nemo_view_get_directory_as_file (NEMO_VIEW (desktop_view));
 
-    horizontal_layout = nemo_file_get_boolean_metadata (file,
-                                                        NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
-                                                        FALSE);
+    horizontal_layout = NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal;
 
     action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
-                                          horizontal_layout ? "Horizontal Layout" : "Vertical Layout");
-    gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
+                                          "Horizontal Layout");
+    gtk_action_set_icon_name (action, horizontal_layout ? "menu-bullet" : "menu-none");
+
+    action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                          "Vertical Layout");
+    gtk_action_set_icon_name (action, horizontal_layout ? "menu-none" : "menu-bullet");
 
     action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                           "Desktop Align to Grid");
 
     gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-                                  nemo_icon_container_is_keep_aligned (get_icon_container (view)));
+                                  nemo_icon_container_is_keep_aligned (container));
 
-    auto_arrange = nemo_icon_container_is_auto_layout (get_icon_container (view));
+    auto_arrange = nemo_icon_container_is_auto_layout (container);
+
+    if (auto_arrange) {
+        NEMO_ICON_VIEW_GRID_CONTAINER (container)->manual_sort_dirty = !auto_arrange;
+    }
 
     action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                           "Desktop Autoarrange");
@@ -967,16 +1016,27 @@ real_update_menus (NemoView *view)
         action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                               sort_criteria[i].action);
         gtk_action_set_always_show_image (action, TRUE);
-        if (g_strcmp0 (order, sort_criteria[i].metadata_text) == 0) {
-            if (auto_arrange) {
-                gtk_action_set_icon_name (action,
-                                          reversed ? "menu-sort-up" : "menu-sort-down");
+        if (!NEMO_ICON_VIEW_GRID_CONTAINER (container)->manual_sort_dirty &&
+             g_strcmp0 (order, sort_criteria[i].metadata_text) == 0) {
+            if (horizontal_layout) {
+                if (auto_arrange) {
+                    gtk_action_set_icon_name (action,
+                                              reversed ? "menu-sort-left" : "menu-sort-right");
+                } else {
+                    gtk_action_set_icon_name (action,
+                                              reversed ? "menu-sort-left-free" : "menu-sort-right-free");
+                }
             } else {
-                gtk_action_set_icon_name (action,
-                                          reversed ? "menu-sort-up-free" : "menu-sort-down-free");
+                if (auto_arrange) {
+                    gtk_action_set_icon_name (action,
+                                              reversed ? "menu-sort-up" : "menu-sort-down");
+                } else {
+                    gtk_action_set_icon_name (action,
+                                              reversed ? "menu-sort-up-free" : "menu-sort-down-free");
+                }
             }
         } else {
-            gtk_action_set_icon_name (action, "menu-sort-none");
+            gtk_action_set_icon_name (action, "menu-none");
         }
     }
 
@@ -1010,17 +1070,6 @@ real_update_menus (NemoView *view)
         }
     }
 }
-
-static const GtkRadioActionEntry desktop_grid_radio_entries[] = {
-  { "Vertical Layout", NULL,
-    N_("_Vertical"), NULL,
-    N_("Arrange icons vertically in stacks"),
-    DESKTOP_ARRANGE_VERTICAL },
-  { "Horizontal Layout", NULL,
-    N_("_Horizontal"), NULL,
-    N_("Arrange icons horizontally in rows"),
-    DESKTOP_ARRANGE_HORIZONTAL }
-};
 
 static const GtkToggleActionEntry desktop_grid_toggle_entries[] = {
   /* name, stock id */      { "Desktop Align to Grid", NULL,
@@ -1060,7 +1109,15 @@ static const GtkActionEntry desktop_grid_entries[] = {
     { "Desktop Sort by Date", NULL,
       N_("By Modification _Date"), NULL,
       N_("Keep icons sorted by modification date in rows"),
-      G_CALLBACK (action_sort_date) }
+      G_CALLBACK (action_sort_date) },
+    { "Vertical Layout", NULL,
+      N_("_Vertical"), NULL,
+      N_("Arrange icons vertically in stacks"),
+      G_CALLBACK (action_vertical_layout) },
+    { "Horizontal Layout", NULL,
+      N_("_Horizontal"), NULL,
+      N_("Arrange icons horizontally in rows"),
+      G_CALLBACK (action_horizontal_layout) }
 };
 
 static void
@@ -1089,13 +1146,6 @@ real_merge_menus (NemoView *view)
                                          desktop_grid_toggle_entries,
                                          G_N_ELEMENTS (desktop_grid_toggle_entries),
                                          view);
-
-    gtk_action_group_add_radio_actions (action_group,
-                                        desktop_grid_radio_entries,
-                                        G_N_ELEMENTS (desktop_grid_radio_entries),
-                                        -1,
-                                        G_CALLBACK (action_direction_radio_changed),
-                                        view);
 
     gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
     g_object_unref (action_group); /* owned by ui manager */

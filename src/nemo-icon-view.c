@@ -187,9 +187,6 @@ static void                 nemo_icon_view_set_directory_tighter_layout (NemoIco
 static gboolean             nemo_icon_view_is_desktop      (NemoIconView           *icon_view);
 static void                 nemo_icon_view_reveal_selection       (NemoView               *view);
 static const SortCriterion *get_sort_criterion_by_sort_type           (NemoFileSortType  sort_type);
-static gboolean             set_sort_reversed                         (NemoIconView     *icon_view,
-								       gboolean              new_value,
-								       gboolean              set_metadata);
 static void                 switch_to_manual_layout                   (NemoIconView     *view);
 static void                 update_layout_menus                       (NemoIconView     *view);
 static NemoFileSortType get_default_sort_order                    (NemoFile         *file,
@@ -308,13 +305,13 @@ nemo_icon_view_clean_up (NemoIconView *icon_view)
 	/* Hardwire Clean Up to always be by name, in forward order */
 	saved_sort_reversed = icon_view->details->sort_reversed;
 	
-	set_sort_reversed (icon_view, FALSE, FALSE);
+	nemo_icon_view_set_sort_reversed (icon_view, FALSE, FALSE);
 	set_sort_criterion (icon_view, &sort_criteria[0], FALSE);
 
 	nemo_icon_container_sort (icon_container);
 	nemo_icon_container_freeze_icon_positions (icon_container);
 
-	set_sort_reversed (icon_view, saved_sort_reversed, FALSE);
+	nemo_icon_view_set_sort_reversed (icon_view, saved_sort_reversed, FALSE);
 }
 
 static void
@@ -835,10 +832,10 @@ nemo_icon_view_set_directory_tighter_layout (NemoIconView *icon_view,
     }
 }
 
-static gboolean
-set_sort_reversed (NemoIconView *icon_view,
-		   gboolean new_value,
-		   gboolean set_metadata)
+gboolean
+nemo_icon_view_set_sort_reversed (NemoIconView *icon_view,
+                                  gboolean      new_value,
+                                  gboolean      set_metadata)
 {
 	if (icon_view->details->sort_reversed == new_value) {
 		return FALSE;
@@ -859,7 +856,7 @@ set_sort_reversed (NemoIconView *icon_view,
 void
 nemo_icon_view_flip_sort_reversed (NemoIconView *icon_view)
 {
-    set_sort_reversed (icon_view, !icon_view->details->sort_reversed, TRUE);
+    nemo_icon_view_set_sort_reversed (icon_view, !icon_view->details->sort_reversed, TRUE);
 }
 
 static const SortCriterion *
@@ -994,7 +991,7 @@ nemo_icon_view_begin_loading (NemoView *view)
 	g_free (sort_name);
 
 	/* Set the sort direction from the metadata. */
-	set_sort_reversed (icon_view, nemo_icon_view_get_directory_sort_reversed (icon_view, file), FALSE);
+	nemo_icon_view_set_sort_reversed (icon_view, nemo_icon_view_get_directory_sort_reversed (icon_view, file), FALSE);
 
 	nemo_icon_container_set_keep_aligned (get_icon_container (icon_view),
                     nemo_icon_view_get_directory_keep_aligned (icon_view, file));
@@ -1250,7 +1247,7 @@ action_reversed_order_callback (GtkAction *action,
 
 	icon_view = NEMO_ICON_VIEW (user_data);
 
-	if (set_sort_reversed (icon_view,
+	if (nemo_icon_view_set_sort_reversed (icon_view,
 			       gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)),
 			       TRUE)) {
 		nemo_icon_container_sort (get_icon_container (icon_view));
@@ -2034,7 +2031,7 @@ default_sort_in_reverse_order_changed_callback (gpointer callback_data)
 	icon_view = NEMO_ICON_VIEW (callback_data);
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (icon_view));
-	set_sort_reversed (icon_view, nemo_icon_view_get_directory_sort_reversed (icon_view, file), FALSE);
+	nemo_icon_view_set_sort_reversed (icon_view, nemo_icon_view_get_directory_sort_reversed (icon_view, file), FALSE);
 	icon_container = get_icon_container (icon_view);
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (icon_container));
 

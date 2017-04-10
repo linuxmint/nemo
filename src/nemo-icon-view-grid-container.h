@@ -51,8 +51,8 @@ struct NemoIconViewGridContainer {
 
 	NemoIconView *view;
 	gboolean    sort_for_desktop;
-    NemoFileSortType sort_type;
-    gboolean sort_reversed;
+    gboolean    horizontal;
+    gboolean    manual_sort_dirty;
 };
 
 struct NemoIconViewGridContainerClass {

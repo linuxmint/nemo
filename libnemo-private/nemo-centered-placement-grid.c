@@ -16,8 +16,6 @@
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
    write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
    Boston, MA 02110-1335, USA.
-
-   Author: Ettore Perazzoli <ettore@gnu.org>
 */
 
 
@@ -26,7 +24,7 @@
 #include "nemo-centered-placement-grid.h"
 
 NemoCenteredPlacementGrid *
-nemo_centered_placement_grid_new (NemoIconContainer *container, gboolean tight)
+nemo_centered_placement_grid_new (NemoIconContainer *container, gboolean horizontal)
 {
     NemoCenteredPlacementGrid *grid;
     int width, height;
@@ -50,7 +48,7 @@ nemo_centered_placement_grid_new (NemoIconContainer *container, gboolean tight)
 
     grid = g_new0 (NemoCenteredPlacementGrid, 1);
     grid->container = container;
-    grid->tight = tight;
+    grid->horizontal = horizontal;
     grid->num_columns = num_columns;
     grid->num_rows = num_rows;
     grid->borders = gtk_border_new ();
@@ -173,13 +171,26 @@ nemo_centered_placement_grid_get_next_position (NemoCenteredPlacementGrid *grid,
     x_ret = -1;
     y_ret = -1;
 
-    for (x = 0; x < grid->num_columns; x++) {
+    if (grid->horizontal) {
         for (y = 0; y < grid->num_rows; y++) {
-            if (nemo_centered_placement_grid_position_is_free (grid, x, y)) {
-                nemo_centered_placement_grid_mark (grid, x, y);
-                x_ret = grid->borders->left + (x * GET_VIEW_CONSTANT (grid->container, snap_size_x));
-                y_ret = grid->borders->top + (y * GET_VIEW_CONSTANT (grid->container, snap_size_y));
-                goto out;
+            for (x = 0; x < grid->num_columns; x++) {
+                if (nemo_centered_placement_grid_position_is_free (grid, x, y)) {
+                    nemo_centered_placement_grid_mark (grid, x, y);
+                    x_ret = grid->borders->left + (x * GET_VIEW_CONSTANT (grid->container, snap_size_x));
+                    y_ret = grid->borders->top + (y * GET_VIEW_CONSTANT (grid->container, snap_size_y));
+                    goto out;
+                }
+            }
+        }
+    } else {
+        for (x = 0; x < grid->num_columns; x++) {
+            for (y = 0; y < grid->num_rows; y++) {
+                if (nemo_centered_placement_grid_position_is_free (grid, x, y)) {
+                    nemo_centered_placement_grid_mark (grid, x, y);
+                    x_ret = grid->borders->left + (x * GET_VIEW_CONSTANT (grid->container, snap_size_x));
+                    y_ret = grid->borders->top + (y * GET_VIEW_CONSTANT (grid->container, snap_size_y));
+                    goto out;
+                }
             }
         }
     }
@@ -213,48 +224,96 @@ nemo_centered_placement_grid_find_empty_position (NemoCenteredPlacementGrid *gri
     cur_x = cur_y = ICON_UNPOSITIONED_VALUE;
     last_empty_x = last_empty_y = ICON_UNPOSITIONED_VALUE;
 
-    for (x = 0; x < grid->num_columns; x++) {
+    if (grid->horizontal) {
         for (y = 0; y < grid->num_rows; y++) {
-            cur_x = grid->borders->left + (x * GET_VIEW_CONSTANT (grid->container, snap_size_x));
-            cur_y = grid->borders->top + (y * GET_VIEW_CONSTANT (grid->container, snap_size_y));
+            for (x = 0; x < grid->num_columns; x++) {
+                cur_x = grid->borders->left + (x * GET_VIEW_CONSTANT (grid->container, snap_size_x));
+                cur_y = grid->borders->top + (y * GET_VIEW_CONSTANT (grid->container, snap_size_y));
 
-            if ((x_orig >= cur_x - x_half_snap && x_orig <= cur_x + x_half_snap) &&
-                (y_orig >= cur_y - y_half_snap && y_orig <= cur_y + y_half_snap)) {
-                match = TRUE;
-            }
+                if ((x_orig >= cur_x - x_half_snap && x_orig <= cur_x + x_half_snap) &&
+                    (y_orig >= cur_y - y_half_snap && y_orig <= cur_y + y_half_snap)) {
+                    match = TRUE;
+                }
 
-            if (!nemo_centered_placement_grid_position_is_free (grid, x, y)) {
-                gint icon_nom_x, icon_nom_y, grid_x, grid_y;
+                if (!nemo_centered_placement_grid_position_is_free (grid, x, y)) {
+                    gint icon_nom_x, icon_nom_y, grid_x, grid_y;
 
-                nemo_centered_placement_grid_icon_position_to_nominal (grid, icon, icon->x, icon->y, &icon_nom_x, &icon_nom_y);
-                grid_x = (icon_nom_x - grid->borders->left) / GET_VIEW_CONSTANT (grid->container, snap_size_x);
-                grid_y = (icon_nom_y - grid->borders->top) / GET_VIEW_CONSTANT (grid->container, snap_size_y);
+                    nemo_centered_placement_grid_icon_position_to_nominal (grid, icon, icon->x, icon->y, &icon_nom_x, &icon_nom_y);
+                    grid_x = (icon_nom_x - grid->borders->left) / GET_VIEW_CONSTANT (grid->container, snap_size_x);
+                    grid_y = (icon_nom_y - grid->borders->top) / GET_VIEW_CONSTANT (grid->container, snap_size_y);
 
-                if (match) {
-                    ideal_position_occupied = TRUE;
+                    if (match) {
+                        ideal_position_occupied = TRUE;
 
-                    /* If the current position is the same as the supplied icon's position, consider
-                     * the position free.  This allows dragging an icon, then dropping it back where it was.
-                     */
-                    if (grid_x != cur_x || grid_y != cur_y) {
-                        *x_new = cur_x;
-                        *y_new = cur_y;
-                        return;
+                        /* If the current position is the same as the supplied icon's position, consider
+                         * the position free.  This allows dragging an icon, then dropping it back where it was.
+                         */
+                        if (grid_x != cur_x || grid_y != cur_y) {
+                            *x_new = cur_x;
+                            *y_new = cur_y;
+                            return;
+                        }
+                    }
+
+                    continue;
+                } else {
+                    if (last_empty_x == ICON_UNPOSITIONED_VALUE) {
+                        last_empty_x = cur_x;
+                        last_empty_y = cur_y;
                     }
                 }
 
-                continue;
-            } else {
-                if (last_empty_x == ICON_UNPOSITIONED_VALUE) {
-                    last_empty_x = cur_x;
-                    last_empty_y = cur_y;
+                if (match || ideal_position_occupied) {
+                    *x_new = cur_x;
+                    *y_new = cur_y;
+                    return;
                 }
             }
+        }
+    } else {
+        for (x = 0; x < grid->num_columns; x++) {
+            for (y = 0; y < grid->num_rows; y++) {
+                cur_x = grid->borders->left + (x * GET_VIEW_CONSTANT (grid->container, snap_size_x));
+                cur_y = grid->borders->top + (y * GET_VIEW_CONSTANT (grid->container, snap_size_y));
 
-            if (match || ideal_position_occupied) {
-                *x_new = cur_x;
-                *y_new = cur_y;
-                return;
+                if ((x_orig >= cur_x - x_half_snap && x_orig <= cur_x + x_half_snap) &&
+                    (y_orig >= cur_y - y_half_snap && y_orig <= cur_y + y_half_snap)) {
+                    match = TRUE;
+                }
+
+                if (!nemo_centered_placement_grid_position_is_free (grid, x, y)) {
+                    gint icon_nom_x, icon_nom_y, grid_x, grid_y;
+
+                    nemo_centered_placement_grid_icon_position_to_nominal (grid, icon, icon->x, icon->y, &icon_nom_x, &icon_nom_y);
+                    grid_x = (icon_nom_x - grid->borders->left) / GET_VIEW_CONSTANT (grid->container, snap_size_x);
+                    grid_y = (icon_nom_y - grid->borders->top) / GET_VIEW_CONSTANT (grid->container, snap_size_y);
+
+                    if (match) {
+                        ideal_position_occupied = TRUE;
+
+                        /* If the current position is the same as the supplied icon's position, consider
+                         * the position free.  This allows dragging an icon, then dropping it back where it was.
+                         */
+                        if (grid_x != cur_x || grid_y != cur_y) {
+                            *x_new = cur_x;
+                            *y_new = cur_y;
+                            return;
+                        }
+                    }
+
+                    continue;
+                } else {
+                    if (last_empty_x == ICON_UNPOSITIONED_VALUE) {
+                        last_empty_x = cur_x;
+                        last_empty_y = cur_y;
+                    }
+                }
+
+                if (match || ideal_position_occupied) {
+                    *x_new = cur_x;
+                    *y_new = cur_y;
+                    return;
+                }
             }
         }
     }

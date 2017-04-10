@@ -6887,6 +6887,7 @@ nemo_icon_container_sort (NemoIconContainer *container)
 
 	reset_scroll_region_if_not_empty (container);
 	container->details->needs_resort = TRUE;
+
 	nemo_icon_container_redo_layout (container);
 
 	if (changed) {

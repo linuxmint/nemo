@@ -79,4 +79,7 @@ void    nemo_icon_view_set_directory_keep_aligned (NemoIconView *icon_view,
 gchar  *nemo_icon_view_get_directory_sort_by      (NemoIconView *icon_view, NemoFile *file);
 gboolean nemo_icon_view_get_directory_sort_reversed (NemoIconView *icon_view, NemoFile *file);
 void    nemo_icon_view_flip_sort_reversed (NemoIconView *icon_view);
+gboolean nemo_icon_view_set_sort_reversed (NemoIconView *icon_view,
+                                           gboolean      new_value,
+                                           gboolean      set_metadata);
 #endif /* NEMO_ICON_VIEW_H */
