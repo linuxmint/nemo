@@ -258,7 +258,7 @@ AC_ARG_ENABLE(update-mimedb,
     enable_update_mimedb=yes)
 AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
 
-CFLAGS="$CFLAGS -Werror=unused-function -Werror=unused-variable -O3"
+CFLAGS="$CFLAGS -Werror=unused-function -Werror=unused-variable -Wno-deprecated-declarations -O3"
 
 AC_CONFIG_FILES([
 Makefile
