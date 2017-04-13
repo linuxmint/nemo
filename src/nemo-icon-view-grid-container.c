@@ -682,8 +682,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
         placed_icons = g_list_reverse (placed_icons);
         unplaced_icons = g_list_reverse (unplaced_icons);
 
-        grid = nemo_centered_placement_grid_new (container,
-                                                 NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal);
+        grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
 
         if (grid) {
             nemo_centered_placement_grid_pre_populate (grid, placed_icons);
@@ -707,8 +706,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
         NemoCenteredPlacementGrid *grid;
         /* There are no placed icons, or we have auto layout enabled */
 
-        grid = nemo_centered_placement_grid_new (container,
-                                                 NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal);
+        grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
 
         while (icons != NULL) {
             NemoIconPosition position;
@@ -876,8 +874,7 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
         if (details->keep_aligned && snap) {
             NemoCenteredPlacementGrid *grid;
 
-            grid = nemo_centered_placement_grid_new (container,
-                                                     NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal);
+            grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
             nemo_centered_placement_grid_pre_populate (grid, container->details->icons);
 
             snap_position (container, grid, icon, &x, &y);
@@ -925,8 +922,7 @@ nemo_icon_view_grid_container_align_icons (NemoIconContainer *container)
         unplaced_icons = g_list_reverse (unplaced_icons);
     }
 
-    grid = nemo_centered_placement_grid_new (container,
-                                             NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal);
+    grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
 
     for (l = unplaced_icons; l != NULL; l = l->next) {
         NemoIcon *icon;
@@ -1010,7 +1006,6 @@ nemo_icon_view_grid_container_reload_icon_positions (NemoIconContainer *containe
 static void
 nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *container)
 {
-    NemoFile *file;
     NemoCenteredPlacementGrid *grid;
 
     GList *p, *new_icons, *no_position_icons;
@@ -1019,15 +1014,7 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
     container->details->new_icons = NULL;
     gboolean horizontal;
 
-    file = nemo_view_get_directory_as_file (NEMO_VIEW (get_icon_view (container)));
-
-    horizontal = nemo_file_get_boolean_metadata (file,
-                                                 NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
-                                                 FALSE);
-
-    NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal = horizontal;
-
-    grid = nemo_centered_placement_grid_new (container, horizontal);
+    grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
     nemo_centered_placement_grid_pre_populate (grid, container->details->icons);
 
     /* Position most icons (not unpositioned manual-layout icons). */

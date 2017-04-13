@@ -142,7 +142,8 @@ enum
 #define NEMO_ICON_VIEW_IID		"OAFIID:Nemo_File_Manager_Icon_View"
 #define NEMO_COMPACT_VIEW_IID	"OAFIID:Nemo_File_Manager_Compact_View"
 #define NEMO_LIST_VIEW_IID		"OAFIID:Nemo_File_Manager_List_View"
-
+#define NEMO_DESKTOP_ICON_VIEW_IID  "OAFIID:Nemo_File_Manager_Desktop_Icon_View"
+#define NEMO_DESKTOP_ICON_GRID_VIEW_IID  "OAFIID:Nemo_File_Manager_Desktop_Icon_Grid_View"
 
 /* Icon View */
 #define NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
@@ -258,6 +259,7 @@ typedef enum
 
 void nemo_global_preferences_init                      (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
+char *nemo_global_preferences_get_desktop_iid (void);
 gboolean nemo_global_preferences_get_ignore_view_metadata (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 gboolean nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key);

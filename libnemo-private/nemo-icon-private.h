@@ -228,6 +228,9 @@ struct NemoIconContainerDetails {
 	/* Is the container for a desktop window */
 	gboolean is_desktop;
 
+    /* Used by desktop grid container only */
+    gboolean horizontal;
+
     gboolean show_desktop_tooltips;
     gboolean show_icon_view_tooltips;
 

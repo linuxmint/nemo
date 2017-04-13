@@ -66,7 +66,9 @@ nemo_desktop_window_update_directory (NemoDesktopWindow *window)
 	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
 
 	window->details->loaded = FALSE;
-	location = g_file_new_for_uri (EEL_DESKTOP_URI);
+
+    location = g_file_new_for_uri (EEL_DESKTOP_URI);
+
 	nemo_window_go_to (NEMO_WINDOW (window), location);
 	window->details->loaded = TRUE;
 

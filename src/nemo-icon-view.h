@@ -80,6 +80,11 @@ gchar  *nemo_icon_view_get_directory_sort_by      (NemoIconView *icon_view, Nemo
 gboolean nemo_icon_view_get_directory_sort_reversed (NemoIconView *icon_view, NemoFile *file);
 void    nemo_icon_view_flip_sort_reversed (NemoIconView *icon_view);
 gboolean nemo_icon_view_set_sort_reversed (NemoIconView *icon_view,
-                                           gboolean      new_value,
-                                           gboolean      set_metadata);
+                                          gboolean      new_value,
+                                          gboolean      set_metadata);
+void   nemo_icon_view_set_directory_horizontal_layout (NemoIconView *icon_view,
+                                                       NemoFile     *file,
+                                                       gboolean      horizontal);
+gboolean nemo_icon_view_get_directory_horizontal_layout (NemoIconView *icon_view,
+                                                         NemoFile     *file);
 #endif /* NEMO_ICON_VIEW_H */

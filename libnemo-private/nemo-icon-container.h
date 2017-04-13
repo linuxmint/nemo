@@ -283,6 +283,8 @@ void              nemo_icon_container_set_keep_aligned              (NemoIconCon
 									 gboolean                keep_aligned);
 void              nemo_icon_container_set_layout_mode               (NemoIconContainer  *container,
 									 NemoIconLayoutMode  mode);
+void              nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
+                                                             gboolean           horizontal);
 void              nemo_icon_container_set_label_position            (NemoIconContainer  *container,
 									 NemoIconLabelPosition pos);
 void              nemo_icon_container_sort                          (NemoIconContainer  *container);

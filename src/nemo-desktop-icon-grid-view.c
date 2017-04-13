@@ -658,12 +658,6 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
 
     nemo_view_set_show_foreign (NEMO_VIEW (desktop_icon_grid_view),
                     FALSE);
-    
-    /* Set our default layout mode */
-    nemo_icon_container_set_layout_mode (icon_container,
-                         gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
-                         NEMO_ICON_LAYOUT_T_B_R_L :
-                         NEMO_ICON_LAYOUT_T_B_L_R);
 
     g_signal_connect_object (icon_container, "middle_click",
                  G_CALLBACK (nemo_desktop_icon_grid_view_handle_middle_click), desktop_icon_grid_view, 0);
@@ -875,21 +869,18 @@ set_direction (NemoDesktopIconGridView *view,
     container = get_icon_container (view);
     file = nemo_view_get_directory_as_file (NEMO_VIEW (view));
 
-    NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal = horizontal;
+    nemo_icon_container_set_horizontal_layout (container, horizontal);
     container->details->needs_resort = TRUE;
 
-    nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
-    nemo_icon_container_sort (get_icon_container (view));
-    nemo_icon_container_redo_layout (get_icon_container (view));
-
-    if (!nemo_icon_container_is_auto_layout (container)) {
+    if (nemo_icon_container_is_auto_layout (container)) {
+        nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
+        nemo_icon_container_sort (get_icon_container (view));
+        nemo_icon_container_redo_layout (get_icon_container (view));
+    } else {
         NEMO_ICON_VIEW_GRID_CONTAINER (get_icon_container (view))->manual_sort_dirty = TRUE;
     }
 
-    nemo_file_set_boolean_metadata (file,
-                                    NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
-                                    FALSE,
-                                    horizontal);
+    nemo_icon_view_set_directory_horizontal_layout (NEMO_ICON_VIEW (view), file, horizontal);
 
     nemo_view_update_menus (NEMO_VIEW (view));
 }
@@ -980,7 +971,7 @@ real_update_menus (NemoView *view)
 
     file = nemo_view_get_directory_as_file (NEMO_VIEW (desktop_view));
 
-    horizontal_layout = NEMO_ICON_VIEW_GRID_CONTAINER (container)->horizontal;
+    horizontal_layout = nemo_icon_view_get_directory_horizontal_layout (NEMO_ICON_VIEW (desktop_view), file);
 
     action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                           "Horizontal Layout");
@@ -997,6 +988,8 @@ real_update_menus (NemoView *view)
                                   nemo_icon_container_is_keep_aligned (container));
 
     auto_arrange = nemo_icon_container_is_auto_layout (container);
+
+    gtk_action_set_sensitive (action, !auto_arrange);
 
     if (auto_arrange) {
         NEMO_ICON_VIEW_GRID_CONTAINER (container)->manual_sort_dirty = !auto_arrange;

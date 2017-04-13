@@ -6733,6 +6733,20 @@ nemo_icon_container_set_auto_layout (NemoIconContainer *container,
 	g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
 }
 
+void
+nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
+                                           gboolean           horizontal)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+    g_return_if_fail (horizontal == FALSE || horizontal == TRUE);
+
+    if (container->details->horizontal == horizontal) {
+        return;
+    }
+
+    container->details->horizontal = horizontal;
+}
+
 /* Toggle the tighter layout boolean. */
 void
 nemo_icon_container_set_tighter_layout (NemoIconContainer *container,
@@ -8022,8 +8036,7 @@ nemo_icon_container_is_layout_rtl (NemoIconContainer *container)
 {
 	g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), 0);
 
-	return container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_R_L ||
-		container->details->layout_mode == NEMO_ICON_LAYOUT_R_L_T_B;
+    return gtk_widget_get_direction (GTK_WIDGET(container)) == GTK_TEXT_DIR_RTL;
 }
 
 gboolean

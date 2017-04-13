@@ -45,10 +45,12 @@
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
+#include <eel/eel-vfs-extensions.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
 #include <libnemo-extension/nemo-location-widget-provider.h>
+#include <libnemo-private/nemo-desktop-directory.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
@@ -679,7 +681,7 @@ begin_location_change (NemoWindowSlot *slot,
 	slot->open_callback = callback;
 	slot->open_callback_user_data = user_data;
 
-        directory = nemo_directory_get (location);
+    directory = nemo_directory_get (location);
 
 	/* The code to force a reload is here because if we do it
 	 * after determining an initial view (in the components), then
@@ -876,14 +878,19 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 		/* Otherwise, use default */
 		if (view_id == NULL) {
-            gchar *name;
+            gchar *name, *uri;
             name = nemo_file_get_name (file);
+            uri = nemo_file_get_uri (file);
 
-            if (g_strcmp0 (name, "x-nemo-search") == 0)
+            if (g_strcmp0 (name, "x-nemo-search") == 0) {
                 view_id = g_strdup (NEMO_LIST_VIEW_IID);
-            else
+            } else if (eel_uri_is_desktop (uri)) {
+                view_id = nemo_global_preferences_get_desktop_iid ();
+            } else {
                 view_id = nemo_global_preferences_get_default_folder_viewer_preference_as_iid ();
+            }
 
+            g_free (uri);
             g_free (name);
 
 			if (view_id != NULL && 
@@ -983,71 +990,62 @@ got_file_info_for_view_selection_callback (NemoFile *file,
  */
 static void
 create_content_view (NemoWindowSlot *slot,
-		     const char *view_id)
+                     const char     *view_id)
 {
-	NemoWindow *window;
-        NemoView *view;
-	GList *selection;
+    NemoWindow *window;
+    NemoView *view;
+    GList *selection;
 
-	window = nemo_window_slot_get_window (slot);
+    window = nemo_window_slot_get_window (slot);
 
-    /* FIXME bugzilla.gnome.org 41243: 
-    * We should use inheritance instead of these special cases
-    * for the desktop window.
-    */
-
-    if (NEMO_IS_DESKTOP_WINDOW (window)) {
-       /* We force the desktop to use a desktop_icon_view. It's simpler
-        * to fix it here than trying to make it pick the right view in
-        * the first place.
-        */
-        if (g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_USE_DESKTOP_GRID)) {
-            view_id = NEMO_DESKTOP_ICON_GRID_VIEW_IID;
-        } else {
-            view_id = NEMO_DESKTOP_ICON_VIEW_IID;
-        }
+    if (slot->content_view != NULL &&
+        g_strcmp0 (nemo_view_get_view_id (slot->content_view),
+        view_id) == 0) {
+        /* reuse existing content view */
+        view = slot->content_view;
+        slot->new_content_view = view;
+        g_object_ref (view);
+    } else {
+        /* create a new content view */
+        view = nemo_view_factory_create (view_id, slot);
+        slot->new_content_view = view;
+        nemo_window_connect_content_view (window, slot->new_content_view);
     }
 
-        if (slot->content_view != NULL &&
-	    g_strcmp0 (nemo_view_get_view_id (slot->content_view),
-			view_id) == 0) {
-                /* reuse existing content view */
-                view = slot->content_view;
-                slot->new_content_view = view;
-        	g_object_ref (view);
-        } else {
-                /* create a new content view */
-		view = nemo_view_factory_create (view_id, slot);
+    if (NEMO_IS_DESKTOP_WINDOW (window)) {
+        NemoDesktopDirectory *directory;
 
-                slot->new_content_view = view;
-		nemo_window_connect_content_view (window, slot->new_content_view);
-        }
+        directory = NEMO_DESKTOP_DIRECTORY (nemo_directory_get (slot->pending_location));
+        directory->display_number = nemo_desktop_window_get_monitor (NEMO_DESKTOP_WINDOW (window));
 
-	/* Actually load the pending location and selection: */
+        nemo_directory_unref (NEMO_DIRECTORY (directory));
+    }
 
-        if (slot->pending_location != NULL) {
-		load_new_location (slot,
-				   slot->pending_location,
-				   slot->pending_selection,
-				   FALSE,
-				   TRUE);
+    /* Actually load the pending location and selection: */
 
-		g_list_free_full (slot->pending_selection, g_object_unref);
-		slot->pending_selection = NULL;
-	} else if (slot->location != NULL) {
-		selection = nemo_view_get_selection (slot->content_view);
-		load_new_location (slot,
-				   slot->location,
-				   selection,
-				   FALSE,
-				   TRUE);
-		g_list_free_full (selection, g_object_unref);
-	} else {
-		/* Something is busted, there was no location to load.
-		   Just load the homedir. */
-		nemo_window_slot_go_home (slot, FALSE);
-		
-	}
+    if (slot->pending_location != NULL) {
+        load_new_location (slot,
+                           slot->pending_location,
+                           slot->pending_selection,
+                           FALSE,
+                           TRUE);
+
+        g_list_free_full (slot->pending_selection, g_object_unref);
+        slot->pending_selection = NULL;
+    } else if (slot->location != NULL) {
+        selection = nemo_view_get_selection (slot->content_view);
+        load_new_location (slot,
+                           slot->location,
+                           selection,
+                           FALSE,
+                           TRUE);
+        g_list_free_full (selection, g_object_unref);
+    } else {
+        /* Something is busted, there was no location to load.
+           Just load the homedir. */
+        nemo_window_slot_go_home (slot, FALSE);
+
+    }
 }
 
 static void

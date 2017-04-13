@@ -59,6 +59,7 @@
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-desktop-utils.h>
+#include <libnemo-private/nemo-desktop-directory.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_ICON_VIEW
 #include <libnemo-private/nemo-debug.h>
@@ -224,6 +225,27 @@ nemo_icon_view_destroy (GtkWidget *object)
 	GTK_WIDGET_CLASS (nemo_icon_view_parent_class)->destroy (object);
 }
 
+static void
+sync_directory_monitor_number (NemoIconView *view, NemoFile *file)
+{
+    NemoDirectory *directory;
+    NemoDesktopWindow *desktop_window;
+    gint monitor;
+
+    if (!view->details->is_desktop) {
+        return;
+    }
+
+    desktop_window = NEMO_DESKTOP_WINDOW (nemo_view_get_nemo_window (NEMO_VIEW (view)));
+
+    monitor = nemo_desktop_window_get_monitor (desktop_window);
+
+    directory = nemo_view_get_model (NEMO_VIEW (view));
+
+    NEMO_DESKTOP_DIRECTORY (directory)->display_number = monitor;
+}
+
+
 static NemoIconContainer *
 get_icon_container (NemoIconView *icon_view)
 {
@@ -254,20 +276,25 @@ real_set_sort_criterion (NemoIconView *icon_view,
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (icon_view));
 
+    sync_directory_monitor_number (icon_view, file);
+
 	if (clear) {
 		nemo_file_set_metadata (file,
-					    NEMO_METADATA_KEY_ICON_VIEW_SORT_BY, NULL, NULL);
+                                NEMO_METADATA_KEY_ICON_VIEW_SORT_BY,
+                                NULL,
+                                NULL);
 		nemo_file_set_metadata (file,
-					    NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED, NULL, NULL);
-		icon_view->details->sort =
-			get_sort_criterion_by_sort_type	(get_default_sort_order
-							 (file, &icon_view->details->sort_reversed));
-	} else if (set_metadata) {
+                                NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED,
+                                NULL,
+                                NULL);
+        icon_view->details->sort = 
+            get_sort_criterion_by_sort_type (get_default_sort_order (file, &icon_view->details->sort_reversed));
+    } else if (set_metadata) {
 		/* Store the new sort setting. */
-		nemo_icon_view_set_directory_sort_by (icon_view,
-						    file,
-						    sort->metadata_text);
-	}
+        nemo_icon_view_set_directory_sort_by (icon_view,
+                                              file,
+                                              sort->metadata_text);
+    }
 
 	/* Update the layout menus to match the new sort setting. */
 	update_layout_menus (icon_view);
@@ -633,9 +660,11 @@ nemo_icon_view_get_directory_sort_by (NemoIconView *icon_view,
 	default_sort_criterion = get_sort_criterion_by_sort_type (get_default_sort_order (file, NULL));
 	g_return_val_if_fail (default_sort_criterion != NULL, NULL);
 
-	return nemo_file_get_metadata
-		(file, NEMO_METADATA_KEY_ICON_VIEW_SORT_BY,
-		 default_sort_criterion->metadata_text);
+    sync_directory_monitor_number (icon_view, file);
+
+    return nemo_file_get_metadata (file,
+                                   NEMO_METADATA_KEY_ICON_VIEW_SORT_BY,
+                                   default_sort_criterion->metadata_text);
 }
 
 static NemoFileSortType
@@ -678,10 +707,12 @@ nemo_icon_view_set_directory_sort_by (NemoIconView *icon_view,
 	default_sort_criterion = get_sort_criterion_by_sort_type (get_default_sort_order (file, NULL));
 	g_return_if_fail (default_sort_criterion != NULL);
 
-	nemo_file_set_metadata
-		(file, NEMO_METADATA_KEY_ICON_VIEW_SORT_BY,
-		 default_sort_criterion->metadata_text,
-		 sort_by);
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_metadata (file,
+                            NEMO_METADATA_KEY_ICON_VIEW_SORT_BY,
+                            default_sort_criterion->metadata_text,
+                            sort_by);
 }
 
 gboolean
@@ -695,10 +726,12 @@ nemo_icon_view_get_directory_sort_reversed (NemoIconView *icon_view,
 	}
 
 	get_default_sort_order (file, &reversed);
-	return nemo_file_get_boolean_metadata
-		(file,
-		 NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED,
-		 reversed);
+
+    sync_directory_monitor_number (icon_view, file);
+
+    return nemo_file_get_boolean_metadata (file,
+                                           NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED,
+                                           reversed);
 }
 
 static void
@@ -713,10 +746,13 @@ nemo_icon_view_set_directory_sort_reversed (NemoIconView *icon_view,
 	}
 
 	get_default_sort_order (file, &reversed);
-	nemo_file_set_boolean_metadata
-		(file,
-		 NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED,
-		 reversed, sort_reversed);
+
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_boolean_metadata (file,
+                                    NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED,
+                                    reversed,
+                                    sort_reversed);
 }
 
 static gboolean
@@ -733,10 +769,11 @@ nemo_icon_view_get_directory_keep_aligned (NemoIconView *icon_view,
 		return FALSE;
 	}
 
-	return  nemo_file_get_boolean_metadata
-		(file,
-		 NEMO_METADATA_KEY_ICON_VIEW_KEEP_ALIGNED,
-		 get_default_directory_keep_aligned ());
+    sync_directory_monitor_number (icon_view, file);
+
+    return nemo_file_get_boolean_metadata (file,
+                                           NEMO_METADATA_KEY_ICON_VIEW_KEEP_ALIGNED,
+                                           get_default_directory_keep_aligned ());
 }
 
 void
@@ -748,10 +785,12 @@ nemo_icon_view_set_directory_keep_aligned (NemoIconView *icon_view,
 		return;
 	}
 
-	nemo_file_set_boolean_metadata
-		(file, NEMO_METADATA_KEY_ICON_VIEW_KEEP_ALIGNED,
-		 get_default_directory_keep_aligned (),
-		 keep_aligned);
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_boolean_metadata (file,
+                                    NEMO_METADATA_KEY_ICON_VIEW_KEEP_ALIGNED,
+                                    get_default_directory_keep_aligned (),
+                                    keep_aligned);
 }
 
 static gboolean
@@ -766,8 +805,11 @@ nemo_icon_view_get_directory_auto_layout (NemoIconView *icon_view,
 		return TRUE;
 	}
 
-	return nemo_file_get_boolean_metadata
-		(file, NEMO_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT, TRUE);
+    sync_directory_monitor_number (icon_view, file);
+
+    return nemo_file_get_boolean_metadata (file,
+                                           NEMO_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT,
+                                           TRUE);
 }
 
 static void
@@ -780,10 +822,36 @@ nemo_icon_view_set_directory_auto_layout (NemoIconView *icon_view,
 		return;
 	}
 
-	nemo_file_set_boolean_metadata
-		(file, NEMO_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT,
-		 TRUE,
-		 auto_layout);
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_boolean_metadata (file,
+                                    NEMO_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT,
+                                    TRUE,
+                                    auto_layout);
+}
+
+void
+nemo_icon_view_set_directory_horizontal_layout (NemoIconView *icon_view,
+                                                NemoFile     *file,
+                                                gboolean      horizontal)
+{
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_boolean_metadata (file,
+                                    NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
+                                    FALSE,
+                                    horizontal);
+}
+
+gboolean
+nemo_icon_view_get_directory_horizontal_layout (NemoIconView *icon_view,
+                                                NemoFile     *file)
+{
+    sync_directory_monitor_number (icon_view, file);
+
+    return nemo_file_get_boolean_metadata (file,
+                                           NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
+                                           FALSE);
 }
 
 /* maintainence of tighter layout boolean */
@@ -808,6 +876,8 @@ nemo_icon_view_get_directory_tighter_layout (NemoIconView *icon_view,
         return t > TIGHTER_NULL ? t == TIGHTER_YES : get_default_directory_tighter_layout ();
     }
 
+    sync_directory_monitor_number (icon_view, file);
+
     return nemo_file_get_boolean_metadata (file,
                                            NEMO_METADATA_KEY_ICON_VIEW_TIGHTER_LAYOUT,
                                            get_default_directory_tighter_layout ());
@@ -826,6 +896,8 @@ nemo_icon_view_set_directory_tighter_layout (NemoIconView *icon_view,
         gint t = tighter_layout ? TIGHTER_YES : TIGHTER_NO;
         nemo_window_set_ignore_meta_tighter_layout (nemo_view_get_nemo_window (NEMO_VIEW (icon_view)), t);
     } else {
+        sync_directory_monitor_number (icon_view, file);
+
         nemo_file_set_boolean_metadata (file, NEMO_METADATA_KEY_ICON_VIEW_TIGHTER_LAYOUT,
                                         get_default_directory_tighter_layout (),
                                         tighter_layout);
@@ -837,20 +909,21 @@ nemo_icon_view_set_sort_reversed (NemoIconView *icon_view,
                                   gboolean      new_value,
                                   gboolean      set_metadata)
 {
-	if (icon_view->details->sort_reversed == new_value) {
-		return FALSE;
-	}
-	icon_view->details->sort_reversed = new_value;
+    if (icon_view->details->sort_reversed == new_value) {
+        return FALSE;
+    }
 
-	if (set_metadata) {
-		/* Store the new sort setting. */
-		nemo_icon_view_set_directory_sort_reversed (icon_view, nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)), new_value);
-	}
-	
-	/* Update the layout menus to match the new sort-order setting. */
-	update_layout_menus (icon_view);
+    icon_view->details->sort_reversed = new_value;
 
-	return TRUE;
+    if (set_metadata) {
+        /* Store the new sort setting. */
+        nemo_icon_view_set_directory_sort_reversed (icon_view, nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)), new_value);
+    }
+
+    /* Update the layout menus to match the new sort-order setting. */
+    update_layout_menus (icon_view);
+
+    return TRUE;
 }
 
 void
@@ -953,6 +1026,14 @@ nemo_icon_view_begin_loading (NemoView *view)
 	uri = nemo_file_get_uri (file);
 	icon_container = GTK_WIDGET (get_icon_container (icon_view));
 
+    /* Set our default layout mode */
+    if (!icon_view->details->is_desktop) {
+        nemo_icon_container_set_layout_mode (icon_container,
+                                             gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
+                                             NEMO_ICON_LAYOUT_R_L_T_B :
+                                             NEMO_ICON_LAYOUT_L_R_T_B);
+    }
+
 	nemo_icon_container_begin_loading (NEMO_ICON_CONTAINER (icon_container));
 
 	nemo_icon_container_set_allow_moves (NEMO_ICON_CONTAINER (icon_container),
@@ -966,16 +1047,16 @@ nemo_icon_view_begin_loading (NemoView *view)
             nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view))) > -1) {
             level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view)));
         } else {
-    		if (icon_view->details->compact) {
-    			level = nemo_file_get_integer_metadata
-    				(file, 
-    				 NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-    				 get_default_zoom_level (icon_view));
-    		} else {
-    			level = nemo_file_get_integer_metadata
-    				(file, 
-    				 NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-    				 get_default_zoom_level (icon_view));
+            sync_directory_monitor_number (icon_view, file);
+
+            if (icon_view->details->compact) {
+                level = nemo_file_get_integer_metadata (file,
+                                                        NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL,
+                                                        get_default_zoom_level (icon_view));
+            } else {
+                level = nemo_file_get_integer_metadata (file,
+                                                        NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL,
+                                                        get_default_zoom_level (icon_view));
     		}
         }
 
@@ -992,6 +1073,9 @@ nemo_icon_view_begin_loading (NemoView *view)
 
 	/* Set the sort direction from the metadata. */
 	nemo_icon_view_set_sort_reversed (icon_view, nemo_icon_view_get_directory_sort_reversed (icon_view, file), FALSE);
+
+    nemo_icon_container_set_horizontal_layout (get_icon_container (icon_view),
+                                               nemo_icon_view_get_directory_horizontal_layout (icon_view, file));
 
 	nemo_icon_container_set_keep_aligned (get_icon_container (icon_view),
                     nemo_icon_view_get_directory_keep_aligned (icon_view, file));
@@ -1080,19 +1164,19 @@ nemo_icon_view_set_zoom_level (NemoIconView *view,
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
         nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (view)), new_level);
     } else {
-    	if (view->details->compact) {
-    		nemo_file_set_integer_metadata
-    			(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
-    			 NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-    			 get_default_zoom_level (view),
-    			 new_level);
-    	} else {
-    		nemo_file_set_integer_metadata
-    			(nemo_view_get_directory_as_file (NEMO_VIEW (view)), 
-    			 NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-    			 get_default_zoom_level (view),
-    			 new_level);
-    	}
+        sync_directory_monitor_number (view, nemo_view_get_directory_as_file (NEMO_VIEW (view)));
+
+        if (view->details->compact) {
+            nemo_file_set_integer_metadata (nemo_view_get_directory_as_file (NEMO_VIEW (view)),
+                                            NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL,
+                                            get_default_zoom_level (view),
+                                            new_level);
+        } else {
+            nemo_file_set_integer_metadata (nemo_view_get_directory_as_file (NEMO_VIEW (view)),
+                                            NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
+                                            get_default_zoom_level (view),
+                                            new_level);
+        }
     }
 
 	nemo_icon_container_set_zoom_level (icon_container, new_level);
@@ -1897,6 +1981,9 @@ icon_position_changed_callback (NemoIconContainer *container,
 	}
 
 	g_ascii_dtostr (scale_string, sizeof (scale_string), position->scale);
+
+    sync_directory_monitor_number (icon_view, file);
+
 	nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_SCALE, "1.0", scale_string);
 }
 
@@ -2077,18 +2164,20 @@ default_zoom_level_changed_callback (gpointer callback_data)
             nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view))) > -1) {
             level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view)));
         } else {
-    		if (nemo_icon_view_is_compact (icon_view)) {
-    			level = nemo_file_get_integer_metadata (file, 
-    								    NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL, 
-    								    get_default_zoom_level (icon_view));
-    		} else {
-    			level = nemo_file_get_integer_metadata (file, 
-    								    NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL, 
-    								    get_default_zoom_level (icon_view));
-    		}
+            sync_directory_monitor_number (icon_view, file);
+
+            if (nemo_icon_view_is_compact (icon_view)) {
+                level = nemo_file_get_integer_metadata (file,
+                                                        NEMO_METADATA_KEY_COMPACT_VIEW_ZOOM_LEVEL,
+                                                        get_default_zoom_level (icon_view));
+            } else {
+                level = nemo_file_get_integer_metadata (file,
+                                                        NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL,
+                                                        get_default_zoom_level (icon_view));
+            }
         }
-		nemo_view_zoom_to_level (NEMO_VIEW (icon_view), level);
-	}
+        nemo_view_zoom_to_level (NEMO_VIEW (icon_view), level);
+    }
 }
 
 static void
@@ -2208,13 +2297,16 @@ get_stored_layout_timestamp (NemoIconContainer *container,
 		}
 
 		file = nemo_directory_get_corresponding_file (directory);
-		*timestamp = nemo_file_get_time_metadata (file,
-							      NEMO_METADATA_KEY_ICON_VIEW_LAYOUT_TIMESTAMP);
+
+        sync_directory_monitor_number (view, file);
+
+        *timestamp = nemo_file_get_time_metadata (file, NEMO_METADATA_KEY_ICON_VIEW_LAYOUT_TIMESTAMP);
 
 		nemo_file_unref (file);
 	} else {
-		*timestamp = nemo_file_get_time_metadata (NEMO_FILE (icon_data),
-							      NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP);
+        sync_directory_monitor_number (view, NEMO_FILE (icon_data));
+
+        *timestamp = nemo_file_get_time_metadata (NEMO_FILE (icon_data), NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP);
 	}
 
 	return TRUE;
@@ -2236,14 +2328,19 @@ store_layout_timestamp (NemoIconContainer *container,
 		}
 
 		file = nemo_directory_get_corresponding_file (directory);
+
+        sync_directory_monitor_number (view, file);
+
 		nemo_file_set_time_metadata (file,
-						 NEMO_METADATA_KEY_ICON_VIEW_LAYOUT_TIMESTAMP,
-						 (time_t) *timestamp);
+                                     NEMO_METADATA_KEY_ICON_VIEW_LAYOUT_TIMESTAMP,
+                                     (time_t) *timestamp);
 		nemo_file_unref (file);
 	} else {
+        sync_directory_monitor_number (view, NEMO_FILE (icon_data));
+
 		nemo_file_set_time_metadata (NEMO_FILE (icon_data),
-						 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP,
-						 (time_t) *timestamp);
+                                     NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP,
+                                     (time_t) *timestamp);
 	}
 
 	return TRUE;
@@ -2546,12 +2643,6 @@ nemo_icon_view_constructed (NemoIconView *icon_view)
     g_return_if_fail (gtk_bin_get_child (GTK_BIN (icon_view)) == NULL);
 
     icon_container = create_icon_container (icon_view);
-
-    /* Set our default layout mode */
-    nemo_icon_container_set_layout_mode (icon_container,
-                         gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
-                         NEMO_ICON_LAYOUT_R_L_T_B :
-                         NEMO_ICON_LAYOUT_L_R_T_B);
 
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_DEFAULT_SORT_ORDER,

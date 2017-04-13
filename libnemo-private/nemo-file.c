@@ -3494,6 +3494,15 @@ nemo_file_get_metadata (NemoFile *file,
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), g_strdup (default_metadata));
 
+    if (NEMO_FILE_GET_CLASS (file)->get_metadata) {
+        value = NEMO_FILE_GET_CLASS (file)->get_metadata (file, key);
+        if (value) {
+            return value;
+        } else {
+            return g_strdup (default_metadata);
+        }
+    }
+
 	id = nemo_metadata_get_id (key);
 	value = g_hash_table_lookup (file->details->metadata, GUINT_TO_POINTER (id));
 
@@ -3521,6 +3530,10 @@ nemo_file_get_metadata_list (NemoFile *file,
 	}
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    if (NEMO_FILE_GET_CLASS (file)->get_metadata_as_list) {
+        return NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key);
+    }
 
 	id = nemo_metadata_get_id (key);
 	id |= METADATA_ID_IS_LIST_MASK;
@@ -8241,6 +8254,8 @@ nemo_file_class_init (NemoFileClass *class)
 
 	class->set_metadata = real_set_metadata;
 	class->set_metadata_as_list = real_set_metadata_as_list;
+    class->get_metadata = NULL;
+    class->get_metadata_as_list = NULL;
 
 	signals[CHANGED] =
 		g_signal_new ("changed",

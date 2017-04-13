@@ -42,7 +42,9 @@
 #include "nemo-window-bookmarks.h"
 #include "nemo-window-private.h"
 
+#include <eel/eel-vfs-extensions.h>
 #include <libnemo-private/nemo-desktop-link-monitor.h>
+#include <libnemo-private/nemo-desktop-metadata.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-signaller.h>
@@ -87,6 +89,7 @@ init_desktop (NemoDesktopApplication *self)
 {
 	/* Initialize the desktop link monitor singleton */
 	nemo_desktop_link_monitor_get ();
+    nemo_desktop_metadata_init ();
 
     self->priv->desktop_manager = nemo_desktop_manager_get ();
 }
@@ -306,7 +309,7 @@ nemo_desktop_application_local_command_line (GApplication *application,
 
     files = g_malloc0 (2 * sizeof (GFile *));
     len = 1;
-    files[0] = g_file_new_for_path (g_get_home_dir ());
+    files[0] = g_file_new_for_uri (EEL_DESKTOP_URI);
     files[1] = NULL;
 
     g_application_open (application, files, len, "");

@@ -793,9 +793,21 @@ handle_local_move (NemoIconContainer *container,
     gint monitor;
 	time_t now;
 
-	if (container->details->auto_layout) {
-		return;
-	}
+    if (container->details->auto_layout) {
+        if (nemo_icon_container_get_is_desktop (container)) {
+
+            item = container->details->dnd_info->drag_info.selection_list->data;
+
+            if (nemo_icon_container_get_icon_by_uri (container,
+                                                     item->uri)) {
+                return;
+            }
+        } else {
+            return;
+        }
+    }
+
+    monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
 	time (&now);
 
@@ -812,7 +824,6 @@ handle_local_move (NemoIconContainer *container,
 			 * this screen
 			 */
 			file = nemo_file_get_by_uri (item->uri);
-
 			nemo_file_set_time_metadata (file,
 							 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP, now);
 
@@ -829,8 +840,6 @@ handle_local_move (NemoIconContainer *container,
             file = NEMO_FILE (icon->data);
 
         nemo_file_set_is_desktop_orphan (file, FALSE);
-
-        monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
 		if (item->got_icon_position) {
 			nemo_icon_container_move_icon (container, icon,

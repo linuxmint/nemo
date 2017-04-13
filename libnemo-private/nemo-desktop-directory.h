@@ -46,6 +46,7 @@ typedef struct NemoDesktopDirectoryDetails NemoDesktopDirectoryDetails;
 typedef struct {
 	NemoDirectory parent_slot;
 	NemoDesktopDirectoryDetails *details;
+    gint display_number;
 } NemoDesktopDirectory;
 
 typedef struct {

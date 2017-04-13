@@ -562,12 +562,15 @@ typedef struct {
 	char *                (* get_where_string)       (NemoFile           *file);
 
 	void                  (* set_metadata)           (NemoFile           *file,
-							  const char             *key,
-							  const char             *value);
+                                                      const char         *key,
+                                                      const char         *value);
 	void                  (* set_metadata_as_list)   (NemoFile           *file,
-							  const char             *key,
-							  char                  **value);
-	
+                                                      const char         *key,
+                                                      char              **value);
+    gchar *               (* get_metadata)           (NemoFile           *file,
+                                                      const char         *key);
+    gchar **              (* get_metadata_as_list)   (NemoFile           *file,
+                                                      const char         *key);
 	void                  (* mount)                  (NemoFile                   *file,
 							  GMountOperation                *mount_op,
 							  GCancellable                   *cancellable,

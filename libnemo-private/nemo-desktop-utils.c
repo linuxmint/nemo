@@ -120,6 +120,14 @@ nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget)
     return monitor;
 }
 
+gint
+nemo_desktop_utils_get_num_monitors (void)
+{
+    ensure_screen ();
+
+    return gdk_screen_get_n_monitors (default_screen);
+}
+
 gboolean
 nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary)
 {
