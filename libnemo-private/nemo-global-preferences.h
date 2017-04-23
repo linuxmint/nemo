@@ -220,6 +220,8 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS "show-orphaned-desktop-icons"
 #define NEMO_PREFERENCES_SHOW_DESKTOP   "show-desktop-icons"    /* DEPRECATED */
 #define NEMO_PREFERENCES_USE_DESKTOP_GRID "use-desktop-grid"
+#define NEMO_PREFERENCES_DESKTOP_HORIZONTAL_GRID_ADJUST "horizontal-grid-adjust"
+#define NEMO_PREFERENCES_DESKTOP_VERTICAL_GRID_ADJUST "vertical-grid-adjust"
 
 /* File size unit prefix */
 #define NEMO_PREFERENCES_SIZE_PREFIXES			"size-prefixes"

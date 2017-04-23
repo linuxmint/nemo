@@ -33,7 +33,6 @@
 #include <gio/gio.h>
 #include <eel/eel-glib-extensions.h>
 #include "nemo-icon-private.h"
-#include <libnemo-private/nemo-placement-grid.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-metadata.h>
@@ -1801,6 +1800,34 @@ nemo_icon_view_container_finish_adding_new_icons (NemoIconContainer *container)
 }
 
 static void
+nemo_icon_view_container_set_zoom_level (NemoIconContainer *container, gint new_level)
+{
+    NemoIconContainerDetails *details;
+    int pinned_level;
+    double pixels_per_unit;
+
+    details = container->details;
+
+    nemo_icon_container_end_renaming_mode (container, TRUE);
+
+    pinned_level = new_level;
+    if (pinned_level < NEMO_ZOOM_LEVEL_SMALLEST) {
+        pinned_level = NEMO_ZOOM_LEVEL_SMALLEST;
+    } else if (pinned_level > NEMO_ZOOM_LEVEL_LARGEST) {
+        pinned_level = NEMO_ZOOM_LEVEL_LARGEST;
+    }
+
+    if (pinned_level == details->zoom_level) {
+        return;
+    }
+
+    details->zoom_level = pinned_level;
+
+    pixels_per_unit = (double) nemo_get_icon_size_for_zoom_level (pinned_level) / NEMO_ICON_SIZE_STANDARD;
+    eel_canvas_set_pixels_per_unit (EEL_CANVAS (container), pixels_per_unit);
+}
+
+static void
 nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 {
 	NemoIconContainerClass *ic_class;
@@ -1826,7 +1853,7 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
     ic_class->reload_icon_positions = nemo_icon_view_container_reload_icon_positions;
     ic_class->finish_adding_new_icons = nemo_icon_view_container_finish_adding_new_icons;
     ic_class->icon_get_bounding_box = nemo_icon_view_container_icon_get_bounding_box;
-    ic_class->draw_debug_grid = NULL;
+    ic_class->set_zoom_level = nemo_icon_view_container_set_zoom_level;
 }
 
 static void
@@ -1855,7 +1882,6 @@ nemo_icon_view_container_construct (NemoIconViewContainer *icon_container, NemoI
     constants->icon_pad_right = 4;
     constants->icon_pad_top = 4;
     constants->icon_pad_bottom = 4;
-    constants->icon_base_width = 96;
     constants->container_pad_left = 4;
     constants->container_pad_right = 4;
     constants->container_pad_top = 4;
@@ -1866,6 +1892,10 @@ nemo_icon_view_container_construct (NemoIconViewContainer *icon_container, NemoI
     constants->desktop_pad_vertical = 10;
     constants->snap_size_x = 78;
     constants->snap_size_y = 20;
+    constants->max_text_width_standard = 135;
+    constants->max_text_width_tighter = 80;
+    constants->max_text_width_beside = 90;
+    constants->max_text_width_beside_top_to_bottom = 150;
 
 	return NEMO_ICON_CONTAINER (icon_container);
 }

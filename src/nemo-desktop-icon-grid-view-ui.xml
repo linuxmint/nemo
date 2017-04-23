@@ -3,6 +3,12 @@
     <placeholder name="Before Zoom Items">
         <placeholder name="View Items">
             <menu action="Desktop Submenu">
+                <menu action="Desktop Zoom">
+                    <menuitem name="Desktop Small" action="Desktop Small"/>
+                    <menuitem name="Desktop Normal" action="Desktop Normal"/>
+                    <menuitem name="Desktop Large" action="Desktop Large"/>
+                </menu>
+                <separator name="Zoom submenu separator"/>
                 <menuitem name="Desktop Autoarrange" action="Desktop Autoarrange"/>
                 <menuitem name="Desktop Align to Grid" action="Desktop Align to Grid"/>
                 <separator name="Desktop layout separator"/>

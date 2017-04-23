@@ -128,8 +128,6 @@ typedef struct {
 						   int x,
 						   int y);
 
-    void         (* draw_debug_grid) (NemoIconContainer *container, cairo_t *cr);
-
 	/* Queries on the container for subclass/client.
 	 * These must be implemented. The default "do nothing" is not good enough.
 	 */
@@ -210,6 +208,7 @@ typedef struct {
                                            int *x1_return, int *y1_return,
                                            int *x2_return, int *y2_return,
                                            NemoIconCanvasItemBoundsUsage usage);
+    void         (*set_zoom_level)        (NemoIconContainer *container, gint new_level);
 	/* Notifications for the whole container. */
 	void	     (* band_select_started)	  (NemoIconContainer *container);
 	void	     (* band_select_ended)	  (NemoIconContainer *container);
@@ -285,6 +284,8 @@ void              nemo_icon_container_set_layout_mode               (NemoIconCon
 									 NemoIconLayoutMode  mode);
 void              nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
                                                              gboolean           horizontal);
+gboolean          nemo_icon_container_get_horizontal_layout (NemoIconContainer *container);
+
 void              nemo_icon_container_set_label_position            (NemoIconContainer  *container,
 									 NemoIconLabelPosition pos);
 void              nemo_icon_container_sort                          (NemoIconContainer  *container);

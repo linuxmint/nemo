@@ -37,6 +37,10 @@ typedef enum {
 #define NEMO_ICON_SIZE_LARGER	96
 #define NEMO_ICON_SIZE_LARGEST     192
 
+#define NEMO_DESKTOP_ICON_SIZE_SMALL 36
+#define NEMO_DESKTOP_ICON_SIZE_STANDARD 48
+#define NEMO_DESKTOP_ICON_SIZE_LARGE 60
+
 /* Maximum size of an icon that the icon factory will ever produce */
 #define NEMO_ICON_MAXIMUM_SIZE     320
 
@@ -85,6 +89,8 @@ void                  nemo_icon_info_clear_caches                 (void);
 /* Relationship between zoom levels and icons sizes. */
 guint nemo_get_icon_size_for_zoom_level          (NemoZoomLevel  zoom_level);
 guint nemo_get_list_icon_size_for_zoom_level     (NemoZoomLevel  zoom_level);
+
+guint nemo_get_desktop_icon_size_for_zoom_level  (NemoZoomLevel  zoom_level);
 
 gint  nemo_get_icon_size_for_stock_size          (GtkIconSize        size);
 guint nemo_icon_get_emblem_size_for_icon_size    (guint              size);

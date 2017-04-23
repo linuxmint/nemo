@@ -32,7 +32,6 @@
 #include "nemo-file.h"
 #include "nemo-global-preferences.h"
 #include "nemo-icon-private.h"
-#include "nemo-placement-grid.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-selection-canvas-item.h"
 #include "nemo-desktop-utils.h"
@@ -4361,18 +4360,10 @@ static void
 draw_canvas_background (EelCanvas *canvas,
                         cairo_t   *cr)
 {
-    NemoIconContainer *container;
-
-    container = NEMO_ICON_CONTAINER (canvas);
-
-    if (NEMO_ICON_CONTAINER_GET_CLASS (container)->draw_debug_grid != NULL) {
-        NEMO_ICON_CONTAINER_GET_CLASS (container)->draw_debug_grid (container, cr);
-    }
-
-    /* Don't chain up to the parent to avoid clearing and redrawing */
+    /* Don't chain up to the parent to avoid clearing and redrawing.
+     * This is overridden by nemo-icon-view-grid-container. */
     return;
 }
-
 
 static AtkObject *
 get_accessible (GtkWidget *widget)
@@ -4463,6 +4454,13 @@ real_icon_get_bounding_box (NemoIcon *icon,
     g_assert_not_reached ();
 }
 
+static void
+real_set_zoom_level (NemoIconContainer *container,
+                     gint               new_level)
+{
+    g_assert_not_reached ();
+}
+
 static GObject*
 nemo_icon_container_constructor (GType                  type,
 				     guint                  n_construct_params,
@@ -4509,7 +4507,7 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
     class->align_icons = real_align_icons;
     class->finish_adding_new_icons = NULL;
     class->icon_get_bounding_box = real_icon_get_bounding_box;
-    class->draw_debug_grid = NULL;
+    class->set_zoom_level = real_set_zoom_level;
 
 	/* Signals.  */
 
@@ -5047,6 +5045,8 @@ nemo_icon_container_init (NemoIconContainer *container)
     container->details->tooltip_flags = nemo_global_preferences_get_tooltip_flags ();
 
     details->skip_rename_on_release = FALSE;
+
+    details->dnd_grid = NULL;
 
 	if (!setup_prefs) {
 		g_signal_connect_swapped (nemo_icon_view_preferences,
@@ -6089,39 +6089,17 @@ nemo_icon_container_request_update (NemoIconContainer *container,
 NemoZoomLevel
 nemo_icon_container_get_zoom_level (NemoIconContainer *container)
 {
-        return container->details->zoom_level;
+    return container->details->zoom_level;
 }
 
 void
-nemo_icon_container_set_zoom_level (NemoIconContainer *container, int new_level)
+nemo_icon_container_set_zoom_level (NemoIconContainer *container,
+                                    gint               new_level)
 {
-	NemoIconContainerDetails *details;
-        int pinned_level;
-	double pixels_per_unit;
-	
-	details = container->details;
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->set_zoom_level (container, new_level);
 
-	nemo_icon_container_end_renaming_mode (container, TRUE);
-		
-	pinned_level = new_level;
-        if (pinned_level < NEMO_ZOOM_LEVEL_SMALLEST) {
-		pinned_level = NEMO_ZOOM_LEVEL_SMALLEST;
-        } else if (pinned_level > NEMO_ZOOM_LEVEL_LARGEST) {
-        	pinned_level = NEMO_ZOOM_LEVEL_LARGEST;
-	}
-
-        if (pinned_level == details->zoom_level) {
-		return;
-	}
-	
-	details->zoom_level = pinned_level;
-	
-	pixels_per_unit = (double) nemo_get_icon_size_for_zoom_level (pinned_level)
-		/ NEMO_ICON_SIZE_STANDARD;
-	eel_canvas_set_pixels_per_unit (EEL_CANVAS (container), pixels_per_unit);
-
-	invalidate_labels (container);
-	nemo_icon_container_request_update_all (container);
+    invalidate_labels (container);
+    nemo_icon_container_request_update_all (container);
 }
 
 /**
@@ -6747,6 +6725,15 @@ nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
     container->details->horizontal = horizontal;
 }
 
+gboolean
+nemo_icon_container_get_horizontal_layout (NemoIconContainer *container)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    return container->details->horizontal;
+}
+
+
 /* Toggle the tighter layout boolean. */
 void
 nemo_icon_container_set_tighter_layout (NemoIconContainer *container,
@@ -7078,10 +7065,12 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 	} else {
 		context = gtk_widget_get_pango_context (GTK_WIDGET (container));
 		desc = pango_font_description_copy (pango_context_get_font_description (context));
-		pango_font_description_set_size (desc,
-						 pango_font_description_get_size (desc) +
-						 container->details->font_size_table [container->details->zoom_level]);
 	}
+
+    pango_font_description_set_size (desc,
+                                     pango_font_description_get_size (desc) +
+                                     container->details->font_size_table [container->details->zoom_level]);
+
 	eel_editable_label_set_font_description (EEL_EDITABLE_LABEL (details->rename_widget),
 						 desc);
 	pango_font_description_free (desc);

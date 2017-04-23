@@ -116,7 +116,6 @@ static const DesktopSortCriterion sort_criteria[] = {
     }
 };
 
-static void     default_zoom_level_changed                        (gpointer                user_data);
 static void     real_merge_menus                                  (NemoView        *view);
 static void     real_update_menus                                 (NemoView        *view);
 static void     nemo_desktop_icon_grid_view_update_icon_container_fonts  (NemoDesktopIconGridView      *view);
@@ -352,9 +351,6 @@ nemo_desktop_icon_grid_view_dispose (GObject *object)
 					&icon_view->details->desktop_action_group);
 	}
 
-	g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
-					      default_zoom_level_changed,
-					      icon_view);
 	g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
 					      font_changed_callback,
 					      icon_view);
@@ -477,30 +473,6 @@ desktop_icon_container_realize (GtkWidget *widget,
     gdk_window_set_background_rgba (bin_window, &transparent);
 }
 
-static NemoZoomLevel
-get_default_zoom_level (void)
-{
-	NemoZoomLevel default_zoom_level;
-
-	default_zoom_level = g_settings_get_enum (nemo_icon_view_preferences,
-						  NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL);
-
-	return CLAMP (default_zoom_level, NEMO_ZOOM_LEVEL_SMALLEST, NEMO_ZOOM_LEVEL_LARGEST);
-}
-
-static void
-default_zoom_level_changed (gpointer user_data)
-{
-	NemoZoomLevel new_level;
-	NemoDesktopIconGridView *desktop_icon_grid_view;
-
-	desktop_icon_grid_view = NEMO_DESKTOP_ICON_GRID_VIEW (user_data);
-	new_level = get_default_zoom_level ();
-
-	nemo_icon_container_set_zoom_level (get_icon_container (desktop_icon_grid_view),
-						new_level);
-}
-
 static gboolean
 do_desktop_rescan (gpointer data)
 {
@@ -583,7 +555,7 @@ nemo_desktop_icon_grid_view_update_icon_container_fonts (NemoDesktopIconGridView
 	g_assert (icon_container != NULL);
 
 	font = g_settings_get_string (nemo_desktop_preferences,
-				      NEMO_PREFERENCES_DESKTOP_FONT);
+                                  NEMO_PREFERENCES_DESKTOP_FONT);
 
 	nemo_icon_container_set_font (icon_container, font);
 
@@ -664,11 +636,6 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
     g_signal_connect_object (icon_container, "realize",
                  G_CALLBACK (desktop_icon_container_realize), desktop_icon_grid_view, 0);
 
-    g_signal_connect_swapped (nemo_icon_view_preferences,
-                  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
-                  G_CALLBACK (default_zoom_level_changed),
-                  desktop_icon_grid_view);
-
     g_signal_connect_object (desktop_icon_grid_view, "realize",
                              G_CALLBACK (realized_callback), desktop_icon_grid_view, 0);
     g_signal_connect_object (desktop_icon_grid_view, "unrealize",
@@ -679,7 +646,6 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
                   G_CALLBACK (font_changed_callback),
                   desktop_icon_grid_view);
 
-    default_zoom_level_changed (desktop_icon_grid_view);
     nemo_desktop_icon_grid_view_update_icon_container_fonts (desktop_icon_grid_view);
 
     g_signal_connect_swapped (gnome_lockdown_preferences,
@@ -759,6 +725,10 @@ action_auto_arrange_callback (GtkAction *action,
     nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
 
     nemo_icon_container_set_auto_layout (get_icon_container (view), new);
+
+    if (new == TRUE) {
+        nemo_icon_container_set_keep_aligned (get_icon_container (view), TRUE);
+    }
 }
 
 static void
@@ -903,6 +873,18 @@ action_vertical_layout (GtkAction               *action,
     set_direction (view, FALSE);
 }
 
+static void
+action_desktop_size_callback (GtkAction               *action,
+                              GtkRadioAction          *current,
+                              NemoDesktopIconGridView *view)
+{
+    NemoZoomLevel level;
+
+    level = gtk_radio_action_get_current_value (current);
+
+    nemo_view_zoom_to_level (NEMO_VIEW (view), level);
+}
+
 static gboolean
 trash_link_is_selection (NemoView *view)
 {
@@ -938,6 +920,7 @@ real_update_menus (NemoView *view)
 	NemoDesktopIconGridView *desktop_view;
     NemoIconContainer *container;
     NemoFile *file;
+    NemoZoomLevel zoom_level;
 	char *label;
 	gboolean include_empty_trash;
     gboolean horizontal_layout;
@@ -1035,6 +1018,26 @@ real_update_menus (NemoView *view)
 
     g_free (order);
 
+    /* Update zoom radio */
+
+    switch (nemo_view_get_zoom_level (NEMO_VIEW (desktop_view))) {
+        case NEMO_ZOOM_LEVEL_SMALL:
+            action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                                  "Desktop Small");
+            break;
+        case NEMO_ZOOM_LEVEL_LARGE:
+            action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                                  "Desktop Large");
+            break;
+        case NEMO_ZOOM_LEVEL_STANDARD:
+        default:
+            action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                                  "Desktop Normal");
+            break;
+    }
+
+    gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
+
     desktop_view->details->updating_menus = FALSE;
 
     ui_manager = nemo_view_get_ui_manager (view);
@@ -1074,12 +1077,27 @@ static const GtkToggleActionEntry desktop_grid_toggle_entries[] = {
   /* label, accelerator */    N_("_Auto-arrange"), NULL,
   /* tooltip */               N_("Keep icons automatically arranged"),
                               G_CALLBACK (action_auto_arrange_callback),
-                              0 },
+                              0 }
+};
 
+static const GtkRadioActionEntry desktop_size_radio_entries[] = {
+  { "Desktop Small", NULL,
+    N_("Smaller"), NULL,
+    N_("Display smaller icons"),
+    NEMO_ZOOM_LEVEL_SMALL },
+  { "Desktop Normal", NULL,
+    N_("Normal"), NULL,
+    N_("Display normal-sized icons"),
+    NEMO_ZOOM_LEVEL_STANDARD },
+  { "Desktop Large", NULL,
+    N_("Larger"), NULL,
+    N_("Display larger icons"),
+    NEMO_ZOOM_LEVEL_LARGE }
 };
 
 static const GtkActionEntry desktop_grid_entries[] = {
     /* name, stock id, label */  { "Desktop Submenu", NULL, N_("_Desktop") }, 
+    /* name, stock id, label */  { "Desktop Zoom", NULL, N_("_Icon Size") }, 
     /* name, stock id */
     { "Empty Trash Conditional", NULL,
       /* label, accelerator */
@@ -1140,6 +1158,13 @@ real_merge_menus (NemoView *view)
                                          G_N_ELEMENTS (desktop_grid_toggle_entries),
                                          view);
 
+    gtk_action_group_add_radio_actions (action_group,
+                                        desktop_size_radio_entries,
+                                        G_N_ELEMENTS (desktop_size_radio_entries),
+                                        -1,
+                                        G_CALLBACK (action_desktop_size_callback),
+                                        view);
+
     gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
     g_object_unref (action_group); /* owned by ui manager */
 
@@ -1154,7 +1179,7 @@ nemo_desktop_icon_grid_view_create (NemoWindowSlot *slot)
 
 	view = g_object_new (NEMO_TYPE_DESKTOP_ICON_GRID_VIEW,
 			     "window-slot", slot,
-			     "supports-zooming", FALSE,
+			     "supports-zooming", TRUE,
 			     "supports-auto-layout", TRUE,
 			     "is-desktop", TRUE,
 			     "supports-keep-aligned", TRUE,

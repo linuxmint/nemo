@@ -85,7 +85,6 @@ typedef struct {
     gint icon_pad_right;
     gint icon_pad_top;
     gint icon_pad_bottom;
-    gint icon_base_width;
     gint container_pad_left;
     gint container_pad_right;
     gint container_pad_top;
@@ -96,7 +95,34 @@ typedef struct {
     gint desktop_pad_vertical;
     gint snap_size_x;
     gint snap_size_y;
+    gint max_text_width_standard;
+    gint max_text_width_tighter;
+    gint max_text_width_beside;
+    gint max_text_width_beside_top_to_bottom;
+    gint icon_vertical_adjust;
 } NemoViewLayoutConstants;
+
+typedef struct {
+    NemoIconContainer *container;
+    int **icon_grid;
+    int *grid_memory;
+    int num_rows;
+    int num_columns;
+    int icon_size;
+    int real_snap_x;
+    int real_snap_y;
+    GtkBorder *borders;
+    gboolean horizontal;
+} NemoCenteredPlacementGrid;
+
+typedef struct {
+    NemoIconContainer *container;
+    int **icon_grid;
+    int *grid_memory;
+    int num_rows;
+    int num_columns;
+    gboolean tight;
+} NemoPlacementGrid;
 
 struct NemoIconContainerDetails {
 	/* List of icons. */
@@ -271,6 +297,11 @@ struct NemoIconContainerDetails {
 	GtkWidget *search_entry;
 	guint search_entry_changed_id;
 	guint typeselect_flush_timeout;
+
+    NemoCenteredPlacementGrid *dnd_grid;
+    gint current_dnd_x;
+    gint current_dnd_y;
+    gboolean insert_dnd_mode;
 };
 
 typedef struct {
@@ -347,16 +378,59 @@ void          nemo_icon_container_get_all_icon_bounds (NemoIconContainer *contai
 void          nemo_icon_container_store_layout_timestamps_now (NemoIconContainer *container);
 void          nemo_icon_container_redo_layout (NemoIconContainer *container);
 
+/* nemo-centered-placement-grid api
+ *
+ * used by nemo-icon-view-grid-container.c, nemo-icon-dnd.h
+ */
 
+NemoCenteredPlacementGrid *nemo_centered_placement_grid_new               (NemoIconContainer *container, gboolean horizontal);
+void               nemo_centered_placement_grid_free              (NemoCenteredPlacementGrid *grid);
 
+void               nemo_centered_placement_grid_nominal_to_icon_position (NemoCenteredPlacementGrid *grid,
+                                                                          gint                       x_nominal,
+                                                                          gint                       y_nominal,
+                                                                          gint                      *x_adjusted,
+                                                                          gint                      *y_adjusted);
+void               nemo_centered_placement_grid_icon_position_to_nominal (NemoCenteredPlacementGrid *grid,
+                                                                          gint                       x_adjusted,
+                                                                          gint                       y_adjusted,
+                                                                          gint                      *x_nominal,
+                                                                          gint                      *y_nominal);
+void               nemo_centered_placement_grid_mark_icon         (NemoCenteredPlacementGrid *grid, NemoIcon *icon);
+void               nemo_centered_placement_grid_unmark_icon       (NemoCenteredPlacementGrid *grid, NemoIcon *icon);
+void               nemo_centered_placement_grid_get_next_free_position (NemoCenteredPlacementGrid *grid,
+                                                                        gint                      *x_out,
+                                                                        gint                      *y_out);
+void               nemo_centered_placement_grid_find_empty_position (NemoCenteredPlacementGrid *grid,
+                                                                     NemoIcon                  *icon,
+                                                                     gint                       x_nominal,
+                                                                     gint                       y_nominal,
+                                                                     gint                      *x_new,
+                                                                     gint                      *y_new);
+void               nemo_centered_placement_grid_pre_populate        (NemoCenteredPlacementGrid *grid,
+                                                                     GList                     *icons);
+void               nemo_centered_placement_grid_get_current_position_rect (NemoCenteredPlacementGrid *grid,
+                                                                           gint                       x,
+                                                                           gint                       y,
+                                                                           GdkRectangle              *rect,
+                                                                           gboolean                  *is_free);
+NemoIcon *         nemo_centered_placement_grid_get_icon_at_position (NemoCenteredPlacementGrid *grid,
+                                                                      gint                       x,
+                                                                      gint                       y);
+GList *            nemo_centered_placement_grid_clear_grid_for_selection (NemoCenteredPlacementGrid *grid,
+                                                                          gint                       start_x,
+                                                                          gint                       start_y,
+                                                                          GList                     *drag_sel_list);
+/* nemo-placement-grid api
+ *
+ * used by nemo-icon-view-container.c
+ */
 
-
-
-
-
-
-
-
-
+NemoPlacementGrid *nemo_placement_grid_new               (NemoIconContainer *container, gboolean tight);
+void               nemo_placement_grid_free              (NemoPlacementGrid *grid);
+gboolean           nemo_placement_grid_position_is_free  (NemoPlacementGrid *grid, EelIRect pos);
+void               nemo_placement_grid_mark              (NemoPlacementGrid *grid, EelIRect pos);
+void               nemo_placement_grid_canvas_position_to_grid_position (NemoPlacementGrid *grid, EelIRect canvas_position, EelIRect *grid_position);
+void               nemo_placement_grid_mark_icon         (NemoPlacementGrid *grid, NemoIcon *icon);
 
 #endif /* NEMO_ICON_CONTAINER_PRIVATE_H */

@@ -23,7 +23,8 @@
 
 #include "math.h"
 
-#include "nemo-placement-grid.h"
+#include <eel/eel-art-extensions.h>
+#include "nemo-icon-private.h"
 
 NemoPlacementGrid *
 nemo_placement_grid_new (NemoIconContainer *container, gboolean tight)
