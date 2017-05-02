@@ -6685,6 +6685,9 @@ void
 nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
                                            gboolean           horizontal)
 {
+    GtkTextDirection dir;
+    NemoIconLayoutMode layout_mode;
+
     g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
     g_return_if_fail (horizontal == FALSE || horizontal == TRUE);
 
@@ -6693,6 +6696,16 @@ nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
     }
 
     container->details->horizontal = horizontal;
+
+    dir = gtk_widget_get_direction (GTK_WIDGET (container));
+
+    if (dir == GTK_TEXT_DIR_LTR) {
+        layout_mode = horizontal ? NEMO_ICON_LAYOUT_L_R_T_B : NEMO_ICON_LAYOUT_T_B_L_R;
+    } else {
+        layout_mode = horizontal ? NEMO_ICON_LAYOUT_R_L_T_B : NEMO_ICON_LAYOUT_T_B_R_L;
+    }
+
+    container->details->layout_mode = layout_mode;
 }
 
 gboolean

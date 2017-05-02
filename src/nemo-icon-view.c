@@ -1026,14 +1026,6 @@ nemo_icon_view_begin_loading (NemoView *view)
 	uri = nemo_file_get_uri (file);
 	icon_container = GTK_WIDGET (get_icon_container (icon_view));
 
-    /* Set our default layout mode */
-    if (!icon_view->details->is_desktop) {
-        nemo_icon_container_set_layout_mode (icon_container,
-                                             gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
-                                             NEMO_ICON_LAYOUT_R_L_T_B :
-                                             NEMO_ICON_LAYOUT_L_R_T_B);
-    }
-
 	nemo_icon_container_begin_loading (NEMO_ICON_CONTAINER (icon_container));
 
 	nemo_icon_container_set_allow_moves (NEMO_ICON_CONTAINER (icon_container),
@@ -2645,6 +2637,14 @@ nemo_icon_view_constructed (NemoIconView *icon_view)
     g_return_if_fail (gtk_bin_get_child (GTK_BIN (icon_view)) == NULL);
 
     icon_container = create_icon_container (icon_view);
+
+    /* Set our default layout mode */
+    if (!icon_view->details->is_desktop) {
+        nemo_icon_container_set_layout_mode (icon_container,
+                                             gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
+                                             NEMO_ICON_LAYOUT_R_L_T_B :
+                                             NEMO_ICON_LAYOUT_L_R_T_B);
+    }
 
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_DEFAULT_SORT_ORDER,
