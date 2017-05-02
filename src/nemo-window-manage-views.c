@@ -473,23 +473,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		target_window = window;
 	} else {
 		app = nemo_application_get_singleton ();
-        if (is_desktop) {
-            gchar *uri = g_file_get_uri (location);
-            gchar *argv[3] = { "xdg-open", uri, NULL };
-            g_spawn_async (NULL,
-                           argv,
-                           NULL,
-                           G_SPAWN_SEARCH_PATH,
-                           NULL,
-                           NULL,
-                           NULL,
-                           NULL);
-            g_free (uri);
-            return;
-        } else {
-            target_window = nemo_application_create_window (app,
-                                                            gtk_window_get_screen (GTK_WINDOW (window)));
-        }
+        target_window = nemo_application_create_window (app, gtk_window_get_screen (GTK_WINDOW (window)));
 	}
 
     old_location = nemo_window_slot_get_location (slot);

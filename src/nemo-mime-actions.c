@@ -28,6 +28,7 @@
 
 #include "nemo-window-slot.h"
 #include "nemo-error-reporting.h"
+#include "nemo-desktop-window.h"
 
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
@@ -773,7 +774,7 @@ nemo_mime_file_opens_in_view (NemoFile *file)
 }
 
 static ActivationAction
-get_activation_action (NemoFile *file)
+get_activation_action (NemoFile *file, gboolean is_desktop)
 {
 	ActivationAction action;
 	char *activation_uri;
@@ -803,7 +804,7 @@ get_activation_action (NemoFile *file)
 	} 
 
 	if (action == ACTIVATION_ACTION_DO_NOTHING) {
-		if (nemo_mime_file_opens_in_view (file)) {
+		if (nemo_mime_file_opens_in_view (file) && !is_desktop) {
 			action = ACTIVATION_ACTION_OPEN_IN_VIEW;
 		} else {
 			action = ACTIVATION_ACTION_OPEN_IN_APPLICATION;
@@ -819,7 +820,7 @@ nemo_mime_file_opens_in_external_app (NemoFile *file)
 {
   ActivationAction activation_action;
   
-  activation_action = get_activation_action (file);
+  activation_action = get_activation_action (file, FALSE);
   
   return (activation_action == ACTIVATION_ACTION_OPEN_IN_APPLICATION);
 }
@@ -1393,7 +1394,8 @@ activate_files (ActivateParameters *parameters)
 	gint num_unhandled;
 	gint num_files;
 	gboolean open_files;
-	
+    gboolean launch_location_is_desktop;
+
 	screen = gtk_widget_get_screen (GTK_WIDGET (parameters->parent_window));
 
 	launch_desktop_files = NULL;
@@ -1401,6 +1403,14 @@ activate_files (ActivateParameters *parameters)
 	launch_in_terminal_files = NULL;
 	open_in_app_uris = NULL;
 	open_in_view_files = NULL;
+
+    window = NULL;
+
+    if (parameters->slot != NULL) {
+        window = nemo_window_slot_get_window (parameters->slot);
+
+        launch_location_is_desktop = NEMO_IS_DESKTOP_WINDOW (window);
+    }
 
 	for (l = parameters->locations; l != NULL; l = l->next) {
 		location = l->data;
@@ -1410,7 +1420,7 @@ activate_files (ActivateParameters *parameters)
 			continue;
 		}
 
-		action = get_activation_action (file);
+		action = get_activation_action (file, launch_location_is_desktop);
 		if (action == ACTIVATION_ACTION_ASK) {
 			/* Special case for executable text files, since it might be
 			 * dangerous & unexpected to launch these.
@@ -1602,11 +1612,6 @@ activate_files (ActivateParameters *parameters)
 			/* this does not block */
 			application_unhandled_uri (parameters, uri);
 		}
-	}
-
-	window = NULL;
-	if (parameters->slot != NULL) {
-		window = nemo_window_slot_get_window (parameters->slot);
 	}
 
 	if (open_in_app_parameters != NULL ||
