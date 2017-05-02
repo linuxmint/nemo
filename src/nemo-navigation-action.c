@@ -185,6 +185,43 @@ schedule_menu_popup_timeout (NemoNavigationAction *self)
                                self);
 }
 
+/* Performs the given action using a new tab, if the selected action
+   supports this. In this case TRUE is returned. */
+static gboolean
+new_tab_action (NemoNavigationAction *self)
+{
+	NemoWindow *window;
+
+	window = self->priv->window;
+
+	switch (self->priv->direction) {
+	case NEMO_NAVIGATION_DIRECTION_FORWARD:
+		nemo_window_back_or_forward (window, FALSE, 1,
+					     NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
+		break;
+	case NEMO_NAVIGATION_DIRECTION_BACK:
+		nemo_window_back_or_forward (window, TRUE, 1,
+					     NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
+		break;
+	case NEMO_NAVIGATION_DIRECTION_UP:
+		nemo_window_slot_go_up (nemo_window_get_active_slot (window),
+					NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
+		break;
+	/* remaining actions are not supported */
+	case NEMO_NAVIGATION_DIRECTION_RELOAD:
+	case NEMO_NAVIGATION_DIRECTION_HOME:
+	case NEMO_NAVIGATION_DIRECTION_COMPUTER:
+	case NEMO_NAVIGATION_DIRECTION_EDIT:
+		return FALSE;
+	default:
+		g_assert_not_reached ();
+		return FALSE;
+	}
+	
+
+	return TRUE;
+}
+
 static gboolean
 tool_button_press_cb (GtkButton *button,
                       GdkEventButton *event,
@@ -197,6 +234,16 @@ tool_button_press_cb (GtkButton *button,
                 show_menu (self, event->button, event->time);
                 return TRUE;
         }
+
+	/* When double clicking with the middle bouse button, tool_button_press_cb
+	   is called three instead of two times. Handle the current event
+	   as new_tab_action only if it's an actual button press to prevent
+	   calling new_tab_action the third time. */
+	if (event->button == 2 && event->type == GDK_BUTTON_PRESS
+	    && new_tab_action (self)) {
+		/* it was a valid new_tab_action -> event is handled */
+		return TRUE;
+	}
 
         if (event->button == 1) {
                 schedule_menu_popup_timeout (self);
