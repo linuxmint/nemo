@@ -59,8 +59,10 @@ struct NemoIconViewContainerClass {
 
 GType                  nemo_icon_view_container_get_type         (void);
 NemoIconContainer *nemo_icon_view_container_construct        (NemoIconViewContainer *icon_container,
-								      NemoIconView      *view);
-NemoIconContainer *nemo_icon_view_container_new              (NemoIconView      *view);
+                                                              NemoIconView          *view,
+                                                              gboolean               is_desktop);
+NemoIconContainer *nemo_icon_view_container_new              (NemoIconView          *view,
+                                                              gboolean               is_desktop);
 void                   nemo_icon_view_container_set_sort_desktop (NemoIconViewContainer *container,
 								      gboolean         desktop);
 

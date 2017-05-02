@@ -2392,9 +2392,11 @@ create_icon_container (NemoIconView *icon_view)
 	NemoIconContainer *icon_container;
 
     if (NEMO_ICON_VIEW_GET_CLASS (icon_view)->use_grid_container) {
-        icon_container = nemo_icon_view_grid_container_new (icon_view);
+        icon_container = nemo_icon_view_grid_container_new (icon_view,
+                                                            icon_view->details->is_desktop);
     } else {
-        icon_container = nemo_icon_view_container_new (icon_view);
+        icon_container = nemo_icon_view_container_new (icon_view,
+                                                       icon_view->details->is_desktop);
     }
 
 	icon_view->details->icon_container = GTK_WIDGET (icon_container);
@@ -2696,6 +2698,8 @@ nemo_icon_view_constructed (NemoIconView *icon_view)
         g_signal_connect (nemo_clipboard_monitor_get (),
                           "clipboard_info",
                           G_CALLBACK (icon_view_notify_clipboard_info), icon_view);
+
+    nemo_icon_container_set_is_desktop (icon_container, FALSE);
 }
 
 static void

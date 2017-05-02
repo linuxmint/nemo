@@ -1370,7 +1370,9 @@ nemo_icon_view_grid_container_set_zoom_level (NemoIconContainer *container, gint
 }
 
 NemoIconContainer *
-nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_container, NemoIconView *view)
+nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_container,
+                                         NemoIconView              *view,
+                                         gboolean                   is_desktop)
 {
     AtkObject *atk_obj;
     NemoViewLayoutConstants *constants = NEMO_ICON_CONTAINER (icon_container)->details->view_constants;
@@ -1378,6 +1380,8 @@ nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_contain
     g_return_val_if_fail (NEMO_IS_ICON_VIEW (view), NULL);
 
     icon_container->view = view;
+    nemo_icon_container_set_is_desktop (NEMO_ICON_CONTAINER (icon_container), is_desktop);
+
     atk_obj = gtk_widget_get_accessible (GTK_WIDGET (icon_container));
     atk_object_set_name (atk_obj, _("Icon View"));
 
@@ -1448,11 +1452,12 @@ nemo_icon_view_grid_container_init (NemoIconViewGridContainer *icon_container)
 }
 
 NemoIconContainer *
-nemo_icon_view_grid_container_new (NemoIconView *view)
+nemo_icon_view_grid_container_new (NemoIconView *view,
+                                   gboolean      is_desktop)
 {
-	return nemo_icon_view_grid_container_construct
-		(g_object_new (NEMO_TYPE_ICON_VIEW_GRID_CONTAINER, NULL),
-		 view);
+    return nemo_icon_view_grid_container_construct (g_object_new (NEMO_TYPE_ICON_VIEW_GRID_CONTAINER, NULL),
+                                                    view,
+                                                    is_desktop);
 }
 
 void

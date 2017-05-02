@@ -4461,35 +4461,6 @@ real_set_zoom_level (NemoIconContainer *container,
     g_assert_not_reached ();
 }
 
-static GObject*
-nemo_icon_container_constructor (GType                  type,
-				     guint                  n_construct_params,
-				     GObjectConstructParam *construct_params)
-{
-	NemoIconContainer *container;
-	GObject *object;
-
-	object = G_OBJECT_CLASS (nemo_icon_container_parent_class)->constructor
-		(type,
-		 n_construct_params,
-		 construct_params);
-
-	container = NEMO_ICON_CONTAINER (object);
-	if (nemo_icon_container_get_is_desktop (container)) {
-		g_signal_connect_swapped (nemo_desktop_preferences,
-					  "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
-					  G_CALLBACK (text_ellipsis_limit_changed_container_callback),
-					  container);
-	} else {
-		g_signal_connect_swapped (nemo_icon_view_preferences,
-					  "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
-					  G_CALLBACK (text_ellipsis_limit_changed_container_callback),
-					  container);
-	}
-
-	return object;
-}
-
 /* Initialization.  */
 
 static void
@@ -4498,7 +4469,6 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
 	GtkWidgetClass *widget_class;
 	EelCanvasClass *canvas_class;
 
-	G_OBJECT_CLASS (class)->constructor = nemo_icon_container_constructor;
 	G_OBJECT_CLASS (class)->finalize = finalize;
 
     class->lay_down_icons = real_lay_down_icons;
@@ -5055,7 +5025,7 @@ nemo_icon_container_init (NemoIconContainer *container)
 					  NULL);
 		text_ellipsis_limit_changed_callback (NULL);
 
-		g_signal_connect_swapped (nemo_icon_view_preferences,
+		g_signal_connect_swapped (nemo_desktop_preferences,
 					  "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
 					  G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
 					  NULL);
@@ -7246,16 +7216,33 @@ void
 nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 					   gboolean is_desktop)
 {
-	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
-	container->details->is_desktop = is_desktop;
+    container->details->is_desktop = is_desktop;
 
-	if (is_desktop) {
-		GtkStyleContext *context;
+    g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
+                                          text_ellipsis_limit_changed_container_callback,
+                                          container);
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                                          text_ellipsis_limit_changed_container_callback,
+                                          container);
 
-		context = gtk_widget_get_style_context (GTK_WIDGET (container));
-		gtk_style_context_add_class (context, "nemo-desktop");
-	}
+    if (is_desktop) {
+        GtkStyleContext *context;
+
+        context = gtk_widget_get_style_context (GTK_WIDGET (container));
+        gtk_style_context_add_class (context, "nemo-desktop");
+
+        g_signal_connect_swapped (nemo_desktop_preferences,
+                                  "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
+                                  G_CALLBACK (text_ellipsis_limit_changed_container_callback),
+                                  container);
+    } else {
+        g_signal_connect_swapped (nemo_icon_view_preferences,
+                                  "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
+                                  G_CALLBACK (text_ellipsis_limit_changed_container_callback),
+                                  container);
+    }
 }
 
 void
