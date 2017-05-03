@@ -1112,7 +1112,7 @@ nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
 
 	if (search_directory != NULL) {
 		toggle_toolbar_search_button (pane, TRUE);
-	} else } else {
+	} else  {
 		/* If we're not in a search directory, make sure the query editor visibility matches the
 		   search button due to a quirk when switching tabs. TODO: Another approach would be to
 		   leave the editor visible and toggle the search button true. Which is better? */
