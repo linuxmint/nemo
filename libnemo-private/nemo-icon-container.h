@@ -256,6 +256,7 @@ void              nemo_icon_container_for_each                      (NemoIconCon
 									 gpointer                callback_data);
 void              nemo_icon_container_request_update                (NemoIconContainer  *view,
 									 NemoIconData       *data);
+void              nemo_icon_container_invalidate_labels             (NemoIconContainer  *container);
 void              nemo_icon_container_request_update_all            (NemoIconContainer  *container);
 void              nemo_icon_container_reveal                        (NemoIconContainer  *container,
 									 NemoIconData       *data);

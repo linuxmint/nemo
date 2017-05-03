@@ -211,6 +211,11 @@ nemo_desktop_manager_constructed (GObject *object)
                                                          G_CALLBACK (queue_update_layout),
                                                          manager);
 
+    manager->use_grid_changed_id = g_signal_connect_swapped (nemo_desktop_preferences,
+                                                             "changed::" NEMO_PREFERENCES_USE_DESKTOP_GRID,
+                                                             G_CALLBACK (queue_update_layout),
+                                                             manager);
+
     /* Monitor the preference to have the desktop */
     /* point to the Unix home folder */
 
@@ -236,6 +241,7 @@ nemo_desktop_manager_dispose (GObject *object)
 
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->show_desktop_changed_id);
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->desktop_layout_changed_id);
+    g_signal_handler_disconnect (nemo_desktop_preferences, manager->use_grid_changed_id);
     g_signal_handler_disconnect (manager->screen, manager->size_changed_id);
     g_signal_handler_disconnect (nemo_preferences, manager->home_dir_changed_id);
     g_signal_handler_disconnect (nemo_preferences, manager->orphaned_icon_handling_id);

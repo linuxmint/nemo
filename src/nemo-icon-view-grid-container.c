@@ -1369,6 +1369,15 @@ nemo_icon_view_grid_container_set_zoom_level (NemoIconContainer *container, gint
     update_layout_constants (container);
 }
 
+static void
+grid_adjust_prefs_changed_callback (NemoIconContainer *container)
+{
+    update_layout_constants (container);
+
+    nemo_icon_container_invalidate_labels (container);
+    nemo_icon_container_request_update_all (container);
+}
+
 NemoIconContainer *
 nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_container,
                                          NemoIconView              *view,
@@ -1407,7 +1416,27 @@ nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_contain
     constants->max_text_width_beside_top_to_bottom = 150; // Not used
     constants->icon_vertical_adjust = 20;
 
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                              "changed::" NEMO_PREFERENCES_DESKTOP_HORIZONTAL_GRID_ADJUST,
+                              G_CALLBACK (grid_adjust_prefs_changed_callback),
+                              NEMO_ICON_CONTAINER (icon_container));
+
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                              "changed::" NEMO_PREFERENCES_DESKTOP_VERTICAL_GRID_ADJUST,
+                              G_CALLBACK (grid_adjust_prefs_changed_callback),
+                              NEMO_ICON_CONTAINER (icon_container));
+
     return NEMO_ICON_CONTAINER (icon_container);
+}
+
+static void
+finalize (GObject *object)
+{
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                                          grid_adjust_prefs_changed_callback,
+                                          object);
+
+    G_OBJECT_CLASS (nemo_icon_view_grid_container_parent_class)->finalize (object);
 }
 
 static void
@@ -1418,7 +1447,9 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
 	ic_class = &klass->parent_class;
 
 	attribute_none_q = g_quark_from_static_string ("none");
-	
+
+    G_OBJECT_CLASS (klass)->finalize = finalize;
+
 	ic_class->get_icon_text = nemo_icon_view_grid_container_get_icon_text;
 	ic_class->get_icon_images = nemo_icon_view_grid_container_get_icon_images;
 	ic_class->get_icon_description = nemo_icon_view_grid_container_get_icon_description;

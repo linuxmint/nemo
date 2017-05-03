@@ -46,6 +46,7 @@ typedef struct {
   gulong cinnamon_panel_layout_changed_id;
   gulong orphaned_icon_handling_id;
   gulong scale_factor_changed_id;
+  gulong use_grid_changed_id;
 
   guint update_layout_idle_id;
 

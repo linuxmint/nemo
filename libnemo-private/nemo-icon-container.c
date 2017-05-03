@@ -1102,20 +1102,6 @@ invalidate_label_sizes (NemoIconContainer *container)
 	}
 }
 
-/* invalidate the entire labels (i.e. their attributes) for all the icons */
-static void
-invalidate_labels (NemoIconContainer *container)
-{
-	GList *p;
-	NemoIcon *icon;
-	
-	for (p = container->details->icons; p != NULL; p = p->next) {
-		icon = p->data;
-
-		nemo_icon_canvas_item_invalidate_label (icon->item);		
-	}
-}
-
 static gboolean
 select_range (NemoIconContainer *container,
 	      NemoIcon *icon1,
@@ -2979,7 +2965,7 @@ style_updated (GtkWidget *widget)
 	}
 
 	if (gtk_widget_get_realized (widget)) {
-		invalidate_labels (container);
+		nemo_icon_container_invalidate_labels (container);
 		nemo_icon_container_request_update_all (container);
 	}
 }
@@ -6054,6 +6040,20 @@ nemo_icon_container_request_update (NemoIconContainer *container,
 	}
 }
 
+/* invalidate the entire labels (i.e. their attributes) for all the icons */
+void
+nemo_icon_container_invalidate_labels (NemoIconContainer *container)
+{
+    GList *p;
+    NemoIcon *icon;
+
+    for (p = container->details->icons; p != NULL; p = p->next) {
+        icon = p->data;
+
+        nemo_icon_canvas_item_invalidate_label (icon->item);
+    }
+}
+
 /* zooming */
 
 NemoZoomLevel
@@ -6068,7 +6068,7 @@ nemo_icon_container_set_zoom_level (NemoIconContainer *container,
 {
     NEMO_ICON_CONTAINER_GET_CLASS (container)->set_zoom_level (container, new_level);
 
-    invalidate_labels (container);
+    nemo_icon_container_invalidate_labels (container);
     nemo_icon_container_request_update_all (container);
 }
 
@@ -6803,7 +6803,7 @@ nemo_icon_container_set_layout_mode (NemoIconContainer *container,
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
 	container->details->layout_mode = mode;
-	invalidate_labels (container);
+	nemo_icon_container_invalidate_labels (container);
 
 	container->details->needs_resort = TRUE;
 	nemo_icon_container_redo_layout (container);
@@ -6820,7 +6820,7 @@ nemo_icon_container_set_label_position (NemoIconContainer *container,
 	if (container->details->label_position != position) {
 		container->details->label_position = position;
 
-		invalidate_labels (container);
+		nemo_icon_container_invalidate_labels (container);
 		nemo_icon_container_request_update_all (container);
 
 		schedule_redo_layout (container);
@@ -7304,7 +7304,7 @@ nemo_icon_container_set_font (NemoIconContainer *container,
 	g_free (container->details->font);
 	container->details->font = g_strdup (font);
 
-	invalidate_labels (container);
+	nemo_icon_container_invalidate_labels (container);
 	nemo_icon_container_request_update_all (container);
 	gtk_widget_queue_draw (GTK_WIDGET (container));
 }
@@ -7328,7 +7328,7 @@ nemo_icon_container_set_font_size_table (NemoIconContainer *container,
 	}
 
 	if (old_font_size != container->details->font_size_table[container->details->zoom_level]) {
-		invalidate_labels (container);
+		nemo_icon_container_invalidate_labels (container);
 		nemo_icon_container_request_update_all (container);
 	}
 }
@@ -7395,7 +7395,7 @@ nemo_icon_container_set_all_columns_same_width (NemoIconContainer *container,
 	if (all_columns_same_width != container->details->all_columns_same_width) {
 		container->details->all_columns_same_width = all_columns_same_width;
 
-		invalidate_labels (container);
+		nemo_icon_container_invalidate_labels (container);
 		nemo_icon_container_request_update_all (container);
 	}
 }
