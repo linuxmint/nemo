@@ -10886,7 +10886,8 @@ nemo_view_scroll_event (GtkWidget *widget,
 	NemoView *directory_view;
 
 	directory_view = NEMO_VIEW (widget);
-	if (nemo_view_handle_scroll_event (directory_view, event)) {
+    if (!get_is_desktop_view (directory_view) &&
+        nemo_view_handle_scroll_event (directory_view, event)) {
 		return TRUE;
 	}
 
