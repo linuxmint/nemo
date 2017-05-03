@@ -19,7 +19,7 @@
 }
 
 .nemo-desktop.nemo-canvas-item:prelight {
-    background-color: alpha(@theme_selected_bg_color, 0.4);
+    background-color: alpha(black, 0.5);
     background-image: none;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
 }
