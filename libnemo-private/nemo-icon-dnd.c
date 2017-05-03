@@ -100,8 +100,6 @@ initialize_dnd_grid (NemoIconContainer *container)
                                                                      container->details->horizontal);
 
     nemo_centered_placement_grid_pre_populate (container->details->dnd_grid, container->details->icons);
-
-    gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
 static void
@@ -112,8 +110,6 @@ free_dnd_grid (NemoIconContainer *container)
     }
 
     container->details->dnd_grid = NULL;
-
-    gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
 static EelCanvasItem *
@@ -550,6 +546,7 @@ drag_end_callback (GtkWidget *widget,
 	container = NEMO_ICON_CONTAINER (widget);
 
     free_dnd_grid (container);
+    gtk_widget_queue_draw (GTK_WIDGET (container));
 
 	dnd_info = container->details->dnd_info;
 
@@ -880,6 +877,16 @@ handle_local_move (NemoIconContainer *container,
     if (container->details->insert_dnd_mode) {
         NemoCenteredPlacementGrid *dnd_grid;
         gint drop_x, drop_y;
+        gboolean free_grid_after;
+
+        free_grid_after = FALSE;
+
+        if (container->details->dnd_grid == NULL) {
+            /* This might be null if we're dragging from one monitor to another -
+             * the target container never had an drag start signal. */
+            initialize_dnd_grid (container);
+            free_grid_after = TRUE;
+        }
 
         dnd_grid = container->details->dnd_grid;
 
@@ -890,6 +897,10 @@ handle_local_move (NemoIconContainer *container,
                                                                            drop_x,
                                                                            drop_y,
                                                                            container->details->dnd_info->drag_info.selection_list);
+
+        if (free_grid_after) {
+            free_dnd_grid (container);
+        }
     }
 
     /* Move the extra icons that were needed to accomodate the selection,
@@ -1372,8 +1383,10 @@ nemo_icon_dnd_begin_drag (NemoIconContainer *container,
 	dnd_info = container->details->dnd_info;
 	g_return_if_fail (dnd_info != NULL);
 
+    initialize_dnd_grid (container);
+    gtk_widget_queue_draw (GTK_WIDGET (container));
+
     if (!container->details->auto_layout && container->details->keep_aligned) {
-        initialize_dnd_grid (container);
         container->details->insert_dnd_mode = TRUE;
     }
 

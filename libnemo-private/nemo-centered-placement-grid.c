@@ -385,6 +385,9 @@ nemo_centered_placement_grid_get_current_position_rect (NemoCenteredPlacementGri
     index_x = x / grid->real_snap_x;
     index_y = y / grid->real_snap_y;
 
+    index_x = CLAMP (index_x, 0, grid->num_columns - 1);
+    index_y = CLAMP (index_y, 0, grid->num_rows - 1);
+
     rect->x = index_x * grid->real_snap_x;
     rect->y = index_y * grid->real_snap_y;
     rect->width = grid->real_snap_x;

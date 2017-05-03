@@ -1156,6 +1156,7 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
 {
     NemoIconContainer *container;
     NemoIcon *target_icon;
+    // GtkAllocation allocation;
     gboolean before;
 
     container = NEMO_ICON_CONTAINER (canvas);
@@ -1193,6 +1194,16 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
     if (container->details->dnd_grid == NULL) {
         return;
     }
+
+    // gtk_widget_get_allocation (GTK_WIDGET (canvas), &allocation);
+    // g_printerr ("%d, %d..... %d, %d,   %d, %d\n", container->details->current_dnd_x, container->details->current_dnd_y,
+    //     allocation.x, allocation.y, allocation.x + allocation.width, allocation.y + allocation.height);
+    // if (container->details->current_dnd_x < allocation.x ||
+    //     container->details->current_dnd_x > allocation.x + allocation.width ||
+    //     container->details->current_dnd_y < allocation.y ||
+    //     container->details->current_dnd_y > allocation.y + allocation.height) {
+    //     return;
+    // }
 
     target_icon = container->details->drop_target;
 
