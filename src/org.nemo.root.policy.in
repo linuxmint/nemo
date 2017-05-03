@@ -5,16 +5,16 @@
 
 <policyconfig>
 
- <vendor>Linux Mint</vendor>
- <vendor_url>http://linuxmint.com/</vendor_url>
+ <vendor>Nemo Project</vendor>
+ <vendor_url>https://github.com/linuxmint/nemo</vendor_url>
 
  <action id="org.nemo.root">
    <description>Run Nemo with elevated privileges</description>
-   <message>Authentication is required to run Nemo as root</message>
+   <message>Please enter your password to run Nemo as root</message>
    <icon_name>gksu-root-terminal</icon_name>
    <defaults>
-     <allow_any>auth_admin_keep</allow_any>
-     <allow_inactive>auth_admin_keep</allow_inactive>
+     <allow_any>no</allow_any>
+     <allow_inactive>no</allow_inactive>
      <allow_active>auth_admin_keep</allow_active>
    </defaults>
    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/nemo</annotate>
