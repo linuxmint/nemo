@@ -24,7 +24,7 @@
 #include "nemo-metadata.h"
 #include <glib.h>
 
-static char *used_metadata_names[] = {
+static const char *used_metadata_names[] = {
   NEMO_METADATA_KEY_DEFAULT_VIEW,
   NEMO_METADATA_KEY_LOCATION_BACKGROUND_COLOR,
   NEMO_METADATA_KEY_LOCATION_BACKGROUND_IMAGE,
@@ -72,7 +72,7 @@ nemo_metadata_get_id (const char *metadata)
       hash = g_hash_table_new (g_str_hash, g_str_equal);
       for (i = 0; used_metadata_names[i] != NULL; i++)
 	g_hash_table_insert (hash,
-			     used_metadata_names[i],
+			     (gpointer) used_metadata_names[i],
 			     GINT_TO_POINTER (i + 1));
     }
 

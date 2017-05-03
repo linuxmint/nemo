@@ -120,8 +120,8 @@ sanity_check_window_dimensions (guint *width, guint *height)
 	 * be reached (might not be necessary with all window managers,
 	 * but seems reasonable anyway).
 	 */
-	*width = MIN (*width, gdk_screen_width());
-	*height = MIN (*height, gdk_screen_height());
+	*width = MIN (*width, (guint) gdk_screen_width());
+	*height = MIN (*height, (guint) gdk_screen_height());
 }
 
 /**

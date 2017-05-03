@@ -355,20 +355,23 @@ update_history (NemoWindowSlot *slot,
                 NemoLocationChangeType type,
                 GFile *new_location)
 {
-        switch (type) {
-        case NEMO_LOCATION_CHANGE_STANDARD:
+	switch (type) {
+	case NEMO_LOCATION_CHANGE_STANDARD:
 		handle_go_elsewhere (slot, new_location);
-                return;
-        case NEMO_LOCATION_CHANGE_RELOAD:
-                /* for reload there is no work to do */
-                return;
-        case NEMO_LOCATION_CHANGE_BACK:
-                handle_go_back (slot, new_location);
-                return;
-        case NEMO_LOCATION_CHANGE_FORWARD:
-                handle_go_forward (slot, new_location);
-                return;
-        }
+		return;
+	case NEMO_LOCATION_CHANGE_RELOAD:
+		/* for reload there is no work to do */
+		return;
+	case NEMO_LOCATION_CHANGE_BACK:
+		handle_go_back (slot, new_location);
+		return;
+	case NEMO_LOCATION_CHANGE_FORWARD:
+		handle_go_forward (slot, new_location);
+		return;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
 	g_return_if_fail (FALSE);
 }
 

@@ -50,7 +50,7 @@ enum {
 };
 
 static const GtkTargetEntry target_table[] = {
-        { "text/uri-list",  0, TARGET_URI_LIST }
+        { (gchar *) "text/uri-list",  0, TARGET_URI_LIST }
 };
 
 static gboolean

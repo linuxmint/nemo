@@ -353,7 +353,7 @@ connect_dialog_finish_fill (NemoConnectServerDialog *dialog)
 		g_mount_operation_set_domain (op, gtk_entry_get_text (GTK_ENTRY (dialog->details->domain_entry)));
 	}
 
-	if (flags & G_ASK_PASSWORD_SAVING_SUPPORTED &&
+	if ((flags & G_ASK_PASSWORD_SAVING_SUPPORTED) &&
 	    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->details->remember_checkbox))) {
 		g_mount_operation_set_password_save (op, G_PASSWORD_SAVE_PERMANENTLY);
 	}
@@ -515,7 +515,8 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	int index;
 	GtkTreeIter iter;
 	char *user, *initial_path, *server, *folder, *domain, *port_str;
-	char *t, *join, *uri;
+	char *t, *uri;
+	const char *join;
 	char *temp, *stripped_server;
 	double port;
 
@@ -523,7 +524,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (dialog->details->type_combo), &iter);
 	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->details->type_combo)),
 			    &iter, 0, &index, -1);
-	g_assert (index < G_N_ELEMENTS (methods) && index >= 0);
+	g_assert (index >= 0 && (size_t)index < G_N_ELEMENTS (methods));
 	meth = &(methods[index]);
 
 	server = gtk_editable_get_chars (GTK_EDITABLE (dialog->details->server_entry), 0, -1);
@@ -760,7 +761,7 @@ connect_dialog_setup_for_type (NemoConnectServerDialog *dialog)
 
 	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->details->type_combo)),
 			    &iter, 0, &index, -1);
-	g_assert (index < G_N_ELEMENTS (methods) && index >= 0);
+	g_assert (index >= 0 && (size_t)index < G_N_ELEMENTS (methods));
 	meth = &(methods[index]);
 
     if (g_settings_get_int (nemo_preferences, NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD) != index) {
@@ -834,7 +835,7 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 	GtkListStore *store;
 	GtkCellRenderer *renderer;
 	gchar *str;
-	int i;
+	size_t i;
 	
 	dialog->details = G_TYPE_INSTANCE_GET_PRIVATE (dialog, NEMO_TYPE_CONNECT_SERVER_DIALOG,
 						       NemoConnectServerDialogDetails);
@@ -974,7 +975,7 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 				    1, get_method_description (&(methods[i])),
 				    -1);
 
-        if (i == last) {
+        if ((gint) i == last) {
             gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
         }
 	}
@@ -1219,7 +1220,7 @@ nemo_connect_server_dialog_fill_details_async (NemoConnectServerDialog *self,
 							str);
 			set_flags ^= G_ASK_PASSWORD_NEED_PASSWORD;
 			
-			if (flags & G_ASK_PASSWORD_SAVING_SUPPORTED &&
+			if ((flags & G_ASK_PASSWORD_SAVING_SUPPORTED) &&
 			    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->details->remember_checkbox))) {
 				g_mount_operation_set_password_save (G_MOUNT_OPERATION (operation),
 								     G_PASSWORD_SAVE_PERMANENTLY);

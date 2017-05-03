@@ -211,7 +211,7 @@ static GtkWidget *preferences_dialog = NULL;
 
 static void
 nemo_file_management_properties_size_group_create (GtkBuilder *builder,
-						       char *prefix,
+						       const char *prefix,
 						       int items)
 {
 	GtkSizeGroup *size_group;
@@ -323,16 +323,16 @@ icon_captions_changed_callback (GtkComboBox *combo_box,
 	captions = g_ptr_array_new ();
 
 	for (i = 0; icon_captions_components[i] != NULL; i++) {
-		GtkWidget *combo_box;
+		GtkWidget *combo_box2;
 		int active;
 		GPtrArray *column_names;
 		char *name;
 
-		combo_box = GTK_WIDGET (gtk_builder_get_object
+		combo_box2 = GTK_WIDGET (gtk_builder_get_object
 					(builder, icon_captions_components[i]));
-		active = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
+		active = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box2));
 
-		column_names = g_object_get_data (G_OBJECT (combo_box),
+		column_names = g_object_get_data (G_OBJECT (combo_box2),
 						  "column_names");
 
 		name = g_ptr_array_index (column_names, active);
@@ -352,7 +352,7 @@ update_caption_combo_box (GtkBuilder *builder,
 			  const char *name)
 {
 	GtkWidget *combo_box;
-	int i;
+	guint i;
 	GPtrArray *column_names;
 
 	combo_box = GTK_WIDGET (gtk_builder_get_object (builder, combo_box_name));
@@ -391,7 +391,7 @@ update_icon_captions_from_settings (GtkBuilder *builder)
 	for (i = 0, j = 0; 
 	     icon_captions_components[i] != NULL;
 	     i++) {
-		char *data;
+		const char *data;
 
 		if (captions[j]) {
 			data = captions[j];

@@ -23,11 +23,6 @@
 G_DEFINE_TYPE (NemoCellRendererDisk, nemo_cell_renderer_disk,
 	       GTK_TYPE_CELL_RENDERER_TEXT);
 
-
-static void     nemo_cell_renderer_disk_init       (NemoCellRendererDisk      *cell);
-
-static void     nemo_cell_renderer_disk_class_init (NemoCellRendererDiskClass *klass);
-
 static void     nemo_cell_renderer_disk_get_property  (GObject                    *object,
                                                        guint                       param_id,
                                                        GValue                     *value,

@@ -110,8 +110,8 @@ G_DEFINE_TYPE_WITH_CODE (NemoListModel, nemo_list_model, G_TYPE_OBJECT,
 						nemo_list_model_multi_drag_source_init));
 
 static const GtkTargetEntry drag_types [] = {
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
+	{ (gchar *) NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	{ (gchar *) NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
 };
 
 static GtkTargetList *drag_target_list = NULL;
@@ -164,7 +164,7 @@ nemo_list_model_get_column_type (GtkTreeModel *tree_model, int index)
 	case NEMO_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN:
 		return G_TYPE_BOOLEAN;
 	default:
-		if (index < NEMO_LIST_MODEL_NUM_COLUMNS + NEMO_LIST_MODEL (tree_model)->details->columns->len) {
+		if (index < NEMO_LIST_MODEL_NUM_COLUMNS + (int) (NEMO_LIST_MODEL (tree_model)->details->columns->len)) {
 			return G_TYPE_STRING;
 		} else {
 			return G_TYPE_INVALID;
@@ -275,7 +275,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 	int icon_size, icon_scale;
 	NemoZoomLevel zoom_level;
 	NemoFile *parent_file;
-	char *emblems_to_ignore[3];
+	const char *emblems_to_ignore[3];
 	int i;
 	NemoFileIconFlags flags;
     cairo_surface_t *surface;
@@ -411,7 +411,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
                 g_value_set_boolean (value, file != NULL && nemo_file_can_rename (file));
                 break;
  	default:
- 		if (column >= NEMO_LIST_MODEL_NUM_COLUMNS || column < NEMO_LIST_MODEL_NUM_COLUMNS + model->details->columns->len) {
+ 		if (column >= NEMO_LIST_MODEL_NUM_COLUMNS || column < NEMO_LIST_MODEL_NUM_COLUMNS + (int) model->details->columns->len) {
 			NemoColumn *nemo_column;
 			GQuark attribute;
 			nemo_column = model->details->columns->pdata[column - NEMO_LIST_MODEL_NUM_COLUMNS];
@@ -1036,7 +1036,7 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
     gboolean add_child = FALSE;
 
     if (nemo_file_is_directory (file)) {
-        gint count;
+        guint count;
         if (nemo_file_get_directory_item_count (file, &count, NULL)) {
             add_child = count > 0;
         } else {
@@ -1410,7 +1410,7 @@ nemo_list_model_get_attribute_from_sort_column_id (NemoListModel *model,
 
 	index = sort_column_id - NEMO_LIST_MODEL_NUM_COLUMNS;
 
-	if (index < 0 || index >= model->details->columns->len) {
+	if (index < 0 || (guint) index >= model->details->columns->len) {
 		g_warning ("unknown sort column id: %d", sort_column_id);
 		return 0;
 	}
@@ -1439,9 +1439,9 @@ nemo_list_model_get_zoom_level_from_column_id (int column)
 		return NEMO_ZOOM_LEVEL_LARGER;
 	case NEMO_LIST_MODEL_LARGEST_ICON_COLUMN:
 		return NEMO_ZOOM_LEVEL_LARGEST;
+	default:
+		g_return_val_if_reached (NEMO_ZOOM_LEVEL_STANDARD);
 	}
-
-	g_return_val_if_reached (NEMO_ZOOM_LEVEL_STANDARD);
 }
 
 int
@@ -1462,6 +1462,7 @@ nemo_list_model_get_column_id_from_zoom_level (NemoZoomLevel zoom_level)
 		return NEMO_LIST_MODEL_LARGER_ICON_COLUMN;
 	case NEMO_ZOOM_LEVEL_LARGEST:
 		return NEMO_LIST_MODEL_LARGEST_ICON_COLUMN;
+	case NEMO_ZOOM_LEVEL_NULL:
     default: 
         g_return_val_if_reached (NEMO_LIST_MODEL_STANDARD_ICON_COLUMN);
 	}
@@ -1483,7 +1484,7 @@ nemo_list_model_set_drag_view (NemoListModel *model,
 }
 
 GtkTargetList *
-nemo_list_model_get_drag_target_list ()
+nemo_list_model_get_drag_target_list (void)
 {
 	GtkTargetList *target_list;
 
@@ -1507,7 +1508,7 @@ int
 nemo_list_model_get_column_number (NemoListModel *model,
 				       const char *column_name)
 {
-	int i;
+	guint i;
 
 	for (i = 0; i < model->details->columns->len; i++) {
 		NemoColumn *column;
@@ -1531,7 +1532,7 @@ static void
 nemo_list_model_dispose (GObject *object)
 {
 	NemoListModel *model;
-	int i;
+	guint i;
 
 	model = NEMO_LIST_MODEL (object);
 

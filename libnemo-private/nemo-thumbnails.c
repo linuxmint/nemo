@@ -141,13 +141,13 @@ free_thumbnail_info (NemoThumbnailInfo *info)
 static GnomeDesktopThumbnailFactory *
 get_thumbnail_factory (void)
 {
-	static GnomeDesktopThumbnailFactory *thumbnail_factory = NULL;
+	static GnomeDesktopThumbnailFactory *thumbnail_factory_local = NULL;
 
-	if (thumbnail_factory == NULL) {
-		thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL);
+	if (thumbnail_factory_local == NULL) {
+		thumbnail_factory_local = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL);
 	}
 
-	return thumbnail_factory;
+	return thumbnail_factory_local;
 }
 
 
@@ -616,6 +616,7 @@ thumbnail_thread_start (gpointer data)
 				 thumbnail_thread_notify_file_changed,
 				 g_strdup (info->image_uri), NULL);
 	}
+	return NULL;
 }
 
 gboolean

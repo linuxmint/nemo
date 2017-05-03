@@ -387,6 +387,7 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 								position_set);
 			break;
 
+		case CHANGE_FILE_INITIAL:
 		default:
 			g_assert_not_reached ();
 			break;

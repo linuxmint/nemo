@@ -174,8 +174,14 @@ AM_CONDITIONAL(ENABLE_EMPTY_VIEW, test "x$ENABLE_EMPTY_VIEW" = "x1")
 
 dnl ==========================================================================
 
+extra_warn_flags="\
+	-Werror=unused-function\
+	-Werror=unused-variable\
+	-Wno-declaration-after-statement\
+	"
+
 m4_ifdef([AX_COMPILER_FLAGS],
-	 [AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS])])
+	 [AX_COMPILER_FLAGS([WARN_CFLAGS],[WARN_LDFLAGS],[$ax_is_release],[],[$extra_warn_flags])])
 
 dnl ===========================================================================
 dnl Check for Tracker
@@ -258,7 +264,7 @@ AC_ARG_ENABLE(update-mimedb,
     enable_update_mimedb=yes)
 AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
 
-CFLAGS="$CFLAGS -Werror=unused-function -Werror=unused-variable -O3"
+CFLAGS="$CFLAGS -O3"
 
 AC_CONFIG_FILES([
 Makefile

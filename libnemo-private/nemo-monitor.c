@@ -114,7 +114,7 @@ dir_changed (GFileMonitor* monitor,
 	}
 
 	switch (event_type) {
-	default:
+	case G_FILE_MONITOR_EVENT_MOVED:
 	case G_FILE_MONITOR_EVENT_CHANGED:
 		/* ignore */
 		break;
@@ -134,6 +134,9 @@ dir_changed (GFileMonitor* monitor,
 		break;
 	case G_FILE_MONITOR_EVENT_UNMOUNTED:
 		/* TODO: Do something */
+		break;
+	default:
+		g_assert_not_reached ();
 		break;
 	}
 

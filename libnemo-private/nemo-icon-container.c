@@ -35,6 +35,7 @@
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-selection-canvas-item.h"
 #include "nemo-desktop-utils.h"
+#include "nemo-warnings.h"
 #include <atk/atkaction.h>
 #include <eel/eel-accessibility.h>
 #include <eel/eel-vfs-extensions.h>
@@ -165,7 +166,7 @@ static void          end_renaming_mode                              (NemoIconCon
 								     gboolean               commit);
 static NemoIcon *get_icon_being_renamed                         (NemoIconContainer *container);
 static void          finish_adding_new_icons                        (NemoIconContainer *container);
-static inline void   icon_get_bounding_box                          (NemoIcon          *icon,
+static void   icon_get_bounding_box                          (NemoIcon          *icon,
 								     int                   *x1_return,
 								     int                   *y1_return,
 								     int                   *x2_return,
@@ -544,7 +545,7 @@ icon_set_selected (NemoIconContainer *container,
 	return TRUE;
 }
 
-static inline void
+static void
 icon_get_bounding_box (NemoIcon *icon,
 		       int *x1_return, int *y1_return,
 		       int *x2_return, int *y2_return,
@@ -852,7 +853,7 @@ clear_keyboard_focus (NemoIconContainer *container)
 	container->details->keyboard_focus = NULL;
 }
 
-static void inline
+static inline void
 emit_atk_focus_tracker_notify (NemoIcon *icon)
 {
 	AtkObject *atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
@@ -3505,8 +3506,10 @@ closest_in_90_degrees (NemoIconContainer *container,
 			return FALSE;
 		}
 		break;
+	case GTK_DIR_TAB_FORWARD:
+	case GTK_DIR_TAB_BACKWARD:
 	default:
-		g_assert_not_reached();
+		g_assert_not_reached ();
 	}
 
 	dist = dx*dx + dy*dy;
@@ -4704,6 +4707,9 @@ keyboard_stretching (NemoIconContainer *container,
 						   1.0,
 						   FALSE, TRUE, TRUE);
 		break;
+	default:
+		g_assert_not_reached ();
+		break;
 	}
 	
 	return TRUE;
@@ -4811,6 +4817,7 @@ button_release_event (GtkWidget *widget,
 				(EEL_CANVAS (container), event->x, event->y, &world_x, &world_y);
 			end_stretching (container, world_x, world_y);
 			break;
+		case DRAG_STATE_INITIAL:
 		default:
 			break;
 		}
@@ -4883,6 +4890,7 @@ motion_notify_event (GtkWidget *widget,
 				(EEL_CANVAS (container), event->x, event->y, &world_x, &world_y);
 			continue_stretching (container, world_x, world_y);
 			break;
+		case DRAG_STATE_INITIAL:
 		default:
 			break;
 		}
@@ -5258,7 +5266,7 @@ nemo_icon_container_search_key_press_event (GtkWidget *widget,
 	}
 
 	/* close window and activate alternate */
-	if (event->keyval == GDK_KEY_Return && event->state & GDK_SHIFT_MASK) {
+	if (event->keyval == GDK_KEY_Return && (event->state & GDK_SHIFT_MASK)) {
 		nemo_icon_container_search_dialog_hide (widget,
 							    container);
 
@@ -6183,9 +6191,11 @@ get_text_ellipsis_limit_for_zoom (char **strs,
 
 	if (strs != NULL) {
 		for (p = strs; *p != NULL; p++) {
+NEMO_GNUC_BEGIN_IGNORE_FORMAT_NOLIITERAL
 			if (sscanf (*p, str, limit)) {
 				success = TRUE;
 			}
+NEMO_GNUC_END_IGNORE_FORMAT_NOLIITERAL
 		}
 	}
 
@@ -6523,7 +6533,7 @@ item_event_callback (EelCanvasItem *item,
 	icon = NEMO_ICON_CANVAS_ITEM (item)->user_data;
 	g_assert (icon != NULL);
 
-	switch (event->type) {
+	switch ((int) event->type) {
 	case GDK_BUTTON_PRESS:
 		if (handle_icon_button_press (container, icon, &event->button)) {
 			/* Stop the event from being passed along further. Returning
@@ -6854,7 +6864,7 @@ preview_selected_items (NemoIconContainer *container)
 {
 	GList *selection;
 	GArray *locations;
-	gint idx;
+	guint idx;
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
@@ -7289,7 +7299,6 @@ finish_adding_new_icons (NemoIconContainer *container)
 		now = time (NULL);
 
 		for (p = semi_position_icons; p != NULL; p = p->next) {
-			NemoIcon *icon;
 			NemoIconPosition position;
 			int x, y;
 
@@ -9278,7 +9287,7 @@ nemo_icon_container_accessible_ref_child (AtkObject *accessible, int i)
                 
                 return atk_object;
         } else {
-		if (i == g_list_length (container->details->icons)) {
+		if ((guint)i == g_list_length (container->details->icons)) {
 			if (container->details->rename_widget) {
 				atk_object = gtk_widget_get_accessible (container->details->rename_widget);
 				g_object_ref (atk_object);

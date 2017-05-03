@@ -143,7 +143,6 @@ void                 nemo_window_report_load_underway  (NemoWindow *window,
 void                 nemo_window_view_visible          (NemoWindow *window,
                                                             NemoView *view);
 GList *              nemo_window_get_panes             (NemoWindow *window);
-NemoWindowSlot * nemo_window_get_active_slot       (NemoWindow *window);
 void                 nemo_window_push_status           (NemoWindow *window,
                                                             const char *text);
 GtkWidget *          nemo_window_ensure_location_bar   (NemoWindow *window);

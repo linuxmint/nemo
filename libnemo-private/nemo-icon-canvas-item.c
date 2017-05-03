@@ -1611,7 +1611,7 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 	icon_item = NEMO_ICON_CANVAS_ITEM (item);
 	cursor_window = ((GdkEventAny *)event)->window;
 
-	switch (event->type) {
+	switch ((int) event->type) {
 	case GDK_ENTER_NOTIFY:
         gtk_widget_set_tooltip_text (GTK_WIDGET (item->canvas), icon_item->tooltip);
 		if (!icon_item->details->is_prelit) {

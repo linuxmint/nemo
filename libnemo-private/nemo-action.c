@@ -28,10 +28,6 @@
 G_DEFINE_TYPE (NemoAction, nemo_action,
 	       GTK_TYPE_ACTION);
 
-static void     nemo_action_init       (NemoAction      *action);
-
-static void     nemo_action_class_init (NemoActionClass *klass);
-
 static void     nemo_action_get_property  (GObject                    *object,
                                            guint                       param_id,
                                            GValue                     *value,
@@ -440,7 +436,7 @@ nemo_action_constructed (GObject *object)
     gboolean is_desktop = FALSE;
 
     if (conditions && condition_count > 0) {
-        int j;
+        unsigned int j;
         gchar *condition;
         for (j = 0; j < condition_count; j++) {
             condition = conditions[j];
@@ -563,7 +559,7 @@ nemo_action_new (const gchar *name,
     gboolean finish = TRUE;
 
     if (deps != NULL) {
-        gint i = 0;
+        guint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
             if (g_path_is_absolute (deps[i])) {
                 GFile *f = g_file_new_for_path (deps[i]);
@@ -842,6 +838,9 @@ insert_quote (NemoAction *action, GString *str)
             break;
         case QUOTE_TYPE_NONE:
             break;
+        default:
+        	g_assert_not_reached ();
+        	break;
     }
 
     return str;
@@ -970,8 +969,11 @@ default_parent_display_name:
                 goto default_parent_path;
             }
             break;
+        case TOKEN_NONE:
+        	break;
         default:
-            break; 
+        	g_assert_not_reached ();
+        	break;
     }
 
     gchar *ret = str->str;
@@ -1284,7 +1286,7 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
     if (g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE)) {
         GSettings *s = g_settings_new (split[GSETTINGS_SCHEMA_INDEX]);
         gchar **keys = g_settings_list_keys (s);
-        gint i;
+        guint i;
         for (i = 0; i < g_strv_length (keys); i++) {
             if (len == 3) {
                 if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
@@ -1351,7 +1353,7 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
     guint condition_count = conditions != NULL ? g_strv_length (conditions) : 0;
 
     if (condition_count > 0) {
-        int j;
+        guint j;
         gchar *condition;
         for (j = 0; j < condition_count; j++) {
             condition = conditions[j];
@@ -1427,7 +1429,7 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
         gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
         gchar *filename = g_ascii_strdown (raw_fn, -1);
         g_free (raw_fn);
-        int i;
+        guint i;
         gboolean is_dir = get_is_dir_hack (iter->data);
         if (ext_count > 0) {
             for (i = 0; i < ext_count; i++) {

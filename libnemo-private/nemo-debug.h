@@ -55,7 +55,7 @@ void nemo_debug_set_flags (DebugFlags flags);
 gboolean nemo_debug_flag_is_set (DebugFlags flag);
 
 void nemo_debug_valist (DebugFlags flag,
-                            const gchar *format, va_list args);
+                            const gchar *format, va_list args) G_GNUC_PRINTF(2, 0);
 
 void nemo_debug (DebugFlags flag, const gchar *format, ...)
   G_GNUC_PRINTF (2, 3);

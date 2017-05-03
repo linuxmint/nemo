@@ -37,8 +37,8 @@
 typedef struct {
 	char *undo_text;
 	gint position;
-	guint selection_start;
-	guint selection_end;
+	gint selection_start;
+	gint selection_end;
 } EditableUndoData;
 
 typedef struct {

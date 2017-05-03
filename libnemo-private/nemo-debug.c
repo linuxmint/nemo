@@ -56,7 +56,7 @@ static GDebugKey keys[] = {
 };
 
 static void
-nemo_debug_set_flags_from_env ()
+nemo_debug_set_flags_from_env (void)
 {
   guint nkeys;
   const gchar *flags_string;
@@ -107,7 +107,7 @@ nemo_debug_valist (DebugFlags flag,
     g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, format, args);
 }
 
-static void
+static void G_GNUC_PRINTF(3, 0)
 nemo_debug_files_valist (DebugFlags flag,
                              GList *files,
                              const gchar *format,

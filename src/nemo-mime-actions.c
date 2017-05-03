@@ -1441,6 +1441,9 @@ activate_files (ActivateParameters *parameters)
 		case ACTIVATION_ACTION_ASK :
 			g_assert_not_reached ();
 			break;
+		default:
+			g_assert_not_reached ();
+			break;
 		}
 	}
 

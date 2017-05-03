@@ -126,8 +126,11 @@ nemo_desktop_link_monitor_delete_link (NemoDesktopLinkMonitor *monitor,
 	case NEMO_DESKTOP_LINK_NETWORK:
 		/* just ignore. We don't allow you to delete these */
 		break;
-	default:
+	case NEMO_DESKTOP_LINK_MOUNT:
 		volume_delete_dialog (parent_view, link);
+		break;
+	default:
+		g_assert_not_reached ();
 		break;
 	}
 }

@@ -913,9 +913,6 @@ clicked_within_slow_click_interval_on_text (NemoListView *view, GtkTreePath *pat
 static gboolean
 handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton *event, gboolean on_expander)
 {
-    GtkWidgetClass *tree_view_class;
-    tree_view_class = GTK_WIDGET_GET_CLASS (view->details->tree_view);
-
     /* Ignore double click if we are in single click mode */
     if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
         return FALSE;
@@ -1485,7 +1482,8 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
 	gint sort_column_id, default_sort_column_id;
 	GtkSortType reversed;
 	GQuark sort_attr, default_sort_attr;
-	char *reversed_attr, *default_reversed_attr;
+	const char *reversed_attr;
+	const char *default_reversed_attr;
 	gboolean default_sort_reversed;
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (view));

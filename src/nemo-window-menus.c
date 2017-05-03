@@ -729,7 +729,7 @@ nemo_window_initialize_go_menu (NemoWindow *window)
 {
 	GtkUIManager *ui_manager;
 	GtkWidget *menuitem;
-	int i;
+	size_t i;
 
 	ui_manager = nemo_window_get_ui_manager (NEMO_WINDOW (window));
 

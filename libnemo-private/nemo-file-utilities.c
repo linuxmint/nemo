@@ -284,15 +284,15 @@ xdg_dir_changed (NemoFile *file,
 		path = g_file_get_path (location);
 
 		if (path) {
-			char *argv[5];
+			gchar *argv[5];
 			int i;
 			
 			g_free (dir->path);
 			dir->path = path;
 
 			i = 0;
-			argv[i++] = "xdg-user-dirs-update";
-			argv[i++] = "--set";
+			argv[i++] = (gchar *) "xdg-user-dirs-update";
+			argv[i++] = (gchar *) "--set";
 			argv[i++] = dir->type;
 			argv[i++] = dir->path;
 			argv[i++] = NULL;
