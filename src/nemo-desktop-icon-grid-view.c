@@ -880,6 +880,10 @@ action_desktop_size_callback (GtkAction               *action,
 {
     NemoZoomLevel level;
 
+    if (view->details->updating_menus) {
+        return;
+    }
+
     level = gtk_radio_action_get_current_value (current);
 
     nemo_view_zoom_to_level (NEMO_VIEW (view), level);
