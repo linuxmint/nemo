@@ -36,6 +36,9 @@ typedef struct {
 
 	GList *mime_types;
 	char **words;
+	gboolean *word_strstr;
+	gboolean words_and;
+
 	GList *found_list;
 
 	GQueue *directories; /* GFiles */
@@ -73,6 +76,76 @@ finalize (GObject *object)
 	G_OBJECT_CLASS (nemo_search_engine_simple_parent_class)->finalize (object);
 }
 
+/**
+ * function modified taken from glib2 / gstrfuncs.c
+ */
+static gchar**
+strsplit_esc_n (const gchar *string,
+				const gchar delimiter,
+				const gchar escape,
+				gint max_tokens,
+				gint *n_tokens)
+{
+	GSList *string_list = NULL, *slist;
+	gchar **str_array, *s;
+	guint n = 0;
+	const gchar *remainder;
+
+	g_return_val_if_fail (string != NULL, NULL);
+	g_return_val_if_fail (delimiter != NULL, NULL);
+
+	if (max_tokens < 1)
+	max_tokens = G_MAXINT;
+
+	remainder = string;
+	s = remainder;
+	while (s && *s) {
+		if (*s == delimiter) break;
+		else if (*s == escape) {
+			s++;
+			if (*s == 0) break;
+		}
+		s++;
+	}
+	if (*s == 0) s = NULL;
+	if (s) {
+		while (--max_tokens && s) {
+			gsize len;
+
+			len = s - remainder;
+			string_list = g_slist_prepend (string_list,
+										 g_strndup (remainder, len));
+			n++;
+			remainder = s + 1;
+
+			s = remainder;
+			while (s && *s) {
+				if (*s == delimiter) break;
+				else if (*s == escape) {
+					s++;
+					if (*s == 0) break;
+				}
+				s++;
+			}
+			if (*s == 0) s = NULL;
+		}
+	}
+	if (*string) {
+		n++;
+		string_list = g_slist_prepend (string_list, g_strdup (remainder));
+	}
+	*n_tokens = n;
+	str_array = g_new (gchar*, n + 1);
+
+	str_array[n--] = NULL;
+	for (slist = string_list; slist; slist = slist->next)
+		str_array[n--] = slist->data;
+
+	g_slist_free (string_list);
+
+	return str_array;
+}
+
 static SearchThreadData *
 search_thread_data_new (NemoSearchEngineSimple *engine,
 			NemoQuery *query)
@@ -80,6 +153,7 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	SearchThreadData *data;
 	char *text, *lower, *normalized, *uri;
 	GFile *location;
+	gint n, i;
 	
 	data = g_new0 (SearchThreadData, 1);
 
@@ -100,10 +174,25 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	text = nemo_query_get_text (query);
 	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
 	lower = g_utf8_strdown (normalized, -1);
-	data->words = g_strsplit (lower, " ", -1);
+	data->words = strsplit_esc_n (lower, ' ', '\\', -1, &n);
 	g_free (text);
 	g_free (lower);
 	g_free (normalized);
+
+	data->word_strstr = g_malloc(sizeof(gboolean)*n);
+	data->words_and = TRUE;
+	for (i = 0; data->words[i] != NULL; i++) {
+		data->word_strstr[i]=TRUE;
+		text = data->words[i];
+		while(*text!=0) {
+			if(*text=='\\' || *text=='?' || *text=='*') {
+				data->word_strstr[i]=FALSE;
+				break;
+			}
+			text++;
+		}
+		if (!data->word_strstr[i]) data->words_and = FALSE;
+	}
 
 	data->mime_types = nemo_query_get_mime_types (query);
 
@@ -120,7 +209,8 @@ search_thread_data_free (SearchThreadData *data)
 	g_queue_free (data->directories);
 	g_hash_table_destroy (data->visited);
 	g_object_unref (data->cancellable);
-	g_strfreev (data->words);	
+	g_strfreev (data->words);
+	g_free (data->word_strstr);
 	g_list_free_full (data->mime_types, g_free);
 	g_list_free_full (data->uri_hits, g_free);
 	g_free (data);
@@ -183,6 +273,31 @@ send_batch (SearchThreadData *data)
 	data->uri_hits = NULL;
 }
 
+static gboolean
+strwildcardcmp(char *a, char *b)
+{
+    if (*a == 0 && *b == 0)  return TRUE;
+    while(*a!=0 && *b!=0) {
+		if(*a=='\\') { // escaped character
+			a++;
+			if (*a != *b) return FALSE;
+		}
+		else {
+			if (*a=='*') {
+				if(*(a+1)==0) return TRUE;
+				if(*b==0) return FALSE; 
+				if (strwildcardcmp(a+1, b) || strwildcardcmp(a, b+1)) return TRUE;
+				else return FALSE;
+			}
+			else if (*a!='?' && (*a != *b)) return FALSE;
+		}
+		a++;
+		b++;
+	} 
+	if ((*a == 0 && *b == 0) || (*a=='*' && *(a+1)==0))  return TRUE;
+	return FALSE;
+}
+
 #define STD_ATTRIBUTES \
 	G_FILE_ATTRIBUTE_STANDARD_NAME "," \
 	G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," \
@@ -231,10 +346,16 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		lower_name = g_utf8_strdown (normalized, -1);
 		g_free (normalized);
 		
-		hit = TRUE;
+		hit = data->words_and;
 		for (i = 0; data->words[i] != NULL; i++) {
-			if (strstr (lower_name, data->words[i]) == NULL) {
-				hit = FALSE;
+			if (data->word_strstr[i]) {
+				if ((strstr (lower_name, data->words[i]) != NULL)^data->words_and) {
+					hit = !data->words_and;
+					break;
+				}
+			}
+			else if (strwildcardcmp (data->words[i], lower_name)^data->words_and) {
+				hit = !data->words_and;
 				break;
 			}
 		}
