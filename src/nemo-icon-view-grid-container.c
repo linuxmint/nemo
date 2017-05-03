@@ -620,29 +620,36 @@ static void
 snap_position (NemoIconContainer         *container,
                NemoCenteredPlacementGrid *grid,
                NemoIcon                  *icon,
-               gint                      *x,
-               gint                      *y)
+               gint                       x_in,
+               gint                       y_in,
+               gint                      *x_out,
+               gint                      *y_out)
 {
-    gint x_nominal, y_nominal, x_new, y_new;
+    gint x_new, y_new;
+    gboolean is_free;
+    GdkRectangle grid_rect;
 
     if (nemo_icon_container_is_layout_rtl (container)) {
-        *x = nemo_icon_container_get_mirror_x_position (container, icon, *x);
+        x_in = nemo_icon_container_get_mirror_x_position (container, icon, x_in);
     }
 
-    nemo_centered_placement_grid_icon_position_to_nominal (grid,
-                                                           *x, *y,
-                                                           &x_nominal, &y_nominal);
+    nemo_centered_placement_grid_get_current_position_rect (grid,
+                                                            x_in,
+                                                            y_in,
+                                                            &grid_rect,
+                                                            &is_free);
+    if (is_free) {
+        x_new = grid_rect.x;
+        y_new = grid_rect.y;
+    } else {
+        nemo_centered_placement_grid_get_next_free_position (grid, &x_new, &y_new);
+    }
 
-    nemo_centered_placement_grid_find_empty_position (grid, icon,
-                                                      *x, *y,
-                                                      &x_new, &y_new);
-
-    nemo_centered_placement_grid_nominal_to_icon_position (grid,
-                                                           x_new, y_new,
-                                                           x, y);
+    *x_out = x_new;
+    *y_out = y_new;
 
     if (nemo_icon_container_is_layout_rtl (container)) {
-        *x = nemo_icon_container_get_mirror_x_position (container, icon, *x);
+        *x_out = nemo_icon_container_get_mirror_x_position (container, icon, *x_out);
     }
 }
 
@@ -671,15 +678,13 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
         /* Add only placed icons in list */
         for (p = container->details->icons; p != NULL; p = p->next) {
             icon = p->data;
-            if (nemo_icon_container_icon_is_positioned (icon)) {
-                nemo_icon_container_icon_set_position(container, icon, icon->saved_ltr_x, icon->y);
+            if (nemo_icon_container_icon_is_positioned (icon) && !icon->has_lazy_position) {
                 placed_icons = g_list_prepend (placed_icons, icon);
             } else {
-                icon->x = 0;
-                icon->y = 0;
                 unplaced_icons = g_list_prepend (unplaced_icons, icon);
             }
         }
+
         placed_icons = g_list_reverse (placed_icons);
         unplaced_icons = g_list_reverse (unplaced_icons);
 
@@ -692,10 +697,20 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
             for (p = unplaced_icons; p != NULL; p = p->next) {
                 icon = p->data;
 
-                snap_position (container, grid, icon, &x, &y);
+                nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                                       icon->x,
+                                                                       icon->y,
+                                                                       &x, &y);
+
+                snap_position (container, grid, icon, x, y, &x, &y);
+
+                nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                                       x, y,
+                                                                       &x, &y);
+
                 nemo_icon_container_icon_set_position (container, icon, x, y);
+                icon->has_lazy_position = FALSE;
                 icon->saved_ltr_x = x;
-                nemo_centered_placement_grid_mark_icon (grid, icon);
             }
 
             nemo_centered_placement_grid_free (grid);
@@ -715,6 +730,8 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
             icon = icons->data;
 
             nemo_centered_placement_grid_get_next_free_position (grid, &x, &y);
+
+            nemo_centered_placement_grid_nominal_to_icon_position (grid, x, y, &x, &y);
 
             nemo_icon_container_icon_set_position (container,
                                                    icon,
@@ -894,6 +911,38 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
     }
 
     if (!details->auto_layout) {
+        if (details->keep_aligned && snap) {
+            NemoCenteredPlacementGrid *grid;
+            gboolean free_grid_after;
+
+            free_grid_after = FALSE;
+
+            if (container->details->dnd_grid == NULL) {
+                grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
+
+                nemo_centered_placement_grid_pre_populate (grid, container->details->icons);
+                free_grid_after = TRUE;
+            } else {
+                grid = container->details->dnd_grid;
+            }
+
+            nemo_centered_placement_grid_unmark_icon (grid, icon);
+
+            nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                                   x, y,
+                                                                   &x, &y);
+
+            snap_position (container, grid, icon, x, y, &x, &y);
+
+            nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                                   x, y,
+                                                                   &x, &y);
+
+            if (free_grid_after) {
+                nemo_centered_placement_grid_free (grid);
+            }
+        }
+
         if (x != icon->x || y != icon->y) {
             nemo_icon_container_icon_set_position (container, icon, x, y);
             emit_signal = update_position;
@@ -948,12 +997,17 @@ nemo_icon_view_grid_container_align_icons (NemoIconContainer *container)
         int x, y;
 
         icon = l->data;
-        x = icon->saved_ltr_x;
-        y = icon->y;
 
-        snap_position (container, grid, icon, &x, &y);
+        nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                               icon->saved_ltr_x, icon->y,
+                                                               &x, &y);
 
-        nemo_centered_placement_grid_mark_icon (grid, icon);
+        snap_position (container, grid, icon, x, y, &x, &y);
+
+        nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                               x, y,
+                                                               &x, &y);
+
         nemo_icon_container_icon_set_position (container, icon, x, y);
 
         icon->saved_ltr_x = icon->x;
@@ -1026,9 +1080,12 @@ static void
 nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *container)
 {
     GList *p, *new_icons, *no_position_icons;
+    NemoCenteredPlacementGrid *grid;
     NemoIcon *icon;
 
     update_layout_constants (container);
+
+    grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
 
     new_icons = container->details->new_icons;
 
@@ -1059,8 +1116,27 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
 
         if (!container->details->auto_layout) {
             if (have_stored_position) {
+                if (icon->has_lazy_position) {
+                    no_position_icons = g_list_prepend (no_position_icons, icon);
+                } else {
+                    if (container->details->keep_aligned) {
+                        GdkRectangle rect;
+
+                        nemo_centered_placement_grid_get_current_position_rect (grid,
+                                                                                position.x,
+                                                                                position.y,
+                                                                                &rect,
+                                                                                NULL);
+
+                        nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                                               rect.x, rect.y,
+                                                                               &position.x, &position.y);
+                    }
+                }
+
                 nemo_icon_container_icon_set_position (container, icon, position.x, position.y);
                 icon->saved_ltr_x = icon->x;
+
             } else {
                 no_position_icons = g_list_prepend (no_position_icons, icon);
             }
@@ -1191,19 +1267,9 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
         cairo_restore (cr);
     }
 
-    if (container->details->dnd_grid == NULL) {
+    if (container->details->dnd_grid == NULL || !container->details->insert_dnd_mode) {
         return;
     }
-
-    // gtk_widget_get_allocation (GTK_WIDGET (canvas), &allocation);
-    // g_printerr ("%d, %d..... %d, %d,   %d, %d\n", container->details->current_dnd_x, container->details->current_dnd_y,
-    //     allocation.x, allocation.y, allocation.x + allocation.width, allocation.y + allocation.height);
-    // if (container->details->current_dnd_x < allocation.x ||
-    //     container->details->current_dnd_x > allocation.x + allocation.width ||
-    //     container->details->current_dnd_y < allocation.y ||
-    //     container->details->current_dnd_y > allocation.y + allocation.height) {
-    //     return;
-    // }
 
     target_icon = container->details->drop_target;
 

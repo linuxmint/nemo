@@ -162,6 +162,10 @@ nemo_centered_placement_grid_mark_icon (NemoCenteredPlacementGrid *grid, NemoIco
 {
     gint nom_x, nom_y, grid_x, grid_y;
 
+    if (icon->x <= 0.0 && icon->y <= 0.0) {
+        return;
+    }
+
     nemo_centered_placement_grid_icon_position_to_nominal (grid,
                                                            icon->x,
                                                            icon->y,
@@ -170,13 +174,21 @@ nemo_centered_placement_grid_mark_icon (NemoCenteredPlacementGrid *grid, NemoIco
     grid_x = (nom_x - grid->borders->left) / grid->real_snap_x;
     grid_y = (nom_y - grid->borders->top) / grid->real_snap_y;
 
-    nemo_centered_placement_grid_mark (grid, grid_x, grid_y);
+    if ((grid_x >= 0 && grid_x < grid->num_columns) &&
+       (grid_y >= 0 && grid_y < grid->num_rows)) {
+        nemo_centered_placement_grid_mark (grid, grid_x, grid_y);
+    }
 }
 
 void
-nemo_centered_placement_grid_unmark_icon (NemoCenteredPlacementGrid *grid, NemoIcon *icon)
+nemo_centered_placement_grid_unmark_icon (NemoCenteredPlacementGrid *grid,
+                                          NemoIcon                  *icon)
 {
     gint nom_x, nom_y, grid_x, grid_y;
+
+    if (icon->x <= 0.0 && icon->y <= 0.0) {
+        return;
+    }
 
     nemo_centered_placement_grid_icon_position_to_nominal (grid,
                                                            icon->x,
@@ -186,7 +198,10 @@ nemo_centered_placement_grid_unmark_icon (NemoCenteredPlacementGrid *grid, NemoI
     grid_x = (nom_x - grid->borders->left) / grid->real_snap_x;
     grid_y = (nom_y - grid->borders->top) / grid->real_snap_y;
 
-    nemo_centered_placement_grid_unmark (grid, grid_x, grid_y);
+    if ((grid_x >= 0 && grid_x < grid->num_columns) &&
+       (grid_y >= 0 && grid_y < grid->num_rows)) {
+        nemo_centered_placement_grid_unmark (grid, grid_x, grid_y);
+    }
 }
 
 void
@@ -224,135 +239,8 @@ nemo_centered_placement_grid_get_next_free_position (NemoCenteredPlacementGrid *
     }
 
 out:
-    nemo_centered_placement_grid_nominal_to_icon_position (grid,
-                                                           x_ret, y_ret,
-                                                           &x_ret, &y_ret);
     *x_out = x_ret;
     *y_out = y_ret;
-}
-
-void
-nemo_centered_placement_grid_find_empty_position (NemoCenteredPlacementGrid *grid,
-                                                  NemoIcon                  *icon,
-                                                  gint                       x_orig,
-                                                  gint                       y_orig,
-                                                  gint                      *x_new,
-                                                  gint                      *y_new)
-{
-    gint x, y, cur_x, cur_y, x_half_snap, y_half_snap;
-    gint last_empty_x, last_empty_y;
-    gboolean ideal_position_occupied;
-    gboolean match;
-
-    x_half_snap = grid->real_snap_x / 2;
-    y_half_snap = grid->real_snap_y / 2;
-
-    ideal_position_occupied = FALSE;
-    match = FALSE;
-    cur_x = cur_y = ICON_UNPOSITIONED_VALUE;
-    last_empty_x = last_empty_y = ICON_UNPOSITIONED_VALUE;
-
-    if (grid->horizontal) {
-        for (y = 0; y < grid->num_rows; y++) {
-            for (x = 0; x < grid->num_columns; x++) {
-                cur_x = grid->borders->left + (x * grid->real_snap_x);
-                cur_y = grid->borders->top + (y * grid->real_snap_y);
-
-                if ((x_orig >= cur_x - x_half_snap && x_orig <= cur_x + x_half_snap) &&
-                    (y_orig >= cur_y - y_half_snap && y_orig <= cur_y + y_half_snap)) {
-                    match = TRUE;
-                }
-
-                if (!nemo_centered_placement_grid_position_is_free (grid, x, y)) {
-                    gint icon_nom_x, icon_nom_y, grid_x, grid_y;
-
-                    nemo_centered_placement_grid_icon_position_to_nominal (grid, icon->x, icon->y, &icon_nom_x, &icon_nom_y);
-                    grid_x = (icon_nom_x - grid->borders->left) / grid->real_snap_x;
-                    grid_y = (icon_nom_y - grid->borders->top) / grid->real_snap_y;
-
-                    if (match) {
-                        ideal_position_occupied = TRUE;
-
-                        /* If the current position is the same as the supplied icon's position, consider
-                         * the position free.  This allows dragging an icon, then dropping it back where it was.
-                         */
-                        if (grid_x != cur_x || grid_y != cur_y) {
-                            *x_new = cur_x;
-                            *y_new = cur_y;
-                            return;
-                        }
-                    }
-
-                    continue;
-                } else {
-                    if (last_empty_x == ICON_UNPOSITIONED_VALUE) {
-                        last_empty_x = cur_x;
-                        last_empty_y = cur_y;
-                    }
-                }
-
-                if (match || ideal_position_occupied) {
-                    *x_new = cur_x;
-                    *y_new = cur_y;
-                    return;
-                }
-            }
-        }
-    } else {
-        for (x = 0; x < grid->num_columns; x++) {
-            for (y = 0; y < grid->num_rows; y++) {
-                cur_x = grid->borders->left + (x * grid->real_snap_x);
-                cur_y = grid->borders->top + (y * grid->real_snap_y);
-
-                if ((x_orig >= cur_x - x_half_snap && x_orig <= cur_x + x_half_snap) &&
-                    (y_orig >= cur_y - y_half_snap && y_orig <= cur_y + y_half_snap)) {
-                    match = TRUE;
-                }
-
-                if (!nemo_centered_placement_grid_position_is_free (grid, x, y)) {
-                    gint icon_nom_x, icon_nom_y, grid_x, grid_y;
-
-                    nemo_centered_placement_grid_icon_position_to_nominal (grid, icon->x, icon->y, &icon_nom_x, &icon_nom_y);
-                    grid_x = (icon_nom_x - grid->borders->left) / grid->real_snap_x;
-                    grid_y = (icon_nom_y - grid->borders->top) / grid->real_snap_y;
-
-                    if (match) {
-                        ideal_position_occupied = TRUE;
-
-                        /* If the current position is the same as the supplied icon's position, consider
-                         * the position free.  This allows dragging an icon, then dropping it back where it was.
-                         */
-                        if (grid_x != cur_x || grid_y != cur_y) {
-                            *x_new = cur_x;
-                            *y_new = cur_y;
-                            return;
-                        }
-                    }
-
-                    continue;
-                } else {
-                    if (last_empty_x == ICON_UNPOSITIONED_VALUE) {
-                        last_empty_x = cur_x;
-                        last_empty_y = cur_y;
-                    }
-                }
-
-                if (match || ideal_position_occupied) {
-                    *x_new = cur_x;
-                    *y_new = cur_y;
-                    return;
-                }
-            }
-        }
-    }
-
-    if (last_empty_x != ICON_UNPOSITIONED_VALUE) {
-        *x_new = last_empty_x;
-        *y_new = last_empty_y;
-    } else {
-        *x_new = cur_x;
-        *y_new = cur_y;
-    }
 }
 
 void

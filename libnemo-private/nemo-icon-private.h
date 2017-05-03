@@ -401,12 +401,6 @@ void               nemo_centered_placement_grid_unmark_icon       (NemoCenteredP
 void               nemo_centered_placement_grid_get_next_free_position (NemoCenteredPlacementGrid *grid,
                                                                         gint                      *x_out,
                                                                         gint                      *y_out);
-void               nemo_centered_placement_grid_find_empty_position (NemoCenteredPlacementGrid *grid,
-                                                                     NemoIcon                  *icon,
-                                                                     gint                       x_nominal,
-                                                                     gint                       y_nominal,
-                                                                     gint                      *x_new,
-                                                                     gint                      *y_new);
 void               nemo_centered_placement_grid_pre_populate        (NemoCenteredPlacementGrid *grid,
                                                                      GList                     *icons);
 void               nemo_centered_placement_grid_get_current_position_rect (NemoCenteredPlacementGrid *grid,

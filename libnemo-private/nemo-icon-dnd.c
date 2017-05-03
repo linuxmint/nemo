@@ -545,6 +545,8 @@ drag_end_callback (GtkWidget *widget,
 
 	container = NEMO_ICON_CONTAINER (widget);
 
+    container->details->insert_dnd_mode = FALSE;
+
     free_dnd_grid (container);
     gtk_widget_queue_draw (GTK_WIDGET (container));
 

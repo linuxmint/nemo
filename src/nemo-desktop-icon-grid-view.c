@@ -883,6 +883,18 @@ action_desktop_size_callback (GtkAction               *action,
     level = gtk_radio_action_get_current_value (current);
 
     nemo_view_zoom_to_level (NEMO_VIEW (view), level);
+
+    clear_orphan_states (view);
+
+    /* TODO: Instead of switching back to defaults, re-align the existing icons
+     * into the new slots.  This is complicated, due to how the redo_layout_internal
+     * function works. */
+
+    nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
+    nemo_icon_container_set_auto_layout (get_icon_container (view), TRUE);
+    nemo_icon_container_set_keep_aligned (get_icon_container (view), TRUE);
+
+    nemo_view_update_menus (NEMO_VIEW (view));
 }
 
 static gboolean
