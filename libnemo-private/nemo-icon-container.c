@@ -105,8 +105,8 @@
 /* Desktop layout mode defines */
 #define DESKTOP_PAD_HORIZONTAL 	10
 #define DESKTOP_PAD_VERTICAL 	10
-#define SNAP_SIZE_X 		78
-#define SNAP_SIZE_Y 		20
+#define SNAP_SIZE_X 		68
+#define SNAP_SIZE_Y 		68
 
 #define MINIMUM_EMBEDDED_TEXT_RECT_WIDTH       20
 #define MINIMUM_EMBEDDED_TEXT_RECT_HEIGHT      20
