@@ -84,8 +84,8 @@
 
 /* Forward and back buttons on the mouse */
 static gboolean mouse_extra_buttons = TRUE;
-static int mouse_forward_button = 9;
-static int mouse_back_button = 8;
+static guint mouse_forward_button = 9;
+static guint mouse_back_button = 8;
 
 static void mouse_back_button_changed		     (gpointer                  callback_data);
 static void mouse_forward_button_changed	     (gpointer                  callback_data);
@@ -132,7 +132,7 @@ static void cancel_view_as_callback         (NemoWindowSlot      *slot);
 static void action_view_as_callback         (GtkAction               *action,
 					     ActivateViewData        *data);
 
-G_DEFINE_TYPE (NemoWindow, nemo_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE (NemoWindow, nemo_window, GTK_TYPE_APPLICATION_WINDOW);
 
 static const struct {
 	unsigned int keyval;
@@ -557,7 +557,12 @@ nemo_window_constructed (GObject *self)
 	application = nemo_application_get_singleton ();
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
+	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
 
+	/* disable automatic menubar handling, since we show our regular
+	 * menubar together with the app menu.
+	 */
+	gtk_application_window_set_show_menubar (GTK_APPLICATION_WINDOW (self), FALSE);
 
 	grid = gtk_grid_new ();
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
@@ -671,7 +676,6 @@ nemo_window_constructed (GObject *self)
 
 	nemo_window_initialize_bookmarks_menu (window);
 	nemo_window_set_initial_window_geometry (window);
-	nemo_undo_manager_attach (application->undo_manager, G_OBJECT (window));
 
 	slot = nemo_window_pane_open_slot (window->details->active_pane, 0);
 	nemo_window_set_active_slot (window, slot);
@@ -727,6 +731,9 @@ nemo_window_get_property (GObject *object,
         case PROP_SHOW_SIDEBAR:
             g_value_set_boolean (value, window->details->show_sidebar);
             break;
+        default:
+        	g_assert_not_reached ();
+        	break;
 	}
 }
 
@@ -1071,7 +1078,7 @@ nemo_window_key_press_event (GtkWidget *widget,
 	NemoWindowSlot *active_slot;
 	NemoView *view;
 	GtkWidget *focus_widget;
-	int i;
+	size_t i;
 
 	window = NEMO_WINDOW (widget);
 
@@ -1944,7 +1951,7 @@ static gboolean
 nemo_window_state_event (GtkWidget *widget,
 			     GdkEventWindowState *event)
 {
-	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED && !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
+	if ((event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) && !nemo_window_is_desktop (NEMO_WINDOW (widget))) {
 		g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED,
 					event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
 	}
@@ -2228,9 +2235,11 @@ nemo_window_class_init (NemoWindowClass *class)
 }
 
 NemoWindow *
-nemo_window_new (GdkScreen *screen)
+nemo_window_new (GtkApplication *application,
+                 GdkScreen *screen)
 {
 	return g_object_new (NEMO_TYPE_WINDOW,
+			     "application", application,
 			     "screen", screen,
 			     NULL);
 }

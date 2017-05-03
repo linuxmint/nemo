@@ -30,7 +30,7 @@
 
 #include "nemo-application.h"
 
-#if ENABLE_EMPTY_VIEW
+#if (defined(ENABLE_EMPTY_VIEW) && ENABLE_EMPTY_VIEW)
 #include "nemo-empty-view.h"
 #endif /* ENABLE_EMPTY_VIEW */
 
@@ -302,9 +302,7 @@ nemo_application_create_window (NemoApplication *application,
 
 	g_return_val_if_fail (NEMO_IS_APPLICATION (application), NULL);
 
-	window = nemo_window_new (screen);
-	gtk_application_add_window (GTK_APPLICATION (application),
-				    GTK_WINDOW (window));
+	window = nemo_window_new (GTK_APPLICATION (application), screen);
 
 	maximized = g_settings_get_boolean
 		(nemo_window_state, NEMO_WINDOW_STATE_MAXIMIZED);
@@ -330,6 +328,8 @@ nemo_application_create_window (NemoApplication *application,
 			 TRUE);
 	}
 	g_free (geometry_string);
+
+	nemo_undo_manager_attach (application->undo_manager, G_OBJECT (window));
 
 	DEBUG ("Creating a new navigation window");
 	
@@ -385,7 +385,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 	NemoWindowSlot *force_no_close_slot;
 	GFile *root, *computer;
 	gchar *uri;
-	gint n_slots;
+	guint n_slots;
 
 	close_list = NULL;
 	force_no_close_slot = NULL;
@@ -490,7 +490,7 @@ open_windows (NemoApplication *application,
 	      GdkScreen *screen,
 	      const char *geometry)
 {
-	guint i;
+	gint i;
 
 	if (files == NULL || files[0] == NULL) {
 		/* Open a window pointing at the default location. */
@@ -1194,7 +1194,7 @@ nemo_application_startup (GApplication *app)
 	nemo_desktop_icon_view_register ();
 	nemo_list_view_register ();
 	nemo_icon_view_compact_register ();
-#if ENABLE_EMPTY_VIEW
+#if defined(ENABLE_EMPTY_VIEW) && ENABLE_EMPTY_VIEW
 	nemo_empty_view_register ();
 #endif
 
