@@ -103,9 +103,18 @@ gint
 nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget)
 {
     GdkWindow *window;
+    GtkWidget *toplevel;
     gint monitor;
 
     g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+    toplevel = gtk_widget_get_toplevel (widget);
+
+    if (toplevel != NULL &&
+        g_object_get_data (G_OBJECT (toplevel), "is_desktop_window")) {
+        monitor = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (toplevel), "monitor_number"));
+        return monitor;
+    }
 
     ensure_screen ();
 

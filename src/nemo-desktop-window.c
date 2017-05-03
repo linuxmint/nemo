@@ -97,7 +97,10 @@ nemo_desktop_window_constructed (GObject *obj)
 	NemoWindow *nwindow = NEMO_WINDOW (obj);
 
 	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->constructed (obj);
-	
+
+    g_object_set_data (G_OBJECT (window), "monitor_number",
+                       GINT_TO_POINTER (window->details->monitor));
+
 	gtk_widget_hide (nwindow->details->statusbar);
 	gtk_widget_hide (nwindow->details->menubar);
 
