@@ -438,12 +438,11 @@ get_scaled_icon_size (NemoIconCanvasItem *item,
        canvas = EEL_CANVAS_ITEM (item)->canvas;
        scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas));
        pixbuf = item->details->pixbuf;
+       if (width)
+           *width = (pixbuf == NULL) ? 0 : (gdk_pixbuf_get_width (pixbuf) / scale);
+       if (height)
+           *height = (pixbuf == NULL) ? 0 : (gdk_pixbuf_get_height (pixbuf) / scale);
    }
-
-   if (width)
-       *width = (pixbuf == NULL) ? 0 : (gdk_pixbuf_get_width (pixbuf) / scale);
-   if (height)
-       *height = (pixbuf == NULL) ? 0 : (gdk_pixbuf_get_height (pixbuf) / scale);
 }
 
 cairo_surface_t *
