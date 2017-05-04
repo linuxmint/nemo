@@ -373,16 +373,12 @@ nemo_desktop_application_class_init (NemoDesktopApplicationClass *class)
 
     application_class = G_APPLICATION_CLASS (class);
     application_class->open = nemo_desktop_application_open;
-    // application_class->startup = nemo_desktop_application_startup;
     application_class->local_command_line = nemo_desktop_application_local_command_line;
 
     nemo_app_class = NEMO_APPLICATION_CLASS (class);
     nemo_app_class->continue_startup = nemo_desktop_application_continue_startup;
     nemo_app_class->create_window = nemo_desktop_application_create_window;
     nemo_app_class->continue_quit = nemo_desktop_application_continue_quit;
-    // nemo_app_class->notify_unmount_show = nemo_main_application_notify_unmount_show;
-    // nemo_app_class->notify_unmount_done = nemo_main_application_notify_unmount_done;
-    // nemo_app_class->close_all_windows = nemo_main_application_close_all_windows;
 
     g_type_class_add_private (class, sizeof (NemoDesktopApplicationPriv));
 }
