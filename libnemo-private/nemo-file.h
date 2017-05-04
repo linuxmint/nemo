@@ -389,11 +389,6 @@ char *                  nemo_file_get_string_attribute_with_default (NemoFile   
 									 const char                     *attribute_name);
 char *                  nemo_file_get_string_attribute_with_default_q (NemoFile                  *file,
 									 GQuark                          attribute_q);
-char *			nemo_file_fit_modified_date_as_string	(NemoFile 			*file,
-									 int				 width,
-									 NemoWidthMeasureCallback    measure_callback,
-									 NemoTruncateCallback	 truncate_callback,
-									 void				*measure_truncate_context);
 
 /* Matching with another URI. */
 gboolean                nemo_file_matches_uri                       (NemoFile                   *file,
@@ -493,8 +488,6 @@ char *   nemo_file_get_owner_as_string            (NemoFile          *file,
                                                           gboolean           include_real_name);
 char *   nemo_file_get_type_as_string             (NemoFile          *file);
 char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
-
-char *   nemo_file_get_date_as_string             (NemoFile *file, NemoDateType date_type);
 
 gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags);
 

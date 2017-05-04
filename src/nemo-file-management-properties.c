@@ -460,9 +460,7 @@ create_date_format_menu (GtkBuilder *builder)
 	gtk_combo_box_text_append_text (combo_box, date_string);
 	g_free (date_string);
 
-	date_string = g_date_time_format (now, _("today at %-I:%M:%S %p"));
-	gtk_combo_box_text_append_text (combo_box, date_string);
-	g_free (date_string);
+	gtk_combo_box_text_append_text (combo_box, _("Yesterday"));
 
 	g_date_time_unref (now);
 }
