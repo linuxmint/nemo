@@ -59,6 +59,23 @@ nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 	return g_strdup (viewer_iid);
 }
 
+char *
+nemo_global_preferences_get_desktop_iid (void)
+{
+    gboolean use_grid;
+    const char *viewer_iid;
+
+    use_grid = g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_USE_DESKTOP_GRID);
+
+    if (use_grid) {
+        viewer_iid = NEMO_DESKTOP_ICON_GRID_VIEW_IID;
+    } else {
+        viewer_iid = NEMO_DESKTOP_ICON_VIEW_IID;
+    }
+
+    return g_strdup (viewer_iid);
+}
+
 gboolean
 nemo_global_preferences_get_ignore_view_metadata (void)
 {

@@ -29,6 +29,7 @@
 
 #include <libnemo-private/nemo-file.h>
 
+void nemo_desktop_metadata_init (void);
 void nemo_desktop_set_metadata_string (NemoFile *file,
                                            const gchar *name,
                                            const gchar *key,
@@ -38,6 +39,14 @@ void nemo_desktop_set_metadata_stringv (NemoFile *file,
                                             const char *name,
                                             const char *key,
                                             const char * const *stringv);
+
+gchar *nemo_desktop_get_metadata_string (NemoFile *file,
+                                         const gchar *name,
+                                         const gchar *key);
+
+gchar **nemo_desktop_get_metadata_stringv (NemoFile *file,
+                                           const char *name,
+                                           const char *key);
 
 gboolean nemo_desktop_update_metadata_from_keyfile (NemoFile *file,
                                                         const gchar *name);

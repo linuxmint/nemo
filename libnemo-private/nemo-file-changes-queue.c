@@ -335,7 +335,6 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 				changes = NULL;
 			}
 			if (position_set_requests != NULL) {
-                g_printerr ("length: %d\n", g_list_length (position_set_requests));
 				position_set_requests = g_list_reverse (position_set_requests);
 				nemo_directory_schedule_position_set (position_set_requests);
 				position_set_list_free (position_set_requests);

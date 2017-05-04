@@ -66,7 +66,9 @@ nemo_desktop_window_update_directory (NemoDesktopWindow *window)
 	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
 
 	window->details->loaded = FALSE;
-	location = g_file_new_for_uri (EEL_DESKTOP_URI);
+
+    location = g_file_new_for_uri (EEL_DESKTOP_URI);
+
 	nemo_window_go_to (NEMO_WINDOW (window), location);
 	window->details->loaded = TRUE;
 
@@ -95,7 +97,10 @@ nemo_desktop_window_constructed (GObject *obj)
 	NemoWindow *nwindow = NEMO_WINDOW (obj);
 
 	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->constructed (obj);
-	
+
+    g_object_set_data (G_OBJECT (window), "monitor_number",
+                       GINT_TO_POINTER (window->details->monitor));
+
 	gtk_widget_hide (nwindow->details->statusbar);
 	gtk_widget_hide (nwindow->details->menubar);
 

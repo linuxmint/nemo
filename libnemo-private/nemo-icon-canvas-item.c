@@ -51,11 +51,6 @@
 #define LABEL_OFFSET 1
 #define LABEL_LINE_SPACING 0
 
-#define MAX_TEXT_WIDTH_STANDARD 135
-#define MAX_TEXT_WIDTH_TIGHTER 80
-#define MAX_TEXT_WIDTH_BESIDE 90
-#define MAX_TEXT_WIDTH_BESIDE_TOP_TO_BOTTOM 150
-
 /* special text height handling
  * each item has three text height variables:
  *  + text_height: actual height of the displayed (i.e. on-screen) PangoLayout.
@@ -174,8 +169,6 @@ static void     draw_label_text                      (NemoIconCanvasItem        
 						      cairo_t                       *cr,
 						      EelIRect                       icon_rect);
 static void     measure_label_text                   (NemoIconCanvasItem        *item);
-static void     get_icon_canvas_rectangle            (NemoIconCanvasItem        *item,
-						      EelIRect                      *rect);
 static void     draw_pixbuf                          (GdkPixbuf                     *pixbuf,
 						      cairo_t                       *cr,
 						      int                            x,
@@ -743,14 +736,14 @@ nemo_icon_canvas_item_update_bounds (NemoIconCanvasItem *item,
 	}
 	
 	/* Update canvas and text rect cache */
-	get_icon_canvas_rectangle (item, &item->details->canvas_rect);
+	nemo_icon_canvas_item_get_icon_canvas_rectangle (item, &item->details->canvas_rect);
 	item->details->text_rect = compute_text_rectangle (item, item->details->canvas_rect,
 							   TRUE, BOUNDS_USAGE_FOR_DISPLAY);
 
 	/* queue a redraw. */
 	eel_canvas_request_redraw (canvas_item->canvas,
 				   before.x0, before.y0,
-				   before.x1 + 1, before.y1 + 1);
+				   before.x1 + 5, before.y1 + 5);
 }
 
 /* Update handler for the icon canvas item. */
@@ -1568,10 +1561,10 @@ create_label_layout (NemoIconCanvasItem *item,
 		desc = pango_font_description_from_string (container->details->font);
 	} else {
 		desc = pango_font_description_copy (pango_context_get_font_description (context));
-		pango_font_description_set_size (desc,
-						 pango_font_description_get_size (desc) +
-						 container->details->font_size_table [container->details->zoom_level]);
 	}
+    pango_font_description_set_size (desc,
+                                     pango_font_description_get_size (desc) +
+                                     container->details->font_size_table [container->details->zoom_level]);
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
@@ -1932,9 +1925,9 @@ nemo_icon_canvas_item_get_text_rectangle (NemoIconCanvasItem *item,
 
 
 /* Get the rectangle of the icon only, in canvas coordinates. */
-static void
-get_icon_canvas_rectangle (NemoIconCanvasItem *item,
-			   EelIRect *rect)
+void
+nemo_icon_canvas_item_get_icon_canvas_rectangle (NemoIconCanvasItem *item,
+                                                 EelIRect *rect)
 {
     gint width, height;
 
@@ -2081,21 +2074,21 @@ nemo_icon_canvas_item_get_max_text_width (NemoIconCanvasItem *item)
 	canvas_item = EEL_CANVAS_ITEM (item);
 	container = NEMO_ICON_CONTAINER (canvas_item->canvas);
     if (nemo_icon_container_is_tighter_layout (container)) {
-       return MAX_TEXT_WIDTH_TIGHTER * canvas_item->canvas->pixels_per_unit;
+       return GET_VIEW_CONSTANT (container, max_text_width_tighter) * canvas_item->canvas->pixels_per_unit;
     } else {
         if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
            if (container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_L_R ||
                container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_R_L) {
                if (container->details->all_columns_same_width) {
-                   return MAX_TEXT_WIDTH_BESIDE_TOP_TO_BOTTOM * canvas_item->canvas->pixels_per_unit;
+                   return GET_VIEW_CONSTANT (container, max_text_width_beside_top_to_bottom) * canvas_item->canvas->pixels_per_unit;
                } else {
                    return -1;
                }
             } else {
-                return MAX_TEXT_WIDTH_BESIDE * canvas_item->canvas->pixels_per_unit;
+                return GET_VIEW_CONSTANT (container, max_text_width_beside) * canvas_item->canvas->pixels_per_unit;
             }
         } else {
-           return MAX_TEXT_WIDTH_STANDARD * canvas_item->canvas->pixels_per_unit;
+           return GET_VIEW_CONSTANT (container, max_text_width_standard) * canvas_item->canvas->pixels_per_unit;
         }
 	}
 }

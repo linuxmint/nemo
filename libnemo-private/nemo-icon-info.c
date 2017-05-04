@@ -645,6 +645,25 @@ nemo_get_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 }
 
 guint
+nemo_get_desktop_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
+{
+    switch (zoom_level) {
+        case NEMO_ZOOM_LEVEL_SMALL:
+            return NEMO_DESKTOP_ICON_SIZE_SMALL;
+        case NEMO_ZOOM_LEVEL_STANDARD:
+            return NEMO_DESKTOP_ICON_SIZE_STANDARD;
+        case NEMO_ZOOM_LEVEL_LARGE:
+            return NEMO_DESKTOP_ICON_SIZE_LARGE;
+        case NEMO_ZOOM_LEVEL_SMALLEST:
+        case NEMO_ZOOM_LEVEL_SMALLER:
+        case NEMO_ZOOM_LEVEL_LARGER:
+        case NEMO_ZOOM_LEVEL_LARGEST:
+        default:
+            g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
+    }
+}
+
+guint
 nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 {
     switch (zoom_level) {

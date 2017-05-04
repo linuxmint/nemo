@@ -65,6 +65,32 @@ Description: file manager and graphical shell for Cinnamon
  Several icon themes and components for viewing different kinds of files
  are available in separate packages.
 
+Package: nemo-bin
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         nemo (= ${source:Version}),
+Description: file manager and graphical shell for Cinnamon
+ Nemo is the official file manager for the Cinnamon desktop. It allows
+ to browse directories, preview files and launch applications associated
+ with them. It is also responsible for handling the icons on the Cinnamon
+ desktop. It works on local and remote filesystems.
+ .
+ This package contains the executable and desktop files for nemo.
+
+Package: nemo-desktop-bin
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         nemo (= ${source:Version}),
+Description: file manager and graphical shell for Cinnamon
+ Nemo is the official file manager for the Cinnamon desktop. It allows
+ to browse directories, preview files and launch applications associated
+ with them. It is also responsible for handling the icons on the Cinnamon
+ desktop. It works on local and remote filesystems.
+ .
+ This package contains the executable and desktop files for nemo-desktop.
+
 Package: nemo-dbg
 Section: debug
 Architecture: any

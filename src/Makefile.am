@@ -2,6 +2,7 @@ include $(top_srcdir)/Makefile.shared
 
 bin_PROGRAMS=					\
 	nemo				\
+    nemo-desktop \
 	nemo-autorun-software		\
 	nemo-connect-server			\
     nemo-open-with \
@@ -71,7 +72,6 @@ nemo-resources.c: nemo.gresource.xml $(UI_FILES)
 nemo-resources.h: nemo.gresource.xml
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nemo $(srcdir)/nemo.gresource.xml
 
-
 BUILT_SOURCES = \
 	$(dbus_built_sources) \
 	nemo-resources.c \
@@ -97,14 +97,14 @@ nemo_SOURCES = \
 	nemo-connect-server-dialog-nonmain.c \
 	nemo-connect-server-operation.c	\
 	nemo-connect-server-operation.h	\
-	nemo-desktop-icon-view.c		\
-	nemo-desktop-icon-view.h		\
+    nemo-desktop-icon-grid-view.c \
+    nemo-desktop-icon-grid-view.h \
 	nemo-desktop-item-properties.c	\
 	nemo-desktop-item-properties.h	\
     nemo-desktop-manager.c \
     nemo-desktop-manager.h \
-	nemo-desktop-window.c		\
-	nemo-desktop-window.h		\
+    nemo-desktop-window.c       \
+    nemo-desktop-window.h       \
 	nemo-error-reporting.c		\
 	nemo-error-reporting.h		\
     nemo-extension-config-widget.c      \
@@ -117,6 +117,8 @@ nemo_SOURCES = \
 	nemo-freedesktop-dbus.h		\
 	nemo-icon-view.c			\
 	nemo-icon-view.h			\
+    nemo-icon-view-grid-container.c      \
+    nemo-icon-view-grid-container.h      \
 	nemo-icon-view-container.c		\
 	nemo-icon-view-container.h		\
 	nemo-image-properties-page.c	\
@@ -133,6 +135,8 @@ nemo_SOURCES = \
 	nemo-location-entry.c               \
 	nemo-location-entry.h               \
 	nemo-main.c 			\
+    nemo-main-application.c \
+    nemo-main-application.h \
 	nemo-mime-actions.c 		\
 	nemo-mime-actions.h 		\
 	nemo-navigation-action.c		\
@@ -210,6 +214,137 @@ EMPTY_VIEW_SOURCES = \
 if ENABLE_EMPTY_VIEW
 nemo_SOURCES += $(EMPTY_VIEW_SOURCES)
 endif
+
+nemo_desktop_SOURCES = \
+	nemo-actions.h          \
+    nemo-action-config-widget.c         \
+    nemo-action-config-widget.h         \
+    nemo-application.c          \
+    nemo-application.h          \
+    nemo-blank-desktop-window.c \
+    nemo-blank-desktop-window.h \
+    nemo-bookmark-list.c        \
+    nemo-bookmark-list.h        \
+    nemo-bookmarks-window.c     \
+    nemo-bookmarks-window.h     \
+    nemo-config-base-widget.c           \
+    nemo-config-base-widget.h           \
+    nemo-connect-server-dialog.c    \
+    nemo-connect-server-dialog.h    \
+    nemo-connect-server-dialog-nonmain.c \
+    nemo-connect-server-operation.c \
+    nemo-connect-server-operation.h \
+    nemo-desktop-application.c          \
+    nemo-desktop-application.h          \
+    nemo-desktop-item-properties.c  \
+    nemo-desktop-item-properties.h  \
+    nemo-desktop-icon-grid-view.c       \
+    nemo-desktop-icon-grid-view.h       \
+    nemo-desktop-icon-view.c       \
+    nemo-desktop-icon-view.h       \
+    nemo-desktop-main.c \
+    nemo-desktop-manager.c \
+    nemo-desktop-manager.h \
+    nemo-desktop-window.c       \
+    nemo-desktop-window.h       \
+    nemo-error-reporting.c      \
+    nemo-error-reporting.h      \
+    nemo-extension-config-widget.c      \
+    nemo-extension-config-widget.h      \
+    nemo-file-management-properties.c   \
+    nemo-file-management-properties.h   \
+    nemo-floating-bar.c         \
+    nemo-floating-bar.h         \
+    nemo-freedesktop-dbus.c     \
+    nemo-freedesktop-dbus.h     \
+    nemo-icon-view.c            \
+    nemo-icon-view.h            \
+    nemo-icon-view-container.c      \
+    nemo-icon-view-container.h      \
+    nemo-icon-view-grid-container.c      \
+    nemo-icon-view-grid-container.h      \
+    nemo-image-properties-page.c    \
+    nemo-image-properties-page.h    \
+    nemo-interesting-folder-bar.c  \
+    nemo-interesting-folder-bar.h  \
+    nemo-list-model.c           \
+    nemo-list-model.h           \
+    nemo-list-view-private.h        \
+    nemo-list-view.c            \
+    nemo-list-view.h            \
+    nemo-location-bar.c             \
+    nemo-location-bar.h         \
+    nemo-location-entry.c               \
+    nemo-location-entry.h               \
+    nemo-mime-actions.c         \
+    nemo-mime-actions.h         \
+    nemo-navigation-action.c        \
+    nemo-navigation-action.h        \
+    nemo-navigation-state.c     \
+    nemo-navigation-state.h     \
+    nemo-notebook.c         \
+    nemo-notebook.h         \
+    nemo-pathbar.c          \
+    nemo-pathbar.h          \
+    nemo-places-sidebar.c       \
+    nemo-places-sidebar.h       \
+    nemo-plugin-manager.c        \
+    nemo-plugin-manager.h        \
+    nemo-previewer.c            \
+    nemo-previewer.h            \
+    nemo-progress-info-widget.c     \
+    nemo-progress-info-widget.h     \
+    nemo-progress-ui-handler.c      \
+    nemo-progress-ui-handler.h      \
+    nemo-properties-window.c        \
+    nemo-properties-window.h        \
+    nemo-query-editor.c         \
+    nemo-query-editor.h         \
+    nemo-script-config-widget.c         \
+    nemo-script-config-widget.h         \
+    nemo-self-check-functions.c     \
+    nemo-self-check-functions.h     \
+    nemo-statusbar.c    \
+    nemo-statusbar.h    \
+    nemo-thumbnail-problem-bar.c  \
+    nemo-thumbnail-problem-bar.h  \
+    nemo-toolbar.c          \
+    nemo-toolbar.h          \
+    nemo-tree-sidebar.c         \
+    nemo-tree-sidebar.h         \
+    nemo-tree-sidebar-model.c       \
+    nemo-tree-sidebar-model.h       \
+    nemo-trash-bar.c            \
+    nemo-trash-bar.h            \
+    nemo-view.c             \
+    nemo-view.h             \
+    nemo-view-dnd.c         \
+    nemo-view-dnd.h         \
+    nemo-view-factory.c         \
+    nemo-view-factory.h         \
+    nemo-window-bookmarks.c     \
+    nemo-window-bookmarks.h     \
+    nemo-window-manage-views.c      \
+    nemo-window-manage-views.h      \
+    nemo-window-menus.c             \
+    nemo-window-menus.h         \
+    nemo-window-pane.c  \
+    nemo-window-pane.h  \
+    nemo-window-private.h       \
+    nemo-window-slot.c          \
+    nemo-window-slot.h          \
+    nemo-window-slot-dnd.c      \
+    nemo-window-slot-dnd.h      \
+    nemo-window.c           \
+    nemo-window.h           \
+    nemo-window-types.h         \
+    nemo-x-content-bar.c        \
+    nemo-x-content-bar.h        \
+    $(NULL)
+
+nodist_nemo_desktop_SOURCES = \
+	$(BUILT_SOURCES) \
+	$(NULL)
 
 nemo_autorun_software_SOURCES= 			\
 	nemo-autorun-software.c			\

@@ -80,10 +80,11 @@ gint
 nemo_desktop_utils_get_primary_monitor (void)
 {
 #if GTK_CHECK_VERSION (3, 22, 0)
+    gint n_mon, i;
+
     ensure_display ();
 
-    gint n_mon = gdk_display_get_n_monitors (default_display);
-    gint i;
+    n_mon = gdk_display_get_n_monitors (default_display);
 
     for (i = 0; i < n_mon; i ++) {
         GdkMonitor *monitor = gdk_display_get_monitor (default_display, i);
@@ -101,18 +102,39 @@ nemo_desktop_utils_get_primary_monitor (void)
 gint
 nemo_desktop_utils_get_monitor_for_widget (GtkWidget *widget)
 {
-    ensure_screen ();
+    GdkWindow *window;
+    GtkWidget *toplevel;
+    gint monitor;
 
     g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
 
-    GdkWindow *window = gtk_widget_get_window (widget);
+    toplevel = gtk_widget_get_toplevel (widget);
 
-    if (window == NULL)
+    if (toplevel != NULL &&
+        g_object_get_data (G_OBJECT (toplevel), "is_desktop_window")) {
+        monitor = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (toplevel), "monitor_number"));
+        return monitor;
+    }
+
+    ensure_screen ();
+
+    window = gtk_widget_get_window (widget);
+
+    if (window == NULL) {
         return 0;
+    }
 
-    gint monitor = gdk_screen_get_monitor_at_window (default_screen, window);
+    monitor = gdk_screen_get_monitor_at_window (default_screen, window);
 
     return monitor;
+}
+
+gint
+nemo_desktop_utils_get_num_monitors (void)
+{
+    ensure_screen ();
+
+    return gdk_screen_get_n_monitors (default_screen);
 }
 
 gboolean
@@ -120,10 +142,11 @@ nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary)
 {
     GdkRectangle rect_primary;
     GdkRectangle rect_test;
+    gint n_monitors;
 
     ensure_screen ();
 
-    gint n_monitors = gdk_screen_get_n_monitors (default_screen);
+    n_monitors = gdk_screen_get_n_monitors (default_screen);
 
 	g_return_val_if_fail (monitor >= 0 && monitor < n_monitors, FALSE);
 	g_return_val_if_fail (x_primary >= 0 && x_primary < n_monitors, FALSE);
@@ -131,10 +154,10 @@ nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary)
     gdk_screen_get_monitor_geometry(default_screen, x_primary, &rect_primary);
     gdk_screen_get_monitor_geometry(default_screen, monitor, &rect_test);
 
-    if (rect_primary.x == rect_test.x &&
-    		rect_primary.y == rect_test.y) {
-    	return TRUE;
+    if (rect_primary.x == rect_test.x && rect_primary.y == rect_test.y) {
+        return TRUE;
     }
+
     return FALSE;
 }
 

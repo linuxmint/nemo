@@ -9,16 +9,26 @@
     border-radius: 3px;
 }
 
+.nemo-desktop {
+    -NemoIconContainer-activate-prelight-icon-label: true;
+}
+
 .nemo-desktop.nemo-canvas-item {
     color: #eeeeee;
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 
+.nemo-desktop.nemo-canvas-item:prelight {
+    background-color: alpha(black, 0.5);
+    background-image: none;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+}
+
 .nemo-desktop.nemo-canvas-item:selected {
     background-color: alpha(@theme_selected_bg_color, 0.8);
     background-image: none;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
     color: #f5f5f5;
-    text-shadow: none;
 }
 
 /* EelEditableLabel (icon labels) */

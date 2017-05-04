@@ -37,10 +37,12 @@
 
 #include "nemo-file-dnd.h"
 #include "nemo-icon-private.h"
+#include "libnemo-private/nemo-icon.h"
 #include "nemo-link.h"
 #include "nemo-metadata.h"
 #include "nemo-selection-canvas-item.h"
 #include "nemo-desktop-utils.h"
+#include "nemo-global-preferences.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gnome-extensions.h>
 #include <eel/eel-graphic-effects.h>
@@ -86,6 +88,29 @@ static char * nemo_icon_container_find_drop_target (NemoIconContainer *container
 							GdkDragContext *context,
 							int x, int y, gboolean *icon_hit,
 							gboolean rewrite_desktop);
+
+static void
+initialize_dnd_grid (NemoIconContainer *container)
+{
+    if (container->details->dnd_grid != NULL) {
+        nemo_centered_placement_grid_free (container->details->dnd_grid);
+    }
+
+    container->details->dnd_grid = nemo_centered_placement_grid_new (container,
+                                                                     container->details->horizontal);
+
+    nemo_centered_placement_grid_pre_populate (container->details->dnd_grid, container->details->icons);
+}
+
+static void
+free_dnd_grid (NemoIconContainer *container)
+{
+    if (container->details->dnd_grid != NULL) {
+        nemo_centered_placement_grid_free (container->details->dnd_grid);
+    }
+
+    container->details->dnd_grid = NULL;
+}
 
 static EelCanvasItem *
 create_selection_shadow (NemoIconContainer *container,
@@ -519,6 +544,12 @@ drag_end_callback (GtkWidget *widget,
 	NemoIconDndInfo *dnd_info;
 
 	container = NEMO_ICON_CONTAINER (widget);
+
+    container->details->insert_dnd_mode = FALSE;
+
+    free_dnd_grid (container);
+    gtk_widget_queue_draw (GTK_WIDGET (container));
+
 	dnd_info = container->details->dnd_info;
 
 	nemo_drag_destroy_selection_list (dnd_info->drag_info.selection_list);
@@ -527,7 +558,7 @@ drag_end_callback (GtkWidget *widget,
 
 static NemoIcon *
 nemo_icon_container_item_at (NemoIconContainer *container,
-				 int x, int y)
+                                int x, int y)
 {
 	GList *p;
 	int size;
@@ -780,69 +811,155 @@ stop_auto_scroll (NemoIconContainer *container)
 	nemo_drag_autoscroll_stop (&container->details->dnd_info->drag_info);
 }
 
+static NemoIcon *
+get_icon_from_drag_info (NemoIconContainer     *container,
+                         NemoDragSelectionItem *item,
+                         time_t                 now,
+                         gint                   monitor)
+{
+    NemoIcon *icon;
+    NemoFile *file;
+
+    icon = nemo_icon_container_get_icon_by_uri (container, item->uri);
+
+    if (icon == NULL) {
+        /* probably dragged from another monitor or screen.  Add it to
+         * this screen
+         */
+        file = nemo_file_get_by_uri (item->uri);
+        nemo_file_set_time_metadata (file, NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP, now);
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+        nemo_file_set_monitor_number (file, monitor);
+        // nemo_file_set_position (file, world_x + item->icon_x, world_y + item->icon_y);
+        nemo_icon_container_add (container, NEMO_ICON_CONTAINER_ICON_DATA (file));
+        
+        icon = nemo_icon_container_get_icon_by_uri (container, item->uri);
+    }
+
+    return icon;
+}
+
 static void
 handle_local_move (NemoIconContainer *container,
 		   double world_x, double world_y)
 {
-	GList *moved_icons, *p;
+	GList *moved_icons, *p, *push_list;
+
 	NemoDragSelectionItem *item;
 	NemoIcon *icon;
 	NemoFile *file = NULL;
     gint monitor;
 	time_t now;
 
-	if (container->details->auto_layout) {
-		return;
-	}
+    if (container->details->auto_layout) {
+        if (nemo_icon_container_get_is_desktop (container)) {
+
+            item = container->details->dnd_info->drag_info.selection_list->data;
+
+            if (nemo_icon_container_get_icon_by_uri (container,
+                                                     item->uri)) {
+                return;
+            }
+        } else {
+            return;
+        }
+    }
+
+    monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
 	time (&now);
 
-	/* Move and select the icons. */
-	moved_icons = NULL;
-	for (p = container->details->dnd_info->drag_info.selection_list; p != NULL; p = p->next) {
-		item = p->data;
-		
-		icon = nemo_icon_container_get_icon_by_uri
-			(container, item->uri);
+    /* If we're inserting items, we need to also shift icons over that are in our way.
+     * To do this, let's append icons that are subsequent to the drop point until we've
+     * got a contiguous space long enough to hold our original selection *plus* the icons
+     * we've picked up to accomodate them */
 
-		if (icon == NULL) {
-			/* probably dragged from another screen.  Add it to
-			 * this screen
-			 */
+    push_list = NULL;
 
-			file = nemo_file_get_by_uri (item->uri);
+    if (container->details->insert_dnd_mode) {
+        NemoCenteredPlacementGrid *dnd_grid;
+        gint drop_x, drop_y;
+        gboolean free_grid_after;
 
-			nemo_file_set_time_metadata (file,
-							 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP, now);
+        free_grid_after = FALSE;
 
-			nemo_icon_container_add (container, NEMO_ICON_CONTAINER_ICON_DATA (file));
-			
-			icon = nemo_icon_container_get_icon_by_uri
-				(container, item->uri);
-		}
+        if (container->details->dnd_grid == NULL) {
+            /* This might be null if we're dragging from one monitor to another -
+             * the target container never had an drag start signal. */
+            initialize_dnd_grid (container);
+            free_grid_after = TRUE;
+        }
 
-        if (file == NULL)
-            file = NEMO_FILE (icon->data);
+        dnd_grid = container->details->dnd_grid;
 
+        drop_x = container->details->current_dnd_x - container->details->left_margin;
+        drop_y = container->details->current_dnd_y - container->details->top_margin;
+
+        push_list = nemo_centered_placement_grid_clear_grid_for_selection (dnd_grid,
+                                                                           drop_x,
+                                                                           drop_y,
+                                                                           container->details->dnd_info->drag_info.selection_list);
+
+        if (free_grid_after) {
+            free_dnd_grid (container);
+        }
+    }
+
+    /* Move the extra icons that were needed to accomodate the selection,
+     * but don't add them to moved_icons - we don't want them highlighted
+     * when we're done */
+
+    for (p = push_list; p != NULL; p = p->next) {
+        item = p->data;
+
+        icon = get_icon_from_drag_info (container, item, now, monitor);
+
+        file = NEMO_FILE (icon->data);
         nemo_file_set_is_desktop_orphan (file, FALSE);
 
-        monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
-        nemo_file_set_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0, monitor);
+        nemo_icon_container_move_icon (container, icon,
+                                       item->icon_x,
+                                       item->icon_y,
+                                       icon->scale,
+                                       TRUE, TRUE, TRUE);
+    }
 
-		if (item->got_icon_position) {
-			nemo_icon_container_move_icon
-				(container, icon,
-				 world_x + item->icon_x, world_y + item->icon_y,
-				 icon->scale,
-				 TRUE, TRUE, TRUE);
-		}
-		moved_icons = g_list_prepend (moved_icons, icon);
-	}		
-	nemo_icon_container_select_list_unselect_others
-		(container, moved_icons);
-	/* Might have been moved in a way that requires adjusting scroll region. */
-	nemo_icon_container_update_scroll_region (container);
-	g_list_free (moved_icons);
+    nemo_drag_destroy_selection_list (push_list);
+
+    /* Now move and select the icons of the original drag selection */
+    moved_icons = NULL;
+
+    for (p = container->details->dnd_info->drag_info.selection_list; p != NULL; p = p->next) {
+        item = p->data;
+
+        icon = get_icon_from_drag_info (container, item, now, monitor);
+
+        file = NEMO_FILE (icon->data);
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+
+        if (container->details->insert_dnd_mode) {
+            nemo_icon_container_move_icon (container, icon,
+                                           item->icon_x,
+                                           item->icon_y,
+                                           icon->scale,
+                                           TRUE, TRUE, TRUE);
+        } else if (item->got_icon_position) {
+            nemo_icon_container_move_icon (container, icon,
+                                           world_x + item->icon_x,
+                                           world_y + item->icon_y,
+                                           icon->scale,
+                                           TRUE, TRUE, TRUE);
+        }
+
+        moved_icons = g_list_prepend (moved_icons, icon);
+    }
+
+    nemo_icon_container_select_list_unselect_others (container, moved_icons);
+
+    /* Might have been moved in a way that requires adjusting scroll region. */
+    nemo_icon_container_update_scroll_region (container);
+
+    g_list_free (moved_icons);
 }
 
 static void
@@ -899,7 +1016,7 @@ handle_nonlocal_move (NemoIconContainer *container,
 
 	if (is_rtl) {
 		gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
-		x = CANVAS_WIDTH (container, allocation) - x;
+		x = nemo_icon_container_get_canvas_width (container, allocation) - x;
 	}
 
 	/* start the copy */
@@ -1157,17 +1274,17 @@ nemo_icon_dnd_update_drop_target (NemoIconContainer *container,
 
 	/* Find if target icon accepts our drop. */
 	if (icon != NULL) {
-		    uri = nemo_icon_container_get_icon_uri (container, icon);
-		    file = nemo_file_get_by_uri (uri);
-		    g_free (uri);
-		
-		    if (!nemo_drag_can_accept_info (file,
-					    		container->details->dnd_info->drag_info.data_type,
-							container->details->dnd_info->drag_info.selection_list)) {
-			    icon = NULL;
-		    }
+		uri = nemo_icon_container_get_icon_uri (container, icon);
+		file = nemo_file_get_by_uri (uri);
+		g_free (uri);
 
-		    nemo_file_unref (file);
+		if (!nemo_drag_can_accept_info (file,
+			container->details->dnd_info->drag_info.data_type,
+			container->details->dnd_info->drag_info.selection_list)) {
+			icon = NULL;
+		}
+
+		nemo_file_unref (file);
 	}
 
 	set_drop_target (container, icon);
@@ -1212,7 +1329,7 @@ drag_leave_callback (GtkWidget *widget,
 		eel_canvas_item_hide (dnd_info->shadow);
 
 	stop_dnd_highlight (widget);
-	
+
 	set_drop_target (NEMO_ICON_CONTAINER (widget), NULL);
 	stop_auto_scroll (NEMO_ICON_CONTAINER (widget));
 	nemo_icon_container_free_drag_data(NEMO_ICON_CONTAINER (widget));
@@ -1267,7 +1384,14 @@ nemo_icon_dnd_begin_drag (NemoIconContainer *container,
 
 	dnd_info = container->details->dnd_info;
 	g_return_if_fail (dnd_info != NULL);
-	
+
+    initialize_dnd_grid (container);
+    gtk_widget_queue_draw (GTK_WIDGET (container));
+
+    if (!container->details->auto_layout && container->details->keep_aligned) {
+        container->details->insert_dnd_mode = TRUE;
+    }
+
 	/* Notice that the event is in bin_window coordinates, because of
            the way the canvas handles events.
 	*/
@@ -1392,22 +1516,30 @@ drag_motion_callback (GtkWidget *widget,
 		      int x, int y,
 		      guint32 time)
 {
-	int action;
+    NemoIconContainer *container;
+    int action;
 
-	nemo_icon_container_ensure_drag_data (NEMO_ICON_CONTAINER (widget), context, time);
-	nemo_icon_container_position_shadow (NEMO_ICON_CONTAINER (widget), x, y);
-	nemo_icon_dnd_update_drop_target (NEMO_ICON_CONTAINER (widget), context, x, y);
-	set_up_auto_scroll_if_needed (NEMO_ICON_CONTAINER (widget));
+    container = NEMO_ICON_CONTAINER (widget);
+
+	nemo_icon_container_ensure_drag_data (container, context, time);
+	nemo_icon_container_position_shadow (container, x, y);
+
+    container->details->current_dnd_x = x;
+    container->details->current_dnd_y = y;
+
+	nemo_icon_dnd_update_drop_target (container, context, x, y);
+	set_up_auto_scroll_if_needed (container);
 	/* Find out what the drop actions are based on our drag selection and
 	 * the drop target.
 	 */
 	action = 0;
-	nemo_icon_container_get_drop_action (NEMO_ICON_CONTAINER (widget), context, x, y,
+	nemo_icon_container_get_drop_action (container, context, x, y,
 						 &action);
 	if (action != 0) {
 		start_dnd_highlight (widget);
+        gtk_widget_queue_draw (widget);
 	}
-	  
+
 	gdk_drag_status (context, action, time);
 
 	return TRUE;
@@ -1443,7 +1575,7 @@ nemo_icon_dnd_end_drag (NemoIconContainer *container)
 	NemoIconDndInfo *dnd_info;
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
-		
+
 	dnd_info = container->details->dnd_info;
 	g_return_if_fail (dnd_info != NULL);
 	stop_auto_scroll (container);
@@ -1635,7 +1767,6 @@ nemo_icon_dnd_init (NemoIconContainer *container)
 	targets = gtk_drag_dest_get_target_list (GTK_WIDGET (container));
 	gtk_target_list_add_text_targets (targets, NEMO_ICON_DND_TEXT);
 
-	
 	/* Messages for outgoing drag. */
 	g_signal_connect (container, "drag_begin", 
 			  G_CALLBACK (drag_begin_callback), NULL);

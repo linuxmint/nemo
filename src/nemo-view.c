@@ -297,6 +297,8 @@ struct NemoViewDetails
     gboolean showing_places_in_to_menus;
 
     GVolumeMonitor *volume_monitor;
+
+    GTimer *load_timer;
 };
 
 typedef struct {
@@ -1124,6 +1126,19 @@ get_view_directory (NemoView *view)
 	g_free (uri);
 	
 	return path;
+}
+
+static gboolean
+get_is_desktop_view (NemoView *view)
+{
+    gchar *uri;
+    gboolean ret;
+
+    uri = nemo_directory_get_uri (view->details->model);
+    ret = eel_uri_is_desktop (uri);
+    g_free (uri);
+
+    return ret;
 }
 
 void
@@ -2678,6 +2693,8 @@ nemo_view_init (NemoView *view)
 	view->details = G_TYPE_INSTANCE_GET_PRIVATE (view, NEMO_TYPE_VIEW,
 						     NemoViewDetails);
 
+    view->details->load_timer = g_timer_new ();
+
 	/* Default to true; desktop-icon-view sets to false */
 	view->details->show_foreign_files = TRUE;
 
@@ -3259,6 +3276,18 @@ reveal_selection_idle_callback (gpointer data)
 	return FALSE;
 }
 
+static gboolean
+idle_timer_report (gpointer user_data)
+{
+    g_return_val_if_fail (NEMO_IS_VIEW (user_data), G_SOURCE_REMOVE);
+
+    NemoView *view = NEMO_VIEW (user_data);
+
+    g_printerr ("Idle...Folder load time: %f seconds\n", g_timer_elapsed (view->details->load_timer, NULL));
+
+    return G_SOURCE_REMOVE;
+}
+
 static void
 done_loading (NemoView *view,
 	      gboolean all_files_seen)
@@ -3313,17 +3342,17 @@ done_loading (NemoView *view,
 	view->details->loading = FALSE;
 	g_signal_emit (view, signals[END_LOADING], 0, all_files_seen);
 
-    if (g_getenv("NEMO_TIME_STARTUP")) {
-        gint64 current = g_get_monotonic_time ();
-        gint64 diff = (current - nemo_startup_time) / 1000;
+    if (g_getenv("NEMO_BENCHMARK_LOADING")) {
+        if (nemo_startup_timer != NULL) {
+            g_printerr ("Nemo startup time: %f seconds\n", g_timer_elapsed (nemo_startup_timer, NULL));
+            g_clear_pointer (&nemo_startup_timer, g_timer_destroy);
+        }
 
-        gint64 milli_remainder = diff % 1000;
-        gint64 seconds = diff / 1000;
+        g_printerr ("Folder load time: %f seconds\n", g_timer_elapsed (view->details->load_timer, NULL));
 
-        g_printerr ("Nemo startup time: %ld.%ld seconds\n", seconds, milli_remainder);
+        g_idle_add_full (1000, (GSourceFunc) idle_timer_report, view, NULL);
     }
 }
-
 
 typedef struct {
 	GHashTable *debuting_files;
@@ -9694,7 +9723,7 @@ real_update_menus (NemoView *view)
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER) &&
-		!NEMO_IS_DESKTOP_ICON_VIEW (view);
+		!get_is_desktop_view (view);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN_ALTERNATE);
@@ -9800,7 +9829,7 @@ real_update_menus (NemoView *view)
 				selection_count),
 		      NULL);
 	
-	show_properties = (!NEMO_IS_DESKTOP_ICON_VIEW (view) || selection_count > 0);
+	show_properties = (!get_is_desktop_view (view) || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);
@@ -10339,6 +10368,8 @@ finish_loading (NemoView *view)
 	nemo_window_report_load_underway (view->details->window,
 					      NEMO_VIEW (view));
 
+    g_timer_start (view->details->load_timer);
+
 	/* Tell interested parties that we've begun loading this directory now.
 	 * Subclasses use this to know that the new metadata is now available.
 	 */
@@ -10855,7 +10886,8 @@ nemo_view_scroll_event (GtkWidget *widget,
 	NemoView *directory_view;
 
 	directory_view = NEMO_VIEW (widget);
-	if (nemo_view_handle_scroll_event (directory_view, event)) {
+    if (!get_is_desktop_view (directory_view) &&
+        nemo_view_handle_scroll_event (directory_view, event)) {
 		return TRUE;
 	}
 
