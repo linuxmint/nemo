@@ -135,9 +135,6 @@ nemo_desktop_window_constructed (GObject *obj)
     gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
     gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
 
-    gtk_window_set_resizable (GTK_WINDOW (window),
-                  FALSE);
-
     gtk_widget_show (GTK_WIDGET (window));
 }
 
