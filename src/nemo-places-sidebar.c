@@ -851,25 +851,6 @@ update_places (NemoPlacesSidebar *sidebar)
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
     }
 
-    /* file system root */
-    mount_uri = "file:///"; /* No need to strdup */
-    icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
-    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
-    tooltip = g_strdup_printf (_("Open the contents of the File System\n%s"), tooltip_info);
-    g_free (tooltip_info);
-    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                           SECTION_COMPUTER,
-                           _("File System"), icon,
-                           mount_uri, NULL, NULL, NULL, 0,
-                           tooltip,
-                           full, TRUE,
-                           cat_iter);
-    g_object_unref (icon);
-    g_free (tooltip);
-
-    if (!recent_is_supported())
-        sidebar->bottom_bookend_uri = g_strdup (mount_uri);
-
     mount_uri = "trash:///"; /* No need to strdup */
     icon = nemo_trash_monitor_get_icon ();
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -906,6 +887,25 @@ update_places (NemoPlacesSidebar *sidebar)
             g_free (tooltip);
         }
     }
+
+    /* file system root */
+    mount_uri = "file:///"; /* No need to strdup */
+    icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
+    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+    tooltip = g_strdup_printf (_("Open the contents of the File System\n%s"), tooltip_info);
+    g_free (tooltip_info);
+    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                           SECTION_DEVICES,
+                           _("File System"), icon,
+                           mount_uri, NULL, NULL, NULL, 0,
+                           tooltip,
+                           full, TRUE,
+                           cat_iter);
+    g_object_unref (icon);
+    g_free (tooltip);
+
+    if (!recent_is_supported())
+        sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
     /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
     mounts = g_volume_monitor_get_mounts (volume_monitor);
