@@ -111,7 +111,6 @@ Name[vi_VN]=Nhà
 Name[zh_CN]=主目录
 Name[zh_HK]=家
 Name[zh_TW]=家
-Comment=None
 Exec=nemo %U
 
 [Desktop Action open-computer]
@@ -210,7 +209,6 @@ Name[vi_VN]=Máy tính
 Name[zh_CN]=计算机
 Name[zh_HK]=電腦
 Name[zh_TW]=電腦
-Comment=None
 Exec=nemo computer:///
 
 [Desktop Action open-trash]
@@ -320,5 +318,4 @@ Name[vi_VN]=Thùng rác
 Name[zh_CN]=回收站
 Name[zh_HK]=垃圾桶
 Name[zh_TW]=回收筒
-Comment=None
 Exec=nemo trash:///
