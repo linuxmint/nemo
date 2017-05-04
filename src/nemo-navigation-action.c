@@ -196,11 +196,11 @@ new_tab_action (NemoNavigationAction *self)
 
 	switch (self->priv->direction) {
 	case NEMO_NAVIGATION_DIRECTION_FORWARD:
-		nemo_window_back_or_forward (window, FALSE, 1,
+		nemo_window_back_or_forward (window, FALSE, 0,
 					     NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
 		break;
 	case NEMO_NAVIGATION_DIRECTION_BACK:
-		nemo_window_back_or_forward (window, TRUE, 1,
+		nemo_window_back_or_forward (window, TRUE, 0,
 					     NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
 		break;
 	case NEMO_NAVIGATION_DIRECTION_UP:
@@ -208,18 +208,24 @@ new_tab_action (NemoNavigationAction *self)
 					NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
 		break;
 	/* remaining actions are not supported */
-	case NEMO_NAVIGATION_DIRECTION_RELOAD:
-	case NEMO_NAVIGATION_DIRECTION_HOME:
-	case NEMO_NAVIGATION_DIRECTION_COMPUTER:
-	case NEMO_NAVIGATION_DIRECTION_EDIT:
-		return FALSE;
 	default:
-		g_assert_not_reached ();
 		return FALSE;
 	}
 	
 
 	return TRUE;
+}
+
+/* Checks if, given the event, the action should be performed in a new tab. */
+static gboolean
+is_new_tab_event(GdkEventButton *event) {
+	/* When double clicking with the middle bouse button, tool_button_press_cb
+	   is called three instead of two times. Handle the current event
+	   as new_tab_action only if it's an actual button press to prevent
+	   calling new_tab_action the third time. */
+	return (event->button == 2
+		|| (event->button == 1 && event->state & GDK_CONTROL_MASK))
+	       && event->type == GDK_BUTTON_PRESS;
 }
 
 static gboolean
@@ -235,12 +241,7 @@ tool_button_press_cb (GtkButton *button,
                 return TRUE;
         }
 
-	/* When double clicking with the middle bouse button, tool_button_press_cb
-	   is called three instead of two times. Handle the current event
-	   as new_tab_action only if it's an actual button press to prevent
-	   calling new_tab_action the third time. */
-	if (event->button == 2 && event->type == GDK_BUTTON_PRESS
-	    && new_tab_action (self)) {
+	if (is_new_tab_event (event) && new_tab_action (self)) {
 		/* it was a valid new_tab_action -> event is handled */
 		return TRUE;
 	}
