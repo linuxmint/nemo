@@ -1,7 +1,6 @@
-usr/bin/nemo-autorun-software
-usr/bin/nemo-connect-server
-usr/bin/nemo-open-with
+usr/bin
 usr/lib/nemo/nemo-convert-metadata
 usr/lib/nemo/nemo-extensions-list
+usr/share/applications
 usr/share/dbus-1
 usr/share/man
