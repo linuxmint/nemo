@@ -1,0 +1,19 @@
+[Nemo Action]
+
+Active=true
+
+Name=Enqueue in Audacious
+Comment=Enqueue in Audacious
+
+Name[pt]=Enfileirar no Audacious
+Comment[pt]=Enfileirar no Audacious
+
+Exec=audacious -e "%U"
+
+Icon-Name=media-playback-start
+
+Selection=notnone
+
+Extensions=mp3;flac;ogg;mid;midi;
+
+Dependencies=audacious;
