@@ -1,3 +1,9 @@
+nemo (3.4.1) sonya; urgency=medium
+
+  * Revert "split executables into separate packages."
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 05 May 2017 17:24:21 +0100
+
 nemo (3.4.0) sonya; urgency=medium
 
   [ Daniel Schürmann ]
