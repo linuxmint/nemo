@@ -2545,6 +2545,29 @@ nemo_icon_view_get_id (NemoView *view)
 }
 
 static void
+set_compact_view (NemoIconView *icon_view,
+                  gboolean      compact)
+{
+    icon_view->details->compact = compact;
+
+    if (compact) {
+        nemo_icon_container_set_layout_mode (get_icon_container (icon_view),
+                                             gtk_widget_get_direction (GTK_WIDGET(icon_view)) == GTK_TEXT_DIR_RTL ?
+                                                                                                     NEMO_ICON_LAYOUT_T_B_R_L :
+                                                                                                     NEMO_ICON_LAYOUT_T_B_L_R);
+        nemo_icon_container_set_forced_icon_size (get_icon_container (icon_view),
+                                                  NEMO_ICON_SIZE_SMALLEST);
+    } else {
+        nemo_icon_container_set_layout_mode (get_icon_container (icon_view),
+                                             gtk_widget_get_direction (GTK_WIDGET(icon_view)) == GTK_TEXT_DIR_RTL ?
+                                                                                                     NEMO_ICON_LAYOUT_R_L_T_B :
+                                                                                                     NEMO_ICON_LAYOUT_L_R_T_B);
+        nemo_icon_container_set_forced_icon_size (get_icon_container (icon_view),
+                                                  0);
+    }
+}
+
+static void
 nemo_icon_view_set_property (GObject         *object,
 			   guint            prop_id,
 			   const GValue    *value,
@@ -2556,15 +2579,7 @@ nemo_icon_view_set_property (GObject         *object,
 
 	switch (prop_id)  {
 	case PROP_COMPACT:
-		icon_view->details->compact = g_value_get_boolean (value);
-		if (icon_view->details->compact) {
-			nemo_icon_container_set_layout_mode (get_icon_container (icon_view),
-								 gtk_widget_get_direction (GTK_WIDGET(icon_view)) == GTK_TEXT_DIR_RTL ?
-								 NEMO_ICON_LAYOUT_T_B_R_L :
-								 NEMO_ICON_LAYOUT_T_B_L_R);
-			nemo_icon_container_set_forced_icon_size (get_icon_container (icon_view),
-								      NEMO_ICON_SIZE_SMALLEST);
-		}
+        set_compact_view (icon_view, g_value_get_boolean (value));
 		break;
 	case PROP_SUPPORTS_AUTO_LAYOUT:
 		icon_view->details->supports_auto_layout = g_value_get_boolean (value);
@@ -2764,8 +2779,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 				      "Compact",
 				      "Whether this view provides a compact listing",
 				      FALSE,
-				      G_PARAM_WRITABLE |
-				      G_PARAM_CONSTRUCT_ONLY);
+				      G_PARAM_WRITABLE);
 	properties[PROP_SUPPORTS_AUTO_LAYOUT] =
 		g_param_spec_boolean ("supports-auto-layout",
 				      "Supports auto layout",
@@ -2812,11 +2826,13 @@ nemo_icon_view_create (NemoWindowSlot *slot)
 
 	view = g_object_new (NEMO_TYPE_ICON_VIEW,
 			     "window-slot", slot,
-			     "compact", FALSE,
 			     NULL);
 #if GTK_CHECK_VERSION (3, 20, 0)
 	gtk_style_context_add_class (gtk_widget_get_style_context (view), GTK_STYLE_CLASS_VIEW);
 #endif
+
+    set_compact_view (view, FALSE);
+
 	return NEMO_VIEW (view);
 }
 
@@ -2827,12 +2843,14 @@ nemo_compact_view_create (NemoWindowSlot *slot)
 
 	view = g_object_new (NEMO_TYPE_ICON_VIEW,
 			     "window-slot", slot,
-			     "compact", TRUE,
 			     NULL);
 #if GTK_CHECK_VERSION (3, 20, 0)
 	gtk_style_context_add_class (gtk_widget_get_style_context (view), GTK_STYLE_CLASS_VIEW);
 #endif
-	return NEMO_VIEW (view);
+
+    set_compact_view (view, TRUE);
+
+    return NEMO_VIEW (view);
 }
 
 static gboolean

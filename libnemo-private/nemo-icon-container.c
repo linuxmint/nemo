@@ -1102,6 +1102,19 @@ invalidate_label_sizes (NemoIconContainer *container)
 	}
 }
 
+static void
+update_icons (NemoIconContainer *container)
+{
+    GList *p;
+    NemoIcon *icon;
+
+    for (p = container->details->icons; p != NULL; p = p->next) {
+        icon = p->data;
+
+        nemo_icon_container_update_icon (container, icon);
+    }
+}
+
 static gboolean
 select_range (NemoIconContainer *container,
 	      NemoIcon *icon1,
@@ -5807,11 +5820,14 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
 							     large_embedded_text, &embedded_text_needs_loading,
 							     &has_open_window);
 
-	if (container->details->forced_icon_size > 0) {
-		pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
-	} else {
-		pixbuf = nemo_icon_info_get_pixbuf (icon_info);
-	}
+    if (container->details->forced_icon_size > 0) {
+        gint scale_factor;
+
+        scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (container));
+        pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size * scale_factor);
+    } else {
+        pixbuf = nemo_icon_info_get_pixbuf (icon_info);
+    }
 
 	nemo_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
 	has_embedded_text_rect = nemo_icon_info_get_embedded_rect (icon_info,
@@ -7374,6 +7390,7 @@ nemo_icon_container_set_forced_icon_size (NemoIconContainer *container,
 		container->details->forced_icon_size = forced_icon_size;
 
 		invalidate_label_sizes (container);
+        update_icons (container);
 		nemo_icon_container_request_update_all (container);
 	}
 }
