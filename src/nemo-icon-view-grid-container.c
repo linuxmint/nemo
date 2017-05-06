@@ -1305,7 +1305,7 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
                                       container->details->horizontal);
 
         if (container->details->horizontal) {
-            if (is_free || before) {
+            if (!is_free && before) {
                 draw_x = grid_rect.x;
                 draw_y = grid_rect.y + (grid_rect.height * .2);
                 draw_distance_x = 0;
@@ -1314,7 +1314,7 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
                 draw_insert_stroke (cr, draw_x, draw_y, draw_distance_x, draw_distance_y);
             }
 
-            if (is_free || !before) {
+            if (!is_free && !before) {
                 draw_x = grid_rect.x + grid_rect.width;
                 draw_y = grid_rect.y + (grid_rect.height * .2);
                 draw_distance_x = 0;
@@ -1323,7 +1323,7 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
                 draw_insert_stroke (cr, draw_x, draw_y, draw_distance_x, draw_distance_y);
             }
         } else {
-            if (is_free || before) {
+            if (!is_free && before) {
                 draw_x = grid_rect.x + (grid_rect.width * .2);
                 draw_y = grid_rect.y;
                 draw_distance_x = grid_rect.width * .6;
@@ -1332,7 +1332,7 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
                 draw_insert_stroke (cr, draw_x, draw_y, draw_distance_x, draw_distance_y);
             }
 
-            if (is_free || !before) {
+            if (!is_free && !before) {
                 draw_x = grid_rect.x + (grid_rect.width * .2);
                 draw_y = grid_rect.y + grid_rect.height;
                 draw_distance_x = grid_rect.width * .6;
