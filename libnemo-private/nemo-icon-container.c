@@ -2915,14 +2915,6 @@ realize (GtkWidget *widget)
 
 	container = NEMO_ICON_CONTAINER (widget);
 
-#if !GTK_CHECK_VERSION(3, 21, 0)
-	/* Ensure that the desktop window is native so the background
-	   set on it is drawn by X. */
-	if (container->details->is_desktop) {
-		gdk_x11_window_get_xid (gtk_layout_get_bin_window (GTK_LAYOUT (widget)));
-	}
-#endif
-
 	/* Set up DnD.  */
 	nemo_icon_dnd_init (container);
 
