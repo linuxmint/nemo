@@ -90,8 +90,10 @@ static char * nemo_icon_container_find_drop_target (NemoIconContainer *container
 							gboolean rewrite_desktop);
 
 static void
-initialize_dnd_grid (NemoIconContainer *container)
+initialize_dnd_grid (NemoIconContainer *container, NemoIconDndInfo *dnd_info)
 {
+    GList *selection, *p;
+
     if (container->details->dnd_grid != NULL) {
         nemo_centered_placement_grid_free (container->details->dnd_grid);
     }
@@ -100,6 +102,28 @@ initialize_dnd_grid (NemoIconContainer *container)
                                                                      container->details->horizontal);
 
     nemo_centered_placement_grid_pre_populate (container->details->dnd_grid, container->details->icons);
+
+    selection = nemo_icon_container_get_selection (container);
+
+    for (p = selection; p != NULL; p = p->next) {
+        NemoFile *file;
+        NemoIcon *icon;
+        gchar *uri;
+
+        file = p->data;
+
+        uri = nemo_file_get_uri (file);
+        icon = nemo_icon_container_get_icon_by_uri (container, uri);
+
+        if (icon != NULL) {
+            nemo_centered_placement_grid_unmark_icon (container->details->dnd_grid,
+                                                      icon);
+        }
+
+        g_free (uri);
+    }
+
+    g_list_free (selection);
 }
 
 static void
@@ -886,7 +910,7 @@ handle_local_move (NemoIconContainer *container,
         if (container->details->dnd_grid == NULL) {
             /* This might be null if we're dragging from one monitor to another -
              * the target container never had an drag start signal. */
-            initialize_dnd_grid (container);
+            initialize_dnd_grid (container, container->details->dnd_info);
             free_grid_after = TRUE;
         }
 
@@ -1385,7 +1409,7 @@ nemo_icon_dnd_begin_drag (NemoIconContainer *container,
 	dnd_info = container->details->dnd_info;
 	g_return_if_fail (dnd_info != NULL);
 
-    initialize_dnd_grid (container);
+    initialize_dnd_grid (container, dnd_info);
     gtk_widget_queue_draw (GTK_WIDGET (container));
 
     if (!container->details->auto_layout && container->details->keep_aligned) {
