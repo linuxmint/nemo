@@ -279,77 +279,85 @@ viewed_file_changed_callback (NemoFile *file,
 
 	slot->viewed_file_in_trash = is_in_trash = nemo_file_is_in_trash (file);
 
-	/* Close window if the file it's viewing has been deleted or moved to trash. */
-	if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
-                /* Don't close the window in the case where the
-                 * file was never seen in the first place.
-                 */
-                if (slot->viewed_file_seen) {
-			/* auto-show existing parent. */
-			GFile *go_to_file, *parent, *location;
-
-                        /* Detecting a file is gone may happen in the
-                         * middle of a pending location change, we
-                         * need to cancel it before closing the window
-                         * or things break.
-                         */
-                        /* FIXME: It makes no sense that this call is
-                         * needed. When the window is destroyed, it
-                         * calls nemo_window_manage_views_destroy,
-                         * which calls free_location_change, which
-                         * should be sufficient. Also, if this was
-                         * really needed, wouldn't it be needed for
-                         * all other nemo_window_close callers?
-                         */
-			end_location_change (slot);
-
-			go_to_file = NULL;
-			location =  nemo_file_get_location (file);
-			parent = g_file_get_parent (location);
-			g_object_unref (location);
-			if (parent) {
-				go_to_file = nemo_find_existing_uri_in_hierarchy (parent);
-				g_object_unref (parent);
-			}
-				
-			if (go_to_file != NULL) {
-				/* the path bar URI will be set to go_to_uri immediately
-				 * in begin_location_change, but we don't want the
-				 * inexistant children to show up anymore */
-				if (slot == slot->pane->active_slot) {
-					/* multiview-TODO also update NemoWindowSlot
-					 * [which as of writing doesn't save/store any path bar state]
-					 */
-					nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
-				}
-				
-				nemo_window_slot_open_location (slot, go_to_file, 0);
-				g_object_unref (go_to_file);
-			} else {
-				nemo_window_slot_go_home (slot, FALSE);
-			}
-                }
-	} else {
-                new_location = nemo_file_get_location (file);
-
-                /* If the file was renamed, update location and/or
-                 * title. */
-                if (!g_file_equal (new_location,
-				   slot->location)) {
-                        g_object_unref (slot->location);
-                        slot->location = new_location;
-			if (slot == slot->pane->active_slot) {
-				nemo_window_pane_sync_location_widgets (slot->pane);
-			}
-                } else {
-			/* TODO?
- 			 *   why do we update title & icon at all in this case? */
-                        g_object_unref (new_location);
-                }
-
-                nemo_window_slot_update_title (slot);
-		nemo_window_slot_update_icon (slot);
+    /* Close window if the file it's viewing has been deleted or moved to trash. */
+    if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
+        if (slot->back_list == NULL) {
+            end_location_change (slot);
+            gtk_widget_destroy (GTK_WIDGET (slot->content_view));
+            nemo_window_close (nemo_window_slot_get_window (slot));
+            return;
         }
+
+        /* Don't close the window in the case where the
+        * file was never seen in the first place.
+        */
+        if (slot->viewed_file_seen) {
+            /* auto-show existing parent. */
+            GFile *go_to_file, *parent, *location;
+
+            /* Detecting a file is gone may happen in the
+            * middle of a pending location change, we
+            * need to cancel it before closing the window
+            * or things break.
+            */
+            /* FIXME: It makes no sense that this call is
+            * needed. When the window is destroyed, it
+            * calls nemo_window_manage_views_destroy,
+            * which calls free_location_change, which
+            * should be sufficient. Also, if this was
+            * really needed, wouldn't it be needed for
+            * all other nemo_window_close callers?
+            */
+            end_location_change (slot);
+
+            go_to_file = NULL;
+            location =  nemo_file_get_location (file);
+            parent = g_file_get_parent (location);
+            g_object_unref (location);
+
+            if (parent) {
+                go_to_file = nemo_find_existing_uri_in_hierarchy (parent);
+                g_object_unref (parent);
+            }
+
+            if (go_to_file != NULL) {
+                /* the path bar URI will be set to go_to_uri immediately
+                * in begin_location_change, but we don't want the
+                * inexistant children to show up anymore */
+                if (slot == slot->pane->active_slot) {
+                    /* multiview-TODO also update NemoWindowSlot
+                    * [which as of writing doesn't save/store any path bar state]
+                    */
+                    nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
+                }
+
+                nemo_window_slot_open_location (slot, go_to_file, 0);
+                g_object_unref (go_to_file);
+            } else {
+                nemo_window_slot_go_home (slot, FALSE);
+            }
+        }
+    } else {
+        new_location = nemo_file_get_location (file);
+
+        /* If the file was renamed, update location and/or
+         * title. */
+        if (!g_file_equal (new_location, slot->location)) {
+            g_object_unref (slot->location);
+            slot->location = new_location;
+
+            if (slot == slot->pane->active_slot) {
+                nemo_window_pane_sync_location_widgets (slot->pane);
+            }
+        } else {
+            /* TODO?
+            *   why do we update title & icon at all in this case? */
+            g_object_unref (new_location);
+        }
+
+        nemo_window_slot_update_title (slot);
+        nemo_window_slot_update_icon (slot);
+    }
 }
 
 static void
