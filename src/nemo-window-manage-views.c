@@ -688,10 +688,12 @@ begin_location_change (NemoWindowSlot *slot,
 	}
 
 	if (force_reload) {
-		nemo_directory_force_reload (directory);
-		file = nemo_directory_get_corresponding_file (directory);
-		nemo_file_invalidate_all_attributes (file);
-		nemo_file_unref (file);
+        file = nemo_directory_get_corresponding_file (directory);
+        nemo_file_invalidate_all_attributes (file);
+        nemo_file_unref (file);
+
+        nemo_directory_force_reload (directory);
+
 	}
 
         nemo_directory_unref (directory);
