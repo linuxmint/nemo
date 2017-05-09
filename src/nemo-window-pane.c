@@ -229,18 +229,14 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 
 static void
 navigation_bar_location_changed_callback (GtkWidget *widget,
-                                        const gchar *uri,
-                                     NemoWindowPane *pane)
+                                          GFile *location,
+                                          NemoWindowPane *pane)
 {
-    GFile *location;
-
     nemo_window_pane_hide_temporary_bars (pane);
 
     restore_focus_widget (pane);
 
-    location = g_file_new_for_uri (uri);
     nemo_window_slot_open_location (pane->active_slot, location, 0);
-    g_object_unref (location);
 }
 
 static gboolean
@@ -738,23 +734,27 @@ action_show_hide_search_callback (GtkAction *action,
 	    remember_focus_widget (pane);
 	    nemo_window_slot_set_query_editor_visible (slot, TRUE);
 	} else {
-		GFile *location = NULL;
+		/* Do nothing if the query editor is not visible to begin with,
+		   i.e. if toggle action was due to switching from a search tab */
+		if (gtk_revealer_get_reveal_child (GTK_REVEALER (slot->query_editor_revealer))) {
+			GFile *location = NULL;
 
-		restore_focus_widget (pane);
+			restore_focus_widget (pane);
 
-		/* Use the location bar as the return location */
-		if (slot->query_editor != NULL) {
-		    location = nemo_query_editor_get_location (slot->query_editor);
-			/* Last try: use the home directory as the return location */
-			if (location == NULL) {
-				location = g_file_new_for_path (g_get_home_dir ());
+			/* Use the location bar as the return location */
+			if (slot->query_editor != NULL) {
+		 	  	location = nemo_query_editor_get_location (slot->query_editor);
+				/* Last try: use the home directory as the return location */
+				if (location == NULL) {
+					location = g_file_new_for_path (g_get_home_dir ());
+				}	
+
+				nemo_window_go_to (window, location);
+				g_object_unref (location);
 			}
 
-			nemo_window_go_to (window, location);
-			g_object_unref (location);
+			nemo_window_slot_set_query_editor_visible (slot, FALSE);
 		}
-
-		nemo_window_slot_set_query_editor_visible (slot, FALSE);
 	}
 }
 
@@ -1112,8 +1112,14 @@ nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
 
 	if (search_directory != NULL) {
 		toggle_toolbar_search_button (pane, TRUE);
-	} else {
-	    toggle_toolbar_search_button (pane, FALSE);
+	} else  {
+		/* If we're not in a search directory, make sure the query editor visibility matches the
+		   search button due to a quirk when switching tabs. TODO: Another approach would be to
+		   leave the editor visible and toggle the search button true. Which is better? */
+		if (gtk_revealer_get_reveal_child (GTK_REVEALER (slot->query_editor_revealer))) {
+			nemo_window_slot_set_query_editor_visible (slot, FALSE);
+		}
+	    	toggle_toolbar_search_button (pane, FALSE);
 	}
 
 	nemo_directory_unref (directory);

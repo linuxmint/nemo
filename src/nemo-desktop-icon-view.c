@@ -29,6 +29,9 @@
 #include "nemo-desktop-icon-view.h"
 
 #include "nemo-actions.h"
+#include "nemo-application.h"
+#include "nemo-desktop-manager.h"
+#include "nemo-desktop-window.h"
 #include "nemo-icon-view-container.h"
 #include "nemo-view-factory.h"
 #include "nemo-view.h"
@@ -83,6 +86,7 @@ static void     real_merge_menus                                  (NemoView     
 static void     real_update_menus                                 (NemoView        *view);
 static void     nemo_desktop_icon_view_update_icon_container_fonts  (NemoDesktopIconView      *view);
 static void     font_changed_callback                             (gpointer                callback_data);
+static void     nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view);
 
 G_DEFINE_TYPE (NemoDesktopIconView, nemo_desktop_icon_view, NEMO_TYPE_ICON_VIEW)
 
@@ -104,9 +108,13 @@ update_margins (NemoDesktopIconView *icon_view)
     NemoIconContainer *icon_container;
     GdkRectangle geometry, work_rect;
     gint current_monitor;
+    gint l, r, t, b;
 
     icon_container = get_icon_container (icon_view);
-    current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (icon_view));
+
+    g_object_get (NEMO_DESKTOP_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (icon_view))),
+                  "monitor", &current_monitor,
+                  NULL);
 
     /* _NET_WORKAREA only applies to the primary monitor - use it to adjust
        container margins on the primary icon container only.  For any others,
@@ -119,8 +127,6 @@ update_margins (NemoDesktopIconView *icon_view)
 
     nemo_desktop_utils_get_monitor_geometry (current_monitor, &geometry);
     nemo_desktop_utils_get_monitor_work_rect (current_monitor, &work_rect);
-
-    gint l, r, t, b;
 
     l = work_rect.x - geometry.x;
     r = (geometry.x + geometry.width) - (work_rect.x + work_rect.width);
@@ -157,6 +163,53 @@ static const char *
 real_get_id (NemoView *view)
 {
 	return NEMO_DESKTOP_ICON_VIEW_ID;
+}
+
+static gboolean
+should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
+{
+    gint current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (view));
+    gint file_monitor = nemo_file_get_monitor_number (file);
+
+    NemoDesktopManager *dm = nemo_desktop_manager_get ();
+
+    if (current_monitor == file_monitor) {
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+        return TRUE;
+    }
+
+    if (!g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS)) {
+        return FALSE;
+    }
+
+    if (!nemo_desktop_manager_get_monitor_is_active (dm, file_monitor)) {
+        nemo_file_set_is_desktop_orphan (file, TRUE);
+        if (nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor)) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void
+real_add_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
+{
+    NemoIconView *icon_view;
+    NemoIconContainer *icon_container;
+
+    g_assert (directory == nemo_view_get_model (view));
+    
+    icon_view = NEMO_ICON_VIEW (view);
+    icon_container = get_icon_container (icon_view);
+
+    if (!should_show_file_on_current_monitor (view, file)) {
+        return;
+    }
+
+    if (nemo_icon_container_add (icon_container, NEMO_ICON_CONTAINER_ICON_DATA (file))) {
+        nemo_file_ref (file);
+    }
 }
 
 static void
@@ -240,11 +293,15 @@ nemo_desktop_icon_view_class_init (NemoDesktopIconViewClass *class)
 
 	vclass = NEMO_VIEW_CLASS (class);
 
-	G_OBJECT_CLASS (class)->dispose = nemo_desktop_icon_view_dispose;
+    G_OBJECT_CLASS (class)->dispose = nemo_desktop_icon_view_dispose;
+	G_OBJECT_CLASS (class)->constructed = nemo_desktop_icon_view_constructed;
+
+    NEMO_ICON_VIEW_CLASS (class)->use_grid_container = FALSE;
 
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
 	vclass->get_view_id = real_get_id;
+    vclass->add_file = real_add_file;
 
 #if GTK_CHECK_VERSION(3, 21, 0)
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (class);
@@ -449,95 +506,119 @@ nemo_desktop_icon_view_update_icon_container_fonts (NemoDesktopIconView *icon_vi
 static void
 nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 {
-	NemoIconContainer *icon_container;
-	GtkAllocation allocation;
-	GtkAdjustment *hadj, *vadj;
+    desktop_icon_view->details = G_TYPE_INSTANCE_GET_PRIVATE (desktop_icon_view,
+                                                              NEMO_TYPE_DESKTOP_ICON_VIEW,
+                                                              NemoDesktopIconViewDetails);
+}
 
-	desktop_icon_view->details = G_TYPE_INSTANCE_GET_PRIVATE (desktop_icon_view,
-								  NEMO_TYPE_DESKTOP_ICON_VIEW,
-								  NemoDesktopIconViewDetails);
+static void
+nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view)
+{
+    NemoIconContainer *icon_container;
+    GtkAllocation allocation;
+    GtkAdjustment *hadj, *vadj;
 
-	if (desktop_directory == NULL) {
-		g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
-					  G_CALLBACK(desktop_directory_changed_callback),
-					  NULL);
-		desktop_directory_changed_callback (NULL);
-	}
+    G_OBJECT_CLASS (nemo_desktop_icon_view_parent_class)->constructed (G_OBJECT (desktop_icon_view));
 
-	icon_container = get_icon_container (desktop_icon_view);
-	nemo_icon_container_set_use_drop_shadows (icon_container, TRUE);
-	nemo_icon_view_container_set_sort_desktop (NEMO_ICON_VIEW_CONTAINER (icon_container), TRUE);
+    if (desktop_directory == NULL) {
+        g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
+                      G_CALLBACK(desktop_directory_changed_callback),
+                      NULL);
+        desktop_directory_changed_callback (NULL);
+    }
 
-	/* Do a reload on the desktop if we don't have FAM, a smarter
-	 * way to keep track of the items on the desktop.
-	 */
-	if (!nemo_monitor_active ()) {
-		desktop_icon_view->details->delayed_init_signal = g_signal_connect_object
-			(desktop_icon_view, "begin_loading",
-			 G_CALLBACK (delayed_init), desktop_icon_view, 0);
-	}
-	
-	nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
-	nemo_icon_container_set_is_desktop (icon_container, TRUE);
+    icon_container = get_icon_container (desktop_icon_view);
+    nemo_icon_container_set_use_drop_shadows (icon_container, TRUE);
+    nemo_icon_view_container_set_sort_desktop (NEMO_ICON_VIEW_CONTAINER (icon_container), TRUE);
 
-	nemo_icon_container_set_store_layout_timestamps (icon_container, TRUE);
+    /* Do a reload on the desktop if we don't have FAM, a smarter
+     * way to keep track of the items on the desktop.
+     */
+    if (!nemo_monitor_active ()) {
+        desktop_icon_view->details->delayed_init_signal = g_signal_connect_object
+            (desktop_icon_view, "begin_loading",
+             G_CALLBACK (delayed_init), desktop_icon_view, 0);
+    }
+    
+    nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
+    nemo_icon_container_set_is_desktop (icon_container, TRUE);
 
-	/* Set allocation to be at 0, 0 */
-	gtk_widget_get_allocation (GTK_WIDGET (icon_container), &allocation);
-	allocation.x = 0;
-	allocation.y = 0;
-	gtk_widget_set_allocation (GTK_WIDGET (icon_container), &allocation);
-	
-	gtk_widget_queue_resize (GTK_WIDGET (icon_container));
+    nemo_icon_container_set_store_layout_timestamps (icon_container, TRUE);
 
-	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (icon_container));
-	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (icon_container));
+    /* Set allocation to be at 0, 0 */
+    gtk_widget_get_allocation (GTK_WIDGET (icon_container), &allocation);
+    allocation.x = 0;
+    allocation.y = 0;
+    gtk_widget_set_allocation (GTK_WIDGET (icon_container), &allocation);
+    
+    gtk_widget_queue_resize (GTK_WIDGET (icon_container));
 
-	gtk_adjustment_set_value (hadj, 0);
-	gtk_adjustment_set_value (vadj, 0);
+    hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (icon_container));
+    vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (icon_container));
 
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (desktop_icon_view),
-					     GTK_SHADOW_NONE);
+    gtk_adjustment_set_value (hadj, 0);
+    gtk_adjustment_set_value (vadj, 0);
 
-	nemo_view_ignore_hidden_file_preferences
-		(NEMO_VIEW (desktop_icon_view));
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (desktop_icon_view),
+                         GTK_SHADOW_NONE);
 
-	nemo_view_set_show_foreign (NEMO_VIEW (desktop_icon_view),
-					FALSE);
-	
-	/* Set our default layout mode */
-	nemo_icon_container_set_layout_mode (icon_container,
-						 gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
-						 NEMO_ICON_LAYOUT_T_B_R_L :
-						 NEMO_ICON_LAYOUT_T_B_L_R);
+    nemo_view_ignore_hidden_file_preferences
+        (NEMO_VIEW (desktop_icon_view));
 
-	g_signal_connect_object (icon_container, "middle_click",
-				 G_CALLBACK (nemo_desktop_icon_view_handle_middle_click), desktop_icon_view, 0);
+    nemo_view_set_show_foreign (NEMO_VIEW (desktop_icon_view),
+                    FALSE);
+    
+    /* Set our default layout mode */
+    nemo_icon_container_set_layout_mode (icon_container,
+                         gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
+                         NEMO_ICON_LAYOUT_T_B_R_L :
+                         NEMO_ICON_LAYOUT_T_B_L_R);
+
+    g_signal_connect_object (icon_container, "middle_click",
+                 G_CALLBACK (nemo_desktop_icon_view_handle_middle_click), desktop_icon_view, 0);
     g_signal_connect_object (icon_container, "realize",
                  G_CALLBACK (desktop_icon_container_realize), desktop_icon_view, 0);
 
-	g_signal_connect_swapped (nemo_icon_view_preferences,
-				  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
-				  G_CALLBACK (default_zoom_level_changed),
-				  desktop_icon_view);
+    g_signal_connect_swapped (nemo_icon_view_preferences,
+                  "changed::" NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
+                  G_CALLBACK (default_zoom_level_changed),
+                  desktop_icon_view);
 
     g_signal_connect_object (desktop_icon_view, "realize",
                              G_CALLBACK (realized_callback), desktop_icon_view, 0);
     g_signal_connect_object (desktop_icon_view, "unrealize",
                              G_CALLBACK (unrealized_callback), desktop_icon_view, 0);
 
-	g_signal_connect_swapped (nemo_desktop_preferences,
-				  "changed::" NEMO_PREFERENCES_DESKTOP_FONT,
-				  G_CALLBACK (font_changed_callback),
-				  desktop_icon_view);
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                  "changed::" NEMO_PREFERENCES_DESKTOP_FONT,
+                  G_CALLBACK (font_changed_callback),
+                  desktop_icon_view);
 
-	default_zoom_level_changed (desktop_icon_view);
-	nemo_desktop_icon_view_update_icon_container_fonts (desktop_icon_view);
+    default_zoom_level_changed (desktop_icon_view);
+    nemo_desktop_icon_view_update_icon_container_fonts (desktop_icon_view);
 
-	g_signal_connect_swapped (gnome_lockdown_preferences,
-				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
-				  G_CALLBACK (nemo_view_update_menus),
-				  desktop_icon_view);
+    g_signal_connect_swapped (gnome_lockdown_preferences,
+                  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
+                  G_CALLBACK (nemo_view_update_menus),
+                  desktop_icon_view);
+}
+
+static void
+action_stretch_callback (GtkAction *action,
+                         gpointer callback_data)
+{
+    g_assert (NEMO_IS_ICON_VIEW (callback_data));
+
+    nemo_icon_container_show_stretch_handles (get_icon_container (callback_data));
+}
+
+static void
+action_unstretch_callback (GtkAction *action,
+                           gpointer callback_data)
+{
+    g_assert (NEMO_IS_ICON_VIEW (callback_data));
+
+    nemo_icon_container_unstretch (get_icon_container (callback_data));
 }
 
 static void
@@ -581,8 +662,11 @@ trash_link_is_selection (NemoView *view)
 static void
 real_update_menus (NemoView *view)
 {
-	NemoDesktopIconView *desktop_view;
-	char *label;
+    NemoDesktopIconView *desktop_view;
+    NemoIconContainer *icon_container;
+    char *label;
+    gint selection_count;
+
 	gboolean include_empty_trash;
 	GtkAction *action;
 
@@ -605,17 +689,44 @@ real_update_menus (NemoView *view)
 					  !nemo_trash_monitor_is_empty ());
 		g_free (label);
 	}
+
+    selection_count = nemo_view_get_selection_count (view);
+    icon_container = get_icon_container (desktop_view);
+
+    action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                          NEMO_ACTION_STRETCH);
+    gtk_action_set_sensitive (action,
+                              selection_count == 1 &&
+                              icon_container != NULL &&
+                              !nemo_icon_container_has_stretch_handles (icon_container));
+    gtk_action_set_visible (action, TRUE);
+
+    action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                          NEMO_ACTION_UNSTRETCH);
+    g_object_set (action, "label",
+                  (selection_count > 1) ?
+                      _("Restore Icons' Original Si_zes")
+                    : _("Restore Icon's Original Si_ze"),
+                  NULL);
+    gtk_action_set_sensitive (action,
+                              icon_container != NULL &&
+                              nemo_icon_container_is_stretched (icon_container));
+    gtk_action_set_visible (action, TRUE);
 }
 
 static const GtkActionEntry desktop_view_entries[] = {
-
-	/* name, stock id */
-	{ "Empty Trash Conditional", NULL,
-	  /* label, accelerator */
-	  N_("Empty Trash"), NULL,
-	  /* tooltip */
-	  N_("Delete all items in the Trash"),
-	  G_CALLBACK (action_empty_trash_conditional_callback) }
+    /* name, stock id */         { "Stretch", NULL,
+    /* label, accelerator */       N_("Resize Icon..."), NULL,
+    /* tooltip */                  N_("Make the selected icon resizable"),
+                                 G_CALLBACK (action_stretch_callback) },
+    /* name, stock id */         { "Unstretch", NULL,
+    /* label, accelerator */       N_("Restore Icons' Original Si_zes"), NULL,
+    /* tooltip */                  N_("Restore each selected icon to its original size"),
+                                 G_CALLBACK (action_unstretch_callback) },
+    /* name, stock id */         { "Empty Trash Conditional", NULL,
+    /* label, accelerator */       N_("Empty Trash"), NULL,
+    /* tooltip */                  N_("Delete all items in the Trash"),
+                                 G_CALLBACK (action_empty_trash_conditional_callback) }
 };
 
 static void
@@ -692,3 +803,4 @@ nemo_desktop_icon_view_register (void)
 	
 	nemo_view_factory_register (&nemo_desktop_icon_view);
 }
+

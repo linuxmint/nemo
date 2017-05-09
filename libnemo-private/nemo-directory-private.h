@@ -205,8 +205,6 @@ NemoFile *     nemo_directory_find_file_by_name               (NemoDirectory    
 NemoFile *     nemo_directory_find_file_by_internal_filename  (NemoDirectory         *directory,
 								       const char                *internal_filename);
 
-void               nemo_directory_add_file                        (NemoDirectory         *directory,
-								       NemoFile              *file);
 void               nemo_directory_remove_file                     (NemoDirectory         *directory,
 								       NemoFile              *file);
 FileMonitors *     nemo_directory_remove_file_monitors            (NemoDirectory         *directory,

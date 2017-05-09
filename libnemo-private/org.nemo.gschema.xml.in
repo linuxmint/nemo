@@ -487,6 +487,21 @@
       <_summary>Deprecated: Allow Nemo to manage the desktop</_summary>
       <_description>Deprecated: If this is set to true, Nemo will autostart and manage the desktop</_description>
     </key>
+    <key name="use-desktop-grid" type="b">
+      <default>true</default>
+      <_summary>Which desktop view type to use</_summary>
+      <_description>If true, the new desktop grid view will be used by nemo-desktop, otherwise the legacy view will be used.</_description>
+    </key>
+    <key name="vertical-grid-adjust" type="d">
+      <default>1.0</default>
+      <_summary>Vertical desktop grid adjustment</_summary>
+      <_description>Overrides the standard vertical spacing for the desktop grid, in situation where default spacing is not ideal due to label customizations.  This is a value from 0.5 to 1.5, with 1.0 being no adjustment, and 0.5 being half the default spacing.</_description>
+    </key>
+    <key name="horizontal-grid-adjust" type="d">
+      <default>1.0</default>
+      <_summary>Horizontal desktop grid adjustment</_summary>
+      <_description>Overrides the standard horizontal spacing for the desktop grid, in situation where default spacing is not ideal due to label customizations.  This is a value from 0.5 to 1.5, with 1.0 being no adjustment, and 0.5 being half the default spacing.</_description>
+    </key>
     <key name="home-icon-visible" type="b">
       <default>false</default>
       <_summary>Home icon visible on desktop</_summary>
@@ -513,7 +528,7 @@
       <_description>If this is set to true, an icon linking to the Network Servers view will be put on the desktop.</_description>
     </key>
     <key name="text-ellipsis-limit" type="i">
-      <default>3</default>
+      <default>2</default>
       <_summary>Text Ellipsis Limit</_summary>
       <_description>An integer specifying how parts of overlong file names should be replaced by ellipses on the desktop. If the number is larger than 0, the file name will not exceed the given number of lines. If the number is 0 or smaller, no limit is imposed on the number of displayed lines.</_description>
     </key>

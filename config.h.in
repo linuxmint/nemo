@@ -64,9 +64,6 @@
 /* Define to 1 if libselinux is available */
 #undef HAVE_SELINUX
 
-/* Define to 1 if you have the <selinux/selinux.h> header file. */
-#undef HAVE_SELINUX_SELINUX_H
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -103,7 +100,8 @@
 /* path for translations */
 #undef LOCALEDIR
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #undef LT_OBJDIR
 
 /* Name of package */

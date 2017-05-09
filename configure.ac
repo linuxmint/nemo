@@ -18,7 +18,7 @@ dnl Interface break is not allowed.
 m4_define(nemo_extension_current,  5)
 m4_define(nemo_extension_revision, 0)
 
-AC_INIT(nemo, 3.2.2, https://github.com/linuxmint/nemo)
+AC_INIT(nemo, 3.4.1, https://github.com/linuxmint/nemo)
 
 dnl ===========================================================================
 
@@ -149,18 +149,19 @@ dnl ==========================================================================
 dnl ****************************
 dnl *** Check for libselinux ***
 dnl ****************************
-    
-SELINUX_LIBS=
+
 msg_selinux=no
-AC_CHECK_LIB(selinux, is_selinux_enabled,
-   [AC_CHECK_HEADERS(selinux/selinux.h,
-     [AC_SEARCH_LIBS(selinux_raw_to_trans_context, selinux, 
-       [AC_DEFINE(HAVE_SELINUX, 1, [Define to 1 if libselinux is available])
-        SELINUX_LIBS="-lselinux"
-        msg_selinux=yes])
-     ])
-   ])
-AC_SUBST(SELINUX_LIBS)
+
+AC_ARG_ENABLE([selinux],
+              [AS_HELP_STRING([--enable-selinux],
+                              [Enable selinux support])])
+AS_IF([test "$enable_selinux" != "no"],
+      [PKG_CHECK_MODULES([SELINUX], [libselinux >= 2.0],
+                         [
+                           AC_DEFINE([HAVE_SELINUX], [1], [Define to 1 if libselinux is available])
+                           msg_selinux=yes
+                         ])
+      ])
 
 
 AC_ARG_ENABLE(empty_view,
@@ -256,8 +257,6 @@ AC_ARG_ENABLE(update-mimedb,
                    [disable the update-mime-database after install [default=no]]),,
     enable_update_mimedb=yes)
 AM_CONDITIONAL(ENABLE_UPDATE_MIMEDB, test x$enable_update_mimedb = xyes)
-
-CFLAGS="$CFLAGS -Werror=unused-function -Werror=unused-variable -O3"
 
 AC_CONFIG_FILES([
 Makefile

@@ -270,13 +270,6 @@ nemo_blank_desktop_window_init (NemoBlankDesktopWindow *window)
     window->details->actions_changed_id = 0;
 }
 
-static gint
-nemo_blank_desktop_window_delete_event (NemoBlankDesktopWindow *window)
-{
-	/* Returning true tells GTK+ not to delete the window. */
-	return TRUE;
-}
-
 NemoBlankDesktopWindow *
 nemo_blank_desktop_window_new (gint monitor)
 {
@@ -286,12 +279,18 @@ nemo_blank_desktop_window_new (gint monitor)
                            "monitor", monitor,
                            NULL);
 
-	g_signal_connect (window, "delete_event", G_CALLBACK (nemo_blank_desktop_window_delete_event), NULL);
-
     GdkRGBA transparent = {0, 0, 0, 0};
     gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
 	return window;
+}
+
+static gboolean
+nemo_blank_desktop_window_delete_event (GtkWidget *widget,
+                                        GdkEventAny *event)
+{
+	/* Returning true tells GTK+ not to delete the window. */
+	return TRUE;
 }
 
 static void
@@ -344,17 +343,10 @@ realize (GtkWidget *widget)
 }
 
 static void
-nemo_blank_desktop_window_open_plugin_manager (NemoBlankDesktopWindow *window)
-{
-    nemo_plugin_manager_show ();
-}
-
-static void
 nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 {
 	GtkWidgetClass *wclass = GTK_WIDGET_CLASS (klass);
 	GObjectClass *oclass = G_OBJECT_CLASS (klass);
-    GtkBindingSet *binding_set;
 
 	oclass->constructed = nemo_blank_desktop_window_constructed;
     oclass->dispose = nemo_blank_desktop_window_dispose;
@@ -365,6 +357,7 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+	wclass->delete_event = nemo_blank_desktop_window_delete_event;
 
     properties[PROP_MONITOR] =
         g_param_spec_int ("monitor",
@@ -373,22 +366,7 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
                           G_MININT, G_MAXINT, 0,
                           G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    signals[PLUGIN_MANAGER] =
-        g_signal_new ("plugin-manager",
-                      G_TYPE_FROM_CLASS (klass),
-                      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                      G_STRUCT_OFFSET (NemoBlankDesktopWindowClass, plugin_manager),
-                      NULL, NULL,
-                      g_cclosure_marshal_generic,
-                      G_TYPE_NONE, 0);
-
 	g_type_class_add_private (klass, sizeof (NemoBlankDesktopWindowDetails));
 
     g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
-
-    binding_set = gtk_binding_set_by_class (klass);
-    gtk_binding_entry_add_signal (binding_set, GDK_KEY_p, GDK_MOD1_MASK,
-                                  "plugin-manager", 0);
-
-    klass->plugin_manager = nemo_blank_desktop_window_open_plugin_manager;
 }

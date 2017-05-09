@@ -3,7 +3,7 @@
 #include "nemo-desktop-manager.h"
 #include "nemo-blank-desktop-window.h"
 #include "nemo-desktop-window.h"
-#include "nemo-application.h"
+#include "nemo-desktop-application.h"
 
 #include <gdk/gdkx.h>
 
@@ -121,11 +121,6 @@ layout_changed (NemoDesktopManager *manager)
 
     close_all_windows (manager);
 
-    NemoApplication *app = NEMO_APPLICATION (g_application_get_default ());
-    if (!nemo_application_get_show_desktop (app)) {
-        return FALSE;
-    } 
-
     gchar *pref = g_settings_get_string (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_LAYOUT);
 
     if (g_strcmp0 (pref, "") == 0) {
@@ -216,6 +211,11 @@ nemo_desktop_manager_constructed (GObject *object)
                                                          G_CALLBACK (queue_update_layout),
                                                          manager);
 
+    manager->use_grid_changed_id = g_signal_connect_swapped (nemo_desktop_preferences,
+                                                             "changed::" NEMO_PREFERENCES_USE_DESKTOP_GRID,
+                                                             G_CALLBACK (queue_update_layout),
+                                                             manager);
+
     /* Monitor the preference to have the desktop */
     /* point to the Unix home folder */
 
@@ -241,6 +241,7 @@ nemo_desktop_manager_dispose (GObject *object)
 
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->show_desktop_changed_id);
     g_signal_handler_disconnect (nemo_desktop_preferences, manager->desktop_layout_changed_id);
+    g_signal_handler_disconnect (nemo_desktop_preferences, manager->use_grid_changed_id);
     g_signal_handler_disconnect (manager->screen, manager->size_changed_id);
     g_signal_handler_disconnect (nemo_preferences, manager->home_dir_changed_id);
     g_signal_handler_disconnect (nemo_preferences, manager->orphaned_icon_handling_id);

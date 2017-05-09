@@ -30,7 +30,7 @@
 
 #include <config.h>
 
-#include "nemo-application.h"
+#include "nemo-main-application.h"
 
 #include <libnemo-private/nemo-debug.h>
 #include <eel/eel-debug.h>
@@ -89,14 +89,12 @@ main (int argc, char *argv[])
 
 	g_set_prgname ("nemo");
 
-	gdk_set_allowed_backends ("x11");
-
 #ifdef HAVE_EXEMPI
 	xmp_init();
 #endif
 
 	/* Run the nemo application. */
-	application = nemo_application_get_singleton ();
+	application = nemo_main_application_get_singleton ();
 
     /* hold indefinitely if we're asked to persist */
     if (g_getenv ("NEMO_PERSIST") != NULL) {

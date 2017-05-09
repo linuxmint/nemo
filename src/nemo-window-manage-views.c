@@ -45,10 +45,12 @@
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
+#include <eel/eel-vfs-extensions.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
 #include <libnemo-extension/nemo-location-widget-provider.h>
+#include <libnemo-private/nemo-desktop-directory.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
@@ -277,77 +279,85 @@ viewed_file_changed_callback (NemoFile *file,
 
 	slot->viewed_file_in_trash = is_in_trash = nemo_file_is_in_trash (file);
 
-	/* Close window if the file it's viewing has been deleted or moved to trash. */
-	if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
-                /* Don't close the window in the case where the
-                 * file was never seen in the first place.
-                 */
-                if (slot->viewed_file_seen) {
-			/* auto-show existing parent. */
-			GFile *go_to_file, *parent, *location;
-
-                        /* Detecting a file is gone may happen in the
-                         * middle of a pending location change, we
-                         * need to cancel it before closing the window
-                         * or things break.
-                         */
-                        /* FIXME: It makes no sense that this call is
-                         * needed. When the window is destroyed, it
-                         * calls nemo_window_manage_views_destroy,
-                         * which calls free_location_change, which
-                         * should be sufficient. Also, if this was
-                         * really needed, wouldn't it be needed for
-                         * all other nemo_window_close callers?
-                         */
-			end_location_change (slot);
-
-			go_to_file = NULL;
-			location =  nemo_file_get_location (file);
-			parent = g_file_get_parent (location);
-			g_object_unref (location);
-			if (parent) {
-				go_to_file = nemo_find_existing_uri_in_hierarchy (parent);
-				g_object_unref (parent);
-			}
-				
-			if (go_to_file != NULL) {
-				/* the path bar URI will be set to go_to_uri immediately
-				 * in begin_location_change, but we don't want the
-				 * inexistant children to show up anymore */
-				if (slot == slot->pane->active_slot) {
-					/* multiview-TODO also update NemoWindowSlot
-					 * [which as of writing doesn't save/store any path bar state]
-					 */
-					nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
-				}
-				
-				nemo_window_slot_open_location (slot, go_to_file, 0);
-				g_object_unref (go_to_file);
-			} else {
-				nemo_window_slot_go_home (slot, FALSE);
-			}
-                }
-	} else {
-                new_location = nemo_file_get_location (file);
-
-                /* If the file was renamed, update location and/or
-                 * title. */
-                if (!g_file_equal (new_location,
-				   slot->location)) {
-                        g_object_unref (slot->location);
-                        slot->location = new_location;
-			if (slot == slot->pane->active_slot) {
-				nemo_window_pane_sync_location_widgets (slot->pane);
-			}
-                } else {
-			/* TODO?
- 			 *   why do we update title & icon at all in this case? */
-                        g_object_unref (new_location);
-                }
-
-                nemo_window_slot_update_title (slot);
-		nemo_window_slot_update_icon (slot);
+    /* Close window if the file it's viewing has been deleted or moved to trash. */
+    if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
+        if (slot->back_list == NULL) {
+            end_location_change (slot);
+            gtk_widget_destroy (GTK_WIDGET (slot->content_view));
+            nemo_window_close (nemo_window_slot_get_window (slot));
+            return;
         }
+
+        /* Don't close the window in the case where the
+        * file was never seen in the first place.
+        */
+        if (slot->viewed_file_seen) {
+            /* auto-show existing parent. */
+            GFile *go_to_file, *parent, *location;
+
+            /* Detecting a file is gone may happen in the
+            * middle of a pending location change, we
+            * need to cancel it before closing the window
+            * or things break.
+            */
+            /* FIXME: It makes no sense that this call is
+            * needed. When the window is destroyed, it
+            * calls nemo_window_manage_views_destroy,
+            * which calls free_location_change, which
+            * should be sufficient. Also, if this was
+            * really needed, wouldn't it be needed for
+            * all other nemo_window_close callers?
+            */
+            end_location_change (slot);
+
+            go_to_file = NULL;
+            location =  nemo_file_get_location (file);
+            parent = g_file_get_parent (location);
+            g_object_unref (location);
+
+            if (parent) {
+                go_to_file = nemo_find_existing_uri_in_hierarchy (parent);
+                g_object_unref (parent);
+            }
+
+            if (go_to_file != NULL) {
+                /* the path bar URI will be set to go_to_uri immediately
+                * in begin_location_change, but we don't want the
+                * inexistant children to show up anymore */
+                if (slot == slot->pane->active_slot) {
+                    /* multiview-TODO also update NemoWindowSlot
+                    * [which as of writing doesn't save/store any path bar state]
+                    */
+                    nemo_path_bar_clear_buttons (NEMO_PATH_BAR (slot->pane->path_bar));
+                }
+
+                nemo_window_slot_open_location (slot, go_to_file, 0);
+                g_object_unref (go_to_file);
+            } else {
+                nemo_window_slot_go_home (slot, FALSE);
+            }
+        }
+    } else {
+        new_location = nemo_file_get_location (file);
+
+        /* If the file was renamed, update location and/or
+         * title. */
+        if (!g_file_equal (new_location, slot->location)) {
+            g_object_unref (slot->location);
+            slot->location = new_location;
+
+            if (slot == slot->pane->active_slot) {
+                nemo_window_pane_sync_location_widgets (slot->pane);
+            }
+        } else {
+            /* TODO?
+            *   why do we update title & icon at all in this case? */
+            g_object_unref (new_location);
+        }
+
+        nemo_window_slot_update_title (slot);
+        nemo_window_slot_update_icon (slot);
+    }
 }
 
 static void
@@ -466,19 +476,17 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		use_same = FALSE;
 	}
 
-	old_location = nemo_window_slot_get_location (slot);
-
 	/* now get/create the window */
 	if (use_same) {
 		target_window = window;
 	} else {
 		app = nemo_application_get_singleton ();
-		target_window = nemo_application_create_window
-			(app,
-			 gtk_window_get_screen (GTK_WINDOW (window)));
+        target_window = nemo_application_create_window (app, gtk_window_get_screen (GTK_WINDOW (window)));
 	}
 
-        g_assert (target_window != NULL);
+    old_location = nemo_window_slot_get_location (slot);
+
+    g_assert (target_window != NULL);
 
 	/* if the flags say we want a new tab, open a slot in the current window */
 	if ((flags & NEMO_WINDOW_OPEN_FLAG_NEW_TAB) != 0) {
@@ -665,7 +673,7 @@ begin_location_change (NemoWindowSlot *slot,
 	slot->open_callback = callback;
 	slot->open_callback_user_data = user_data;
 
-        directory = nemo_directory_get (location);
+    directory = nemo_directory_get (location);
 
 	/* The code to force a reload is here because if we do it
 	 * after determining an initial view (in the components), then
@@ -680,10 +688,12 @@ begin_location_change (NemoWindowSlot *slot,
 	}
 
 	if (force_reload) {
-		nemo_directory_force_reload (directory);
-		file = nemo_directory_get_corresponding_file (directory);
-		nemo_file_invalidate_all_attributes (file);
-		nemo_file_unref (file);
+        file = nemo_directory_get_corresponding_file (directory);
+        nemo_file_invalidate_all_attributes (file);
+        nemo_file_unref (file);
+
+        nemo_directory_force_reload (directory);
+
 	}
 
         nemo_directory_unref (directory);
@@ -862,14 +872,19 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 		/* Otherwise, use default */
 		if (view_id == NULL) {
-            gchar *name;
+            gchar *name, *uri;
             name = nemo_file_get_name (file);
+            uri = nemo_file_get_uri (file);
 
-            if (g_strcmp0 (name, "x-nemo-search") == 0)
+            if (g_strcmp0 (name, "x-nemo-search") == 0) {
                 view_id = g_strdup (NEMO_LIST_VIEW_IID);
-            else
+            } else if (eel_uri_is_desktop (uri)) {
+                view_id = nemo_global_preferences_get_desktop_iid ();
+            } else {
                 view_id = nemo_global_preferences_get_default_folder_viewer_preference_as_iid ();
+            }
 
+            g_free (uri);
             g_free (name);
 
 			if (view_id != NULL && 
@@ -969,66 +984,62 @@ got_file_info_for_view_selection_callback (NemoFile *file,
  */
 static void
 create_content_view (NemoWindowSlot *slot,
-		     const char *view_id)
+                     const char     *view_id)
 {
-	NemoWindow *window;
-        NemoView *view;
-	GList *selection;
+    NemoWindow *window;
+    NemoView *view;
+    GList *selection;
 
-	window = nemo_window_slot_get_window (slot);
+    window = nemo_window_slot_get_window (slot);
 
- 	/* FIXME bugzilla.gnome.org 41243: 
-	 * We should use inheritance instead of these special cases
-	 * for the desktop window.
-	 */
-        if (NEMO_IS_DESKTOP_WINDOW (window)) {
-        	/* We force the desktop to use a desktop_icon_view. It's simpler
-        	 * to fix it here than trying to make it pick the right view in
-        	 * the first place.
-        	 */
-		view_id = NEMO_DESKTOP_ICON_VIEW_IID;
-	} 
-        
-        if (slot->content_view != NULL &&
-	    g_strcmp0 (nemo_view_get_view_id (slot->content_view),
-			view_id) == 0) {
-                /* reuse existing content view */
-                view = slot->content_view;
-                slot->new_content_view = view;
-        	g_object_ref (view);
-        } else {
-                /* create a new content view */
-		view = nemo_view_factory_create (view_id, slot);
+    if (slot->content_view != NULL &&
+        g_strcmp0 (nemo_view_get_view_id (slot->content_view),
+        view_id) == 0) {
+        /* reuse existing content view */
+        view = slot->content_view;
+        slot->new_content_view = view;
+        g_object_ref (view);
+    } else {
+        /* create a new content view */
+        view = nemo_view_factory_create (view_id, slot);
+        slot->new_content_view = view;
+        nemo_window_connect_content_view (window, slot->new_content_view);
+    }
 
-                slot->new_content_view = view;
-		nemo_window_connect_content_view (window, slot->new_content_view);
-        }
+    if (NEMO_IS_DESKTOP_WINDOW (window)) {
+        NemoDesktopDirectory *directory;
 
-	/* Actually load the pending location and selection: */
+        directory = NEMO_DESKTOP_DIRECTORY (nemo_directory_get (slot->pending_location));
+        directory->display_number = nemo_desktop_window_get_monitor (NEMO_DESKTOP_WINDOW (window));
 
-        if (slot->pending_location != NULL) {
-		load_new_location (slot,
-				   slot->pending_location,
-				   slot->pending_selection,
-				   FALSE,
-				   TRUE);
+        nemo_directory_unref (NEMO_DIRECTORY (directory));
+    }
 
-		g_list_free_full (slot->pending_selection, g_object_unref);
-		slot->pending_selection = NULL;
-	} else if (slot->location != NULL) {
-		selection = nemo_view_get_selection (slot->content_view);
-		load_new_location (slot,
-				   slot->location,
-				   selection,
-				   FALSE,
-				   TRUE);
-		g_list_free_full (selection, g_object_unref);
-	} else {
-		/* Something is busted, there was no location to load.
-		   Just load the homedir. */
-		nemo_window_slot_go_home (slot, FALSE);
-		
-	}
+    /* Actually load the pending location and selection: */
+
+    if (slot->pending_location != NULL) {
+        load_new_location (slot,
+                           slot->pending_location,
+                           slot->pending_selection,
+                           FALSE,
+                           TRUE);
+
+        g_list_free_full (slot->pending_selection, g_object_unref);
+        slot->pending_selection = NULL;
+    } else if (slot->location != NULL) {
+        selection = nemo_view_get_selection (slot->content_view);
+        load_new_location (slot,
+                           slot->location,
+                           selection,
+                           FALSE,
+                           TRUE);
+        g_list_free_full (selection, g_object_unref);
+    } else {
+        /* Something is busted, there was no location to load.
+           Just load the homedir. */
+        nemo_window_slot_go_home (slot, FALSE);
+
+    }
 }
 
 static void

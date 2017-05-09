@@ -99,6 +99,8 @@ void        nemo_icon_canvas_item_invalidate_label_size    (NemoIconCanvasItem  
 EelDRect    nemo_icon_canvas_item_get_icon_rectangle       (const NemoIconCanvasItem *item);
 EelDRect    nemo_icon_canvas_item_get_text_rectangle       (NemoIconCanvasItem       *item,
 								gboolean                      for_layout);
+void        nemo_icon_canvas_item_get_icon_canvas_rectangle (NemoIconCanvasItem *item,
+                                                             EelIRect *rect);
 void        nemo_icon_canvas_item_get_bounds_for_layout    (NemoIconCanvasItem       *item,
 								double *x1, double *y1, double *x2, double *y2);
 void        nemo_icon_canvas_item_get_bounds_for_entire_item (NemoIconCanvasItem       *item,

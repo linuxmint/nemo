@@ -785,7 +785,7 @@ eel_canvas_item_show (EelCanvasItem *item)
 
 		if (item->parent != NULL) {
 			if (!(item->flags & EEL_CANVAS_ITEM_MAPPED) &&
-			    item->parent->flags & EEL_CANVAS_ITEM_MAPPED)
+			    (item->parent->flags & EEL_CANVAS_ITEM_MAPPED))
 				(* EEL_CANVAS_ITEM_GET_CLASS (item)->map) (item);
 		} else {
 			if (!(item->flags & EEL_CANVAS_ITEM_MAPPED) &&
@@ -1458,7 +1458,7 @@ eel_canvas_group_map (EelCanvasItem *item)
 	for (list = group->item_list; list; list = list->next) {
 		i = list->data;
 
-		if (i->flags & EEL_CANVAS_ITEM_VISIBLE &&
+		if ((i->flags & EEL_CANVAS_ITEM_VISIBLE) &&
 		    !(i->flags & EEL_CANVAS_ITEM_MAPPED)) {
 			if (!(i->flags & EEL_CANVAS_ITEM_REALIZED))
 				(* EEL_CANVAS_ITEM_GET_CLASS (i)->realize) (i);
@@ -1678,8 +1678,8 @@ group_add (EelCanvasGroup *group, EelCanvasItem *item)
 	} else
 		group->item_list_end = g_list_append (group->item_list_end, item)->next;
 
-	if (item->flags & EEL_CANVAS_ITEM_VISIBLE &&
-	    group->item.flags & EEL_CANVAS_ITEM_MAPPED) {
+	if ((item->flags & EEL_CANVAS_ITEM_VISIBLE) &&
+	    (group->item.flags & EEL_CANVAS_ITEM_MAPPED)) {
 		if (!(item->flags & EEL_CANVAS_ITEM_REALIZED))
 			(* EEL_CANVAS_ITEM_GET_CLASS (item)->realize) (item);
 		
@@ -1834,19 +1834,19 @@ eel_canvas_set_property (GObject      *object,
 
 static void
 eel_canvas_accessible_adjustment_changed (GtkAdjustment *adjustment,
-					  gpointer       data)
+		AtkObject *obj)
 {
 	/* The scrollbars have changed */
 
-	g_signal_emit_by_name (ATK_OBJECT (data), "visible_data_changed");
+	g_signal_emit_by_name (obj, "visible_data_changed");
 }
 
 static void
-accessible_destroy_cb (GtkWidget     *widget,
-		       GtkAccessible *accessible)
+accessible_destroy_cb (GtkWidget *widget,
+		AtkObject *obj)
 {
-	gtk_accessible_set_widget (accessible, NULL);
-	atk_object_notify_state_change (ATK_OBJECT (accessible), ATK_STATE_DEFUNCT, TRUE);
+	gtk_accessible_set_widget (GTK_ACCESSIBLE(obj), NULL);
+	atk_object_notify_state_change (obj, ATK_STATE_DEFUNCT, TRUE);
 }
 
 static gboolean
@@ -2125,20 +2125,6 @@ eel_canvas_accessible_ref_state_set (AtkObject *accessible)
 }
 
 static void
-eel_canvas_accessible_class_init (EelCanvasAccessibleClass *klass)
-{
-	AtkObjectClass *atk_class = ATK_OBJECT_CLASS (klass);
-
- 	accessible_parent_class = g_type_class_peek_parent (klass);
-
-	atk_class->initialize = eel_canvas_accessible_initialize;
-	atk_class->get_n_children = eel_canvas_accessible_get_n_children;
-	atk_class->ref_child = eel_canvas_accessible_ref_child;
-	/* below adapted from gtkwidgetaccessible.c */
-	atk_class->ref_state_set = eel_canvas_accessible_ref_state_set;
-}
-
-static void
 eel_canvas_accessible_get_extents (AtkComponent   *component,
                                    gint           *x,
                                    gint           *y,
@@ -2211,7 +2197,7 @@ eel_canvas_accessible_get_size (AtkComponent *component,
 }
 
 static void
-eel_canvas_accessible_component_init(gpointer iface, gpointer data)
+eel_canvas_accessible_component_init (gpointer iface, gpointer data)
 {
 	AtkComponentIface *component;
 
@@ -2222,13 +2208,27 @@ eel_canvas_accessible_component_init(gpointer iface, gpointer data)
 	component->get_size = eel_canvas_accessible_get_size;
 }
 
+G_DEFINE_TYPE_WITH_CODE (EelCanvasAccessible, eel_canvas_accessible, GTK_TYPE_ACCESSIBLE,
+			 G_IMPLEMENT_INTERFACE (ATK_TYPE_COMPONENT, eel_canvas_accessible_component_init))
+
+static void
+eel_canvas_accessible_class_init (EelCanvasAccessibleClass *klass)
+{
+	AtkObjectClass *atk_class = ATK_OBJECT_CLASS (klass);
+
+ 	accessible_parent_class = g_type_class_peek_parent (klass);
+
+	atk_class->initialize = eel_canvas_accessible_initialize;
+	atk_class->get_n_children = eel_canvas_accessible_get_n_children;
+	atk_class->ref_child = eel_canvas_accessible_ref_child;
+	/* below adapted from gtkwidgetaccessible.c */
+	atk_class->ref_state_set = eel_canvas_accessible_ref_state_set;
+}
+
 static void
 eel_canvas_accessible_init (EelCanvasAccessible *accessible)
 {
 }
-
-G_DEFINE_TYPE_WITH_CODE (EelCanvasAccessible, eel_canvas_accessible, GTK_TYPE_ACCESSIBLE,
-			 G_IMPLEMENT_INTERFACE (ATK_TYPE_COMPONENT, eel_canvas_accessible_component_init))
 
 static AtkObject *
 eel_canvas_accessible_create (GObject *for_object)
@@ -2490,7 +2490,7 @@ eel_canvas_map (GtkWidget *widget)
 
 	/* Map items */
 
-	if (canvas->root->flags & EEL_CANVAS_ITEM_VISIBLE &&
+	if ((canvas->root->flags & EEL_CANVAS_ITEM_VISIBLE) &&
 	    !(canvas->root->flags & EEL_CANVAS_ITEM_MAPPED) &&
 	    EEL_CANVAS_ITEM_GET_CLASS (canvas->root)->map)
 		(* EEL_CANVAS_ITEM_GET_CLASS (canvas->root)->map) (canvas->root);
@@ -2729,7 +2729,7 @@ emit_event (EelCanvas *canvas, GdkEvent *event)
         }
 
 	if (canvas->grabbed_item) {
-		switch (event->type) {
+		switch ((int) event->type) {
 		case GDK_ENTER_NOTIFY:
 			mask = GDK_ENTER_NOTIFY_MASK;
 			break;
@@ -2775,7 +2775,7 @@ emit_event (EelCanvas *canvas, GdkEvent *event)
 
 	ev = *event;
 
-	switch (ev.type)
+	switch ((int) ev.type)
         {
 	case GDK_ENTER_NOTIFY:
 	case GDK_LEAVE_NOTIFY:
@@ -3025,7 +3025,7 @@ eel_canvas_button (GtkWidget *widget, GdkEventButton *event)
 		mask = 0;
 	}
 
-	switch (event->type) {
+	switch ((int) event->type) {
 	case GDK_BUTTON_PRESS:
 	case GDK_2BUTTON_PRESS:
 	case GDK_3BUTTON_PRESS:
@@ -3512,7 +3512,6 @@ eel_canvas_set_pixels_per_unit (EelCanvas *canvas, double n)
 	 */
 	window = NULL;
 	if (gtk_widget_get_mapped (widget)) {
-		GtkAllocation allocation;
 		attributes.window_type = GDK_WINDOW_CHILD;
 		gtk_widget_get_allocation (widget, &allocation);
 		attributes.x = allocation.x;
@@ -3845,7 +3844,7 @@ static gboolean
 boolean_handled_accumulator (GSignalInvocationHint *ihint,
 			     GValue                *return_accu,
 			     const GValue          *handler_return,
-			     gpointer               dummy)
+			     gpointer               data)
 {
 	gboolean signal_handled;
 	

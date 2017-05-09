@@ -138,6 +138,14 @@ get_keyfile (void)
 }
 
 void
+nemo_desktop_metadata_init (void)
+{
+    GKeyFile *file;
+
+    file = get_keyfile ();
+}
+
+void
 nemo_desktop_set_metadata_string (NemoFile *file,
                                       const gchar *name,
                                       const gchar *key,
@@ -207,6 +215,44 @@ nemo_desktop_set_metadata_stringv (NemoFile *file,
 	if (free_strv) {
 		g_free (actual_stringv);
 	}
+}
+
+gchar *
+nemo_desktop_get_metadata_string (NemoFile *file,
+                                  const gchar *name,
+                                  const gchar *key)
+{
+    GKeyFile *keyfile;
+    gchar *string;
+
+    keyfile = get_keyfile ();
+
+    string = g_key_file_get_string (keyfile,
+                                    name,
+                                    key,
+                                    NULL);
+
+    return string;
+}
+
+gchar **
+nemo_desktop_get_metadata_stringv (NemoFile *file,
+                                   const char *name,
+                                   const char *key)
+{
+    GKeyFile *keyfile;
+    guint length;
+    gchar **stringv = NULL;
+
+    keyfile = get_keyfile ();
+
+    stringv = g_key_file_get_string_list (keyfile,
+                                          name,
+                                          key,
+                                          &length,
+                                          NULL);
+
+    return stringv;
 }
 
 gboolean

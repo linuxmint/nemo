@@ -389,11 +389,6 @@ char *                  nemo_file_get_string_attribute_with_default (NemoFile   
 									 const char                     *attribute_name);
 char *                  nemo_file_get_string_attribute_with_default_q (NemoFile                  *file,
 									 GQuark                          attribute_q);
-char *			nemo_file_fit_modified_date_as_string	(NemoFile 			*file,
-									 int				 width,
-									 NemoWidthMeasureCallback    measure_callback,
-									 NemoTruncateCallback	 truncate_callback,
-									 void				*measure_truncate_context);
 
 /* Matching with another URI. */
 gboolean                nemo_file_matches_uri                       (NemoFile                   *file,
@@ -494,14 +489,14 @@ char *   nemo_file_get_owner_as_string            (NemoFile          *file,
 char *   nemo_file_get_type_as_string             (NemoFile          *file);
 char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
 
-char *   nemo_file_get_date_as_string             (NemoFile *file, NemoDateType date_type);
-
 gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags);
 
 gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
 
 gint     nemo_file_get_monitor_number             (NemoFile *file);
-
+void     nemo_file_set_monitor_number             (NemoFile *file, gint monitor);
+GdkPoint *nemo_file_get_position                  (NemoFile *file);
+void     nemo_file_set_position                   (NemoFile *file, gint x, gint y);
 gboolean nemo_file_get_is_desktop_orphan          (NemoFile *file);
 void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_desktop_orphan);
 
@@ -560,12 +555,15 @@ typedef struct {
 	char *                (* get_where_string)       (NemoFile           *file);
 
 	void                  (* set_metadata)           (NemoFile           *file,
-							  const char             *key,
-							  const char             *value);
+                                                      const char         *key,
+                                                      const char         *value);
 	void                  (* set_metadata_as_list)   (NemoFile           *file,
-							  const char             *key,
-							  char                  **value);
-	
+                                                      const char         *key,
+                                                      char              **value);
+    gchar *               (* get_metadata)           (NemoFile           *file,
+                                                      const char         *key);
+    gchar **              (* get_metadata_as_list)   (NemoFile           *file,
+                                                      const char         *key);
 	void                  (* mount)                  (NemoFile                   *file,
 							  GMountOperation                *mount_op,
 							  GCancellable                   *cancellable,

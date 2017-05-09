@@ -1,3 +1,137 @@
+nemo (3.4.1) sonya; urgency=medium
+
+  * Revert "split executables into separate packages."
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 05 May 2017 17:24:21 +0100
+
+nemo (3.4.0) sonya; urgency=medium
+
+  [ Daniel Schürmann ]
+  * Nemo-Icon-View: Fix missing cast warning
+  * restore prototype lost in c5a513468ee8c3497f0673e3ca019ccd3f409f8b
+  * Add missing include
+
+  [ Timothy Sharitt ]
+  * Fix quirks with tabs and search widgets
+
+  [ leigh123linux ]
+  * Don't reload while a reload is ongoing
+
+  [ Stefan-Olt ]
+  * wildcard search for search-engine-simple
+
+  [ Daniel Schürmann ]
+  * Remove double definition
+
+  [ JosephMcc ]
+  * Fix a crash when attempting to delete an empty selection on the desktop
+
+  [ dg1727 ]
+  * Updated pkexec support
+
+  [ JosephMcc ]
+  * Fix search never resolving
+
+  [ Ulrik Sverdrup ]
+  * nemo-dbus-manager.c: Add MoveURIs method
+
+  [ William Jon McCann ]
+  * Improve date display
+  * Use 24 hour date format when requested
+
+  [ Frédéric Péters ]
+  * Translate date formats
+
+  [ Carlos Soriano ]
+  * nautilus-file: implement smarter dates
+  * nautilus-list-view: add a modified column with time
+  * nautilus-file: Clarify translators comments
+  * nautilus-file: fix memory leak
+  * nautilus-file: fix code style
+  * nautilus-file: use const for the date format
+
+  [ Khaled Hosny ]
+  * Mark time format with xgettext:no-c-format
+
+  [ Carlos Soriano ]
+  * file: fix wrong date calculation
+  * file: fix previous commit
+  * file: use _() directly for date formatting
+
+  [ Ernestas Kulik ]
+  * file: fix date string day difference calculation
+
+  [ Daniel Schürmann ]
+  * Use long day and month names if space allows
+
+  [ leigh123linux ]
+  * Make libselinux dependency controllable by configure switch
+  * raise tracker version
+  * autogen.sh: don't run aclocal
+
+  [ Daniel Schürmann ]
+  * location-bar: use a GFile in location-changed signal
+
+  [ Clement Lefebvre ]
+  * l10n: Generate desktop file via generate_aditional_file
+  * Add Cinnamon panel shortcuts (trash, computer, etc.) to the launcher
+
+  [ leigh123linux ]
+  * Disable selinux for Debian rules
+
+  [ Daniel Schürmann ]
+  * Fix compiler warnings in eel folder
+  * nemo-desktop-window: cleanup delete-event handling
+  * nemo-blank-desktop-window: cleanup delete-event handling
+  * window: make NemoWindow a GtkApplicationWindow
+
+  [ itzexor ]
+  * nemo-file-operations.c: use only template filename for new files
+
+  [ Denis Golubev ]
+  * nemo-navigation-action.c: Add new_tab_action
+
+  [ Michael Webster ]
+  * Fix merge fail in previous commit.
+  * configure.ac: Remove CFLAGS line - the optimization is dangerous, and the fatal warnings for unused stuff was just annoying when trying to refactor - warnings are enough.
+  * Use GTimer for tracking startup speed, and also use one to track view loads.
+  * nemo-view.c: Add idle timer for benchmarking.
+  * Split off desktop handling into new process
+  * Update .gitignore
+  * Split off old icon container into the existing subclass NemoIconViewContainer and set up a new subclass - NemoIconViewGridContainer to match with a new NemoDesktopIconGridView class.  The old style is accessible via the org.nemo.desktop 'use-desktop-grid' setting.
+  * fix autostart file name so cinnamon session doesn't fail.
+  * split executables into separate packages.
+  * Remove a bunch of comments, fix auto-layout not sticking.
+  * nemo-icon-container: Move debug drawing to the grid container subclass.  Trigger it using NEMO_DEBUG=Desktop when running nemo-desktop.
+  * Implement horizontal layout.
+  * General fixes, icons, metadata issues between monitors.  Provide per-monitor metadata for desktop containers.
+  * Improve DND during keep-aligned, allow for insertion of items. Implement zoom scaling and allow adjustment.
+  * Improve highlighting of hovered items
+  * Fix desktop folder launching - xdg-open was never intended to be the final answer.
+  * Fix ellipses change listening - the is_desktop flag was being set too late in the view construction process to connect to the correct gsettings key.
+  * Fix regression causing metadata to be inconsistent in nemo client window when navigating to and away from the Desktop folder
+  * Add some gsettings listeners for grid stuff
+  * Fix dnd between monitors - clamp grid values, and ensure we have a grid on the target monitor.
+  * Fix zoom switching, dnd placement, snapping
+  * nemo-desktop-utils.c: Improve how we store the monitor number for a desktop window.
+  * Use black instead of theme color for pre-light label highlighting
+  * nemo-icon-canvas-item.c: extend redraw area slightly for canvas items. This ensures any small shadow we have is cleaned up after an item is de-selected.
+  * nemo-desktop-icon-grid-view.c: Don't trigger a real update while updating menus.
+  * Disable zoom for the desktop window (allow it only via context menu)
+  * nemo-desktop-application: cleanup some commented lines
+
+  [ leigh123linux ]
+  * fix desktop file error (#1477)
+
+  [ Denis Golubev ]
+  * nemo-navigation-action.c: Extend, Fix Middle-Click (#1478)
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT file
+  * l10n: Generate additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 04 May 2017 13:39:55 +0100
+
 nemo (3.2.2) serena; urgency=medium
 
   * l10n: Generate additional files

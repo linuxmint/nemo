@@ -106,6 +106,12 @@ typedef enum {
 	SHOW_HIDDEN = 1 << 0,
 } FilterOptions;
 
+typedef enum {
+	NEMO_DATE_FORMAT_REGULAR = 0,
+	NEMO_DATE_FORMAT_REGULAR_WITH_TIME = 1,
+	NEMO_DATE_FORMAT_FULL = 2,
+} NemoDateCompactFormat;
+
 typedef void (* ModifyListFunction) (GList **list, NemoFile *file);
 
 enum {
@@ -121,11 +127,14 @@ static GHashTable *symbolic_links;
 static GQuark attribute_name_q,
 	attribute_size_q,
 	attribute_type_q,
-    attribute_detailed_type_q,
+	attribute_detailed_type_q,
 	attribute_modification_date_q,
 	attribute_date_modified_q,
+	attribute_date_modified_full_q,
+	attribute_date_modified_with_time_q,
 	attribute_accessed_date_q,
 	attribute_date_accessed_q,
+	attribute_date_accessed_full_q,
 	attribute_mime_type_q,
 	attribute_size_detail_q,
 	attribute_deep_size_q,
@@ -133,9 +142,12 @@ static GQuark attribute_name_q,
 	attribute_deep_directory_count_q,
 	attribute_deep_total_count_q,
 	attribute_date_changed_q,
+	attribute_date_changed_full_q,
 	attribute_trashed_on_q,
+	attribute_trashed_on_full_q,
 	attribute_trash_orig_path_q,
 	attribute_date_permissions_q,
+	attribute_date_permissions_full_q,
 	attribute_permissions_q,
 	attribute_selinux_context_q,
 	attribute_octal_permissions_q,
@@ -164,6 +176,10 @@ static void
 nemo_file_init (NemoFile *file)
 {
 	file->details = G_TYPE_INSTANCE_GET_PRIVATE ((file), NEMO_TYPE_FILE, NemoFileDetails);
+
+    file->details->position = g_new0 (GdkPoint, 1);
+    file->details->position->x = -1;
+    file->details->position->y = -1;
 
 	nemo_file_clear_info (file);
 	nemo_file_invalidate_extension_info_internal (file);
@@ -494,6 +510,10 @@ nemo_file_clear_info (NemoFile *file)
 
     file->details->is_desktop_orphan = FALSE;
 
+    file->details->position->x = -1;
+    file->details->position->y = -1;
+    file->details->desktop_monitor = -1;
+
 	clear_metadata (file);
 }
 
@@ -808,6 +828,8 @@ finalize (GObject *object)
 	g_free (file->details->description);
 	g_free (file->details->activation_uri);
 	g_clear_object (&file->details->custom_icon);
+
+    g_clear_pointer (&file->details->position, g_free);
 
 	if (file->details->thumbnail) {
 		g_object_unref (file->details->thumbnail);
@@ -3190,7 +3212,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 	}
 	
 	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, reversed);
-	
+
 	if (result == 0) {
 		switch (sort_type) {
 		case NEMO_FILE_SORT_BY_DISPLAY_NAME:
@@ -3286,17 +3308,17 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
                                NEMO_FILE_SORT_BY_DETAILED_TYPE,
                                directories_first,
                                reversed); 
-    } else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q) {
+	} else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q || attribute == attribute_date_modified_with_time_q || attribute == attribute_date_modified_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_MTIME,
 						       directories_first,
 						       reversed);
-        } else if (attribute == attribute_accessed_date_q || attribute == attribute_date_accessed_q) {
+        } else if (attribute == attribute_accessed_date_q || attribute == attribute_date_accessed_q || attribute == attribute_date_accessed_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_ATIME,
 						       directories_first,
 						       reversed);
-        } else if (attribute == attribute_trashed_on_q) {
+        } else if (attribute == attribute_trashed_on_q || attribute == attribute_trashed_on_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TRASHED_TIME,
 						       directories_first,
@@ -3484,6 +3506,15 @@ nemo_file_get_metadata (NemoFile *file,
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), g_strdup (default_metadata));
 
+    if (NEMO_FILE_GET_CLASS (file)->get_metadata) {
+        value = NEMO_FILE_GET_CLASS (file)->get_metadata (file, key);
+        if (value) {
+            return value;
+        } else {
+            return g_strdup (default_metadata);
+        }
+    }
+
 	id = nemo_metadata_get_id (key);
 	value = g_hash_table_lookup (file->details->metadata, GUINT_TO_POINTER (id));
 
@@ -3511,6 +3542,10 @@ nemo_file_get_metadata_list (NemoFile *file,
 	}
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    if (NEMO_FILE_GET_CLASS (file)->get_metadata_as_list) {
+        return NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key);
+    }
 
 	id = nemo_metadata_get_id (key);
 	id |= METADATA_ID_IS_LIST_MASK;
@@ -4454,218 +4489,6 @@ nemo_file_get_where_string (NemoFile *file)
 	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_where_string (file);
 }
 
-static const char *TODAY_TIME_FORMATS [] = {
-	/* Today, use special word.
-	 * strftime patterns preceeded with the widest
-	 * possible resulting string for that pattern.
-	 *
-	 * Note to localizers: You can look at man strftime
-	 * for details on the format, but you should only use
-	 * the specifiers from the C standard, not extensions.
-	 * These include "%" followed by one of
-	 * "aAbBcdHIjmMpSUwWxXyYZ". There are two extensions
-	 * in the Nemo version of strftime that can be
-	 * used (and match GNU extensions). Putting a "-"
-	 * between the "%" and any numeric directive will turn
-	 * off zero padding, and putting a "_" there will use
-	 * space padding instead of zero padding.
-	 */
-	N_("today at 00:00:00 PM"),
-	N_("today at %-I:%M:%S %p"),
-	
-	N_("today at 00:00 PM"),
-	N_("today at %-I:%M %p"),
-	
-	N_("today, 00:00 PM"),
-	N_("today, %-I:%M %p"),
-	
-	N_("today"),
-	N_("today"),
-
-	NULL
-};
-
-static const char *YESTERDAY_TIME_FORMATS [] = {
-	/* Yesterday, use special word.
-	 * Note to localizers: Same issues as "today" string.
-	 */
-	N_("yesterday at 00:00:00 PM"),
-	N_("yesterday at %-I:%M:%S %p"),
-	
-	N_("yesterday at 00:00 PM"),
-	N_("yesterday at %-I:%M %p"),
-	
-	N_("yesterday, 00:00 PM"),
-	N_("yesterday, %-I:%M %p"),
-	
-	N_("yesterday"),
-	N_("yesterday"),
-
-	NULL
-};
-
-static const char *CURRENT_WEEK_TIME_FORMATS [] = {
-	/* Current week, include day of week.
-	 * Note to localizers: Same issues as "today" string.
-	 * The width measurement templates correspond to
-	 * the day/month name with the most letters.
-	 */
-	N_("Wednesday, September 00 0000 at 00:00:00 PM"),
-	N_("%A, %B %-d %Y at %-I:%M:%S %p"),
-
-	N_("Mon, Oct 00 0000 at 00:00:00 PM"),
-	N_("%a, %b %-d %Y at %-I:%M:%S %p"),
-
-	N_("Mon, Oct 00 0000 at 00:00 PM"),
-	N_("%a, %b %-d %Y at %-I:%M %p"),
-	
-	N_("Oct 00 0000 at 00:00 PM"),
-	N_("%b %-d %Y at %-I:%M %p"),
-	
-	N_("Oct 00 0000, 00:00 PM"),
-	N_("%b %-d %Y, %-I:%M %p"),
-	
-	N_("00/00/00, 00:00 PM"),
-	N_("%m/%-d/%y, %-I:%M %p"),
-
-	N_("00/00/00"),
-	N_("%m/%d/%y"),
-
-	NULL
-};
-
-static char *
-nemo_file_fit_date_as_string (NemoFile *file,
-				  NemoDateType date_type,
-				  int width,
-				  NemoWidthMeasureCallback measure_callback,
-				  NemoTruncateCallback truncate_callback,
-				  void *measure_context)
-{
-	time_t file_time_raw;
-	const char **formats;
-	const char *width_template;
-	const char *format;
-	char *date_string;
-	gchar *result = NULL;
-	int i, date_format_pref;
-	GDateTime *date_time, *today;
-	GTimeSpan file_date_age;
-
-	if (!nemo_file_get_date (file, date_type, &file_time_raw)) {
-		return NULL;
-	}
-
-	date_time = g_date_time_new_from_unix_local (file_time_raw);
-	date_format_pref = g_settings_get_enum (nemo_preferences,
-						NEMO_PREFERENCES_DATE_FORMAT);
-
-	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
-		result = g_date_time_format (date_time, "%c");
-		goto out;
-	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
-		result = g_date_time_format (date_time, "%Y-%m-%d %H:%M:%S");
-		goto out;
-	}
-
-	today = g_date_time_new_now_local ();
-	file_date_age = g_date_time_difference (today, date_time);
-
-	g_date_time_unref (today);
-
-	/* Format varies depending on how old the date is. This minimizes
-	 * the length (and thus clutter & complication) of typical dates
-	 * while providing sufficient detail for recent dates to make
-	 * them maximally understandable at a glance. Keep all format
-	 * strings separate rather than combining bits & pieces for
-	 * internationalization's sake.
-	 */
-
-	if (file_date_age < G_TIME_SPAN_DAY) {
-		formats = TODAY_TIME_FORMATS;
-	} else if (file_date_age < 2 * G_TIME_SPAN_DAY) {
-		formats = YESTERDAY_TIME_FORMATS;
-	} else {
-		formats = CURRENT_WEEK_TIME_FORMATS;
-	}
-
-	/* Find the date format that just fits the required width. Instead of measuring
-	 * the resulting string width directly, measure the width of a template that represents
-	 * the widest possible version of a date in a given format. This is done by using M, m
-	 * and 0 for the variable letters/digits respectively.
-	 */
-	format = NULL;
-	
-	for (i = 0; ; i += 2) {
-		width_template = (formats [i] ? _(formats [i]) : NULL);
-		if (width_template == NULL) {
-			/* no more formats left */
-			g_assert (format != NULL);
-			
-			/* Can't fit even the shortest format -- return an ellipsized form in the
-			 * shortest format
-			 */
-			
-			date_string = g_date_time_format (date_time, format);
-
-			if (truncate_callback == NULL) {
-				result = date_string;
-				break;
-			}
-			
-			result = (* truncate_callback) (date_string, width, measure_context);
-			g_free (date_string);
-
-			break;
-		}
-		
-		format = _(formats [i + 1]);
-
-		if (measure_callback == NULL) {
-			/* don't care about fitting the width */
-			break;
-		}
-
-		if ((* measure_callback) (width_template, measure_context) <= width) {
-			/* The template fits, this is the format we can fit. */
-			break;
-		}
-	}
-
-	if (result == NULL) {
-		result = g_date_time_format (date_time, format);
-	}
-
- out:
-	g_date_time_unref (date_time);
-	return result;
-}
-
-/**
- * nemo_file_fit_modified_date_as_string:
- * 
- * Get a user-displayable string representing a file modification date,
- * truncated to @width using the measuring and truncating callbacks.
- * @file: NemoFile representing the file in question.
- * @width: The desired resulting string width.
- * @measure_callback: The callback used to measure the string width.
- * @truncate_callback: The callback used to truncate the string to a desired width.
- * @measure_context: Data neede when measuring and truncating.
- * 
- * Returns: Newly allocated string ready to display to the user.
- * 
- **/
-char *
-nemo_file_fit_modified_date_as_string (NemoFile *file,
-					   int width,
-					   NemoWidthMeasureCallback measure_callback,
-					   NemoTruncateCallback truncate_callback,
-					   void *measure_context)
-{
-	return nemo_file_fit_date_as_string (file, NEMO_DATE_TYPE_MODIFIED,
-		width, measure_callback, truncate_callback, measure_context);
-}
-
 static char *
 nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
 {
@@ -4700,11 +4523,164 @@ nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
  * Returns: Newly allocated string ready to display to the user.
  * 
  **/
-char *
-nemo_file_get_date_as_string (NemoFile *file, NemoDateType date_type)
+static char *
+nemo_file_get_date_as_string (NemoFile       *file,
+                              NemoDateType    date_type,
+                              NemoDateCompactFormat  date_format)
 {
-	return nemo_file_fit_date_as_string (file, date_type,
-		0, NULL, NULL, NULL);
+	time_t file_time_raw;
+	GDateTime *file_date_time, *now;
+        GDateTime *today_midnight;
+	gint days_ago;
+	gboolean use_24;
+	const gchar *format;
+	gchar *result;
+	gchar *result_with_ratio;
+    int date_format_pref;
+
+  	if (!nemo_file_get_date (file, date_type, &file_time_raw))
+		return NULL;
+
+  	file_date_time = g_date_time_new_from_unix_local (file_time_raw);
+	date_format_pref = g_settings_get_enum (nemo_preferences,
+						NEMO_PREFERENCES_DATE_FORMAT);
+
+	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
+		result = g_date_time_format (file_date_time, "%c");
+		goto out;
+	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
+		result = g_date_time_format (file_date_time, "%Y-%m-%d %H:%M:%S");
+		goto out;
+	}
+
+	if (date_format != NEMO_DATE_FORMAT_FULL) {
+		GDateTime *file_date;
+
+		now = g_date_time_new_now_local ();
+                today_midnight = g_date_time_new_local (g_date_time_get_year (now),
+                                                        g_date_time_get_month (now),
+                                                        g_date_time_get_day_of_month (now),
+                                                        0, 0, 0);
+
+		file_date = g_date_time_new_local (g_date_time_get_year (file_date_time),
+                                                   g_date_time_get_month (file_date_time),
+                                                   g_date_time_get_day_of_month (file_date_time),
+                                                   0, 0, 0);
+
+		days_ago = g_date_time_difference (today_midnight, file_date) / G_TIME_SPAN_DAY;
+
+		use_24 = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
+
+		// Show only the time if date is on today
+		if (days_ago < 1) {
+			if (use_24) {
+				/* Translators: Time in 24h format */
+				format = _("%H:%M");
+			} else {
+				/* Translators: Time in 12h format */
+				format = _("%l:%M %p");
+			}
+		}
+		// Show the word "Yesterday" and time if date is on yesterday
+		else if (days_ago < 2) {
+			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
+				// xgettext:no-c-format
+				format = _("Yesterday");
+			} else {
+				if (use_24) {
+					/* Translators: this is the word Yesterday followed by
+					 * a time in 24h format. i.e. "Yesterday 23:04" */
+					// xgettext:no-c-format
+					format = _("Yesterday %H:%M");
+				} else {
+					/* Translators: this is the word Yesterday followed by
+					 * a time in 12h format. i.e. "Yesterday 9:04 PM" */
+					// xgettext:no-c-format
+					format = _("Yesterday %l:%M %p");
+				}
+			}
+		}
+		// Show a week day and time if date is in the last week
+		else if (days_ago < 7) {
+			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
+				// xgettext:no-c-format
+				format = _("%A");
+			} else {
+				if (use_24) {
+					/* Translators: this is the name of the week day followed by
+					 * a time in 24h format. i.e. "Monday 23:04" */
+					// xgettext:no-c-format
+					format = _("%A %H:%M");
+				} else {
+					/* Translators: this is the week day name followed by
+					 * a time in 12h format. i.e. "Monday 9:04 PM" */
+					// xgettext:no-c-format
+					format = _("%A %l:%M %p");
+				}
+			}
+		} else if (g_date_time_get_year (file_date) == g_date_time_get_year (now)) {
+			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
+				/* Translators: this is the day of the month followed
+				 * by the abbreviated month name i.e. "3 February" */
+				// xgettext:no-c-format
+				format = _("%-e %B");
+			} else {
+				if (use_24) {
+					/* Translators: this is the day of the month followed
+					 * by the abbreviated month name followed by a time in
+					 * 24h format i.e. "3 February 23:04" */
+					// xgettext:no-c-format
+					format = _("%-e %B %H:%M");
+				} else {
+					/* Translators: this is the day of the month followed
+					 * by the abbreviated month name followed by a time in
+					 * 12h format i.e. "3 February 9:04" */
+					// xgettext:no-c-format
+					format = _("%-e %B %l:%M %p");
+				}
+			}
+		} else {
+			if (date_format == NEMO_DATE_FORMAT_REGULAR) {
+				/* Translators: this is the day of the month followed by the abbreviated
+				 * month name followed by the year i.e. "3 Feb 2015" */
+				// xgettext:no-c-format
+				format = _("%-e %b %Y");
+			} else {
+				if (use_24) {
+					/* Translators: this is the day number followed
+					 * by the abbreviated month name followed by the year followed
+					 * by a time in 24h format i.e. "3 Feb 2015 23:04" */
+					// xgettext:no-c-format
+					format = _("%-e %b %Y %H:%M");
+				} else {
+					/* Translators: this is the day number followed
+					 * by the abbreviated month name followed by the year followed
+					 * by a time in 12h format i.e. "3 Feb 2015 9:04 PM" */
+					// xgettext:no-c-format
+					format = _("%-e %b %Y %l:%M %p");
+				}
+			}
+		}
+
+		g_date_time_unref (file_date);
+		g_date_time_unref (now);
+		g_date_time_unref (today_midnight);
+	} else {
+		// xgettext:no-c-format
+		format = _("%c");
+	}
+
+	result = g_date_time_format (file_date_time, format);
+
+ out:
+	g_date_time_unref (file_date_time);
+
+	/* Replace ":" with ratio. Replacement is done afterward because g_date_time_format
+	 * may fail with utf8 chars in some locales */
+	result_with_ratio = eel_str_replace_substring (result, ":", "∶");
+ 	g_free (result);
+
+        return  result_with_ratio;
 }
 
 static NemoSpeedTradeoffValue show_directory_item_count;
@@ -6175,23 +6151,58 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	}
 	if (attribute_q == attribute_date_modified_q) {
 		return nemo_file_get_date_as_string (file, 
-							 NEMO_DATE_TYPE_MODIFIED);
+							 NEMO_DATE_TYPE_MODIFIED,
+							 NEMO_DATE_FORMAT_REGULAR);
+	}
+	if (attribute_q == attribute_date_modified_full_q) {
+		return nemo_file_get_date_as_string (file, 
+							 NEMO_DATE_TYPE_MODIFIED,
+							 NEMO_DATE_FORMAT_FULL);
+	}
+	if (attribute_q == attribute_date_modified_with_time_q) {
+		return nemo_file_get_date_as_string (file,
+							 NEMO_DATE_TYPE_MODIFIED,
+		                     NEMO_DATE_FORMAT_REGULAR_WITH_TIME);
 	}
 	if (attribute_q == attribute_date_changed_q) {
 		return nemo_file_get_date_as_string (file, 
-							 NEMO_DATE_TYPE_CHANGED);
+							 NEMO_DATE_TYPE_CHANGED,
+							 NEMO_DATE_FORMAT_REGULAR);
+	}
+	if (attribute_q == attribute_date_changed_full_q) {
+		return nemo_file_get_date_as_string (file, 
+							 NEMO_DATE_TYPE_CHANGED,
+							 NEMO_DATE_FORMAT_FULL);
 	}
 	if (attribute_q == attribute_date_accessed_q) {
 		return nemo_file_get_date_as_string (file,
-							 NEMO_DATE_TYPE_ACCESSED);
+							 NEMO_DATE_TYPE_ACCESSED,
+							 NEMO_DATE_FORMAT_REGULAR);
+	}
+	if (attribute_q == attribute_date_accessed_full_q) {
+		return nemo_file_get_date_as_string (file,
+							 NEMO_DATE_TYPE_ACCESSED,
+							 NEMO_DATE_FORMAT_FULL);
 	}
 	if (attribute_q == attribute_trashed_on_q) {
 		return nemo_file_get_date_as_string (file,
-							 NEMO_DATE_TYPE_TRASHED);
+							 NEMO_DATE_TYPE_TRASHED,
+							 NEMO_DATE_FORMAT_FULL);
+	}
+	if (attribute_q == attribute_trashed_on_full_q) {
+		return nemo_file_get_date_as_string (file,
+							 NEMO_DATE_TYPE_TRASHED,
+							 NEMO_DATE_FORMAT_REGULAR);
 	}
 	if (attribute_q == attribute_date_permissions_q) {
 		return nemo_file_get_date_as_string (file,
-							 NEMO_DATE_TYPE_PERMISSIONS_CHANGED);
+							 NEMO_DATE_TYPE_PERMISSIONS_CHANGED,
+							 NEMO_DATE_FORMAT_FULL);
+	}
+	if (attribute_q == attribute_date_permissions_full_q) {
+		return nemo_file_get_date_as_string (file,
+							 NEMO_DATE_TYPE_PERMISSIONS_CHANGED,
+							 NEMO_DATE_FORMAT_REGULAR);
 	}
 	if (attribute_q == attribute_permissions_q) {
 		return nemo_file_get_permissions_as_string (file);
@@ -6339,11 +6350,17 @@ nemo_file_is_date_sort_attribute_q (GQuark attribute_q)
 {
 	if (attribute_q == attribute_modification_date_q ||
 	    attribute_q == attribute_date_modified_q ||
+	    attribute_q == attribute_date_modified_full_q ||
+	    attribute_q == attribute_date_modified_with_time_q ||
 	    attribute_q == attribute_accessed_date_q ||
 	    attribute_q == attribute_date_accessed_q ||
+	    attribute_q == attribute_date_accessed_full_q ||
 	    attribute_q == attribute_date_changed_q ||
+	    attribute_q == attribute_date_changed_full_q ||
 	    attribute_q == attribute_trashed_on_q ||
-	    attribute_q == attribute_date_permissions_q) {
+	    attribute_q == attribute_trashed_on_full_q ||
+	    attribute_q == attribute_date_permissions_q ||
+	    attribute_q == attribute_date_permissions_full_q) {
 		return TRUE;
 	}
 
@@ -7460,7 +7477,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     }
 
     if (flags & NEMO_FILE_TOOLTIP_FLAGS_ACCESS_DATE) {
-        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_ACCESSED);
+        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_ACCESSED, TRUE);
         tmp = g_strdup_printf (_("Accessed: %s"), date);
         g_free (date);
         string = add_line (string, tmp, TRUE);
@@ -7468,7 +7485,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     }
 
     if (flags & NEMO_FILE_TOOLTIP_FLAGS_MOD_DATE) {
-        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_MODIFIED);
+        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_MODIFIED, TRUE);
         tmp = g_strdup_printf (_("Modified: %s"), date);
         g_free (date);
         string = add_line (string, tmp, TRUE);
@@ -7503,7 +7520,61 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
 gint
 nemo_file_get_monitor_number (NemoFile *file)
 {
-    return nemo_file_get_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, 0);
+    if (file->details->desktop_monitor == -1) {
+        file->details->desktop_monitor = nemo_file_get_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, -1);
+    }
+
+    return file->details->desktop_monitor;
+}
+
+void
+nemo_file_set_monitor_number (NemoFile *file, gint monitor)
+{
+    nemo_file_set_integer_metadata (file, NEMO_METADATA_KEY_MONITOR, -1, monitor);
+    file->details->desktop_monitor = monitor;
+}
+
+GdkPoint *
+nemo_file_get_position (NemoFile *file)
+{
+    gint x, y;
+
+    if (file->details->position->x == -1) {
+        char *position_string;
+        gboolean position_good;
+        char c;
+
+        /* Get the current position of this icon from the metadata. */
+        position_string = nemo_file_get_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, "");
+
+        position_good = sscanf (position_string, " %d , %d %c", &x, &y, &c) == 2;
+        g_free (position_string);
+
+        if (position_good) {
+            file->details->position->x = x;
+            file->details->position->y = y;
+        }
+    }
+
+    return file->details->position;
+}
+
+void
+nemo_file_set_position (NemoFile *file, gint x, gint y)
+{
+    gchar *position_string;
+
+    if (x > -1 && y > -1) {
+        position_string = g_strdup_printf ("%d,%d", x, y);
+    } else {
+        position_string = NULL;
+    }
+    nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, NULL, position_string);
+
+    file->details->position->x = x;
+    file->details->position->y = y;
+
+    g_free (position_string);
 }
 
 gboolean
@@ -8149,8 +8220,11 @@ nemo_file_class_init (NemoFileClass *class)
     attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
+	attribute_date_modified_full_q = g_quark_from_static_string ("date_modified_full");
+	attribute_date_modified_with_time_q = g_quark_from_static_string ("date_modified_with_time");
 	attribute_accessed_date_q = g_quark_from_static_string ("accessed_date");
 	attribute_date_accessed_q = g_quark_from_static_string ("date_accessed");
+	attribute_date_accessed_full_q = g_quark_from_static_string ("date_accessed_full");
 	attribute_mime_type_q = g_quark_from_static_string ("mime_type");
 	attribute_size_detail_q = g_quark_from_static_string ("size_detail");
 	attribute_deep_size_q = g_quark_from_static_string ("deep_size");
@@ -8158,9 +8232,12 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_deep_directory_count_q = g_quark_from_static_string ("deep_directory_count");
 	attribute_deep_total_count_q = g_quark_from_static_string ("deep_total_count");
 	attribute_date_changed_q = g_quark_from_static_string ("date_changed");
+	attribute_date_changed_full_q = g_quark_from_static_string ("date_changed_full");
 	attribute_trashed_on_q = g_quark_from_static_string ("trashed_on");
+	attribute_trashed_on_full_q = g_quark_from_static_string ("trashed_on_full");
 	attribute_trash_orig_path_q = g_quark_from_static_string ("trash_orig_path");
 	attribute_date_permissions_q = g_quark_from_static_string ("date_permissions");
+	attribute_date_permissions_full_q = g_quark_from_static_string ("date_permissions_full");
 	attribute_permissions_q = g_quark_from_static_string ("permissions");
 	attribute_selinux_context_q = g_quark_from_static_string ("selinux_context");
 	attribute_octal_permissions_q = g_quark_from_static_string ("octal_permissions");
@@ -8177,6 +8254,8 @@ nemo_file_class_init (NemoFileClass *class)
 
 	class->set_metadata = real_set_metadata;
 	class->set_metadata_as_list = real_set_metadata_as_list;
+    class->get_metadata = NULL;
+    class->get_metadata_as_list = NULL;
 
 	signals[CHANGED] =
 		g_signal_new ("changed",

@@ -29,7 +29,9 @@
 
 #include "nemo-file-undo-operations.h"
 
+#include <stdlib.h>
 #include <glib/gi18n.h>
+
 
 #include "nemo-file-operations.h"
 #include "nemo-file.h"

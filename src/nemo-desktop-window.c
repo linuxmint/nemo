@@ -59,6 +59,23 @@ G_DEFINE_TYPE (NemoDesktopWindow, nemo_desktop_window,
 	       NEMO_TYPE_WINDOW);
 
 static void
+nemo_desktop_window_update_directory (NemoDesktopWindow *window)
+{
+	GFile *location;
+
+	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
+
+	window->details->loaded = FALSE;
+
+    location = g_file_new_for_uri (EEL_DESKTOP_URI);
+
+	nemo_window_go_to (NEMO_WINDOW (window), location);
+	window->details->loaded = TRUE;
+
+	g_object_unref (location);
+}
+
+static void
 nemo_desktop_window_dispose (GObject *obj)
 {
 	NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (obj);
@@ -80,7 +97,10 @@ nemo_desktop_window_constructed (GObject *obj)
 	NemoWindow *nwindow = NEMO_WINDOW (obj);
 
 	G_OBJECT_CLASS (nemo_desktop_window_parent_class)->constructed (obj);
-	
+
+    g_object_set_data (G_OBJECT (window), "monitor_number",
+                       GINT_TO_POINTER (window->details->monitor));
+
 	gtk_widget_hide (nwindow->details->statusbar);
 	gtk_widget_hide (nwindow->details->menubar);
 
@@ -170,34 +190,16 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
 }
 
-static gint
-nemo_desktop_window_delete_event (NemoDesktopWindow *window)
-{
-	/* Returning true tells GTK+ not to delete the window. */
-	return TRUE;
-}
-
-void
-nemo_desktop_window_update_directory (NemoDesktopWindow *window)
-{
-	GFile *location;
-
-	g_assert (NEMO_IS_DESKTOP_WINDOW (window));
-
-	window->details->loaded = FALSE;
-	location = g_file_new_for_uri (EEL_DESKTOP_URI);
-	nemo_window_go_to (NEMO_WINDOW (window), location);
-	window->details->loaded = TRUE;
-
-	g_object_unref (location);
-}
-
 NemoDesktopWindow *
 nemo_desktop_window_new (gint monitor)
 {
+	GApplication *application;
 	NemoDesktopWindow *window;
 
+	application = g_application_get_default ();
+
     window = g_object_new (NEMO_TYPE_DESKTOP_WINDOW,
+			               "application", application,                           
                            "disable-chrome", TRUE,
                            "monitor", monitor,
                            NULL);
@@ -209,8 +211,6 @@ nemo_desktop_window_new (gint monitor)
     gtk_window_set_default_size (GTK_WINDOW (window), -1, -1);
 #endif
 
-    g_signal_connect (window, "delete_event", G_CALLBACK (nemo_desktop_window_delete_event), NULL);
-
     GdkRGBA transparent = {0, 0, 0, 0};
     gtk_widget_override_background_color (GTK_WIDGET (window), 0, &transparent);
 
@@ -220,6 +220,14 @@ nemo_desktop_window_new (gint monitor)
 	nemo_desktop_window_update_directory (window);
 
 	return window;
+}
+
+static gboolean
+nemo_desktop_window_delete_event (GtkWidget *widget,
+                                  GdkEventAny *event)
+{
+	/* Returning true tells GTK+ not to delete the window. */
+	return TRUE;
 }
 
 static void
@@ -314,6 +322,7 @@ nemo_desktop_window_class_init (NemoDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+	wclass->delete_event = nemo_desktop_window_delete_event;
 
 	nclass->sync_title = real_sync_title;
 	nclass->get_icon = real_get_icon;

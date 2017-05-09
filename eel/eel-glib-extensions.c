@@ -316,22 +316,22 @@ eel_self_check_glib_extensions (void)
 	/* eel_g_list_partition */
 
 	list_to_partition = NULL;
-	list_to_partition = g_list_append (list_to_partition, "Cadillac");
-	list_to_partition = g_list_append (list_to_partition, "Pontiac");
-	list_to_partition = g_list_append (list_to_partition, "Ford");
-	list_to_partition = g_list_append (list_to_partition, "Range Rover");
+	list_to_partition = g_list_append (list_to_partition, (gpointer) "Cadillac");
+	list_to_partition = g_list_append (list_to_partition, (gpointer) "Pontiac");
+	list_to_partition = g_list_append (list_to_partition, (gpointer) "Ford");
+	list_to_partition = g_list_append (list_to_partition, (gpointer) "Range Rover");
 	
 	expected_passed = NULL;
-	expected_passed = g_list_append (expected_passed, "Cadillac");
-	expected_passed = g_list_append (expected_passed, "Ford");
+	expected_passed = g_list_append (expected_passed, (gpointer) "Cadillac");
+	expected_passed = g_list_append (expected_passed, (gpointer) "Ford");
 	
 	expected_failed = NULL;
-	expected_failed = g_list_append (expected_failed, "Pontiac");
-	expected_failed = g_list_append (expected_failed, "Range Rover");
+	expected_failed = g_list_append (expected_failed, (gpointer) "Pontiac");
+	expected_failed = g_list_append (expected_failed, (gpointer) "Range Rover");
 	
 	actual_passed = eel_g_list_partition (list_to_partition, 
 						   eel_test_predicate,
-						   "m",
+						   (gpointer) "m",
 						   &actual_failed);
 	
 	EEL_CHECK_BOOLEAN_RESULT (eel_g_str_list_equal (expected_passed, actual_passed), TRUE);

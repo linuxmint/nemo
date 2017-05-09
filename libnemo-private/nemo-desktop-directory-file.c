@@ -209,7 +209,10 @@ desktop_callback_check_done (DesktopCallback *desktop_callback)
 	}
 
 	/* Ensure our metadata is updated before calling back */
-	nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "directory");
+
+    // nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "directory");
+    nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "desktop-monitor-0");
+	nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "desktop-monitor-1");
 
 	/* Remove from the hash table before sending it. */
 	g_hash_table_remove (desktop_callback->desktop_file->details->callbacks,
@@ -448,20 +451,78 @@ monitor_destroy (gpointer data)
 	g_free (monitor);
 }
 
+static gchar *
+get_indexed_key (NemoFile *file)
+{
+    NemoDesktopDirectory *desktop_directory;
+    gchar *indexed_key;
+
+    desktop_directory = NEMO_DESKTOP_DIRECTORY_FILE (file)->details->desktop_directory;
+
+    indexed_key = g_strdup_printf ("desktop-monitor-%d",
+                                   NEMO_DESKTOP_DIRECTORY (desktop_directory)->display_number);
+
+    return indexed_key;
+}
+
 static void
 nemo_desktop_directory_file_set_metadata (NemoFile           *file,
-					      const char             *key,
-					      const char             *value)
+                                          const char         *key,
+                                          const char         *value)
 {
-	nemo_desktop_set_metadata_string (file, "directory", key, value);
+    gchar *name;
+
+    name = get_indexed_key (file);
+
+    nemo_desktop_set_metadata_string (file, name, key, value);
+
+    g_free (name);
 }
 
 static void
 nemo_desktop_directory_file_set_metadata_as_list (NemoFile           *file,
-						      const char             *key,
-						      char                  **value)
+                                                  const char         *key,
+                                                  char              **value)
 {
-	nemo_desktop_set_metadata_stringv (file, "directory", key, (const gchar **) value);
+    gchar *name;
+
+    name = get_indexed_key (file);
+
+    nemo_desktop_set_metadata_stringv (file, name, key, (const gchar **) value);
+
+    g_free (name);
+}
+
+static gchar *
+nemo_desktop_directory_file_get_metadata (NemoFile           *file,
+                                          const char         *key)
+{
+    gchar *name;
+    gchar *string;
+
+    name = get_indexed_key (file);
+
+    string = nemo_desktop_get_metadata_string (file, name, key);
+
+    g_free (name);
+
+    return string;
+}
+
+static gchar **
+nemo_desktop_directory_file_get_metadata_as_list (NemoFile           *file,
+                                                  const char         *key)
+{
+    gchar *name;
+    gchar **stringv;
+
+    name = get_indexed_key (file);
+
+    stringv = nemo_desktop_get_metadata_stringv (file, name, key);
+
+    g_free (name);
+
+    return stringv;
 }
 
 static void
@@ -553,8 +614,10 @@ nemo_desktop_directory_file_class_init (NemoDesktopDirectoryFileClass *klass)
 	file_class->get_deep_counts = desktop_directory_file_get_deep_counts;
 	file_class->get_date = desktop_directory_file_get_date;
 	file_class->get_where_string = desktop_directory_file_get_where_string;
-	file_class->set_metadata = nemo_desktop_directory_file_set_metadata;
-	file_class->set_metadata_as_list = nemo_desktop_directory_file_set_metadata_as_list;
+    file_class->set_metadata = nemo_desktop_directory_file_set_metadata;
+	file_class->get_metadata = nemo_desktop_directory_file_get_metadata;
+    file_class->set_metadata_as_list = nemo_desktop_directory_file_set_metadata_as_list;
+	file_class->get_metadata_as_list = nemo_desktop_directory_file_get_metadata_as_list;
 
 	g_type_class_add_private (klass, sizeof (NemoDesktopDirectoryFileDetails));
 }

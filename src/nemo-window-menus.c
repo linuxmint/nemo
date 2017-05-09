@@ -231,21 +231,27 @@ static void
 action_zoom_in_callback (GtkAction *action, 
 			 gpointer user_data) 
 {
-	nemo_view_bump_zoom_level (get_current_view (user_data), 1);
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        nemo_view_bump_zoom_level (get_current_view (user_data), 1);
+    }
 }
 
 static void
 action_zoom_out_callback (GtkAction *action, 
 			  gpointer user_data) 
 {
-	nemo_view_bump_zoom_level (get_current_view (user_data), -1);
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        nemo_view_bump_zoom_level (get_current_view (user_data), -1);
+    }
 }
 
 static void
 action_zoom_normal_callback (GtkAction *action, 
 			     gpointer user_data) 
 {
-	nemo_view_restore_default_zoom_level (get_current_view (user_data));
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        nemo_view_restore_default_zoom_level (get_current_view (user_data));
+    }
 }
 
 static void

@@ -59,6 +59,23 @@ nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 	return g_strdup (viewer_iid);
 }
 
+char *
+nemo_global_preferences_get_desktop_iid (void)
+{
+    gboolean use_grid;
+    const char *viewer_iid;
+
+    use_grid = g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_USE_DESKTOP_GRID);
+
+    if (use_grid) {
+        viewer_iid = NEMO_DESKTOP_ICON_GRID_VIEW_IID;
+    } else {
+        viewer_iid = NEMO_DESKTOP_ICON_VIEW_IID;
+    }
+
+    return g_strdup (viewer_iid);
+}
+
 gboolean
 nemo_global_preferences_get_ignore_view_metadata (void)
 {
@@ -131,6 +148,7 @@ nemo_global_preferences_init (void)
 	gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");
 	gnome_terminal_preferences = g_settings_new("org.cinnamon.desktop.default-applications.terminal");
     cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
+	cinnamon_interface_preferences = g_settings_new ("org.cinnamon.desktop.interface");
 
     ignore_view_metadata = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_IGNORE_VIEW_METADATA);
 

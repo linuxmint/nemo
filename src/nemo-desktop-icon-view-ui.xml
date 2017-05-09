@@ -12,6 +12,10 @@
         </placeholder>
 </popup>
 <popup name="selection">
+        <placeholder name="Icon Appearance Items">
+            <menuitem name="Stretch" action="Stretch"/>
+            <menuitem name="Unstretch" action="Unstretch"/>
+        </placeholder>
         <placeholder name="Empty Trash Holder">
                 <menuitem name="Empty Trash" action="Empty Trash Conditional"/>
         </placeholder>
