@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-icon-dnd.c - Drag & drop handling for the icon container widget.
 
@@ -1224,9 +1224,13 @@ nemo_icon_container_get_drop_action (NemoIconContainer *container,
 		if (!drop_target) {
 			return;
 		}
-		nemo_drag_default_drop_action_for_icons (context, drop_target, 
-							     container->details->dnd_info->drag_info.selection_list, 
-							     action);
+
+        nemo_drag_default_drop_action_for_icons (context,
+                                                 drop_target,
+                                                 container->details->dnd_info->drag_info.selection_list,
+                                                 action,
+                                                 &container->details->dnd_info->drag_info.source_fs,
+                                                 &container->details->dnd_info->drag_info.can_delete_source);
 		g_free (drop_target);
 		break;
 	case NEMO_ICON_DND_URI_LIST:

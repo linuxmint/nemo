@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /*
  * Nemo
@@ -62,7 +62,10 @@ struct _NemoTreeViewDragDestDetails {
 	guint highlight_id;
 	guint scroll_id;
 	guint expand_id;
-	
+
+    gchar *desktop_dnd_source_fs;
+    gboolean desktop_dnd_can_delete_source;
+
 	char *direct_save_uri;
 };
 
@@ -293,8 +296,10 @@ free_drag_data (NemoTreeViewDragDest *dest)
 		dest->details->drag_list = NULL;
 	}
 
-	g_free (dest->details->direct_save_uri);
-	dest->details->direct_save_uri = NULL;
+    g_clear_pointer (&dest->details->direct_save_uri, g_free);
+    g_clear_pointer (&dest->details->desktop_dnd_source_fs, g_free);
+
+    dest->details->desktop_dnd_can_delete_source = FALSE;
 }
 
 static char *
@@ -404,11 +409,12 @@ get_drop_action (NemoTreeViewDragDest *dest,
 			return 0;
 		}
 
-		nemo_drag_default_drop_action_for_icons
-			(context,
-			 drop_target,
-			 dest->details->drag_list,
-			 &action);
+        nemo_drag_default_drop_action_for_icons (context,
+                                                 drop_target,
+                                                 dest->details->drag_list,
+                                                 &action,
+                                                 &dest->details->desktop_dnd_source_fs,
+                                                 &dest->details->desktop_dnd_can_delete_source);
 
 		g_free (drop_target);
 		
@@ -1140,6 +1146,8 @@ nemo_tree_view_drag_dest_new (GtkTreeView *tree_view)
 	dest = g_object_new (NEMO_TYPE_TREE_VIEW_DRAG_DEST, NULL);
 
 	dest->details->tree_view = tree_view;
+    dest->details->desktop_dnd_source_fs = NULL;
+    dest->details->desktop_dnd_can_delete_source = FALSE;
 	g_object_weak_ref (G_OBJECT (dest->details->tree_view),
 			   tree_view_weak_notify, dest);
 	

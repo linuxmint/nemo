@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-dnd.c - Common Drag & drop handling code shared by the icon container
    and the list view.
@@ -74,6 +74,8 @@ nemo_drag_init (NemoDragInfo     *drag_info,
 
 	drag_info->drop_occured = FALSE;
 	drag_info->need_to_destroy = FALSE;
+    drag_info->source_fs = NULL;
+    drag_info->can_delete_source = FALSE;
 }
 
 void
@@ -81,6 +83,8 @@ nemo_drag_finalize (NemoDragInfo *drag_info)
 {
 	gtk_target_list_unref (drag_info->target_list);
 	nemo_drag_destroy_selection_list (drag_info->selection_list);
+    g_free (drag_info->source_fs);
+    drag_info->can_delete_source = FALSE;
 
 	g_free (drag_info);
 }
@@ -382,27 +386,40 @@ nemo_drag_default_drop_action_for_netscape_url (GdkDragContext *context)
 }
 
 static gboolean
-check_same_fs (NemoFile *file1,
-	       NemoFile *file2)
+check_same_fs (NemoFile    *target_file,
+               NemoFile    *source_file,
+               const gchar *source_fs_for_desktop)
 {
-	char *id1, *id2;
-	gboolean result;
+    char *target_id, *source_id;
+    gboolean result;
 
-	result = FALSE;
+    result = FALSE;
 
-	if (file1 != NULL && file2 != NULL) {
-		id1 = nemo_file_get_filesystem_id (file1);
-		id2 = nemo_file_get_filesystem_id (file2);
+    if (target_file != NULL && source_fs_for_desktop != NULL) {
 
-		if (id1 != NULL && id2 != NULL) {
-			result = (strcmp (id1, id2) == 0);
-		}
+    }
 
-		g_free (id1);
-		g_free (id2);
-	}
+    if (target_file != NULL && source_file != NULL) {
+        source_id = nemo_file_get_filesystem_id (source_file);
+        target_id = nemo_file_get_filesystem_id (target_file);
 
-	return result;
+        if (source_id != NULL && target_id != NULL) {
+            result = (strcmp (source_id, target_id) == 0);
+        }
+
+        g_free (source_id);
+        g_free (target_id);
+    } else if (target_file != NULL && source_fs_for_desktop != NULL) {
+        target_id = nemo_file_get_filesystem_id (target_file);
+
+        if (target_id != NULL) {
+            result = (strcmp (source_fs_for_desktop, target_id) == 0);
+        }
+
+        g_free (target_id);
+    }
+
+    return result;
 }
 
 static gboolean
@@ -423,10 +440,32 @@ source_is_deletable (GFile *file)
 	return ret;
 }
 
+static gboolean
+uri_contains_desktop (const gchar *uri)
+{
+    gchar *real_desktop_uri;
+
+    if (eel_uri_is_desktop (uri)) {
+        return TRUE;
+    }
+
+    real_desktop_uri = nemo_get_desktop_directory_uri ();
+
+    if (g_str_has_prefix (uri, real_desktop_uri)) {
+        g_free (real_desktop_uri);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 void
 nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
-					     const char *target_uri_string, const GList *items,
-					     int *action)
+                                         const char     *target_uri_string,
+                                         const GList    *items,
+                                         int            *action,
+                                         gchar         **source_fs,
+                                         gboolean       *can_delete_source)
 {
 	gboolean same_fs;
 	gboolean target_is_source_parent;
@@ -456,6 +495,55 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 	
 	dropped_uri = ((NemoDragSelectionItem *)items->data)->uri;
 	dropped_file = nemo_file_get_existing_by_uri (dropped_uri);
+
+    /* To/from desktop preparation - since we are separate processes, we don't have the full filesystem
+     * info on the source and destination - we only have the destination info.  Creating a NemoFile for it
+     * is an async operation, so here we'll grab the source filesystem type and store it for the duration of
+     * the drag.  We can use it to compare below with the destination type to ensure a proper move action -
+     * (we default to copy when we can't confirm source and destination fs types are the same.)
+     */
+    if (dropped_file == NULL && (uri_contains_desktop (target_uri_string) || uri_contains_desktop (dropped_uri))) {
+        if (*source_fs == NULL) {
+            GFile *source_file;
+
+            source_file = g_file_new_for_uri (dropped_uri);
+
+            if (g_file_is_native (source_file)) {
+                GFileInfo *fs_info;
+                GError *error = NULL;
+
+                fs_info = g_file_query_info (source_file,
+                                             G_FILE_ATTRIBUTE_ID_FILESYSTEM "," G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE,
+                                             G_FILE_QUERY_INFO_NONE,
+                                             NULL,
+                                             &error);
+
+                if (error != NULL) {
+                    g_warning ("Cannot fetch filesystem type for drag involving the desktop: %s", error->message);
+                    g_clear_error (&error);
+                } else {
+                    if (g_file_info_has_attribute (fs_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM)) {
+                        *source_fs = g_strdup (g_file_info_get_attribute_string (fs_info,
+                                                                                 G_FILE_ATTRIBUTE_ID_FILESYSTEM));
+                    } else {
+                        *source_fs = NULL;
+                    }
+
+                    if (g_file_info_has_attribute (fs_info, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE)) {
+                        *can_delete_source = g_file_info_get_attribute_boolean (fs_info,
+                                                                                G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE);
+                    } else {
+                        *can_delete_source = FALSE;
+                    }
+                }
+
+                g_object_unref (fs_info);
+            }
+
+            g_object_unref (source_file);
+        }
+    }
+
 	target_file = nemo_file_get_existing_by_uri (target_uri_string);
 	
 	/*
@@ -498,6 +586,7 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 			return;
 		}
 	} else if (target_file != NULL && nemo_file_is_archive (target_file)) {
+        g_printerr ("is archive\n");
 		*action = GDK_ACTION_COPY;
 
 		nemo_file_unref (dropped_file);
@@ -507,7 +596,7 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		target = g_file_new_for_uri (target_uri_string);
 	}
 
-	same_fs = check_same_fs (target_file, dropped_file);
+	same_fs = check_same_fs (target_file, dropped_file, *source_fs);
 
 	nemo_file_unref (dropped_file);
 	nemo_file_unref (target_file);
@@ -526,7 +615,7 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 	}
 	source_deletable = source_is_deletable (dropped);
 
-	if ((same_fs && source_deletable) || target_is_source_parent ||
+	if ((same_fs && (source_deletable || *can_delete_source)) || target_is_source_parent ||
 	    g_file_has_uri_scheme (dropped, "trash")) {
 		if (actions & GDK_ACTION_MOVE) {
 			*action = GDK_ACTION_MOVE;

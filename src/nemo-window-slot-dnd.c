@@ -42,6 +42,9 @@ typedef struct {
     char *netscape_url;
   } data;
 
+  gchar *desktop_dnd_source_fs;
+  gboolean desktop_dnd_can_delete_source;
+
   NemoFile *target_file;
   NemoWindowSlot *target_slot;
 } NemoDragSlotProxyInfo;
@@ -98,9 +101,12 @@ slot_proxy_drag_motion (GtkWidget          *widget,
   if (drag_info->have_data &&
       drag_info->have_valid_data) {
     if (drag_info->info == NEMO_ICON_DND_GNOME_ICON_LIST) {
-      nemo_drag_default_drop_action_for_icons (context, target_uri,
-                                                   drag_info->data.selection_list,
-                                                   &action);
+      nemo_drag_default_drop_action_for_icons (context,
+                                               target_uri,
+                                               drag_info->data.selection_list,
+                                               &action,
+                                               &drag_info->desktop_dnd_source_fs,
+                                               &drag_info->desktop_dnd_can_delete_source);
     } else if (drag_info->info == NEMO_ICON_DND_URI_LIST) {
       action = nemo_drag_default_drop_action_for_uri_list (context, target_uri);
     } else if (drag_info->info == NEMO_ICON_DND_NETSCAPE_URL) {
@@ -129,6 +135,7 @@ drag_info_free (gpointer user_data)
 
   g_clear_object (&drag_info->target_file);
   g_clear_object (&drag_info->target_slot);
+  g_clear_pointer (&drag_info->desktop_dnd_source_fs, g_free);
 
   g_slice_free (NemoDragSlotProxyInfo, drag_info);
 }
@@ -151,7 +158,7 @@ drag_info_clear (NemoDragSlotProxyInfo *drag_info)
  out:
   drag_info->have_data = FALSE;
   drag_info->have_valid_data = FALSE;
-
+  drag_info->desktop_dnd_can_delete_source = FALSE;
   drag_info->drop_occured = FALSE;
 }
 
@@ -328,6 +335,9 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   g_object_set_data_full (G_OBJECT (widget), "drag-slot-proxy-data", drag_info,
                           drag_info_free);
+
+  drag_info->desktop_dnd_source_fs = NULL;
+  drag_info->desktop_dnd_can_delete_source = FALSE;
 
   if (target_file != NULL)
     drag_info->target_file = g_object_ref (target_file);

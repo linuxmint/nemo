@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-dnd.h - Common Drag & drop handling code shared by the icon container
    and the list view.
@@ -68,6 +68,9 @@ typedef enum {
 typedef struct {
 	GtkTargetList *target_list;
 
+    gchar *source_fs;
+    gboolean can_delete_source;
+
 	/* Stuff saved at "receive data" time needed later in the drag. */
 	gboolean got_drop_data_type;
 	NemoIconDndTargetType data_type;
@@ -123,10 +126,12 @@ gboolean		    nemo_drag_uris_local			(const char			      *target_uri,
 									 const GList			      *source_uri_list);
 gboolean		    nemo_drag_items_in_trash		(const GList			      *selection_list);
 gboolean		    nemo_drag_items_on_desktop		(const GList			      *selection_list);
-void			    nemo_drag_default_drop_action_for_icons (GdkDragContext			      *context,
-									 const char			      *target_uri,
-									 const GList			      *items,
-									 int				      *action);
+void                nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
+                                                             const char     *target_uri_string,
+                                                             const GList    *items,
+                                                             int            *action,
+                                                             gchar         **source_fs,
+                                                             gboolean       *can_delete_source);
 GdkDragAction		    nemo_drag_default_drop_action_for_netscape_url (GdkDragContext			     *context);
 GdkDragAction		    nemo_drag_default_drop_action_for_uri_list     (GdkDragContext			     *context,
 										const char			     *target_uri_string);

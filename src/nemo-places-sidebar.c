@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /*
  *  Nemo
@@ -94,6 +94,8 @@ typedef struct {
 	int       drag_data_info;
 	gboolean  drop_occured;
     gboolean  in_drag;
+    gchar     *desktop_dnd_source_fs;
+    gboolean  desktop_dnd_can_delete_source;
 
 	GtkWidget *popup_menu;
 	GtkWidget *popup_menu_open_in_new_tab_item;
@@ -1641,6 +1643,9 @@ free_drag_data (NemoPlacesSidebar *sidebar)
 		nemo_drag_destroy_selection_list (sidebar->drag_list);
 		sidebar->drag_list = NULL;
 	}
+
+    g_clear_pointer (&sidebar->desktop_dnd_source_fs, g_free);
+    sidebar->desktop_dnd_can_delete_source = FALSE;
 }
 
 static gboolean
@@ -1729,10 +1734,13 @@ drag_motion_callback (GtkTreeView *tree_view,
 					    &iter,
 					    PLACES_SIDEBAR_COLUMN_URI, &uri,
 					    -1);
-			nemo_drag_default_drop_action_for_icons (context, uri,
-								     sidebar->drag_list,
-								     &action);
-			g_free (uri);
+            nemo_drag_default_drop_action_for_icons (context,
+                                                     uri,
+                                                     sidebar->drag_list,
+                                                     &action,
+                                                     &sidebar->desktop_dnd_source_fs,
+                                                     &sidebar->desktop_dnd_can_delete_source);
+            g_free (uri);
 		}
 	}
 
@@ -4000,6 +4008,9 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
     sidebar->action_items = NULL;
 
     sidebar->in_drag = FALSE;
+
+    sidebar->desktop_dnd_source_fs = NULL;
+    sidebar->desktop_dnd_can_delete_source = FALSE;
 
 	sidebar->volume_monitor = g_volume_monitor_get ();
 
