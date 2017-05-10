@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-global-preferences.c - Nemo specific preference keys and
                                    functions.
@@ -33,6 +33,8 @@
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
 #include <glib/gi18n.h>
+#include <gio/gdesktopappinfo.h>
+
 
 static gboolean ignore_view_metadata = FALSE;
 
@@ -124,6 +126,49 @@ ignore_view_metadata_cb (GSettings *settings,
     ignore_view_metadata = g_settings_get_boolean (settings, key);
 }
 
+static void
+cache_fileroller_mimetypes (void)
+{
+    if (nemo_is_file_roller_installed ()) {
+        GAppInfo *app_info;
+        gchar ***results;
+        gchar **result;
+        gint i;
+
+        results = g_desktop_app_info_search ("file-roller");
+
+        if (results != NULL && results[0] != NULL) {
+            const gchar *best;
+
+            best = results[0][0];
+
+            app_info = G_APP_INFO (g_desktop_app_info_new (best));
+
+            if (app_info == NULL) {
+                g_warning ("Unable to retrieve list of file-roller mimetypes");
+                file_roller_mimetypes = NULL;
+                return;
+            }
+
+            file_roller_mimetypes = g_strdupv ((gchar **) g_app_info_get_supported_types (app_info));
+
+            g_object_unref (app_info);
+        }
+
+        i = 0;
+        result = results[i];
+
+        while (result != NULL) {
+            g_strfreev (result);
+            result = results[++i];
+        }
+
+        g_free (results);
+    } else {
+        file_roller_mimetypes = NULL;
+    }
+}
+
 void
 nemo_global_preferences_init (void)
 {
@@ -155,4 +200,12 @@ nemo_global_preferences_init (void)
     g_signal_connect (nemo_preferences,
                       "changed::" NEMO_PREFERENCES_IGNORE_VIEW_METADATA,
                       G_CALLBACK (ignore_view_metadata_cb), NULL);
+
+    cache_fileroller_mimetypes ();
+}
+
+void
+nemo_global_preferences_finalize (void)
+{
+    g_strfreev (file_roller_mimetypes);
 }

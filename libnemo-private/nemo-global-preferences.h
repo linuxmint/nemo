@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-global-preferences.h - Nemo specific preference keys and
                                    functions.
@@ -26,7 +26,6 @@
 #ifndef NEMO_GLOBAL_PREFERENCES_H
 #define NEMO_GLOBAL_PREFERENCES_H
 
-#include <libnemo-private/nemo-global-preferences.h>
 #include <gio/gio.h>
 
 G_BEGIN_DECLS
@@ -260,6 +259,7 @@ typedef enum
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
 
 void nemo_global_preferences_init                      (void);
+void nemo_global_preferences_finalize                  (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
 char *nemo_global_preferences_get_desktop_iid (void);
 gboolean nemo_global_preferences_get_ignore_view_metadata (void);
@@ -282,6 +282,8 @@ GSettings *cinnamon_privacy_preferences;
 GSettings *cinnamon_interface_preferences;
 
 GTimer    *nemo_startup_timer;
+
+gchar    **file_roller_mimetypes;
 
 G_END_DECLS
 

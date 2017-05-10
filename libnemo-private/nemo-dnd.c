@@ -586,7 +586,6 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 			return;
 		}
 	} else if (target_file != NULL && nemo_file_is_archive (target_file)) {
-        g_printerr ("is archive\n");
 		*action = GDK_ACTION_COPY;
 
 		nemo_file_unref (dropped_file);
