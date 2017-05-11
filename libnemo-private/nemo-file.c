@@ -2140,8 +2140,9 @@ static gboolean
 access_ok (const gchar *path)
 {
     if (g_access (path, R_OK|W_OK) != 0) {
-        if (errno != ENOENT)
+        if (errno != ENOENT && errno != EFAULT) {
             return FALSE;
+        }
     }
 
     return TRUE;
