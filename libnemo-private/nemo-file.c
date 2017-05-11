@@ -7060,24 +7060,54 @@ nemo_file_is_user_special_directory (NemoFile *file,
 	return is_special_dir;
 }
 
+static const char * fallback_mime_types[] = { "application/x-gtar",
+                                              "application/x-zip",
+                                              "application/x-zip-compressed",
+                                              "application/zip",
+                                              "application/x-zip",
+                                              "application/x-tar",
+                                              "application/x-7z-compressed",
+                                              "application/x-rar",
+                                              "application/x-rar-compressed",
+                                              "application/x-jar",
+                                              "application/x-java-archive",
+                                              "application/x-war",
+                                              "application/x-ear",
+                                              "application/x-arj",
+                                              "application/x-gzip",
+                                              "application/x-bzip-compressed-tar",
+                                              "application/x-compressed-tar",
+                                              "application/x-xz-compressed-tar" };
+
 gboolean
 nemo_file_is_archive (NemoFile *file)
 {
-	char *mime_type;
-	int i;
+    gchar *mime_type;
+    gint i;
 
-	g_return_val_if_fail (file != NULL, FALSE);
+    g_return_val_if_fail (file != NULL, FALSE);
 
-	mime_type = nemo_file_get_mime_type (file);
-	for (i = 0; i < g_strv_length (file_roller_mimetypes); i++) {
-		if (!strcmp (mime_type, file_roller_mimetypes[i])) {
-			g_free (mime_type);
-			return TRUE;
-		}
-	}
-	g_free (mime_type);
+    mime_type = nemo_file_get_mime_type (file);
 
-	return FALSE;
+    if (file_roller_mimetypes != NULL) {
+        for (i = 0; i < g_strv_length (file_roller_mimetypes); i++) {
+            if (!strcmp (mime_type, file_roller_mimetypes[i])) {
+                g_free (mime_type);
+                return TRUE;
+            }
+        }
+    } else {
+        for (i = 0; i < G_N_ELEMENTS (fallback_mime_types); i++) {
+            if (!strcmp (mime_type, fallback_mime_types[i])) {
+                g_free (mime_type);
+                return TRUE;
+            }
+        }
+    }
+
+    g_free (mime_type);
+
+    return FALSE;
 }
 
 
