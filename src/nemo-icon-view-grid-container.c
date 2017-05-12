@@ -80,7 +80,7 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 	GIcon *emblemed_icon;
 	GEmblem *emblem;
 	GList *emblem_icons, *l;
-    gint scale;
+    gint scale, max_width;
 
 	file = (NemoFile *) data;
 
@@ -91,7 +91,9 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
-			NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
+			NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+            NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
+            NEMO_FILE_ICON_FLAGS_PIN_HEIGHT_FOR_DESKTOP;
 
 	if (for_drag_accept) {
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
@@ -104,7 +106,7 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 	g_strfreev (emblems_to_ignore);
 
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
-	icon_info = nemo_file_get_icon (file, size, scale, flags);
+	icon_info = nemo_file_get_icon (file, size, GET_VIEW_CONSTANT (container, max_text_width_standard), scale, flags);
 
 	/* apply emblems */
 	if (emblem_icons != NULL) {
@@ -974,6 +976,101 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
 }
 
 static void
+nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
+                                      NemoIcon          *icon)
+{
+    NemoIconContainerDetails *details;
+    guint icon_size;
+    guint min_image_size, max_image_size;
+    NemoIconInfo *icon_info;
+    GdkPoint *attach_points;
+    int n_attach_points;
+    gboolean has_embedded_text_rect;
+    GdkPixbuf *pixbuf;
+    char *editable_text, *additional_text;
+    char *embedded_text;
+    GdkRectangle embedded_text_rect;
+    gboolean large_embedded_text;
+    gboolean embedded_text_needs_loading;
+    gboolean has_open_window;
+    gint scale_factor;
+
+    if (icon == NULL) {
+        return;
+    }
+
+    details = container->details;
+
+    /* Get the appropriate images for the file. */
+    icon_size = container->details->forced_icon_size;
+
+    DEBUG ("Icon size for desktop grid, getting for size %d", icon_size);
+
+    /* Get the icons. */
+    embedded_text = NULL;
+    icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
+                                                     &embedded_text,
+                                                     icon == details->drop_target,
+                                                     FALSE, &embedded_text_needs_loading,
+                                                     &has_open_window);
+
+    scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (container));
+    pixbuf = nemo_icon_info_get_desktop_pixbuf_at_size (icon_info,
+                                                        icon_size * scale_factor,
+                                                        GET_VIEW_CONSTANT (container, max_text_width_standard));
+
+    nemo_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
+    has_embedded_text_rect = nemo_icon_info_get_embedded_rect (icon_info,
+                                       &embedded_text_rect);
+
+    g_object_unref (icon_info);
+
+    nemo_icon_container_get_icon_text (container,
+                           icon->data,
+                           &editable_text,
+                           &additional_text,
+                           FALSE);
+
+    if (container->details->show_desktop_tooltips) {
+        NemoFile *file = NEMO_FILE (icon->data);
+        gchar *tooltip_text;
+
+        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
+
+        nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
+        g_free (tooltip_text);
+    } else {
+        nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
+    }
+
+    /* If name of icon being renamed was changed from elsewhere, end renaming mode. 
+     * Alternatively, we could replace the characters in the editable text widget
+     * with the new name, but that could cause timing problems if the user just
+     * happened to be typing at that moment.
+     */
+    if (icon == nemo_icon_container_get_icon_being_renamed (container) &&
+        g_strcmp0 (editable_text,
+               nemo_icon_canvas_item_get_editable_text (icon->item)) != 0) {
+        nemo_icon_container_end_renaming_mode (container, FALSE);
+    }
+
+    eel_canvas_item_set (EEL_CANVAS_ITEM (icon->item),
+                 "editable_text", editable_text,
+                 "additional_text", additional_text,
+                 "highlighted_for_drop", icon == details->drop_target,
+                 NULL);
+
+    nemo_icon_canvas_item_set_image (icon->item, pixbuf);
+    nemo_icon_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
+
+    /* Let the pixbufs go. */
+    g_object_unref (pixbuf);
+
+    g_free (editable_text);
+    g_free (additional_text);
+}
+
+static void
 nemo_icon_view_grid_container_align_icons (NemoIconContainer *container)
 {
     NemoCenteredPlacementGrid *grid;
@@ -1540,6 +1637,7 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
     ic_class->lay_down_icons = nemo_icon_view_grid_container_lay_down_icons;
     ic_class->icon_set_position = nemo_icon_view_grid_container_icon_set_position;
     ic_class->move_icon = nemo_icon_view_grid_container_move_icon;
+    ic_class->update_icon = nemo_icon_view_grid_container_update_icon;
     ic_class->align_icons = nemo_icon_view_grid_container_align_icons;
     ic_class->reload_icon_positions = nemo_icon_view_grid_container_reload_icon_positions;
     ic_class->finish_adding_new_icons = nemo_icon_view_grid_container_finish_adding_new_icons;

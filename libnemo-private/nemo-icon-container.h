@@ -150,6 +150,8 @@ typedef struct {
 						   char **editable_text,
 						   char **additional_text,
 						   gboolean include_invisible);
+    void         (* update_icon)              (NemoIconContainer *container,
+                                               NemoIcon          *icon);
 	char *       (* get_icon_description)     (NemoIconContainer *container,
 						   NemoIconData *data);
 	int          (* compare_icons)            (NemoIconContainer *container,

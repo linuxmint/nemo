@@ -585,6 +585,37 @@ nemo_icon_info_get_pixbuf_at_size (NemoIconInfo  *icon,
 	return scaled_pixbuf;
 }
 
+GdkPixbuf *
+nemo_icon_info_get_desktop_pixbuf_at_size (NemoIconInfo  *icon,
+                                           gsize          max_height,
+                                           gsize          max_width)
+{
+    GdkPixbuf *pixbuf, *scaled_pixbuf;
+    int w, h, s;
+    double scale;
+
+    pixbuf = nemo_icon_info_get_pixbuf (icon);
+
+    w = gdk_pixbuf_get_width (pixbuf) / icon->orig_scale;
+    h = gdk_pixbuf_get_height (pixbuf) / icon->orig_scale;
+
+    if (w == max_width || h == max_height) {
+        return pixbuf;
+    }
+
+    scale = (gdouble) max_height / h;
+
+    if (w * scale > max_width) {
+        scale = (gdouble) max_width / w;
+    }
+
+    scaled_pixbuf = gdk_pixbuf_scale_simple (pixbuf,
+                         MAX (w * scale, 1), MAX (h * scale, 1),
+                         GDK_INTERP_BILINEAR);
+    g_object_unref (pixbuf);
+    return scaled_pixbuf;
+}
+
 gboolean
 nemo_icon_info_get_embedded_rect (NemoIconInfo  *icon,
 				      GdkRectangle      *rectangle)

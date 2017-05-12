@@ -76,15 +76,6 @@
 #define CONTEXTUAL_MENU_BUTTON 3
 #define DRAG_MENU_BUTTON 2
 
-/* Maximum size (pixels) allowed for icons at the standard zoom level. */
-#define MINIMUM_IMAGE_SIZE 24
-#define MAXIMUM_IMAGE_SIZE 96
-
-/* If icon size is bigger than this, request large embedded text.
- * Its selected so that the non-large text should fit in "normal" icon sizes
- */
-#define ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT 55
-
 /* Copied from NemoIconContainer */
 #define NEMO_ICON_CONTAINER_SEARCH_DIALOG_TIMEOUT 5
 
@@ -122,13 +113,7 @@ static void          icon_destroy                                   (NemoIconCon
 static gboolean      is_renaming                                    (NemoIconContainer *container);
 static gboolean      is_renaming_pending                            (NemoIconContainer *container);
 static void          process_pending_icon_to_rename                 (NemoIconContainer *container);
-static void          nemo_icon_container_stop_monitor_top_left  (NemoIconContainer *container,
-								     NemoIconData      *data,
-								     gconstpointer          client);
-static void          nemo_icon_container_start_monitor_top_left (NemoIconContainer *container,
-								     NemoIconData      *data,
-								     gconstpointer          client,
-								     gboolean               large_text);
+
 static void          handle_hadjustment_changed                     (GtkAdjustment         *adjustment,
 								     NemoIconContainer *container);
 static void          handle_vadjustment_changed                     (GtkAdjustment         *adjustment,
@@ -3769,7 +3754,7 @@ nemo_icon_container_search_populate_popup (GtkEntry *entry,
 				  G_CALLBACK (add_search_entry_timeout), container);
 }
 
-static void
+void
 nemo_icon_container_get_icon_text (NemoIconContainer *container,
 				       NemoIconData      *data,
 				       char                 **editable_text,
@@ -4431,6 +4416,13 @@ real_move_icon (NemoIconContainer *container,
 }
 
 static void
+real_update_icon (NemoIconContainer *container,
+                  NemoIcon *icon)
+{
+    g_assert_not_reached ();
+}
+
+static void
 real_align_icons (NemoIconContainer *container)
 {
     g_assert_not_reached ();
@@ -4465,6 +4457,7 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
     class->lay_down_icons = real_lay_down_icons;
     class->icon_set_position = real_icon_set_position;
     class->move_icon = real_move_icon;
+    class->update_icon = real_update_icon;
     class->align_icons = real_align_icons;
     class->finish_adding_new_icons = NULL;
     class->icon_get_bounding_box = real_icon_get_bounding_box;
@@ -5608,7 +5601,7 @@ activate_selected_items_alternate (NemoIconContainer *container,
 	g_list_free (selection);
 }
 
-static NemoIconInfo *
+NemoIconInfo *
 nemo_icon_container_get_icon_images (NemoIconContainer *container,
 					 NemoIconData      *data,
 					 int                    size,
@@ -5648,7 +5641,7 @@ nemo_icon_container_unfreeze_updates (NemoIconContainer *container)
 	klass->unfreeze_updates (container);
 }
 
-static void
+void
 nemo_icon_container_start_monitor_top_left (NemoIconContainer *container,
 						NemoIconData *data,
 						gconstpointer client,
@@ -5662,7 +5655,7 @@ nemo_icon_container_start_monitor_top_left (NemoIconContainer *container,
 	klass->start_monitor_top_left (container, data, client, large_text);
 }
 
-static void
+void
 nemo_icon_container_stop_monitor_top_left (NemoIconContainer *container,
 					       NemoIconData *data,
 					       gconstpointer client)
@@ -5767,129 +5760,6 @@ handle_hadjustment_changed (GtkAdjustment *adjustment,
 	if (nemo_icon_container_is_layout_vertical (container)) {
 		nemo_icon_container_update_visible_icons (container);
 	}
-}
-
-void 
-nemo_icon_container_update_icon (NemoIconContainer *container,
-				     NemoIcon *icon)
-{
-	NemoIconContainerDetails *details;
-	guint icon_size;
-	guint min_image_size, max_image_size;
-	NemoIconInfo *icon_info;
-	GdkPoint *attach_points;
-	int n_attach_points;
-	gboolean has_embedded_text_rect;
-	GdkPixbuf *pixbuf;
-	char *editable_text, *additional_text;
-	char *embedded_text;
-	GdkRectangle embedded_text_rect;
-	gboolean large_embedded_text;
-	gboolean embedded_text_needs_loading;
-	gboolean has_open_window;
-	
-	if (icon == NULL) {
-		return;
-	}
-
-	details = container->details;
-
-	/* compute the maximum size based on the scale factor */
-	min_image_size = MINIMUM_IMAGE_SIZE * EEL_CANVAS (container)->pixels_per_unit;
-	max_image_size = MAX (MAXIMUM_IMAGE_SIZE * EEL_CANVAS (container)->pixels_per_unit, NEMO_ICON_MAXIMUM_SIZE);
-
-	/* Get the appropriate images for the file. */
-	if (container->details->forced_icon_size > 0) {
-		icon_size = container->details->forced_icon_size;
-	} else {
-		icon_get_size (container, icon, &icon_size);
-	}
-
-
-	icon_size = MAX (icon_size, min_image_size);
-	icon_size = MIN (icon_size, max_image_size);
-
-	DEBUG ("Icon size, getting for size %d", icon_size);
-
-	/* Get the icons. */
-	embedded_text = NULL;
-	large_embedded_text = icon_size > ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT;
-	icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
-							     &embedded_text,
-							     icon == details->drop_target,							     
-							     large_embedded_text, &embedded_text_needs_loading,
-							     &has_open_window);
-
-    if (container->details->forced_icon_size > 0) {
-        gint scale_factor;
-
-        scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (container));
-        pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size * scale_factor);
-    } else {
-        pixbuf = nemo_icon_info_get_pixbuf (icon_info);
-    }
-
-	nemo_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
-	has_embedded_text_rect = nemo_icon_info_get_embedded_rect (icon_info,
-								       &embedded_text_rect);
-
-	g_object_unref (icon_info);
- 
-	if (has_embedded_text_rect && embedded_text_needs_loading) {
-		icon->is_monitored = TRUE;
-		nemo_icon_container_start_monitor_top_left (container, icon->data, icon, large_embedded_text);
-	}
-	
-	nemo_icon_container_get_icon_text (container,
-					       icon->data,
-					       &editable_text,
-					       &additional_text,
-					       FALSE);
-
-    gboolean is_desktop = nemo_icon_container_get_is_desktop (container);
-
-    gboolean show_tooltip = (container->details->show_desktop_tooltips && is_desktop) ||
-                            (container->details->show_icon_view_tooltips && !is_desktop);
-
-    if (show_tooltip) {
-        NemoFile *file = NEMO_FILE (icon->data);
-        gchar *tooltip_text;
-
-        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
-
-        nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
-        g_free (tooltip_text);
-    } else {
-        nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
-    }
-
-	/* If name of icon being renamed was changed from elsewhere, end renaming mode. 
-	 * Alternatively, we could replace the characters in the editable text widget
-	 * with the new name, but that could cause timing problems if the user just
-	 * happened to be typing at that moment.
-	 */
-	if (icon == nemo_icon_container_get_icon_being_renamed (container) &&
-	    g_strcmp0 (editable_text,
-		       nemo_icon_canvas_item_get_editable_text (icon->item)) != 0) {
-		nemo_icon_container_end_renaming_mode (container, FALSE);
-	}
-
-	eel_canvas_item_set (EEL_CANVAS_ITEM (icon->item),
-			     "editable_text", editable_text,
-			     "additional_text", additional_text,
-			     "highlighted_for_drop", icon == details->drop_target,
-			     NULL);
-
-	nemo_icon_canvas_item_set_image (icon->item, pixbuf);
-	nemo_icon_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
-	nemo_icon_canvas_item_set_embedded_text_rect (icon->item, &embedded_text_rect);
-	nemo_icon_canvas_item_set_embedded_text (icon->item, embedded_text);
-
-	/* Let the pixbufs go. */
-	g_object_unref (pixbuf);
-
-	g_free (editable_text);
-	g_free (additional_text);
 }
 
 static gboolean
@@ -8269,5 +8139,11 @@ nemo_icon_container_icon_get_bounding_box (NemoIconContainer *container,
     NEMO_ICON_CONTAINER_GET_CLASS (container)->icon_get_bounding_box (icon, x1_return, y1_return, x2_return, y2_return, usage);
 }
 
+void 
+nemo_icon_container_update_icon (NemoIconContainer *container,
+                     NemoIcon *icon)
+{
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon);
+}
 
 #endif /* ! NEMO_OMIT_SELF_CHECK */

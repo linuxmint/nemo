@@ -82,7 +82,8 @@ typedef enum {
 	/* uses the icon of the mount if present */
 	NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON = (1<<6),
 	/* render the mount icon as an emblem over the regular one */
-	NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM = (1<<7)
+	NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM = (1<<7),
+    NEMO_FILE_ICON_FLAGS_PIN_HEIGHT_FOR_DESKTOP = (1<<8)
 } NemoFileIconFlags;	
 
 typedef enum {
@@ -453,6 +454,7 @@ GIcon *                 nemo_file_get_emblemed_icon                 (NemoFile   
 
 NemoIconInfo *      nemo_file_get_icon                          (NemoFile                   *file,
 									 int                             size,
+                                     int                             max_width,
                                      int                             scale,
 									 NemoFileIconFlags           flags);
 GdkPixbuf *             nemo_file_get_icon_pixbuf                   (NemoFile                   *file,

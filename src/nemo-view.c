@@ -5584,7 +5584,7 @@ get_menu_icon_for_file (NemoFile *file,
 	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
     scale = gtk_widget_get_scale_factor (widget);
 
-	info = nemo_file_get_icon (file, size, scale, 0);
+	info = nemo_file_get_icon (file, size, 0, scale, 0);
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
 	g_object_unref (info);
 	
@@ -7921,7 +7921,7 @@ action_connect_to_server_link_callback (GtkAction *action,
 	file = NEMO_FILE (selection->data);
 
 	uri = nemo_file_get_activation_uri (file);
-	icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, gtk_widget_get_scale_factor (GTK_WIDGET (view)), 0);
+	icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, 0, gtk_widget_get_scale_factor (GTK_WIDGET (view)), 0);
 	icon_name = nemo_icon_info_get_used_name (icon);
 	name = nemo_file_get_display_name (file);
 

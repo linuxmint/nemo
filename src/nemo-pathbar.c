@@ -1466,7 +1466,7 @@ get_type_icon_info (ButtonData *button_data, gint scale)
         case NORMAL_BUTTON:
             if (button_data->is_base_dir) {
                 return nemo_file_get_icon (button_data->file,
-                                   NEMO_PATH_BAR_ICON_SIZE,
+                                   NEMO_PATH_BAR_ICON_SIZE, 0,
                                    scale,
                                    NEMO_FILE_ICON_FLAGS_NONE);
             }

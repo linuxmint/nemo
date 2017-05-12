@@ -371,11 +371,11 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 		file = NEMO_FILE (l->data);
 		
 		if (!icon) {
-			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, 0, icon_scale,
                                        NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
                                        NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 		} else {
-			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, icon_scale,
+			new_icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, 0, icon_scale,
                                            NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
                                            NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 			if (!new_icon || new_icon != icon) {

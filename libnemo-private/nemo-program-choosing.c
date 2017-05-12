@@ -137,7 +137,7 @@ nemo_launch_application_by_uri (GAppInfo *application,
 
 	file = nemo_file_get_by_uri (uris->data);
 	icon = nemo_file_get_icon (file,
-                               48,
+                               48, 0,
                                gtk_widget_get_scale_factor (GTK_WIDGET (parent_window)),
                                0);
 	nemo_file_unref (file);

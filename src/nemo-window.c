@@ -2076,7 +2076,7 @@ static NemoIconInfo *
 real_get_icon (NemoWindow *window,
                NemoWindowSlot *slot)
 {
-        return nemo_file_get_icon (slot->viewed_file, 48,
+        return nemo_file_get_icon (slot->viewed_file, 48, 0,
                        gtk_widget_get_scale_factor (GTK_WIDGET (window)),
 				       NEMO_FILE_ICON_FLAGS_IGNORE_VISITING |
 				       NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON);
