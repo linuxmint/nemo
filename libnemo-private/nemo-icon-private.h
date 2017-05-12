@@ -407,11 +407,13 @@ NemoCenteredPlacementGrid *nemo_centered_placement_grid_new               (NemoI
 void               nemo_centered_placement_grid_free              (NemoCenteredPlacementGrid *grid);
 
 void               nemo_centered_placement_grid_nominal_to_icon_position (NemoCenteredPlacementGrid *grid,
+                                                                          NemoIcon                  *icon,
                                                                           gint                       x_nominal,
                                                                           gint                       y_nominal,
                                                                           gint                      *x_adjusted,
                                                                           gint                      *y_adjusted);
 void               nemo_centered_placement_grid_icon_position_to_nominal (NemoCenteredPlacementGrid *grid,
+                                                                          NemoIcon                  *icon,
                                                                           gint                       x_adjusted,
                                                                           gint                       y_adjusted,
                                                                           gint                      *x_nominal,

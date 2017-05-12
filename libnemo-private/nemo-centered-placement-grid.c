@@ -127,14 +127,29 @@ nemo_centered_placement_grid_unmark (NemoCenteredPlacementGrid *grid,
 
 void
 nemo_centered_placement_grid_nominal_to_icon_position (NemoCenteredPlacementGrid *grid,
+                                                       NemoIcon                  *icon,
                                                        gint                       x_nominal,
                                                        gint                       y_nominal,
                                                        gint                      *x_adjusted,
                                                        gint                      *y_adjusted)
 {
+    gint icon_width, icon_height;
+
+    if (icon != NULL) {
+        EelDRect icon_bounds;
+
+        icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+
+        icon_width = icon_bounds.x1 - icon_bounds.x0;
+        icon_height = icon_bounds.y1 - icon_bounds.y0;
+    } else {
+        icon_width = grid->icon_size;
+        icon_height = grid->icon_size;
+    }
+
     *x_adjusted =   x_nominal
                   + (grid->real_snap_x / 2)
-                  - (grid->icon_size   / 2);
+                  - (icon_width        / 2);
 
     *y_adjusted =   y_nominal
                   + (grid->real_snap_y / 2)
@@ -143,13 +158,28 @@ nemo_centered_placement_grid_nominal_to_icon_position (NemoCenteredPlacementGrid
 
 void
 nemo_centered_placement_grid_icon_position_to_nominal (NemoCenteredPlacementGrid *grid,
+                                                       NemoIcon                  *icon,
                                                        gint                       x_adjusted,
                                                        gint                       y_adjusted,
                                                        gint                      *x_nominal,
                                                        gint                      *y_nominal)
 {
+    gint icon_width, icon_height;
+
+    if (icon != NULL) {
+        EelDRect icon_bounds;
+
+        icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+
+        icon_width = icon_bounds.x1 - icon_bounds.x0;
+        icon_height = icon_bounds.y1 - icon_bounds.y0;
+    } else {
+        icon_width = grid->icon_size;
+        icon_height = grid->icon_size;
+    }
+
     *x_nominal =   x_adjusted
-                 + (grid->icon_size   / 2)
+                 + (icon_width        / 2)
                  - (grid->real_snap_x / 2);
 
     *y_nominal =   y_adjusted
@@ -167,6 +197,7 @@ nemo_centered_placement_grid_mark_icon (NemoCenteredPlacementGrid *grid, NemoIco
     }
 
     nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                           icon,
                                                            icon->x,
                                                            icon->y,
                                                            &nom_x, &nom_y);
@@ -191,6 +222,7 @@ nemo_centered_placement_grid_unmark_icon (NemoCenteredPlacementGrid *grid,
     }
 
     nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                           icon,
                                                            icon->x,
                                                            icon->y,
                                                            &nom_x, &nom_y);
@@ -303,7 +335,7 @@ get_icon_at_grid_position (NemoCenteredPlacementGrid *grid,
     for (l = grid->container->details->icons; l != NULL; l = l->next) {
         icon = l->data;
 
-        nemo_centered_placement_grid_icon_position_to_nominal (grid, icon->x, icon->y, &icon_x, &icon_y);
+        nemo_centered_placement_grid_icon_position_to_nominal (grid, icon, icon->x, icon->y, &icon_x, &icon_y);
 
         icon_x -= grid->borders->left;
         icon_y -= grid->borders->top;
@@ -491,6 +523,7 @@ nemo_centered_placement_grid_clear_grid_for_selection (NemoCenteredPlacementGrid
         item = p->data;
 
         nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                               NULL,
                                                                iter_x * grid->real_snap_x,
                                                                iter_y * grid->real_snap_y,
                                                                &icon_new_x,
@@ -512,6 +545,7 @@ nemo_centered_placement_grid_clear_grid_for_selection (NemoCenteredPlacementGrid
         icon = p->data;
 
         nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                               icon,
                                                                iter_x * grid->real_snap_x,
                                                                iter_y * grid->real_snap_y,
                                                                &icon_new_x,

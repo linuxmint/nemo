@@ -4365,6 +4365,8 @@ nemo_file_get_icon (NemoFile *file,
                 if (w * thumb_scale > max_width) {
                     thumb_scale = (gdouble) max_width / w;
                 }
+
+                s = thumb_scale * h;
             } else {
                 s = MAX (w, h);         
                 /* Don't scale up small thumbnails in the standard view */
@@ -4392,6 +4394,17 @@ nemo_file_get_icon (NemoFile *file,
                 if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
                     nemo_thumbnail_frame_image (&scaled_pixbuf);
                 }
+
+                if (flags & NEMO_FILE_ICON_FLAGS_PIN_HEIGHT_FOR_DESKTOP) {
+                    gint check_height;
+
+                    check_height = gdk_pixbuf_get_height (scaled_pixbuf);
+
+                    if (check_height < size) {
+                        nemo_thumbnail_pad_top_and_bottom (&scaled_pixbuf, size - check_height);
+                    }
+                }
+
                 g_clear_object (&file->details->scaled_thumbnail);
                 file->details->scaled_thumbnail = scaled_pixbuf;
                 file->details->thumbnail_scale = thumb_scale;

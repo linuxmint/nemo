@@ -700,6 +700,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 icon = p->data;
 
                 nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                                       icon,
                                                                        icon->x,
                                                                        icon->y,
                                                                        &x, &y);
@@ -707,6 +708,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 snap_position (container, grid, icon, x, y, &x, &y);
 
                 nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                                       icon,
                                                                        x, y,
                                                                        &x, &y);
 
@@ -733,7 +735,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
 
             nemo_centered_placement_grid_get_next_free_position (grid, &x, &y);
 
-            nemo_centered_placement_grid_nominal_to_icon_position (grid, x, y, &x, &y);
+            nemo_centered_placement_grid_nominal_to_icon_position (grid, icon, x, y, &x, &y);
 
             nemo_icon_container_icon_set_position (container,
                                                    icon,
@@ -931,12 +933,14 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
             nemo_centered_placement_grid_unmark_icon (grid, icon);
 
             nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                                   icon,
                                                                    x, y,
                                                                    &x, &y);
 
             snap_position (container, grid, icon, x, y, &x, &y);
 
             nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                                   icon,
                                                                    x, y,
                                                                    &x, &y);
 
@@ -1096,12 +1100,14 @@ nemo_icon_view_grid_container_align_icons (NemoIconContainer *container)
         icon = l->data;
 
         nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                               icon,
                                                                icon->saved_ltr_x, icon->y,
                                                                &x, &y);
 
         snap_position (container, grid, icon, x, y, &x, &y);
 
         nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                               icon,
                                                                x, y,
                                                                &x, &y);
 
@@ -1226,6 +1232,7 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
                                                                                 NULL);
 
                         nemo_centered_placement_grid_nominal_to_icon_position (grid,
+                                                                               icon,
                                                                                rect.x, rect.y,
                                                                                &position.x, &position.y);
                     }

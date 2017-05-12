@@ -234,6 +234,55 @@ nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
 	*pixbuf = pixbuf_with_frame;
 }
 
+nemo_thumbnail_pad_top_and_bottom (GdkPixbuf **pixbuf,
+                                   gint        extra_height)
+{
+    GdkPixbuf *pixbuf_with_padding;
+    GdkRectangle rect;
+    GdkRGBA transparent = { 0, 0, 0, 0.0 };
+    cairo_surface_t *surface;
+    cairo_t *cr;
+    gint width, height;
+
+    width = gdk_pixbuf_get_width (*pixbuf);
+    height = gdk_pixbuf_get_height (*pixbuf);
+
+    surface = gdk_window_create_similar_image_surface (NULL,
+                                                       CAIRO_FORMAT_ARGB32,
+                                                       width,
+                                                       height + extra_height,
+                                                       0);
+
+    cr = cairo_create (surface);
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = width;
+    rect.height = height + extra_height;
+
+    gdk_cairo_rectangle (cr, &rect);
+    gdk_cairo_set_source_rgba (cr, &transparent);
+    cairo_fill (cr);
+
+    gdk_cairo_set_source_pixbuf (cr,
+                                 *pixbuf,
+                                 0,
+                                 extra_height / 2);
+    cairo_paint (cr);
+
+    pixbuf_with_padding = gdk_pixbuf_get_from_surface (surface,
+                                                       0,
+                                                       0,
+                                                       width,
+                                                       height + extra_height);
+
+    g_object_unref (*pixbuf);
+    cairo_surface_destroy (surface);
+    cairo_destroy (cr);
+
+    *pixbuf = pixbuf_with_padding;
+}
+
 void
 nemo_thumbnail_remove_from_queue (const char *file_uri)
 {
