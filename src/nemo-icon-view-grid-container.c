@@ -1403,6 +1403,18 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
         grid_rect.x += container->details->left_margin;
         grid_rect.y += container->details->top_margin;
 
+        if (DEBUGGING) {
+            GdkRGBA active_rect_color = { 0.5, 0.5, 0.5, 0.4};
+
+            cairo_save (cr);
+            gdk_cairo_set_source_rgba (cr, &active_rect_color);
+
+            gdk_cairo_rectangle (cr, &grid_rect);
+            cairo_fill (cr);
+
+            cairo_restore (cr);
+        }
+
         before = should_place_before (container->details->current_dnd_x,
                                       container->details->current_dnd_y,
                                       &grid_rect,
