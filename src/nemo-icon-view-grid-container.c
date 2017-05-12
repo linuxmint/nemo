@@ -849,7 +849,7 @@ nemo_icon_view_grid_container_icon_set_position (NemoIconContainer *container,
     container_bottom = container_top + container_height / pixels_per_unit;
 
     nemo_icon_container_icon_get_bounding_box (container, icon, &x1, &y1, &x2, &y2,
-                   BOUNDS_USAGE_FOR_ENTIRE_ITEM);
+                                               BOUNDS_USAGE_FOR_LAYOUT);
     item_width = x2 - x1;
     item_height = y2 - y1;
 
@@ -981,7 +981,7 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
 
 static void
 nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
-                                      NemoIcon          *icon)
+                                           NemoIcon          *icon)
 {
     NemoIconContainerDetails *details;
     guint icon_size;
