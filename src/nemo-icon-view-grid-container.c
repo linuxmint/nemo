@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* fm-icon-container.h - the container widget for file manager icons
 
@@ -44,13 +44,11 @@
 #include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 
-#define ICON_TEXT_ATTRIBUTES_NUM_ITEMS		3
-#define ICON_TEXT_ATTRIBUTES_DEFAULT_TOKENS	"size,date_modified,type"
-
 static void update_layout_constants (NemoIconContainer *container);
 
 G_DEFINE_TYPE (NemoIconViewGridContainer, nemo_icon_view_grid_container, NEMO_TYPE_ICON_CONTAINER);
 
+#define GRID_VIEW_MAX_ADDITIONAL_ATTRIBUTES 1
 static GQuark attribute_none_q;
 
 static NemoIconView *
@@ -263,17 +261,9 @@ update_auto_strv_as_quarks (GSettings   *settings,
 static GQuark *
 nemo_icon_view_grid_container_get_icon_text_attributes_from_preferences (void)
 {
-	static GQuark *attributes = NULL;
+    GQuark *attributes;
 
-	if (attributes == NULL) {
-		update_auto_strv_as_quarks (nemo_icon_view_preferences, 
-					    NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
-					    &attributes);
-		g_signal_connect (nemo_icon_view_preferences, 
-				  "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
-				  G_CALLBACK (update_auto_strv_as_quarks),
-				  &attributes);
-	}
+
 
 	/* We don't need to sanity check the attributes list even though it came
 	 * from preferences.
@@ -328,26 +318,18 @@ static GQuark *
 nemo_icon_view_grid_container_get_icon_text_attribute_names (NemoIconContainer *container,
 							    int *len)
 {
-	GQuark *attributes;
-	int piece_count;
+    GQuark *attributes;
+    int piece_count;
 
-	const int pieces_by_level[] = {
-		0,	/* NEMO_ZOOM_LEVEL_SMALLEST */
-		0,	/* NEMO_ZOOM_LEVEL_SMALLER */
-		0,	/* NEMO_ZOOM_LEVEL_SMALL */
-		1,	/* NEMO_ZOOM_LEVEL_STANDARD */
-		2,	/* NEMO_ZOOM_LEVEL_LARGE */
-		2,	/* NEMO_ZOOM_LEVEL_LARGER */
-		3	/* NEMO_ZOOM_LEVEL_LARGEST */
-	};
+    /* For now, limit extra attributes to one line - TODO: make this desktop
+     * more flexible at displaying various file info without disturbing grid layout
+     */
 
-	piece_count = pieces_by_level[nemo_icon_container_get_zoom_level (container)];
+    piece_count = GRID_VIEW_MAX_ADDITIONAL_ATTRIBUTES;
 
-	attributes = nemo_icon_view_grid_container_get_icon_text_attributes_from_preferences ();
+	*len = MIN (piece_count, quarkv_length (NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes));
 
-	*len = MIN (piece_count, quarkv_length (attributes));
-
-	return attributes;
+	return NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes;
 }
 
 /* This callback returns the text, both the editable part, and the
@@ -376,35 +358,24 @@ nemo_icon_view_grid_container_get_icon_text (NemoIconContainer *container,
 
 	use_additional = (additional_text != NULL);
 
-	/* In the smallest zoom mode, no text is drawn. */
-	if (nemo_icon_container_get_zoom_level (container) == NEMO_ZOOM_LEVEL_SMALLEST &&
-            !include_invisible) {
-		*editable_text = NULL;
-	} else {
-		/* Strip the suffix for nemo object xml files. */
-		*editable_text = nemo_file_get_display_name (file);
-	}
+    /* Strip the suffix for nemo object xml files. */
+    *editable_text = nemo_file_get_display_name (file);
 
-	if (!use_additional) {
-		return;
-	}
+    if (!use_additional) {
+        return;
+    }
 
-	if (nemo_icon_view_is_compact (icon_view)) {
-		*additional_text = NULL;
-		return;
-	}
-
-	if (NEMO_IS_DESKTOP_ICON_FILE (file) ||
-	    nemo_file_is_nemo_link (file)) {
-		/* Don't show the normal extra information for desktop icons,
-		 * or desktop files, it doesn't make sense. */
- 		*additional_text = NULL;
-		return;
-	}
+    if (NEMO_IS_DESKTOP_ICON_FILE (file) ||
+        nemo_file_is_nemo_link (file)) {
+        /* Don't show the normal extra information for desktop icons,
+         * or desktop files, it doesn't make sense. */
+        *additional_text = NULL;
+        return;
+    }
 
 	/* Find out what attributes go below each icon. */
 	attributes = nemo_icon_view_grid_container_get_icon_text_attribute_names (container,
-									   &num_attributes);
+                                                                              &num_attributes);
 
 	/* Get the attributes. */
 	j = 0;
@@ -413,15 +384,15 @@ nemo_icon_view_grid_container_get_icon_text (NemoIconContainer *container,
 			continue;
 		}
 
-		text_array[j++] =
-			nemo_file_get_string_attribute_with_default_q (file, attributes[i]);
-	}
-	text_array[j] = NULL;
+        text_array[j++] = nemo_file_get_string_attribute_with_default_q (file, attributes[i]);
+    }
+
+    text_array[j] = NULL;
 
 	/* Return them. */
-	if (j == 0) {
-		*additional_text = NULL;
-	} else if (j == 1) {
+    if (j == 0) {
+        *additional_text = NULL;
+    } else if (j == 1) {
 		/* Only one item, avoid the strdup + free */
 		*additional_text = text_array[0];
 	} else {
@@ -1011,9 +982,8 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
     DEBUG ("Icon size for desktop grid, getting for size %d", icon_size);
 
     /* Get the icons. */
-    embedded_text = NULL;
     icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
-                                                     &embedded_text,
+                                                     NULL,
                                                      icon == details->drop_target,
                                                      FALSE, &embedded_text_needs_loading,
                                                      &has_open_window);
@@ -1024,8 +994,6 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
                                                         GET_VIEW_CONSTANT (container, max_text_width_standard));
 
     nemo_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
-    has_embedded_text_rect = nemo_icon_info_get_embedded_rect (icon_info,
-                                       &embedded_text_rect);
 
     g_object_unref (icon_info);
 
@@ -1473,10 +1441,10 @@ get_vertical_adjustment (NemoIconContainer *container,
 {
     PangoLayout *layout;
     PangoFontDescription *desc;
-    gint ellipses_limit;
+    gint ellipsis_limit;
     gint height;
 
-    ellipses_limit = g_settings_get_int (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT);
+    ellipsis_limit = g_settings_get_int (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT);
 
     layout = gtk_widget_create_pango_layout (GTK_WIDGET (container), "Test");
 
@@ -1496,7 +1464,7 @@ get_vertical_adjustment (NemoIconContainer *container,
                                  NULL,
                                  &height);
 
-    height *= ellipses_limit;
+    height *= ellipsis_limit;
 
     height += icon_size + GET_VIEW_CONSTANT (container, icon_pad_bottom) + LABEL_OFFSET;
 
@@ -1506,9 +1474,16 @@ get_vertical_adjustment (NemoIconContainer *container,
 static void
 update_layout_constants (NemoIconContainer *container)
 {
-    gint icon_size;
+    gint icon_size, ellipsis_pref;
     NemoViewLayoutConstants *constants;
     gdouble scale, h_adjust, v_adjust;
+
+    update_auto_strv_as_quarks (nemo_icon_view_preferences, 
+                                NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+                                &(NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes));
+
+    ellipsis_pref = g_settings_get_int (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT);
+    NEMO_ICON_VIEW_GRID_CONTAINER (container)->text_ellipsis_limit = ellipsis_pref;
 
     icon_size = nemo_get_desktop_icon_size_for_zoom_level (container->details->zoom_level);
 
@@ -1563,8 +1538,80 @@ nemo_icon_view_grid_container_set_zoom_level (NemoIconContainer *container, gint
 }
 
 static void
+desktop_text_ellipsis_limit_changed_callback (NemoIconContainer *container)
+{
+    update_layout_constants (container);
+
+    nemo_icon_container_invalidate_labels (container);
+    nemo_icon_container_request_update_all (container);
+}
+
+gint
+get_layout_adjust_for_additional_attributes (NemoIconContainer *container)
+{
+    GQuark *attrs;
+    gint length;
+
+    attrs = nemo_icon_view_grid_container_get_icon_text_attribute_names (NEMO_ICON_VIEW_GRID_CONTAINER (container),
+                                                                         &length);
+
+    if (length == 0) {
+        return 0;
+    }
+
+    if (attrs[0] == attribute_none_q) {
+        return 0;
+    }
+
+    return GRID_VIEW_MAX_ADDITIONAL_ATTRIBUTES;
+}
+
+static gint
+nemo_icon_view_grid_container_get_max_layout_lines_for_pango (NemoIconContainer  *container)
+{
+    int limit;
+
+    limit = MAX (1,   NEMO_ICON_VIEW_GRID_CONTAINER (container)->text_ellipsis_limit
+                    - get_layout_adjust_for_additional_attributes (container));
+
+    if (limit <= 0) {
+        return G_MININT;
+    }
+
+    return -limit;
+}
+
+static gint
+nemo_icon_view_grid_container_get_max_layout_lines (NemoIconContainer  *container)
+{
+    int limit;
+
+    limit = MAX (1,   NEMO_ICON_VIEW_GRID_CONTAINER (container)->text_ellipsis_limit
+                    - get_layout_adjust_for_additional_attributes (container));
+
+    if (limit <= 0) {
+        return G_MAXINT;
+    }
+
+    return limit;
+}
+
+static void
 grid_adjust_prefs_changed_callback (NemoIconContainer *container)
 {
+    update_layout_constants (container);
+
+    nemo_icon_container_invalidate_labels (container);
+    nemo_icon_container_request_update_all (container);
+}
+
+static void
+captions_changed_callback (NemoIconContainer *container)
+{
+    update_auto_strv_as_quarks (nemo_icon_view_preferences, 
+                                NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+                                &(NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes));
+
     update_layout_constants (container);
 
     nemo_icon_container_invalidate_labels (container);
@@ -1619,6 +1666,16 @@ nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_contain
                               G_CALLBACK (grid_adjust_prefs_changed_callback),
                               NEMO_ICON_CONTAINER (icon_container));
 
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                              "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
+                              G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
+                              NEMO_ICON_CONTAINER (icon_container));
+
+    g_signal_connect_swapped (nemo_icon_view_preferences, 
+                              "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+                              G_CALLBACK (captions_changed_callback),
+                              NEMO_ICON_CONTAINER (icon_container));
+
     return NEMO_ICON_CONTAINER (icon_container);
 }
 
@@ -1627,6 +1684,14 @@ finalize (GObject *object)
 {
     g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
                                           grid_adjust_prefs_changed_callback,
+                                          object);
+
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                                          desktop_text_ellipsis_limit_changed_callback,
+                                          object);
+
+    g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
+                                          captions_changed_callback,
                                           object);
 
     G_OBJECT_CLASS (nemo_icon_view_grid_container_parent_class)->finalize (object);
@@ -1649,6 +1714,8 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
 	ic_class->start_monitor_top_left = nemo_icon_view_grid_container_start_monitor_top_left;
 	ic_class->stop_monitor_top_left = nemo_icon_view_grid_container_stop_monitor_top_left;
 	ic_class->prioritize_thumbnailing = nemo_icon_view_grid_container_prioritize_thumbnailing;
+    ic_class->get_max_layout_lines_for_pango = nemo_icon_view_grid_container_get_max_layout_lines_for_pango;
+    ic_class->get_max_layout_lines = nemo_icon_view_grid_container_get_max_layout_lines;
 
 	ic_class->compare_icons = nemo_icon_view_grid_container_compare_icons;
 	ic_class->freeze_updates = nemo_icon_view_grid_container_freeze_updates;
@@ -1674,6 +1741,8 @@ nemo_icon_view_grid_container_init (NemoIconViewGridContainer *icon_container)
 
     NEMO_ICON_CONTAINER (icon_container)->details->font_size_table[NEMO_ZOOM_LEVEL_SMALL] = -1 * PANGO_SCALE;
     NEMO_ICON_CONTAINER (icon_container)->details->font_size_table[NEMO_ZOOM_LEVEL_LARGE] =  1 * PANGO_SCALE;
+
+    icon_container->text_ellipsis_limit = 2;
 }
 
 NemoIconContainer *

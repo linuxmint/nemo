@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* gnome-icon-container.h - Icon container widget.
 
@@ -168,6 +168,8 @@ typedef struct {
 						   gconstpointer client);
 	void         (* prioritize_thumbnailing)  (NemoIconContainer *container,
 						   NemoIconData *data);
+    gint         (* get_max_layout_lines_for_pango) (NemoIconContainer *container);
+    gint         (* get_max_layout_lines)           (NemoIconContainer *container);
 
 	/* Queries on icons for subclass/client.
 	 * These must be implemented => These are signals !
@@ -294,8 +296,8 @@ void              nemo_icon_container_set_label_position            (NemoIconCon
 void              nemo_icon_container_sort                          (NemoIconContainer  *container);
 void              nemo_icon_container_freeze_icon_positions         (NemoIconContainer  *container);
 
-int               nemo_icon_container_get_max_layout_lines           (NemoIconContainer  *container);
-int               nemo_icon_container_get_max_layout_lines_for_pango (NemoIconContainer  *container);
+gint               nemo_icon_container_get_max_layout_lines           (NemoIconContainer  *container);
+gint               nemo_icon_container_get_max_layout_lines_for_pango (NemoIconContainer  *container);
 
 void              nemo_icon_container_set_highlighted_for_clipboard (NemoIconContainer  *container,
 									 GList                  *clipboard_icon_data);

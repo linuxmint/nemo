@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* fm-icon-container.h - the container widget for file manager icons
 
@@ -50,9 +50,12 @@ struct NemoIconViewGridContainer {
 	NemoIconContainer parent;
 
 	NemoIconView *view;
-	gboolean    sort_for_desktop;
-    gboolean    horizontal;
-    gboolean    manual_sort_dirty;
+	gboolean      sort_for_desktop;
+    gboolean      horizontal;
+    gboolean      manual_sort_dirty;
+    gint          text_ellipsis_limit;
+
+    GQuark       *attributes;
 };
 
 struct NemoIconViewGridContainerClass {

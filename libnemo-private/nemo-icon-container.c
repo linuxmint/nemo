@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-icon-container.c - Icon container widget.
 
@@ -4849,95 +4849,10 @@ handle_focus_out_event (GtkWidget *widget, GdkEventFocus *event, gpointer user_d
 	return FALSE;
 }
 
-
-static int text_ellipsis_limits[NEMO_ZOOM_LEVEL_N_ENTRIES];
-static int desktop_text_ellipsis_limit;
-
-static gboolean
-get_text_ellipsis_limit_for_zoom (char **strs,
-				  const char *zoom_level,
-				  int *limit)
-{
-	char **p;
-	char *str;
-	gboolean success;
-
-	success = FALSE;
-
-	/* default */
-	*limit = 3;
-
-	if (zoom_level != NULL) {
-		str = g_strdup_printf ("%s:%%d", zoom_level);
-	} else {
-		str = g_strdup ("%d");
-	}
-
-	if (strs != NULL) {
-		for (p = strs; *p != NULL; p++) {
-			if (sscanf (*p, str, limit)) {
-				success = TRUE;
-			}
-		}
-	}
-
-	g_free (str);
-
-	return success;
-}
-
-static const char * zoom_level_names[] = {
-	"smallest",
-	"smaller",
-	"small",
-	"standard",
-	"large",
-	"larger",
-	"largest"
-};
-
-static void
-text_ellipsis_limit_changed_callback (gpointer callback_data)
-{
-	char **pref;
-	unsigned int i;
-	int one_limit;
-
-	pref = g_settings_get_strv (nemo_icon_view_preferences,
-				    NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT);
-
-	/* set default */
-	get_text_ellipsis_limit_for_zoom (pref, NULL, &one_limit);
-	for (i = 0; i < NEMO_ZOOM_LEVEL_N_ENTRIES; i++) {
-		text_ellipsis_limits[i] = one_limit;
-	}
-
-	/* override for each zoom level */
-	for (i = 0; i < G_N_ELEMENTS(zoom_level_names); i++) {
-		if (get_text_ellipsis_limit_for_zoom (pref,
-						      zoom_level_names[i],
-						      &one_limit)) {
-			text_ellipsis_limits[i] = one_limit;
-		}
-	}
-
-	g_strfreev (pref);
-}
-
-static void
-desktop_text_ellipsis_limit_changed_callback (gpointer callback_data)
-{
-	int pref;
-
-	pref = g_settings_get_int (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT);
-	desktop_text_ellipsis_limit = pref;
-}
-
 static void
 nemo_icon_container_init (NemoIconContainer *container)
 {
 	NemoIconContainerDetails *details;
-	static gboolean setup_prefs = FALSE;
 
 	details = g_new0 (NemoIconContainerDetails, 1);
 
@@ -5001,22 +4916,6 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->skip_rename_on_release = FALSE;
 
     details->dnd_grid = NULL;
-
-	if (!setup_prefs) {
-		g_signal_connect_swapped (nemo_icon_view_preferences,
-					  "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
-					  G_CALLBACK (text_ellipsis_limit_changed_callback),
-					  NULL);
-		text_ellipsis_limit_changed_callback (NULL);
-
-		g_signal_connect_swapped (nemo_desktop_preferences,
-					  "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
-					  G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
-					  NULL);
-		desktop_text_ellipsis_limit_changed_callback (NULL);
-
-        setup_prefs = TRUE;
-	}
 }
 
 typedef struct {
@@ -5972,6 +5871,8 @@ nemo_icon_container_request_update_all (NemoIconContainer *container)
 
 	container->details->needs_resort = TRUE;
 	nemo_icon_container_redo_layout (container);
+
+    gtk_widget_queue_draw (container);
 }
 
 /**
@@ -7916,40 +7817,16 @@ nemo_icon_container_is_layout_vertical (NemoIconContainer *container)
 		container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_R_L);
 }
 
-int
+gint
 nemo_icon_container_get_max_layout_lines_for_pango (NemoIconContainer  *container)
 {
-	int limit;
-
-	if (nemo_icon_container_get_is_desktop (container)) {
-		limit = desktop_text_ellipsis_limit;
-	} else {
-		limit = text_ellipsis_limits[container->details->zoom_level];
-	}
-
-	if (limit <= 0) {
-		return G_MININT;
-	}
-
-	return -limit;
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->get_max_layout_lines_for_pango (container);
 }
 
-int
+gint
 nemo_icon_container_get_max_layout_lines (NemoIconContainer  *container)
 {
-	int limit;
-
-	if (nemo_icon_container_get_is_desktop (container)) {
-		limit = desktop_text_ellipsis_limit;
-	} else {
-		limit = text_ellipsis_limits[container->details->zoom_level];
-	}
-
-	if (limit <= 0) {
-		return G_MAXINT;
-	}
-
-	return limit;
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->get_max_layout_lines (container);
 }
 
 void

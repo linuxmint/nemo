@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* fm-icon-container.h - the container widget for file manager icons
 
@@ -50,9 +50,6 @@
  * Its selected so that the non-large text should fit in "normal" icon sizes
  */
 #define ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT 55
-
-#define ICON_TEXT_ATTRIBUTES_NUM_ITEMS		3
-#define ICON_TEXT_ATTRIBUTES_DEFAULT_TOKENS	"size,date_modified,type"
 
 static void get_max_icon_dimensions (GList *icon_start,
                                      GList *icon_end,
@@ -1969,6 +1966,125 @@ nemo_icon_view_container_set_zoom_level (NemoIconContainer *container, gint new_
     eel_canvas_set_pixels_per_unit (EEL_CANVAS (container), pixels_per_unit);
 }
 
+static int text_ellipsis_limits[NEMO_ZOOM_LEVEL_N_ENTRIES];
+static int desktop_text_ellipsis_limit;
+
+static gboolean
+get_text_ellipsis_limit_for_zoom (char **strs,
+                  const char *zoom_level,
+                  int *limit)
+{
+    char **p;
+    char *str;
+    gboolean success;
+
+    success = FALSE;
+
+    /* default */
+    *limit = 3;
+
+    if (zoom_level != NULL) {
+        str = g_strdup_printf ("%s:%%d", zoom_level);
+    } else {
+        str = g_strdup ("%d");
+    }
+
+    if (strs != NULL) {
+        for (p = strs; *p != NULL; p++) {
+            if (sscanf (*p, str, limit)) {
+                success = TRUE;
+            }
+        }
+    }
+
+    g_free (str);
+
+    return success;
+}
+
+static const char * zoom_level_names[] = {
+    "smallest",
+    "smaller",
+    "small",
+    "standard",
+    "large",
+    "larger",
+    "largest"
+};
+
+static void
+text_ellipsis_limit_changed_callback (gpointer callback_data)
+{
+    char **pref;
+    unsigned int i;
+    int one_limit;
+
+    pref = g_settings_get_strv (nemo_icon_view_preferences,
+                    NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT);
+
+    /* set default */
+    get_text_ellipsis_limit_for_zoom (pref, NULL, &one_limit);
+    for (i = 0; i < NEMO_ZOOM_LEVEL_N_ENTRIES; i++) {
+        text_ellipsis_limits[i] = one_limit;
+    }
+
+    /* override for each zoom level */
+    for (i = 0; i < G_N_ELEMENTS(zoom_level_names); i++) {
+        if (get_text_ellipsis_limit_for_zoom (pref,
+                              zoom_level_names[i],
+                              &one_limit)) {
+            text_ellipsis_limits[i] = one_limit;
+        }
+    }
+
+    g_strfreev (pref);
+}
+
+static void
+desktop_text_ellipsis_limit_changed_callback (gpointer callback_data)
+{
+    int pref;
+
+    pref = g_settings_get_int (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT);
+    desktop_text_ellipsis_limit = pref;
+}
+
+static gint
+nemo_icon_view_container_get_max_layout_lines_for_pango (NemoIconContainer  *container)
+{
+    int limit;
+
+    if (nemo_icon_container_get_is_desktop (container)) {
+        limit = desktop_text_ellipsis_limit;
+    } else {
+        limit = text_ellipsis_limits[container->details->zoom_level];
+    }
+
+    if (limit <= 0) {
+        return G_MININT;
+    }
+
+    return -limit;
+}
+
+static gint
+nemo_icon_view_container_get_max_layout_lines (NemoIconContainer  *container)
+{
+    int limit;
+
+    if (nemo_icon_container_get_is_desktop (container)) {
+        limit = desktop_text_ellipsis_limit;
+    } else {
+        limit = text_ellipsis_limits[container->details->zoom_level];
+    }
+
+    if (limit <= 0) {
+        return G_MAXINT;
+    }
+
+    return limit;
+}
+
 static void
 nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 {
@@ -1984,6 +2100,8 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 	ic_class->start_monitor_top_left = nemo_icon_view_container_start_monitor_top_left;
 	ic_class->stop_monitor_top_left = nemo_icon_view_container_stop_monitor_top_left;
 	ic_class->prioritize_thumbnailing = nemo_icon_view_container_prioritize_thumbnailing;
+    ic_class->get_max_layout_lines_for_pango = nemo_icon_view_container_get_max_layout_lines_for_pango;
+    ic_class->get_max_layout_lines = nemo_icon_view_container_get_max_layout_lines;
 
 	ic_class->compare_icons = nemo_icon_view_container_compare_icons;
 	ic_class->freeze_updates = nemo_icon_view_container_freeze_updates;
@@ -2005,6 +2123,23 @@ nemo_icon_view_container_init (NemoIconViewContainer *icon_container)
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (icon_container)),
 				     GTK_STYLE_CLASS_VIEW);
 
+    static gboolean setup_prefs = FALSE;
+
+    if (!setup_prefs) {
+        g_signal_connect_swapped (nemo_icon_view_preferences,
+                      "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
+                      G_CALLBACK (text_ellipsis_limit_changed_callback),
+                      NULL);
+        text_ellipsis_limit_changed_callback (NULL);
+
+        g_signal_connect_swapped (nemo_desktop_preferences,
+                      "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
+                      G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
+                      NULL);
+        desktop_text_ellipsis_limit_changed_callback (NULL);
+
+        setup_prefs = TRUE;
+    }
 }
 
 NemoIconContainer *
