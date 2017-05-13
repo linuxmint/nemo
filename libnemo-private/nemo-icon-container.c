@@ -5872,7 +5872,7 @@ nemo_icon_container_request_update_all (NemoIconContainer *container)
 	container->details->needs_resort = TRUE;
 	nemo_icon_container_redo_layout (container);
 
-    gtk_widget_queue_draw (container);
+    gtk_widget_queue_draw (GTK_WIDGET (container));
 }
 
 /**
@@ -6490,11 +6490,10 @@ nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
 gboolean
 nemo_icon_container_get_horizontal_layout (NemoIconContainer *container)
 {
-    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
 
     return container->details->horizontal;
 }
-
 
 /* Toggle the tighter layout boolean. */
 void
@@ -7820,13 +7819,13 @@ nemo_icon_container_is_layout_vertical (NemoIconContainer *container)
 gint
 nemo_icon_container_get_max_layout_lines_for_pango (NemoIconContainer  *container)
 {
-    NEMO_ICON_CONTAINER_GET_CLASS (container)->get_max_layout_lines_for_pango (container);
+    return NEMO_ICON_CONTAINER_GET_CLASS (container)->get_max_layout_lines_for_pango (container);
 }
 
 gint
 nemo_icon_container_get_max_layout_lines (NemoIconContainer  *container)
 {
-    NEMO_ICON_CONTAINER_GET_CLASS (container)->get_max_layout_lines (container);
+    return NEMO_ICON_CONTAINER_GET_CLASS (container)->get_max_layout_lines (container);
 }
 
 void

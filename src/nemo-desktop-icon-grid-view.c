@@ -228,8 +228,6 @@ should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
 static void
 nemo_desktop_icon_grid_view_remove_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
 {
-    NemoIconView *icon_view;
-
     /* This used to assert that 'directory == nemo_view_get_model (view)', but that
      * resulted in a lot of crash reports (bug #352592). I don't see how that trace happens.
      * It seems that somehow we get a files_changed event sent to the view from a directory
@@ -288,7 +286,7 @@ nemo_desktop_icon_grid_view_file_changed (NemoView *view, NemoFile *file, NemoDi
 
     
     if (!should_show_file_on_current_monitor (view, file)) {
-        nemo_icon_view_remove_file (view, file, directory);
+        nemo_desktop_icon_grid_view_remove_file (view, file, directory);
     } else {
         nemo_icon_container_request_update (get_icon_container (icon_view),
                                             NEMO_ICON_CONTAINER_ICON_DATA (file));
@@ -576,7 +574,6 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
     NemoIconContainer *icon_container;
     GtkAllocation allocation;
     GtkAdjustment *hadj, *vadj;
-    gboolean horizontal;
 
     G_OBJECT_CLASS (nemo_desktop_icon_grid_view_parent_class)->constructed (G_OBJECT (desktop_icon_grid_view));
 
@@ -739,8 +736,6 @@ set_sort_type (NemoDesktopIconGridView *view,
     NemoFile *file;
     gint i;
     gchar *old_sort_name;
-    gboolean auto_arrange;
-    gboolean reverse;
 
     if (view->details->updating_menus) {
         return;

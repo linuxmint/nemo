@@ -133,7 +133,7 @@ nemo_centered_placement_grid_nominal_to_icon_position (NemoCenteredPlacementGrid
                                                        gint                      *x_adjusted,
                                                        gint                      *y_adjusted)
 {
-    gint icon_width, icon_height;
+    gint icon_width;
 
     if (icon != NULL) {
         EelDRect icon_bounds;
@@ -141,10 +141,8 @@ nemo_centered_placement_grid_nominal_to_icon_position (NemoCenteredPlacementGrid
         icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
 
         icon_width = icon_bounds.x1 - icon_bounds.x0;
-        icon_height = icon_bounds.y1 - icon_bounds.y0;
     } else {
         icon_width = grid->icon_size;
-        icon_height = grid->icon_size;
     }
 
     *x_adjusted =   x_nominal
@@ -164,7 +162,7 @@ nemo_centered_placement_grid_icon_position_to_nominal (NemoCenteredPlacementGrid
                                                        gint                      *x_nominal,
                                                        gint                      *y_nominal)
 {
-    gint icon_width, icon_height;
+    gint icon_width;
 
     if (icon != NULL) {
         EelDRect icon_bounds;
@@ -172,10 +170,8 @@ nemo_centered_placement_grid_icon_position_to_nominal (NemoCenteredPlacementGrid
         icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
 
         icon_width = icon_bounds.x1 - icon_bounds.x0;
-        icon_height = icon_bounds.y1 - icon_bounds.y0;
     } else {
         icon_width = grid->icon_size;
-        icon_height = grid->icon_size;
     }
 
     *x_nominal =   x_adjusted

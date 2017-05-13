@@ -141,8 +141,6 @@ free_thumbnail_info (NemoThumbnailInfo *info)
 static GnomeDesktopThumbnailFactory *
 get_thumbnail_factory (void)
 {
-	static GnomeDesktopThumbnailFactory *thumbnail_factory = NULL;
-
 	if (thumbnail_factory == NULL) {
 		thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL);
 	}
@@ -205,7 +203,6 @@ nemo_get_thumbnail_frame (void)
 	return thumbnail_frame;
 }
 
-
 void
 nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
 {
@@ -234,6 +231,7 @@ nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
 	*pixbuf = pixbuf_with_frame;
 }
 
+void
 nemo_thumbnail_pad_top_and_bottom (GdkPixbuf **pixbuf,
                                    gint        extra_height)
 {

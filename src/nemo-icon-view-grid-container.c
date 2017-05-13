@@ -78,7 +78,7 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 	GIcon *emblemed_icon;
 	GEmblem *emblem;
 	GList *emblem_icons, *l;
-    gint scale, max_width;
+    gint scale;
 
 	file = (NemoFile *) data;
 
@@ -254,46 +254,6 @@ update_auto_strv_as_quarks (GSettings   *settings,
 	g_strfreev (value);
 }
 
-/*
- * Get the preference for which caption text should appear
- * beneath icons.
- */
-static GQuark *
-nemo_icon_view_grid_container_get_icon_text_attributes_from_preferences (void)
-{
-    GQuark *attributes;
-
-
-
-	/* We don't need to sanity check the attributes list even though it came
-	 * from preferences.
-	 *
-	 * There are 2 ways that the values in the list could be bad.
-	 *
-	 * 1) The user picks "bad" values.  "bad" values are those that result in
-	 *    there being duplicate attributes in the list.
-	 *
-	 * 2) Value stored in GConf are tampered with.  Its possible physically do
-	 *    this by pulling the rug underneath GConf and manually editing its
-	 *    config files.  Its also possible to use a third party GConf key
-	 *    editor and store garbage for the keys in question.
-	 *
-	 * Thankfully, the Nemo preferences machinery deals with both of
-	 * these cases.
-	 *
-	 * In the first case, the preferences dialog widgetry prevents
-	 * duplicate attributes by making "bad" choices insensitive.
-	 *
-	 * In the second case, the preferences getter (and also the auto storage) for
-	 * string_array values are always valid members of the enumeration associated
-	 * with the preference.
-	 *
-	 * So, no more error checking on attributes is needed here and we can return
-	 * a the auto stored value.
-	 */
-	return attributes;
-}
-
 static int
 quarkv_length (GQuark *attributes)
 {
@@ -318,7 +278,6 @@ static GQuark *
 nemo_icon_view_grid_container_get_icon_text_attribute_names (NemoIconContainer *container,
 							    int *len)
 {
-    GQuark *attributes;
     int piece_count;
 
     /* For now, limit extra attributes to one line - TODO: make this desktop
@@ -956,16 +915,11 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
 {
     NemoIconContainerDetails *details;
     guint icon_size;
-    guint min_image_size, max_image_size;
     NemoIconInfo *icon_info;
     GdkPoint *attach_points;
     int n_attach_points;
-    gboolean has_embedded_text_rect;
     GdkPixbuf *pixbuf;
     char *editable_text, *additional_text;
-    char *embedded_text;
-    GdkRectangle embedded_text_rect;
-    gboolean large_embedded_text;
     gboolean embedded_text_needs_loading;
     gboolean has_open_window;
     gint scale_factor;
@@ -1546,14 +1500,13 @@ desktop_text_ellipsis_limit_changed_callback (NemoIconContainer *container)
     nemo_icon_container_request_update_all (container);
 }
 
-gint
+static gint
 get_layout_adjust_for_additional_attributes (NemoIconContainer *container)
 {
     GQuark *attrs;
     gint length;
 
-    attrs = nemo_icon_view_grid_container_get_icon_text_attribute_names (NEMO_ICON_VIEW_GRID_CONTAINER (container),
-                                                                         &length);
+    attrs = nemo_icon_view_grid_container_get_icon_text_attribute_names (container, &length);
 
     if (length == 0) {
         return 0;
