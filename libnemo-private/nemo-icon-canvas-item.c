@@ -434,6 +434,8 @@ get_scaled_icon_size (NemoIconCanvasItem *item,
    GdkPixbuf *pixbuf = NULL;
    gint scale;
 
+   scale = 1.0;
+
    if (item != NULL) {
        canvas = EEL_CANVAS_ITEM (item)->canvas;
        scale = gtk_widget_get_scale_factor (GTK_WIDGET (canvas));

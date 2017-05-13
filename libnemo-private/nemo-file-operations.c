@@ -6202,7 +6202,7 @@ create_job (GIOSchedulerJob *io_job,
 			g_assert (dest_fs_type == NULL);
 			dest_fs_type = query_fs_type (job->dest_dir, common->cancellable);
 
-			g_object_unref (dest);
+			g_clear_object (&dest);
 
 			if (count == 1) {
 				new_filename = g_strdup (filename);
@@ -6227,7 +6227,7 @@ create_job (GIOSchedulerJob *io_job,
 			}
 
 			if (make_file_name_valid_for_dest_fs (new_filename, dest_fs_type)) {
-				g_object_unref (dest);
+                g_clear_object (&dest);
 
 				if (filename_is_utf8) {
 					dest = g_file_get_child_for_display_name (job->dest_dir, new_filename, NULL);
@@ -6242,7 +6242,7 @@ create_job (GIOSchedulerJob *io_job,
 			}
 			g_free (new_filename);
 		} else if (IS_IO_ERROR (error, EXISTS)) {
-			g_object_unref (dest);
+            g_clear_object (&dest);
 			dest = NULL;
 			filename_base = eel_filename_strip_extension (filename);
 			offset = strlen (filename_base);
@@ -6306,9 +6306,8 @@ create_job (GIOSchedulerJob *io_job,
 	}
 
  aborted:
-	if (dest) {
-		g_object_unref (dest);
-	}
+    g_clear_object (&dest);
+
 	g_free (filename);
 	g_free (dest_fs_type);
 	g_io_scheduler_job_send_to_mainloop_async (io_job,

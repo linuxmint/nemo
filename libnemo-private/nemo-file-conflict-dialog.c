@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-file-conflict-dialog: dialog that handles file conflicts
    during transfer operations.
@@ -133,8 +133,7 @@ file_list_ready_cb (GList *files,
 	type = nemo_file_get_mime_type (dest);
 	should_show_type = !nemo_file_is_mime_type (src, type);
 
-	g_free (type);
-	type = NULL;
+    g_clear_pointer (&type, g_free);
 
 	/* Set up the right labels */
 	if (dest_is_dir) {
@@ -191,7 +190,7 @@ file_list_ready_cb (GList *files,
 	}
 
 	secondary_text = g_strdup_printf ("%s\n%s", message, message_extra);
-	g_free (message);
+    g_clear_pointer (&message, g_free);
 
 	label = gtk_label_new (primary_text);
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
@@ -269,9 +268,10 @@ file_list_ready_cb (GList *files,
 			    label, FALSE, FALSE, 0);
 	gtk_widget_show (label);
 
-	g_free (size);
-	g_free (type);
-	g_free (date);
+    g_clear_pointer (&size, g_free);
+    g_clear_pointer (&type, g_free);
+    g_clear_pointer (&date, g_free);
+
 	g_string_erase (str, 0, -1);
 
 	/* Second label */
@@ -300,10 +300,10 @@ file_list_ready_cb (GList *files,
 			    label, FALSE, FALSE, 0);
 	gtk_widget_show (label);
 
-	g_free (size);
-	g_free (date);
-	g_free (type);
-	g_free (label_text);
+    g_clear_pointer (&size, g_free);
+    g_clear_pointer (&type, g_free);
+    g_clear_pointer (&date, g_free);
+    g_clear_pointer (&label_text, g_free);
 
 	/* Populate the entry */
 	edit_name = nemo_file_get_edit_name (dest);

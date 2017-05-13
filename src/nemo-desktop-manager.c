@@ -127,6 +127,7 @@ layout_changed (NemoDesktopManager *manager)
         g_settings_set_string (nemo_desktop_preferences, NEMO_PREFERENCES_DESKTOP_LAYOUT, DESKTOPS_DEFAULT);
         g_free (pref);
         layout_changed (manager);
+        return FALSE;
     }
 
     gchar **pref_split = g_strsplit (pref, "::", 2);
@@ -136,6 +137,7 @@ layout_changed (NemoDesktopManager *manager)
         g_free (pref);
         g_strfreev (pref_split);
         layout_changed (manager);
+        return FALSE;;
     }
 
     n_monitors = gdk_screen_get_n_monitors (manager->screen);
