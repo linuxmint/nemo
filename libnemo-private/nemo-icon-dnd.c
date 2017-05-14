@@ -1275,6 +1275,10 @@ set_drop_target (NemoIconContainer *container,
 	container->details->drop_target = icon;
 	nemo_icon_container_update_icon (container, old_icon);
 	nemo_icon_container_update_icon (container, icon);
+
+    if (icon != NULL) {
+        nemo_icon_container_icon_raise (container, icon);
+    }
 }
 
 static void

@@ -365,6 +365,8 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 			return;
 		}
 		details->is_highlighted_for_drop = g_value_get_boolean (value);
+        nemo_icon_canvas_item_invalidate_label_size (item);
+
 		break;
 
 	case PROP_HIGHLIGHTED_FOR_CLIPBOARD:
