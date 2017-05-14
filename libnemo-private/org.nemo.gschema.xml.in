@@ -469,7 +469,7 @@
 
   <schema id="org.nemo.desktop" path="/org/nemo/desktop/" gettext-domain="nemo">
     <key name="font" type="s">
-      <default l10n="messages" context="desktop-font">''</default>
+      <default l10n="messages" context="desktop-font">'Noto Sans 10'</default>
       <_summary>Desktop font</_summary>
       <_description>The font _description used for the icons on the desktop.</_description>
     </key>
