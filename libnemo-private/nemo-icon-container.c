@@ -6821,16 +6821,18 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 	} 
 
 	/* Set the right font */
-	if (details->font) {
+	if (details->font && g_strcmp0 (details->font, "") != 0) {
 		desc = pango_font_description_from_string (details->font);
 	} else {
 		context = gtk_widget_get_pango_context (GTK_WIDGET (container));
 		desc = pango_font_description_copy (pango_context_get_font_description (context));
 	}
 
-    pango_font_description_set_size (desc,
-                                     pango_font_description_get_size (desc) +
-                                     container->details->font_size_table [container->details->zoom_level]);
+    if (pango_font_description_get_size (desc) > 0) {
+        pango_font_description_set_size (desc,
+                                         pango_font_description_get_size (desc) +
+                                         container->details->font_size_table [container->details->zoom_level]);
+    }
 
 	eel_editable_label_set_font_description (EEL_EDITABLE_LABEL (details->rename_widget),
 						 desc);

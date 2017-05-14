@@ -15,6 +15,7 @@
 
 .nemo-desktop.nemo-canvas-item {
     color: #eeeeee;
+    font: Noto Sans 10;
     text-shadow: 1px 1px alpha(black, 0.8);
 }
 

@@ -1394,6 +1394,7 @@ get_vertical_adjustment (NemoIconContainer *container,
                          gint               icon_size)
 {
     PangoLayout *layout;
+    PangoContext *context;
     PangoFontDescription *desc;
     gint ellipsis_limit;
     gint height;
@@ -1402,10 +1403,18 @@ get_vertical_adjustment (NemoIconContainer *container,
 
     layout = gtk_widget_create_pango_layout (GTK_WIDGET (container), "Test");
 
-    desc = pango_font_description_from_string (container->details->font);
-    pango_font_description_set_size (desc,
-                                     pango_font_description_get_size (desc) +
-                                     container->details->font_size_table [container->details->zoom_level]);
+    if (container->details->font && g_strcmp0 (container->details->font, "") != 0) {
+        desc = pango_font_description_from_string (container->details->font);
+    } else {
+        context = gtk_widget_get_pango_context (GTK_WIDGET (container));
+        desc = pango_font_description_copy (pango_context_get_font_description (context));
+    }
+
+    if (pango_font_description_get_size (desc) > 0) {
+        pango_font_description_set_size (desc,
+                                         pango_font_description_get_size (desc) +
+                                         container->details->font_size_table [container->details->zoom_level]);
+    }
 
     pango_layout_set_font_description (layout, desc);
 

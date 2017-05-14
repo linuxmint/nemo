@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* Nemo - Icon canvas item class for icon container.
  *
@@ -1561,14 +1561,18 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
 
 	/* Create a font description */
-	if (container->details->font) {
+	if (container->details->font && g_strcmp0 (container->details->font, "") != 0) {
 		desc = pango_font_description_from_string (container->details->font);
 	} else {
 		desc = pango_font_description_copy (pango_context_get_font_description (context));
 	}
-    pango_font_description_set_size (desc,
-                                     pango_font_description_get_size (desc) +
-                                     container->details->font_size_table [container->details->zoom_level]);
+
+    if (pango_font_description_get_size (desc) > 0) {
+        pango_font_description_set_size (desc,
+                                         pango_font_description_get_size (desc) +
+                                         container->details->font_size_table [container->details->zoom_level]);
+    }
+
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
