@@ -695,50 +695,37 @@ nemo_icon_view_grid_container_lay_down_icons (NemoIconContainer *container, GLis
     lay_down_icons_desktop (container, icons);
 }
 
-static int
-compare_icons_by_position_vertical (gconstpointer a, gconstpointer b)
+static gint
+order_icons_by_visual_position (gconstpointer a, gconstpointer b, gpointer user_data)
 {
+    NemoCenteredPlacementGrid *grid;
     NemoIcon *icon_a, *icon_b;
-    int x1, y1, x2, y2;
-    int center_a;
-    int center_b;
+    GdkRectangle rect_a, rect_b;
+
+    grid = (NemoCenteredPlacementGrid *) user_data;
 
     icon_a = (NemoIcon*)a;
     icon_b = (NemoIcon*)b;
 
-    nemo_icon_view_grid_container_icon_get_bounding_box (icon_a, &x1, &y1, &x2, &y2,
-                   BOUNDS_USAGE_FOR_DISPLAY);
-    center_a = x1 + (x2 - x1) / 2;
-    nemo_icon_view_grid_container_icon_get_bounding_box (icon_b, &x1, &y1, &x2, &y2,
-                   BOUNDS_USAGE_FOR_DISPLAY);
-    center_b = x1 + (x2 - x1) / 2;
+    nemo_centered_placement_grid_get_current_position_rect (grid,
+                                                            (gint) icon_a->x,
+                                                            (gint) icon_a->y,
+                                                            &rect_a,
+                                                            NULL);
 
-    return center_a == center_b ?
-        icon_a->y - icon_b->y :
-        center_a - center_b;
-}
+    nemo_centered_placement_grid_get_current_position_rect (grid,
+                                                            (gint) icon_b->x,
+                                                            (gint) icon_b->y,
+                                                            &rect_b,
+                                                            NULL);
 
-static int
-compare_icons_by_position_horizontal (gconstpointer a, gconstpointer b)
-{
-    NemoIcon *icon_a, *icon_b;
-    int x1, y1, x2, y2;
-    int center_a;
-    int center_b;
-
-    icon_a = (NemoIcon*)a;
-    icon_b = (NemoIcon*)b;
-
-    nemo_icon_view_grid_container_icon_get_bounding_box (icon_a, &x1, &y1, &x2, &y2,
-                   BOUNDS_USAGE_FOR_DISPLAY);
-    center_a = y1 + (y2 - y1) / 2;
-    nemo_icon_view_grid_container_icon_get_bounding_box (icon_b, &x1, &y1, &x2, &y2,
-                   BOUNDS_USAGE_FOR_DISPLAY);
-    center_b = y1 + (y2 - y1) / 2;
-
-    return center_a == center_b ?
-        icon_a->x - icon_b->x :
-        center_a - center_b;
+    if (grid->horizontal) {
+        return (rect_a.y == rect_b.y) ?
+            rect_a.x - rect_b.x : rect_a.y - rect_b.y;
+    } else {
+        return (rect_a.x == rect_b.x) ?
+            rect_a.y - rect_b.y : rect_a.x - rect_b.x;
+    }
 }
 
 /* x, y are the top-left coordinates of the icon. */
@@ -903,9 +890,17 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
     }
 
     if (!container->details->auto_layout) {
-        container->details->icons = g_list_sort (container->details->icons,
-                                                 container->details->horizontal ? compare_icons_by_position_horizontal :
-                                                                                  compare_icons_by_position_vertical);
+        NemoCenteredPlacementGrid *grid;
+
+        grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
+
+        if (grid) {
+            container->details->icons = g_list_sort_with_data (container->details->icons,
+                                                               order_icons_by_visual_position,
+                                                               grid);
+
+            nemo_centered_placement_grid_free (grid);
+        }
     }
 }
 
@@ -1000,20 +995,20 @@ static void
 nemo_icon_view_grid_container_align_icons (NemoIconContainer *container)
 {
     NemoCenteredPlacementGrid *grid;
-    GList *unplaced_icons;
+    GList *unplaced_icons, *old_list;
     GList *l;
 
     unplaced_icons = g_list_copy (container->details->icons);
 
-    unplaced_icons = g_list_sort (unplaced_icons,
-                                  container->details->horizontal ? compare_icons_by_position_horizontal :
-                                                                   compare_icons_by_position_vertical);
+    grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
+
+    unplaced_icons = g_list_sort_with_data (unplaced_icons,
+                                            order_icons_by_visual_position,
+                                            grid);
 
     if (nemo_icon_container_is_layout_rtl (container)) {
         unplaced_icons = g_list_reverse (unplaced_icons);
     }
-
-    grid = nemo_centered_placement_grid_new (container, container->details->horizontal);
 
     for (l = unplaced_icons; l != NULL; l = l->next) {
         NemoIcon *icon;
@@ -1040,7 +1035,10 @@ nemo_icon_view_grid_container_align_icons (NemoIconContainer *container)
 
     nemo_centered_placement_grid_free (grid);
 
-    g_list_free (unplaced_icons);
+    old_list = container->details->icons;
+    container->details->icons = unplaced_icons;
+
+    g_list_free (old_list);
 
     if (nemo_icon_container_is_layout_rtl (container)) {
         nemo_icon_container_set_rtl_positions (container);

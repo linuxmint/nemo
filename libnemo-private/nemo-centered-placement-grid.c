@@ -280,7 +280,7 @@ nemo_centered_placement_grid_pre_populate (NemoCenteredPlacementGrid *grid,
 
     for (p = icons; p != NULL; p = p->next) {
         icon = p->data;
-        if (nemo_icon_container_icon_is_positioned (icon) && !icon->has_lazy_position) {
+        if (nemo_icon_container_icon_is_positioned (icon)) {
             nemo_centered_placement_grid_mark_icon (grid, icon);
         }
     }
