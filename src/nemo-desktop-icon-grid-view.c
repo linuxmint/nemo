@@ -211,8 +211,14 @@ should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
         return TRUE;
     }
 
-    if (!g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS)) {
+    if (file_monitor > -1 &&
+        !g_settings_get_boolean (nemo_desktop_preferences, NEMO_PREFERENCES_SHOW_ORPHANED_DESKTOP_ICONS)) {
         return FALSE;
+    }
+
+    if (file_monitor == -1) {
+        /* New file, no previous metadata - this should go on the primary monitor */
+        return nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor);
     }
 
     if (!nemo_desktop_manager_get_monitor_is_active (dm, file_monitor)) {

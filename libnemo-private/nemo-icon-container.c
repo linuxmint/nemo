@@ -139,6 +139,8 @@ static gboolean handle_icon_slow_two_click (NemoIconContainer *container,
                                             NemoIcon *icon,
                                             GdkEventButton *event);
 
+static void schedule_align_icons (NemoIconContainer *container);
+
 static gpointer accessible_parent_class;
 
 static GQuark accessible_private_data_quark = 0;
@@ -1008,7 +1010,9 @@ redo_layout_internal (NemoIconContainer *container)
         }
 
         NEMO_ICON_CONTAINER_GET_CLASS (container)->lay_down_icons (container, container->details->icons, 0);
-	}
+	} else if (container->details->keep_aligned && container->details->drag_state != DRAG_STATE_STRETCH) {
+        schedule_align_icons (container);
+    }
 
 	if (nemo_icon_container_is_layout_rtl (container)) {
 		nemo_icon_container_set_rtl_positions (container);

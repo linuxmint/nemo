@@ -586,7 +586,7 @@ snap_position (NemoIconContainer         *container,
 }
 
 static void
-lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
+lay_down_icons_desktop (NemoIconContainer *container, GList *icons)
 {
     GList *p, *placed_icons, *unplaced_icons;
     int total, new_length, placed;
@@ -692,7 +692,7 @@ static void
 nemo_icon_view_grid_container_lay_down_icons (NemoIconContainer *container, GList *icons, double start_y)
 {
 
-    lay_down_icons_vertical_desktop (container, icons);
+    lay_down_icons_desktop (container, icons);
 }
 
 static int
@@ -1162,7 +1162,6 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
 
                 nemo_icon_container_icon_set_position (container, icon, position.x, position.y);
                 icon->saved_ltr_x = icon->x;
-
             } else {
                 no_position_icons = g_list_prepend (no_position_icons, icon);
             }
