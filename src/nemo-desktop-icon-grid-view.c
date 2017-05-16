@@ -880,6 +880,7 @@ action_desktop_size_callback (GtkAction               *action,
                               NemoDesktopIconGridView *view)
 {
     NemoZoomLevel level;
+    NemoIconContainer *container;
 
     if (view->details->updating_menus) {
         return;
@@ -896,8 +897,12 @@ action_desktop_size_callback (GtkAction               *action,
      * function works. */
 
     nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
-    nemo_icon_container_set_auto_layout (get_icon_container (view), TRUE);
-    nemo_icon_container_set_keep_aligned (get_icon_container (view), TRUE);
+
+    container = get_icon_container (view);
+
+    if (!container->details->auto_layout) {
+        set_sort_type (view, action, NEMO_FILE_SORT_BY_DISPLAY_NAME);
+    }
 
     nemo_view_update_menus (NEMO_VIEW (view));
 }
