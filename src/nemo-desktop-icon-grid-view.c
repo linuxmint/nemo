@@ -121,6 +121,7 @@ static void     real_update_menus                                 (NemoView     
 static void     nemo_desktop_icon_grid_view_update_icon_container_fonts  (NemoDesktopIconGridView      *view);
 static void     font_changed_callback                             (gpointer                callback_data);
 static void     nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_grid_view);
+static void     grid_adjust_prefs_changed_callback (NemoDesktopIconGridView *view);
 
 G_DEFINE_TYPE (NemoDesktopIconGridView, nemo_desktop_icon_grid_view, NEMO_TYPE_ICON_VIEW)
 
@@ -366,6 +367,10 @@ nemo_desktop_icon_grid_view_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
 					      nemo_view_update_menus,
 					      icon_view);
+
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                                          grid_adjust_prefs_changed_callback,
+                                          icon_view);
 
 	G_OBJECT_CLASS (nemo_desktop_icon_grid_view_parent_class)->dispose (object);
 }
@@ -655,6 +660,16 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
                   "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
                   G_CALLBACK (nemo_view_update_menus),
                   desktop_icon_grid_view);
+
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                              "changed::" NEMO_PREFERENCES_DESKTOP_HORIZONTAL_GRID_ADJUST,
+                              G_CALLBACK (grid_adjust_prefs_changed_callback),
+                              desktop_icon_grid_view);
+
+    g_signal_connect_swapped (nemo_desktop_preferences,
+                              "changed::" NEMO_PREFERENCES_DESKTOP_VERTICAL_GRID_ADJUST,
+                              G_CALLBACK (grid_adjust_prefs_changed_callback),
+                              desktop_icon_grid_view);
 }
 
 static void
@@ -886,6 +901,8 @@ action_desktop_size_callback (GtkAction               *action,
         return;
     }
 
+    container = get_icon_container (view);
+
     level = gtk_radio_action_get_current_value (current);
 
     nemo_view_zoom_to_level (NEMO_VIEW (view), level);
@@ -896,13 +913,37 @@ action_desktop_size_callback (GtkAction               *action,
      * into the new slots.  This is complicated, due to how the redo_layout_internal
      * function works. */
 
-    nemo_icon_view_set_sort_reversed (NEMO_ICON_VIEW (view), FALSE, TRUE);
+    NEMO_ICON_VIEW_GRID_CONTAINER (container)->manual_sort_dirty = TRUE;
+    container->details->needs_resort = TRUE;
+    container->details->auto_layout = TRUE;
+
+    nemo_icon_container_redo_layout (container);
+
+    nemo_view_update_menus (NEMO_VIEW (view));
+}
+
+static void
+grid_adjust_prefs_changed_callback (NemoDesktopIconGridView *view)
+{
+    NemoIconContainer *container;
+
+    if (view->details->updating_menus) {
+        return;
+    }
 
     container = get_icon_container (view);
 
-    if (!container->details->auto_layout) {
-        set_sort_type (view, action, NEMO_FILE_SORT_BY_DISPLAY_NAME);
-    }
+    clear_orphan_states (view);
+
+    /* TODO: Instead of switching back to defaults, re-align the existing icons
+     * into the new slots.  This is complicated, due to how the redo_layout_internal
+     * function works. */
+
+    NEMO_ICON_VIEW_GRID_CONTAINER (container)->manual_sort_dirty = TRUE;
+    container->details->needs_resort = TRUE;
+    container->details->auto_layout = TRUE;
+
+    nemo_icon_container_redo_layout (container);
 
     nemo_view_update_menus (NEMO_VIEW (view));
 }

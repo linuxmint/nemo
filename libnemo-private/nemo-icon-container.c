@@ -1010,9 +1010,7 @@ redo_layout_internal (NemoIconContainer *container)
         }
 
         NEMO_ICON_CONTAINER_GET_CLASS (container)->lay_down_icons (container, container->details->icons, 0);
-	} else if (container->details->keep_aligned && container->details->drag_state != DRAG_STATE_STRETCH) {
-        schedule_align_icons (container);
-    }
+	}
 
 	if (nemo_icon_container_is_layout_rtl (container)) {
 		nemo_icon_container_set_rtl_positions (container);

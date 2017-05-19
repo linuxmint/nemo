@@ -4324,6 +4324,12 @@ copy_move_file (CopyMoveJob *copy_job,
 		report_copy_progress (copy_job, source_info, transfer_info);
 
 		if (debuting_files) {
+            if (position) {
+                nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
+            } else {
+                nemo_file_changes_queue_schedule_position_remove (dest);
+            }
+
 			g_hash_table_replace (debuting_files, g_object_ref (dest), GINT_TO_POINTER (TRUE));
 		}
 		if (copy_job->is_move) {
@@ -4967,6 +4973,12 @@ move_file_prepare (CopyMoveJob *move_job,
 
 		nemo_file_changes_queue_file_moved (src, dest);
 
+        if (position) {
+            nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
+        } else {
+            nemo_file_changes_queue_schedule_position_remove (dest);
+        }
+
 		if (job->undo_info != NULL) {
 			nemo_file_undo_info_ext_add_origin_target_pair (NEMO_FILE_UNDO_INFO_EXT (job->undo_info),
 									    src, dest);
@@ -5456,6 +5468,12 @@ link_file (CopyMoveJob *job,
 		}
 		
 		nemo_file_changes_queue_file_added (dest);
+
+        if (position) {
+            nemo_file_changes_queue_schedule_position_set (dest, *position, common->monitor_num);
+        } else {
+            nemo_file_changes_queue_schedule_position_remove (dest);
+        }
 
 		g_object_unref (dest);
 		

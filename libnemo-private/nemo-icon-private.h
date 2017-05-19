@@ -420,11 +420,18 @@ void               nemo_centered_placement_grid_icon_position_to_nominal (NemoCe
                                                                           gint                      *y_nominal);
 void               nemo_centered_placement_grid_mark_icon         (NemoCenteredPlacementGrid *grid, NemoIcon *icon);
 void               nemo_centered_placement_grid_unmark_icon       (NemoCenteredPlacementGrid *grid, NemoIcon *icon);
-void               nemo_centered_placement_grid_get_next_free_position (NemoCenteredPlacementGrid *grid,
-                                                                        gint                      *x_out,
-                                                                        gint                      *y_out);
+void               nemo_centered_placement_grid_mark_position (NemoCenteredPlacementGrid *grid,
+                                                               gint                       x,
+                                                               gint                       y);
+void               nemo_centered_placement_grid_unmark_position (NemoCenteredPlacementGrid *grid,
+                                                                 gint                       x,
+                                                                 gint                       y);
 void               nemo_centered_placement_grid_pre_populate        (NemoCenteredPlacementGrid *grid,
                                                                      GList                     *icons);
+void               nemo_centered_placement_grid_get_next_position_rect (NemoCenteredPlacementGrid *grid,
+                                                                        GdkRectangle              *in_rect,
+                                                                        GdkRectangle              *out_rect,
+                                                                        gboolean                  *is_free);
 void               nemo_centered_placement_grid_get_current_position_rect (NemoCenteredPlacementGrid *grid,
                                                                            gint                       x,
                                                                            gint                       y,
