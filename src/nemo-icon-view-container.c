@@ -453,16 +453,16 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
  *   1) home link
  *   2) network link
  *   3) mount links
- *   4) other
- *   5) trash link
+ *   4) trash link
+ *   5) other
  */
 typedef enum {
 	SORT_COMPUTER_LINK,
 	SORT_HOME_LINK,
 	SORT_NETWORK_LINK,
 	SORT_MOUNT_LINK,
-	SORT_OTHER,
-	SORT_TRASH_LINK
+	SORT_TRASH_LINK,
+	SORT_OTHER
 } SortCategory;
 
 static SortCategory
