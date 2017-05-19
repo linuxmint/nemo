@@ -376,8 +376,8 @@ typedef enum {
 	SORT_HOME_LINK,
 	SORT_NETWORK_LINK,
 	SORT_MOUNT_LINK,
-	SORT_OTHER,
-	SORT_TRASH_LINK
+	SORT_TRASH_LINK,
+	SORT_OTHER
 } SortCategory;
 
 static SortCategory
