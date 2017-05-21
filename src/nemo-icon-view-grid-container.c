@@ -1630,6 +1630,8 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
 
     G_OBJECT_CLASS (klass)->finalize = finalize;
 
+    ic_class->is_grid_container = TRUE;
+
 	ic_class->get_icon_text = nemo_icon_view_grid_container_get_icon_text;
 	ic_class->get_icon_images = nemo_icon_view_grid_container_get_icon_images;
 	ic_class->get_icon_description = nemo_icon_view_grid_container_get_icon_description;

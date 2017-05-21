@@ -4464,6 +4464,7 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
     class->finish_adding_new_icons = NULL;
     class->icon_get_bounding_box = real_icon_get_bounding_box;
     class->set_zoom_level = real_set_zoom_level;
+    class->is_grid_container = FALSE;
 
 	/* Signals.  */
 

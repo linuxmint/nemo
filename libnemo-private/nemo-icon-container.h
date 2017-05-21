@@ -75,6 +75,7 @@ typedef struct {
 
 typedef struct {
 	EelCanvasClass parent_slot;
+    gboolean is_grid_container;
 
 	/* Operations on the container. */
 	int          (* button_press) 	          (NemoIconContainer *container,

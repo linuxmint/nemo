@@ -1476,6 +1476,7 @@ nemo_icon_view_container_move_icon (NemoIconContainer *container,
         position.x = icon->saved_ltr_x;
         position.y = icon->y;
         position.scale = scale;
+        position.monitor =  nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
         g_signal_emit_by_name (container, "icon_position_changed", icon->data, &position);
     }
     
@@ -2094,6 +2095,7 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 
 	attribute_none_q = g_quark_from_static_string ("none");
 
+    ic_class->is_grid_container = FALSE;
 	ic_class->get_icon_text = nemo_icon_view_container_get_icon_text;
 	ic_class->get_icon_images = nemo_icon_view_container_get_icon_images;
 	ic_class->get_icon_description = nemo_icon_view_container_get_icon_description;

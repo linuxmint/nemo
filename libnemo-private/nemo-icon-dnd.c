@@ -135,8 +135,6 @@ initialize_dnd_grid (NemoIconContainer *container)
 static void
 free_dnd_grid (NemoIconContainer *container)
 {
-    GList *selection, *p;
-
     g_clear_pointer (&container->details->dnd_grid,
                      nemo_centered_placement_grid_free);
 
@@ -874,6 +872,56 @@ handle_local_move (NemoIconContainer *container,
     GList *moved_icons, *p;
     NemoDragSelectionItem *item;
     NemoIcon *icon;
+    NemoFile *file = NULL;
+    gint monitor;
+    time_t now;
+
+    if (container->details->auto_layout) {
+        return;
+    }
+
+    monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
+
+    time (&now);
+
+    /* Move and select the icons. */
+    moved_icons = NULL;
+    for (p = container->details->dnd_info->drag_info.selection_list; p != NULL; p = p->next) {
+        item = p->data;
+
+        icon = nemo_icon_container_get_icon_by_uri
+            (container, item->uri);
+
+        icon = get_icon_from_drag_info (container, item, now, monitor);
+
+        file = NEMO_FILE (icon->data);
+        nemo_file_set_is_desktop_orphan (file, FALSE);
+
+        if (item->got_icon_position) {
+            nemo_icon_container_move_icon (container, icon,
+                                           world_x + item->icon_x,
+                                           world_y + item->icon_y,
+                                           icon->scale,
+                                           TRUE, TRUE, TRUE);
+        }
+
+        moved_icons = g_list_prepend (moved_icons, icon);
+    }
+
+    nemo_icon_container_select_list_unselect_others (container, moved_icons);
+    /* Might have been moved in a way that requires adjusting scroll region. */
+    nemo_icon_container_update_scroll_region (container);
+    g_list_free (moved_icons);
+}
+
+static void
+handle_local_grid_container_move (NemoIconContainer *container,
+                                  double world_x,
+                                  double world_y)
+{
+    GList *moved_icons, *p;
+    NemoDragSelectionItem *item;
+    NemoIcon *icon;
     NemoFile *file;
     gint monitor;
     gint drop_x, drop_y;
@@ -1085,6 +1133,10 @@ prep_selection (NemoIconContainer *container,
     time_t now;
     gboolean drop_position_free;
     gboolean iter_is_free;
+
+    if (!NEMO_ICON_CONTAINER_GET_CLASS (container)->is_grid_container) {
+        return;
+    }
 
     drop_x = (gint)(world_x + 0.5);
     drop_y = (gint)(world_y + 0.5);
@@ -1347,7 +1399,11 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 		if (local_move_only) {
             prep_selection (container, world_x, world_y);
 
-			handle_local_move (container, world_x, world_y);
+            if (NEMO_ICON_CONTAINER_GET_CLASS (container)->is_grid_container) {
+                handle_local_grid_container_move (container, world_x, world_y);
+            } else {
+                handle_local_move (container, world_x, world_y);
+            }
 		} else {
             if (!icon_hit) {
                 prep_selection (container, world_x, world_y);
