@@ -843,7 +843,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     if (recent_is_supported ()) {
         mount_uri = "recent:///"; /* No need to strdup */
-        icon = g_themed_icon_new ("document-open-recent");
+        icon = g_themed_icon_new ("folder-recent");
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                               SECTION_COMPUTER,
                               _("Recent"), icon, mount_uri,
