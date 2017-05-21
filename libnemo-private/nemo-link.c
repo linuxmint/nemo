@@ -182,7 +182,7 @@ nemo_link_local_create (const char     *directory_uri,
 			    const char     *image,
 			    const char     *target_uri,
 			    const GdkPoint *point,
-			    int             screen,
+			    int             monitor,
 			    gboolean        unique_filename)
 {
 	char *real_directory_uri;
@@ -265,13 +265,14 @@ nemo_link_local_create (const char     *directory_uri,
 	if (point != NULL) {
 		item.location = file;
 		item.set = TRUE;
+        item.monitor = monitor;
 		item.point.x = point->x;
 		item.point.y = point->y;
-		item.screen = screen;
+		item.screen = 0;
 		dummy_list.data = &item;
 		dummy_list.next = NULL;
 		dummy_list.prev = NULL;
-	
+	g_printerr ("position set: %d, %d\n", point->x, point->y);
 		nemo_directory_schedule_position_set (&dummy_list);
 	}
 

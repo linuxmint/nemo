@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /*
  * nemo-view-dnd.c: DnD helpers for NemoView
@@ -33,6 +33,7 @@
 
 #include "nemo-desktop-icon-view.h"
 #include "nemo-view.h"
+#include "nemo-desktop-utils.h"
 
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
@@ -96,10 +97,9 @@ handle_netscape_url_drop_link_cb (GObject *source_object,
 	NetscapeUrlDropLink *data = user_data;
 	char *link_name = data->link_name;
 	char *link_display_name;
-	gint screen_num;
+	gint monitor_num;
 	GFileInfo *info;
 	char *icon_name = NULL;
-	GdkScreen *screen;
 
 	info = g_file_query_info_finish (G_FILE (source_object),
 					 res, NULL);
@@ -128,8 +128,7 @@ handle_netscape_url_drop_link_cb (GObject *source_object,
 	   (the basename of http://foo/ is http://foo/) */
 	revert_slashes (link_name);
 
-	screen = gtk_widget_get_screen (GTK_WIDGET (data->view));
-	screen_num = gdk_screen_get_number (screen);
+    monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (data->view));
 
 	nemo_link_local_create (data->target_uri,
 				    link_name,
@@ -137,7 +136,7 @@ handle_netscape_url_drop_link_cb (GObject *source_object,
 				    icon_name,
 				    data->url,
 				    &data->point,
-				    screen_num,
+                    monitor_num,
 				    TRUE);
 
 	g_free (link_display_name);

@@ -33,7 +33,7 @@ gboolean         nemo_link_local_create                      (const char        
 								  const char        *image,
 								  const char        *target_uri,
 								  const GdkPoint    *point,
-								  int                screen,
+								  int                monitor,
 								  gboolean           unique_filename);
 gboolean         nemo_link_local_set_text                    (const char        *uri,
 								 const char        *text);

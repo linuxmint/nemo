@@ -1027,9 +1027,6 @@ nemo_icon_view_grid_container_reload_icon_positions (NemoIconContainer *containe
     NemoIcon *icon;
     gboolean have_stored_position;
     NemoIconPosition position;
-    EelDRect bounds;
-    double bottom;
-    EelCanvasItem *item;
 
     g_assert (!container->details->auto_layout);
 
@@ -1038,7 +1035,6 @@ nemo_icon_view_grid_container_reload_icon_positions (NemoIconContainer *containe
     no_position_icons = NULL;
 
     /* Place all the icons with positions. */
-    bottom = 0;
     for (p = container->details->icons; p != NULL; p = p->next) {
         icon = p->data;
 
@@ -1073,6 +1069,8 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
         return;
     }
 
+    nemo_centered_placement_grid_pre_populate (grid, container->details->icons);
+
     new_icons = container->details->new_icons;
 
     container->details->new_icons = NULL;
@@ -1103,7 +1101,6 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
         if (!container->details->auto_layout) {
             if (have_stored_position) {
                 if (container->details->keep_aligned) {
-                    GdkRectangle rect;
                     gint x_nom, y_nom;
 
                     snap_position (container,
@@ -1228,7 +1225,6 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
 
         if (grid != NULL) {
             GdkRectangle grid_rect;
-            gint next_x, next_y;
             gint count;
             GdkRGBA grid_color = { 1.0, 1.0, 1.0, 0.4};
 
@@ -1263,7 +1259,8 @@ nemo_icon_view_grid_container_draw_background (EelCanvas *canvas,
         cairo_restore (cr);
     }
 
-    if (!container->details->insert_dnd_mode) {
+    if (!container->details->insert_dnd_mode ||
+        container->details->dnd_info->drag_info.data_type != NEMO_ICON_DND_GNOME_ICON_LIST) {
         return;
     }
 

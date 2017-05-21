@@ -180,6 +180,7 @@ nemo_file_init (NemoFile *file)
     file->details->position = g_new0 (GdkPoint, 1);
     file->details->position->x = -1;
     file->details->position->y = -1;
+    file->details->desktop_monitor = -1;
 
 	nemo_file_clear_info (file);
 	nemo_file_invalidate_extension_info_internal (file);

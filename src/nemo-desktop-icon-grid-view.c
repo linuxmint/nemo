@@ -221,7 +221,6 @@ should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
         /* New file, no previous metadata - this should go on the primary monitor */
         return nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor);
     }
-
     if (!nemo_desktop_manager_get_monitor_is_active (dm, file_monitor)) {
         nemo_file_set_is_desktop_orphan (file, TRUE);
         if (nemo_desktop_manager_get_monitor_is_primary (dm, current_monitor)) {
