@@ -4195,6 +4195,7 @@ copy_move_file (CopyMoveJob *copy_job,
 	gboolean res;
 	int unique_name_nr;
 	gboolean handled_invalid_filename;
+    gboolean target_is_desktop;
 
 	job = (CommonJob *)copy_job;
 	
@@ -4202,6 +4203,9 @@ copy_move_file (CopyMoveJob *copy_job,
 		*skipped_file = TRUE;
 		return;
 	}
+
+    target_is_desktop = (copy_job->desktop_location != NULL &&
+                         g_file_equal (copy_job->desktop_location, dest_dir));
 
 	unique_name_nr = 1;
 
@@ -4324,10 +4328,12 @@ copy_move_file (CopyMoveJob *copy_job,
 		report_copy_progress (copy_job, source_info, transfer_info);
 
 		if (debuting_files) {
-            if (position) {
-                nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
-            } else {
-                nemo_file_changes_queue_schedule_position_remove (dest);
+            if (target_is_desktop) {
+                if (position) {
+                    nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
+                } else {
+                    nemo_file_changes_queue_schedule_position_remove (dest);
+                }
             }
 
 			g_hash_table_replace (debuting_files, g_object_ref (dest), GINT_TO_POINTER (TRUE));
@@ -4909,6 +4915,10 @@ move_file_prepare (CopyMoveJob *move_job,
 	GFileCopyFlags flags;
 	MoveFileCopyFallback *fallback;
 	gboolean handled_invalid_filename;
+    gboolean target_is_desktop;
+
+    target_is_desktop = (move_job->desktop_location != NULL &&
+                         g_file_equal (move_job->desktop_location, dest_dir));
 
 	overwrite = FALSE;
 	handled_invalid_filename = *dest_fs_type != NULL;
@@ -4973,10 +4983,12 @@ move_file_prepare (CopyMoveJob *move_job,
 
 		nemo_file_changes_queue_file_moved (src, dest);
 
-        if (position) {
-            nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
-        } else {
-            nemo_file_changes_queue_schedule_position_remove (dest);
+        if (target_is_desktop) {
+            if (position) {
+                nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
+            } else {
+                nemo_file_changes_queue_schedule_position_remove (dest);
+            }
         }
 
 		if (job->undo_info != NULL) {
@@ -5430,6 +5442,10 @@ link_file (CopyMoveJob *job,
 	char *primary, *secondary, *details;
 	int response;
 	gboolean handled_invalid_filename;
+    gboolean target_is_desktop;
+
+    target_is_desktop = (job->desktop_location != NULL &&
+                         g_file_equal (job->desktop_location, dest_dir));
 
 	common = (CommonJob *)job;
 
@@ -5469,10 +5485,12 @@ link_file (CopyMoveJob *job,
 		
 		nemo_file_changes_queue_file_added (dest);
 
-        if (position) {
-            nemo_file_changes_queue_schedule_position_set (dest, *position, common->monitor_num);
-        } else {
-            nemo_file_changes_queue_schedule_position_remove (dest);
+        if (target_is_desktop) {
+            if (position) {
+                nemo_file_changes_queue_schedule_position_set (dest, *position, common->monitor_num);
+            } else {
+                nemo_file_changes_queue_schedule_position_remove (dest);
+            }
         }
 
 		g_object_unref (dest);
