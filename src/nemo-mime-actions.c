@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-mime-actions.c - uri-specific versions of mime action functions
 
@@ -339,7 +339,9 @@ nemo_mime_get_default_application_for_file (NemoFile *file)
 	char *uri_scheme;
 
 	if (!nemo_mime_actions_check_if_required_attributes_ready (file)) {
-		return NULL;
+        if (file_has_local_path (file)) {
+            return NULL;
+        }
 	}
 
 	mime_type = nemo_file_get_mime_type (file);
