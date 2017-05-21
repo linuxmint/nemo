@@ -893,8 +893,8 @@ handle_local_move (NemoIconContainer *container,
         }
     }
 
-    drop_x = (gint)(world_x + 0.5) + container->details->left_margin;
-    drop_y = (gint)(world_y + 0.5) + container->details->top_margin;
+    drop_x = (gint)(world_x + 0.5);
+    drop_y = (gint)(world_y + 0.5);
 
     monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
@@ -941,9 +941,6 @@ handle_nonlocal_move (NemoIconContainer *container,
 	if (container->details->dnd_info->drag_info.selection_list == NULL) {
 		return;
 	}
-
-    x += container->details->left_margin;
-    y += container->details->top_margin;
 
 	source_uris = NULL;
 	for (p = container->details->dnd_info->drag_info.selection_list; p != NULL; p = p->next) {
@@ -1089,8 +1086,8 @@ prep_selection (NemoIconContainer *container,
     gboolean drop_position_free;
     gboolean iter_is_free;
 
-    drop_x = (gint)(world_x + 0.5) + container->details->left_margin;
-    drop_y = (gint)(world_y + 0.5) + container->details->top_margin;
+    drop_x = (gint)(world_x + 0.5);
+    drop_y = (gint)(world_y + 0.5);
 
     monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
 
@@ -1142,8 +1139,8 @@ prep_selection (NemoIconContainer *container,
 
                 if (item->got_icon_position) {
                     nemo_centered_placement_grid_get_current_position_rect (grid,
-                                                                            drop_x + item->icon_x,
-                                                                            drop_y + item->icon_y,
+                                                                            drop_x + item->icon_x + item->icon_width / 2,
+                                                                            drop_y + item->icon_y + item->icon_height / 2,
                                                                             &iter_rect,
                                                                             &iter_is_free);
 
@@ -1255,6 +1252,9 @@ prep_selection (NemoIconContainer *container,
             nemo_drag_destroy_selection_list (push_list);
         }
     } else {
+        iter_rect.x = drop_rect.x;
+        iter_rect.y = drop_rect.y;
+
         /* Just a normal move - no alignment - if we're provided a position, let it go
            wherever it wants. */
         for (p = container->details->dnd_info->drag_info.selection_list; p != NULL; p = p->next) {

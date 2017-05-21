@@ -272,7 +272,6 @@ nemo_link_local_create (const char     *directory_uri,
 		dummy_list.data = &item;
 		dummy_list.next = NULL;
 		dummy_list.prev = NULL;
-	g_printerr ("position set: %d, %d\n", point->x, point->y);
 		nemo_directory_schedule_position_set (&dummy_list);
 	}
 
