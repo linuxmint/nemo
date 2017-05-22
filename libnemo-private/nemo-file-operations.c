@@ -4054,10 +4054,8 @@ is_trusted_desktop_file (GFile *file,
 	res = FALSE;
 	
 	/* Weird file => not trusted,
-	   Already executable => no need to mark trusted */
+	   File in system directory => no need to mark trusted */
 	if (g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR &&
-	    !g_file_info_get_attribute_boolean (info,
-						G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE) &&
 	    nemo_is_in_system_dir (file)) {
 		res = TRUE;
 	}
