@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*- */
 
 /* nemo-file-operations.c - Nemo file operations.
 
@@ -5714,6 +5714,7 @@ nemo_file_operations_duplicate (GList *files,
 	CopyMoveJob *job;
 
 	job = op_job_new (CopyMoveJob, parent_window);
+    job->desktop_location = nemo_get_desktop_location ();
 	job->done_callback = done_callback;
 	job->done_callback_data = done_callback_data;
 	job->files = eel_g_object_list_copy (files);
