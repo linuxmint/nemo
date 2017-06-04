@@ -177,9 +177,6 @@ nemo_file_init (NemoFile *file)
 {
 	file->details = G_TYPE_INSTANCE_GET_PRIVATE ((file), NEMO_TYPE_FILE, NemoFileDetails);
 
-    file->details->position = g_new0 (GdkPoint, 1);
-    file->details->position->x = -1;
-    file->details->position->y = -1;
     file->details->desktop_monitor = -1;
 
 	nemo_file_clear_info (file);
@@ -511,8 +508,6 @@ nemo_file_clear_info (NemoFile *file)
 
     file->details->is_desktop_orphan = FALSE;
 
-    file->details->position->x = -1;
-    file->details->position->y = -1;
     file->details->desktop_monitor = -1;
 
 	clear_metadata (file);
@@ -829,8 +824,6 @@ finalize (GObject *object)
 	g_free (file->details->description);
 	g_free (file->details->activation_uri);
 	g_clear_object (&file->details->custom_icon);
-
-    g_clear_pointer (&file->details->position, g_free);
 
 	if (file->details->thumbnail) {
 		g_object_unref (file->details->thumbnail);
@@ -7573,29 +7566,28 @@ nemo_file_set_monitor_number (NemoFile *file, gint monitor)
     file->details->desktop_monitor = monitor;
 }
 
-GdkPoint *
-nemo_file_get_position (NemoFile *file)
+void
+nemo_file_get_position (NemoFile *file, GdkPoint *point)
 {
     gint x, y;
 
-    if (file->details->position->x == -1) {
-        char *position_string;
-        gboolean position_good;
-        char c;
+    char *position_string;
+    gboolean position_good;
+    char c;
 
-        /* Get the current position of this icon from the metadata. */
-        position_string = nemo_file_get_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, "");
+    /* Get the current position of this icon from the metadata. */
+    position_string = nemo_file_get_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, "");
 
-        position_good = sscanf (position_string, " %d , %d %c", &x, &y, &c) == 2;
-        g_free (position_string);
+    position_good = sscanf (position_string, " %d , %d %c", &x, &y, &c) == 2;
+    g_free (position_string);
 
-        if (position_good) {
-            file->details->position->x = x;
-            file->details->position->y = y;
-        }
+    if (position_good) {
+        point->x = x;
+        point->y = y;
+    } else {
+        point->x = -1;
+        point->y = -1;
     }
-
-    return file->details->position;
 }
 
 void
@@ -7609,9 +7601,6 @@ nemo_file_set_position (NemoFile *file, gint x, gint y)
         position_string = NULL;
     }
     nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, NULL, position_string);
-
-    file->details->position->x = x;
-    file->details->position->y = y;
 
     g_free (position_string);
 }

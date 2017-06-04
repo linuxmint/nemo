@@ -1001,7 +1001,6 @@ save_files_async (NemoBookmarkList    *self,
     GTask *task;
 
     g_object_ref (self);
-    // G_BREAKPOINT ();
     task = g_task_new (self, NULL, callback, self);
     g_task_run_in_thread (task, save_files_thread);
 

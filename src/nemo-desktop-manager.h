@@ -50,6 +50,8 @@ typedef struct {
 
   guint update_layout_idle_id;
 
+  gboolean desktop_on_primary_only;
+
   NemoActionManager *action_manager;
 
   GList *desktops;
@@ -68,6 +70,8 @@ gboolean nemo_desktop_manager_get_monitor_is_active (NemoDesktopManager *manager
                                                                    gint  monitor);
 gboolean nemo_desktop_manager_get_monitor_is_primary (NemoDesktopManager *manager,
                                                                    gint  monitor);
+
+gboolean nemo_desktop_manager_get_primary_only (NemoDesktopManager *manager);
 
 G_END_DECLS
 

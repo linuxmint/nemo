@@ -427,7 +427,8 @@ void               nemo_centered_placement_grid_unmark_position (NemoCenteredPla
                                                                  gint                       x,
                                                                  gint                       y);
 void               nemo_centered_placement_grid_pre_populate        (NemoCenteredPlacementGrid *grid,
-                                                                     GList                     *icons);
+                                                                     GList                     *icons,
+                                                                     gboolean                   ignore_lazy);
 void               nemo_centered_placement_grid_get_next_position_rect (NemoCenteredPlacementGrid *grid,
                                                                         GdkRectangle              *in_rect,
                                                                         GdkRectangle              *out_rect,

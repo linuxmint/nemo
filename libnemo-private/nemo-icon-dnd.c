@@ -101,7 +101,7 @@ initialize_dnd_grid (NemoIconContainer *container)
     container->details->dnd_grid = nemo_centered_placement_grid_new (container,
                                                                      container->details->horizontal);
 
-    nemo_centered_placement_grid_pre_populate (container->details->dnd_grid, container->details->icons);
+    nemo_centered_placement_grid_pre_populate (container->details->dnd_grid, container->details->icons, FALSE);
 
     selection = nemo_icon_container_get_selection (container);
 

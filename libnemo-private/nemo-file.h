@@ -497,7 +497,7 @@ gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
 
 gint     nemo_file_get_monitor_number             (NemoFile *file);
 void     nemo_file_set_monitor_number             (NemoFile *file, gint monitor);
-GdkPoint *nemo_file_get_position                  (NemoFile *file);
+void     nemo_file_get_position                   (NemoFile *file, GdkPoint *point);
 void     nemo_file_set_position                   (NemoFile *file, gint x, gint y);
 gboolean nemo_file_get_is_desktop_orphan          (NemoFile *file);
 void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_desktop_orphan);

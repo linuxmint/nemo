@@ -174,7 +174,10 @@ should_show_file_on_current_monitor (NemoView *view, NemoFile *file)
     NemoDesktopManager *dm = nemo_desktop_manager_get ();
 
     if (current_monitor == file_monitor) {
-        nemo_file_set_is_desktop_orphan (file, FALSE);
+        return TRUE;
+    }
+
+    if (nemo_desktop_manager_get_primary_only (dm)) {
         return TRUE;
     }
 

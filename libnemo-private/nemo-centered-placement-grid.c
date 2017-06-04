@@ -231,20 +231,17 @@ nemo_centered_placement_grid_icon_position_to_nominal (NemoCenteredPlacementGrid
 void
 nemo_centered_placement_grid_mark_icon (NemoCenteredPlacementGrid *grid, NemoIcon *icon)
 {
-    gint nom_x, nom_y, grid_x, grid_y;
+    gint grid_x, grid_y;
+    GdkRectangle rect;
 
     if (icon->x <= 0.0 && icon->y <= 0.0) {
         return;
     }
 
-    nemo_centered_placement_grid_icon_position_to_nominal (grid,
-                                                           icon,
-                                                           icon->x,
-                                                           icon->y,
-                                                           &nom_x, &nom_y);
+    nemo_centered_placement_grid_get_current_position_rect (grid, icon->x, icon->y, &rect, NULL);
 
-    grid_x = (nom_x - grid->borders->left) / grid->real_snap_x;
-    grid_y = (nom_y - grid->borders->top) / grid->real_snap_y;
+    grid_x = rect.x / grid->real_snap_x;
+    grid_y = rect.y / grid->real_snap_y;
 
     if ((grid_x >= 0 && grid_x < grid->num_columns) &&
        (grid_y >= 0 && grid_y < grid->num_rows)) {
@@ -256,20 +253,17 @@ void
 nemo_centered_placement_grid_unmark_icon (NemoCenteredPlacementGrid *grid,
                                           NemoIcon                  *icon)
 {
-    gint nom_x, nom_y, grid_x, grid_y;
+    gint grid_x, grid_y;
+    GdkRectangle rect;
 
     if (icon->x <= 0.0 && icon->y <= 0.0) {
         return;
     }
 
-    nemo_centered_placement_grid_icon_position_to_nominal (grid,
-                                                           icon,
-                                                           icon->x,
-                                                           icon->y,
-                                                           &nom_x, &nom_y);
+    nemo_centered_placement_grid_get_current_position_rect (grid, icon->x, icon->y, &rect, NULL);
 
-    grid_x = (nom_x - grid->borders->left) / grid->real_snap_x;
-    grid_y = (nom_y - grid->borders->top) / grid->real_snap_y;
+    grid_x = rect.x / grid->real_snap_x;
+    grid_y = rect.y / grid->real_snap_y;
 
     if ((grid_x >= 0 && grid_x < grid->num_columns) &&
        (grid_y >= 0 && grid_y < grid->num_rows)) {
@@ -333,14 +327,23 @@ nemo_centered_placement_grid_unmark_position (NemoCenteredPlacementGrid *grid,
 
 void
 nemo_centered_placement_grid_pre_populate (NemoCenteredPlacementGrid *grid,
-                                           GList                     *icons)
+                                           GList                     *icons,
+                                           gboolean                   ignore_lazy)
 {
     GList *p;
     NemoIcon *icon;
 
     for (p = icons; p != NULL; p = p->next) {
+        gboolean should_mark;
         icon = p->data;
-        if (nemo_icon_container_icon_is_positioned (icon)) {
+
+        if (ignore_lazy) {
+            should_mark = nemo_icon_container_icon_is_positioned (icon) && !icon->has_lazy_position;
+        } else {
+            should_mark = nemo_icon_container_icon_is_positioned (icon);
+        }
+
+        if (should_mark) {
             nemo_centered_placement_grid_mark_icon (grid, icon);
         }
     }

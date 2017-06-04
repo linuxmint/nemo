@@ -146,6 +146,8 @@ layout_changed (NemoDesktopManager *manager)
     show_desktop_on_primary = g_strcmp0 (pref_split[0], "true") == 0;
     show_desktop_on_remaining = g_strcmp0 (pref_split[1], "true") == 0;
 
+    manager->desktop_on_primary_only = show_desktop_on_primary && !show_desktop_on_remaining;
+
     gint i = 0;
     gboolean primary_set = FALSE;
 
@@ -284,6 +286,8 @@ nemo_desktop_manager_init (NemoDesktopManager *self)
 
     self->desktops = NULL;
 
+    self->desktop_on_primary_only = FALSE;
+
     self->action_manager = nemo_action_manager_new ();
 }
 
@@ -357,6 +361,12 @@ nemo_desktop_manager_get_monitor_is_primary (NemoDesktopManager *manager,
     }
 
     return ret;
+}
+
+gboolean
+nemo_desktop_manager_get_primary_only (NemoDesktopManager *manager)
+{
+    return manager->desktop_on_primary_only;
 }
 
 NemoActionManager *

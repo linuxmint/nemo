@@ -5680,6 +5680,7 @@ is_old_or_unknown_icon_data (NemoIconContainer *container,
 		       signals[GET_STORED_LAYOUT_TIMESTAMP], 0,
 		       data, &timestamp, &success);
 
+
 	return (!success || timestamp < container->details->layout_timestamp);
 }
 
