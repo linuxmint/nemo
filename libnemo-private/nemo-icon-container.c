@@ -5680,8 +5680,19 @@ is_old_or_unknown_icon_data (NemoIconContainer *container,
 		       signals[GET_STORED_LAYOUT_TIMESTAMP], 0,
 		       data, &timestamp, &success);
 
-
 	return (!success || timestamp < container->details->layout_timestamp);
+}
+
+gboolean
+nemo_icon_container_icon_is_new_for_monitor (NemoIconContainer *container,
+                                             NemoIcon          *icon,
+                                             gint               current_monitor)
+{
+    if (container->details->auto_layout || !container->details->is_desktop) {
+        return FALSE;
+    }
+
+    return nemo_file_get_monitor_number (NEMO_FILE (icon->data)) != current_monitor;
 }
 
 /**

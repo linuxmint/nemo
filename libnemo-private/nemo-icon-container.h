@@ -251,6 +251,9 @@ GtkWidget *       nemo_icon_container_new                           (void);
 
 /* adding, removing, and managing icons */
 void              nemo_icon_container_clear                         (NemoIconContainer  *view);
+gboolean          nemo_icon_container_icon_is_new_for_monitor       (NemoIconContainer *container,
+                                                                     NemoIcon          *icon,
+                                                                     gint               current_monitor);
 gboolean          nemo_icon_container_add                           (NemoIconContainer  *view,
 									 NemoIconData       *data);
 void              nemo_icon_container_layout_now                    (NemoIconContainer *container);

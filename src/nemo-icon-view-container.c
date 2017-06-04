@@ -1856,7 +1856,7 @@ nemo_icon_view_container_finish_adding_new_icons (NemoIconContainer *container)
     for (p = new_icons; p != NULL; p = p->next) {
         icon = p->data;
         nemo_icon_container_update_icon (container, icon);
-        if (icon->has_lazy_position || nemo_file_get_monitor_number (NEMO_FILE (icon->data)) != current_monitor) {
+        if (icon->has_lazy_position || nemo_icon_container_icon_is_new_for_monitor (container, icon, current_monitor)) {
             assign_icon_position (container, icon);
             semi_position_icons = g_list_prepend (semi_position_icons, icon);
         } else if (!assign_icon_position (container, icon)) {
