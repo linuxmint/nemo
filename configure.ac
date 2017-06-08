@@ -266,6 +266,7 @@ data/Makefile
 data/icons/Makefile
 data/nemo.desktop.in
 data/nemo-autorun-software.desktop.in
+data/nemo-connect-server.desktop.in
 docs/Makefile
 docs/reference/Makefile
 docs/reference/libnemo-extension/Makefile

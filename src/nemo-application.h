@@ -101,5 +101,6 @@ void nemo_application_set_cache_flag (NemoApplication *application);
 void nemo_application_ignore_cache_problem (NemoApplication *application);
 gboolean nemo_application_get_cache_problem_ignored (NemoApplication *application);
 gboolean nemo_application_get_show_desktop (NemoApplication *application);
+GtkWidget * nemo_application_connect_server (NemoApplication *application, NemoWindow *window);
 
 #endif /* __NEMO_APPLICATION_H__ */

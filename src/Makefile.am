@@ -94,9 +94,6 @@ nemo_SOURCES = \
     nemo-config-base-widget.h           \
 	nemo-connect-server-dialog.c	\
 	nemo-connect-server-dialog.h	\
-	nemo-connect-server-dialog-nonmain.c \
-	nemo-connect-server-operation.c	\
-	nemo-connect-server-operation.h	\
     nemo-desktop-icon-grid-view.c \
     nemo-desktop-icon-grid-view.h \
 	nemo-desktop-item-properties.c	\
@@ -231,9 +228,6 @@ nemo_desktop_SOURCES = \
     nemo-config-base-widget.h           \
     nemo-connect-server-dialog.c    \
     nemo-connect-server-dialog.h    \
-    nemo-connect-server-dialog-nonmain.c \
-    nemo-connect-server-operation.c \
-    nemo-connect-server-operation.h \
     nemo-desktop-application.c          \
     nemo-desktop-application.h          \
     nemo-desktop-item-properties.c  \
@@ -351,13 +345,9 @@ nemo_autorun_software_SOURCES= 			\
 	$(NULL)
 
 nemo_connect_server_SOURCES= \
-	nemo-bookmark-list.c		\
-	nemo-bookmark-list.h		\
-	nemo-connect-server-dialog.c	\
-	nemo-connect-server-dialog.h	\
-	nemo-connect-server-dialog-main.c	\
-	nemo-connect-server-operation.c     \
-	nemo-connect-server-operation.h     \
+	nemo-connect-server-dialog.c        \
+	nemo-connect-server-dialog.h        \
+	nemo-connect-server.c		\
 	$(NULL)
 
 nemo_open_with_SOURCES = \

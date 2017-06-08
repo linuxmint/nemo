@@ -8,7 +8,8 @@ desktopdir       = $(datadir)/applications
 desktop_DATA     = $(desktop_in_files:.desktop.in=.desktop)
 desktop_in_files = 					\
 	nemo.desktop.in				\
-	nemo-autorun-software.desktop.in
+	nemo-autorun-software.desktop.in		\
+	nemo-connect-server.desktop.in
 
 autostartdir     = $(datadir)/applications
 autostart_in_files = nemo-autostart.desktop.in
