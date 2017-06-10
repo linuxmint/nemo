@@ -137,6 +137,8 @@ nemo_desktop_window_constructed (GObject *obj)
 
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);
+    gtk_window_set_decorated (GTK_WINDOW (window),
+                  FALSE);
 
     gtk_widget_show (GTK_WIDGET (window));
 }
