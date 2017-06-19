@@ -1,0 +1,10 @@
+[Nemo Action]
+
+Active=true
+Name=Report GVFS info on %f
+Comment=Send the results of gvfs-info on %f to stdout
+Exec=gvfs-info %F
+Icon-Name=info
+Selection=s
+Extensions=any;
+EscapeSpaces=true
