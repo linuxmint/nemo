@@ -977,12 +977,11 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
     new_width = new_size.x1 - new_size.x0;
 
     if (old_width != 0 && old_width != new_width) {
-        nemo_icon_container_request_update (container, icon->data);
-
-        icon->has_lazy_position = TRUE;
-        container->details->new_icons = g_list_prepend (container->details->new_icons, icon);
-        nemo_icon_container_redo_layout (container);
-        nemo_icon_container_icon_raise (container, icon);
+        gint diff;
+        diff = (new_width - old_width) / 2;
+        nemo_icon_container_move_icon (container, icon, (int)icon->x - diff, (int)icon->y, 1.0, FALSE, TRUE, TRUE);
+        nemo_icon_canvas_item_invalidate_label_size (icon->item);
+        gtk_widget_queue_draw (container);
     }
 
     /* Let the pixbufs go. */
