@@ -1412,23 +1412,13 @@ nemo_directory_schedule_position_set (GList *position_setting_list)
             nemo_file_set_position (file, -1, -1);
 		}
 
-		if (item->set) {
-			nemo_file_set_time_metadata
-				(file,
-				 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP,
-				 now);
-		} else {
-			nemo_file_set_time_metadata
-				(file,
-				 NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP,
-				 UNDEFINED_TIME);
-		}
-
         if (item->set) {
             nemo_file_set_monitor_number (file, item->monitor);
         } else {
             nemo_file_set_monitor_number (file, -1);
         }
+
+        nemo_file_set_time_metadata (file, NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP, UNDEFINED_TIME);
 
 		nemo_file_unref (file);
 	}

@@ -901,12 +901,16 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
     gboolean embedded_text_needs_loading;
     gboolean has_open_window;
     gint scale_factor;
+    EelIRect old_size, new_size;
+    gint old_width, new_width;
 
     if (icon == NULL) {
         return;
     }
 
     details = container->details;
+
+    nemo_icon_canvas_item_get_icon_canvas_rectangle (icon->item, &old_size);
 
     /* Get the appropriate images for the file. */
     icon_size = container->details->forced_icon_size;
@@ -966,6 +970,20 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
 
     nemo_icon_canvas_item_set_image (icon->item, pixbuf);
     nemo_icon_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
+
+    nemo_icon_canvas_item_get_icon_canvas_rectangle (icon->item, &new_size);
+
+    old_width = old_size.x1 - old_size.x0;
+    new_width = new_size.x1 - new_size.x0;
+
+    if (old_width != 0 && old_width != new_width) {
+        nemo_icon_container_request_update (container, icon->data);
+
+        icon->has_lazy_position = TRUE;
+        container->details->new_icons = g_list_prepend (container->details->new_icons, icon);
+        nemo_icon_container_redo_layout (container);
+        nemo_icon_container_icon_raise (container, icon);
+    }
 
     /* Let the pixbufs go. */
     g_object_unref (pixbuf);

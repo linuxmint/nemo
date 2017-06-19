@@ -178,6 +178,8 @@ nemo_file_init (NemoFile *file)
 	file->details = G_TYPE_INSTANCE_GET_PRIVATE ((file), NEMO_TYPE_FILE, NemoFileDetails);
 
     file->details->desktop_monitor = -1;
+    file->details->cached_position_x = -1;
+    file->details->cached_position_y = -1;
 
 	nemo_file_clear_info (file);
 	nemo_file_invalidate_extension_info_internal (file);
@@ -7571,22 +7573,30 @@ nemo_file_get_position (NemoFile *file, GdkPoint *point)
 {
     gint x, y;
 
-    char *position_string;
-    gboolean position_good;
-    char c;
+    if (file->details->cached_position_x == -1) {
+        char *position_string;
+        gboolean position_good;
+        char c;
 
-    /* Get the current position of this icon from the metadata. */
-    position_string = nemo_file_get_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, "");
+        /* Get the current position of this icon from the metadata. */
+        position_string = nemo_file_get_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, "");
 
-    position_good = sscanf (position_string, " %d , %d %c", &x, &y, &c) == 2;
-    g_free (position_string);
+        position_good = sscanf (position_string, " %d , %d %c", &x, &y, &c) == 2;
+        g_free (position_string);
 
-    if (position_good) {
-        point->x = x;
-        point->y = y;
+        if (position_good) {
+            point->x = x;
+            point->y = y;
+        } else {
+            point->x = -1;
+            point->y = -1;
+        }
+
+        file->details->cached_position_x = x;
+        file->details->cached_position_y = y;
     } else {
-        point->x = -1;
-        point->y = -1;
+        point->x = file->details->cached_position_x;
+        point->y = file->details->cached_position_y;
     }
 }
 
@@ -7601,6 +7611,9 @@ nemo_file_set_position (NemoFile *file, gint x, gint y)
         position_string = NULL;
     }
     nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_POSITION, NULL, position_string);
+
+    file->details->cached_position_x = x;
+    file->details->cached_position_y = y;
 
     g_free (position_string);
 }
