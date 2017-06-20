@@ -1,3 +1,17 @@
+nemo (3.4.3) sonya; urgency=medium
+
+  [ leigh123linux ]
+  * Remove decoration from desktop window (shows in weston)
+
+  [ Michael Webster ]
+  * Desktop: Relax control of positioning for placed icons.  At startup, they are loaded and set to their stored position, but not force-aligned, allowing the layout to ignore fluctuations in the work area during system startup.  Fix some logic around 'orphan' icons as well to prevent issues with icons not being shown due to being falsely classified as orphans.
+  * icon container: Be more specific about when to flag icons coming from a different monitor due to a desktop configuration change. (see previous commit)
+  * metadata: Add back cached position values in NemoFile.  Be sure to clear the timestamp metadata on files being moved/copied to or from the desktop. This ensures the lazy flag operates correctly.  With the desktop becoming a separate process, transfers that include position info need to be handled slightly differently, as the old way of just setting metadata and reacting to it from a new container won't work - the file gets debuted in the other process sooner than (or not reliably after, at least) the metadata is written, resulting in inconsistent positioning.
+  * Add gvfs-info action for inspecting file metadata (for purposes of debugging) - right-click a file and it will send gvfs-info output on that file to stdout.
+  * nemo-icon-view-grid-container.c: improve updates after thumbnail generation.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 20 Jun 2017 15:43:53 +0200
+
 nemo (3.4.2) sonya; urgency=medium
 
   [ Michael Webster ]
