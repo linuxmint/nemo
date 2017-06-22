@@ -294,6 +294,8 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	g_signal_connect (slot->floating_bar, "action",
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
+    slot->cache_bar = NULL;
+
 	slot->title = g_strdup (_("Loading..."));
 }
 
