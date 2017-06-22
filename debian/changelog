@@ -1,3 +1,11 @@
+nemo (3.4.4) sonya; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-icon-view-grid-container.c: skip default placement if we're in auto-layout mode.  We get false lazy flags on new icons since the original desktop did not use auto-layout.  We need to handle this because we both store layout timestamps and provide auto-layout.
+  * nemo-window-slot.c: Initialize cache_bar to NULL, this is checked for in nemo-window-manage-views (nemo_window_slot_check_bad_cache_bar)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 22 Jun 2017 15:00:12 +0200
+
 nemo (3.4.3) sonya; urgency=medium
 
   [ leigh123linux ]
