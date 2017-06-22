@@ -1148,7 +1148,8 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
 
         nemo_icon_container_update_icon (container, icon);
 
-        if (icon->has_lazy_position || nemo_icon_container_icon_is_new_for_monitor (container, icon, current_monitor)) {
+        if (!container->details->auto_layout &&
+            (icon->has_lazy_position || nemo_icon_container_icon_is_new_for_monitor (container, icon, current_monitor))) {
             assign_icon_position (container, icon);
             semi_position_icons = g_list_prepend (semi_position_icons, icon);
         } else if (!assign_icon_position (container, icon)) {

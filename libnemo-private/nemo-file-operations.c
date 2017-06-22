@@ -4338,15 +4338,16 @@ copy_move_file (CopyMoveJob *copy_job,
 		transfer_info->num_files ++;
 		report_copy_progress (copy_job, source_info, transfer_info);
 
-		if (debuting_files) {
+        if (debuting_files) {
             if (target_is_desktop && position) {
                 nemo_file_changes_queue_schedule_position_set (dest, *position, job->monitor_num);
-            } else if (source_is_desktop) {
+            } else if (source_is_desktop && copy_job->is_move) {
                 nemo_file_changes_queue_schedule_position_remove (dest);
+            }
+
+            g_hash_table_replace (debuting_files, g_object_ref (dest), GINT_TO_POINTER (TRUE));
         }
 
-			g_hash_table_replace (debuting_files, g_object_ref (dest), GINT_TO_POINTER (TRUE));
-		}
 		if (copy_job->is_move) {
 			nemo_file_changes_queue_file_moved (src, dest);
 		} else {
@@ -5461,21 +5462,10 @@ link_file (CopyMoveJob *job,
 	char *primary, *secondary, *details;
 	int response;
 	gboolean handled_invalid_filename;
-    gboolean target_is_desktop, source_is_desktop;
+    gboolean target_is_desktop;
 
     target_is_desktop = (job->desktop_location != NULL &&
                          g_file_equal (job->desktop_location, dest_dir));
-
-    source_is_desktop = FALSE;
-
-    if (src != NULL) {
-        GFile *parent = g_file_get_parent (src);
-
-        if (parent != NULL && g_file_equal (job->desktop_location, parent)) {
-            source_is_desktop = TRUE;
-            g_object_unref (parent);
-        }
-    }
 
 	common = (CommonJob *)job;
 
@@ -5517,8 +5507,6 @@ link_file (CopyMoveJob *job,
 
         if (target_is_desktop && position) {
             nemo_file_changes_queue_schedule_position_set (dest, *position, common->monitor_num);
-        } else if (source_is_desktop) {
-            nemo_file_changes_queue_schedule_position_remove (dest);
         }
 
 		g_object_unref (dest);
@@ -6254,8 +6242,6 @@ create_job (GIOSchedulerJob *io_job,
 		nemo_file_changes_queue_file_added (dest);
 		if (job->has_position) {
 			nemo_file_changes_queue_schedule_position_set (dest, job->position, common->monitor_num);
-		} else {
-			nemo_file_changes_queue_schedule_position_remove (dest);
 		}
 	} else {
 		g_assert (error != NULL);
