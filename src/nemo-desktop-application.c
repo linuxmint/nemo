@@ -45,6 +45,7 @@
 #include <eel/eel-vfs-extensions.h>
 #include <libnemo-private/nemo-desktop-link-monitor.h>
 #include <libnemo-private/nemo-desktop-metadata.h>
+#include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-signaller.h>
@@ -323,6 +324,12 @@ nemo_desktop_application_local_command_line (GApplication *application,
 static void
 nemo_desktop_application_continue_startup (NemoApplication *app)
 {
+    /* Check the user's Desktop and config directories and post warnings
+     * if there are problems.
+     */
+    nemo_application_check_required_directory (app, nemo_get_desktop_directory ());
+    nemo_application_check_required_directory (app, nemo_get_user_directory ());
+
 	/* register views */
 	nemo_desktop_icon_view_register ();
     nemo_desktop_icon_grid_view_register ();

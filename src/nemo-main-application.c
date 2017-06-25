@@ -692,6 +692,12 @@ nemo_main_application_continue_startup (NemoApplication *app)
 	self->priv->dbus_manager = nemo_dbus_manager_new ();
 	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
 
+    /* Check the user's ~/.config/nemo directory and post warnings
+     * if there are problems.
+     */
+
+    nemo_application_check_required_directory (app, nemo_get_user_directory ());
+
 	/* register views */
 	nemo_icon_view_register ();
 	nemo_list_view_register ();

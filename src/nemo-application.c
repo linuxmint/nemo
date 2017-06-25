@@ -251,74 +251,41 @@ init_menu_provider_callback (void)
 
 /* end Common Startup Stuff */
 
-static gboolean
-check_required_directories (NemoApplication *application)
+gboolean
+nemo_application_check_required_directory (NemoApplication *application,
+                                           gchar           *path)
 {
-	char *user_directory;
-	char *desktop_directory;
-	GSList *directories;
-	gboolean ret;
+    gboolean ret;
 
-	g_assert (NEMO_IS_APPLICATION (application));
+    g_assert (NEMO_IS_APPLICATION (application));
 
-	ret = TRUE;
+    ret = TRUE;
 
-	user_directory = nemo_get_user_directory ();
-	desktop_directory = nemo_get_desktop_directory ();
+    if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
+        ret = FALSE;
+    }
 
-	directories = NULL;
+    if (!ret) {
+        char *error_string;
+        const char *detail_string;
+        GtkDialog *dialog;
 
-	if (!g_file_test (user_directory, G_FILE_TEST_IS_DIR)) {
-		directories = g_slist_prepend (directories, user_directory);
-	}
+        error_string = g_strdup_printf (_("Nemo could not create the required folder \"%s\"."),
+                                        path);
+        detail_string = _("Before running Nemo, please create the following folder, or "
+                          "set permissions such that Nemo can create it.");
 
-	if (!g_file_test (desktop_directory, G_FILE_TEST_IS_DIR)) {
-		directories = g_slist_prepend (directories, desktop_directory);
-	}
+        dialog = eel_show_error_dialog (error_string, detail_string, NULL);
+        /* We need the main event loop so the user has a chance to see the dialog. */
+        gtk_application_add_window (GTK_APPLICATION (application),
+                                    GTK_WINDOW (dialog));
 
-	if (directories != NULL) {
-		int failed_count;
-		GString *directories_as_string;
-		GSList *l;
-		char *error_string;
-		const char *detail_string;
-		GtkDialog *dialog;
+        g_free (error_string);
+    }
 
-		ret = FALSE;
+    g_free (path);
 
-		failed_count = g_slist_length (directories);
-
-		directories_as_string = g_string_new ((const char *)directories->data);
-		for (l = directories->next; l != NULL; l = l->next) {
-			g_string_append_printf (directories_as_string, ", %s", (const char *)l->data);
-		}
-
-		if (failed_count == 1) {
-			error_string = g_strdup_printf (_("Nemo could not create the required folder \"%s\"."),
-							directories_as_string->str);
-			detail_string = _("Before running Nemo, please create the following folder, or "
-					  "set permissions such that Nemo can create it.");
-		} else {
-			error_string = g_strdup_printf (_("Nemo could not create the following required folders: "
-							  "%s."), directories_as_string->str);
-			detail_string = _("Before running Nemo, please create these folders, or "
-					  "set permissions such that Nemo can create them.");
-		}
-
-		dialog = eel_show_error_dialog (error_string, detail_string, NULL);
-		/* We need the main event loop so the user has a chance to see the dialog. */
-		gtk_application_add_window (GTK_APPLICATION (application),
-					    GTK_WINDOW (dialog));
-
-		g_string_free (directories_as_string, TRUE);
-		g_free (error_string);
-	}
-
-	g_slist_free (directories);
-	g_free (user_directory);
-	g_free (desktop_directory);
-
-	return ret;
+    return ret;
 }
 
 void
@@ -457,11 +424,6 @@ nemo_application_startup (GApplication *app)
 	/* Initialize the UI handler singleton for file operations */
 	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nemo_progress_ui_handler_new ();
-
-	/* Check the user's ~/.nemo directories and post warnings
-	 * if there are problems.
-	 */
-	check_required_directories (self);
 
     self->priv->cache_problem = FALSE;
     self->priv->ignore_cache_problem = FALSE;
