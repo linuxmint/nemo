@@ -238,7 +238,7 @@ PKG_CHECK_MODULES(NEMO, [
 AC_SUBST(NEMO_CFLAGS)
 AC_SUBST(NEMO_LIBS)
 
-AC_SUBST(DISABLE_DEPRECATED_CFLAGS)
+CFLAGS="$CFLAGS -Wno-deprecated-declarations -Wno-deprecated"
 
 dnl Multimedia keys
 AC_CHECK_HEADERS([X11/XF86keysym.h])
