@@ -1,3 +1,17 @@
+nemo (3.4.5) sonya; urgency=medium
+
+  [ Michael Webster ]
+  * search (ctrl-f): Don't search for an empty string.  If the user wants to search for every file, they can use the wildcard (*).
+  * nemo-application: Only check/create the config dir at startup for nemo, and have nemo-desktop check both config and Desktop directories.
+  * nemo-window-menus.c: Fix control-n (new window) action callback when used from the desktop process - it should launch the preferred file manager instead of attempting to spawn a window itself.
+  * configure.ac: suppress deprecated warnings
+  * Add --enable-silent-rules to debian/rules, quiet C90 warnings.
+
+  [ Clement Lefebvre ]
+  * l10n: Generate desktop files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 26 Jun 2017 12:14:28 +0200
+
 nemo (3.4.4) sonya; urgency=medium
 
   [ Michael Webster ]
