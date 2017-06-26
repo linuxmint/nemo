@@ -6,7 +6,8 @@ CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/nemo \
                         --disable-update-mimedb \
 			--enable-gtk-doc \
 			--enable-selinux=no \
-			--enable-compile-warnings=yes
+			--enable-compile-warnings=yes \
+			--enable-silent-rules
 
 export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 
