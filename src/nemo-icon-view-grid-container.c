@@ -685,7 +685,7 @@ lay_down_icons_desktop (NemoIconContainer *container, GList *icons)
                                                        x, y);
 
                 icon->saved_ltr_x = icon->x;
-
+                icon->has_lazy_position = FALSE;
                 icons = icons->next;
 
                 nemo_centered_placement_grid_mark_icon (grid, icon);
