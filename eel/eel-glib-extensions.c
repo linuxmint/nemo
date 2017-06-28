@@ -65,14 +65,7 @@ eel_g_str_list_equal (GList *list_a, GList *list_b)
 GList *
 eel_g_str_list_copy (GList *list)
 {
-	GList *node, *result;
-
-	result = NULL;
-	
-	for (node = g_list_last (list); node != NULL; node = node->prev) {
-		result = g_list_prepend (result, g_strdup (node->data));
-	}
-	return result;
+	return g_list_copy_deep (list, (GCopyFunc) g_strdup, NULL);
 }
 
 gboolean
