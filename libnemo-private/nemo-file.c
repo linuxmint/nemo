@@ -2132,6 +2132,11 @@ update_links_if_target (NemoFile *target_file)
 	nemo_file_list_free (link_files);
 }
 
+
+static guint64 cached_thumbnail_limit;
+int cached_thumbnail_size;
+static int show_image_thumbs;
+
 static gboolean
 access_ok (const gchar *path)
 {
@@ -2481,7 +2486,8 @@ update_info_internal (NemoFile *file,
 	if (g_strcmp0 (file->details->thumbnail_path, thumbnail_path) != 0) {
 		changed = TRUE;
 		g_free (file->details->thumbnail_path);
-        if (!access_ok (thumbnail_path)) {
+
+        if (show_image_thumbs != NEMO_SPEED_TRADEOFF_NEVER && thumbnail_path != NULL && !access_ok (thumbnail_path)) {
             file->details->thumbnail_access_problem = TRUE;
             file->details->thumbnail_path = NULL;
         } else {
@@ -4062,11 +4068,6 @@ get_custom_icon (NemoFile *file)
  
 	return icon;
 }
-
-
-static guint64 cached_thumbnail_limit;
-int cached_thumbnail_size;
-static int show_image_thumbs;
 
 GFilesystemPreviewType
 nemo_file_get_filesystem_use_preview (NemoFile *file)
