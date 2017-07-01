@@ -566,12 +566,10 @@ nemo_action_new (const gchar *name,
         gint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
             if (g_path_is_absolute (deps[i])) {
-                GFile *f = g_file_new_for_path (deps[i]);
-                if (!g_file_query_exists (f, NULL)) {
+                if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
                     finish = FALSE;
                     DEBUG ("Missing action dependency: %s", deps[i]);
                 }
-                g_object_unref (f);
             } else {
                 gchar *p = g_find_program_in_path (deps[i]);
                 if (p == NULL) {
@@ -1325,13 +1323,24 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
 }
 
 static gboolean
-get_is_dir_hack (NemoFile *file)
+get_is_dir (NemoFile *file)
 {
     gboolean ret = FALSE;
 
     GFile *f = nemo_file_get_location (file);
-    GFileType type = g_file_query_file_type (f, 0, NULL);
-    ret = type == G_FILE_TYPE_DIRECTORY;
+
+    if (g_file_is_native (f)) {
+        gchar *path;
+
+        path = g_file_get_path (f);
+        ret = g_file_test (path, G_FILE_TEST_IS_DIR);
+        g_free (path);
+    } else {
+        ret = nemo_file_is_directory (file);
+    }
+
+    g_object_unref (f);
+
     return ret;
 }
 
@@ -1424,11 +1433,14 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
 
     for (iter = selection; iter != NULL && found_match; iter = iter->next) {
         found_match = FALSE;
+        gboolean is_dir;
         gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
         gchar *filename = g_ascii_strdown (raw_fn, -1);
         g_free (raw_fn);
         int i;
-        gboolean is_dir = get_is_dir_hack (iter->data);
+
+        is_dir = get_is_dir (iter->data);
+
         if (ext_count > 0) {
             for (i = 0; i < ext_count; i++) {
                 if (g_strcmp0 (extensions[i], "dir") == 0) {
