@@ -20,7 +20,9 @@
 #include "nemo-action.h"
 #include <eel/eel-string.h>
 #include <glib/gi18n.h>
+#include <gdk/gdk.h>
 #include "nemo-file-utilities.h"
+#include "nemo-program-choosing.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_ACTIONS
 #include <libnemo-private/nemo-debug.h>
@@ -65,6 +67,7 @@ enum
   PROP_SEPARATOR,
   PROP_QUOTE_TYPE,
   PROP_ESCAPE_SPACE,
+  PROP_RUN_IN_TERMINAL,
   PROP_CONDITIONS
 };
 
@@ -103,6 +106,7 @@ nemo_action_init (NemoAction *action)
     action->escape_underscores = FALSE;
     action->escape_space = FALSE;
     action->show_in_blank_desktop = FALSE;
+    action->run_in_terminal = FALSE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -229,6 +233,14 @@ nemo_action_class_init (NemoActionClass *klass)
                                                            FALSE,
                                                            G_PARAM_READWRITE)
                                      );
+    g_object_class_install_property (object_class,
+                                     PROP_RUN_IN_TERMINAL,
+                                     g_param_spec_boolean ("run-in-terminal",
+                                                           "Run command in a terminal",
+                                                           "Run command in a terminal",
+                                                           FALSE,
+                                                           G_PARAM_READWRITE)
+                                 );
 }
 
 static void
@@ -437,6 +449,13 @@ nemo_action_constructed (GObject *object)
                                            KEY_WHITESPACE,
                                            NULL);
 
+    gboolean run_in_terminal;
+
+    run_in_terminal = g_key_file_get_boolean (key_file,
+                                              ACTION_FILE_GROUP,
+                                              KEY_TERMINAL,
+                                              NULL);
+
     gboolean is_desktop = FALSE;
 
     if (conditions && condition_count > 0) {
@@ -491,6 +510,7 @@ nemo_action_constructed (GObject *object)
                    "separator", separator,
                    "conditions", conditions,
                    "escape-space", escape_space,
+                   "run-in-terminal", run_in_terminal,
                     NULL);
 
     g_free (orig_label);
@@ -678,6 +698,9 @@ nemo_action_set_property (GObject         *object,
     case PROP_ESCAPE_SPACE:
       action->escape_space = g_value_get_boolean (value);
       break;
+    case PROP_RUN_IN_TERMINAL:
+      action->run_in_terminal = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -735,6 +758,9 @@ nemo_action_get_property (GObject    *object,
     case PROP_ESCAPE_SPACE:
       g_value_set_boolean (value, action->escape_space);
       break;
+    case PROP_RUN_IN_TERMINAL:
+      g_value_set_boolean (value, action->run_in_terminal);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -788,15 +814,20 @@ find_token_type (const gchar *str, TokenType *token_type)
 static gchar *
 get_path (NemoAction *action, NemoFile *file)
 {
-    gchar *ret;
+    gchar *ret, *quote_escaped, *orig;
+
+    orig = nemo_file_get_path (file);
+
+    quote_escaped = eel_str_escape_quotes (orig);
 
     if (action->escape_space) {
-        gchar *path = nemo_file_get_path (file);
-        ret = eel_str_escape_spaces (path);
-        g_free (path);
+        ret = eel_str_escape_spaces (quote_escaped);
     } else {
-        ret = nemo_file_get_path (file);
+        ret = g_strdup (quote_escaped);
     }
+
+    g_free (orig);
+    g_free (quote_escaped);
 
     return ret;
 }
@@ -1020,7 +1051,19 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
     if (action->log_output)
         g_printerr ("Action Spawning: %s\n", exec->str);
 
-    g_spawn_command_line_async (exec->str, NULL);
+    gint argcp;
+    gchar **argvp;
+
+    if (g_shell_parse_argv (exec->str, &argcp, &argvp, NULL)) {
+        nemo_launch_application_from_command_array (gdk_screen_get_default (),
+                                                    argvp[0],
+                                                    action->run_in_terminal,
+                                                    (argvp + sizeof (gchar)));
+    }
+
+
+
+    // g_spawn_command_line_async (exec->str, NULL);
 
     g_string_free (exec, TRUE);
 }
