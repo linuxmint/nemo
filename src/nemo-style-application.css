@@ -5,6 +5,16 @@
 	background-color: transparent;
 }
 
+.nemo-desktop-window,
+.nemo-desktop-window:backdrop
+{
+    box-shadow: none;
+}
+
+NemoDesktopWindow GtkPaned {
+    background-color: transparent;
+}
+
 .nemo-canvas-item {
     border-radius: 3px;
 }
