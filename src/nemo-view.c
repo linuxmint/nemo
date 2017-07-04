@@ -6931,6 +6931,8 @@ action_browse_for_move_to_folder_callback (GtkAction *action, gpointer callback_
                                           GTK_STOCK_OPEN, GTK_RESPONSE_OK,
                                           NULL);
 
+    gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), FALSE);
+
     g_signal_connect (dialog, "response",
                       G_CALLBACK (browse_move_to_response_cb), view);
 
@@ -6951,6 +6953,8 @@ action_browse_for_copy_to_folder_callback (GtkAction *action, gpointer callback_
                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                           GTK_STOCK_OPEN, GTK_RESPONSE_OK,
                                           NULL);
+
+    gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), FALSE);
 
     g_signal_connect (dialog, "response",
                       G_CALLBACK (browse_copy_to_response_cb), view);
