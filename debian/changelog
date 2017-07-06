@@ -1,3 +1,15 @@
+nemo (3.4.6) sonya; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-icon-view-grid-container.c: Reset lazy flag when the icon position is stored in auto-layout mode.
+  * nemo-file.c: Don't check for valid thumbnails if thumbnailing is disabled.
+  * nemo-action.c: Use non-blocking checks for a directory.
+  * css: Treat NemoBlankDesktopWindow the same as NemoDesktopWindow with regards to themes, add a couple fixes to our app css to prevent background issues with certain themes (Blackmate, Ambiance)
+  * Add github issue template
+  * move-to/copy-to dialogs - allow remote locations in the sidebar.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 06 Jul 2017 11:21:28 +0200
+
 nemo (3.4.5) sonya; urgency=medium
 
   [ Michael Webster ]
