@@ -110,6 +110,7 @@ Icon=folder
 Terminal=false
 Type=Application
 StartupNotify=false
+DBusActivatable=true
 Categories=GNOME;GTK;Utility;Core;
 MimeType=inode/directory;application/x-gnome-saved-search;
 Actions=open-home;open-computer;open-trash;

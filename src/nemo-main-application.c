@@ -492,6 +492,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	gboolean no_default_window = FALSE;
 	gboolean fix_cache = FALSE;
 	gchar **remaining = NULL;
+    GApplicationFlags init_flags;
 	NemoMainApplication *self = NEMO_MAIN_APPLICATION (application);
 
 	const GOptionEntry options[] = {
@@ -569,15 +570,34 @@ nemo_main_application_local_command_line (GApplication *application,
 	       "self checks %d",
 	       no_default_window, kill_shell, perform_self_check);
 
-	g_application_register (application, NULL, &error);
+    /* Keep our original flags handy */
+    init_flags = g_application_get_flags (application);
+
+    /* First try to register as a service (this allows our dbus activation to succeed
+     * if we're not already running */
+    g_application_set_flags (application, init_flags | G_APPLICATION_IS_SERVICE);
+    g_application_register (application, NULL, &error);
 
 	if (error != NULL) {
-		g_printerr ("Could not register the application: %s\n", error->message);
-		g_error_free (error);
+        g_debug ("Could not register nemo as a service, trying as a remote: %s", error->message);
+        g_clear_error (&error);
+    } else {
+        goto post_registration;
+    }
 
-		*exit_status = EXIT_FAILURE;
-		goto out;
-	}
+    /* If service registration failed, try to connect to the existing instance */
+    g_application_set_flags (application, init_flags | G_APPLICATION_IS_LAUNCHER);
+    g_application_register (application, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr ("Could not register nemo as a remote: %s\n", error->message);
+        g_clear_error (&error);
+
+        *exit_status = EXIT_FAILURE;
+        goto out;
+    }
+
+post_registration:
 
 	if (kill_shell) {
 		DEBUG ("Killing application, as requested");
@@ -764,7 +784,7 @@ nemo_main_application_get_singleton (void)
     return nemo_application_initialize_singleton (NEMO_TYPE_MAIN_APPLICATION,
                                                   "application-id", "org.Nemo",
                                                   "flags", G_APPLICATION_HANDLES_OPEN,
-                                                  "inactivity-timeout", 12000,
+                                                  "inactivity-timeout", 30 * 1000, // seconds
                                                   "register-session", TRUE,
                                                   NULL);
 }
