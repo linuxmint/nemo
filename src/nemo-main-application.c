@@ -490,6 +490,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	gboolean browser = FALSE;
 	gboolean kill_shell = FALSE;
 	gboolean no_default_window = FALSE;
+    gboolean no_desktop_ignored = FALSE;
 	gboolean fix_cache = FALSE;
 	gchar **remaining = NULL;
     GApplicationFlags init_flags;
@@ -509,6 +510,8 @@ nemo_main_application_local_command_line (GApplication *application,
 		  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
+        { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop_ignored,
+          N_("Ignored - left for compatibility only."), NULL },
 		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
 		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
