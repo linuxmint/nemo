@@ -1403,6 +1403,7 @@ activate_files (ActivateParameters *parameters)
 	launch_desktop_files = NULL;
 	launch_files = NULL;
 	launch_in_terminal_files = NULL;
+    launch_location_is_desktop = FALSE;
 	open_in_app_uris = NULL;
 	open_in_view_files = NULL;
 
@@ -2150,4 +2151,19 @@ nemo_mime_activate_file (GtkWindow *parent_window,
 	files = g_list_prepend (NULL, file);
 	nemo_mime_activate_files (parent_window, slot, files, launch_directory, flags, FALSE);
 	g_list_free (files);
+}
+
+void
+nemo_mime_launch_fm_and_select_file (GFile *file)
+{
+    GAppInfo *info;
+    GList *list;
+
+    info = g_app_info_get_default_for_type ("inode/directory", !g_file_is_native (file));
+
+    list = g_list_prepend (NULL, file);
+
+    g_app_info_launch (info, list, NULL, NULL);
+
+    g_list_free (list);
 }

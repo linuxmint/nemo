@@ -52,6 +52,6 @@ void                   nemo_mime_activate_file                        (GtkWindow
 									   NemoFile            *file,
 									   const char              *launch_directory,
 									   NemoWindowOpenFlags  flags);
-
+void                   nemo_mime_launch_fm_and_select_file            (GFile *file);
 
 #endif /* NEMO_MIME_ACTIONS_H */
