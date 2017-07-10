@@ -1119,6 +1119,7 @@ NemoQuery *
 nemo_query_editor_get_query (NemoQueryEditor *editor)
 {
 	const char *query_text;
+    gchar *cmp;
 	NemoQuery *query;
 	GList *l;
 	NemoQueryEditorRow *row;
@@ -1129,9 +1130,15 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 
 	query_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
 
-    if (g_strcmp0 (g_strstrip (query_text), "") == 0) {
+    cmp = g_strdup (query_text);
+    g_strstrip (cmp);
+
+    if (g_strcmp0 (cmp, "") == 0) {
+        g_free (cmp);
         return NULL;
     }
+
+    g_free (cmp);
 
 	query = nemo_query_new ();
 	nemo_query_set_text (query, query_text);
