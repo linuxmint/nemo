@@ -183,9 +183,9 @@ dnl ===========================================================================
 
 AC_ARG_ENABLE(tracker,
               [AS_HELP_STRING([--enable-tracker=@<:@yes/no/auto@:>@],
-                              [build Tracker builtin support [default=auto]])],
+                              [build Tracker builtin support [default=no]])],
               [enable_tracker="$enableval"],
-              [enable_tracker=auto])
+              [enable_tracker=no])
 
 build_tracker=no
 if test "x$enable_tracker" != "xno"; then
