@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "nemo-file-operations.h"
 
@@ -970,6 +971,57 @@ get_parent_name (GFile *file, gchar **name)
     *name = get;
 }
 
+/* adapted from gio/glocalfile.c */
+static gboolean
+_g_local_file_delete (GFile         *file,
+                     GCancellable  *cancellable,
+                     GError       **error)
+{
+    gchar *path;
+
+    path = g_file_get_path (file);
+
+    if (g_remove (path) == -1) {
+        int errsv = errno;
+
+        /* Posix allows EEXIST too, but the more sane error
+           is G_IO_ERROR_NOT_FOUND, and it's what nautilus
+           expects */
+        if (errsv == EEXIST) {
+            errsv = ENOTEMPTY;
+        }
+
+        g_set_error (error, G_IO_ERROR,
+                     g_io_error_from_errno (errsv),
+                     _("Error removing file: %s"),
+                     g_strerror (errsv));
+
+        g_free (path);
+        return FALSE;
+    }
+
+    g_free (path);
+    return TRUE;
+}
+
+static gboolean
+file_delete_wrapper (GFile        *file,
+                     GCancellable *cancellable,
+                     GError      **error)
+{
+    gboolean ret;
+
+    ret = FALSE;
+
+    if (g_file_is_native (file)) {
+        ret = _g_local_file_delete (file, cancellable, error);
+    } else {
+        ret = g_file_delete (file, cancellable, error);
+    }
+
+    return ret;
+}
+
 static void
 generate_initial_job_details (NemoProgressInfo *info,
                               OpKind            kind,
@@ -1727,7 +1779,7 @@ delete_dir (CommonJob *job, GFile *dir,
 	if (!job_aborted (job) &&
 	    /* Don't delete dir if there was a skipped file */
 	    !local_skipped_file) {
-		if (!g_file_delete (dir, job->cancellable, &error)) {
+		if (!file_delete_wrapper (dir, job->cancellable, &error)) {
 			if (job->skip_all_error) {
 				goto skip;
 			}
@@ -1786,7 +1838,7 @@ delete_file (CommonJob *job, GFile *file,
 	}
 	
 	error = NULL;
-	if (g_file_delete (file, job->cancellable, &error)) {
+	if (file_delete_wrapper (file, job->cancellable, &error)) {
 		nemo_file_changes_queue_file_removed (file);
 		transfer_info->num_files ++;
 		report_delete_progress (job, source_info, transfer_info);
@@ -3776,7 +3828,7 @@ copy_move_directory (CopyMoveJob *copy_job,
 	if (!job_aborted (job) && copy_job->is_move &&
 	    /* Don't delete source if there was a skipped file */
 	    !local_skipped_file) {
-		if (!g_file_delete (src, job->cancellable, &error)) {
+		if (!file_delete_wrapper (src, job->cancellable, &error)) {
 			if (job->skip_all_error) {
 				goto skip;
 			}
@@ -3902,7 +3954,7 @@ remove_target_recursively (CommonJob *job,
 
 	error = NULL;
 	
-	if (!g_file_delete (file, job->cancellable, &error)) {
+	if (!file_delete_wrapper (file, job->cancellable, &error)) {
 		if (job->skip_all_error ||
 		    IS_IO_ERROR (error, CANCELLED)) {
 			goto skip2;
@@ -4482,7 +4534,7 @@ copy_move_file (CopyMoveJob *copy_job,
 			error = NULL;
 			
 			/* Copying a dir onto file, first remove the file */
-			if (!g_file_delete (dest, job->cancellable, &error) &&
+			if (!file_delete_wrapper (dest, job->cancellable, &error) &&
 			    !IS_IO_ERROR (error, NOT_FOUND)) {
 				if (job->skip_all_error) {
 					g_error_free (error);
@@ -6514,7 +6566,7 @@ delete_trash_file (CommonJob *job,
 	}
 
 	if (!job_aborted (job) && del_file) {
-		g_file_delete (file, job->cancellable, NULL);
+		file_delete_wrapper (file, job->cancellable, NULL);
 
 		if ((*deletions_since_progress)++ > 100) {
 			nemo_progress_info_pulse_progress (job->progress);
