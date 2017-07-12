@@ -45,6 +45,8 @@
  */
 #define TRASH_TIME_EPSILON 2
 
+#define HEAD(q) (g_queue_peek_head_link(q))
+
 G_DEFINE_TYPE (NemoFileUndoInfo, nemo_file_undo_info, G_TYPE_OBJECT)
 
 enum {
@@ -333,21 +335,20 @@ G_DEFINE_TYPE (NemoFileUndoInfoExt, nemo_file_undo_info_ext, NEMO_TYPE_FILE_UNDO
 struct _NemoFileUndoInfoExtDetails {
 	GFile *src_dir;
 	GFile *dest_dir;
-	GList *sources;	     /* Relative to src_dir */
-	GList *destinations; /* Relative to dest_dir */
+	GQueue *sources;	     /* Relative to src_dir */
+	GQueue *destinations;    /* Relative to dest_dir */
 };
 
 static char *
 ext_get_first_target_short_name (NemoFileUndoInfoExt *self)
 {
-	GList *targets_first;
+	GFile *first_file;
 	char *file_name = NULL;
 
-	targets_first = g_list_first (self->priv->destinations);
+    first_file = G_FILE (g_queue_peek_head (self->priv->destinations));
 
-	if (targets_first != NULL &&
-	    targets_first->data != NULL) {
-		file_name = g_file_get_basename (targets_first->data);
+	if (first_file != NULL) {
+		file_name = g_file_get_basename (first_file);
 	}
 
 	return file_name;
@@ -482,7 +483,7 @@ static void
 ext_create_link_redo_func (NemoFileUndoInfoExt *self,
 			   GtkWindow *parent_window)
 {
-	nemo_file_operations_link (self->priv->sources, NULL,
+	nemo_file_operations_link (HEAD (self->priv->sources), NULL,
 				       self->priv->dest_dir, parent_window,
 				       file_undo_info_transfer_callback, self);
 }
@@ -491,7 +492,7 @@ static void
 ext_duplicate_redo_func (NemoFileUndoInfoExt *self,
 			 GtkWindow *parent_window)
 {
-	nemo_file_operations_duplicate (self->priv->sources, NULL, parent_window,
+	nemo_file_operations_duplicate (HEAD (self->priv->sources), NULL, parent_window,
 					    file_undo_info_transfer_callback, self);
 }
 
@@ -499,7 +500,7 @@ static void
 ext_copy_redo_func (NemoFileUndoInfoExt *self,
 		    GtkWindow *parent_window)
 {
-	nemo_file_operations_copy (self->priv->sources, NULL,
+	nemo_file_operations_copy (HEAD (self->priv->sources), NULL,
 				       self->priv->dest_dir, parent_window,
 				       file_undo_info_transfer_callback, self);
 }
@@ -508,7 +509,7 @@ static void
 ext_move_restore_redo_func (NemoFileUndoInfoExt *self,
 			    GtkWindow *parent_window)
 {
-	nemo_file_operations_move (self->priv->sources, NULL,
+	nemo_file_operations_move (HEAD (self->priv->sources), NULL,
 				       self->priv->dest_dir, parent_window,
 				       file_undo_info_transfer_callback, self);
 }
@@ -538,7 +539,7 @@ static void
 ext_restore_undo_func (NemoFileUndoInfoExt *self,
 		       GtkWindow *parent_window)
 {
-	nemo_file_operations_trash_or_delete (self->priv->destinations, parent_window,
+	nemo_file_operations_trash_or_delete (HEAD (self->priv->destinations), parent_window,
 						  file_undo_info_delete_callback, self);
 }
 
@@ -547,7 +548,7 @@ static void
 ext_move_undo_func (NemoFileUndoInfoExt *self,
 		    GtkWindow *parent_window)
 {
-	nemo_file_operations_move (self->priv->destinations, NULL,
+	nemo_file_operations_move (HEAD (self->priv->destinations), NULL,
 				       self->priv->src_dir, parent_window,
 				       file_undo_info_transfer_callback, self);
 }
@@ -558,7 +559,7 @@ ext_copy_duplicate_undo_func (NemoFileUndoInfoExt *self,
 {
 	GList *files;
 
-	files = g_list_copy (self->priv->destinations);
+	files = g_list_copy (HEAD (self->priv->destinations));
 	files = g_list_reverse (files); /* Deleting must be done in reverse */
 
 	nemo_file_operations_delete (files, parent_window,
@@ -600,11 +601,11 @@ nemo_file_undo_info_ext_finalize (GObject *obj)
 	NemoFileUndoInfoExt *self = NEMO_FILE_UNDO_INFO_EXT (obj);
 
 	if (self->priv->sources) {
-		g_list_free_full (self->priv->sources, g_object_unref);
+		g_queue_free_full (self->priv->sources, g_object_unref);
 	}
 
 	if (self->priv->destinations) {
-		g_list_free_full (self->priv->destinations, g_object_unref);
+		g_queue_free_full (self->priv->destinations, g_object_unref);
 	}
 
 	g_clear_object (&self->priv->src_dir);
@@ -643,6 +644,8 @@ nemo_file_undo_info_ext_new (NemoFileUndoOp op_type,
 
 	retval->priv->src_dir = g_object_ref (src_dir);
 	retval->priv->dest_dir = g_object_ref (target_dir);
+    retval->priv->destinations = g_queue_new ();
+    retval->priv->sources = g_queue_new ();
 
 	return NEMO_FILE_UNDO_INFO (retval);
 }
@@ -652,10 +655,8 @@ nemo_file_undo_info_ext_add_origin_target_pair (NemoFileUndoInfoExt *self,
 						    GFile                   *origin,
 						    GFile                   *target)
 {
-	self->priv->sources =
-		g_list_append (self->priv->sources, g_object_ref (origin));
-	self->priv->destinations =
-		g_list_append (self->priv->destinations, g_object_ref (target));
+    g_queue_push_tail (self->priv->sources, g_object_ref (origin));
+    g_queue_push_tail (self->priv->destinations, g_object_ref (target));
 }
 
 /* create new file/folder */
