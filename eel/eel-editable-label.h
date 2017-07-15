@@ -55,11 +55,12 @@ struct _EelEditableLabel
 {
   GtkMisc misc;
 
-  /*< private >*/
   guint   jtype : 2;
   guint   wrap : 1;
   guint   overwrite_mode : 1;
   guint   draw_outline : 1;
+  guint   layout_includes_preedit : 1;
+  guint   padding:2;
   PangoWrapMode  wrap_mode;
 
   GdkWindow *text_area;
@@ -69,7 +70,6 @@ struct _EelEditableLabel
   int n_bytes;	 /* length in use (not including terminating zero), in bytes */
 
   PangoLayout *layout;
-  guint        layout_includes_preedit : 1;
 
   int selection_anchor; /* cursor pos, byte index */
   int selection_end; /* byte index */
