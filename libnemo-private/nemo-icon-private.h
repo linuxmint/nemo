@@ -34,18 +34,17 @@
 /* Private NemoIconContainer members. */
 
 typedef struct {
-	gboolean active;
-
 	double start_x, start_y;
 
 	EelCanvasItem *selection_rectangle;
-
+	EelDRect prev_rect;
 	guint timer_id;
 
 	guint prev_x, prev_y;
-	EelDRect prev_rect;
+
 	int last_adj_x;
 	int last_adj_y;
+	gboolean active;
 } NemoIconRubberbandInfo;
 
 typedef enum {
@@ -104,6 +103,7 @@ typedef struct {
 
 typedef struct {
     NemoIconContainer *container;
+    GtkBorder *borders;
     int **icon_grid;
     int *grid_memory;
     int num_rows;
@@ -111,7 +111,6 @@ typedef struct {
     int icon_size;
     int real_snap_x;
     int real_snap_y;
-    GtkBorder *borders;
     gboolean horizontal;
 } NemoCenteredPlacementGrid;
 
@@ -134,18 +133,21 @@ struct NemoIconContainerDetails {
 	NemoIcon *keyboard_focus;
 	NemoIcon *keyboard_rubberband_start;
 
-    NemoViewLayoutConstants *view_constants;
+	/* Rubberbanding status. */
+        NemoIconRubberbandInfo rubberband_info;
+
+        NemoViewLayoutConstants *view_constants;
+        /* Last highlighted drop target. */
+	NemoIcon *drop_target;
 
 	/* Current icon with stretch handles, so we have only one. */
 	NemoIcon *stretch_icon;
 	double stretch_initial_x, stretch_initial_y;
-	guint stretch_initial_size;
+		/* The position we are scaling to on stretch */
+	double world_x;
+	double world_y;
 	
-	/* Last highlighted drop target. */
-	NemoIcon *drop_target;
-
-	/* Rubberbanding status. */
-	NemoIconRubberbandInfo rubberband_info;
+	guint stretch_initial_size;
 
 	/* Timeout used to make a selected icon fully visible after a short
 	 * period of time. (The timeout is needed to make sure
@@ -153,9 +155,6 @@ struct NemoIconContainerDetails {
 	 */
 	guint keyboard_icon_reveal_timer_id;
 	NemoIcon *keyboard_icon_to_reveal;
-
-	/* Used to coalesce selection changed signals in some cases */
-	guint selection_changed_id;
 	
 	/* If a request is made to reveal an unpositioned icon we remember
 	 * it and reveal it once it gets positioned (in relayout).
@@ -180,17 +179,21 @@ struct NemoIconContainerDetails {
 	gboolean drag_allow_moves;
 
 	gboolean icon_selected_on_button_down;
-	NemoIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
 	guint double_click_button[2];
-
-    gboolean skip_rename_on_release;
+	gboolean skip_rename_on_release;
+	NemoIcon *double_click_icon[2]; /* Both clicks in a double click need to be on the same icon */
 
 	NemoIcon *range_selection_base_icon;
+	/* DnD info. */
+	NemoIconDndInfo *dnd_info;
 	
 	/* Renaming Details */
-	gboolean renaming;
+
 	GtkWidget *rename_widget;	/* Editable text item */
 	char *original_text;			/* Copy of editable text for later compare */
+
+	char *font; 	/* specific fonts used to draw labels */
+        gboolean renaming;
 
 	/* Idle ID. */
 	guint idle_id;
@@ -201,14 +204,11 @@ struct NemoIconContainerDetails {
 	/* Align idle id */
 	guint align_idle_id;
 
-	/* DnD info. */
-	NemoIconDndInfo *dnd_info;
+	/* Used to coalesce selection changed signals in some cases */
+	guint selection_changed_id;
 
 	/* zoom level */
 	int zoom_level;
-
-	/* specific fonts used to draw labels */
-	char *font;
 	
 	/* font sizes used to draw labels */
 	int font_size_table[NEMO_ZOOM_LEVEL_LARGEST + 1];
@@ -222,9 +222,9 @@ struct NemoIconContainerDetails {
 	/* Mode settings. */
 	gboolean single_click_mode;
 	gboolean auto_layout;
-    gboolean stored_auto_layout;
+        gboolean stored_auto_layout;
 	gboolean tighter_layout;
-    gboolean click_to_rename;
+        gboolean click_to_rename;
 
 	/* Whether for the vertical layout, all columns are supposed to
 	 * have the same width. */
@@ -254,20 +254,16 @@ struct NemoIconContainerDetails {
 	/* Is the container for a desktop window */
 	gboolean is_desktop;
 
-    /* Used by desktop grid container only */
-    gboolean horizontal;
+        /* Used by desktop grid container only */
+        gboolean horizontal;
 
-    gboolean show_desktop_tooltips;
-    gboolean show_icon_view_tooltips;
-
-    gint tooltip_flags; /* Really a NemoFileTooltipFlags */
+        gboolean show_desktop_tooltips;
+        gboolean show_icon_view_tooltips;
 
 	/* Ignore the visible area the next time the scroll region is recomputed */
 	gboolean reset_scroll_region_trigger;
 	
-	/* The position we are scaling to on stretch */
-	double world_x;
-	double world_y;
+        gint tooltip_flags; /* Really a NemoFileTooltipFlags */
 
 	/* margins to follow, used for the desktop panel avoidance */
 	int left_margin;
@@ -278,30 +274,30 @@ struct NemoIconContainerDetails {
 	/* Whether we should use drop shadows for the icon labels or not */
 	gboolean use_drop_shadows;
 	gboolean drop_shadows_requested;
-
+	/* interactive search */
+	gboolean imcontext_changed;
 	/* a11y items used by canvas items */
 	guint a11y_item_action_idle_handler;
+
+        time_t layout_timestamp;
+
+	GtkWidget *search_window;
+	GtkWidget *search_entry;
+	NemoCenteredPlacementGrid *dnd_grid;
 	GQueue* a11y_item_action_queue;
+        int selected_iter;
+	guint search_entry_changed_id;
+	guint typeselect_flush_timeout;
+
+        gint current_dnd_x;
+        gint current_dnd_y;
+        gboolean insert_dnd_mode;
 
 	eel_boolean_bit is_loading : 1;
 	eel_boolean_bit needs_resort : 1;
 
 	eel_boolean_bit store_layout_timestamps : 1;
 	eel_boolean_bit store_layout_timestamps_when_finishing_new_icons : 1;
-	time_t layout_timestamp;
-
-	/* interactive search */
-	gboolean imcontext_changed;
-	int selected_iter;
-	GtkWidget *search_window;
-	GtkWidget *search_entry;
-	guint search_entry_changed_id;
-	guint typeselect_flush_timeout;
-
-    NemoCenteredPlacementGrid *dnd_grid;
-    gint current_dnd_x;
-    gint current_dnd_y;
-    gboolean insert_dnd_mode;
 };
 
 typedef struct {
