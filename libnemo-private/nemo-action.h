@@ -100,15 +100,13 @@ typedef enum {
 
 struct _NemoAction {
     GtkAction parent;
-    gchar *key_file_path;
-    SelectionType selection_type;
     gchar **extensions;
     gchar **mimetypes;
     gchar *exec;
     gchar *parent_dir;
     gchar **conditions;
     gchar *separator;
-    QuoteType quote_type;
+
     gchar *orig_label;
     gchar *orig_tt;
     gboolean use_parent_dir;
@@ -118,6 +116,9 @@ struct _NemoAction {
     gboolean escape_underscores;
     gboolean escape_space;
     gboolean show_in_blank_desktop;
+    gchar *key_file_path;
+    QuoteType quote_type;        
+    SelectionType selection_type;
 };
 
 struct _NemoActionClass {
