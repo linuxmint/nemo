@@ -1036,7 +1036,10 @@ expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GS
 void
 nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
 {
+    GError *error;
     GString *exec = g_string_new (action->exec);
+
+    error = NULL;
 
     action->escape_underscores = FALSE;
 
@@ -1051,19 +1054,28 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
     if (action->log_output)
         g_printerr ("Action Spawning: %s\n", exec->str);
 
-    gint argcp;
-    gchar **argvp;
+    if (action->run_in_terminal) {
+        gint argcp;
+        gchar **argvp;
 
-    if (g_shell_parse_argv (exec->str, &argcp, &argvp, NULL)) {
-        nemo_launch_application_from_command_array (gdk_screen_get_default (),
-                                                    argvp[0],
-                                                    action->run_in_terminal,
-                                                    (argvp + sizeof (gchar)));
+        if (g_shell_parse_argv (exec->str, &argcp, &argvp, &error)) {
+            nemo_launch_application_from_command_array (gdk_screen_get_default (),
+                                                        argvp[0],
+                                                        TRUE,
+                                                        (const char * const *)(argvp + sizeof (gchar)));
+            g_strfreev (argvp);
+        } else {
+            DEBUG ("Could not parse arguments terminal launch.  Possibly turn off Quotes and remove any from your Exec line: %s\n",
+                   error->message);
+            g_error_free (error);
+        }
+    } else {
+        if (!g_spawn_command_line_async (exec->str, &error)) {
+            DEBUG ("Error spawning action: %s\n",
+                   error->message);
+            g_error_free (error);
+        }
     }
-
-
-
-    // g_spawn_command_line_async (exec->str, NULL);
 
     g_string_free (exec, TRUE);
 }
