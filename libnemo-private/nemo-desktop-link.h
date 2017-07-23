@@ -64,6 +64,7 @@ GType   nemo_desktop_link_get_type (void);
 NemoDesktopLink *   nemo_desktop_link_new                     (NemoDesktopLinkType  type);
 NemoDesktopLink *   nemo_desktop_link_new_from_mount          (GMount                 *mount);
 NemoDesktopLinkType nemo_desktop_link_get_link_type           (NemoDesktopLink     *link);
+NemoFile *          nemo_desktop_link_get_file                (NemoDesktopLink *link);
 char *                  nemo_desktop_link_get_file_name           (NemoDesktopLink     *link);
 char *                  nemo_desktop_link_get_display_name        (NemoDesktopLink     *link);
 GIcon *                 nemo_desktop_link_get_icon                (NemoDesktopLink     *link);

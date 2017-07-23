@@ -221,6 +221,12 @@ nemo_desktop_link_get_link_type (NemoDesktopLink *link)
 	return link->details->type;
 }
 
+NemoFile *
+nemo_desktop_link_get_file (NemoDesktopLink *link)
+{
+    return NEMO_FILE (link->details->icon_file);
+}
+
 char *
 nemo_desktop_link_get_file_name (NemoDesktopLink *link)
 {

@@ -40,6 +40,8 @@ void nemo_desktop_set_metadata_stringv (NemoFile *file,
                                             const char *key,
                                             const char * const *stringv);
 
+void nemo_desktop_clear_metadata       (NemoFile *file);
+
 gchar *nemo_desktop_get_metadata_string (NemoFile *file,
                                          const gchar *name,
                                          const gchar *key);

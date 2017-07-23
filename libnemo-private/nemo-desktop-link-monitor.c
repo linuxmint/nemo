@@ -24,6 +24,7 @@
 
 #include <config.h>
 #include "nemo-desktop-link-monitor.h"
+#include "nemo-desktop-metadata.h"
 #include "nemo-desktop-link.h"
 #include "nemo-desktop-icon-file.h"
 #include "nemo-directory.h"
@@ -277,6 +278,14 @@ update_link_visibility (NemoDesktopLinkMonitor *monitor,
 		}
 	} else {
 		if (*link_ref != NULL) {
+            /* If this were a real file, removing (deleting or moving) it would
+             * also remove its metadata, though for a different reason, and
+             * unmanaged by us.  We have to simulate that when removing a fake
+             * 'desktop' file, so if it gets added again later, it behaves like a
+             * 'new' file.
+             */
+            nemo_desktop_clear_metadata (nemo_desktop_link_get_file (*link_ref));
+
 			g_object_unref (*link_ref);
 			*link_ref = NULL;
 		}

@@ -71,6 +71,20 @@ typedef struct {
 G_DEFINE_TYPE (NemoDesktopDirectoryFile, nemo_desktop_directory_file,
 	       NEMO_TYPE_FILE);
 
+static gchar *
+get_indexed_key (NemoFile *file)
+{
+    NemoDesktopDirectory *desktop_directory;
+    gchar *indexed_key;
+
+    desktop_directory = NEMO_DESKTOP_DIRECTORY_FILE (file)->details->desktop_directory;
+
+    indexed_key = g_strdup_printf ("desktop-monitor-%d",
+                                   NEMO_DESKTOP_DIRECTORY (desktop_directory)->display_number);
+
+    return indexed_key;
+}
+
 static guint
 desktop_callback_hash (gconstpointer desktop_callback_as_pointer)
 {
@@ -202,6 +216,8 @@ desktop_callback_destroy (DesktopCallback *desktop_callback)
 static void
 desktop_callback_check_done (DesktopCallback *desktop_callback)
 {
+    NemoFile *file;
+
 	/* Check if we are ready. */
 	if (desktop_callback->initializing ||
 	    desktop_callback->non_ready_files != NULL) {
@@ -210,9 +226,8 @@ desktop_callback_check_done (DesktopCallback *desktop_callback)
 
 	/* Ensure our metadata is updated before calling back */
 
-    // nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "directory");
-    nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "desktop-monitor-0");
-	nemo_desktop_update_metadata_from_keyfile (NEMO_FILE (desktop_callback->desktop_file), "desktop-monitor-1");
+    file = NEMO_FILE (desktop_callback->desktop_file);
+    nemo_desktop_update_metadata_from_keyfile (file, get_indexed_key (file));
 
 	/* Remove from the hash table before sending it. */
 	g_hash_table_remove (desktop_callback->desktop_file->details->callbacks,
@@ -449,20 +464,6 @@ monitor_destroy (gpointer data)
 	nemo_file_monitor_remove
 		(NEMO_FILE (monitor->desktop_file->details->real_dir_file), monitor);
 	g_free (monitor);
-}
-
-static gchar *
-get_indexed_key (NemoFile *file)
-{
-    NemoDesktopDirectory *desktop_directory;
-    gchar *indexed_key;
-
-    desktop_directory = NEMO_DESKTOP_DIRECTORY_FILE (file)->details->desktop_directory;
-
-    indexed_key = g_strdup_printf ("desktop-monitor-%d",
-                                   NEMO_DESKTOP_DIRECTORY (desktop_directory)->display_number);
-
-    return indexed_key;
 }
 
 static void

@@ -217,6 +217,18 @@ nemo_desktop_set_metadata_stringv (NemoFile *file,
 	}
 }
 
+void
+nemo_desktop_clear_metadata (NemoFile *file)
+{
+    GKeyFile *keyfile;
+
+    keyfile = get_keyfile ();
+
+    if (g_key_file_remove_group (keyfile, file->details->name, NULL)) {
+        save_in_idle (keyfile);
+    }
+}
+
 gchar *
 nemo_desktop_get_metadata_string (NemoFile *file,
                                   const gchar *name,
