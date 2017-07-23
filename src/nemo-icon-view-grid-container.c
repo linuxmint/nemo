@@ -1163,7 +1163,6 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
 
     if (semi_position_icons != NULL) {
         NemoCenteredPlacementGrid *grid;
-        gboolean dummy;
 
         g_assert (!container->details->auto_layout);
 
@@ -1617,6 +1616,22 @@ captions_changed_callback (NemoIconContainer *container)
     nemo_icon_container_request_update_all (container);
 }
 
+static void
+nemo_icon_view_grid_container_icon_added (NemoIconViewGridContainer *container,
+                                          NemoIconData              *icon_data,
+                                          gpointer                   data)
+{
+    container->manual_sort_dirty = TRUE;
+}
+
+static void
+nemo_icon_view_grid_container_icon_removed (NemoIconViewGridContainer *container,
+                                            NemoIconData              *icon_data,
+                                            gpointer                   data)
+{
+    container->manual_sort_dirty = TRUE;
+}
+
 NemoIconContainer *
 nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_container,
                                          NemoIconView              *view,
@@ -1716,6 +1731,14 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
     ic_class->finish_adding_new_icons = nemo_icon_view_grid_container_finish_adding_new_icons;
     ic_class->icon_get_bounding_box = nemo_icon_view_grid_container_icon_get_bounding_box;
     ic_class->set_zoom_level = nemo_icon_view_grid_container_set_zoom_level;
+
+    g_signal_override_class_handler ("icon_added",
+                                     NEMO_TYPE_ICON_VIEW_GRID_CONTAINER,
+                                     G_CALLBACK (nemo_icon_view_grid_container_icon_added));
+
+    g_signal_override_class_handler ("icon_removed",
+                                     NEMO_TYPE_ICON_VIEW_GRID_CONTAINER,
+                                     G_CALLBACK (nemo_icon_view_grid_container_icon_removed));
 
     EEL_CANVAS_CLASS (klass)->draw_background = nemo_icon_view_grid_container_draw_background;
 }
