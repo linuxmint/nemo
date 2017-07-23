@@ -726,6 +726,8 @@ action_align_grid_callback (GtkAction *action,
     nemo_icon_view_set_directory_keep_aligned (NEMO_ICON_VIEW (view), file, keep_aligned);
 
     nemo_icon_container_set_keep_aligned (get_icon_container (view), keep_aligned);
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
 
 static void
@@ -750,6 +752,8 @@ action_auto_arrange_callback (GtkAction *action,
     if (new == TRUE) {
         nemo_icon_container_set_keep_aligned (get_icon_container (view), TRUE);
     }
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
 
 static void
@@ -791,6 +795,9 @@ set_sort_type (NemoDesktopIconGridView *view,
                 nemo_file_list_free (selection);
 
                 nemo_view_update_menus (NEMO_VIEW (view));
+
+                nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
+
                 return;
             }
         }
@@ -804,6 +811,8 @@ set_sort_type (NemoDesktopIconGridView *view,
     nemo_icon_view_set_sort_criterion_by_sort_type (NEMO_ICON_VIEW (view), type);
 
     nemo_view_update_menus (NEMO_VIEW (view));
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
 
 static void
@@ -872,6 +881,8 @@ set_direction (NemoDesktopIconGridView *view,
     nemo_icon_view_set_directory_horizontal_layout (NEMO_ICON_VIEW (view), file, horizontal);
 
     nemo_view_update_menus (NEMO_VIEW (view));
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
 
 static void
@@ -923,6 +934,8 @@ action_desktop_size_callback (GtkAction               *action,
     nemo_icon_container_redo_layout (container);
 
     nemo_view_update_menus (NEMO_VIEW (view));
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
 
 static void
@@ -949,6 +962,8 @@ grid_adjust_prefs_changed_callback (NemoDesktopIconGridView *view)
     nemo_icon_container_redo_layout (container);
 
     nemo_view_update_menus (NEMO_VIEW (view));
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
 
 static gboolean
