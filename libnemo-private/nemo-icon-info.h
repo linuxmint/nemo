@@ -37,9 +37,9 @@ typedef enum {
 #define NEMO_ICON_SIZE_LARGER	96
 #define NEMO_ICON_SIZE_LARGEST     192
 
-#define NEMO_DESKTOP_ICON_SIZE_SMALL 36
+#define NEMO_DESKTOP_ICON_SIZE_SMALL 32
 #define NEMO_DESKTOP_ICON_SIZE_STANDARD 48
-#define NEMO_DESKTOP_ICON_SIZE_LARGE 60
+#define NEMO_DESKTOP_ICON_SIZE_LARGE 64
 
 /* Maximum size of an icon that the icon factory will ever produce */
 #define NEMO_ICON_MAXIMUM_SIZE     320
