@@ -69,6 +69,8 @@
 #define KEY_DEPENDENCIES "Dependencies"
 #define KEY_CONDITIONS "Conditions"
 #define KEY_WHITESPACE "EscapeSpaces"
+#define KEY_DOUBLE_ESCAPE_QUOTES "DoubleEscapeQuotes"
+#define KEY_TERMINAL "Terminal"
 
 typedef struct _NemoAction NemoAction;
 typedef struct _NemoActionClass NemoActionClass;
@@ -118,6 +120,7 @@ struct _NemoAction {
     gboolean escape_underscores;
     gboolean escape_space;
     gboolean show_in_blank_desktop;
+    gboolean run_in_terminal;
 };
 
 struct _NemoActionClass {

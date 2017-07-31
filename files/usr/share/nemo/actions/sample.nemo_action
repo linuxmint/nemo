@@ -97,4 +97,14 @@ Extensions=any;
 # quotes.
 #
 # Optional - by default this is false
+
 EscapeSpaces=true
+
+# Run in terminal - set to true to execute the Exec line in a spawned terminal window.
+#
+# Generally if you use this you should not have Quotes defined, as that will be taken care
+# of during converting the expanded command string into an arg vector.
+#
+# Optional - by default this is false
+
+#Terminal=false

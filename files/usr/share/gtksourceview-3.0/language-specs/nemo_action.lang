@@ -88,6 +88,7 @@
       <keyword>Dependencies</keyword>
       <keyword>Conditions</keyword>
       <keyword>EscapeSpaces</keyword>
+      <keyword>Terminal</keyword>
     </context>
 
     <context id="non-standard-key" style-ref="key">
