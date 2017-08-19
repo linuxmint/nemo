@@ -232,6 +232,7 @@ PKG_CHECK_MODULES(NEMO, [
 	gio-2.0 >= glib_minver
 	gio-unix-2.0 >= glib_minver
 	cinnamon-desktop
+    xapp
 	libnotify >= notify_minver
 ])
 

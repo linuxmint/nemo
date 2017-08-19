@@ -39,6 +39,7 @@
 #include <libnemo-private/nemo-progress-info-manager.h>
 
 #include <libnotify/notify.h>
+#include <libxapp/xapp-gtk-window.h>
 
 struct _NemoProgressUIHandlerPriv {
 	NemoProgressInfoManager *manager;
@@ -196,7 +197,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 		return;
 	}
 	
-	progress_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	progress_window = xapp_gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	self->priv->progress_window = progress_window;
 
     gtk_window_set_resizable (GTK_WINDOW (progress_window), FALSE);
@@ -208,8 +209,8 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 				"file_progress", "Nemo");
 	gtk_window_set_position (GTK_WINDOW (progress_window),
 				 GTK_WIN_POS_CENTER);
-	gtk_window_set_icon_name (GTK_WINDOW (progress_window),
-				"system-run");
+	xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (progress_window),
+                                   "system-run");
 
 	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
 	gtk_container_add (GTK_CONTAINER (progress_window),
@@ -316,12 +317,14 @@ progress_info_changed_cb (NemoProgressInfo *info,
             int iprogress = progress * 100;
             gchar *str = g_strdup_printf (_("%d%% %s"), iprogress, nemo_progress_info_get_status(first_info));
             gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), str);
+            xapp_gtk_window_set_progress (XAPP_GTK_WINDOW (self->priv->progress_window), iprogress);
             g_free (str);
             self->priv->active_percent = iprogress;
             progress_ui_handler_update_status_icon (self);
         }
         else {
             gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_status(first_info)); 
+            xapp_gtk_window_set_progress (XAPP_GTK_WINDOW (self->priv->progress_window), 0);
         }
     } 
 }
@@ -355,7 +358,7 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 		progress_ui_handler_add_to_window (self, info);
         gtk_window_present (GTK_WINDOW (self->priv->progress_window));
 		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_details(info));
-		gtk_window_set_icon_name (GTK_WINDOW (self->priv->progress_window), "system-run");			     
+        xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (self->priv->progress_window), "system-run");
 	} else {
 		progress_ui_handler_add_to_window (self, info);
 		progress_ui_handler_update_status_icon (self);
