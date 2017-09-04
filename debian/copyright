@@ -1,51 +1,280 @@
-This package was debianized by Takuo KITAME <kitame@excalibur.northeye.org> on
-Fri, 19 May 2000 14:10:24 +0900.
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Nemo
+Upstream-Contact: Linux Mint Project <root@linuxmint.com>
+Source: https://github.com/linuxmint/nemo
 
-It was downloaded from ftp://ftp.gnome.org/pub/GNOME/sources/nemo
+Files: *
+Copyright: 2009, Alexander Larsson
+           2007-2011, Amos Brocco
+           2002, Anders Carlsson
+           2002, Bent Spoon Software
+           2003-2005, Christian Persch
+           2002, Christophe Fergeau
+           2008-2010, Cosimo Cecchi
+           2010, Cosimo Cecchi <cosimoc@gnome.org>
+           2002, Darin Adler
+           2000-2001, Eazel, Inc
+           1999-2000, Free Software Foundation
+           2008, Free Software Foundation, Inc
+           1999-2000, Free Software Foundaton
+           2004, James Willcox
+           2001, Maciej Stachowiak
+           2003-2004, Marco Pesenti Gritti
+           2007, Martin Wehner
+           2005, Mr Jamie McCracken
+           2007, Novell, Inc
+           2006, Paolo Borelli <pborelli@katamail.com>
+           2004, Red Hat Inc
+           1999-2000, Red Hat, Inc
+           2002, Sun Microsystems, Inc
+           2005, Vincent Untz
+           1999-2000, Eazel, Inc
+           1999-2000, Red Hat Inc
+License: GPL-2+
 
-Copyright Holders and Upstream Authors:
-  Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
-  Copyright (C) 1997-2000, 2008 Free Software Foundation, Inc.
-  Copyright (C) 1999, 2000, 2001 Eazel, Inc.
-  Copyright (C) 1999, 2000, 2003, 2004 Red Hat, Inc.
-  Copyright (C) 2001, 2002 Anders Carlsson
-  Copyright (C) 2001 Maciej Stachowiak
-  Copyright (C) 2002, 2004 James Willcox
-  Copyright (C) 2002 Bent Spoon Software
-  Copyright (C) 2002 Christophe Fergeau
-  Copyright (C) 2002 Darin Adler
-  Copyright (C) 2002 Jan Arne Petersen
-  Copyright (C) 2002 Sun Microsystems, Inc.
-  Copyright (C) 2003, 2004, 2005 Christian Persch
-  Copyright (C) 2003, 2004 Marco Pesenti Gritti
-  Copyright (C) 2005 Jamie McCracken
-  Copyright (C) 2005 Raffaele Sandrini
-  Copyright (C) 2005 Roberto Majadas
-  Copyright (C) 2005 Vincent Untz
-  Copyright (C) 2006 Paolo Borelli
-  Copyright (C) 2006 Zbigniew Chyla
-  Copyright (C) 2007 Collabora Ltd.
-  Copyright (C) 2007 Martin Wehner
-  Copyright (C) 2007 Nokia Corporation
-  Copyright (C) 2008-2010 Cosimo Cecchi
-  Copyright (C) 2009 Alexander Larsson
-  Copyright (C) 2011 Ignacio Casal Quinteiro
+Files: COPYING.LIB
+       cut-n-paste-code/libegg/eggtreemultidnd.c
+       cut-n-paste-code/libegg/eggtreemultidnd.h
+       data/dbus-interfaces.xml
+       data/freedesktop-dbus-interfaces.xml
+       eel/check-program.c
+       eel/eel-accessibility.c
+       eel/eel-accessibility.h
+       eel/eel-art-extensions.c
+       eel/eel-art-extensions.h
+       eel/eel-canvas.c
+       eel/eel-canvas.h
+       eel/eel-debug.c
+       eel/eel-debug.h
+       eel/eel-editable-label.c
+       eel/eel-editable-label.h
+       eel/eel-gdk-extensions.c
+       eel/eel-gdk-extensions.h
+       eel/eel-glib-extensions.c
+       eel/eel-glib-extensions.h
+       eel/eel-gnome-extensions.c
+       eel/eel-gnome-extensions.h
+       eel/eel-graphic-effects.c
+       eel/eel-graphic-effects.h
+       eel/eel-gtk-extensions.c
+       eel/eel-gtk-extensions.h
+       eel/eel-lib-self-check-functions.c
+       eel/eel-lib-self-check-functions.h
+       eel/eel-self-checks.c
+       eel/eel-self-checks.h
+       eel/eel-stock-dialogs.c
+       eel/eel-stock-dialogs.h
+       eel/eel-string.c
+       eel/eel-string.h
+       eel/eel-vfs-extensions.c
+       eel/eel-vfs-extensions.h
+       eel/eel.h
+       libnemo-extension/nemo-column-provider.c
+       libnemo-extension/nemo-column-provider.h
+       libnemo-extension/nemo-column.c
+       libnemo-extension/nemo-column.h
+       libnemo-extension/nemo-extension-private.h
+       libnemo-extension/nemo-extension-types.c
+       libnemo-extension/nemo-extension-types.h
+       libnemo-extension/nemo-file-info.c
+       libnemo-extension/nemo-file-info.h
+       libnemo-extension/nemo-info-provider.c
+       libnemo-extension/nemo-info-provider.h
+       libnemo-extension/nemo-location-widget-provider.c
+       libnemo-extension/nemo-location-widget-provider.h
+       libnemo-extension/nemo-menu-item.c
+       libnemo-extension/nemo-menu-item.h
+       libnemo-extension/nemo-menu-provider.c
+       libnemo-extension/nemo-menu-provider.h
+       libnemo-extension/nemo-menu.c
+       libnemo-extension/nemo-menu.h
+       libnemo-extension/nemo-property-page-provider.c
+       libnemo-extension/nemo-property-page-provider.h
+       libnemo-extension/nemo-property-page.c
+       libnemo-extension/nemo-property-page.h
+       libnemo-private/nemo-bookmark.c
+       libnemo-private/nemo-bookmark.h
+       libnemo-private/nemo-clipboard.c
+       libnemo-private/nemo-clipboard.h
+       libnemo-private/nemo-column-chooser.c
+       libnemo-private/nemo-column-chooser.h
+       libnemo-private/nemo-column-utilities.c
+       libnemo-private/nemo-column-utilities.h
+       libnemo-private/nemo-dnd.c
+       libnemo-private/nemo-dnd.h
+       libnemo-private/nemo-entry.c
+       libnemo-private/nemo-entry.h
+       libnemo-private/nemo-file-dnd.c
+       libnemo-private/nemo-file-dnd.h
+       libnemo-private/nemo-file-utilities.c
+       libnemo-private/nemo-file-utilities.h
+       libnemo-private/nemo-global-preferences.c
+       libnemo-private/nemo-global-preferences.h
+       libnemo-private/nemo-icon-canvas-item.c
+       libnemo-private/nemo-icon-canvas-item.h
+       libnemo-private/nemo-icon-container.c
+       libnemo-private/nemo-icon-container.h
+       libnemo-private/nemo-icon-dnd.c
+       libnemo-private/nemo-icon-dnd.h
+       libnemo-private/nemo-icon-info.c
+       libnemo-private/nemo-icon-private.h
+       libnemo-private/nemo-metadata.c
+       libnemo-private/nemo-mime-application-chooser.c
+       libnemo-private/nemo-mime-application-chooser.h
+       libnemo-private/nemo-module.c
+       libnemo-private/nemo-module.h
+       libnemo-private/nemo-program-choosing.c
+       libnemo-private/nemo-program-choosing.h
+       libnemo-private/nemo-selection-canvas-item.c
+       libnemo-private/nemo-selection-canvas-item.h
+       libnemo-private/nemo-ui-utilities.c
+       libnemo-private/nemo-ui-utilities.h
+       libnemo-private/nemo-undo-manager.c
+       libnemo-private/nemo-undo-manager.h
+       libnemo-private/nemo-undo-private.h
+       libnemo-private/nemo-undo-signal-handlers.c
+       libnemo-private/nemo-undo-signal-handlers.h
+       libnemo-private/nemo-undo-transaction.c
+       libnemo-private/nemo-undo-transaction.h
+       libnemo-private/nemo-undo.c
+       libnemo-private/nemo-undo.h
+       libnemo-private/nemo-widget-menu-item.c
+       libnemo-private/nemo-widget-menu-item.h
+       src/nemo-autorun-software.c
+       src/nemo-desktop-icon-view.c
+       src/nemo-desktop-icon-view.h
+       src/nemo-empty-view.c
+       src/nemo-empty-view.h
+       src/nemo-error-reporting.c
+       src/nemo-error-reporting.h
+       src/nemo-file-management-properties.c
+       src/nemo-file-management-properties.h
+       src/nemo-floating-bar.c
+       src/nemo-floating-bar.h
+       src/nemo-icon-view-container.c
+       src/nemo-icon-view-container.h
+       src/nemo-icon-view.c
+       src/nemo-icon-view.h
+       src/nemo-list-model.c
+       src/nemo-list-model.h
+       src/nemo-list-view-private.h
+       src/nemo-list-view.c
+       src/nemo-list-view.h
+       src/nemo-mime-actions.c
+       src/nemo-mime-actions.h
+       src/nemo-navigation-state.c
+       src/nemo-navigation-state.h
+       src/nemo-pathbar.c
+       src/nemo-pathbar.h
+       src/nemo-properties-window.c
+       src/nemo-properties-window.h
+       src/nemo-statusbar.c
+       src/nemo-statusbar.h
+       src/nemo-window-slot-dnd.c
+       src/nemo-window-slot-dnd.h
+Copyright: 2001-2002, Anders Carlsson
+           2001-2002, Anders Carlsson <andersca@gnu.org>
+           2002, Anders Carlsson, Sun Microsystems, Inc
+           2000, Eazel, Inc
+           2000-2001, Eazel, Inc.mou
+           1997-2000, Free Software Foundation
+           2006, Free Software Foundation, Inc
+           1999-2000, Free Software Foundaton
+           2002, Jan Arne Petersen
+           2003, Novell, Inc
+           1995-1997, Peter Mattis, Spencer Kimball and Josh MacDonald
+           2005, Raffaele Sandrini
+           2011, Red Hat Inc
+           2001, Red Hat, Inc
+           2007, Red Hat, Inc., Alexander Larsson <alexl@redhat.com>
+           2004, Red Hat, Inc., Jonathan Blandford <jrb@gnome.org>
+           2009, Red Hatl, Inc
+           2003, Soeren Sandmann
+           2002, Sun Microsystems, Inc
+License: LGPL-2+
 
-License:
+Files: INSTALL
+       m4/ltoptions.m4
+       m4/ltsugar.m4
+       m4/ltversion.m4
+       m4/lt~obsolete.m4
+       po/Makefile.in.in
+Copyright: 2004-2009, Free Software Foundation
+           2004-2009, Free Software Foundation, Inc
+           2004-2008, Rodney Dawes <dobey.pwns@gmail.com>
+           1995-1997, Ulrich Drepper <drepper@gnu.ai.mit.edu>
+License: Permissive
+ This file is free software; the Free Software Foundation gives
+ unlimited permission to copy and/or distribute it, with or without
+ modifications, as long as this notice is preserved.
 
-   This package is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
+Files: files/usr/share/gtksourceview-2.0/language-specs/nemo_action.lang
+       files/usr/share/gtksourceview-3.0/language-specs/nemo_action.lang
+       libnemo-private/nemo-debug.c
+       libnemo-private/nemo-debug.h
+Copyright: 2007, Collabora Ltd
+           2006, Luca Cavalli <lcavalli@cvs.gnome.org>
+           2007, Nokia Corporation
+           2003, Paolo Maggi <paolo.maggi@polito.it>
+           2010, Red Hat, Inc
+License: LGPL-2.1+
 
-   This package is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+Files: debian/*
+Copyright: 2012, Nicolas Bourdaud
+           2012, Josselin Mouette
+           2014-2015, Maximiliano Curia <maxy@debian.org>
+License: GPL-2+
 
-   You should have received a copy of the GNU General Public License
-   along with this package; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this package; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-2'.
 
-On Debian systems, the complete text of the GNU General
-Public License can be found in `/usr/share/common-licenses/GPL'.
+License: LGPL-2+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+ .
+ You should have received a copy of the GNU Library General Public License
+ along with this package; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/LGPL-2'.
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ .
+ On Debian systems, the complete text of the GNU Lesser General
+ Public License can be found in `/usr/share/common-licenses/LGPL-2.1'.
