@@ -1,5 +1,5 @@
-usr/lib/libnemo-extension*.so
-usr/include
-usr/lib/pkgconfig
+usr/include/nemo
+usr/lib/*/libnemo-extension.so
+usr/lib/*/pkgconfig/libnemo-extension.pc
 usr/share/gir-1.0/Nemo-3.0.gir
-usr/share/gtk-doc
+usr/share/gtk-doc/*/libnemo-extension
