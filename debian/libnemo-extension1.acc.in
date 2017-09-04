@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<descriptor>
+
+<version>
+    2.0.8
+</version>
+
+<headers>
+    /usr/include/nemo
+</headers>
+
+<libs>
+    /usr/lib/${DEB_HOST_MULTIARCH}/libnemo-extension.so
+</libs>
+
+</descriptor>
