@@ -1,0 +1,3 @@
+# interpreter python2 is provided in python-mini, there is no python2 bin
+# package to depend on.
+nemo-data: python-script-but-no-python-dep usr/share/nemo/actions/myaction.py
