@@ -43,6 +43,7 @@ EXTRA_DIST = $(nemodata_DATA) 	\
 	nemo.desktop.in		\
 	dbus-interfaces.xml		\
 	freedesktop-dbus-interfaces.xml	\
+    org.Cinnamon.xml \
 	$(xml_in_files) 		\
 	$(desktop_in_files)		\
 	$(service_in_files)		\
