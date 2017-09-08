@@ -1759,10 +1759,11 @@ rename_get_info_callback (GObject *source_object,
 		new_name = g_file_info_get_name (new_info);
 		
 		/* If there was another file by the same name in this
-		 * directory, mark it gone.
+		 * directory and it is not the same file that we are
+		 * renaming, mark it gone.
 		 */
 		existing_file = nemo_directory_find_file_by_name (directory, new_name);
-		if (existing_file != NULL) {
+		if (existing_file != NULL && existing_file != op->file) {
 			nemo_file_mark_gone (existing_file);
 			nemo_file_changed (existing_file);
 		}
