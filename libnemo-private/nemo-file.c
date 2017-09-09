@@ -2225,7 +2225,8 @@ update_info_internal (NemoFile *file,
 	file->details->type = file_type;
 
 	if (!file->details->got_custom_activation_uri &&
-	    !nemo_file_is_in_trash (file)) {
+           (g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_VIRTUAL) ||
+            nemo_file_is_in_recent (file))) {
 		activation_uri = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
 		if (activation_uri == NULL) {
 			if (file->details->activation_uri) {
