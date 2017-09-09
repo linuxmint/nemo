@@ -3536,6 +3536,82 @@ is_dir (GFile *file)
 	return res;
 }
 
+static GFile*
+map_possibly_volatile_file_to_real (GFile *volatile_file,
+				    GCancellable *cancellable,
+				    GError **error)
+{
+	GFile *real_file = NULL;
+	GFileInfo *info = NULL;
+
+	info = g_file_query_info (volatile_file,
+				  G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK","
+				  G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE","
+				  G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET,
+				  G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+				  cancellable,
+				  error);
+	if (info == NULL) {
+		return NULL;
+	} else {
+		gboolean is_volatile;
+
+		is_volatile = g_file_info_get_attribute_boolean (info,
+								 G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE);
+		if (is_volatile) {
+			const gchar *target;
+
+			target = g_file_info_get_symlink_target (info);
+			real_file = g_file_resolve_relative_path (volatile_file, target);
+		}
+	}
+
+	g_object_unref (info);
+
+	if (real_file == NULL)
+		real_file = g_object_ref (volatile_file);
+
+	return real_file;
+}
+
+static GFile*
+map_possibly_volatile_file_to_real_on_write (GFile *volatile_file,
+					     GFileOutputStream *stream,
+					     GCancellable *cancellable,
+					     GError **error)
+{
+	GFile *real_file = NULL;
+	GFileInfo *info = NULL;
+
+	info = g_file_output_stream_query_info (stream,
+						G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK","
+						G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE","
+						G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET,
+						cancellable,
+						error);
+	if (info == NULL) {
+		return NULL;
+	} else {
+		gboolean is_volatile;
+
+		is_volatile = g_file_info_get_attribute_boolean (info,
+								 G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE);
+		if (is_volatile) {
+			const gchar *target;
+
+			target = g_file_info_get_symlink_target (info);
+			real_file = g_file_resolve_relative_path (volatile_file, target);
+		}
+	}
+
+	g_object_unref (info);
+
+	if (real_file == NULL)
+		real_file = g_object_ref (volatile_file);
+
+	return real_file;
+}
+
 static void copy_move_file (CopyMoveJob *job,
 			    GFile *src,
 			    GFile *dest_dir,
@@ -3568,6 +3644,7 @@ create_dest_dir (CommonJob *job,
 	char *primary, *secondary, *details;
 	int response;
 	gboolean handled_invalid_filename;
+	gboolean res;
 
 	handled_invalid_filename = *dest_fs_type != NULL;
 
@@ -3576,7 +3653,21 @@ create_dest_dir (CommonJob *job,
 	   copying the attributes, because we need to be sure we can write to it */
 	
 	error = NULL;
-	if (!g_file_make_directory (*dest, job->cancellable, &error)) {
+	res = g_file_make_directory (*dest, job->cancellable, &error);
+
+	if (res) {
+		GFile *real;
+
+		real = map_possibly_volatile_file_to_real (*dest, job->cancellable, &error);
+		if (real == NULL) {
+			res = FALSE;
+		} else {
+			g_object_unref (*dest);
+			*dest = real;
+		}
+	}
+
+	if (!res) {
 		if (IS_IO_ERROR (error, CANCELLED)) {
 			g_error_free (error);
 			return CREATE_DEST_DIR_FAILED;
@@ -4386,6 +4477,18 @@ copy_move_file (CopyMoveJob *copy_job,
 				   &error);
 	}
 	
+	if (res) {
+		GFile *real;
+
+		real = map_possibly_volatile_file_to_real (dest, job->cancellable, &error);
+		if (real == NULL) {
+			res = FALSE;
+		} else {
+			g_object_unref (dest);
+			dest = real;
+		}
+	}
+
 	if (res) {
 		transfer_info->num_files ++;
 		report_copy_progress (copy_job, source_info, transfer_info);
@@ -6228,6 +6331,18 @@ create_job (GIOSchedulerJob *io_job,
 					     common->cancellable,
 					     &error);
 
+		if (res) {
+			GFile *real;
+
+			real = map_possibly_volatile_file_to_real (dest, common->cancellable, &error);
+			if (real == NULL) {
+				res = FALSE;
+			} else {
+				g_object_unref (dest);
+				dest = real;
+			}
+		}
+
 		if (res && common->undo_info != NULL) {
 			nemo_file_undo_info_create_set_data (NEMO_FILE_UNDO_INFO_CREATE (common->undo_info),
 								 dest, NULL, 0);
@@ -6241,6 +6356,18 @@ create_job (GIOSchedulerJob *io_job,
 					   common->cancellable,
 					   NULL, NULL,
 					   &error);
+
+			if (res) {
+				GFile *real;
+
+				real = map_possibly_volatile_file_to_real (dest, common->cancellable, &error);
+				if (real == NULL) {
+					res = FALSE;
+				} else {
+					g_object_unref (dest);
+					dest = real;
+				}
+			}
 
 			if (res && common->undo_info != NULL) {
 				gchar *uri;
@@ -6265,24 +6392,38 @@ create_job (GIOSchedulerJob *io_job,
 					     common->cancellable,
 					     &error);
 			if (out) {
-				res = g_output_stream_write_all (G_OUTPUT_STREAM (out),
-								 data, length,
-								 NULL,
-								 common->cancellable,
-								 &error);
-				if (res) {
-					res = g_output_stream_close (G_OUTPUT_STREAM (out),
-								     common->cancellable,
-								     &error);
+				GFile *real;
 
-					if (res && common->undo_info != NULL) {
-						nemo_file_undo_info_create_set_data (NEMO_FILE_UNDO_INFO_CREATE (common->undo_info),
-											 dest, data, length);
+				real = map_possibly_volatile_file_to_real_on_write (dest,
+										    out,
+										    common->cancellable,
+										    &error);
+				if (real == NULL) {
+					res = FALSE;
+					g_object_unref (out);
+				} else {
+					g_object_unref (dest);
+					dest = real;
+
+					res = g_output_stream_write_all (G_OUTPUT_STREAM (out),
+									 data, length,
+									 NULL,
+									 common->cancellable,
+									 &error);
+					if (res) {
+						res = g_output_stream_close (G_OUTPUT_STREAM (out),
+									     common->cancellable,
+									     &error);
+
+						if (res && common->undo_info != NULL) {
+							nemo_file_undo_info_create_set_data (NEMO_FILE_UNDO_INFO_CREATE (common->undo_info),
+												 dest, data, length);
+						}
 					}
-				}
 
-				/* This will close if the write failed and we didn't close */
-				g_object_unref (out);
+					/* This will close if the write failed and we didn't close */
+					g_object_unref (out);
+				}
 			} else {
 				res = FALSE;
 			}
