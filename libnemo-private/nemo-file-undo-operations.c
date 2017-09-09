@@ -862,6 +862,8 @@ G_DEFINE_TYPE (NemoFileUndoInfoRename, nemo_file_undo_info_rename, NEMO_TYPE_FIL
 struct _NemoFileUndoInfoRenameDetails {
 	GFile *old_file;
 	GFile *new_file;
+	gchar *old_display_name;
+	gchar *new_display_name;
 };
 
 static void
@@ -892,16 +894,13 @@ rename_redo_func (NemoFileUndoInfo *info,
 		  GtkWindow *parent_window)
 {
 	NemoFileUndoInfoRename *self = NEMO_FILE_UNDO_INFO_RENAME (info);
-	gchar *new_name;
 	NemoFile *file;
 
-	new_name = g_file_get_basename (self->priv->new_file);
 	file = nemo_file_get (self->priv->old_file);
-	nemo_file_rename (file, new_name,
+	nemo_file_rename (file, self->priv->new_display_name,
 			      file_undo_info_operation_callback, self);
 
 	nemo_file_unref (file);
-	g_free (new_name);
 }
 
 static void
@@ -909,16 +908,13 @@ rename_undo_func (NemoFileUndoInfo *info,
 		  GtkWindow *parent_window)
 {
 	NemoFileUndoInfoRename *self = NEMO_FILE_UNDO_INFO_RENAME (info);
-	gchar *new_name;
 	NemoFile *file;
 
-	new_name = g_file_get_basename (self->priv->old_file);
 	file = nemo_file_get (self->priv->new_file);
-	nemo_file_rename (file, new_name,
+	nemo_file_rename (file, self->priv->old_display_name,
 			      file_undo_info_operation_callback, self);
 
 	nemo_file_unref (file);
-	g_free (new_name);
 }
 
 static void
@@ -934,6 +930,8 @@ nemo_file_undo_info_rename_finalize (GObject *obj)
 	NemoFileUndoInfoRename *self = NEMO_FILE_UNDO_INFO_RENAME (obj);
 	g_clear_object (&self->priv->old_file);
 	g_clear_object (&self->priv->new_file);
+	g_free (self->priv->old_display_name);
+	g_free (self->priv->new_display_name);
 
 	G_OBJECT_CLASS (nemo_file_undo_info_rename_parent_class)->finalize (obj);
 }
@@ -963,11 +961,20 @@ nemo_file_undo_info_rename_new (void)
 }
 
 void
-nemo_file_undo_info_rename_set_data (NemoFileUndoInfoRename *self,
-					 GFile                      *old_file,
-					 GFile                      *new_file)
+nemo_file_undo_info_rename_set_data_pre (NemoFileUndoInfoRename *self,
+					     GFile                      *old_file,
+					     gchar                      *old_display_name,
+					     gchar                      *new_display_name)
 {
 	self->priv->old_file = g_object_ref (old_file);
+	self->priv->old_display_name = g_strdup (old_display_name);
+	self->priv->new_display_name = g_strdup (new_display_name);
+}
+
+void
+nemo_file_undo_info_rename_set_data_post (NemoFileUndoInfoRename *self,
+					      GFile                      *new_file)
+{
 	self->priv->new_file = g_object_ref (new_file);
 }
 

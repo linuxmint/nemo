@@ -1815,8 +1815,8 @@ rename_callback (GObject *source_object,
 
 	if (new_file != NULL) {
 		if (op->undo_info != NULL) {
-			nemo_file_undo_info_rename_set_data (NEMO_FILE_UNDO_INFO_RENAME (op->undo_info),
-								 G_FILE (source_object), new_file);
+			nemo_file_undo_info_rename_set_data_post (NEMO_FILE_UNDO_INFO_RENAME (op->undo_info),
+								      new_file);
 		}
 
 		g_file_query_info_async (new_file,
@@ -2000,6 +2000,11 @@ nemo_file_rename (NemoFile *file,
 	/* Tell the undo manager a rename is taking place */
 	if (!nemo_file_undo_manager_pop_flag ()) {
 		op->undo_info = nemo_file_undo_info_rename_new ();
+
+		old_name = nemo_file_get_display_name (file);
+		nemo_file_undo_info_rename_set_data_pre (NEMO_FILE_UNDO_INFO_RENAME (op->undo_info),
+							     location, old_name, new_file_name);
+		g_free (old_name);
 	}
 
 	/* Do the renaming. */

@@ -179,9 +179,12 @@ struct _NemoFileUndoInfoRenameClass {
 
 GType nemo_file_undo_info_rename_get_type (void) G_GNUC_CONST;
 NemoFileUndoInfo *nemo_file_undo_info_rename_new (void);
-void nemo_file_undo_info_rename_set_data (NemoFileUndoInfoRename *self,
-					      GFile                      *old_file,
-					      GFile                      *new_file);
+void nemo_file_undo_info_rename_set_data_pre (NemoFileUndoInfoRename *self,
+						  GFile                      *old_file,
+						  gchar                      *old_display_name,
+						  gchar                      *new_display_name);
+void nemo_file_undo_info_rename_set_data_post (NemoFileUndoInfoRename *self,
+						   GFile                      *new_file);
 
 /* trash */
 #define NEMO_TYPE_FILE_UNDO_INFO_TRASH         (nemo_file_undo_info_trash_get_type ())
