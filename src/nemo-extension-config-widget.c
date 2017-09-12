@@ -20,6 +20,7 @@ typedef struct {
     gchar *name;
     gchar *display_name;
     gchar *desc;
+    gchar *config_exec;
 } ExtensionProxy;
 
 static void
@@ -28,6 +29,7 @@ extension_proxy_free (ExtensionProxy *proxy)
     g_clear_pointer (&proxy->name, g_free);
     g_clear_pointer (&proxy->display_name, g_free);
     g_clear_pointer (&proxy->desc, g_free);
+    g_clear_pointer (&proxy->config_exec, g_free);
 }
 
 static void
@@ -125,6 +127,17 @@ on_check_toggled(GtkWidget *button, ExtensionProxy *proxy)
     g_strfreev (new_list_ptr);
 }
 
+static gboolean
+on_config_clicked (GtkLinkButton *button,
+                   gpointer       user_data)
+{
+    ExtensionProxy *proxy = (ExtensionProxy *) user_data;
+
+    g_spawn_command_line_async (proxy->config_exec, NULL);
+
+    return GDK_EVENT_STOP;
+}
+
 #define LINE_PREFIX "NEMO_EXTENSION:::"
 #define LINE_PREFIX_LEN 17
 
@@ -158,9 +171,14 @@ detect_extensions (NemoExtensionConfigWidget *widget)
                     if (len == 3) {
                         p->display_name = g_strdup (split[1]);
                         p->desc = g_strdup (split[2]);
+                    } else if (len == 4) {
+                        p->display_name = g_strdup (split[1]);
+                        p->desc = g_strdup (split[2]);
+                        p->config_exec = g_strdup (split[3]);
                     } else {
                         p->display_name = NULL;
                         p->desc = NULL;
+                        p->config_exec = NULL;
                     }
 
                     p->widget = widget;
@@ -241,6 +259,12 @@ refresh_widget (NemoExtensionConfigWidget *widget)
             g_free (markup);
 
             gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 2);
+
+            if (proxy->config_exec != NULL) {
+                button = gtk_link_button_new_with_label ("uri://dummy", _("Configure"));
+                g_signal_connect (button, "activate-link", G_CALLBACK (on_config_clicked), proxy);
+                gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 2);
+            }
 
             GtkWidget *row = gtk_list_box_row_new ();
             gtk_container_add (GTK_CONTAINER (row), box);
