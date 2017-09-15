@@ -87,7 +87,7 @@ run_state_str (RunState state)
         case RUN_STATE_RUNNING:
             return "RunState.RUNNING";
         case RUN_STATE_FALLBACK:
-            return "RunState.DEFAULT";
+            return "RunState.FALLBACK";
         default:
             g_assert_not_reached ();
     }
@@ -465,9 +465,14 @@ on_monitors_changed (NemoDesktopManager *manager)
 
     for (l = priv->desktops; l != NULL; l = l->next) {
         DesktopInfo *info = (DesktopInfo *) l->data;
-        NemoDesktopWindow *window = NEMO_DESKTOP_WINDOW (info->window);
 
-        nemo_desktop_window_update_geometry (window);
+        if (NEMO_IS_DESKTOP_WINDOW (info->window)) {
+            nemo_desktop_window_update_geometry (NEMO_DESKTOP_WINDOW (info->window));
+        }
+        else
+        if (NEMO_IS_BLANK_DESKTOP_WINDOW (info->window)) {
+            nemo_blank_desktop_window_update_geometry (NEMO_BLANK_DESKTOP_WINDOW (info->window));
+        }
     }
 }
 

@@ -49,7 +49,6 @@ enum {
 };
 
 struct NemoDesktopWindowDetails {
-	gulong size_changed_id;
     gint monitor;
 	gboolean loaded;
 };
