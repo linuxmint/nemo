@@ -1374,6 +1374,7 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
         g_strfreev (split);
         return FALSE;
     }
+    return FALSE;
 }
 
 static gboolean
