@@ -1138,7 +1138,7 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 					trash_time = 0;
 				}
 
-				if (abs (orig_trash_time - trash_time) <= TRASH_TIME_EPSILON) {
+				if (ABS (orig_trash_time - trash_time) <= TRASH_TIME_EPSILON) {
 					/* File in the trash */
 					item = g_file_get_child (trash, g_file_info_get_name (info));
 					g_hash_table_insert (to_restore, item, g_object_ref (origfile));
