@@ -463,6 +463,11 @@ on_monitors_changed (NemoDesktopManager *manager)
         return;
     }
 
+    if (((guint) get_n_monitors (manager)) != g_list_length (priv->desktops)) {
+        queue_update_layout (manager);
+        return;
+    }
+
     for (l = priv->desktops; l != NULL; l = l->next) {
         DesktopInfo *info = (DesktopInfo *) l->data;
 
