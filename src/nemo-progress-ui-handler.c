@@ -320,7 +320,9 @@ progress_info_changed_cb (NemoProgressInfo *info,
             xapp_gtk_window_set_progress (XAPP_GTK_WINDOW (self->priv->progress_window), iprogress);
             g_free (str);
             self->priv->active_percent = iprogress;
-            progress_ui_handler_update_status_icon (self);
+            if (self->priv->should_show_status_icon) {
+                progress_ui_handler_update_status_icon (self);
+            }
         }
         else {
             gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_status(first_info)); 
@@ -361,9 +363,12 @@ handle_new_progress_info (NemoProgressUIHandler *self,
         xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (self->priv->progress_window), "system-run");
 	} else {
 		progress_ui_handler_add_to_window (self, info);
-		progress_ui_handler_update_status_icon (self);
-        if (gtk_widget_get_visible (GTK_WIDGET (self->priv->progress_window)))
+        if (self->priv->should_show_status_icon) {
+            progress_ui_handler_update_status_icon (self);
+        }
+        if (gtk_widget_get_visible (GTK_WIDGET (self->priv->progress_window))) {
             gtk_window_present (GTK_WINDOW (self->priv->progress_window));
+        }
 	}
 }
 
