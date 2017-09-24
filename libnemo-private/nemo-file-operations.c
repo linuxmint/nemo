@@ -185,7 +185,8 @@ typedef struct {
 } TransferInfo;
 
 #define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
-#define NSEC_PER_MICROSEC 1000
+#define US_PER_MS 1000
+#define PROGRESS_UPDATE_THRESHOLD 250
 
 #define MAXIMUM_DISPLAYED_FILE_NAME_LENGTH 50
 
@@ -1611,7 +1612,7 @@ report_delete_progress (CommonJob *job,
 
 	now = g_get_monotonic_time ();
 	if (transfer_info->last_report_time != 0 &&
-	    ABS ((gint64)(transfer_info->last_report_time - now)) < 100 * NSEC_PER_MICROSEC) {
+	    ABS ((gint64)(transfer_info->last_report_time - now)) < PROGRESS_UPDATE_THRESHOLD * US_PER_MS) {
 		return;
 	}
 	transfer_info->last_report_time = now;
@@ -3109,7 +3110,7 @@ report_copy_progress (CopyMoveJob *copy_job,
 	now = g_get_monotonic_time ();
 
 	if (transfer_info->last_report_time != 0 &&
-	    ABS ((gint64)(transfer_info->last_report_time - now)) < 100 * NSEC_PER_MICROSEC) {
+	    ABS ((gint64)(transfer_info->last_report_time - now)) < PROGRESS_UPDATE_THRESHOLD * US_PER_MS) {
 		return;
 	}
 	transfer_info->last_report_time = now;
