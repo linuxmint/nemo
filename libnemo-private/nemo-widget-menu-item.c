@@ -17,6 +17,7 @@
 
 #include "nemo-widget-menu-item.h"
 #include "nemo-widget-action.h"
+#include <string.h>
 
 enum {
   PROP_0,
