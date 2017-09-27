@@ -1177,6 +1177,10 @@ nemo_view_activate_files (NemoView *view,
 				      flags,
 				      confirm_multiple);
 
+	if (get_is_desktop_view(view)) {
+		nemo_view_set_selection(view, NULL);
+	}
+
 	g_free (path);
 }
 
@@ -1193,6 +1197,10 @@ nemo_view_activate_file (NemoView *view,
 				     file,
 				     path,
 				     flags);
+
+	if (get_is_desktop_view(view)) {
+		nemo_view_set_selection(view, NULL);
+	}
 
 	g_free (path);
 }
