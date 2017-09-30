@@ -569,6 +569,28 @@ on_proxy_created (GObject      *source,
     on_run_state_changed (manager);
 }
 
+static gboolean
+fallback_startup_idle_cb (NemoDesktopManager *manager)
+{
+    on_run_state_changed (manager);
+
+    return FALSE;
+}
+
+static gboolean
+is_cinnamon_desktop (void)
+{
+
+    if (g_strcmp0 (g_getenv ("XDG_SESSION_DESKTOP"), "cinnamon") == 0) {
+        return TRUE;
+    }
+
+    if (g_strstr_len (g_getenv ("DESKTOP_SESSION"), -1, "cinnamon") != NULL) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
 
 static void
 nemo_desktop_manager_dispose (GObject *object)
@@ -666,10 +688,10 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
      * 
      * If we're not running cinnamon,  */
 
-    if (g_strcmp0 (g_getenv ("XDG_SESSION_DESKTOP"), "cinnamon") == 0) {
-        DEBUG ("XDG_SESSION_DESKTOP is cinnamon, establishing proxy");
+    g_application_hold (G_APPLICATION (nemo_application_get_singleton ()));
 
-        g_application_hold (G_APPLICATION (nemo_application_get_singleton ()));
+    if (is_cinnamon_desktop ()) {
+         g_message ("nemo-desktop: session is cinnamon, establishing proxy");
 
         nemo_cinnamon_dbus_proxy_new_for_bus (G_BUS_TYPE_SESSION,
                                               G_DBUS_PROXY_FLAGS_NONE,
@@ -679,12 +701,15 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
                                               (GAsyncReadyCallback) on_proxy_created,
                                               manager);
     } else {
-        DEBUG ("XDG_SESSION_DESKTOP is not cinnamon, applying default behavior");
+        g_message ("nemo-desktop: session is not cinnamon (checked XDG_SESSION_DESKTOP,"
+                   "DESKTOP_SESSION environment variables.) Applying default behavior");
 
         priv->other_desktop = TRUE;
         connect_fallback_signals (manager);
 
-        on_run_state_changed (manager);
+        /* Even though we start immediately when we can't do a proxy, we need to get out
+         * of the desktop manager's init first, or else we have recursion problems. */
+        g_idle_add ((GSourceFunc) fallback_startup_idle_cb, manager);
     }
 }
 
