@@ -4168,6 +4168,8 @@ extension_info_stop (NemoDirectory *directory)
 
 		/* The info is not wanted, so stop it. */
 		extension_info_cancel (directory);
+
+        nemo_directory_unref (directory);
 	}
 }
 
@@ -4181,11 +4183,13 @@ finish_info_provider (NemoDirectory *directory,
 				provider);
 	g_object_unref (provider);
 
-	nemo_directory_async_state_changed (directory);
-
 	if (file->details->pending_info_providers == NULL) {
 		nemo_file_info_providers_done (file);
 	}
+
+    nemo_directory_unref (directory);
+
+    nemo_directory_async_state_changed (directory);
 }
 
 
@@ -4263,6 +4267,12 @@ extension_info_start (NemoDirectory *directory,
 	}
 
 	provider = file->details->pending_info_providers->data;
+
+    /* If the user navigates out of the current directory while this job is
+     * running, cleanup will occur before a progress-type callback can complete,
+     * potentially causing a segfault as directory->details->extension_info_could
+     * be NULL during finish_info_provider. */
+    nemo_directory_ref (directory);
 
 	update_complete = g_cclosure_new (G_CALLBACK (info_provider_callback),
 					  directory,
