@@ -235,7 +235,6 @@ real_active (NemoWindowSlot *slot)
 	nemo_window_pane_sync_search_widgets (slot->pane);
 
 	if (slot->viewed_file != NULL) {
-		nemo_window_load_view_as_menus (window);
 		nemo_window_load_extension_menus (window);
 	}
 }

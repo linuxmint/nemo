@@ -59,17 +59,6 @@ struct NemoWindowDetails
 
 	NemoWindowShowHiddenFilesMode show_hidden_files_mode;
 
-	/* View As menu */
-	GList *short_list_viewers;
-	char *extra_viewer;
-
-	/* View As choices */
-	GtkActionGroup *view_as_action_group; /* owned by ui_manager */
-	GtkRadioAction *view_as_radio_action;
-	GtkRadioAction *extra_viewer_radio_action;
-	guint short_list_merge_id;
-	guint extra_viewer_merge_id;
-
 	/* Ensures that we do not react on signals of a
 	 * view that is re-used as new view when its loading
 	 * is cancelled
@@ -138,7 +127,6 @@ struct NemoWindowDetails
 typedef void (*NemoBookmarkFailedCallback) (NemoWindow *window,
                                                 NemoBookmark *bookmark);
 
-void               nemo_window_load_view_as_menus                    (NemoWindow    *window);
 void               nemo_window_load_extension_menus                  (NemoWindow    *window);
 NemoWindowPane *nemo_window_get_next_pane                        (NemoWindow *window);
 void               nemo_menus_append_bookmark_to_menu                (NemoWindow    *window, 
