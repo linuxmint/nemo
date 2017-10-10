@@ -1619,10 +1619,16 @@ nemo_window_initialize_menus (NemoWindow *window)
   	g_object_set (action, "short_label", _("_Location"), NULL);
 
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDDEN_FILES);
-	g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
-	g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
+
+    if (NEMO_IS_DESKTOP_WINDOW (window)) {
+        gtk_action_set_visible (action, FALSE);
+    } else {
+        g_signal_handlers_block_by_func (action, action_show_hidden_files_callback, window);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+                                      g_settings_get_boolean (nemo_preferences,
+                                      NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+        g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
+    }
 
     g_signal_connect_object ( NEMO_WINDOW (window), "notify::sidebar-view-id",
                              G_CALLBACK (update_side_bar_radio_buttons), window, 0);
