@@ -8,7 +8,7 @@ Exec=/usr/lib/gvfs/gvfsd-archive file="%U"
 
 Selection=s
 
-Mimetypes=application/x-cd-image;application/x-bzip-compressed-tar;application/x-compressed-tar;application/x-tar;application/x-cpio;application/zip;
+Mimetypes=application/x-7z-compressed;application/x-cd-image;application/x-cpio;application/x-rar;application/x-rar-compressed;application/x-7z-compressed-tar;application/x-bzip-compressed-tar;application/x-compressed-tar;application/x-tar;application/zip;
 
 Stock-Id=gtk-directory
 
