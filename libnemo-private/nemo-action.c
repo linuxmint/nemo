@@ -20,17 +20,15 @@
 #include "nemo-action.h"
 #include <eel/eel-string.h>
 #include <glib/gi18n.h>
+#include <gdk/gdk.h>
 #include "nemo-file-utilities.h"
+#include "nemo-program-choosing.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_ACTIONS
 #include <libnemo-private/nemo-debug.h>
 
 G_DEFINE_TYPE (NemoAction, nemo_action,
 	       GTK_TYPE_ACTION);
-
-static void     nemo_action_init       (NemoAction      *action);
-
-static void     nemo_action_class_init (NemoActionClass *klass);
 
 static void     nemo_action_get_property  (GObject                    *object,
                                            guint                       param_id,
@@ -65,6 +63,7 @@ enum
   PROP_SEPARATOR,
   PROP_QUOTE_TYPE,
   PROP_ESCAPE_SPACE,
+  PROP_RUN_IN_TERMINAL,
   PROP_CONDITIONS
 };
 
@@ -103,6 +102,7 @@ nemo_action_init (NemoAction *action)
     action->escape_underscores = FALSE;
     action->escape_space = FALSE;
     action->show_in_blank_desktop = FALSE;
+    action->run_in_terminal = FALSE;
     action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
@@ -229,6 +229,14 @@ nemo_action_class_init (NemoActionClass *klass)
                                                            FALSE,
                                                            G_PARAM_READWRITE)
                                      );
+    g_object_class_install_property (object_class,
+                                     PROP_RUN_IN_TERMINAL,
+                                     g_param_spec_boolean ("run-in-terminal",
+                                                           "Run command in a terminal",
+                                                           "Run command in a terminal",
+                                                           FALSE,
+                                                           G_PARAM_READWRITE)
+                                 );
 }
 
 static void
@@ -437,10 +445,17 @@ nemo_action_constructed (GObject *object)
                                            KEY_WHITESPACE,
                                            NULL);
 
+    gboolean run_in_terminal;
+
+    run_in_terminal = g_key_file_get_boolean (key_file,
+                                              ACTION_FILE_GROUP,
+                                              KEY_TERMINAL,
+                                              NULL);
+
     gboolean is_desktop = FALSE;
 
     if (conditions && condition_count > 0) {
-        int j;
+        guint j;
         gchar *condition;
         for (j = 0; j < condition_count; j++) {
             condition = conditions[j];
@@ -491,6 +506,7 @@ nemo_action_constructed (GObject *object)
                    "separator", separator,
                    "conditions", conditions,
                    "escape-space", escape_space,
+                   "run-in-terminal", run_in_terminal,
                     NULL);
 
     g_free (orig_label);
@@ -563,7 +579,7 @@ nemo_action_new (const gchar *name,
     gboolean finish = TRUE;
 
     if (deps != NULL) {
-        gint i = 0;
+        guint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
             if (g_path_is_absolute (deps[i])) {
                 if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
@@ -678,6 +694,9 @@ nemo_action_set_property (GObject         *object,
     case PROP_ESCAPE_SPACE:
       action->escape_space = g_value_get_boolean (value);
       break;
+    case PROP_RUN_IN_TERMINAL:
+      action->run_in_terminal = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -735,6 +754,9 @@ nemo_action_get_property (GObject    *object,
     case PROP_ESCAPE_SPACE:
       g_value_set_boolean (value, action->escape_space);
       break;
+    case PROP_RUN_IN_TERMINAL:
+      g_value_set_boolean (value, action->run_in_terminal);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -788,15 +810,20 @@ find_token_type (const gchar *str, TokenType *token_type)
 static gchar *
 get_path (NemoAction *action, NemoFile *file)
 {
-    gchar *ret;
+    gchar *ret, *quote_escaped, *orig;
+
+    orig = nemo_file_get_path (file);
+
+    quote_escaped = eel_str_escape_quotes (orig);
 
     if (action->escape_space) {
-        gchar *path = nemo_file_get_path (file);
-        ret = eel_str_escape_spaces (path);
-        g_free (path);
+        ret = eel_str_escape_spaces (quote_escaped);
     } else {
-        ret = nemo_file_get_path (file);
+        ret = g_strdup (quote_escaped);
     }
+
+    g_free (orig);
+    g_free (quote_escaped);
 
     return ret;
 }
@@ -839,6 +866,8 @@ insert_quote (NemoAction *action, GString *str)
             str = g_string_append (str, "`");
             break;
         case QUOTE_TYPE_NONE:
+            break;
+        default:
             break;
     }
 
@@ -968,6 +997,7 @@ default_parent_display_name:
                 goto default_parent_path;
             }
             break;
+        case TOKEN_NONE:
         default:
             break; 
     }
@@ -1005,7 +1035,10 @@ expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GS
 void
 nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
 {
+    GError *error;
     GString *exec = g_string_new (action->exec);
+
+    error = NULL;
 
     action->escape_underscores = FALSE;
 
@@ -1020,7 +1053,28 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
     if (action->log_output)
         g_printerr ("Action Spawning: %s\n", exec->str);
 
-    g_spawn_command_line_async (exec->str, NULL);
+    if (action->run_in_terminal) {
+        gint argcp;
+        gchar **argvp;
+
+        if (g_shell_parse_argv (exec->str, &argcp, &argvp, &error)) {
+            nemo_launch_application_from_command_array (gdk_screen_get_default (),
+                                                        argvp[0],
+                                                        TRUE,
+                                                        (const char * const *)(argvp + sizeof (gchar)));
+            g_strfreev (argvp);
+        } else {
+            DEBUG ("Could not parse arguments terminal launch.  Possibly turn off Quotes and remove any from your Exec line: %s\n",
+                   error->message);
+            g_error_free (error);
+        }
+    } else {
+        if (!g_spawn_command_line_async (exec->str, &error)) {
+            DEBUG ("Error spawning action: %s\n",
+                   error->message);
+            g_error_free (error);
+        }
+    }
 
     g_string_free (exec, TRUE);
 }
@@ -1282,7 +1336,7 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
     if (g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE)) {
         GSettings *s = g_settings_new (split[GSETTINGS_SCHEMA_INDEX]);
         gchar **keys = g_settings_list_keys (s);
-        gint i;
+        guint i;
         for (i = 0; i < g_strv_length (keys); i++) {
             if (len == 3) {
                 if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
@@ -1320,6 +1374,7 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
         g_strfreev (split);
         return FALSE;
     }
+    return FALSE;
 }
 
 static gboolean
@@ -1360,7 +1415,7 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
     guint condition_count = conditions != NULL ? g_strv_length (conditions) : 0;
 
     if (condition_count > 0) {
-        int j;
+        guint j;
         gchar *condition;
         for (j = 0; j < condition_count; j++) {
             condition = conditions[j];
@@ -1437,7 +1492,7 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
         gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
         gchar *filename = g_ascii_strdown (raw_fn, -1);
         g_free (raw_fn);
-        int i;
+        guint i;
 
         is_dir = get_is_dir (iter->data);
 

@@ -30,6 +30,7 @@
 #include "nemo-icon-container.h"
 
 #include "nemo-file.h"
+#include "nemo-desktop-icon-file.h"
 #include "nemo-global-preferences.h"
 #include "nemo-icon-private.h"
 #include "nemo-lib-self-check-functions.h"
@@ -5670,17 +5671,20 @@ is_old_or_unknown_icon_data (NemoIconContainer *container,
 {
 	time_t timestamp;
 	gboolean success;
+    gboolean is_transient;
 
     /* Undefined at startup */
 	if (container->details->layout_timestamp == UNDEFINED_TIME) {
 		return FALSE;
 	}
 
+    is_transient = NEMO_IS_DESKTOP_ICON_FILE (data);
+
 	g_signal_emit (container,
 		       signals[GET_STORED_LAYOUT_TIMESTAMP], 0,
 		       data, &timestamp, &success);
 
-	return (!success || timestamp < container->details->layout_timestamp);
+	return (!success || is_transient || timestamp < container->details->layout_timestamp);
 }
 
 gboolean

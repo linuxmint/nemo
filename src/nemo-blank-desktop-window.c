@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include "nemo-blank-desktop-window.h"
+#include "nemo-desktop-manager.h"
 
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
@@ -45,13 +46,7 @@ enum {
     NUM_PROPERTIES
 };
 
-enum {
-    PLUGIN_MANAGER,
-    LAST_SIGNAL
-};
-
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
-static guint signals[LAST_SIGNAL] = { 0 };
 
 struct NemoBlankDesktopWindowDetails {
     gint monitor;
@@ -203,19 +198,11 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 		atk_object_set_name (accessible, _("Desktop"));
 	}
 
-    GdkRectangle rect;
-
-    nemo_desktop_utils_get_monitor_geometry (window->details->monitor, &rect);
-
-    DEBUG ("NemoBlankDesktopWindow monitor:%d: x:%d, y:%d, w:%d, h:%d",
-           window->details->monitor,
-           rect.x, rect.y,
-           rect.width, rect.height);
-
-    gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
-    gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
+    nemo_blank_desktop_window_update_geometry (window);
 
     gtk_window_set_resizable (GTK_WINDOW (window),
+                  FALSE);
+    gtk_window_set_decorated (GTK_WINDOW (window),
                   FALSE);
 
     gtk_widget_show_all (GTK_WIDGET (window));
@@ -373,3 +360,22 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 
     g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
+
+void
+nemo_blank_desktop_window_update_geometry (NemoBlankDesktopWindow *window)
+{
+    GdkRectangle rect;
+
+    nemo_desktop_manager_get_window_rect_for_monitor (nemo_desktop_manager_get (),
+                                                      window->details->monitor,
+                                                      &rect);
+
+    DEBUG ("NemoBlankDesktopWindow monitor:%d: x:%d, y:%d, w:%d, h:%d",
+           window->details->monitor,
+           rect.x, rect.y,
+           rect.width, rect.height);
+
+    gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
+    gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
+}
+

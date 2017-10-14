@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+                      "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!-- GDBus 2.48.1 -->
+<node>
+  <interface name="org.Cinnamon">
+    <method name="GetMonitors">
+      <arg type="ai" direction="out" name="monitors" />
+    </method>
+    <method name="GetMonitorWorkRect">
+      <arg type="i" direction="in" name="monitor" />
+      <arg type="ai" direction="out" name="rect" />
+    </method>
+    <signal name="MonitorsChanged"/>
+    <property name="RunState" type="i" access="read" />
+    <method name="GetRunState">
+        <arg type="i" direction="out" name="state" />
+    </method>
+    <signal name="RunStateChanged"/>
+  </interface>
+</node>

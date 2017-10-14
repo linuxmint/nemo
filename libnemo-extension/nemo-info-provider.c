@@ -83,7 +83,6 @@ nemo_info_provider_cancel_update (NemoInfoProvider *provider,
 {
 	g_return_if_fail (NEMO_IS_INFO_PROVIDER (provider));
 	g_return_if_fail (NEMO_INFO_PROVIDER_GET_IFACE (provider)->cancel_update != NULL);
-	g_return_if_fail (NEMO_INFO_PROVIDER_GET_IFACE (provider)->cancel_update != NULL);
 	g_return_if_fail (handle != NULL);
 
 	NEMO_INFO_PROVIDER_GET_IFACE (provider)->cancel_update (provider,

@@ -104,6 +104,39 @@ eel_str_escape_spaces (const char *string)
 }
 
 char *
+eel_str_escape_quotes (const char *string)
+{
+    int quotes;
+    const char *p;
+    char *q;
+    char *escaped;
+
+    if (string == NULL) {
+        return NULL;
+    }
+
+    quotes = 0;
+    for (p = string; *p != '\0'; p++) {
+        quotes += (*p == '\'') || (*p == '\"');
+    }
+
+    if (quotes == 0) {
+        return g_strdup (string);
+    }
+
+    escaped = g_new (char, strlen (string) + quotes + 1);
+    for (p = string, q = escaped; *p != '\0'; p++, q++) {
+        if ((*p == '\'') || (*p == '\"')) {
+            *q++ = '\\';
+        }
+        *q = *p;
+    }
+    *q = '\0';
+
+    return escaped;
+}
+
+char *
 eel_str_capitalize (const char *string)
 {
 	char *capitalized;

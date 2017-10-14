@@ -47,14 +47,23 @@ LDADD =\
 	$(POPT_LIBS) \
 	$(NULL)
 
-dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
-$(dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
+fd_dbus_built_sources = nemo-freedesktop-generated.c nemo-freedesktop-generated.h
+$(fd_dbus_built_sources) : Makefile.am $(top_srcdir)/data/freedesktop-dbus-interfaces.xml
 	gdbus-codegen									\
 		--interface-prefix org.freedesktop.					\
 		--c-namespace NemoFreedesktop					\
 		--c-generate-object-manager						\
 		--generate-c-code nemo-freedesktop-generated			\
 		$(top_srcdir)/data/freedesktop-dbus-interfaces.xml			\
+		$(NULL)
+
+cin_dbus_built_sources = nemo-cinnamon-dbus.c nemo-cinnamon-dbus.h
+$(cin_dbus_built_sources) : Makefile.am $(top_srcdir)/data/org.Cinnamon.xml
+	gdbus-codegen                                       \
+		--annotate "org.Cinnamon" org.gtk.GDBus.C.Name "CinnamonDBus"       \
+		--c-namespace Nemo                      \
+		--generate-c-code nemo-cinnamon-dbus   \
+		$(top_srcdir)/data/org.Cinnamon.xml                            \
 		$(NULL)
 
 UI_FILES = \
@@ -73,7 +82,8 @@ nemo-resources.h: nemo.gresource.xml
 	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name nemo $(srcdir)/nemo.gresource.xml
 
 BUILT_SOURCES = \
-	$(dbus_built_sources) \
+    $(fd_dbus_built_sources) \
+	$(cin_dbus_built_sources) \
 	nemo-resources.c \
 	nemo-resources.h \
 	$(NULL)

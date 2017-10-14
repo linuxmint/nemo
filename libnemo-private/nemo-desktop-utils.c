@@ -92,6 +92,7 @@ nemo_desktop_utils_get_primary_monitor (void)
             return i;
         }
     }
+    return 0;
 #else
     ensure_screen ();
 

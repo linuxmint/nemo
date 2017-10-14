@@ -54,9 +54,9 @@ typedef struct {
     void   (* plugin_manager)  (NemoBlankDesktopWindow *window);
 } NemoBlankDesktopWindowClass;
 
-GType                  nemo_blank_desktop_window_get_type            (void);
+GType                   nemo_blank_desktop_window_get_type            (void);
 NemoBlankDesktopWindow *nemo_blank_desktop_window_new                 (gint monitor);
-
-NemoActionManager *nemo_desktop_manager_get_action_manager (void);
+NemoActionManager      *nemo_desktop_manager_get_action_manager       (void);
+void                    nemo_blank_desktop_window_update_geometry     (NemoBlankDesktopWindow *window);
 
 #endif /* NEMO_BLANK_DESKTOP_WINDOW_H */
