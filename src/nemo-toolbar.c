@@ -85,7 +85,7 @@ G_DEFINE_TYPE (NemoToolbar, nemo_toolbar, GTK_TYPE_BOX);
 static void
 nemo_toolbar_update_root_state (NemoToolbar *self)
 {
-    if (geteuid() == 0 && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SUPERUSER_TOOLBAR)) {
+    if (geteuid() == 0 && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_ROOT_WARNING)) {
         if (self->priv->show_root_bar != TRUE) {
             self->priv->show_root_bar = TRUE;
         }

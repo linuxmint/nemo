@@ -160,10 +160,10 @@
       <summary>Show Compact View button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
-    <key type="b" name="show-superuser-toolbar">
+    <key type="b" name="show-root-warning">
       <default>true</default>
-      <summary>Show Elevated Privileges warning toolbar</summary>
-      <description>If set to true, then Nemo browser will display a warning toolbar when run with elevated privileges.</description>
+      <summary>Show a warning when Nemo is running as root</summary>
+      <description>If set to true, Nemo shows a warning in the infobar when it is running as root.</description>
     </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
