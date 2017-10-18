@@ -1,6 +1,8 @@
-usr/bin
-usr/lib/nemo/nemo-convert-metadata
-usr/lib/nemo/nemo-extensions-list
-usr/share/applications
-usr/share/dbus-1
-usr/share/man
+usr/bin/nemo*
+usr/lib/*/nemo/nemo-convert-metadata
+usr/lib/*/nemo/nemo-extensions-list
+usr/share/applications/nemo*
+usr/share/dbus-1/services/org.Nemo.service
+usr/share/dbus-1/services/org.nemo.*.service
+usr/share/man/*/nemo*
+usr/share/polkit-1/actions/org.nemo.root.policy

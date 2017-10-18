@@ -1,0 +1,11 @@
+#!/bin/sh
+
+DEB_HOST_MULTIARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+for in_file in debian/*.acc.in; do
+    out_file=${in_file%.in}
+    sed 's/\${DEB_HOST_MULTIARCH}/'"${DEB_HOST_MULTIARCH}"'/' \
+        "${in_file}" > "${out_file}"
+done
+
+dh_acc
