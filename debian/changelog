@@ -1,3 +1,10 @@
+nemo (3.6.2) sylvia; urgency=medium
+
+  [ Leigh Scott ]
+  * add xapps version to configure.ac (#1626)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 24 Oct 2017 12:25:45 +0100
+
 nemo (3.6.1) sylvia; urgency=medium
 
   [ Ingo Lafrenz ]
