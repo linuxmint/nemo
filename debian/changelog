@@ -1,3 +1,89 @@
+nemo (3.6.0) sylvia; urgency=medium
+
+  [ brownsr ]
+  * eel_g_list_str_copy: replace contents with g_list_copy_deep May improve performance somewhat for very high volume file copies though I have no way to test with the volumes reported here https://bugs.launchpad.net/linuxmint/+bug/1663186
+
+  [ Michael Webster ]
+  * nemo-main-application.c: try to start as a service first, then a client.  This allows nemo to be started via dbus (which requires it be run with the G_APPLICATION_IS_SERVICE flag) as well as being able to connect to an already-running instance as we can now.
+  * nemo-main-application.c: Re-add "no-desktop" command line option. We don't use it anymore, but some programs apparently hardcode nemo with this flag rather than use xdg-open or mimetype activation.  This allows them to continue working as before.
+  * nemo-view.c: Fix "follow link to original file" action when the link is on the desktop.  In these cases, we need to launch a folder handler and pass it the full file name (which for most file managers should open the folder and select the file.)
+  * nemo-query-editor.c: Use a copy of the query text to check if the query is empty (or all spaces.)  The function g_strstrip modifies the string in-place, and passing the modified query text causes issues when typing multiple words (separated by spaces) in the query.
+
+  [ leigh123linux ]
+  * Configure: disable tracker for default
+
+  [ Michael Webster ]
+  * actions: Escape single and double quotes that are part of a file path. Add "Terminal" key in the nemo_action file, to execute the Exec line in a terminal window.
+  * actions: Update sample action for Terminal keyword, update nemo_action sourceview files.
+  * actions: Only use nemo_launch_application_from_command_array() when Terminal=true.  This ensures compatibility with existing actions, which will continue to use g_spawn_async().
+  * nemo-desktop-icon-grid-view.c: Store layout timestamps any time the layout is changed by a user action.
+  * Desktop: Remove metadata for pseudo-files on the desktop such as Computer and Home when they're removed via preferences.  This simulates their deletion with respect to how metadata timestamps are tracked and validated.
+  * nemo-icon-view-grid-container.c: mark the sort as dirty any time a file is added or removed (this determines whether and when the sort direction indicator is shown in the context menu when auto-arrange is not active.
+  * nemo-icon-info.h: Use standard icon sizes for the desktop.
+
+  [ brownsr ]
+  * nemo-action.c: fixup a few compiler warnings
+  * nemo-icon-private.h: avoid memory padding save a little memory use by rearranging the fields to avoid memory padding in structures
+  * eel-editable-label.h: Avoid memory padding move fields in a structure to avoid memory padding made padding explicit to avoid warning messages if the padding compiler warnings are on
+
+  [ Michael Webster ]
+  * nemo-file-undo-operations.c: Use GQueue instead of GList for our undo file pair lists.
+  * nemo-file-operations.c: use g_remove for native (path-reachable) files.  Allowing the normal g_file_delete involves gvfs whether the file is native or not.
+  * nemo.desktop: Remove DBusActivatable line - we don't actually support it yet, it was an unnecessary change in ad5fcfc747466715d.  This ends up just causing issues with getting nemo to launch in more up-to-date distributions.
+  * nemo-icon-container.c: Always treat desktop pseudo-files as semi-placed icons - that is, they can have their positions stored, then restored later, but their position can be adjusted upon placement if their previously stored position is now occupied.
+  * nemo-progress-ui-handler.c: Use XAppGtkWindow for the progress window, so we can pass progress info to Cinnamon.
+
+  [ Jeremy Bicha ]
+  * Add translatable files to POTFILES.in (#1584)
+
+  [ Michael Webster ]
+  * nemo-desktop-manager: Refactor and expand to integrate better with cinnamon.
+  * plugin manager: allow launching of an extension's config program from the plugin window, rather than having it in the main menu.
+  * desktop: Handle blank desktop windows properly during monitor change events.
+  * nemo-desktop-manager.c: Don't just try to resize existing desktops if the number of monitors has changed.  In this case, do a full re-layout.
+  * nemo-progress-ui-handler.c: Don't update the status icon if it's not being shown.
+  * nemo-file-operations.c: Reduce progress ui update frequency during file operations.
+
+  [ Leigh Scott ]
+  * update man page for nemo (#1600)
+
+  [ Alexei Sorokin ]
+  * Fix some warnings in libnemo-private (#1482)
+
+  [ Michael Webster ]
+  * nemo-desktop-manager.c: Don't run on_run_state_changed() during the init phase when it's a fallback session as it can cause a nasty recursion problem resulting in a crash.
+  * nemo-directory-async.c: hold the directory alive for the duration of an extension provider job, to ensure clean termination to the job when async info providers are used.
+  * dbus services: normalize file names.
+  * Remove some dead code.
+  * desktop: Don't show the "Show hidden files" menu item.  We never show hidden files on the desktop, so having this is misleading.
+
+  [ alexnch ]
+  * Add .rar and .7z to archive mounting action (#1621)
+
+  [ John Callerame ]
+  * When activating files on the desktop (only), deselect them after activating them (#1608)
+
+  [ Ján Jančár ]
+  * nemo-toolbar.c: Add option to hide elevated privileges warning. (#1610)
+
+  [ Clement Lefebvre ]
+  * Rename show-superuser-toolbar into show-root-warning
+
+  [ Björn Esser ]
+  * file: Let renames work on Google Drive Renaming an item on Google Drive does not change the actual GVfs path because the path is made up of document-ids, which do not change. A rename operation only affects the title of the entry. In GIO terms, only the standard::display-name changes, but the standard::name remains the same.
+  * file, file-undo-operations: Let renames on Google Drive be undone We really should be using standard::display-name when renaming files - g_file_get_basename is simply not the right thing to use. Moreover, in case of Google Drive, the URI might not change with the display name and we can not get the old display name from the old GFile.
+  * debian: Set version for min. needed libglib2
+
+  [ Fabio Fantoni ]
+  * update debian/copyright
+  * debian: remove unneeded postrm
+
+  [ Clement Lefebvre ]
+  * l10n: Generate additional files
+  * l10n: Update POT file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 24 Oct 2017 10:44:41 +0100
+
 nemo (3.4.6) sonya; urgency=medium
 
   [ Michael Webster ]
