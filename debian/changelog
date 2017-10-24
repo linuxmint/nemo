@@ -1,3 +1,13 @@
+nemo (3.6.1) sylvia; urgency=medium
+
+  [ Ingo Lafrenz ]
+  * send by mail nemo action (#1625)
+
+  [ Clement Lefebvre ]
+  * Fix permissions on files/usr/share/nemo/actions/send-by-mail.py
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 24 Oct 2017 10:58:34 +0100
+
 nemo (3.6.0) sylvia; urgency=medium
 
   [ brownsr ]
