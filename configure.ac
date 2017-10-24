@@ -11,6 +11,7 @@ m4_define(exif_minver,                 0.6.20)
 m4_define(exempi_minver,               2.2.0)
 m4_define(notify_minver,               0.7.0)
 m4_define(glib_mime_ver,               2.34.0)
+m4_define(xapps_minver,                1.0.4)
 
 dnl 1. If the library code has changed at all since last release, then increment revision.
 dnl 2. If any interfaces have been added, then increment current and set revision to 0.
@@ -232,7 +233,7 @@ PKG_CHECK_MODULES(NEMO, [
 	gio-2.0 >= glib_minver
 	gio-unix-2.0 >= glib_minver
 	cinnamon-desktop
-    xapp
+	xapp >= xapps_minver
 	libnotify >= notify_minver
 ])
 
