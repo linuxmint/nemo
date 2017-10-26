@@ -208,6 +208,7 @@ get_window_rect_for_monitor (NemoDesktopManager *manager,
     GVariant *out_rect_var;
     GdkRectangle out_rect;
     gsize n_elem;
+    gint scale_factor;
     GError *error;
 
     error = NULL;
@@ -234,6 +235,14 @@ get_window_rect_for_monitor (NemoDesktopManager *manager,
     }
 
     out_rect = *( (GdkRectangle *) g_variant_get_fixed_array (out_rect_var, &n_elem, sizeof(gint)) );
+
+    /* GdkScreen sizes are scaled for hidpi already.  But if we've gotten this far, we're using
+     * Cinnamon-provided numbers, which aren't scaled. */
+
+    scale_factor = nemo_desktop_utils_get_scale_factor ();
+
+    out_rect.width /= scale_factor;
+    out_rect.height /= scale_factor;
 
 out:
 

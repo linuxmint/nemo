@@ -162,4 +162,22 @@ nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary)
     return FALSE;
 }
 
+gint
+nemo_desktop_utils_get_scale_factor (void)
+{
+    guint scale;
+    GValue value = G_VALUE_INIT;
+
+    ensure_screen ();
+
+    g_value_init (&value, G_TYPE_UINT);
+
+    if (gdk_screen_get_setting (default_screen, "gdk-window-scaling-factor", &value)) {
+        scale = g_value_get_uint (&value);
+    } else {
+        scale = 1;
+    }
+
+    return (gint) scale;
+}
 
