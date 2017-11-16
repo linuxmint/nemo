@@ -581,6 +581,7 @@ drag_end_callback (GtkWidget *widget,
 
 	nemo_drag_destroy_selection_list (dnd_info->drag_info.selection_list);
 	dnd_info->drag_info.selection_list = NULL;
+    g_clear_pointer (&dnd_info->drag_info.source_fs, g_free);
 }
 
 static NemoIcon *
@@ -1415,6 +1416,8 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 
 	g_free (drop_target);
 	nemo_drag_destroy_selection_list (container->details->dnd_info->drag_info.selection_list);
+
+    g_clear_pointer (&container->details->dnd_info->drag_info.source_fs, g_free);
 	container->details->dnd_info->drag_info.selection_list = NULL;
     free_dnd_grid (container);
 }

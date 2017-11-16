@@ -395,10 +395,6 @@ check_same_fs (NemoFile    *target_file,
 
     result = FALSE;
 
-    if (target_file != NULL && source_fs_for_desktop != NULL) {
-
-    }
-
     if (target_file != NULL && source_file != NULL) {
         source_id = nemo_file_get_filesystem_id (source_file);
         target_id = nemo_file_get_filesystem_id (target_file);

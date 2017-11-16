@@ -149,6 +149,7 @@ drag_info_clear (NemoDragSlotProxyInfo *drag_info)
 
   if (drag_info->info == NEMO_ICON_DND_GNOME_ICON_LIST) {
     nemo_drag_destroy_selection_list (drag_info->data.selection_list);
+    g_clear_pointer (&drag_info->desktop_dnd_source_fs, g_free);
   } else if (drag_info->info == NEMO_ICON_DND_URI_LIST) {
     g_list_free (drag_info->data.uri_list);
   } else if (drag_info->info == NEMO_ICON_DND_NETSCAPE_URL) {
