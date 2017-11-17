@@ -1,3 +1,11 @@
+nemo (3.6.3) sylvia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-desktop-manager.c: Account for scale factor when using cinnamon- supplied monitor info.  Cinnamon runs at a scale factor of 1 always, and things are scaled internally.
+  * dnd: Make sure to clear any source_fs pointers after dnd operations.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 27 Oct 2017 11:03:15 +0100
+
 nemo (3.6.2) sylvia; urgency=medium
 
   [ Leigh Scott ]
