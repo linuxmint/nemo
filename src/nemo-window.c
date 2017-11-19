@@ -123,11 +123,6 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
-typedef struct  {
-	NemoWindow *window;
-	char *id;
-} ActivateViewData;
-
 G_DEFINE_TYPE (NemoWindow, nemo_window, GTK_TYPE_APPLICATION_WINDOW);
 
 static const struct {
@@ -1140,6 +1135,58 @@ nemo_window_key_release_event (GtkWidget *widget,
  * Main API
  */
 
+static void
+sync_view_type_callback (NemoFile *file, 
+                         gpointer callback_data)
+{
+    NemoWindow *window;
+    NemoWindowSlot *slot;
+
+    slot = callback_data;
+    window = nemo_window_slot_get_window (slot);
+
+    if (slot == nemo_window_get_active_slot (window)) {
+        NemoWindowPane *pane;
+        const gchar *view_id;
+
+        if (slot->content_view == NULL) {
+            return;
+        }
+
+        pane = nemo_window_get_active_pane(window);
+        view_id = nemo_window_slot_get_content_view_id (slot);
+
+        toolbar_set_view_button (toolbar_action_for_view_id (view_id), pane);
+    }
+}
+
+static void
+cancel_sync_view_type_callback (NemoWindowSlot *slot)
+{
+	nemo_file_cancel_call_when_ready (slot->viewed_file, 
+					      sync_view_type_callback,
+					      slot);
+}
+
+void
+nemo_window_sync_view_type (NemoWindow *window)
+{
+    NemoWindowSlot *slot;
+    NemoFileAttributes attributes;
+
+    g_return_if_fail (NEMO_IS_WINDOW (window));
+
+    attributes = nemo_mime_actions_get_required_file_attributes ();
+
+    slot = nemo_window_get_active_slot (window);
+
+    cancel_sync_view_type_callback (slot);
+    nemo_file_call_when_ready (slot->viewed_file,
+                               attributes,
+                               sync_view_type_callback,
+                               slot);
+}
+
 void
 nemo_window_sync_menu_bar (NemoWindow *window)
 {
@@ -1307,6 +1354,11 @@ nemo_window_connect_content_view (NemoWindow *window,
 			  G_CALLBACK (zoom_level_changed_callback),
 			  window);
 
+    /* Update displayed the selected view type in the toolbar and menu. */
+    if (slot->pending_location == NULL) {
+        nemo_window_sync_view_type (window);
+    }
+
 	nemo_view_grab_focus (view);
 }
 
@@ -1415,6 +1467,8 @@ nemo_window_slot_set_viewed_file (NemoWindowSlot *slot,
 	}
 
 	nemo_file_ref (file);
+
+	cancel_sync_view_type_callback (slot);
 
 	if (slot->viewed_file != NULL) {
 		nemo_file_monitor_remove (slot->viewed_file,

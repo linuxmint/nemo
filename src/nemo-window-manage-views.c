@@ -1452,6 +1452,8 @@ update_for_new_location (NemoWindowSlot *slot)
 		nemo_window_sync_up_button (window);
 		nemo_window_sync_zoom_widgets (window);
 
+        nemo_window_sync_view_type (window);
+
 		/* Load menus from nemo extensions for this location */
 		nemo_window_load_extension_menus (window);
 	}

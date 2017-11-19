@@ -127,6 +127,7 @@ struct NemoWindowDetails
 typedef void (*NemoBookmarkFailedCallback) (NemoWindow *window,
                                                 NemoBookmark *bookmark);
 
+void               nemo_window_sync_view_type                    (NemoWindow    *window);
 void               nemo_window_load_extension_menus                  (NemoWindow    *window);
 NemoWindowPane *nemo_window_get_next_pane                        (NemoWindow *window);
 void               nemo_menus_append_bookmark_to_menu                (NemoWindow    *window, 
