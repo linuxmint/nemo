@@ -1,3 +1,10 @@
+nemo (3.6.4) sylvia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window: Restore initial syncing of view buttons.  This was inadvertantly removed in d23762640b48d8 while getting rid of some actual unused code related to an old way view types used to be selected.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 20 Nov 2017 10:10:17 +0000
+
 nemo (3.6.3) sylvia; urgency=medium
 
   [ Michael Webster ]
