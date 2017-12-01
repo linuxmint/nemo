@@ -29,7 +29,8 @@
 #include "nemo-window-pane.h"
 #include <gtk/gtk.h>
 
-guint         toolbar_action_for_view_id  (const char *view_id                           );
+guint           action_for_view_id  (const char *view_id                           );
 void            toolbar_set_view_button     (guint action_id,      NemoWindowPane *pane);
-
+void            menu_set_view_selection (guint       action_id,
+                                         NemoWindow *window);
 #endif /* NEMO_WINDOW_PANE_H */

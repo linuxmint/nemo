@@ -73,6 +73,18 @@
 #define NETWORK_URI          "network:"
 #define COMPUTER_URI         "computer:"
 
+static void set_content_view_type(NemoWindow *window,
+                                  const gchar *view_id);
+
+enum {
+    NULL_VIEW,
+    ICON_VIEW,
+    LIST_VIEW,
+    COMPACT_VIEW,
+    SIDEBAR_PLACES,
+    SIDEBAR_TREE
+};
+
 static void
 action_close_window_slot_callback (GtkAction *action,
 				   gpointer user_data)
@@ -469,11 +481,6 @@ nemo_window_initialize_trash_icon_monitor (NemoWindow *window)
 
 #define MENU_ITEM_MAX_WIDTH_CHARS 32
 
-enum {
-	SIDEBAR_PLACES,
-	SIDEBAR_TREE
-};
-
 static void
 action_close_all_windows_callback (GtkAction *action, 
 				   gpointer user_data)
@@ -623,10 +630,42 @@ sidebar_radio_entry_changed_cb (GtkAction *action,
 
     current_value = gtk_radio_action_get_current_value (current);
 
-    if (current_value == SIDEBAR_PLACES) {
-        nemo_window_set_sidebar_id (window, NEMO_WINDOW_SIDEBAR_PLACES);
-    } else if (current_value == SIDEBAR_TREE) {
-        nemo_window_set_sidebar_id (window, NEMO_WINDOW_SIDEBAR_TREE);
+    switch (current_value) {
+        case SIDEBAR_PLACES:
+            nemo_window_set_sidebar_id (window, NEMO_WINDOW_SIDEBAR_PLACES);
+            break;
+        case SIDEBAR_TREE:
+            nemo_window_set_sidebar_id (window, NEMO_WINDOW_SIDEBAR_TREE);
+            break;
+        default:
+            ;
+            break;
+    }
+}
+
+static void
+view_radio_entry_changed_cb (GtkAction *action,
+                             GtkRadioAction *current,
+                             gpointer user_data)
+{
+    gint current_value;
+    NemoWindow *window = NEMO_WINDOW (user_data);
+
+    current_value = gtk_radio_action_get_current_value (current);
+
+    switch (current_value) {
+        case ICON_VIEW:
+            set_content_view_type (window, NEMO_ICON_VIEW_ID);
+            break;
+        case LIST_VIEW:
+            set_content_view_type (window, NEMO_LIST_VIEW_ID);
+            break;
+        case COMPACT_VIEW:
+            set_content_view_type (window, FM_COMPACT_VIEW_ID);
+            break;
+        default:
+            ;
+            break;
     }
 }
 
@@ -867,22 +906,25 @@ action_menu_edit_location_callback (GtkAction *action,
     toggle_location_entry_setting(window, pane, TRUE);
 }
 
-enum {
-    ICON_VIEW,
-    LIST_VIEW,
-    COMPACT_VIEW,
-    NULL_VIEW
-};
+static void
+set_content_view_type(NemoWindow *window,
+                      const gchar *view_id)
+{
+    NemoWindowSlot *slot;
+
+    slot = nemo_window_get_active_slot (window);
+    nemo_window_slot_set_content_view (slot, view_id);
+}
 
 static void
 action_icon_view_callback (GtkAction *action,
                            gpointer user_data)
 {
     NemoWindow *window;
-    NemoWindowSlot *slot;
+
     window = NEMO_WINDOW (user_data);
-    slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, NEMO_ICON_VIEW_ID);
+
+    set_content_view_type (window, NEMO_ICON_VIEW_ID);
     toolbar_set_view_button (ICON_VIEW, nemo_window_get_active_pane(window));
 }
 
@@ -892,10 +934,10 @@ action_list_view_callback (GtkAction *action,
                            gpointer user_data)
 {
     NemoWindow *window;
-    NemoWindowSlot *slot;
+
     window = NEMO_WINDOW (user_data);
-    slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, NEMO_LIST_VIEW_ID);
+
+    set_content_view_type (window, NEMO_LIST_VIEW_ID);
     toolbar_set_view_button (LIST_VIEW, nemo_window_get_active_pane(window));
 }
 
@@ -905,15 +947,15 @@ action_compact_view_callback (GtkAction *action,
                            gpointer user_data)
 {
     NemoWindow *window;
-    NemoWindowSlot *slot;
+
     window = NEMO_WINDOW (user_data);
-    slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_set_content_view (slot, FM_COMPACT_VIEW_ID);
+
+    set_content_view_type (window, FM_COMPACT_VIEW_ID);
     toolbar_set_view_button (COMPACT_VIEW, nemo_window_get_active_pane(window));
 }
 
 guint
-toolbar_action_for_view_id (const char *view_id)
+action_for_view_id (const char *view_id)
 {
     if (g_strcmp0(view_id, NEMO_ICON_VIEW_ID) == 0) {
         return ICON_VIEW;
@@ -1005,6 +1047,26 @@ toolbar_set_view_button (guint action_id, NemoWindowPane *pane)
                            action_compact_view_callback,
                            NULL);
 
+}
+
+void
+menu_set_view_selection (guint action_id,
+                         NemoWindow *window)
+{
+    GtkAction *action;
+
+    g_signal_handlers_block_by_func (window->details->main_action_group,
+                                     view_radio_entry_changed_cb,
+                                     window);
+
+    action = gtk_action_group_get_action (window->details->main_action_group,
+                                          NEMO_ACTION_ICON_VIEW);
+
+    gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), action_id);
+
+    g_signal_handlers_unblock_by_func (window->details->main_action_group,
+                                       view_radio_entry_changed_cb,
+                                       window);
 }
 
 static void
@@ -1312,13 +1374,25 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* is_active */            FALSE },
 };
 
-static const GtkRadioActionEntry main_radio_entries[] = {
+static const GtkRadioActionEntry sidebar_radio_entries[] = {
 	{ "Sidebar Places", NULL,
 	  N_("Places"), NULL, N_("Select Places as the default sidebar"),
 	  SIDEBAR_PLACES },
 	{ "Sidebar Tree", NULL,
 	  N_("Tree"), NULL, N_("Select Tree as the default sidebar"),
 	  SIDEBAR_TREE }
+};
+
+static const GtkRadioActionEntry view_radio_entries[] = {
+    { "IconView", NULL,
+      N_("Icon View"), "<ctrl>1", N_("Icon View"),
+      ICON_VIEW },
+    { "ListView", NULL,
+      N_("List View"), "<ctrl>2", N_("List View"),
+      LIST_VIEW },
+    { "CompactView", NULL,
+      N_("Compact View"), "<ctrl>3", N_("CompactView"),
+      COMPACT_VIEW }
 };
 
 GtkActionGroup *
@@ -1605,10 +1679,13 @@ nemo_window_initialize_menus (NemoWindow *window)
 					     main_toggle_entries, G_N_ELEMENTS (main_toggle_entries),
 					     window);
 	gtk_action_group_add_radio_actions (action_group,
-					    main_radio_entries, G_N_ELEMENTS (main_radio_entries),
+					    sidebar_radio_entries, G_N_ELEMENTS (sidebar_radio_entries),
 					    0, G_CALLBACK (sidebar_radio_entry_changed_cb),
 					    window);
-
+    gtk_action_group_add_radio_actions (action_group,
+                        view_radio_entries, G_N_ELEMENTS (view_radio_entries),
+                        0, G_CALLBACK (view_radio_entry_changed_cb),
+                        window);
 	action = gtk_action_group_get_action (action_group, NEMO_ACTION_UP);
 	g_object_set (action, "short_label", _("_Up"), NULL);
 

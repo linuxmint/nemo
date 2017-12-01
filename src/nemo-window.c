@@ -74,12 +74,6 @@
 #include <math.h>
 #include <sys/time.h>
 
-/* dock items */
-
-#define NEMO_MENU_PATH_EXTRA_VIEWER_PLACEHOLDER	"/MenuBar/View/View Choices/Extra Viewer"
-#define NEMO_MENU_PATH_SHORT_LIST_PLACEHOLDER  	"/MenuBar/View/View Choices/Short List"
-#define NEMO_MENU_PATH_AFTER_SHORT_LIST_SEPARATOR   "/MenuBar/View/View Choices/After Short List"
-
 #define MAX_TITLE_LENGTH 180
 
 /* Forward and back buttons on the mouse */
@@ -1156,7 +1150,8 @@ sync_view_type_callback (NemoFile *file,
         pane = nemo_window_get_active_pane(window);
         view_id = nemo_window_slot_get_content_view_id (slot);
 
-        toolbar_set_view_button (toolbar_action_for_view_id (view_id), pane);
+        toolbar_set_view_button (action_for_view_id (view_id), pane);
+        menu_set_view_selection (action_for_view_id (view_id), window);
     }
 }
 
