@@ -651,6 +651,10 @@ view_radio_entry_changed_cb (GtkAction *action,
     gint current_value;
     NemoWindow *window = NEMO_WINDOW (user_data);
 
+    if (NEMO_IS_DESKTOP_WINDOW (window)) {
+        return;
+    }
+
     current_value = gtk_radio_action_get_current_value (current);
 
     switch (current_value) {
@@ -1054,6 +1058,10 @@ menu_set_view_selection (guint action_id,
                          NemoWindow *window)
 {
     GtkAction *action;
+
+    if (action_id == NULL_VIEW) {
+        return;
+    }
 
     g_signal_handlers_block_by_func (window->details->main_action_group,
                                      view_radio_entry_changed_cb,
