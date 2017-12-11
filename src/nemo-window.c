@@ -1586,6 +1586,20 @@ window_set_search_action_text (NemoWindow *window,
 	}
 }
 
+static gboolean
+reposition_paned (GtkPaned *paned)
+{
+	/* Make the paned think it's been manually resized, otherwise
+	   things like the trash bar will force unwanted resizes */
+	int w;
+	int current_position;
+	current_position = gtk_paned_get_position (paned);
+	w = gtk_widget_get_allocated_width (GTK_WIDGET (paned)) / 2;
+	gtk_paned_set_position (paned, w);
+	gtk_paned_set_position (paned, current_position);
+	return FALSE;
+}
+
 static NemoWindowSlot *
 create_extra_pane (NemoWindow *window)
 {
@@ -1604,13 +1618,6 @@ create_extra_pane (NemoWindow *window)
 		gtk_paned_pack2 (paned, GTK_WIDGET (pane), TRUE, FALSE);
 	}
 
-    /* Make the paned think it's been manually resized, otherwise
-       things like the trash bar will force unwanted resizes */
-
-    int w;
-    w = gtk_widget_get_allocated_width (GTK_WIDGET (paned)) / 2;
-    gtk_paned_set_position (paned, w);
-
 	/* Ensure the toolbar doesn't pop itself into existence (double toolbars suck.) */
 	gtk_widget_hide (pane->tool_bar);
 
@@ -1618,6 +1625,10 @@ create_extra_pane (NemoWindow *window)
 	slot = nemo_window_pane_open_slot (NEMO_WINDOW_PANE (pane),
 					       NEMO_WINDOW_OPEN_SLOT_APPEND);
 	pane->active_slot = slot;
+
+	/* Defer repositioning paned for the auto-resize fix because the
+		 allocated width is 0 in this function.*/
+	g_idle_add_full (1000, reposition_paned, paned, NULL);
 
 	return slot;
 }
