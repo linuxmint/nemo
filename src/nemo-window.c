@@ -1589,13 +1589,12 @@ window_set_search_action_text (NemoWindow *window,
 static gboolean
 reposition_paned (GtkPaned *paned)
 {
+	g_return_val_if_fail (GTK_IS_PANED (paned), FALSE);
+
 	/* Make the paned think it's been manually resized, otherwise
 	   things like the trash bar will force unwanted resizes */
-	int w;
 	int current_position;
 	current_position = gtk_paned_get_position (paned);
-	w = gtk_widget_get_allocated_width (GTK_WIDGET (paned)) / 2;
-	gtk_paned_set_position (paned, w);
 	gtk_paned_set_position (paned, current_position);
 	return FALSE;
 }
