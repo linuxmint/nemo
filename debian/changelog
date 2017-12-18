@@ -1,3 +1,12 @@
+nemo (3.6.5) sylvia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-desktop-manager.c: Add null checks for GErrors - it seems as though g_dbus calls are not guaranteed to fill the error slot (which seems like a Gio bug to me, but there's no reason to crash here regardless because of a null error.)
+  * nemo-window - Restore inadvertantly removed menu actions for view type selection (and their corresponding shortcuts,) using methods and practices more consistent with currently maintained code.
+  * nemo-window-menus.c: Add a couple guards for the previous commit's view actions for when the window is a NemoDesktopWindow
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 18 Dec 2017 12:37:52 +0000
+
 nemo (3.6.4) sylvia; urgency=medium
 
   [ Michael Webster ]
