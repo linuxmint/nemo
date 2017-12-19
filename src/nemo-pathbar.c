@@ -165,16 +165,29 @@ static gboolean nemo_path_bar_update_path              (NemoPathBar *path_bar,
                                 gboolean         emit_signal);
 
 static GtkWidget *
-get_slider_button (NemoPathBar  *path_bar,
-           GtkArrowType arrow_type)
+get_slider_button (NemoPathBar     *path_bar,
+                   GtkPositionType  position)
 {
     GtkWidget *button;
+    GtkWidget *image;
+
     gtk_widget_push_composite_child ();
 
     button = gtk_button_new ();
+    gtk_style_context_add_class (gtk_widget_get_style_context (button), "slider-button");
     gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
     gtk_widget_add_events (button, GDK_SCROLL_MASK);
-    gtk_container_add (GTK_CONTAINER (button), gtk_arrow_new (arrow_type, GTK_SHADOW_OUT));
+
+    if (position == GTK_POS_LEFT)
+    {
+        image = gtk_image_new_from_icon_name ("pan-start-symbolic", GTK_ICON_SIZE_MENU);
+    }
+    else
+    {
+        image = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_MENU);
+    }
+
+    gtk_container_add (GTK_CONTAINER (button), image);
     gtk_container_add (GTK_CONTAINER (path_bar), button);
     gtk_widget_show_all (button);
 
@@ -340,8 +353,8 @@ nemo_path_bar_init (NemoPathBar *path_bar)
     gtk_widget_set_has_window (GTK_WIDGET (path_bar), FALSE);
     gtk_widget_set_redraw_on_allocate (GTK_WIDGET (path_bar), FALSE);
 
-    path_bar->priv->up_slider_button = get_slider_button (path_bar, GTK_ARROW_LEFT);
-    path_bar->priv->down_slider_button = get_slider_button (path_bar, GTK_ARROW_RIGHT);
+    path_bar->priv->up_slider_button = get_slider_button (path_bar, GTK_POS_LEFT);
+    path_bar->priv->down_slider_button = get_slider_button (path_bar, GTK_POS_RIGHT);
     path_bar->priv->icon_size = NEMO_PATH_BAR_ICON_SIZE;
 
     p = nemo_get_desktop_directory ();
@@ -400,10 +413,8 @@ nemo_path_bar_init (NemoPathBar *path_bar)
                       G_CALLBACK (trash_state_changed_cb),
                       path_bar);
 
-    gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)),
-                                 GTK_STYLE_CLASS_LINKED);
-    gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)),
-                                 GTK_STYLE_CLASS_RAISED);
+    gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)), GTK_STYLE_CLASS_LINKED);
+    gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)), "path-bar");
 }
 
 static void
