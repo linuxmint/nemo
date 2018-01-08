@@ -1183,8 +1183,13 @@ nemo_icon_view_grid_container_finish_adding_new_icons (NemoIconContainer *contai
             int x, y;
 
             icon = p->data;
-            x = icon->x;
-            y = icon->y;
+
+            nemo_centered_placement_grid_icon_position_to_nominal (grid,
+                                                                   icon,
+                                                                   icon->x,
+                                                                   icon->y,
+                                                                   &x, &y);
+
             snap_position (container, grid, icon, x, y, &x, &y);
 
             nemo_centered_placement_grid_nominal_to_icon_position (grid,
