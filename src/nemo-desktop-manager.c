@@ -250,6 +250,8 @@ get_window_rect_for_monitor (NemoDesktopManager *manager,
 
     scale_factor = nemo_desktop_utils_get_scale_factor ();
 
+    out_rect.x /= scale_factor;
+    out_rect.y /= scale_factor;
     out_rect.width /= scale_factor;
     out_rect.height /= scale_factor;
 
