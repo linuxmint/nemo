@@ -1191,9 +1191,22 @@ prep_selection (NemoIconContainer *container,
                 }
 
                 if (item->got_icon_position) {
+                    gint y_shift;
+
+                    if (icon->item) {
+                        gdouble y1, y2;
+
+                        y1 = y2 = 0;
+
+                        nemo_icon_canvas_item_get_bounds_for_entire_item (icon->item, NULL, &y1, NULL, &y2);
+                        y_shift = (gint) ((y2 - y1) / 2);
+                    } else {
+                        y_shift = item->icon_height / 2
+                    }
+
                     nemo_centered_placement_grid_get_current_position_rect (grid,
                                                                             drop_x + item->icon_x + item->icon_width / 2,
-                                                                            drop_y + item->icon_y + item->icon_height / 2,
+                                                                            drop_y + item->icon_y + y_shift,
                                                                             &iter_rect,
                                                                             &iter_is_free);
 
