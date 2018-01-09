@@ -1201,7 +1201,7 @@ prep_selection (NemoIconContainer *container,
                         nemo_icon_canvas_item_get_bounds_for_entire_item (icon->item, NULL, &y1, NULL, &y2);
                         y_shift = (gint) ((y2 - y1) / 2);
                     } else {
-                        y_shift = item->icon_height / 2
+                        y_shift = item->icon_height / 2;
                     }
 
                     nemo_centered_placement_grid_get_current_position_rect (grid,
