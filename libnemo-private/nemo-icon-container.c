@@ -5678,7 +5678,7 @@ is_old_or_unknown_icon_data (NemoIconContainer *container,
 		return FALSE;
 	}
 
-    is_transient = NEMO_IS_DESKTOP_ICON_FILE (data);
+    is_transient = NEMO_IS_DESKTOP_ICON_FILE (data) && container->details->keep_aligned;
 
 	g_signal_emit (container,
 		       signals[GET_STORED_LAYOUT_TIMESTAMP], 0,
