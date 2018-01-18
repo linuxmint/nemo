@@ -28,7 +28,6 @@ Build-Depends: debhelper (>= 8),
                libgirepository1.0-dev (>= 0.9.12),
                libglib2.0-doc,
                libgtk-3-doc,
-               python3-polib,
                python3-gi,
                cinnamon-l10n
 Homepage: http://www.github.com/linuxmint/nemo/
