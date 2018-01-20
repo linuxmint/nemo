@@ -1586,17 +1586,19 @@ window_set_search_action_text (NemoWindow *window,
 	}
 }
 
-static gboolean
-reposition_paned (GtkPaned *paned)
+static void
+center_pane_divider (GtkWidget  *paned,
+                     GParamSpec *pspec,
+                     gpointer    user_data)
 {
-	g_return_val_if_fail (GTK_IS_PANED (paned), FALSE);
+    /* Make the paned think it's been manually resized, otherwise
+     * things like the trash bar will force unwanted resizes */
 
-	/* Make the paned think it's been manually resized, otherwise
-	   things like the trash bar will force unwanted resizes */
-	int current_position;
-	current_position = gtk_paned_get_position (paned);
-	gtk_paned_set_position (paned, current_position);
-	return FALSE;
+    g_object_set (G_OBJECT (paned),
+                  "position-set", TRUE,
+                  NULL);
+
+    g_signal_handlers_disconnect_by_func (G_OBJECT (paned), center_pane_divider, NULL);
 }
 
 static NemoWindowSlot *
@@ -1611,6 +1613,12 @@ create_extra_pane (NemoWindow *window)
 	window->details->panes = g_list_append (window->details->panes, pane);
 
 	paned = GTK_PANED (window->details->split_view_hpane);
+
+    g_signal_connect_after (paned,
+                            "notify::position",
+                            G_CALLBACK(center_pane_divider),
+                            NULL);
+
 	if (gtk_paned_get_child1 (paned) == NULL) {
 		gtk_paned_pack1 (paned, GTK_WIDGET (pane), TRUE, FALSE);
 	} else {
@@ -1624,10 +1632,6 @@ create_extra_pane (NemoWindow *window)
 	slot = nemo_window_pane_open_slot (NEMO_WINDOW_PANE (pane),
 					       NEMO_WINDOW_OPEN_SLOT_APPEND);
 	pane->active_slot = slot;
-
-	/* Defer repositioning paned for the auto-resize fix because the
-		 allocated width is 0 in this function.*/
-	g_idle_add_full (1000, reposition_paned, paned, NULL);
 
 	return slot;
 }
@@ -1982,6 +1986,13 @@ nemo_window_split_view_off (NemoWindow *window)
 			nemo_window_close_pane (window, pane);
 		}
 	}
+
+    /* Reset split view pane's position so the position can be
+     * caught again later */
+    g_object_set (G_OBJECT (window->details->split_view_hpane),
+                  "position", 0,
+                  "position-set", FALSE,
+                  NULL);
 
 	nemo_window_set_active_pane (window, active_pane);
 	nemo_navigation_state_set_master (window->details->nav_state,
