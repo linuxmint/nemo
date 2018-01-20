@@ -4188,20 +4188,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
     gtk_tree_view_set_model (tree_view, GTK_TREE_MODEL (sidebar->store_filter));
 
-    GtkWidget *stupid = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_visible (stupid, TRUE);
-    gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (tree_view), TRUE, TRUE, 0);
-
-    GtkWidget *filler = gtk_drawing_area_new ();
-    gtk_widget_set_visible (filler, TRUE);
-    gtk_box_pack_start (GTK_BOX (stupid), GTK_WIDGET (filler), TRUE, TRUE, 0);
-
-    GtkStyleContext *context = gtk_widget_get_style_context (filler);
-    gtk_style_context_add_class (context, "view");
-
-	gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (stupid));
-
-	gtk_widget_show (GTK_WIDGET (tree_view));
+    gtk_container_add (GTK_CONTAINER (sidebar), GTK_WIDGET (tree_view));
+    gtk_widget_show (GTK_WIDGET (tree_view));
 
 	gtk_widget_show (GTK_WIDGET (sidebar));
 	sidebar->tree_view = tree_view;
