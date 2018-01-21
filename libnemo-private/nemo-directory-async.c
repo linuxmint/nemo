@@ -1910,7 +1910,7 @@ read_dot_hidden_file (NemoDirectory *directory)
 	GFile *child;
 	GFileInfo *info;
 	GFileType type;
-	int i;
+	guint i;
 
 
 	/* FIXME: We only support .hidden on file: uri's for the moment.
@@ -1952,7 +1952,7 @@ read_dot_hidden_file (NemoDirectory *directory)
 	/* Now parse the data */
 	i = 0;
 	while (i < file_size) {
-		int start;
+		guint start;
 
 		start = i;
 		while (i < file_size && file_contents[i] != '\n') {
