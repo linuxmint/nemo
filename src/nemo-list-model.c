@@ -1016,10 +1016,10 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 	}
 
 	if (model->details->temp_unsorted)
-        file_entry->ptr = g_sequence_append (files, file_entry);
-    else
-        file_entry->ptr = g_sequence_insert_sorted (files, file_entry,
-                                                    nemo_list_model_file_entry_compare_func, model);
+                file_entry->ptr = g_sequence_append (files, file_entry);
+        else
+                file_entry->ptr = g_sequence_insert_sorted (files, file_entry,
+                                                            nemo_list_model_file_entry_compare_func, model);
 
 	g_hash_table_insert (parent_hash, file, file_entry->ptr);
 	
@@ -1078,8 +1078,8 @@ nemo_list_model_file_changed (NemoListModel *model, NemoFile *file,
 
 	pos_before = g_sequence_iter_get_position (ptr);
 
-    if (!model->details->temp_unsorted)
-        g_sequence_sort_changed (ptr, nemo_list_model_file_entry_compare_func, model);
+        if (!model->details->temp_unsorted)
+                g_sequence_sort_changed (ptr, nemo_list_model_file_entry_compare_func, model);
 
 	pos_after = g_sequence_iter_get_position (ptr);
 
