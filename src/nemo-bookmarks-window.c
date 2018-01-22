@@ -524,9 +524,9 @@ nemo_bookmarks_window_save_geometry (GtkWindow *window)
 }
 
 static void
-on_bookmark_list_changed (NemoBookmarkList *bookmarks, gpointer data)
+on_bookmark_list_changed (NemoBookmarkList *bmarks, gpointer data)
 {
-	g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
+	g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bmarks));
 
 	/* maybe add logic here or in repopulate to save/restore selection */
 	repopulate ();
@@ -1007,11 +1007,11 @@ repopulate (void)
 
 		if (bookmark == selected) {
 			/* save old selection */
-			GtkTreePath *path;
+			GtkTreePath *pth;
 
-			path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), &iter);
-			reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), path);
-			gtk_tree_path_free (path);
+			pth = gtk_tree_model_get_path (GTK_TREE_MODEL (store), &iter);
+			reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), pth);
+			gtk_tree_path_free (pth);
 		}
 
 		g_object_unref (bookmark_icon);
