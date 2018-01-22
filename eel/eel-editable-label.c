@@ -1325,7 +1325,7 @@ eel_editable_label_get_block_cursor_location (EelEditableLabel  *label,
   if (layout_line == NULL)
     return FALSE;
 
-    text = pango_layout_get_text (label->layout);
+  text = pango_layout_get_text (label->layout);
   if (index[0] < layout_line->start_index + layout_line->length)
     {
       /* this may be a zero-width character in the middle of the line,
