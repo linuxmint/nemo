@@ -4454,8 +4454,8 @@ copy_move_file (CopyMoveJob *copy_job,
 	/* Conflict */
 	if (!overwrite &&
 	    IS_IO_ERROR (error, EXISTS)) {
-		gboolean is_merge;
-		ConflictResponseData *response;
+		gboolean is_a_merge;
+		ConflictResponseData *resp;
 
 		g_error_free (error);
 
@@ -4465,14 +4465,14 @@ copy_move_file (CopyMoveJob *copy_job,
 			goto retry;
 		}
 
-		is_merge = FALSE;
+		is_a_merge = FALSE;
 
 		if (is_dir (dest) && is_dir (src)) {
-			is_merge = TRUE;
+			is_a_merge = TRUE;
 		}
 
-		if ((is_merge && job->merge_all) ||
-		    (!is_merge && job->replace_all)) {
+		if ((is_a_merge && job->merge_all) ||
+		    (!is_a_merge && job->replace_all)) {
 			overwrite = TRUE;
 			goto retry;
 		}
@@ -4481,33 +4481,33 @@ copy_move_file (CopyMoveJob *copy_job,
 			goto out;
 		}
 
-		response = run_conflict_dialog (job, src, dest, dest_dir);	
+		resp = run_conflict_dialog (job, src, dest, dest_dir);
 
-		if (response->id == GTK_RESPONSE_CANCEL ||
-		    response->id == GTK_RESPONSE_DELETE_EVENT) {
-			conflict_response_data_free (response);
+		if (resp->id == GTK_RESPONSE_CANCEL ||
+		    resp->id == GTK_RESPONSE_DELETE_EVENT) {
+			conflict_response_data_free (resp);
 			abort_job (job);
-		} else if (response->id == CONFLICT_RESPONSE_SKIP) {
-			if (response->apply_to_all) {
+		} else if (resp->id == CONFLICT_RESPONSE_SKIP) {
+			if (resp->apply_to_all) {
 				job->skip_all_conflict = TRUE;
 			}
-			conflict_response_data_free (response);
-		} else if (response->id == CONFLICT_RESPONSE_REPLACE) { /* merge/replace */
-			if (response->apply_to_all) {
-				if (is_merge) {
+			conflict_response_data_free (resp);
+		} else if (resp->id == CONFLICT_RESPONSE_REPLACE) { /* merge/replace */
+			if (resp->apply_to_all) {
+				if (is_a_merge) {
 					job->merge_all = TRUE;
 				} else {
 					job->replace_all = TRUE;
 				}
 			}
 			overwrite = TRUE;
-			conflict_response_data_free (response);
+			conflict_response_data_free (resp);
 			goto retry;
-		} else if (response->id == CONFLICT_RESPONSE_RENAME) {
+		} else if (resp->id == CONFLICT_RESPONSE_RENAME) {
 			g_object_unref (dest);
 			dest = get_target_file_for_display_name (dest_dir,
-								 response->new_name);
-			conflict_response_data_free (response);
+								 resp->new_name);
+			conflict_response_data_free (resp);
 			goto retry;
 		} else {
 			g_assert_not_reached ();
@@ -5093,7 +5093,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	else if (!overwrite &&
 		 IS_IO_ERROR (error, EXISTS)) {
 		gboolean is_merge;
-		ConflictResponseData *response;
+		ConflictResponseData *resp;
 		
 		g_error_free (error);
 
@@ -5112,19 +5112,19 @@ move_file_prepare (CopyMoveJob *move_job,
 			goto out;
 		}
 
-		response = run_conflict_dialog (job, src, dest, dest_dir);
+		resp = run_conflict_dialog (job, src, dest, dest_dir);
 
-		if (response->id == GTK_RESPONSE_CANCEL ||
-		    response->id == GTK_RESPONSE_DELETE_EVENT) {
-			conflict_response_data_free (response);	
+		if (resp->id == GTK_RESPONSE_CANCEL ||
+		    resp->id == GTK_RESPONSE_DELETE_EVENT) {
+			conflict_response_data_free (resp);
 			abort_job (job);
-		} else if (response->id == CONFLICT_RESPONSE_SKIP) {
-			if (response->apply_to_all) {
+		} else if (resp->id == CONFLICT_RESPONSE_SKIP) {
+			if (resp->apply_to_all) {
 				job->skip_all_conflict = TRUE;
 			}
-			conflict_response_data_free (response);
-		} else if (response->id == CONFLICT_RESPONSE_REPLACE) { /* merge/replace */
-			if (response->apply_to_all) {
+			conflict_response_data_free (resp);
+		} else if (resp->id == CONFLICT_RESPONSE_REPLACE) { /* merge/replace */
+			if (resp->apply_to_all) {
 				if (is_merge) {
 					job->merge_all = TRUE;
 				} else {
@@ -5132,13 +5132,13 @@ move_file_prepare (CopyMoveJob *move_job,
 				}
 			}
 			overwrite = TRUE;
-			conflict_response_data_free (response);
+			conflict_response_data_free (resp);
 			goto retry;
-		} else if (response->id == CONFLICT_RESPONSE_RENAME) {
+		} else if (resp->id == CONFLICT_RESPONSE_RENAME) {
 			g_object_unref (dest);
 			dest = get_target_file_for_display_name (dest_dir,
-								 response->new_name);
-			conflict_response_data_free (response);
+								 resp->new_name);
+			conflict_response_data_free (resp);
 			goto retry;
 		} else {
 			g_assert_not_reached ();
