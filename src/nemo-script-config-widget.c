@@ -62,7 +62,7 @@ on_check_toggled(GtkWidget *button, ScriptProxy *proxy)
 
     GPtrArray *new_list = g_ptr_array_new ();
 
-    int i;
+    guint i;
 
     if (enabled) {
         for (i = 0; i < g_strv_length (blacklist); i++) {
@@ -165,7 +165,7 @@ refresh_widget (NemoScriptConfigWidget *widget)
             ScriptProxy *proxy = l->data;
 
             gboolean active = TRUE;
-            gint i = 0;
+            guint i = 0;
 
             for (i = 0; i < g_strv_length (blacklist); i++) {
                 if (g_strcmp0 (blacklist[i], proxy->name) == 0) {
@@ -285,7 +285,7 @@ static void setup_dir_monitors (NemoScriptConfigWidget *widget)
 
     gchar **data_dirs = (gchar **) g_get_system_data_dirs ();
 
-    gint i;
+    guint i;
     for (i = 0; i < g_strv_length (data_dirs); i++) {
         gchar *path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
         try_monitor_path (widget, path);
