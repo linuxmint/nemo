@@ -555,7 +555,7 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 
 		store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 		for (l = mime_infos; l != NULL; l = l->next) {
-			GtkTreeIter iter;
+			GtkTreeIter it;
 			char *mime_type = l->data;
 			char *description;
 
@@ -564,8 +564,8 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 				description = g_strdup (mime_type);
 			}
 			
-			gtk_list_store_append (store, &iter);
-			gtk_list_store_set (store, &iter,
+			gtk_list_store_append (store, &it);
+			gtk_list_store_set (store, &it,
 					    0, description,
 					    1, mime_type,
 					    -1);
@@ -574,8 +574,6 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 			g_free (description);
 		}
 		g_list_free (mime_infos);
-		
-
 		
 		toplevel = gtk_widget_get_toplevel (GTK_WIDGET (combo_box));
 		dialog = gtk_dialog_new_with_buttons (_("Select type"),
@@ -647,7 +645,7 @@ type_row_create_widgets (NemoQueryEditorRow *row)
 	GtkCellRenderer *cell;
 	GtkListStore *store;
 	GtkTreeIter iter;
-	int i;
+	guint i;
 
 	store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	combo = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
@@ -791,7 +789,7 @@ type_add_rows_from_query (NemoQueryEditor    *editor,
 	const char *desc;
 	NemoQueryEditorRow *row;
 	GtkTreeIter iter;
-	int i;
+	guint i;
 	GtkTreeModel *model;
 	GList *l;
 
