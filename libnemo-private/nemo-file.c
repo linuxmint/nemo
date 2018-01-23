@@ -4110,7 +4110,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
     if (file->details->thumbnail_access_problem)
         return FALSE;
 
-	if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
+    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
 			return FALSE;
 		} else {
@@ -6428,7 +6428,7 @@ get_basic_type_for_mime_type (const char *mime_type)
 
     icon_name = g_content_type_get_generic_icon_name (mime_type);
     if (icon_name != NULL) {
-        int i;
+        guint i;
 
         for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
             if (strcmp (mime_type_map[i].icon_name, icon_name) == 0) {
@@ -7111,7 +7111,7 @@ gboolean
 nemo_file_is_archive (NemoFile *file)
 {
     gchar *mime_type;
-    gint i;
+    guint i;
 
     g_return_val_if_fail (file != NULL, FALSE);
 
@@ -7496,7 +7496,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     }
 
     if (nemo_file_is_directory (file)) {
-        gint item_count;
+        guint item_count;
         if (nemo_file_get_directory_item_count (file, &item_count, NULL)) {
             gchar *launchpad_sucks = THOU_TO_STR (item_count);
             gchar *count = g_strdup_printf (ngettext ("%s item", "%s items", item_count), launchpad_sucks);
