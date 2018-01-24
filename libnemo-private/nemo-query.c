@@ -35,9 +35,6 @@ struct NemoQueryDetails {
 	GList *mime_types;
 };
 
-static void  nemo_query_class_init       (NemoQueryClass *class);
-static void  nemo_query_init             (NemoQuery      *query);
-
 G_DEFINE_TYPE (NemoQuery, nemo_query, G_TYPE_OBJECT);
 
 static void
