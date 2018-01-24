@@ -206,7 +206,7 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="model8">
+  <object class="GtkListStore" id="model32">
     <columns>
       <!-- column-name gchararray -->
       <column type="gchararray"/>
@@ -244,6 +244,12 @@
       </row>
       <row>
         <col id="0" translatable="yes">8 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">16 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">32 GB</col>
       </row>
     </data>
   </object>
@@ -2402,7 +2408,7 @@
                                               <object class="GtkComboBox" id="preview_image_size_combobox">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="model">model8</property>
+                                                <property name="model">model32</property>
                                                 <child>
                                                   <object class="GtkCellRendererText" id="renderer8"/>
                                                   <attributes>
