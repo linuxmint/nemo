@@ -1496,6 +1496,8 @@ nemo_icon_container_get_drop_action (NemoIconContainer *container,
 	case NEMO_ICON_DND_RAW:
 		*action = GDK_ACTION_COPY;
 		break;
+    default:
+        break;
 	}
 }
 
@@ -1910,6 +1912,8 @@ drag_data_received_callback (GtkWidget *widget,
 	case NEMO_ICON_DND_ROOTWINDOW_DROP:
 		/* Do nothing, this won't even happen, since we don't want to call get_data twice */
 		break;
+    default:
+        break;
 	}
 
 	/* this is the second use case of this callback.
@@ -2005,6 +2009,8 @@ drag_data_received_callback (GtkWidget *widget,
             free_dnd_grid (NEMO_ICON_CONTAINER (widget));
 			break;
 		} /* NEMO_ICON_DND_XDNDDIRECTSAVE */
+        default:
+            break;
 		}
 		gtk_drag_finish (context, success, FALSE, time);
 		
