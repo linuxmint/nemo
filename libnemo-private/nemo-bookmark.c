@@ -173,7 +173,7 @@ construct_default_icon_from_metadata (NemoBookmark *bookmark)
     }
 
     if (ret != NULL && md->emblems != NULL) {
-        gint i = 0;
+        guint i = 0;
 
         GIcon *emb_icon;
         GEmblem *emblem;
@@ -289,9 +289,9 @@ bookmark_file_changed_callback (NemoFile *file,
 	if (nemo_file_is_gone (file) ||
 	    nemo_file_is_in_trash (file)) {
 		/* The file we were monitoring has been trashed, deleted,
-		 * or moved in a way that we didn't notice. We should make 
-		 * a spanking new NemoFile object for this 
-		 * location so if a new file appears in this place 
+		 * or moved in a way that we didn't notice. We should make
+		 * a spanking new NemoFile object for this
+		 * location so if a new file appears in this place
 		 * we will notice. However, we can't immediately do so
 		 * because creating a new NemoFile directly as a result
 		 * of noticing a file goes away may trigger i/o on that file
@@ -448,7 +448,7 @@ nemo_bookmark_finalize (GObject *object)
 
 	bookmark = NEMO_BOOKMARK (object);
 
-	nemo_bookmark_disconnect_file (bookmark);	
+	nemo_bookmark_disconnect_file (bookmark);
 
 	g_object_unref (bookmark->details->location);
 	g_clear_object (&bookmark->details->icon);
@@ -579,11 +579,11 @@ nemo_bookmark_set_custom_name (NemoBookmark *bookmark,
  * Check whether two bookmarks are considered identical.
  * @a: first NemoBookmark*.
  * @b: second NemoBookmark*.
- * 
- * Return value: 0 if @a and @b have same name and uri, 1 otherwise 
+ *
+ * Return value: 0 if @a and @b have same name and uri, 1 otherwise
  * (GCompareFunc style)
  **/
-int		    
+int
 nemo_bookmark_compare_with (gconstpointer a, gconstpointer b)
 {
 	NemoBookmark *bookmark_a;
@@ -599,12 +599,12 @@ nemo_bookmark_compare_with (gconstpointer a, gconstpointer b)
 			   bookmark_b->details->location)) {
 		return 1;
 	}
-	
+
 	if (g_strcmp0 (bookmark_a->details->name,
 		       bookmark_b->details->name) != 0) {
 		return 1;
 	}
-	
+
 	return 0;
 }
 
@@ -614,11 +614,11 @@ nemo_bookmark_compare_with (gconstpointer a, gconstpointer b)
  * Check whether the uris of two bookmarks are for the same location.
  * @a: first NemoBookmark*.
  * @b: second NemoBookmark*.
- * 
- * Return value: 0 if @a and @b have matching uri, 1 otherwise 
+ *
+ * Return value: 0 if @a and @b have matching uri, 1 otherwise
  * (GCompareFunc style)
  **/
-int		    
+int
 nemo_bookmark_compare_uris (gconstpointer a, gconstpointer b)
 {
 	NemoBookmark *bookmark_a;
@@ -669,8 +669,8 @@ nemo_bookmark_get_location (NemoBookmark *bookmark)
 	/* Try to connect a file in case file exists now but didn't earlier.
 	 * This allows a bookmark to update its image properly in the case
 	 * where a new file appears with the same URI as a previously-deleted
-	 * file. Calling connect_file here means that attempts to activate the 
-	 * bookmark will update its image if possible. 
+	 * file. Calling connect_file here means that attempts to activate the
+	 * bookmark will update its image if possible.
 	 */
 	nemo_bookmark_connect_file (bookmark);
 
@@ -703,13 +703,13 @@ nemo_bookmark_new (GFile                *location,
     else
         name = g_strdup (custom_name);
 
-	new_bookmark = NEMO_BOOKMARK (g_object_new (NEMO_TYPE_BOOKMARK,
-							"location", location,
-							"icon", icon,
-							"name", name,
-							"custom-name", custom_name != NULL,
-                            "metadata", md,
-							NULL));
+    new_bookmark = NEMO_BOOKMARK (g_object_new (NEMO_TYPE_BOOKMARK,
+						"location", location,
+						"icon", icon,
+						"name", name,
+						"custom-name", custom_name != NULL,
+						"metadata", md,
+						NULL));
     g_free (name);
 
     return new_bookmark;
@@ -730,11 +730,11 @@ create_image_widget_for_bookmark (NemoBookmark *bookmark)
 
 /**
  * nemo_bookmark_menu_item_new:
- * 
+ *
  * Return a menu item representing a bookmark.
  * @bookmark: The bookmark the menu item represents.
  * Return value: A newly-created bookmark, not yet shown.
- **/ 
+ **/
 GtkWidget *
 nemo_bookmark_menu_item_new (NemoBookmark *bookmark)
 {
@@ -893,7 +893,7 @@ nemo_bookmark_metadata_compare (NemoBookmarkMetadata *d1,
         (g_strv_length (d1->emblems) != g_strv_length (d2->emblems)))
         return FALSE;
 
-    gint i;
+    guint i;
 
     for (i = 0; i < g_strv_length (d1->emblems); i++) {
         if (g_strcmp0 (d1->emblems[i], d2->emblems[i]) != 0)
