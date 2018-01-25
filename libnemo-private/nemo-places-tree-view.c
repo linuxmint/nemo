@@ -22,11 +22,6 @@
 G_DEFINE_TYPE (NemoPlacesTreeView, nemo_places_tree_view,
                GTK_TYPE_TREE_VIEW);
 
-
-static void     nemo_places_tree_view_init       (NemoPlacesTreeView      *tree_view);
-
-static void     nemo_places_tree_view_class_init (NemoPlacesTreeViewClass *klass);
-
 static void     nemo_places_tree_view_finalize (GObject *gobject);
 
 static gpointer parent_class;
