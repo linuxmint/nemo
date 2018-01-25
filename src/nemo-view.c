@@ -2671,7 +2671,7 @@ nemo_view_set_selection (NemoView *nemo_view,
 }
 
 static char *
-get_bulk_rename_tool ()
+get_bulk_rename_tool (void)
 {
 	char *bulk_rename_tool;
 	g_settings_get (nemo_preferences, NEMO_PREFERENCES_BULK_RENAME_TOOL, "^ay", &bulk_rename_tool);
@@ -2679,7 +2679,7 @@ get_bulk_rename_tool ()
 }
 
 static gboolean
-have_bulk_rename_tool ()
+have_bulk_rename_tool (void)
 {
 	char *bulk_rename_tool;
 	gboolean have_tool;
@@ -7111,8 +7111,8 @@ static void
 open_as_root (const gchar *path)
 {
     gchar *argv[4];
-    argv[0] = "pkexec";
-    argv[1] = "nemo";
+    argv[0] = (gchar *)"pkexec";
+    argv[1] = (gchar *)"nemo";
     argv[2] = g_strdup (path);
     argv[3] = NULL;
     GPid pid;
@@ -7299,7 +7299,7 @@ invoke_external_bulk_rename_utility (NemoView *view,
 		g_free (quoted_parameter);
 	}
 
-    gint i = 0;
+        guint i = 0;
 
 	// Escape percents
 	for (i = 0; i < strlen(cmd->str); i++) {
@@ -9550,7 +9550,7 @@ update_complex_popup_items (NemoView *view)
 {
     GtkWidget *item;
     GtkAction *action;
-    gint i;
+    guint i;
 
     gboolean complex_mode = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS);
 
