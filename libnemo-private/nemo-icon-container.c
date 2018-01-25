@@ -5457,7 +5457,7 @@ preview_selected_items (NemoIconContainer *container)
 {
 	GList *selection;
 	GArray *locations;
-	gint idx;
+	guint idx;
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 

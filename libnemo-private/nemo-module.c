@@ -120,7 +120,7 @@ module_is_selected (GType type)
     gchar **disabled_list = g_settings_get_strv (nemo_plugin_preferences, NEMO_PLUGIN_PREFERENCES_DISABLED_EXTENSIONS);
 
     gboolean ret = TRUE;
-    gint i = 0;
+    guint i = 0;
 
     for (i = 0; i < g_strv_length (disabled_list); i++) {
         if (g_strcmp0 (disabled_list[i], g_type_name (type)) == 0)
