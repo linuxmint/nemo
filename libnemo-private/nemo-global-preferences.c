@@ -107,7 +107,7 @@ nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key)
     gchar **disabled_list = g_settings_get_strv (nemo_plugin_preferences, key);
 
     gboolean ret = TRUE;
-    gint i = 0;
+    guint i = 0;
 
     for (i = 0; i < g_strv_length (disabled_list); i++) {
         if (g_strcmp0 (disabled_list[i], name) == 0)

@@ -748,7 +748,7 @@ set_sort_type (NemoDesktopIconGridView *view,
                NemoFileSortType         type)
 {
     NemoFile *file;
-    gint i;
+    guint i;
     gchar *old_sort_name;
 
     if (view->details->updating_menus) {
@@ -1049,7 +1049,7 @@ real_update_menus (NemoView *view)
                                           "Desktop Autoarrange");
     gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), auto_arrange);
 
-    gint i;
+    guint i;
     gchar *order;
 
     order = nemo_icon_view_get_directory_sort_by (NEMO_ICON_VIEW (desktop_view), file);
