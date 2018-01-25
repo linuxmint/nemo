@@ -1483,7 +1483,7 @@ nemo_list_model_set_drag_view (NemoListModel *model,
 }
 
 GtkTargetList *
-nemo_list_model_get_drag_target_list ()
+nemo_list_model_get_drag_target_list (void)
 {
 	GtkTargetList *target_list;
 

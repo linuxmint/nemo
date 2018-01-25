@@ -56,7 +56,7 @@ static GDebugKey keys[] = {
 };
 
 static void
-nemo_debug_set_flags_from_env ()
+nemo_debug_set_flags_from_env (void)
 {
   guint nkeys;
   const gchar *flags_string;
