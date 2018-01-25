@@ -208,6 +208,12 @@ new_tab_action (NemoNavigationAction *self)
 					NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
 		break;
 	/* remaining actions are not supported */
+        case NEMO_NAVIGATION_DIRECTION_RELOAD:
+        case NEMO_NAVIGATION_DIRECTION_HOME:
+        case NEMO_NAVIGATION_DIRECTION_COMPUTER:
+        case NEMO_NAVIGATION_DIRECTION_EDIT:
+                return FALSE;
+                break;
 	default:
 		return FALSE;
 	}
@@ -331,6 +337,8 @@ nemo_navigation_action_set_property (GObject *object,
 		case PROP_WINDOW:
 			nav->priv->window = g_value_get_object (value);
 			break;
+                default:
+                        break;
 	}
 }
 
@@ -355,6 +363,8 @@ nemo_navigation_action_get_property (GObject *object,
 		case PROP_WINDOW:
 			g_value_set_object (value, nav->priv->window);
 			break;
+                default:
+                        break;
 	}
 }
 
