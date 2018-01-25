@@ -537,7 +537,7 @@ nemo_icon_info_get_pixbuf_nodefault_at_size (NemoIconInfo  *icon,
 						 gsize              forced_size)
 {
 	GdkPixbuf *pixbuf, *scaled_pixbuf;
-	int w, h, s;
+	guint w, h, s;
 	double scale;
 
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault (icon);
@@ -566,7 +566,7 @@ nemo_icon_info_get_pixbuf_at_size (NemoIconInfo  *icon,
 				       gsize              forced_size)
 {
 	GdkPixbuf *pixbuf, *scaled_pixbuf;
-	int w, h, s;
+	guint w, h, s;
 	double scale;
 
 	pixbuf = nemo_icon_info_get_pixbuf (icon);
@@ -592,7 +592,7 @@ nemo_icon_info_get_desktop_pixbuf_at_size (NemoIconInfo  *icon,
                                            gsize          max_width)
 {
     GdkPixbuf *pixbuf, *scaled_pixbuf;
-    int w, h;
+    guint w, h;
     double scale;
 
     pixbuf = nemo_icon_info_get_pixbuf (icon);
@@ -671,6 +671,7 @@ nemo_get_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 		return NEMO_ICON_SIZE_LARGER;
 	case NEMO_ZOOM_LEVEL_LARGEST:
 		return NEMO_ICON_SIZE_LARGEST;
+    case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
 	}
@@ -690,6 +691,7 @@ nemo_get_desktop_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
         case NEMO_ZOOM_LEVEL_SMALLER:
         case NEMO_ZOOM_LEVEL_LARGER:
         case NEMO_ZOOM_LEVEL_LARGEST:
+        case NEMO_ZOOM_LEVEL_NULL:
         default:
             g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
     }
@@ -713,6 +715,7 @@ nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
         return NEMO_ICON_SIZE_LARGE;
     case NEMO_ZOOM_LEVEL_LARGEST:
         return NEMO_ICON_SIZE_LARGER;
+    case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
     }
@@ -786,6 +789,7 @@ nemo_user_special_directory_get_gicon (GUserDirectory directory)
 		ICON_CASE (TEMPLATES);
 		ICON_CASE (VIDEOS);
 
+    case G_USER_N_DIRECTORIES:
 	default:
 		return g_themed_icon_new ("folder");
 	}
