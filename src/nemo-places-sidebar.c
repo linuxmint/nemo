@@ -70,6 +70,10 @@
 #define DRAG_EXPAND_CATEGORY_DELAY 500
 #define EJECT_PAD_COLUMN_WIDTH 14
 
+#if (!GLIB_CHECK_VERSION(2,50,0))
+#define g_drive_is_removable g_drive_is_media_removable
+#endif
+
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
@@ -1046,7 +1050,7 @@ update_places (NemoPlacesSidebar *sidebar)
             }
             g_list_free (volumes);
         } else {
-            if (g_drive_is_media_removable (drive) && !g_drive_is_media_check_automatic (drive)) {
+            if (g_drive_is_removable (drive) && !g_drive_is_media_check_automatic (drive)) {
                 /* If the drive has no mountable volumes and we cannot detect media change.. we
                  * display the drive in the sidebar so the user can manually poll the drive by
                  * right clicking and selecting "Rescan..."
@@ -2164,7 +2168,7 @@ check_visibility (GMount           *mount,
 	check_unmount_and_eject (mount, volume, drive, show_unmount, show_eject);
 
 	if (drive != NULL) {
-		if (g_drive_is_media_removable (drive) &&
+		if (g_drive_is_removable (drive) &&
 		    !g_drive_is_media_check_automatic (drive) && 
 		    g_drive_can_poll_for_media (drive))
 			*show_rescan = TRUE;

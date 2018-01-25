@@ -27,6 +27,10 @@
 #define DEBUG_FLAG NEMO_DEBUG_ACTIONS
 #include <libnemo-private/nemo-debug.h>
 
+#if (!GLIB_CHECK_VERSION(2,50,0))
+#define g_drive_is_removable g_drive_is_media_removable
+#endif
+
 G_DEFINE_TYPE (NemoAction, nemo_action,
 	       GTK_TYPE_ACTION);
 
@@ -1431,7 +1435,7 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                     if (mount) {
                         GDrive *drive = g_mount_get_drive (mount);
                         if (drive) {
-                            if (g_drive_is_media_removable (drive))
+                            if (g_drive_is_removable (drive))
                                 is_removable = TRUE;
                             g_object_unref (drive);
                         }
