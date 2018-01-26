@@ -125,7 +125,7 @@ static struct {
 static const char *
 convert_key_name (const char *old_key)
 {
-	int i;
+	guint i;
 
 	for (i = 0; i < G_N_ELEMENTS (metadata_keys); i++) {
 		if (strcmp (metadata_keys[i].old_key, old_key) == 0) {
