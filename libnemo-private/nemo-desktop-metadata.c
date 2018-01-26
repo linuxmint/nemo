@@ -47,7 +47,7 @@ get_keyfile_path (void)
 	retval = g_build_filename (xdg_dir, "desktop-metadata", NULL);
 
 	g_free (xdg_dir);
-	
+
 	return retval;
 }
 
@@ -164,7 +164,7 @@ nemo_desktop_set_metadata_string (NemoFile *file,
 
 	if (nemo_desktop_update_metadata_from_keyfile (file, name)) {
 		nemo_file_changed (file);
-	}	
+	}
 }
 
 #define STRV_TERMINATOR "@x-nemo-desktop-metadata-term@"
@@ -278,7 +278,7 @@ nemo_desktop_update_metadata_from_keyfile (NemoFile *file,
 	gsize length, values_length;
 	GKeyFile *keyfile;
 	GFileInfo *info;
-	gint idx;
+	guint idx;
 	gboolean res;
 
 	keyfile = get_keyfile ();
