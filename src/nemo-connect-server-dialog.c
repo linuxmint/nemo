@@ -50,7 +50,7 @@ struct _NemoConnectServerDialogDetails {
 
 	GtkWidget *info_bar;
 	GtkWidget *info_bar_content;
-	
+
 	GtkWidget *type_combo;
 	GtkWidget *server_entry;
 	GtkWidget *share_entry;
@@ -87,7 +87,7 @@ static void iconized_entry_changed_cb (GtkEditable *entry,
 
 enum {
 	RESPONSE_CONNECT
-};	
+};
 
 struct MethodInfo {
 	const char *scheme;
@@ -164,7 +164,7 @@ connect_dialog_set_connecting (NemoConnectServerDialog *dialog)
 	gint width, height;
 
 	connect_dialog_restore_info_bar (dialog, GTK_MESSAGE_INFO);
-	gtk_widget_show (dialog->details->info_bar);	
+	gtk_widget_show (dialog->details->info_bar);
 
 	content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (dialog->details->info_bar));
 
@@ -204,7 +204,7 @@ connect_dialog_gvfs_error (NemoConnectServerDialog *dialog)
 	image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 6);
 	gtk_widget_show (image);
-	
+
 	label = gtk_label_new (_("Can't load the supported server method list.\n"
 				 "Please check your gvfs installation."));
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 6);
@@ -232,7 +232,7 @@ iconized_entry_restore (gpointer data,
 
 	g_signal_handlers_disconnect_by_func (entry,
 					      iconized_entry_changed_cb,
-					      dialog);	
+					      dialog);
 }
 
 static void
@@ -299,7 +299,7 @@ connect_dialog_set_info_bar_error (NemoConnectServerDialog *dialog,
 
 		g_free (str);
 
-		break;		
+		break;
 	case G_IO_ERROR_FAILED:
 	default:
 		label = gtk_label_new (error->message);
@@ -515,7 +515,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	int index;
 	GtkTreeIter iter;
 	char *user, *initial_path, *server, *folder, *domain, *port_str;
-	char *t, *join, *uri;
+	char *t, *uri;
 	char *temp, *stripped_server;
 	double port;
 
@@ -523,7 +523,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (dialog->details->type_combo), &iter);
 	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->details->type_combo)),
 			    &iter, 0, &index, -1);
-	g_assert (index < G_N_ELEMENTS (methods) && index >= 0);
+	g_assert (index < (int)G_N_ELEMENTS (methods) && index >= 0);
 	meth = &(methods[index]);
 
 	server = gtk_editable_get_chars (GTK_EDITABLE (dialog->details->server_entry), 0, -1);
@@ -544,7 +544,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	/* FTP special case */
 	if (meth->flags & IS_ANONYMOUS) {
 		user = g_strdup ("anonymous");
-		
+
 		/* SMB special case */
 	} else if (strcmp (meth->scheme, "smb") == 0) {
 		g_free (initial_path);
@@ -564,7 +564,7 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 
 	/* domain */
 	domain = gtk_editable_get_chars (GTK_EDITABLE (dialog->details->domain_entry), 0, -1);
-			
+
 	if (strlen (domain) != 0 && strcmp(meth->scheme, "smb") == 0) {
 		t = user;
 
@@ -575,15 +575,12 @@ connect_dialog_connect_to_server (NemoConnectServerDialog *dialog)
 	/* folder */
 	folder = gtk_editable_get_chars (GTK_EDITABLE (dialog->details->folder_entry), 0, -1);
 
-	if (folder[0] != 0 &&
-	    folder[0] != '/') {
-		join = "/";
-	} else {
-		join = "";
-	}
-
 	t = folder;
-	folder = g_strconcat (initial_path, join, t, NULL);
+        if (folder[0] != 0 && folder[0] != '/') {
+	    folder = g_strconcat (initial_path, "/", t, NULL);
+        } else {
+	    folder = g_strconcat (initial_path, "", t, NULL);
+        }
 	g_free (t);
 
 	t = folder;
@@ -760,7 +757,7 @@ connect_dialog_setup_for_type (NemoConnectServerDialog *dialog)
 
 	gtk_tree_model_get (gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->details->type_combo)),
 			    &iter, 0, &index, -1);
-	g_assert (index < G_N_ELEMENTS (methods) && index >= 0);
+	g_assert (index < (int)G_N_ELEMENTS (methods) && index >= 0);
 	meth = &(methods[index]);
 
     if (g_settings_get_int (nemo_preferences, NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD) != index) {
@@ -834,8 +831,8 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 	GtkListStore *store;
 	GtkCellRenderer *renderer;
 	gchar *str;
-	int i;
-	
+	guint i;
+
 	dialog->details = G_TYPE_INSTANCE_GET_PRIVATE (dialog, NEMO_TYPE_CONNECT_SERVER_DIALOG,
 						       NemoConnectServerDialogDetails);
 
@@ -947,7 +944,7 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 	for (i = 0; i < G_N_ELEMENTS (methods); i++) {
 		GtkTreeIter iter;
 		const gchar * const *supported;
-		int j;
+		guint j;
 
 		/* skip methods that don't have corresponding gvfs uri schemes */
 		supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
@@ -970,11 +967,11 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,
-				    0, i,
+				    0, (int)i,
 				    1, get_method_description (&(methods[i])),
 				    -1);
 
-        if (i == last) {
+        if ((int)i == last) {
             gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo), &iter);
         }
 	}
@@ -1218,7 +1215,7 @@ nemo_connect_server_dialog_fill_details_async (NemoConnectServerDialog *self,
 			g_mount_operation_set_password (G_MOUNT_OPERATION (operation),
 							str);
 			set_flags ^= G_ASK_PASSWORD_NEED_PASSWORD;
-			
+
 			if (flags & G_ASK_PASSWORD_SAVING_SUPPORTED &&
 			    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->details->remember_checkbox))) {
 				g_mount_operation_set_password_save (G_MOUNT_OPERATION (operation),
