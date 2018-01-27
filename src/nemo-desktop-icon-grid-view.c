@@ -244,7 +244,7 @@ nemo_desktop_icon_grid_view_remove_file (NemoView *view, NemoFile *file, NemoDir
         g_free (dir_uri);
         g_free (model_uri);
     }
-    
+
     if (nemo_icon_container_remove (get_icon_container (view), NEMO_ICON_CONTAINER_ICON_DATA (file))) {
         nemo_file_unref (file);
     }
@@ -257,7 +257,7 @@ nemo_desktop_icon_grid_view_add_file (NemoView *view, NemoFile *file, NemoDirect
     NemoIconContainer *icon_container;
 
     g_assert (directory == nemo_view_get_model (view));
-    
+
     icon_view = NEMO_ICON_VIEW (view);
     icon_container = get_icon_container (icon_view);
 
@@ -276,11 +276,11 @@ nemo_desktop_icon_grid_view_file_changed (NemoView *view, NemoFile *file, NemoDi
     NemoIconView *icon_view;
 
     g_assert (directory == nemo_view_get_model (view));
-    
+
     g_return_if_fail (view != NULL);
     icon_view = NEMO_ICON_VIEW (view);
 
-    
+
     if (!should_show_file_on_current_monitor (view, file)) {
         nemo_desktop_icon_grid_view_remove_file (view, file, directory);
     } else {
@@ -430,12 +430,12 @@ nemo_desktop_icon_grid_view_handle_middle_click (NemoIconContainer *icon_contain
 		gdk_device_ungrab (pointer, GDK_CURRENT_TIME);
 	}
 
-	
+
 	if (keyboard != NULL) {
 		gdk_device_ungrab (keyboard, GDK_CURRENT_TIME);
 	}
 
-	/* Stop the event because we don't want anyone else dealing with it. */	
+	/* Stop the event because we don't want anyone else dealing with it. */
 	gdk_flush ();
 	g_signal_stop_emission_by_name (icon_container, "middle_click");
 
@@ -454,7 +454,7 @@ nemo_desktop_icon_grid_view_handle_middle_click (NemoIconContainer *icon_contain
 	x_event.state = event->state;
 	x_event.button = event->button;
 	x_event.same_screen = True;
-	
+
 	/* Send it to the root window, the window manager will handle it. */
 	XSendEvent (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), True,
 		    ButtonPressMask, (XEvent *) &x_event);
@@ -481,7 +481,7 @@ do_desktop_rescan (gpointer data)
 	if (desktop_icon_grid_view->details->pending_rescan) {
 		return TRUE;
 	}
-	
+
 	if (stat (desktop_directory, &buf) == -1) {
 		return TRUE;
 	}
@@ -539,7 +539,7 @@ static void
 font_changed_callback (gpointer callback_data)
 {
  	g_return_if_fail (NEMO_IS_DESKTOP_ICON_GRID_VIEW (callback_data));
-	
+
 	nemo_desktop_icon_grid_view_update_icon_container_fonts (NEMO_DESKTOP_ICON_GRID_VIEW (callback_data));
 }
 
@@ -596,7 +596,7 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
             (desktop_icon_grid_view, "begin_loading",
              G_CALLBACK (delayed_init), desktop_icon_grid_view, 0);
     }
-    
+
     nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
     nemo_icon_container_set_is_desktop (icon_container, TRUE);
 
@@ -610,7 +610,7 @@ nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_g
     allocation.x = 0;
     allocation.y = 0;
     gtk_widget_set_allocation (GTK_WIDGET (icon_container), &allocation);
-    
+
     gtk_widget_queue_resize (GTK_WIDGET (icon_container));
 
     hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (icon_container));
@@ -771,7 +771,7 @@ set_sort_type (NemoDesktopIconGridView *view,
 
                 nemo_icon_container_sort (get_icon_container (view));
 
-                selection = nemo_view_get_selection (view);
+                selection = nemo_view_get_selection (NEMO_VIEW (view));
 
                 /* Make sure at least one of the selected items is scrolled into view */
                 if (selection != NULL) {
@@ -960,7 +960,7 @@ trash_link_is_selection (NemoView *view)
 	gboolean result;
 
 	result = FALSE;
-	
+
 	selection = nemo_view_get_selection (view);
 
 	if ((g_list_length (selection) == 1) &&
@@ -975,7 +975,7 @@ trash_link_is_selection (NemoView *view)
 			g_object_unref (link);
 		}
 	}
-	
+
 	nemo_file_list_free (selection);
 
 	return result;
@@ -987,7 +987,6 @@ real_update_menus (NemoView *view)
 	NemoDesktopIconGridView *desktop_view;
     NemoIconContainer *container;
     NemoFile *file;
-    NemoZoomLevel zoom_level;
 	char *label;
 	gboolean include_empty_trash;
     gboolean horizontal_layout;
@@ -1097,6 +1096,11 @@ real_update_menus (NemoView *view)
                                                   "Desktop Large");
             break;
         case NEMO_ZOOM_LEVEL_STANDARD:
+        case NEMO_ZOOM_LEVEL_NULL:
+        case NEMO_ZOOM_LEVEL_SMALLER:
+        case NEMO_ZOOM_LEVEL_SMALLEST:
+        case NEMO_ZOOM_LEVEL_LARGER:
+        case NEMO_ZOOM_LEVEL_LARGEST:
         default:
             action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                                   "Desktop Normal");
@@ -1163,8 +1167,8 @@ static const GtkRadioActionEntry desktop_size_radio_entries[] = {
 };
 
 static const GtkActionEntry desktop_grid_entries[] = {
-    /* name, stock id, label */  { "Desktop Submenu", NULL, N_("_Desktop") }, 
-    /* name, stock id, label */  { "Desktop Zoom", NULL, N_("_Icon Size") }, 
+    /* name, stock id, label */  { "Desktop Submenu", NULL, N_("_Desktop") },
+    /* name, stock id, label */  { "Desktop Zoom", NULL, N_("_Icon Size") },
     /* name, stock id */
     { "Empty Trash Conditional", NULL,
       /* label, accelerator */
@@ -1268,12 +1272,12 @@ nemo_desktop_icon_grid_view_supports_uri (const char *uri,
 }
 
 static NemoViewInfo nemo_desktop_icon_grid_view = {
-	NEMO_DESKTOP_ICON_GRID_VIEW_IID,
-	"Desktop Grid View",
-	"_Desktop",
-	N_("The desktop view encountered an error."),
-	N_("The desktop view encountered an error while starting up."),
-	"Display this location with the desktop grid view.",
+	(char *)NEMO_DESKTOP_ICON_GRID_VIEW_IID,
+	(char *)"Desktop Grid View",
+	(char *)"_Desktop",
+	(char *)N_("The desktop view encountered an error."),
+	(char *)N_("The desktop view encountered an error while starting up."),
+	(char *)"Display this location with the desktop grid view.",
 	nemo_desktop_icon_grid_view_create,
 	nemo_desktop_icon_grid_view_supports_uri
 };
@@ -1283,6 +1287,6 @@ nemo_desktop_icon_grid_view_register (void)
 {
 	nemo_desktop_icon_grid_view.error_label = _(nemo_desktop_icon_grid_view.error_label);
 	nemo_desktop_icon_grid_view.startup_error_label = _(nemo_desktop_icon_grid_view.startup_error_label);
-	
+
 	nemo_view_factory_register (&nemo_desktop_icon_grid_view);
 }
