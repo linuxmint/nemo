@@ -78,7 +78,7 @@ struct NemoIconCanvasItemDetails {
 	char *additional_text;		/* Text that cannot be modifed, such as file size, etc. */
 	GdkPoint *attach_points;
 	int n_attach_points;
-	
+
 	/* Size of the text at current font. */
 	int text_dx;
 	int text_width;
@@ -110,11 +110,11 @@ struct NemoIconCanvasItemDetails {
 	guint rendered_is_highlighted_for_clipboard : 1;
 	guint rendered_is_prelit : 1;
 	guint rendered_is_focused : 1;
-	
+
 	guint is_renaming : 1;
-	
+
 	guint bounds_cached : 1;
-	
+
 	guint is_visible : 1;
 
 	GdkRectangle embedded_text_rect;
@@ -211,7 +211,7 @@ nemo_icon_canvas_item_finalize (GObject *object)
 	if (details->pixbuf != NULL) {
 		g_object_unref (details->pixbuf);
 	}
-	
+
 	if (details->text_util != NULL) {
 		g_object_unref (details->text_util);
 	}
@@ -219,7 +219,7 @@ nemo_icon_canvas_item_finalize (GObject *object)
 	g_free (details->editable_text);
 	g_free (details->additional_text);
 	g_free (details->attach_points);
-	
+
     if (details->rendered_surface != NULL) {
         cairo_surface_destroy (details->rendered_surface);
     }
@@ -240,7 +240,7 @@ nemo_icon_canvas_item_finalize (GObject *object)
 
 	G_OBJECT_CLASS (nemo_icon_canvas_item_parent_class)->finalize (object);
 }
- 
+
 /* Currently we require pixbufs in this format (for hit testing).
  * Perhaps gdk-pixbuf will be changed so it can do the hit testing
  * and we won't have this requirement any more.
@@ -313,7 +313,7 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 						   details->editable_text);
 			g_object_notify (G_OBJECT(accessible), "accessible-name");
 		}
-		
+
 		nemo_icon_canvas_item_invalidate_label_size (item);
 		if (details->editable_text_layout) {
 			g_object_unref (details->editable_text_layout);
@@ -329,8 +329,8 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 
 		g_free (details->additional_text);
 		details->additional_text = g_strdup (g_value_get_string (value));
-		
-		nemo_icon_canvas_item_invalidate_label_size (item);		
+
+		nemo_icon_canvas_item_invalidate_label_size (item);
 		if (details->additional_text_layout) {
 			g_object_unref (details->additional_text_layout);
 			details->additional_text_layout = NULL;
@@ -348,7 +348,7 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 						details->is_highlighted_for_selection);
 
 		break;
-         
+
         case PROP_HIGHLIGHTED_AS_KEYBOARD_FOCUS:
 		if (!details->is_highlighted_as_keyboard_focus == !g_value_get_boolean (value)) {
 			return;
@@ -359,7 +359,7 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 			atk_focus_tracker_notify (accessible);
 		}
 		break;
-		
+
         case PROP_HIGHLIGHTED_FOR_DROP:
 		if (!details->is_highlighted_for_drop == !g_value_get_boolean (value)) {
 			return;
@@ -380,7 +380,7 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 		g_warning ("nemo_icons_view_item_item_set_arg on unknown argument");
 		return;
 	}
-	
+
 	eel_canvas_item_request_update (EEL_CANVAS_ITEM (object));
 }
 
@@ -392,11 +392,11 @@ nemo_icon_canvas_item_get_property (GObject        *object,
 					GParamSpec     *pspec)
 {
 	NemoIconCanvasItemDetails *details;
-	
+
 	details = NEMO_ICON_CANVAS_ITEM (object)->details;
-	
+
 	switch (property_id) {
-		
+
 	case PROP_EDITABLE_TEXT:
 		g_value_set_string (value, details->editable_text);
 		break;
@@ -404,15 +404,15 @@ nemo_icon_canvas_item_get_property (GObject        *object,
 	case PROP_ADDITIONAL_TEXT:
 		g_value_set_string (value, details->additional_text);
 		break;
-		
+
         case PROP_HIGHLIGHTED_FOR_SELECTION:
 		g_value_set_boolean (value, details->is_highlighted_for_selection);
                 break;
-		
+
         case PROP_HIGHLIGHTED_AS_KEYBOARD_FOCUS:
 		g_value_set_boolean (value, details->is_highlighted_as_keyboard_focus);
                 break;
-		
+
         case PROP_HIGHLIGHTED_FOR_DROP:
 		g_value_set_boolean (value, details->is_highlighted_for_drop);
                 break;
@@ -463,14 +463,14 @@ nemo_icon_canvas_item_get_drag_surface (NemoIconCanvasItem *item)
 	cairo_t *cr;
 	GtkStyleContext *context;
     cairo_surface_t *drag_surface;
-	
+
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), NULL);
 
 	canvas = EEL_CANVAS_ITEM (item)->canvas;
 	context = gtk_widget_get_style_context (GTK_WIDGET (canvas));
 
 	gtk_style_context_save (context);
-		
+
         gtk_style_context_add_class (context, "nemo-canvas-item");
 
 	/* Assume we're updated so canvas item data is right */
@@ -522,12 +522,12 @@ void
 nemo_icon_canvas_item_set_image (NemoIconCanvasItem *item,
 				     GdkPixbuf *image)
 {
-	NemoIconCanvasItemDetails *details;	
-	
+	NemoIconCanvasItemDetails *details;
+
 	g_return_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item));
 	g_return_if_fail (image == NULL || pixbuf_is_acceptable (image));
 
-	details = item->details;	
+	details = item->details;
 	if (details->pixbuf == image) {
 		return;
 	}
@@ -544,12 +544,12 @@ nemo_icon_canvas_item_set_image (NemoIconCanvasItem *item,
     }
 
 	details->pixbuf = image;
-			
+
 	nemo_icon_canvas_item_invalidate_bounds_cache (item);
-	eel_canvas_item_request_update (EEL_CANVAS_ITEM (item));	
+	eel_canvas_item_request_update (EEL_CANVAS_ITEM (item));
 }
 
-void 
+void
 nemo_icon_canvas_item_set_attach_points (NemoIconCanvasItem *item,
 					     GdkPoint *attach_points,
 					     int n_attach_points)
@@ -562,7 +562,7 @@ nemo_icon_canvas_item_set_attach_points (NemoIconCanvasItem *item,
 		item->details->attach_points = g_memdup (attach_points, n_attach_points * sizeof (GdkPoint));
 		item->details->n_attach_points = n_attach_points;
 	}
-	
+
 	nemo_icon_canvas_item_invalidate_bounds_cache (item);
 }
 
@@ -653,7 +653,7 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
 		text_height_for_entire_text = item->details->text_height_for_entire_text / pixels_per_unit;
 		text_dx = item->details->text_dx / pixels_per_unit;
 	}
-	
+
 	if (NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas)->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
 		if (!nemo_icon_container_is_layout_rtl (NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas))) {
                 	text_rectangle.x0 = icon_rectangle.x1;
@@ -728,7 +728,7 @@ nemo_icon_canvas_item_update_bounds (NemoIconCanvasItem *item,
 	EelCanvasItem *canvas_item;
 
 	canvas_item = EEL_CANVAS_ITEM (item);
-	
+
 	/* Compute new bounds. */
 	before = get_current_canvas_bounds (canvas_item);
 	recompute_bounding_box (item, i2w_dx, i2w_dy);
@@ -738,7 +738,7 @@ nemo_icon_canvas_item_update_bounds (NemoIconCanvasItem *item,
 	if (eel_irect_equal (before, after)) {
 		return;
 	}
-	
+
 	/* Update canvas and text rect cache */
 	nemo_icon_canvas_item_get_icon_canvas_rectangle (item, &item->details->canvas_rect);
 	item->details->text_rect = compute_text_rectangle (item, item->details->canvas_rect,
@@ -794,7 +794,7 @@ layout_get_full_size (PangoLayout *layout,
 {
 	PangoRectangle logical_rect;
 	int the_width, total_width;
-	
+
 	pango_layout_get_extents (layout, NULL, &logical_rect);
 	the_width = (logical_rect.width + PANGO_SCALE / 2) / PANGO_SCALE;
 	total_width = (logical_rect.x + logical_rect.width + PANGO_SCALE / 2) / PANGO_SCALE;
@@ -929,7 +929,7 @@ measure_label_text (NemoIconCanvasItem *item)
 	/* check to see if the cached values are still valid; if so, there's
 	 * no work necessary
 	 */
-	
+
 	if (item->details->text_width >= 0 && item->details->text_height >= 0) {
 		return;
 	}
@@ -944,7 +944,7 @@ measure_label_text (NemoIconCanvasItem *item)
 		details->text_height = 0;
 		details->text_height_for_layout = 0;
 		details->text_height_for_entire_text = 0;
-		details->text_width = 0;			
+		details->text_width = 0;
 		return;
 	}
 
@@ -966,7 +966,7 @@ measure_label_text (NemoIconCanvasItem *item)
 	additional_height = 0;
 	additional_dx = 0;
 
-	container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);	
+	container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
 	editable_layout = NULL;
 	additional_layout = NULL;
 
@@ -1022,7 +1022,7 @@ measure_label_text (NemoIconCanvasItem *item)
 	}
 
 	/* add some extra space for highlighting even when we don't highlight so things won't move */
-	
+
 	/* extra slop for nicer highlighting */
 	details->text_height += TEXT_BACK_PADDING_Y*2;
 	details->text_height_for_layout += TEXT_BACK_PADDING_Y*2;
@@ -1091,7 +1091,7 @@ draw_label_text (NemoIconCanvasItem *item,
 	max_text_width = floor (nemo_icon_canvas_item_get_max_text_width (item));
 
 	base_state = gtk_widget_get_state_flags (GTK_WIDGET (container));
-	base_state &= ~(GTK_STATE_FLAG_SELECTED | 
+	base_state &= ~(GTK_STATE_FLAG_SELECTED |
 			GTK_STATE_FLAG_PRELIGHT);
 	state = base_state;
 
@@ -1140,7 +1140,7 @@ draw_label_text (NemoIconCanvasItem *item,
 	} else {
 		x = text_rect.x0 + ((text_rect.x1 - text_rect.x0) - max_text_width) / 2;
 	}
-	
+
 	if (have_editable &&
 	    !details->is_renaming) {
 		state = base_state;
@@ -1193,7 +1193,7 @@ draw_label_text (NemoIconCanvasItem *item,
 
 		gtk_style_context_save (context);
 		gtk_style_context_set_state (context, state);
-					     
+
 		gtk_render_focus (context,
 				  cr,
 				  text_rect.x0,
@@ -1207,7 +1207,7 @@ draw_label_text (NemoIconCanvasItem *item,
 	if (editable_layout != NULL) {
 		g_object_unref (editable_layout);
 	}
-	
+
 	if (additional_layout != NULL) {
 		g_object_unref (additional_layout);
 	}
@@ -1219,7 +1219,7 @@ nemo_icon_canvas_item_set_is_visible (NemoIconCanvasItem       *item,
 {
 	if (item->details->is_visible == visible)
 		return;
-	
+
 	item->details->is_visible = visible;
 
 	if (!visible) {
@@ -1335,7 +1335,7 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 	GtkStyleContext *style;
 	GdkRGBA color;
     cairo_surface_t *surface;
-	
+
 	temp_pixbuf = icon_item->details->pixbuf;
 	canvas = EEL_CANVAS_ITEM(icon_item)->canvas;
 
@@ -1356,7 +1356,7 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 		if (gtk_widget_has_focus (GTK_WIDGET (canvas))) {
 			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_SELECTED, &color);
 		} else {
-			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_ACTIVE, &color);	
+			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_ACTIVE, &color);
 		}
 
 		old_pixbuf = temp_pixbuf;
@@ -1424,7 +1424,7 @@ draw_embedded_text (NemoIconCanvasItem *item,
 		context = gtk_widget_get_pango_context (widget);
 		layout = pango_layout_new (context);
 		pango_layout_set_text (layout, item->details->embedded_text, -1);
-		
+
 		desc = pango_font_description_from_string ("monospace 6");
 		pango_layout_set_font_description (layout, desc);
 		pango_font_description_free (desc);
@@ -1481,7 +1481,7 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
 	}
 
 	context = gtk_widget_get_style_context (GTK_WIDGET (container));
-	gtk_style_context_save (context);		
+	gtk_style_context_save (context);
 
 	gtk_style_context_add_class (context, "nemo-canvas-item");
 
@@ -1494,10 +1494,10 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
     cairo_surface_destroy (temp_surface);
 
 	draw_embedded_text (icon_item, cr, icon_rect.x0, icon_rect.y0);
-	
+
 	/* Draw stretching handles (if necessary). */
 	draw_stretch_handles (icon_item, cr, &icon_rect);
-	
+
 	/* Draw the label text. */
 	draw_label_text (icon_item, cr, icon_rect);
 
@@ -1525,7 +1525,7 @@ create_label_layout (NemoIconCanvasItem *item,
 	container = NEMO_ICON_CONTAINER (canvas_item->canvas);
 	context = gtk_widget_get_pango_context (GTK_WIDGET (canvas_item->canvas));
 	layout = pango_layout_new (context);
-	
+
 	zeroified_text = NULL;
 
 	if (text != NULL) {
@@ -1546,7 +1546,7 @@ create_label_layout (NemoIconCanvasItem *item,
 
 	pango_layout_set_text (layout, zeroified_text, -1);
 	pango_layout_set_auto_dir (layout, FALSE);
-	
+
 	if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
 		if (!nemo_icon_container_is_layout_rtl (container)) {
 			pango_layout_set_alignment (layout, PANGO_ALIGN_LEFT);
@@ -1576,7 +1576,7 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
-	
+
 	return layout;
 }
 
@@ -1596,7 +1596,7 @@ get_label_layout (PangoLayout **layout_cache,
 	if (item->details->is_visible) {
 		*layout_cache = g_object_ref (layout);
 	}
-	
+
 	return layout;
 }
 
@@ -1612,8 +1612,8 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 	icon_item = NEMO_ICON_CANVAS_ITEM (item);
 	cursor_window = ((GdkEventAny *)event)->window;
 
-	switch (event->type) {
-	case GDK_ENTER_NOTIFY:
+
+    if (event->type == GDK_ENTER_NOTIFY) {
         gtk_widget_set_tooltip_text (GTK_WIDGET (item->canvas), icon_item->tooltip);
 		if (!icon_item->details->is_prelit) {
 			icon_item->details->is_prelit = TRUE;
@@ -1633,10 +1633,9 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 			}
 		}
 		return TRUE;
-		
-	case GDK_LEAVE_NOTIFY:
+    } else if (event->type == GDK_LEAVE_NOTIFY) {
         gtk_widget_set_tooltip_text (GTK_WIDGET (item->canvas), "");
-		if (icon_item->details->is_prelit 
+		if (icon_item->details->is_prelit
 		    || icon_item->details->is_highlighted_for_drop) {
 			/* When leaving, turn of the prelight state and the
 			 * higlighted for drop. The latter gets turned on
@@ -1652,20 +1651,18 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 			g_clear_object (&icon_item->details->cursor_window);
 		}
 		return TRUE;
-		
-	default:
-		/* Don't eat up other events; icon container might use them. */
-		return FALSE;
-	}
+    }
+
+	return FALSE;
 }
 
 static gboolean
 hit_test (NemoIconCanvasItem *icon_item, EelIRect canvas_rect)
 {
 	NemoIconCanvasItemDetails *details;
-	
+
 	details = icon_item->details;
-	
+
 	/* Quick check to see if the rect hits the icon or text at all. */
 	if (!eel_irect_hits_irect (icon_item->details->canvas_rect, canvas_rect)
 	    && (!eel_irect_hits_irect (details->text_rect, canvas_rect))) {
@@ -1676,7 +1673,7 @@ hit_test (NemoIconCanvasItem *icon_item, EelIRect canvas_rect)
 	if (hit_test_stretch_handle (icon_item, canvas_rect, NULL)) {
 		return TRUE;
 	}
-	
+
 	/* Check for hit in the icon. */
 	if (eel_irect_hits_irect (icon_item->details->canvas_rect, canvas_rect)) {
 		return TRUE;
@@ -1687,7 +1684,7 @@ hit_test (NemoIconCanvasItem *icon_item, EelIRect canvas_rect)
 	    && !icon_item->details->is_renaming) {
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1718,7 +1715,7 @@ nemo_icon_canvas_item_translate (EelCanvasItem *item, double dx, double dy)
 {
 	NemoIconCanvasItem *icon_item;
 	NemoIconCanvasItemDetails *details;
-	
+
 	icon_item = NEMO_ICON_CANVAS_ITEM (item);
 	details = icon_item->details;
 
@@ -1783,7 +1780,7 @@ nemo_icon_canvas_item_get_bounds_for_entire_item (NemoIconCanvasItem *icon_item,
 		*y2 = (int)details->y + total_rect->y1 + 1;
 	}
 }
-	
+
 /* Bounds handler for the icon canvas item. */
 static void
 nemo_icon_canvas_item_bounds (EelCanvasItem *item,
@@ -1823,7 +1820,7 @@ nemo_icon_canvas_item_ensure_bounds_up_to_date (NemoIconCanvasItem *icon_item)
 	EelCanvasItem *item;
 	double pixels_per_unit;
     gint width, height;
-	
+
 	details = icon_item->details;
 	item = EEL_CANVAS_ITEM (icon_item);
 
@@ -1869,7 +1866,7 @@ nemo_icon_canvas_item_get_icon_rectangle (const NemoIconCanvasItem *item)
 	EelDRect rectangle;
 	double pixels_per_unit;
     gint width, height;
-	
+
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), eel_drect_empty);
 
 	rectangle.x0 = item->details->x;
@@ -1900,7 +1897,7 @@ nemo_icon_canvas_item_get_text_rectangle (NemoIconCanvasItem *item,
 	EelDRect ret;
 	double pixels_per_unit;
     gint width, height;
-	
+
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), eel_drect_empty);
 
 	icon_rectangle.x0 = item->details->x;
@@ -1915,7 +1912,7 @@ nemo_icon_canvas_item_get_text_rectangle (NemoIconCanvasItem *item,
 
 	text_rectangle = compute_text_rectangle (item, icon_rectangle, FALSE,
 						 for_layout ? BOUNDS_USAGE_FOR_LAYOUT : BOUNDS_USAGE_FOR_DISPLAY);
- 
+
 	ret.x0 = text_rectangle.x0;
 	ret.y0 = text_rectangle.y0;
 	ret.x1 = text_rectangle.x1;
@@ -1927,7 +1924,7 @@ nemo_icon_canvas_item_get_text_rectangle (NemoIconCanvasItem *item,
         eel_canvas_item_i2w (EEL_CANVAS_ITEM (item),
                              &ret.x1,
                              &ret.y1);
- 
+
         return ret;
 }
 
@@ -1947,9 +1944,9 @@ nemo_icon_canvas_item_get_icon_canvas_rectangle (NemoIconCanvasItem *item,
 			item->details->y,
 			&rect->x0,
 			&rect->y0);
-	
+
     get_scaled_icon_size (item, &width, &height);
-	
+
 	rect->x1 = rect->x0 + width;
     rect->y1 = rect->y0 + height;
 }
@@ -1960,7 +1957,7 @@ nemo_icon_canvas_item_set_show_stretch_handles (NemoIconCanvasItem *item,
 {
 	g_return_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item));
 	g_return_if_fail (show_stretch_handles == FALSE || show_stretch_handles == TRUE);
-	
+
 	if (!item->details->show_stretch_handles == !show_stretch_handles) {
 		return;
 	}
@@ -1979,7 +1976,7 @@ hit_test_stretch_handle (NemoIconCanvasItem *item,
 	GdkPixbuf *knob_pixbuf;
 	int knob_width, knob_height;
 	int hit_corner;
-	
+
 	g_assert (NEMO_IS_ICON_CANVAS_ITEM (item));
 
 	/* Make sure there are handles to hit. */
@@ -1992,7 +1989,7 @@ hit_test_stretch_handle (NemoIconCanvasItem *item,
 	if (!eel_irect_hits_irect (probe_canvas_rect, icon_rect)) {
 		return FALSE;
 	}
-	
+
 	knob_pixbuf = get_knob_pixbuf ();
 	knob_width = gdk_pixbuf_get_width (knob_pixbuf);
 	knob_height = gdk_pixbuf_get_height (knob_pixbuf);
@@ -2027,7 +2024,7 @@ nemo_icon_canvas_item_hit_test_stretch_handles (NemoIconCanvasItem *item,
 	EelIRect canvas_rect;
 
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), FALSE);
-	
+
 	eel_canvas_w2c (EEL_CANVAS_ITEM (item)->canvas,
 			  world_x,
 			  world_y,
@@ -2149,7 +2146,7 @@ nemo_icon_canvas_item_class_init (NemoIconCanvasItemClass *class)
 		g_param_spec_boolean ("highlighted_for_selection",
 				      "highlighted for selection",
 				      "whether we are highlighted for a selection",
-				      FALSE, G_PARAM_READWRITE)); 
+				      FALSE, G_PARAM_READWRITE));
 
         g_object_class_install_property (
 		object_class,
@@ -2157,7 +2154,7 @@ nemo_icon_canvas_item_class_init (NemoIconCanvasItemClass *class)
 		g_param_spec_boolean ("highlighted_as_keyboard_focus",
 				      "highlighted as keyboard focus",
 				      "whether we are highlighted to render keyboard focus",
-				      FALSE, G_PARAM_READWRITE)); 
+				      FALSE, G_PARAM_READWRITE));
 
 
         g_object_class_install_property (
@@ -2257,7 +2254,7 @@ nemo_icon_canvas_item_accessible_idle_do_action (gpointer data)
 	container->details->a11y_item_action_idle_handler = 0;
 	while (!g_queue_is_empty (container->details->a11y_item_action_queue)) {
 		ctx = g_queue_pop_head (container->details->a11y_item_action_queue);
-		action_number = ctx->action_number;	
+		action_number = ctx->action_number;
 		item = ctx->item;
 		g_free (ctx);
 		icon = item->user_data;
@@ -2429,7 +2426,7 @@ static AtkObject *
 nemo_icon_canvas_item_accessible_get_parent (AtkObject *accessible)
 {
 	NemoIconCanvasItem *item;
-	
+
 	item = NEMO_ICON_CANVAS_ITEM (atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (accessible)));
 	if (!item) {
 		return NULL;
@@ -2451,18 +2448,18 @@ nemo_icon_canvas_item_accessible_get_index_in_parent (AtkObject *accessible)
 	if (!item) {
 		return -1;
 	}
-	
+
 	container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
-	
+
 	l = container->details->icons;
 	i = 0;
 	while (l) {
 		icon = l->data;
-		
+
 		if (icon->item == item) {
 			return i;
 		}
-		
+
 		i++;
 		l = l->next;
 	}
@@ -2499,7 +2496,7 @@ nemo_icon_canvas_item_accessible_get_image_description (AtkImage *image)
 
 static void
 nemo_icon_canvas_item_accessible_get_image_size
-	(AtkImage *image, 
+	(AtkImage *image,
 	 gint     *width,
 	 gint     *height)
 {
@@ -2593,7 +2590,7 @@ nemo_icon_canvas_item_accessible_get_offset_at_point (AtkText	 *text,
                                    &real_width, &real_height, coords);
 
 	x -= real_x;
-	y -= real_y; 
+	y -= real_y;
 
 	item = NEMO_ICON_CANVAS_ITEM (atk_gobject_accessible_get_object (ATK_GOBJECT_ACCESSIBLE (text)));
 
@@ -2647,9 +2644,9 @@ nemo_icon_canvas_item_accessible_get_offset_at_point (AtkText	 *text,
 	}
 	pango_layout_index_to_pos (layout, 0, &rect0);
 	x += text_offset;
-	if (!pango_layout_xy_to_index (layout, 
-                                       x * PANGO_SCALE, 
-                                       y * PANGO_SCALE, 
+	if (!pango_layout_xy_to_index (layout,
+                                       x * PANGO_SCALE,
+                                       y * PANGO_SCALE,
                                        &index, NULL)) {
 		if (x < 0 || y < 0) {
 			index = 0;
@@ -2663,17 +2660,17 @@ nemo_icon_canvas_item_accessible_get_offset_at_point (AtkText	 *text,
 		offset = g_utf8_pointer_to_offset (icon_text, icon_text + index);
 	}
 	if (layout == additional_layout) {
-		offset += g_utf8_strlen (item->details->editable_text, -1);	
+		offset += g_utf8_strlen (item->details->editable_text, -1);
 	}
 
 	if (editable_layout != NULL) {
 		g_object_unref (editable_layout);
 	}
-	
+
 	if (additional_layout != NULL) {
 		g_object_unref (additional_layout);
 	}
-	
+
 	return offset;
 }
 
@@ -2715,7 +2712,7 @@ nemo_icon_canvas_item_accessible_get_character_extents (AtkText	   *text,
 
 	editable_layout = get_label_layout (&item->details->editable_text_layout, item, item->details->editable_text);
 	additional_layout = get_label_layout (&item->details->additional_text_layout, item, item->details->additional_text);
-	
+
 	if (offset < len) {
 		icon_text = item->details->editable_text;
 		layout = editable_layout;
@@ -2813,7 +2810,7 @@ nemo_icon_canvas_item_accessible_ref_state_set (AtkObject *accessible)
 		l = container->details->icons;
 		while (l) {
 			icon = l->data;
-		
+
 			if (icon->item == item) {
 				if (icon->is_selected) {
 					one_item_selected = TRUE;
