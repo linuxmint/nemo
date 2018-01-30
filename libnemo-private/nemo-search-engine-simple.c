@@ -44,7 +44,7 @@ typedef struct {
 	GQueue *directories; /* GFiles */
 
 	GHashTable *visited;
-	
+
 	gint n_processed_files;
 	GList *uri_hits;
 } SearchThreadData;
@@ -54,7 +54,7 @@ struct NemoSearchEngineSimpleDetails {
 	NemoQuery *query;
 
 	SearchThreadData *active_search;
-	
+
 	gboolean query_finished;
 };
 
@@ -67,7 +67,7 @@ finalize (GObject *object)
 	NemoSearchEngineSimple *simple;
 
 	simple = NEMO_SEARCH_ENGINE_SIMPLE (object);
-	
+
 	if (simple->details->query) {
 		g_object_unref (simple->details->query);
 		simple->details->query = NULL;
@@ -89,10 +89,10 @@ strsplit_esc_n (const gchar *string,
 	GSList *string_list = NULL, *slist;
 	gchar **str_array, *s;
 	guint n = 0;
-	const gchar *remainder;
+	gchar *remainder;
 
 	g_return_val_if_fail (string != NULL, NULL);
-	g_return_val_if_fail (delimiter != NULL, NULL);
+	g_return_val_if_fail (delimiter != '\0', NULL);
 
 	if (max_tokens < 1)
 	max_tokens = G_MAXINT;
@@ -153,8 +153,8 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	SearchThreadData *data;
 	char *text, *lower, *normalized, *uri;
 	GFile *location;
-	gint n, i;
-	
+	gint n=1, i;
+
 	data = g_new0 (SearchThreadData, 1);
 
 	data->engine = engine;
@@ -170,7 +170,7 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 		location = g_file_new_for_path ("/");
 	}
 	g_queue_push_tail (data->directories, location);
-	
+
 	text = nemo_query_get_text (query);
 	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
 	lower = g_utf8_strdown (normalized, -1);
@@ -197,11 +197,11 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 	data->mime_types = nemo_query_get_mime_types (query);
 
 	data->cancellable = g_cancellable_new ();
-	
+
 	return data;
 }
 
-static void 
+static void
 search_thread_data_free (SearchThreadData *data)
 {
 	g_queue_foreach (data->directories,
@@ -227,9 +227,9 @@ search_thread_done_idle (gpointer user_data)
 		nemo_search_engine_finished (NEMO_SEARCH_ENGINE (data->engine));
 		data->engine->details->active_search = NULL;
 	}
-	
+
 	search_thread_data_free (data);
-	
+
 	return FALSE;
 }
 
@@ -253,7 +253,7 @@ search_thread_add_hits_idle (gpointer user_data)
 
 	g_list_free_full (hits->uris, g_free);
 	g_free (hits);
-	
+
 	return FALSE;
 }
 
@@ -261,9 +261,9 @@ static void
 send_batch (SearchThreadData *data)
 {
 	SearchHits *hits;
-	
+
 	data->n_processed_files = 0;
-	
+
 	if (data->uri_hits) {
 		hits = g_new (SearchHits, 1);
 		hits->uris = data->uri_hits;
@@ -285,7 +285,7 @@ strwildcardcmp(char *a, char *b)
 		else {
 			if (*a=='*') {
 				if(*(a+1)==0) return TRUE;
-				if(*b==0) return FALSE; 
+				if(*b==0) return FALSE;
 				if (strwildcardcmp(a+1, b) || strwildcardcmp(a, b+1)) return TRUE;
 				else return FALSE;
 			}
@@ -293,7 +293,7 @@ strwildcardcmp(char *a, char *b)
 		}
 		a++;
 		b++;
-	} 
+	}
 	if ((*a == 0 && *b == 0) || (*a=='*' && *(a+1)==0))  return TRUE;
 	return FALSE;
 }
@@ -327,7 +327,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 						STD_ATTRIBUTES
 						,
 						0, data->cancellable, NULL);
-	
+
 	if (enumerator == NULL) {
 		return;
 	}
@@ -336,16 +336,16 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		if (g_file_info_get_is_hidden (info)) {
 			goto next;
 		}
-		
+
 		display_name = g_file_info_get_display_name (info);
 		if (display_name == NULL) {
 			goto next;
 		}
-		
+
 		normalized = g_utf8_normalize (display_name, -1, G_NORMALIZE_NFD);
 		lower_name = g_utf8_strdown (normalized, -1);
 		g_free (normalized);
-		
+
 		hit = data->words_and;
 		for (i = 0; data->words[i] != NULL; i++) {
 			if (data->word_strstr[i]) {
@@ -360,11 +360,11 @@ visit_directory (GFile *dir, SearchThreadData *data)
 			}
 		}
 		g_free (lower_name);
-		
+
 		if (hit && data->mime_types) {
 			mime_type = g_file_info_get_content_type (info);
 			hit = FALSE;
-			
+
 			for (l = data->mime_types; mime_type != NULL && l != NULL; l = l->next) {
 				if (g_content_type_equals (mime_type, l->data)) {
 					hit = TRUE;
@@ -372,13 +372,13 @@ visit_directory (GFile *dir, SearchThreadData *data)
 				}
 			}
 		}
-		
+
 		child = g_file_get_child (dir, g_file_info_get_name (info));
-		
+
 		if (hit) {
 			data->uri_hits = g_list_prepend (data->uri_hits, g_file_get_uri (child));
 		}
-		
+
 		data->n_processed_files++;
 		if (data->n_processed_files > BATCH_SIZE) {
 			send_batch (data);
@@ -395,12 +395,12 @@ visit_directory (GFile *dir, SearchThreadData *data)
 					g_hash_table_insert (data->visited, g_strdup (id), NULL);
 				}
 			}
-			
+
 			if (!visited) {
 				g_queue_push_tail (data->directories, g_object_ref (child));
 			}
 		}
-		
+
 		g_object_unref (child);
 	next:
 		g_object_unref (info);
@@ -410,7 +410,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 }
 
 
-static gpointer 
+static gpointer
 search_thread_func (gpointer user_data)
 {
 	SearchThreadData *data;
@@ -430,7 +430,7 @@ search_thread_func (gpointer user_data)
 		}
 		g_object_unref (info);
 	}
-	
+
 	while (!g_cancellable_is_cancelled (data->cancellable) &&
 	       (dir = g_queue_pop_head (data->directories)) != NULL) {
 		visit_directory (dir, data);
@@ -439,7 +439,7 @@ search_thread_func (gpointer user_data)
 	send_batch (data);
 
 	g_idle_add (search_thread_done_idle, data);
-	
+
 	return NULL;
 }
 
@@ -449,7 +449,7 @@ nemo_search_engine_simple_start (NemoSearchEngine *engine)
 	NemoSearchEngineSimple *simple;
 	SearchThreadData *data;
 	GThread *thread;
-	
+
 	simple = NEMO_SEARCH_ENGINE_SIMPLE (engine);
 
 	if (simple->details->active_search != NULL) {
@@ -459,7 +459,7 @@ nemo_search_engine_simple_start (NemoSearchEngine *engine)
 	if (simple->details->query == NULL) {
 		return;
 	}
-	
+
 	data = search_thread_data_new (simple, simple->details->query);
 
 	thread = g_thread_new ("nemo-search-simple", search_thread_func, data);
