@@ -48,7 +48,7 @@
 #define MAXIMUM_MENU_TITLE_LENGTH	48
 
 /* Used for window position & size sanity-checking. The sizes are big enough to prevent
- * at least normal-sized gnome panels from obscuring the window at the screen edges. 
+ * at least normal-sized gnome panels from obscuring the window at the screen edges.
  */
 #define MINIMUM_ON_SCREEN_WIDTH		100
 #define MINIMUM_ON_SCREEN_HEIGHT	100
@@ -57,10 +57,10 @@
 /**
  * eel_gtk_window_get_geometry_string:
  * @window: a #GtkWindow
- * 
+ *
  * Obtains the geometry string for this window, suitable for
  * set_geometry_string(); assumes the window has NorthWest gravity
- * 
+ *
  * Return value: geometry string, must be freed
  **/
 char*
@@ -68,14 +68,14 @@ eel_gtk_window_get_geometry_string (GtkWindow *window)
 {
 	char *str;
 	int w, h, x, y;
-	
+
 	g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
 	g_return_val_if_fail (gtk_window_get_gravity (window) ==
 			      GDK_GRAVITY_NORTH_WEST, NULL);
 
 	gtk_window_get_position (window, &x, &y);
 	gtk_window_get_size (window, &w, &h);
-	
+
 	str = g_strdup_printf ("%dx%d+%d+%d", w, h, x, y);
 
 	return str;
@@ -94,8 +94,8 @@ sanity_check_window_position (int *left, int *top)
 	 * that it might be obscured by the panel.
 	 */
 	*top = CLAMP (*top, 0, gdk_screen_height() - MINIMUM_ON_SCREEN_HEIGHT);
-	
-	/* FIXME bugzilla.eazel.com 669: 
+
+	/* FIXME bugzilla.eazel.com 669:
 	 * If window has negative left coordinate, set_uposition sends it
 	 * somewhere else entirely. Not sure what level contains this bug (XWindows?).
 	 * Hacked around by pinning the left edge to zero, which just means you
@@ -120,18 +120,18 @@ sanity_check_window_dimensions (guint *width, guint *height)
 	 * be reached (might not be necessary with all window managers,
 	 * but seems reasonable anyway).
 	 */
-	*width = MIN (*width, gdk_screen_width());
-	*height = MIN (*height, gdk_screen_height());
+	*width = MIN ((int)*width, gdk_screen_width());
+	*height = MIN ((int)*height, gdk_screen_height());
 }
 
 /**
  * eel_gtk_window_set_initial_geometry:
- * 
+ *
  * Sets the position and size of a GtkWindow before the
  * GtkWindow is shown. It is an error to call this on a window that
  * is already on-screen. Takes into account screen size, and does
  * some sanity-checking on the passed-in values.
- * 
+ *
  * @window: A non-visible GtkWindow
  * @geometry_flags: A EelGdkGeometryFlags value defining which of
  * the following parameters have defined values
@@ -141,7 +141,7 @@ sanity_check_window_dimensions (guint *width, guint *height)
  * @height: height of window in pixels
  */
 static void
-eel_gtk_window_set_initial_geometry (GtkWindow *window, 
+eel_gtk_window_set_initial_geometry (GtkWindow *window,
 					  EelGdkGeometryFlags geometry_flags,
 					  int left,
 					  int top,
@@ -156,7 +156,7 @@ eel_gtk_window_set_initial_geometry (GtkWindow *window,
 
 	/* Setting the default size doesn't work when the window is already showing.
 	 * Someday we could make this move an already-showing window, but we don't
-	 * need that functionality yet. 
+	 * need that functionality yet.
 	 */
 	g_return_if_fail (!gtk_widget_get_visible (GTK_WIDGET (window)));
 
@@ -193,13 +193,13 @@ eel_gtk_window_set_initial_geometry (GtkWindow *window,
 
 /**
  * eel_gtk_window_set_initial_geometry_from_string:
- * 
+ *
  * Sets the position and size of a GtkWindow before the
- * GtkWindow is shown. The geometry is passed in as a string. 
+ * GtkWindow is shown. The geometry is passed in as a string.
  * It is an error to call this on a window that
  * is already on-screen. Takes into account screen size, and does
  * some sanity-checking on the passed-in values.
- * 
+ *
  * @window: A non-visible GtkWindow
  * @geometry_string: A string suitable for use with eel_gdk_parse_geometry
  * @minimum_width: If the width from the string is smaller than this,
@@ -209,7 +209,7 @@ eel_gtk_window_set_initial_geometry (GtkWindow *window,
  * @ignore_position: If true position data from string will be ignored.
  */
 void
-eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window, 
+eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 						 const char *geometry_string,
 						 guint minimum_width,
 						 guint minimum_height,
@@ -224,7 +224,7 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 
 	/* Setting the default size doesn't work when the window is already showing.
 	 * Someday we could make this move an already-showing window, but we don't
-	 * need that functionality yet. 
+	 * need that functionality yet.
 	 */
 	g_return_if_fail (!gtk_widget_get_visible (GTK_WIDGET (window)));
 
@@ -239,7 +239,7 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 	if (geometry_flags & EEL_GDK_HEIGHT_VALUE) {
 		height = MAX (height, minimum_height);
 	}
-	
+
 	/* Ignore saved window position if requested. */
 	if (ignore_position) {
 		geometry_flags &= ~(EEL_GDK_X_VALUE | EEL_GDK_Y_VALUE);
@@ -250,14 +250,14 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 
 /**
  * eel_pop_up_context_menu:
- * 
+ *
  * Pop up a context menu under the mouse.
- * The menu is sunk after use, so it will be destroyed unless the 
+ * The menu is sunk after use, so it will be destroyed unless the
  * caller first ref'ed it.
- * 
+ *
  * This function is more of a helper function than a gtk extension,
  * so perhaps it belongs in a different file.
- * 
+ *
  * @menu: The menu to pop up under the mouse.
  * @offset_x: Ignored.
  * @offset_y: Ignored.
@@ -265,7 +265,7 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
  * is no event available.  This is used to get the timestamp for the menu's popup.
  * In case no event is provided, gtk_get_current_event_time() will be used automatically.
  **/
-void 
+void
 eel_pop_up_context_menu (GtkMenu *menu,
 			 GdkEventButton *event)
 {
@@ -286,7 +286,7 @@ eel_pop_up_context_menu (GtkMenu *menu,
 	} else {
 		button = 0;
 	}
-	
+
 	gtk_menu_popup (menu,					/* menu */
 			NULL,					/* parent_menu_shell */
 			NULL,					/* parent_menu_item */
