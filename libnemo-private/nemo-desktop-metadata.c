@@ -191,7 +191,7 @@ nemo_desktop_set_metadata_stringv (NemoFile *file,
 	if (length == 1) {
 		actual_stringv = g_malloc0 (3 * sizeof (gchar *));
 		actual_stringv[0] = (gchar *) stringv[0];
-		actual_stringv[1] = STRV_TERMINATOR;
+		actual_stringv[1] = (gchar *)STRV_TERMINATOR;
 		actual_stringv[2] = NULL;
 
 		length = 2;
@@ -253,7 +253,7 @@ nemo_desktop_get_metadata_stringv (NemoFile *file,
                                    const char *key)
 {
     GKeyFile *keyfile;
-    guint length;
+    gsize length;
     gchar **stringv = NULL;
 
     keyfile = get_keyfile ();
