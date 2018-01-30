@@ -1,24 +1,24 @@
 /* -*- Mode: C; indent-tabs-mode: f; c-basic-offset: 4; tab-width: 4 -*-
 
    nemo-file.c: Nemo file model.
- 
+
    Copyright (C) 1999, 2000, 2001 Eazel, Inc.
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public
    License along with this program; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
    Boston, MA 02110-1335, USA.
-  
+
    Author: Darin Adler <darin@bentspoon.com>
 */
 
@@ -205,7 +205,7 @@ nemo_file_constructor (GType                  type,
   if (NEMO_FILE_GET_CLASS (file)->default_file_type != G_FILE_TYPE_UNKNOWN) {
 	  file->details->type = NEMO_FILE_GET_CLASS (file)->default_file_type;
   }
-  
+
   return object;
 }
 
@@ -227,11 +227,11 @@ nemo_file_set_display_name (NemoFile *file,
 		}
 		return FALSE;
 	}
-	
+
 	if (display_name == NULL || *display_name == 0) {
 		return FALSE;
 	}
-	
+
 	if (!custom && file->details->got_custom_display_name) {
 		return FALSE;
 	}
@@ -239,27 +239,27 @@ nemo_file_set_display_name (NemoFile *file,
 	if (edit_name == NULL) {
 		edit_name = display_name;
 	}
-	    
+
 	changed = FALSE;
-	
+
 	if (g_strcmp0 (eel_ref_str_peek (file->details->display_name), display_name) != 0) {
 		changed = TRUE;
-		
+
 		eel_ref_str_unref (file->details->display_name);
-		
+
 		if (g_strcmp0 (eel_ref_str_peek (file->details->name), display_name) == 0) {
 			file->details->display_name = eel_ref_str_ref (file->details->name);
 		} else {
 			file->details->display_name = eel_ref_str_new (display_name);
 		}
-		
+
 		g_free (file->details->display_name_collation_key);
 		file->details->display_name_collation_key = g_utf8_collate_key_for_filename (display_name, -1);
 	}
 
 	if (g_strcmp0 (eel_ref_str_peek (file->details->edit_name), edit_name) != 0) {
 		changed = TRUE;
-		
+
 		eel_ref_str_unref (file->details->edit_name);
 		if (g_strcmp0 (eel_ref_str_peek (file->details->display_name), edit_name) == 0) {
 			file->details->edit_name = eel_ref_str_ref (file->details->display_name);
@@ -267,7 +267,7 @@ nemo_file_set_display_name (NemoFile *file,
 			file->details->edit_name = eel_ref_str_new (edit_name);
 		}
 	}
-	
+
 	file->details->got_custom_display_name = custom;
 	return changed;
 }
@@ -447,7 +447,7 @@ nemo_file_clear_info (NemoFile *file)
 		g_free (file->details->activation_uri);
 		file->details->activation_uri = NULL;
 	}
-	
+
 	if (file->details->icon != NULL) {
 		g_object_unref (file->details->icon);
 		file->details->icon = NULL;
@@ -458,7 +458,7 @@ nemo_file_clear_info (NemoFile *file)
 	file->details->thumbnailing_failed = FALSE;
     file->details->thumbnail_throttle_count = 1;
     file->details->last_thumbnail_try_mtime = 0;
-	
+
 	file->details->is_launcher = FALSE;
 	file->details->is_foreign_link = FALSE;
 	file->details->is_trusted_link = FALSE;
@@ -579,7 +579,7 @@ modify_link_hash_table (NemoFile *file,
 	}
 
 	target_uri = nemo_file_get_symbolic_link_target_uri (file);
-	
+
 	/* Find the old contents of the hash table. */
 	found = g_hash_table_lookup_extended
 		(symbolic_links, target_uri,
@@ -617,7 +617,7 @@ add_to_link_hash_table_list (GList **list, NemoFile *file)
 		return;
 	}
 	g_object_weak_ref (G_OBJECT (file), symbolic_link_weak_notify, list);
-	*list = g_list_prepend (*list, file); 
+	*list = g_list_prepend (*list, file);
 }
 
 static void
@@ -683,12 +683,12 @@ nemo_file_get_internal (GFile *location, gboolean create)
 	g_assert (location != NULL);
 
 	parent = g_file_get_parent (location);
-	
+
 	self_owned = FALSE;
 	if (parent == NULL) {
 		self_owned = TRUE;
 		parent = g_object_ref (location);
-	} 
+	}
 
 	/* Get object that represents the directory. */
 	directory = nemo_directory_get_internal (parent, create);
@@ -746,11 +746,11 @@ nemo_file_get_existing_by_uri (const char *uri)
 {
 	GFile *location;
 	NemoFile *file;
-	
+
 	location = g_file_new_for_uri (uri);
 	file = nemo_file_get_internal (location, FALSE);
 	g_object_unref (location);
-	
+
 	return file;
 }
 
@@ -759,11 +759,11 @@ nemo_file_get_by_uri (const char *uri)
 {
 	GFile *location;
 	NemoFile *file;
-	
+
 	location = g_file_new_for_uri (uri);
 	file = nemo_file_get_internal (location, TRUE);
 	g_object_unref (location);
-	
+
 	return file;
 }
 
@@ -789,13 +789,13 @@ finalize (GObject *object)
 		nemo_thumbnail_remove_from_queue (uri);
 		g_free (uri);
 	}
-	
+
 	nemo_async_destroying_file (file);
 
 	remove_from_link_hash_table (file);
 
 	directory = file->details->directory;
-	
+
 	if (nemo_file_is_self_owned (file)) {
 		directory->details->as_file = NULL;
 	} else {
@@ -850,7 +850,7 @@ finalize (GObject *object)
 	if (file->details->pending_extension_attributes) {
 		g_hash_table_destroy (file->details->pending_extension_attributes);
 	}
-	
+
 	if (file->details->extension_attributes) {
 		g_hash_table_destroy (file->details->extension_attributes);
 	}
@@ -873,7 +873,7 @@ nemo_file_ref (NemoFile *file)
 #ifdef NEMO_FILE_DEBUG_REF
 	DEBUG_REF_PRINTF("%10p ref'd", file);
 #endif
-	
+
 	return g_object_ref (file);
 }
 
@@ -889,29 +889,29 @@ nemo_file_unref (NemoFile *file)
 #ifdef NEMO_FILE_DEBUG_REF
 	DEBUG_REF_PRINTF("%10p unref'd", file);
 #endif
-	
+
 	g_object_unref (file);
 }
 
 /**
  * nemo_file_get_parent_uri_for_display:
- * 
+ *
  * Get the uri for the parent directory.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: A string representing the parent's location,
  * formatted for user display (including stripping "file://").
  * If the parent is NULL, returns the empty string.
- */ 
+ */
 char *
-nemo_file_get_parent_uri_for_display (NemoFile *file) 
+nemo_file_get_parent_uri_for_display (NemoFile *file)
 {
 	GFile *parent;
 	char *result;
 
 	g_assert (NEMO_IS_FILE (file));
-	
+
 	parent = nemo_file_get_parent_location (file);
 	if (parent) {
 		result = g_file_get_parse_name (parent);
@@ -925,21 +925,21 @@ nemo_file_get_parent_uri_for_display (NemoFile *file)
 
 /**
  * nemo_file_get_parent_uri:
- * 
+ *
  * Get the uri for the parent directory.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: A string for the parent's location, in "raw URI" form.
  * Use nemo_file_get_parent_uri_for_display instead if the
  * result is to be displayed on-screen.
  * If the parent is NULL, returns the empty string.
- */ 
+ */
 char *
-nemo_file_get_parent_uri (NemoFile *file) 
+nemo_file_get_parent_uri (NemoFile *file)
 {
 	g_assert (NEMO_IS_FILE (file));
-	
+
 	if (nemo_file_is_self_owned (file)) {
 		/* Callers expect an empty string, not a NULL. */
 		return g_strdup ("");
@@ -949,10 +949,10 @@ nemo_file_get_parent_uri (NemoFile *file)
 }
 
 GFile *
-nemo_file_get_parent_location (NemoFile *file) 
+nemo_file_get_parent_location (NemoFile *file)
 {
 	g_assert (NEMO_IS_FILE (file));
-	
+
 	if (nemo_file_is_self_owned (file)) {
 		/* Callers expect an empty string, not a NULL. */
 		return NULL;
@@ -965,7 +965,7 @@ NemoFile *
 nemo_file_get_parent (NemoFile *file)
 {
 	g_assert (NEMO_IS_FILE (file));
-	
+
 	if (nemo_file_is_self_owned (file)) {
 		return NULL;
 	}
@@ -975,11 +975,11 @@ nemo_file_get_parent (NemoFile *file)
 
 /**
  * nemo_file_can_read:
- * 
+ *
  * Check whether the user is allowed to read the contents of this file.
- * 
+ *
  * @file: The file to check.
- * 
+ *
  * Return value: FALSE if the user is definitely not allowed to read
  * the contents of the file. If the user has read permission, or
  * the code can't tell whether the user has read permission,
@@ -989,17 +989,17 @@ gboolean
 nemo_file_can_read (NemoFile *file)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-	
+
 	return file->details->can_read;
 }
 
 /**
  * nemo_file_can_write:
- * 
+ *
  * Check whether the user is allowed to write to this file.
- * 
+ *
  * @file: The file to check.
- * 
+ *
  * Return value: FALSE if the user is definitely not allowed to write
  * to the file. If the user has write permission, or
  * the code can't tell whether the user has write permission,
@@ -1015,11 +1015,11 @@ nemo_file_can_write (NemoFile *file)
 
 /**
  * nemo_file_can_execute:
- * 
+ *
  * Check whether the user is allowed to execute this file.
- * 
+ *
  * @file: The file to check.
- * 
+ *
  * Return value: FALSE if the user is definitely not allowed to execute
  * the file. If the user has execute permission, or
  * the code can't tell whether the user has execute permission,
@@ -1037,10 +1037,10 @@ gboolean
 nemo_file_can_mount (NemoFile *file)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-	
+
 	return file->details->can_mount;
 }
-	
+
 gboolean
 nemo_file_can_unmount (NemoFile *file)
 {
@@ -1054,7 +1054,7 @@ nemo_file_can_unmount (NemoFile *file)
 		(file->details->mount != NULL &&
 		 g_mount_can_unmount (file->details->mount));
 }
-	
+
 gboolean
 nemo_file_can_eject (NemoFile *file)
 {
@@ -1237,7 +1237,7 @@ nemo_file_mount (NemoFile                   *file,
 		     gpointer                        callback_data)
 {
 	GError *error;
-	
+
 	if (NEMO_FILE_GET_CLASS (file)->mount == NULL) {
 		if (callback) {
 			error = NULL;
@@ -1471,11 +1471,11 @@ nemo_file_poll_for_media (NemoFile *file)
 
 /**
  * nemo_file_is_desktop_directory:
- * 
+ *
  * Check whether this file is the desktop directory.
- * 
+ *
  * @file: The file to check.
- * 
+ *
  * Return value: TRUE if this is the physical desktop directory.
  */
 gboolean
@@ -1512,11 +1512,11 @@ can_rename_desktop_file (NemoFile *file)
 
 /**
  * nemo_file_can_rename:
- * 
+ *
  * Check whether the user is allowed to change the name of the file.
- * 
+ *
  * @file: The file to check.
- * 
+ *
  * Return value: FALSE if the user is definitely not allowed to change
  * the name of the file. If the user is allowed to change the name, or
  * the code can't tell whether the user is allowed to change the name,
@@ -1526,7 +1526,7 @@ gboolean
 nemo_file_can_rename (NemoFile *file)
 {
 	gboolean can_rename;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
 	/* Nonexistent files can't be renamed. */
@@ -1543,7 +1543,7 @@ nemo_file_can_rename (NemoFile *file)
 	     nemo_file_is_home (file)) {
 		return FALSE;
 	}
-	
+
 	can_rename = TRUE;
 
 	/* Certain types of links can't be renamed */
@@ -1605,15 +1605,15 @@ GFile *
 nemo_file_get_location (NemoFile *file)
 {
 	GFile *dir;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
 	dir = file->details->directory->details->location;
-	
+
 	if (nemo_file_is_self_owned (file)) {
 		return g_object_ref (dir);
 	}
-	
+
 	return g_file_get_child (dir, eel_ref_str_peek (file->details->name));
 }
 
@@ -1623,13 +1623,13 @@ nemo_file_get_uri (NemoFile *file)
 {
 	char *uri;
 	GFile *loc;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
 	loc = nemo_file_get_location (file);
 	uri = g_file_get_uri (loc);
 	g_object_unref (loc);
-	
+
 	return uri;
 }
 
@@ -1654,10 +1654,10 @@ nemo_file_get_uri_scheme (NemoFile *file)
 {
 	GFile *loc;
 	char *scheme;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
-	if (file->details->directory == NULL || 
+	if (file->details->directory == NULL ||
 	    file->details->directory->details->location == NULL) {
 		return NULL;
 	}
@@ -1665,7 +1665,7 @@ nemo_file_get_uri_scheme (NemoFile *file)
 	loc = nemo_directory_get_location (file->details->directory);
 	scheme = g_file_get_uri_scheme (loc);
 	g_object_unref (loc);
-	
+
 	return scheme;
 }
 
@@ -1748,7 +1748,7 @@ rename_get_info_callback (GObject *source_object,
 	const char *new_name;
 	GFileInfo *new_info;
 	GError *error;
-	
+
 	op = callback_data;
 
 	error = NULL;
@@ -1757,7 +1757,7 @@ rename_get_info_callback (GObject *source_object,
 		directory = op->file->details->directory;
 
 		new_name = g_file_info_get_name (new_info);
-		
+
 		/* If there was another file by the same name in this
 		 * directory and it is not the same file that we are
 		 * renaming, mark it gone.
@@ -1767,19 +1767,19 @@ rename_get_info_callback (GObject *source_object,
 			nemo_file_mark_gone (existing_file);
 			nemo_file_changed (existing_file);
 		}
-		
+
 		old_uri = nemo_file_get_uri (op->file);
 		old_name = g_strdup (eel_ref_str_peek (op->file->details->name));
-		
+
 		update_info_and_name (op->file, new_info);
-		
+
 		g_free (old_name);
-		
+
 		new_uri = nemo_file_get_uri (op->file);
 		nemo_directory_moved (old_uri, new_uri);
 		g_free (new_uri);
 		g_free (old_uri);
-		
+
 		/* the rename could have affected the display name if e.g.
 		 * we're in a vfolder where the name comes from a desktop file
 		 * and a rename affects the contents of the desktop file.
@@ -1789,7 +1789,7 @@ rename_get_info_callback (GObject *source_object,
 							     NEMO_FILE_ATTRIBUTE_INFO |
 							     NEMO_FILE_ATTRIBUTE_LINK_INFO);
 		}
-		
+
 		g_object_unref (new_info);
 	}
 	nemo_file_operation_complete (op, NULL, error);
@@ -1853,14 +1853,14 @@ nemo_file_rename (NemoFile *file,
 	gboolean is_renameable_desktop_file;
 	GFile *location;
 	GError *error;
-	
+
 	g_return_if_fail (NEMO_IS_FILE (file));
 	g_return_if_fail (new_name != NULL);
 	g_return_if_fail (callback != NULL);
 
 	is_renameable_desktop_file =
 		is_desktop_file (file) && can_rename_desktop_file (file);
-	
+
 	/* Return an error for incoming names containing path separators.
 	 * But not for .desktop files as '/' are allowed for them */
 	if (strstr (new_name, "/") != NULL && !is_renameable_desktop_file) {
@@ -1870,7 +1870,7 @@ nemo_file_rename (NemoFile *file,
 		g_error_free (error);
 		return;
 	}
-	
+
 	/* Can't rename a file that's already gone.
 	 * We need to check this here because there may be a new
 	 * file with the same name.
@@ -1912,7 +1912,7 @@ nemo_file_rename (NemoFile *file,
 		nemo_file_changed (file);
 		error = g_error_new (G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
 				     _("Toplevel files cannot be renamed"));
-		
+
 		(* callback) (file, NULL, error, callback_data);
 		g_error_free (error);
 		return;
@@ -1943,7 +1943,7 @@ nemo_file_rename (NemoFile *file,
 		g_object_unref (link);
 		return;
 	}
-	
+
 	if (is_renameable_desktop_file) {
 		/* Don't actually change the name if the new name is the same.
 		 * This helps for the vfolder method where this can happen and
@@ -2052,7 +2052,7 @@ nemo_file_cancel (NemoFile *file,
 	}
 }
 
-gboolean         
+gboolean
 nemo_file_matches_uri (NemoFile *file, const char *match_uri)
 {
 	GFile *match_file, *location;
@@ -2060,7 +2060,7 @@ nemo_file_matches_uri (NemoFile *file, const char *match_uri)
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 	g_return_val_if_fail (match_uri != NULL, FALSE);
-	
+
 	location = nemo_file_get_location (file);
 	match_file = g_file_new_for_uri (match_uri);
 	result = g_file_equal (location, match_file);
@@ -2092,7 +2092,7 @@ gboolean
 nemo_file_is_local (NemoFile *file)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-	
+
 	return nemo_directory_is_local (file->details->directory);
 }
 
@@ -2112,7 +2112,7 @@ get_link_files (NemoFile *target_file)
 {
 	char *uri;
 	GList **link_files;
-	
+
 	if (symbolic_links == NULL) {
 		link_files = NULL;
 	} else {
@@ -2186,7 +2186,7 @@ update_info_internal (NemoFile *file,
 	const char *trash_orig_path;
 	const char *group, *owner, *owner_real;
 	gboolean free_owner, free_group;
-	
+
 	if (file->details->is_gone) {
 		return FALSE;
 	}
@@ -2217,7 +2217,7 @@ update_info_internal (NemoFile *file,
 						  g_file_info_get_display_name (info),
 						  g_file_info_get_edit_name (info),
 						  FALSE);
-	
+
 	file_type = g_file_info_get_file_type (info);
 	if (file->details->type != file_type) {
 		changed = TRUE;
@@ -2235,7 +2235,7 @@ update_info_internal (NemoFile *file,
 		} else {
 			old_activation_uri = file->details->activation_uri;
 			file->details->activation_uri = g_strdup (activation_uri);
-			
+
 			if (old_activation_uri) {
 				if (strcmp (old_activation_uri,
 					    file->details->activation_uri) != 0) {
@@ -2247,7 +2247,7 @@ update_info_internal (NemoFile *file,
 			}
 		}
 	}
-	
+
 	is_symlink = g_file_info_get_is_symlink (info);
 	if (file->details->is_symlink != is_symlink) {
 		changed = TRUE;
@@ -2368,7 +2368,7 @@ update_info_internal (NemoFile *file,
 	    file->details->is_media_check_automatic != is_media_check_automatic) {
 		changed = TRUE;
 	}
-	
+
 	file->details->can_read = can_read;
 	file->details->can_write = can_write;
 	file->details->can_execute = can_execute;
@@ -2390,7 +2390,7 @@ update_info_internal (NemoFile *file,
 	owner_real = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_OWNER_USER_REAL);
 	free_group = FALSE;
 	group = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_OWNER_GROUP);
-	
+
 	uid = -1;
 	gid = -1;
 	if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_UNIX_UID)) {
@@ -2419,13 +2419,13 @@ update_info_internal (NemoFile *file,
 		eel_ref_str_unref (file->details->owner);
 		file->details->owner = eel_ref_str_get_unique (owner);
 	}
-	
+
 	if (g_strcmp0 (eel_ref_str_peek (file->details->owner_real), owner_real) != 0) {
 		changed = TRUE;
 		eel_ref_str_unref (file->details->owner_real);
 		file->details->owner_real = eel_ref_str_get_unique (owner_real);
 	}
-	
+
 	if (g_strcmp0 (eel_ref_str_peek (file->details->group), group) != 0) {
 		changed = TRUE;
 		eel_ref_str_unref (file->details->group);
@@ -2438,7 +2438,7 @@ update_info_internal (NemoFile *file,
 	if (free_group) {
 		g_free ((char *)group);
 	}
-	
+
 	size = -1;
 	if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_STANDARD_SIZE)) {
 		size = g_file_info_get_size (info);
@@ -2453,7 +2453,7 @@ update_info_internal (NemoFile *file,
 		changed = TRUE;
 	}
 	file->details->sort_order = sort_order;
-	
+
 	atime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_ACCESS);
 	ctime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_CHANGED);
 	mtime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
@@ -2506,7 +2506,7 @@ update_info_internal (NemoFile *file,
 		changed = TRUE;
 		file->details->thumbnailing_failed = thumbnailing_failed;
 	}
-	
+
 	symlink_name = g_file_info_get_symlink_target (info);
 	if (g_strcmp0 (file->details->symlink_name, symlink_name) != 0) {
 		changed = TRUE;
@@ -2520,14 +2520,14 @@ update_info_internal (NemoFile *file,
 		eel_ref_str_unref (file->details->mime_type);
 		file->details->mime_type = eel_ref_str_get_unique (mime_type);
 	}
-	
+
 	selinux_context = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_SELINUX_CONTEXT);
 	if (g_strcmp0 (file->details->selinux_context, selinux_context) != 0) {
 		changed = TRUE;
 		g_free (file->details->selinux_context);
 		file->details->selinux_context = g_strdup (selinux_context);
 	}
-	
+
 	description = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_DESCRIPTION);
 	if (g_strcmp0 (file->details->description, description) != 0) {
 		changed = TRUE;
@@ -2571,7 +2571,7 @@ update_info_internal (NemoFile *file,
 
 			node = nemo_directory_begin_file_name_change
 				(file->details->directory, file);
-			
+
 			eel_ref_str_unref (file->details->name);
 			if (g_strcmp0 (eel_ref_str_peek (file->details->display_name),
 				       name) == 0) {
@@ -2596,7 +2596,7 @@ update_info_internal (NemoFile *file,
 
 	if (changed) {
 		add_to_link_hash_table (file);
-		
+
 		update_links_if_target (file);
 	}
 
@@ -2633,13 +2633,13 @@ update_name_internal (NemoFile *file,
 	if (name_is (file, name)) {
 		return FALSE;
 	}
-	
+
 	node = NULL;
 	if (in_directory) {
 		node = nemo_directory_begin_file_name_change
 			(file->details->directory, file);
 	}
-	
+
 	eel_ref_str_unref (file->details->name);
 	file->details->name = eel_ref_str_new (name);
 
@@ -2659,7 +2659,7 @@ gboolean
 nemo_file_update_name (NemoFile *file, const char *name)
 {
 	gboolean ret;
-	
+
 	ret = update_name_internal (file, name, TRUE);
 
 	if (ret) {
@@ -2670,7 +2670,7 @@ nemo_file_update_name (NemoFile *file, const char *name)
 }
 
 gboolean
-nemo_file_update_name_and_directory (NemoFile *file, 
+nemo_file_update_name_and_directory (NemoFile *file,
 					 const char *name,
 					 NemoDirectory *new_directory)
 {
@@ -2809,13 +2809,17 @@ get_time (NemoFile *file,
 	case NEMO_DATE_TYPE_TRASHED:
 		time = file->details->trash_time;
 		break;
+	case NEMO_DATE_TYPE_CHANGED:
+    case NEMO_DATE_TYPE_PERMISSIONS_CHANGED:
+	/* FIXME is some logic needed here ?
+	 */
 	default:
 		g_assert_not_reached ();
 		break;
 	}
 
 	*time_out = time;
-	
+
 	/* If we got info with no modification time in it, it means
 	 * there is no such thing as a modification time as far as
 	 * gnome-vfs is concerned, so "unknowable".
@@ -2851,7 +2855,7 @@ compare_directories_by_count (NemoFile *file_1, NemoFile *file_2)
 
 	/* count_known_1 and count_known_2 are equal now. Check if count
 	 * details are UNKNOWABLE or UNKNOWN.
-	 */ 
+	 */
 	if (count_known_1 == UNKNOWABLE || count_known_1 == UNKNOWN) {
 		return 0;
 	}
@@ -2889,9 +2893,9 @@ compare_files_by_size (NemoFile *file_1, NemoFile *file_2)
 		return +1;
 	}
 
-	/* size_known_1 and size_known_2 are equal now. Check if size 
-	 * details are UNKNOWABLE or UNKNOWN 
-	 */ 
+	/* size_known_1 and size_known_2 are equal now. Check if size
+	 * details are UNKNOWABLE or UNKNOWN
+	 */
 	if (size_known_1 == UNKNOWABLE || size_known_1 == UNKNOWN) {
 		return 0;
 	}
@@ -3025,7 +3029,7 @@ prepend_automatic_keywords (NemoFile *file,
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_NOTE));
 	}
 
-	/* Trash files are assumed to be read-only, 
+	/* Trash files are assumed to be read-only,
 	 * so we want to ignore them here. */
 	if (!nemo_file_can_write (file) &&
 	    !nemo_file_is_in_trash (file) &&
@@ -3045,8 +3049,8 @@ prepend_automatic_keywords (NemoFile *file,
 	if (parent) {
 		nemo_file_unref (parent);
 	}
-		
-	
+
+
 	return names;
 }
 
@@ -3066,7 +3070,7 @@ compare_by_type (NemoFile *file_1, NemoFile *file_2, gboolean detailed)
 	 */
 	is_directory_1 = nemo_file_is_directory (file_1);
 	is_directory_2 = nemo_file_is_directory (file_2);
-	
+
 	if (is_directory_1 && is_directory_2) {
 		return 0;
 	}
@@ -3132,14 +3136,14 @@ compare_by_time (NemoFile *file_1, NemoFile *file_2, NemoDateType type)
 	if (time_known_1 < time_known_2) {
 		return +1;
 	}
-	
-	/* Now time_known_1 is equal to time_known_2. Check whether 
+
+	/* Now time_known_1 is equal to time_known_2. Check whether
 	 * we failed to get modification times for files
 	 */
 	if(time_known_1 == UNKNOWABLE || time_known_1 == UNKNOWN) {
 		return 0;
 	}
-		
+
 	if (time_1 < time_2) {
 		return -1;
 	}
@@ -3200,7 +3204,7 @@ nemo_file_compare_for_sort_internal (NemoFile *file_1,
  * @directories_first: Put all directories before any non-directories
  * @reversed: Reverse the order of the items, except that
  * the directories_first flag is still respected.
- * 
+ *
  * Return value: int < 0 if @file_1 should come before file_2 in a
  * sorted list; int > 0 if @file_2 should come before file_1 in a
  * sorted list; 0 if @file_1 and @file_2 are equal for this sort criterion. Note
@@ -3219,7 +3223,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 	if (file_1 == file_2) {
 		return 0;
 	}
-	
+
 	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, reversed);
 
 	if (result == 0) {
@@ -3269,6 +3273,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
+		case NEMO_FILE_SORT_NONE:
 		default:
 			g_return_val_if_reached (0);
 		}
@@ -3316,7 +3321,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
         return nemo_file_compare_for_sort (file_1, file_2,
                                NEMO_FILE_SORT_BY_DETAILED_TYPE,
                                directories_first,
-                               reversed); 
+                               reversed);
 	} else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q || attribute == attribute_date_modified_with_time_q || attribute == attribute_date_modified_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_MTIME,
@@ -3337,14 +3342,14 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 	/* it is a normal attribute, compare by strings */
 
 	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, reversed);
-	
+
 	if (result == 0) {
 		char *value_1;
 		char *value_2;
-		
-		value_1 = nemo_file_get_string_attribute_q (file_1, 
+
+		value_1 = nemo_file_get_string_attribute_q (file_1,
 								attribute);
-		value_2 = nemo_file_get_string_attribute_q (file_2, 
+		value_2 = nemo_file_get_string_attribute_q (file_2,
 								attribute);
 
 		if (value_1 != NULL && value_2 != NULL) {
@@ -3358,7 +3363,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 			result = -result;
 		}
 	}
-	
+
 	return result;
 }
 
@@ -3380,7 +3385,7 @@ nemo_file_compare_for_sort_by_attribute     (NemoFile                   *file_1,
  * nemo_file_compare_name:
  * @file: A file object
  * @pattern: A string we are comparing it with
- * 
+ *
  * Return value: result of a comparison of the file name and the given pattern,
  * using the same sorting order as sort by name.
  **/
@@ -3411,21 +3416,21 @@ is_file_hidden (NemoFile *file)
 	return file->details->directory->details->hidden_file_hash != NULL &&
 		g_hash_table_lookup (file->details->directory->details->hidden_file_hash,
 				     eel_ref_str_peek (file->details->name)) != NULL;
-	
+
 }
 
 /**
  * nemo_file_should_show:
  * @file: the file to check.
  * @show_hidden: whether we want to show hidden files or not.
- * 
+ *
  * Determines if a #NemoFile should be shown. Note that when browsing
- * a trash directory, this function will always return %TRUE. 
+ * a trash directory, this function will always return %TRUE.
  *
  * Returns: %TRUE if the file should be shown, %FALSE if it shouldn't.
  */
-gboolean 
-nemo_file_should_show (NemoFile *file, 
+gboolean
+nemo_file_should_show (NemoFile *file,
 			   gboolean show_hidden,
 			   gboolean show_foreign)
 {
@@ -3553,7 +3558,7 @@ nemo_file_get_metadata_list (NemoFile *file,
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
     if (NEMO_FILE_GET_CLASS (file)->get_metadata_as_list) {
-        return NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key);
+        return NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key); /* FIXME this is not a GList */
     }
 
 	id = nemo_metadata_get_id (key);
@@ -3806,7 +3811,7 @@ nemo_file_peek_display_name (NemoFile *file)
 		return "";
 
 	/* Default to display name based on filename if its not set yet */
-	
+
 	if (file->details->display_name == NULL) {
 		name = eel_ref_str_peek (file->details->name);
 		if (g_utf8_validate (name, -1, NULL)) {
@@ -3823,7 +3828,7 @@ nemo_file_peek_display_name (NemoFile *file)
 			g_free (escaped_name);
 		}
 	}
-	
+
 	return eel_ref_str_peek (file->details->display_name);
 }
 
@@ -3837,11 +3842,11 @@ char *
 nemo_file_get_edit_name (NemoFile *file)
 {
 	const char *res;
-	
+
 	res = eel_ref_str_peek (file->details->edit_name);
 	if (res == NULL)
 		res = "";
-	
+
 	return g_strdup (res);
 }
 
@@ -3860,11 +3865,11 @@ nemo_file_get_name (NemoFile *file)
 /**
  * nemo_file_get_description:
  * @file: a #NemoFile.
- * 
- * Gets the standard::description key from @file, if 
+ *
+ * Gets the standard::description key from @file, if
  * it has been cached.
- * 
- * Returns: a string containing the value of the standard::description 
+ *
+ * Returns: a string containing the value of the standard::description
  * 	key, or %NULL.
  */
 char *
@@ -3872,8 +3877,8 @@ nemo_file_get_description (NemoFile *file)
 {
 	return g_strdup (file->details->description);
 }
-   
-void             
+
+void
 nemo_file_monitor_add (NemoFile *file,
 			   gconstpointer client,
 			   NemoFileAttributes attributes)
@@ -3882,8 +3887,8 @@ nemo_file_monitor_add (NemoFile *file,
 	g_return_if_fail (client != NULL);
 
 	NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->monitor_add (file, client, attributes);
-}   
-			   
+}
+
 void
 nemo_file_monitor_remove (NemoFile *file,
 			      gconstpointer client)
@@ -3892,7 +3897,7 @@ nemo_file_monitor_remove (NemoFile *file,
 	g_return_if_fail (client != NULL);
 
 	NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->monitor_remove (file, client);
-}			      
+}
 
 gboolean
 nemo_file_is_launcher (NemoFile *file)
@@ -3931,7 +3936,7 @@ nemo_file_get_activation_uri (NemoFile *file)
 	if (file->details->activation_uri != NULL) {
 		return g_strdup (file->details->activation_uri);
 	}
-	
+
 	return nemo_file_get_uri (file);
 }
 
@@ -3943,7 +3948,7 @@ nemo_file_get_activation_location (NemoFile *file)
 	if (file->details->activation_uri != NULL) {
 		return g_file_new_for_uri (file->details->activation_uri);
 	}
-	
+
 	return nemo_file_get_location (file);
 }
 
@@ -3954,7 +3959,7 @@ nemo_file_get_drop_target_uri (NemoFile *file)
 	char *uri, *target_uri;
 	GFile *location;
 	NemoDesktopLink *link;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
 	if (NEMO_IS_DESKTOP_ICON_FILE (file)) {
@@ -3970,9 +3975,9 @@ nemo_file_get_drop_target_uri (NemoFile *file)
 			}
 		}
 	}
-	
+
 	uri = nemo_file_get_uri (file);
-			
+
 	/* Check for Nemo link */
 	if (nemo_file_is_nemo_link (file)) {
 		location = nemo_file_get_location (file);
@@ -4008,7 +4013,7 @@ get_custom_icon_metadata_uri (NemoFile *file)
 	char *custom_icon_uri;
 	char *uri;
 	char *dir_uri;
-	
+
 	uri = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL);
 	if (uri != NULL &&
 	    nemo_file_is_directory (file) &&
@@ -4046,7 +4051,7 @@ get_custom_icon (NemoFile *file)
 	}
 
 	icon = NULL;
-	
+
 	/* Metadata takes precedence; first we look at the custom
 	 * icon URI, then at the custom icon name.
 	 */
@@ -4067,11 +4072,11 @@ get_custom_icon (NemoFile *file)
 			g_free (custom_icon_name);
 		}
 	}
- 
+
 	if (icon == NULL && file->details->got_link_info && file->details->custom_icon != NULL) {
 		icon = g_object_ref (file->details->custom_icon);
  	}
- 
+
 	return icon;
 }
 
@@ -4103,7 +4108,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	 * of the original file.
 	 */
 	if (file->details->thumbnail_path == NULL &&
-	    nemo_file_get_size (file) > cached_thumbnail_limit) {
+	    nemo_file_get_size (file) > (int)cached_thumbnail_limit) {
 		return FALSE;
 	}
 
@@ -4204,19 +4209,19 @@ nemo_file_get_gicon (NemoFile *file,
 
 			/* "folder" should override "inode-directory", not the other way around */
 			if (is_inode_directory) {
-				g_ptr_array_add (prepend_array, "folder");
+				g_ptr_array_add (prepend_array, (char *)"folder");
 			}
 			if (is_folder && (flags & NEMO_FILE_ICON_FLAGS_FOR_OPEN_FOLDER)) {
-				g_ptr_array_add (prepend_array, "folder-open");
+				g_ptr_array_add (prepend_array, (char *)"folder-open");
 			}
 			if (is_folder &&
 			    (flags & NEMO_FILE_ICON_FLAGS_IGNORE_VISITING) == 0 &&
 			    nemo_file_has_open_window (file)) {
-				g_ptr_array_add (prepend_array, "folder-visiting");
+				g_ptr_array_add (prepend_array, (char *)"folder-visiting");
 			}
 			if (is_folder &&
 			    (flags & NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT)) {
-				g_ptr_array_add (prepend_array, "folder-drag-accept");
+				g_ptr_array_add (prepend_array, (char *)"folder-drag-accept");
 			}
 
 			if (prepend_array->len) {
@@ -4254,7 +4259,7 @@ nemo_file_get_gicon (NemoFile *file,
 
 		return icon;
 	}
-	
+
 	return g_themed_icon_new ("text-x-generic");
 }
 
@@ -4271,8 +4276,8 @@ nemo_file_get_emblemed_icon (NemoFile *file,
     gicon = nemo_file_get_gicon (file, flags);
 
     i = 0;
-    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
-    emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+    emblems_to_ignore[i++] = (char *)NEMO_FILE_EMBLEM_NAME_TRASH;
+    emblems_to_ignore[i++] = (char *)NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
     emblems_to_ignore[i++] = NULL;
 
     emblem = NULL;
@@ -4330,7 +4335,7 @@ nemo_file_get_icon (NemoFile *file,
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	gicon = get_custom_icon (file);
 	if (gicon != NULL) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
@@ -4340,7 +4345,7 @@ nemo_file_get_icon (NemoFile *file,
 
 	DEBUG ("Called file_get_icon(), at size %d, force thumbnail %d", size,
 	       flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
-	
+
 	if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
 		modified_size = size * scale;
 	} else {
@@ -4371,7 +4376,7 @@ nemo_file_get_icon (NemoFile *file,
 
                 s = thumb_scale * h;
             } else {
-                s = MAX (w, h);         
+                s = MAX (w, h);
                 /* Don't scale up small thumbnails in the standard view */
                 if (s <= cached_thumbnail_size) {
                     thumb_scale = (double)size / NEMO_ICON_SIZE_STANDARD;
@@ -4429,10 +4434,10 @@ nemo_file_get_icon (NemoFile *file,
 
 			DEBUG ("Returning thumbnailed image, at size %d %d",
 			       (int) (w * thumb_scale), (int) (h * thumb_scale));
-			
+
 			return nemo_icon_info_new_for_pixbuf (scaled_pixbuf, scale);
 		} else if (file->details->thumbnail_path == NULL &&
-			   file->details->can_read &&				
+			   file->details->can_read &&
 			   !file->details->is_thumbnailing &&
 			   !file->details->thumbnailing_failed) {
 			if (nemo_can_thumbnail (file)) {
@@ -4446,7 +4451,7 @@ nemo_file_get_icon (NemoFile *file,
 		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
 	else
 		gicon = nemo_file_get_gicon (file, flags);
-	
+
 	if (gicon) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
 		if (nemo_icon_info_is_fallback (icon)) {
@@ -4477,7 +4482,7 @@ nemo_file_get_icon_pixbuf (NemoFile *file,
 		pixbuf = nemo_icon_info_get_pixbuf (info);
 	}
 	g_object_unref (info);
-	
+
 	return pixbuf;
 }
 
@@ -4543,13 +4548,13 @@ nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
 
 /**
  * nemo_file_get_date_as_string:
- * 
- * Get a user-displayable string representing a file modification date. 
+ *
+ * Get a user-displayable string representing a file modification date.
  * The caller is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_date_as_string (NemoFile       *file,
@@ -4727,7 +4732,7 @@ get_speed_tradeoff_preference_for_file (NemoFile *file, NemoSpeedTradeoffValue v
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
 	use_preview = nemo_file_get_filesystem_use_preview (file);
-	
+
 	if (value == NEMO_SPEED_TRADEOFF_ALWAYS) {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
 			return FALSE;
@@ -4735,7 +4740,7 @@ get_speed_tradeoff_preference_for_file (NemoFile *file, NemoSpeedTradeoffValue v
 			return TRUE;
 		}
 	}
-	
+
 	if (value == NEMO_SPEED_TRADEOFF_NEVER) {
 		return FALSE;
 	}
@@ -4758,14 +4763,14 @@ gboolean
 nemo_file_should_show_directory_item_count (NemoFile *file)
 {
 	static gboolean show_directory_item_count_callback_added = FALSE;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-	
+
 	if (file->details->mime_type &&
 	    strcmp (eel_ref_str_peek (file->details->mime_type), "x-directory/smb-share") == 0) {
 		return FALSE;
 	}
-	
+
 	/* Add the callback once for the life of our process */
 	if (!show_directory_item_count_callback_added) {
 		g_signal_connect_swapped (nemo_preferences,
@@ -4800,18 +4805,18 @@ nemo_file_should_show_type (NemoFile *file)
 
 /**
  * nemo_file_get_directory_item_count
- * 
+ *
  * Get the number of items in a directory.
  * @file: NemoFile representing a directory.
  * @count: Place to put count.
  * @count_unreadable: Set to TRUE (if non-NULL) if permissions prevent
  * the item count from being read on this directory. Otherwise set to FALSE.
- * 
+ *
  * Returns: TRUE if count is available.
- * 
+ *
  **/
 gboolean
-nemo_file_get_directory_item_count (NemoFile *file, 
+nemo_file_get_directory_item_count (NemoFile *file,
 					guint *count,
 					gboolean *count_unreadable)
 {
@@ -4821,7 +4826,7 @@ nemo_file_get_directory_item_count (NemoFile *file,
 	if (count_unreadable != NULL) {
 		*count_unreadable = FALSE;
 	}
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
 	if (!nemo_file_is_directory (file)) {
@@ -4832,13 +4837,13 @@ nemo_file_get_directory_item_count (NemoFile *file,
 		return FALSE;
 	}
 
-	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_item_count 
+	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_item_count
 		(file, count, count_unreadable);
 }
 
 /**
  * nemo_file_get_deep_counts
- * 
+ *
  * Get the statistics about items inside a directory.
  * @file: NemoFile representing a directory or file.
  * @directory_count: Place to put count of directories inside.
@@ -4849,9 +4854,9 @@ nemo_file_get_directory_item_count (NemoFile *file,
  * @force: Whether the deep counts should even be collected if
  * nemo_file_should_show_directory_item_count returns FALSE
  * for this file.
- * 
+ *
  * Returns: Status to indicate whether sizes are available.
- * 
+ *
  **/
 NemoRequestStatus
 nemo_file_get_deep_counts (NemoFile *file,
@@ -4889,7 +4894,7 @@ nemo_file_get_deep_counts (NemoFile *file,
 		return file->details->deep_counts_status;
 	}
 
-	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_deep_counts 
+	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->get_deep_counts
 		(file, directory_count, file_count,
 		 unreadable_directory_count, hidden_count, total_size);
 }
@@ -4909,14 +4914,14 @@ nemo_file_recompute_deep_counts (NemoFile *file)
 
 /**
  * nemo_file_get_directory_item_mime_types
- * 
+ *
  * Get the list of mime-types present in a directory.
  * @file: NemoFile representing a directory. It is an error to
  * call this function on a file that is not a directory.
  * @mime_list: Place to put the list of mime-types.
- * 
+ *
  * Returns: TRUE if mime-type list is available.
- * 
+ *
  **/
 gboolean
 nemo_file_get_directory_item_mime_types (NemoFile *file,
@@ -4940,16 +4945,16 @@ nemo_file_can_get_size (NemoFile *file)
 {
 	return file->details->size == -1;
 }
-	
+
 
 /**
  * nemo_file_get_size
- * 
+ *
  * Get the file size.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Size in bytes.
- * 
+ *
  **/
 goffset
 nemo_file_get_size (NemoFile *file)
@@ -4981,7 +4986,7 @@ set_attributes_get_info_callback (GObject *source_object,
 	NemoFileOperation *op;
 	GFileInfo *new_info;
 	GError *error;
-	
+
 	op = callback_data;
 
 	error = NULL;
@@ -5030,20 +5035,20 @@ set_attributes_callback (GObject *source_object,
 }
 
 void
-nemo_file_set_attributes (NemoFile *file, 
+nemo_file_set_attributes (NemoFile *file,
 			      GFileInfo *attributes,
 			      NemoFileOperationCallback callback,
 			      gpointer callback_data)
 {
 	NemoFileOperation *op;
 	GFile *location;
-	
+
 	op = nemo_file_operation_new (file, callback, callback_data);
 
 	location = nemo_file_get_location (file);
 	g_file_set_attributes_async (location,
 				     attributes,
-				     0, 
+				     0,
 				     G_PRIORITY_DEFAULT,
 				     op->cancellable,
 				     set_attributes_callback,
@@ -5054,12 +5059,12 @@ nemo_file_set_attributes (NemoFile *file,
 
 /**
  * nemo_file_can_get_permissions:
- * 
+ *
  * Check whether the permissions for a file are determinable.
  * This might not be the case for files on non-UNIX file systems.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the permissions are valid.
  */
 gboolean
@@ -5070,12 +5075,12 @@ nemo_file_can_get_permissions (NemoFile *file)
 
 /**
  * nemo_file_can_set_permissions:
- * 
+ *
  * Check whether the current user is allowed to change
  * the permissions of a file.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the current user can change the
  * permissions of @file, FALSE otherwise. It's always possible
  * that when you actually try to do it, you will fail.
@@ -5119,16 +5124,16 @@ nemo_file_get_permissions (NemoFile *file)
 
 /**
  * nemo_file_set_permissions:
- * 
+ *
  * Change a file's permissions. This should only be called if
  * nemo_file_can_set_permissions returned TRUE.
- * 
+ *
  * @file: NemoFile representing the file in question.
  * @new_permissions: New permissions value. This is the whole
  * set of permissions, not a delta.
  **/
 void
-nemo_file_set_permissions (NemoFile *file, 
+nemo_file_set_permissions (NemoFile *file,
 			       guint32 new_permissions,
 			       NemoFileOperationCallback callback,
 			       gpointer callback_data)
@@ -5148,7 +5153,7 @@ nemo_file_set_permissions (NemoFile *file,
 		g_error_free (error);
 		return;
 	}
-			       
+
 	/* Test the permissions-haven't-changed case explicitly
 	 * because we don't want to send the file-changed signal if
 	 * nothing changed.
@@ -5170,19 +5175,19 @@ nemo_file_set_permissions (NemoFile *file,
 	info = g_file_info_new ();
 	g_file_info_set_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE, new_permissions);
 	nemo_file_set_attributes (file, info, callback, callback_data);
-	
+
 	g_object_unref (info);
 }
 
 /**
  * nemo_file_can_get_selinux_context:
- * 
+ *
  * Check whether the selinux context for a file are determinable.
  * This might not be the case for files on non-UNIX file systems,
  * files without a context or systems that don't support selinux.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the permissions are valid.
  */
 gboolean
@@ -5194,20 +5199,20 @@ nemo_file_can_get_selinux_context (NemoFile *file)
 
 /**
  * nemo_file_get_selinux_context:
- * 
+ *
  * Get a user-displayable string representing a file's selinux
  * context
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 char *
 nemo_file_get_selinux_context (NemoFile *file)
 {
 	char *translated;
 	char *raw;
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
 	if (!nemo_file_can_get_selinux_context (file)) {
@@ -5228,7 +5233,7 @@ nemo_file_get_selinux_context (NemoFile *file)
 	{
 		translated = g_strdup (raw);
 	}
-	
+
 	return translated;
 }
 
@@ -5254,7 +5259,7 @@ get_real_name (const char *name, const char *gecos)
 	} else {
 		locale_string = g_strdup (name);
 	}
-	
+
 	capitalized_login_name = eel_str_capitalize (locale_string);
 	g_free (locale_string);
 
@@ -5347,12 +5352,12 @@ get_id_from_digit_string (const char *digit_string, uid_t *id)
 
 /**
  * nemo_file_can_get_owner:
- * 
+ *
  * Check whether the owner a file is determinable.
  * This might not be the case for files on non-UNIX file systems.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the owner is valid.
  */
 gboolean
@@ -5364,13 +5369,13 @@ nemo_file_can_get_owner (NemoFile *file)
 
 /**
  * nemo_file_get_owner_name:
- * 
+ *
  * Get the user name of the file's owner. If the owner has no
  * name, returns the userid as a string. The caller is responsible
  * for g_free-ing this string.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: A newly-allocated string.
  */
 char *
@@ -5381,12 +5386,12 @@ nemo_file_get_owner_name (NemoFile *file)
 
 /**
  * nemo_file_can_set_owner:
- * 
+ *
  * Check whether the current user is allowed to change
  * the owner of a file.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the current user can change the
  * owner of @file, FALSE otherwise. It's always possible
  * that when you actually try to do it, you will fail.
@@ -5408,10 +5413,10 @@ nemo_file_can_set_owner (NemoFile *file)
 
 /**
  * nemo_file_set_owner:
- * 
+ *
  * Set the owner of a file. This will only have any effect if
  * nemo_file_can_set_owner returns TRUE.
- * 
+ *
  * @file: The file in question.
  * @user_name_or_id: The user name to set the owner to.
  * If the string does not match any user name, and the
@@ -5421,7 +5426,7 @@ nemo_file_can_set_owner (NemoFile *file)
  * @callback_data: Parameter passed back with callback function.
  */
 void
-nemo_file_set_owner (NemoFile *file, 
+nemo_file_set_owner (NemoFile *file,
 			 const char *user_name_or_id,
 			 NemoFileOperationCallback callback,
 			 gpointer callback_data)
@@ -5459,7 +5464,7 @@ nemo_file_set_owner (NemoFile *file,
 				     _("Specified owner '%s' doesn't exist"), user_name_or_id);
 		(* callback) (file, NULL, error, callback_data);
 		g_error_free (error);
-		return;		
+		return;
 	}
 
 	/* Test the owner-hasn't-changed case explicitly because we
@@ -5470,7 +5475,7 @@ nemo_file_set_owner (NemoFile *file,
 		(* callback) (file, NULL, NULL, callback_data);
 		return;
 	}
-	
+
 	if (!nemo_file_undo_manager_pop_flag ()) {
 		NemoFileUndoInfo *undo_info;
 		char* current_owner;
@@ -5494,10 +5499,10 @@ nemo_file_set_owner (NemoFile *file,
 
 /**
  * nemo_get_user_names:
- * 
- * Get a list of user names. For users with a different associated 
- * "real name", the real name follows the standard user name, separated 
- * by a carriage return. The caller is responsible for freeing this list 
+ *
+ * Get a list of user names. For users with a different associated
+ * "real name", the real name follows the standard user name, separated
+ * by a carriage return. The caller is responsible for freeing this list
  * and its contents.
  */
 GList *
@@ -5508,7 +5513,7 @@ nemo_get_user_names (void)
 	struct passwd *user;
 
 	list = NULL;
-	
+
 	setpwent ();
 
 	while ((user = getpwent ()) != NULL) {
@@ -5529,12 +5534,12 @@ nemo_get_user_names (void)
 
 /**
  * nemo_file_can_get_group:
- * 
+ *
  * Check whether the group a file is determinable.
  * This might not be the case for files on non-UNIX file systems.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the group is valid.
  */
 gboolean
@@ -5546,13 +5551,13 @@ nemo_file_can_get_group (NemoFile *file)
 
 /**
  * nemo_file_get_group_name:
- * 
+ *
  * Get the name of the file's group. If the group has no
  * name, returns the groupid as a string. The caller is responsible
  * for g_free-ing this string.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: A newly-allocated string.
  **/
 char *
@@ -5563,12 +5568,12 @@ nemo_file_get_group_name (NemoFile *file)
 
 /**
  * nemo_file_can_set_group:
- * 
+ *
  * Check whether the current user is allowed to change
  * the group of a file.
- * 
+ *
  * @file: The file in question.
- * 
+ *
  * Return value: TRUE if the current user can change the
  * group of @file, FALSE otherwise. It's always possible
  * that when you actually try to do it, you will fail.
@@ -5614,7 +5619,7 @@ nemo_get_group_names_for_user (void)
 	struct group *group;
 	int count, i;
 	gid_t gid_list[NGROUPS_MAX + 1];
-	
+
 
 	list = NULL;
 
@@ -5623,7 +5628,7 @@ nemo_get_group_names_for_user (void)
 		group = getgrgid (gid_list[i]);
 		if (group == NULL)
 			break;
-		
+
 		list = g_list_prepend (list, g_strdup (group->gr_name));
 	}
 
@@ -5632,7 +5637,7 @@ nemo_get_group_names_for_user (void)
 
 /**
  * nemo_get_group_names:
- * 
+ *
  * Get a list of all group names.
  */
 GList *
@@ -5640,25 +5645,25 @@ nemo_get_all_group_names (void)
 {
 	GList *list;
 	struct group *group;
-	
+
 	list = NULL;
 
 	setgrent ();
-	
+
 	while ((group = getgrent ()) != NULL)
 		list = g_list_prepend (list, g_strdup (group->gr_name));
-	
+
 	endgrent ();
-	
+
 	return g_list_sort (list, (GCompareFunc) g_utf8_collate);
 }
 
 /**
  * nemo_file_get_settable_group_names:
- * 
+ *
  * Get a list of all group names that the current user
  * can set the group of a specific file to.
- * 
+ *
  * @file: The NemoFile in question.
  */
 GList *
@@ -5669,7 +5674,7 @@ nemo_file_get_settable_group_names (NemoFile *file)
 
 	if (!nemo_file_can_set_group (file)) {
 		return NULL;
-	}	
+	}
 
 	/* Check the user. */
 	user_id = geteuid();
@@ -5690,10 +5695,10 @@ nemo_file_get_settable_group_names (NemoFile *file)
 
 /**
  * nemo_file_set_group:
- * 
+ *
  * Set the group of a file. This will only have any effect if
  * nemo_file_can_set_group returns TRUE.
- * 
+ *
  * @file: The file in question.
  * @group_name_or_id: The group name to set the owner to.
  * If the string does not match any group name, and the
@@ -5703,7 +5708,7 @@ nemo_file_get_settable_group_names (NemoFile *file)
  * @callback_data: Parameter passed back with callback function.
  */
 void
-nemo_file_set_group (NemoFile *file, 
+nemo_file_set_group (NemoFile *file,
 			 const char *group_name_or_id,
 			 NemoFileOperationCallback callback,
 			 gpointer callback_data)
@@ -5741,7 +5746,7 @@ nemo_file_set_group (NemoFile *file,
 				     _("Specified group '%s' doesn't exist"), group_name_or_id);
 		(* callback) (file, NULL, error, callback_data);
 		g_error_free (error);
-		return;		
+		return;
 	}
 
 	if (new_id == (gid_t) file->details->gid) {
@@ -5771,14 +5776,14 @@ nemo_file_set_group (NemoFile *file,
 
 /**
  * nemo_file_get_octal_permissions_as_string:
- * 
+ *
  * Get a user-displayable string representing a file's permissions
  * as an octal number. The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_octal_permissions_as_string (NemoFile *file)
@@ -5797,13 +5802,13 @@ nemo_file_get_octal_permissions_as_string (NemoFile *file)
 
 /**
  * nemo_file_get_permissions_as_string:
- * 
+ *
  * Get a user-displayable string representing a file's permissions. The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_permissions_as_string (NemoFile *file)
@@ -5832,32 +5837,32 @@ nemo_file_get_permissions_as_string (NemoFile *file)
 				 is_link ? 'l' : is_directory ? 'd' : '-',
 		 		 permissions & S_IRUSR ? 'r' : '-',
 				 permissions & S_IWUSR ? 'w' : '-',
-				 permissions & S_IXUSR 
-				 	? (suid ? 's' : 'x') 
+				 permissions & S_IXUSR
+				 	? (suid ? 's' : 'x')
 				 	: (suid ? 'S' : '-'),
 				 permissions & S_IRGRP ? 'r' : '-',
 				 permissions & S_IWGRP ? 'w' : '-',
 				 permissions & S_IXGRP
-				 	? (sgid ? 's' : 'x') 
-				 	: (sgid ? 'S' : '-'),		
+				 	? (sgid ? 's' : 'x')
+				 	: (sgid ? 'S' : '-'),
 				 permissions & S_IROTH ? 'r' : '-',
 				 permissions & S_IWOTH ? 'w' : '-',
 				 permissions & S_IXOTH
-				 	? (sticky ? 't' : 'x') 
+				 	? (sticky ? 't' : 'x')
 				 	: (sticky ? 'T' : '-'));
 }
 
 /**
  * nemo_file_get_owner_as_string:
- * 
+ *
  * Get a user-displayable string representing a file's owner. The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
  * @include_real_name: Whether or not to append the real name (if any)
  * for this user after the user name.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 char *
 nemo_file_get_owner_as_string (NemoFile *file, gboolean include_real_name)
@@ -5887,29 +5892,29 @@ nemo_file_get_owner_as_string (NemoFile *file, gboolean include_real_name)
 }
 
 static char *
-format_item_count_for_display (guint item_count, 
-			       gboolean includes_directories, 
+format_item_count_for_display (guint item_count,
+			       gboolean includes_directories,
 			       gboolean includes_files)
 {
 	g_assert (includes_directories || includes_files);
 
 	return g_strdup_printf (includes_directories
-			? (includes_files 
-			   ? ngettext ("%'u item", "%'u items", item_count) 
+			? (includes_files
+			   ? ngettext ("%'u item", "%'u items", item_count)
 			   : ngettext ("%'u folder", "%'u folders", item_count))
 			: ngettext ("%'u file", "%'u files", item_count), item_count);
 }
 
 /**
  * nemo_file_get_size_as_string:
- * 
+ *
  * Get a user-displayable string representing a file size. The caller
  * is responsible for g_free-ing this string. The string is an item
  * count for directories.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_size_as_string (NemoFile *file)
@@ -5921,35 +5926,35 @@ nemo_file_get_size_as_string (NemoFile *file)
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	g_assert (NEMO_IS_FILE (file));
-	
+
 	if (nemo_file_is_directory (file)) {
 		if (!nemo_file_get_directory_item_count (file, &item_count, &count_unreadable)) {
 			return NULL;
 		}
 		return format_item_count_for_display (item_count, TRUE, TRUE);
 	}
-	
+
 	if (file->details->size == -1) {
 		return NULL;
 	}
-	
+
 	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 	return g_format_size_full (file->details->size, prefix);
 }
 
 /**
  * nemo_file_get_size_as_string_with_real_size:
- * 
+ *
  * Get a user-displayable string representing a file size. The caller
  * is responsible for g_free-ing this string. The string is an item
  * count for directories.
  * This function adds the real size in the string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_size_as_string_with_real_size (NemoFile *file)
@@ -5961,20 +5966,20 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	g_assert (NEMO_IS_FILE (file));
-	
+
 	if (nemo_file_is_directory (file)) {
 		if (!nemo_file_get_directory_item_count (file, &item_count, &count_unreadable)) {
 			return NULL;
 		}
 		return format_item_count_for_display (item_count, TRUE, TRUE);
 	}
-	
+
 	if (file->details->size == -1) {
 		return NULL;
 	}
-	
+
 	/* If base-2 or base-2-full, then prefix will be 2 (i.e. base-2), if base-10 or base-10-long
 	   then prefix will be 0 (i.e. base-0). Prefix will be added to LONG_FORMAT */
 	prefix = (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES) / 2) * 2;
@@ -6004,11 +6009,11 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	g_assert (NEMO_IS_FILE (file));
 	g_assert (nemo_file_is_directory (file));
 
-	status = nemo_file_get_deep_counts 
+	status = nemo_file_get_deep_counts
 		(file, &directory_count, &file_count, &unreadable_count, &hidden_count, &total_size, FALSE);
 
 	/* Check whether any info is available. */
@@ -6030,7 +6035,9 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 			if (unreadable_count != 0) {
 				return NULL;
 			}
-		default: break;
+		case NEMO_REQUEST_NOT_STARTED:
+		default:
+            break;
 		}
 	}
 
@@ -6052,14 +6059,14 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 
 /**
  * nemo_file_get_deep_size_as_string:
- * 
+ *
  * Get a user-displayable string representing the size of all contained
  * items (only makes sense for directories). The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_deep_size_as_string (NemoFile *file)
@@ -6069,14 +6076,14 @@ nemo_file_get_deep_size_as_string (NemoFile *file)
 
 /**
  * nemo_file_get_deep_total_count_as_string:
- * 
+ *
  * Get a user-displayable string representing the count of all contained
  * items (only makes sense for directories). The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_deep_total_count_as_string (NemoFile *file)
@@ -6086,15 +6093,15 @@ nemo_file_get_deep_total_count_as_string (NemoFile *file)
 
 /**
  * nemo_file_get_deep_file_count_as_string:
- * 
+ *
  * Get a user-displayable string representing the count of all contained
  * items, not including directories. It only makes sense to call this
  * function on a directory. The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_deep_file_count_as_string (NemoFile *file)
@@ -6104,15 +6111,15 @@ nemo_file_get_deep_file_count_as_string (NemoFile *file)
 
 /**
  * nemo_file_get_deep_directory_count_as_string:
- * 
+ *
  * Get a user-displayable string representing the count of all contained
  * directories. It only makes sense to call this
  * function on a directory. The caller
  * is responsible for g_free-ing this string.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user.
- * 
+ *
  **/
 static char *
 nemo_file_get_deep_directory_count_as_string (NemoFile *file)
@@ -6122,22 +6129,22 @@ nemo_file_get_deep_directory_count_as_string (NemoFile *file)
 
 /**
  * nemo_file_get_string_attribute:
- * 
+ *
  * Get a user-displayable string from a named attribute. Use g_free to
  * free this string. If the value is unknown, returns NULL. You can call
  * nemo_file_get_string_attribute_with_default if you want a non-NULL
  * default.
- * 
+ *
  * @file: NemoFile representing the file in question.
  * @attribute_name: The name of the desired attribute. The currently supported
  * set includes "name", "type", "detailed_type", "mime_type", "size", "deep_size", "deep_directory_count",
- * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed", 
+ * "deep_file_count", "deep_total_count", "date_modified", "date_changed", "date_accessed",
  * "date_permissions", "owner", "group", "permissions", "octal_permissions", "uri", "where",
  * "link_target", "volume", "free_space", "selinux_context", "trashed_on", "trashed_orig_path"
- * 
+ *
  * Returns: Newly allocated string ready to display to the user, or NULL
  * if the value is unknown or @attribute_name is not supported.
- * 
+ *
  **/
 char *
 nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
@@ -6178,12 +6185,12 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 		return nemo_file_get_trash_original_file_parent_as_string (file);
 	}
 	if (attribute_q == attribute_date_modified_q) {
-		return nemo_file_get_date_as_string (file, 
+		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_MODIFIED,
 							 NEMO_DATE_FORMAT_REGULAR);
 	}
 	if (attribute_q == attribute_date_modified_full_q) {
-		return nemo_file_get_date_as_string (file, 
+		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_MODIFIED,
 							 NEMO_DATE_FORMAT_FULL);
 	}
@@ -6193,12 +6200,12 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 		                     NEMO_DATE_FORMAT_REGULAR_WITH_TIME);
 	}
 	if (attribute_q == attribute_date_changed_q) {
-		return nemo_file_get_date_as_string (file, 
+		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_CHANGED,
 							 NEMO_DATE_FORMAT_REGULAR);
 	}
 	if (attribute_q == attribute_date_changed_full_q) {
-		return nemo_file_get_date_as_string (file, 
+		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_CHANGED,
 							 NEMO_DATE_FORMAT_FULL);
 	}
@@ -6264,17 +6271,17 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	}
 
 	extension_attribute = NULL;
-	
+
 	if (file->details->pending_extension_attributes) {
 		extension_attribute = g_hash_table_lookup (file->details->pending_extension_attributes,
 							   GINT_TO_POINTER (attribute_q));
-	} 
+	}
 
 	if (extension_attribute == NULL && file->details->extension_attributes) {
 		extension_attribute = g_hash_table_lookup (file->details->extension_attributes,
 							   GINT_TO_POINTER (attribute_q));
 	}
-		
+
 	return g_strdup (extension_attribute);
 }
 
@@ -6287,20 +6294,20 @@ nemo_file_get_string_attribute (NemoFile *file, const char *attribute_name)
 
 /**
  * nemo_file_get_string_attribute_with_default:
- * 
+ *
  * Get a user-displayable string from a named attribute. Use g_free to
  * free this string. If the value is unknown, returns a string representing
  * the unknown value, which varies with attribute. You can call
  * nemo_file_get_string_attribute if you want NULL instead of a default
  * result.
- * 
+ *
  * @file: NemoFile representing the file in question.
  * @attribute_name: The name of the desired attribute. See the description of
  * nemo_file_get_string for the set of available attributes.
- * 
+ *
  * Returns: Newly allocated string ready to display to the user, or a string
  * such as "unknown" if the value is unknown or @attribute_name is not supported.
- * 
+ *
  **/
 char *
 nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_q)
@@ -6316,8 +6323,8 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 	}
 
 	/* Supply default values for the ones we know about. */
-	/* FIXME bugzilla.gnome.org 40646: 
-	 * Use hash table and switch statement or function pointers for speed? 
+	/* FIXME bugzilla.gnome.org 40646:
+	 * Use hash table and switch statement or function pointers for speed?
 	 */
 	if (attribute_q == attribute_size_q) {
 		if (!nemo_file_should_show_directory_item_count (file)) {
@@ -6360,7 +6367,7 @@ nemo_file_get_string_attribute_with_default_q (NemoFile *file, GQuark attribute_
 		/* If n/a */
 		return g_strdup ("");
 	}
-	
+
 	/* Fallback, use for both unknown attributes and attributes
 	 * for which we have no more appropriate default.
 	 */
@@ -6532,14 +6539,14 @@ static char *
 update_description_for_link (NemoFile *file, char *string)
 {
 	char *res;
-	
+
 	if (nemo_file_is_symbolic_link (file)) {
 		g_assert (!nemo_file_is_broken_symbolic_link (file));
 		if (string == NULL) {
 			return g_strdup (_("link"));
 		}
-		/* Note to localizers: convert file type string for file 
-		 * (e.g. "folder", "plain text") to file type for symbolic link 
+		/* Note to localizers: convert file type string for file
+		 * (e.g. "folder", "plain text") to file type for symbolic link
 		 * to that kind of file (e.g. "link to folder").
 		 */
 		res = g_strdup_printf (_("Link to %s"), string);
@@ -6574,18 +6581,18 @@ nemo_file_get_detailed_type_as_string (NemoFile *file)
     if (nemo_file_is_broken_symbolic_link (file)) {
         return g_strdup (_("link (broken)"));
 	}
-	
+
 	return update_description_for_link (file, get_description (file, TRUE));
 }
 
 /**
  * nemo_file_get_file_type
- * 
+ *
  * Return this file's type.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: The type.
- * 
+ *
  **/
 GFileType
 nemo_file_get_file_type (NemoFile *file)
@@ -6593,18 +6600,18 @@ nemo_file_get_file_type (NemoFile *file)
 	if (file == NULL) {
 		return G_FILE_TYPE_UNKNOWN;
 	}
-	
+
 	return file->details->type;
 }
 
 /**
  * nemo_file_get_mime_type
- * 
+ *
  * Return this file's default mime type.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: The mime type.
- * 
+ *
  **/
 char *
 nemo_file_get_mime_type (NemoFile *file)
@@ -6620,22 +6627,22 @@ nemo_file_get_mime_type (NemoFile *file)
 
 /**
  * nemo_file_is_mime_type
- * 
+ *
  * Check whether a file is of a particular MIME type, or inherited
  * from it.
  * @file: NemoFile representing the file in question.
  * @mime_type: The MIME-type string to test (e.g. "text/plain")
- * 
+ *
  * Return value: TRUE if @mime_type exactly matches the
  * file's MIME type.
- * 
+ *
  **/
 gboolean
 nemo_file_is_mime_type (NemoFile *file, const char *mime_type)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 	g_return_val_if_fail (mime_type != NULL, FALSE);
-	
+
 	if (file->details->mime_type == NULL) {
 		return FALSE;
 	}
@@ -6653,7 +6660,7 @@ nemo_file_is_launchable (NemoFile *file)
 		type_can_be_executable =
 			g_content_type_can_be_executable (eel_ref_str_peek (file->details->mime_type));
 	}
-		
+
 	return type_can_be_executable &&
 		nemo_file_can_get_permissions (file) &&
 		nemo_file_can_execute (file) &&
@@ -6664,13 +6671,13 @@ nemo_file_is_launchable (NemoFile *file)
 
 /**
  * nemo_file_get_emblem_icons
- * 
+ *
  * Return the list of names of emblems that this file should display,
  * in canonical order.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: A list of emblem names.
- * 
+ *
  **/
 GList *
 nemo_file_get_emblem_icons (NemoFile *file,
@@ -6682,11 +6689,11 @@ nemo_file_get_emblem_icons (NemoFile *file,
 	char *keyword;
 	int i;
 	GIcon *icon;
-	
+
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
 	keywords = nemo_file_get_keywords (file);
@@ -6695,7 +6702,7 @@ nemo_file_get_emblem_icons (NemoFile *file,
 	icons = NULL;
 	for (l = keywords; l != NULL; l = l->next) {
 		keyword = l->data;
-		
+
 #ifdef TRASH_IS_FAST_ENOUGH
 		if (strcmp (keyword, NEMO_FILE_EMBLEM_NAME_TRASH) == 0) {
 			char *uri;
@@ -6719,7 +6726,7 @@ nemo_file_get_emblem_icons (NemoFile *file,
 				}
 			}
 		}
-		
+
 
 		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
 		icon_names[1] = keyword;
@@ -6730,7 +6737,7 @@ nemo_file_get_emblem_icons (NemoFile *file,
 	}
 
 	g_list_free_full (keywords, g_free);
-	
+
 	return icons;
 }
 
@@ -6739,7 +6746,7 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
 {
 	GList *p;
 	GList *duplicate_link;
-	
+
 	if (keywords != NULL) {
 		keywords = g_list_sort (keywords, (GCompareFunc) g_utf8_collate);
 
@@ -6754,18 +6761,18 @@ sort_keyword_list_and_remove_duplicates (GList *keywords)
 			}
 		}
 	}
-	
+
 	return keywords;
 }
 
 /**
  * nemo_file_get_keywords
- * 
+ *
  * Return this file's keywords.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: A list of keywords.
- * 
+ *
  **/
 GList *
 nemo_file_get_keywords (NemoFile *file)
@@ -6787,12 +6794,12 @@ nemo_file_get_keywords (NemoFile *file)
 
 /**
  * nemo_file_is_symbolic_link
- * 
+ *
  * Check if this file is a symbolic link.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: True if the file is a symbolic link.
- * 
+ *
  **/
 gboolean
 nemo_file_is_symbolic_link (NemoFile *file)
@@ -6845,12 +6852,12 @@ nemo_file_set_mount (NemoFile *file,
 
 /**
  * nemo_file_is_broken_symbolic_link
- * 
+ *
  * Check if this file is a symbolic link with a missing target.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: True if the file is a symbolic link with a missing target.
- * 
+ *
  **/
 gboolean
 nemo_file_is_broken_symbolic_link (NemoFile *file)
@@ -6858,7 +6865,7 @@ nemo_file_is_broken_symbolic_link (NemoFile *file)
 	if (file == NULL) {
 		return FALSE;
 	}
-		
+
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
 	/* Non-broken symbolic links return the target's type for get_file_type. */
@@ -6875,7 +6882,7 @@ get_fs_free_cb (GObject *source_object,
 	GFileInfo *info;
 
 	file = NEMO_FILE (user_data);
-	
+
 	free_space = (guint64)-1;
 	info = g_file_query_filesystem_info_finish (G_FILE (source_object),
 						    res, NULL);
@@ -6936,10 +6943,10 @@ nemo_file_get_volume_free_space (NemoFile *file)
  * nemo_file_get_volume_name
  * Get the path of the volume the file resides on
  * @file: NemoFile representing the file in question.
- * 
- * Returns: newly-allocated copy of the volume name of the target file, 
+ *
+ * Returns: newly-allocated copy of the volume name of the target file,
  * if the volume name isn't set, it returns the mount path of the volume
- */ 
+ */
 char *
 nemo_file_get_volume_name (NemoFile *file)
 {
@@ -6948,7 +6955,7 @@ nemo_file_get_volume_name (NemoFile *file)
 	GMount *mount;
 
 	res = NULL;
-	
+
 	location = nemo_file_get_location (file);
 	mount = g_file_find_enclosing_mount (location, NULL, NULL);
 	if (mount) {
@@ -6962,11 +6969,11 @@ nemo_file_get_volume_name (NemoFile *file)
 
 /**
  * nemo_file_get_symbolic_link_target_path
- * 
- * Get the file path of the target of a symbolic link. It is an error 
+ *
+ * Get the file path of the target of a symbolic link. It is an error
  * to call this function on a file that isn't a symbolic link.
  * @file: NemoFile representing the symbolic link in question.
- * 
+ *
  * Returns: newly-allocated copy of the file path of the target of the symbolic link.
  */
 char *
@@ -6981,11 +6988,11 @@ nemo_file_get_symbolic_link_target_path (NemoFile *file)
 
 /**
  * nemo_file_get_symbolic_link_target_uri
- * 
- * Get the uri of the target of a symbolic link. It is an error 
+ *
+ * Get the uri of the target of a symbolic link. It is an error
  * to call this function on a file that isn't a symbolic link.
  * @file: NemoFile representing the symbolic link in question.
- * 
+ *
  * Returns: newly-allocated copy of the uri of the target of the symbolic link.
  */
 char *
@@ -7002,7 +7009,7 @@ nemo_file_get_symbolic_link_target_uri (NemoFile *file)
 		return NULL;
 	} else {
 		target = NULL;
-		
+
 		location = nemo_file_get_location (file);
 		parent = g_file_get_parent (location);
 		g_object_unref (location);
@@ -7010,7 +7017,7 @@ nemo_file_get_symbolic_link_target_uri (NemoFile *file)
 			target = g_file_resolve_relative_path (parent, file->details->symlink_name);
 			g_object_unref (parent);
 		}
-		
+
 		target_uri = NULL;
 		if (target) {
 			target_uri = g_file_get_uri (target);
@@ -7022,13 +7029,13 @@ nemo_file_get_symbolic_link_target_uri (NemoFile *file)
 
 /**
  * nemo_file_is_nemo_link
- * 
+ *
  * Check if this file is a "nemo link", meaning a historical
  * nemo xml link file or a desktop file.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: True if the file is a nemo link.
- * 
+ *
  **/
 gboolean
 nemo_file_is_nemo_link (NemoFile *file)
@@ -7042,12 +7049,12 @@ nemo_file_is_nemo_link (NemoFile *file)
 
 /**
  * nemo_file_is_directory
- * 
+ *
  * Check if this file is a directory.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: TRUE if @file is a directory.
- * 
+ *
  **/
 gboolean
 nemo_file_is_directory (NemoFile *file)
@@ -7061,7 +7068,7 @@ nemo_file_is_directory (NemoFile *file)
  * Check if this file is a special platform directory.
  * @file: NemoFile representing the file in question.
  * @special_directory: GUserDirectory representing the type to test for
- * 
+ *
  * Returns: TRUE if @file is a special directory of the given kind.
  */
 gboolean
@@ -7141,12 +7148,12 @@ nemo_file_is_archive (NemoFile *file)
 
 /**
  * nemo_file_is_in_trash
- * 
+ *
  * Check if this file is a file in trash.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: TRUE if @file is in a trash.
- * 
+ *
  **/
 gboolean
 nemo_file_is_in_trash (NemoFile *file)
@@ -7158,12 +7165,12 @@ nemo_file_is_in_trash (NemoFile *file)
 
 /**
  * nemo_file_is_in_recent
- * 
+ *
  * Check if this file is a file in Recent.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: TRUE if @file is in Recent.
- * 
+ *
  **/
 gboolean
 nemo_file_is_in_recent (NemoFile *file)
@@ -7185,13 +7192,13 @@ nemo_file_get_file_info_error (NemoFile *file)
 
 /**
  * nemo_file_contains_text
- * 
+ *
  * Check if this file contains text.
  * This is private and is used to decide whether or not to read the top left text.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: TRUE if @file has a text MIME type.
- * 
+ *
  **/
 gboolean
 nemo_file_contains_text (NemoFile *file)
@@ -7206,13 +7213,13 @@ nemo_file_contains_text (NemoFile *file)
 
 /**
  * nemo_file_is_executable
- * 
+ *
  * Check if this file is executable at all.
  * @file: NemoFile representing the file in question.
- * 
+ *
  * Returns: TRUE if any of the execute bits are set. FALSE if
  * not, or if the permissions are unknown.
- * 
+ *
  **/
 gboolean
 nemo_file_is_executable (NemoFile *file)
@@ -7274,7 +7281,7 @@ nemo_file_mark_gone (NemoFile *file)
 
 	nemo_file_clear_info (file);
 
-	/* FIXME bugzilla.gnome.org 42429: 
+	/* FIXME bugzilla.gnome.org 42429:
 	 * Maybe we can get rid of the name too eventually, but
 	 * for now that would probably require too many if statements
 	 * everywhere anyone deals with the name. Maybe we can give it
@@ -7284,7 +7291,7 @@ nemo_file_mark_gone (NemoFile *file)
 
 /**
  * nemo_file_changed
- * 
+ *
  * Notify the user that this file has changed.
  * @file: NemoFile representing the file in question.
  **/
@@ -7308,7 +7315,7 @@ nemo_file_changed (NemoFile *file)
 
 /**
  * nemo_file_updated_deep_count_in_progress
- * 
+ *
  * Notify clients that a newer deep count is available for
  * the directory in question.
  */
@@ -7327,12 +7334,12 @@ nemo_file_updated_deep_count_in_progress (NemoFile *file) {
 	for (node = link_files; node != NULL; node = node->next) {
 		nemo_file_updated_deep_count_in_progress (NEMO_FILE (node->data));
 	}
-	nemo_file_list_free (link_files);	
+	nemo_file_list_free (link_files);
 }
 
 /**
  * nemo_file_emit_changed
- * 
+ *
  * Emit a file changed signal.
  * This can only be called by the directory, since the directory
  * also has to emit a files_changed signal.
@@ -7361,7 +7368,7 @@ nemo_file_emit_changed (NemoFile *file)
 
 /**
  * nemo_file_is_gone
- * 
+ *
  * Check if a file has already been deleted.
  * @file: NemoFile representing the file in question.
  *
@@ -7377,7 +7384,7 @@ nemo_file_is_gone (NemoFile *file)
 
 /**
  * nemo_file_is_not_yet_confirmed
- * 
+ *
  * Check if we're in a state where we don't know if a file really
  * exists or not, before the initial I/O is complete.
  * @file: NemoFile representing the file in question.
@@ -7403,7 +7410,7 @@ nemo_file_is_not_yet_confirmed (NemoFile *file)
  *
  * @file: The file being queried.
  * @file_attributes: A bit-mask with the desired information.
- * 
+ *
  * Return value: TRUE if all of the specified attributes are currently readable.
  */
 gboolean
@@ -7420,7 +7427,7 @@ nemo_file_check_if_ready (NemoFile *file,
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
 	return NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->check_if_ready (file, file_attributes);
-}			      
+}
 
 void
 nemo_file_call_when_ready (NemoFile *file,
@@ -7713,7 +7720,7 @@ nemo_file_invalidate_attributes_internal (NemoFile *file,
 		 */
 		return;
 	}
-	
+
 	request = nemo_directory_set_up_request (file_attributes);
 
 	if (REQUEST_WANTS_TYPE (request, REQUEST_DIRECTORY_COUNT)) {
@@ -7767,7 +7774,7 @@ gboolean
 nemo_file_is_thumbnailing (NemoFile *file)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
-	
+
 	return file->details->is_thumbnailing;
 }
 
@@ -7776,13 +7783,13 @@ nemo_file_set_is_thumbnailing (NemoFile *file,
 				   gboolean is_thumbnailing)
 {
 	g_return_if_fail (NEMO_IS_FILE (file));
-	
+
 	file->details->is_thumbnailing = is_thumbnailing;
 }
 
 /**
  * nemo_file_invalidate_attributes
- * 
+ *
  * Invalidate the specified attributes and force a reload.
  * @file: NemoFile representing the file in question.
  * @file_attributes: attributes to froget.
@@ -7796,24 +7803,24 @@ nemo_file_invalidate_attributes (NemoFile *file,
 	nemo_directory_cancel_loading_file_attributes (file->details->directory,
 							   file,
 							   file_attributes);
-	
+
 	/* Actually invalidate the values */
 	nemo_file_invalidate_attributes_internal (file, file_attributes);
 
 	nemo_directory_add_file_to_work_queue (file->details->directory, file);
-	
+
 	/* Kick off I/O if necessary */
 	nemo_directory_async_state_changed (file->details->directory);
 }
 
-NemoFileAttributes 
+NemoFileAttributes
 nemo_file_get_all_attributes (void)
 {
 	return  NEMO_FILE_ATTRIBUTE_INFO |
 		NEMO_FILE_ATTRIBUTE_LINK_INFO |
 		NEMO_FILE_ATTRIBUTE_DEEP_COUNTS |
-		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT | 
-		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_MIME_TYPES | 
+		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT |
+		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_MIME_TYPES |
 		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO |
 		NEMO_FILE_ATTRIBUTE_THUMBNAIL |
 		NEMO_FILE_ATTRIBUTE_MOUNT;
@@ -7865,6 +7872,9 @@ nemo_file_dump (NemoFile *file)
 			file_kind = "symbolic link";
 			break;
 		case G_FILE_TYPE_UNKNOWN:
+		case G_FILE_TYPE_MOUNTABLE:
+		case G_FILE_TYPE_SHORTCUT:
+        /* FIXME should probably show details for these file types */
 		default:
 			file_kind = "unknown";
 			break;
@@ -7935,7 +7945,7 @@ nemo_file_list_from_uris (GList *uri_list)
 	GList *l, *file_list;
 	const char *uri;
 	GFile *file;
-	
+
 	file_list = NULL;
 
 	for (l = uri_list; l != NULL; l = l->next) {
@@ -8048,7 +8058,7 @@ compare_by_display_name_cover (gconstpointer a, gconstpointer b)
 
 /**
  * nemo_file_list_sort_by_display_name
- * 
+ *
  * Sort the list of files by file name.
  * @list: GList of files.
  **/
@@ -8060,7 +8070,7 @@ nemo_file_list_sort_by_display_name (GList *list)
 
 static GList *ready_data_list = NULL;
 
-typedef struct 
+typedef struct
 {
 	GList *file_list;
 	GList *remaining_files;
@@ -8109,7 +8119,7 @@ file_list_file_ready_callback (NemoFile *file,
 
 	data = user_data;
 	data->remaining_files = g_list_remove (data->remaining_files, file);
-	
+
 	if (data->remaining_files == NULL) {
 		if (data->callback) {
 			(*data->callback) (data->file_list, data->callback_data);
@@ -8119,7 +8129,7 @@ file_list_file_ready_callback (NemoFile *file,
 	}
 }
 
-void 
+void
 nemo_file_list_call_when_ready (GList *file_list,
 				    NemoFileAttributes attributes,
 				    NemoFileListHandle **handle,
@@ -8129,7 +8139,7 @@ nemo_file_list_call_when_ready (GList *file_list,
 	GList *l;
 	FileListReadyData *data;
 	NemoFile *file;
-	
+
 	g_return_if_fail (file_list != NULL);
 
 	data = file_list_ready_data_new
@@ -8144,7 +8154,7 @@ nemo_file_list_call_when_ready (GList *file_list,
 	while (l != NULL) {
 		file = NEMO_FILE (l->data);
 		/* Need to do this here, as the list can be modified by this call */
-		l = l->next; 
+		l = l->next;
 		nemo_file_call_when_ready (file,
 					       attributes,
 					       file_list_file_ready_callback,
@@ -8296,7 +8306,7 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_link_target_q = g_quark_from_static_string ("link_target");
 	attribute_volume_q = g_quark_from_static_string ("volume");
 	attribute_free_space_q = g_quark_from_static_string ("free_space");
-	
+
 	G_OBJECT_CLASS (class)->finalize = finalize;
 	G_OBJECT_CLASS (class)->constructor = nemo_file_constructor;
 
@@ -8376,9 +8386,9 @@ nemo_file_add_string_attribute (NemoFile *file,
 	if (file->details->pending_info_providers) {
 		/* Lazily create hashtable */
 		if (!file->details->pending_extension_attributes) {
-			file->details->pending_extension_attributes = 
+			file->details->pending_extension_attributes =
 				g_hash_table_new_full (g_direct_hash, g_direct_equal,
-						       NULL, 
+						       NULL,
 						       (GDestroyNotify)g_free);
 		}
 		g_hash_table_insert (file->details->pending_extension_attributes,
@@ -8386,9 +8396,9 @@ nemo_file_add_string_attribute (NemoFile *file,
 				     g_strdup (value));
 	} else {
 		if (!file->details->extension_attributes) {
-			file->details->extension_attributes = 
+			file->details->extension_attributes =
 				g_hash_table_new_full (g_direct_hash, g_direct_equal,
-						       NULL, 
+						       NULL,
 						       (GDestroyNotify)g_free);
 		}
 		g_hash_table_insert (file->details->extension_attributes,
@@ -8415,14 +8425,14 @@ nemo_file_info_providers_done (NemoFile *file)
 	if (file->details->extension_attributes) {
 		g_hash_table_destroy (file->details->extension_attributes);
 	}
-	
+
 	file->details->extension_attributes = file->details->pending_extension_attributes;
 	file->details->pending_extension_attributes = NULL;
 
 	nemo_file_changed (file);
 }
 
-static void     
+static void
 nemo_file_info_iface_init (NemoFileInfoIface *iface)
 {
 	iface->is_gone = nemo_file_is_gone;
@@ -8468,7 +8478,7 @@ nemo_self_check_file (void)
 	nemo_file_unref (file_1);
 
         EEL_CHECK_INTEGER_RESULT (nemo_directory_number_outstanding (), 0);
-	
+
 	file_1 = nemo_file_get_by_uri ("file:///etc");
 	file_2 = nemo_file_get_by_uri ("file:///usr");
 
@@ -8477,19 +8487,19 @@ nemo_self_check_file (void)
         list = g_list_prepend (list, file_2);
 
         nemo_file_list_ref (list);
-        
+
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_1)->ref_count, 2);
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_2)->ref_count, 2);
 
 	nemo_file_list_unref (list);
-        
+
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_1)->ref_count, 1);
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_2)->ref_count, 1);
 
 	nemo_file_list_free (list);
 
         EEL_CHECK_INTEGER_RESULT (nemo_directory_number_outstanding (), 0);
-	
+
 
         /* name checks */
 	file_1 = nemo_file_get_by_uri ("file:///home/");
