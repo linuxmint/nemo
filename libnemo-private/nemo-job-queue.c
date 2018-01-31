@@ -158,7 +158,7 @@ job_finished_cb (NemoJobQueue *self,
     if (!ptr)
         ptr = g_list_find_custom (self->priv->queued_jobs, info, (GCompareFunc) compare_info_func);
 
-    Job *job = ptr->data; 
+    Job *job = ptr->data;
 
     self->priv->running_jobs = g_list_remove (self->priv->running_jobs, job);
     self->priv->queued_jobs = g_list_remove (self->priv->queued_jobs, job);
@@ -208,7 +208,7 @@ nemo_job_queue_add_new_job (NemoJobQueue         *self,
     else
         nemo_job_queue_start_next_job (self);
 
-	g_signal_emit (self, signals[NEW_JOB], 0, NULL);
+    g_signal_emit (self, signals[NEW_JOB], 0, NULL);
 }
 
 static void
@@ -218,7 +218,7 @@ start_job (NemoJobQueue *self, Job *job)
 
     g_io_scheduler_push_job (job->job_func,
                              job->user_data,
-                             NULL, // destroy notify 
+                             NULL, // destroy notify
                              0,
                              job->cancellable);
 
