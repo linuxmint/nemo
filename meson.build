@@ -145,7 +145,8 @@ configure_file(
 rootInclude = include_directories('.')
 nemoDataPath      = join_paths(get_option('prefix'), get_option('datadir'), 'nemo')
 libExecPath       = join_paths(get_option('prefix'), get_option('libdir'), 'nemo')
-nemoExtensionPath = join_paths(get_option('prefix'), get_option('libdir'), 'nemo', 'extensions-3.0')
+# Keep this constant, in case some extensions are behind in being updated...
+nemoExtensionPath = join_paths(get_option('prefix'), 'lib', 'nemo', 'extensions-3.0')
 
 nemo_definitions =  [
   '-DNEMO_DATADIR="@0@"'.format(nemoDataPath),
@@ -155,6 +156,7 @@ nemo_definitions =  [
 
 po_subdir = join_paths(meson.source_root(), 'po')
 
+subdir('install-scripts')
 subdir('cut-n-paste-code/libegg')
 subdir('data')
 subdir('eel')
@@ -162,6 +164,7 @@ subdir('files')
 subdir('libnemo-extension')
 subdir('libnemo-private')
 # subdir('po')
+subdir('gresources')
 subdir('src')
 subdir('test')
 subdir('docs')

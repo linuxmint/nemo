@@ -9,25 +9,14 @@ dbusBuiltSources = gnome.gdbus_codegen(
 nemoBuiltSources = gnome.gdbus_codegen(
   'nemo-cinnamon-dbus',
   join_paths(meson.source_root(), 'data', 'org.Cinnamon.xml'),
-  interface_prefix: 'org.freedesktop.',
+  interface_prefix: 'org.',
   namespace: 'Nemo',
-  object_manager: true,
-  annotations: ['org.Cinnamon', 'org.gtk.GDBus.C.Name', 'CinnamonDBus'],
+  object_manager: true
 )
-
-gnomeBuiltSources= gnome.compile_resources(
-  'nemo-resources', 'nemo.gresource.xml',
-  source_dir: '.',
-  c_name: 'nemo',
-  # export: true, # (Added 0.37.0) if true, export the symbols of the generated sources
-  install_header: false,
-  install: false
-)
-
 
 nemoCommon_sources = [
+  gresources,
   dbusBuiltSources,
-  gnomeBuiltSources,
   nemoBuiltSources,
   'nemo-action-config-widget.c',
   'nemo-application.c',
