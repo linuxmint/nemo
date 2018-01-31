@@ -35,7 +35,7 @@
 
 typedef enum {
 	NEMO_QUERY_EDITOR_ROW_TYPE,
-	
+
 	NEMO_QUERY_EDITOR_ROW_LAST
 } NemoQueryEditorRowType;
 
@@ -46,7 +46,7 @@ typedef struct {
 	GtkWidget *combo;
 
 	GtkWidget *type_widget;
-	
+
 	void *data;
 } NemoQueryEditorRow;
 
@@ -81,7 +81,7 @@ enum {
 	CHANGED,
 	CANCEL,
 	LAST_SIGNAL
-}; 
+};
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -370,11 +370,11 @@ type_separator_func (GtkTreeModel      *model,
 {
 	char *text;
 	gboolean res;
-	
+
 	gtk_tree_model_get (model, iter, 0, &text, -1);
 
 	res = text != NULL && strcmp (text, "---") == 0;
-	
+
 	g_free (text);
 	return res;
 }
@@ -383,124 +383,124 @@ struct {
 	char *name;
 	char *mimetypes[20];
 } mime_type_groups[] = {
-	{ N_("Documents"),
-	  { "application/rtf",
-	    "application/msword",
-	    "application/vnd.sun.xml.writer",
-	    "application/vnd.sun.xml.writer.global",
-	    "application/vnd.sun.xml.writer.template",
-	    "application/vnd.oasis.opendocument.text",
-	    "application/vnd.oasis.opendocument.text-template",
-	    "application/x-abiword",
-	    "application/x-applix-word",
-	    "application/x-mswrite",
-	    "application/docbook+xml",
-	    "application/x-kword",
-	    "application/x-kword-crypt",
-	    "application/x-lyx",
+	{ (char *)N_("Documents"),
+	  { (char *)"application/rtf",
+	    (char *)"application/msword",
+	    (char *)"application/vnd.sun.xml.writer",
+	    (char *)"application/vnd.sun.xml.writer.global",
+	    (char *)"application/vnd.sun.xml.writer.template",
+	    (char *)"application/vnd.oasis.opendocument.text",
+	    (char *)"application/vnd.oasis.opendocument.text-template",
+	    (char *)"application/x-abiword",
+	    (char *)"application/x-applix-word",
+	    (char *)"application/x-mswrite",
+	    (char *)"application/docbook+xml",
+	    (char *)"application/x-kword",
+	    (char *)"application/x-kword-crypt",
+	    (char *)"application/x-lyx",
 	    NULL
 	  }
 	},
-	{ N_("Music"),
-	  { "application/ogg",
-	    "audio/x-vorbis+ogg",
-	    "audio/ac3",
-	    "audio/basic",
-	    "audio/midi",
-	    "audio/x-flac",
-	    "audio/mp4",
-	    "audio/mpeg",
-	    "audio/x-mpeg",
-	    "audio/x-ms-asx",
-	    "audio/x-pn-realaudio",
+	{ (char *)N_("Music"),
+	  { (char *)"application/ogg",
+	    (char *)"audio/x-vorbis+ogg",
+	    (char *)"audio/ac3",
+	    (char *)"audio/basic",
+	    (char *)"audio/midi",
+	    (char *)"audio/x-flac",
+	    (char *)"audio/mp4",
+	    (char *)"audio/mpeg",
+	    (char *)"audio/x-mpeg",
+	    (char *)"audio/x-ms-asx",
+	    (char *)"audio/x-pn-realaudio",
 	    NULL
 	  }
 	},
-	{ N_("Video"),
-	  { "video/mp4",
-	    "video/3gpp",
-	    "video/mpeg",
-	    "video/quicktime",
-	    "video/vivo",
-	    "video/x-avi",
-	    "video/x-mng",
-	    "video/x-ms-asf",
-	    "video/x-ms-wmv",
-	    "video/x-msvideo",
-	    "video/x-nsv",
-	    "video/x-real-video",
+	{ (char *)N_("Video"),
+	  { (char *)"video/mp4",
+	    (char *)"video/3gpp",
+	    (char *)"video/mpeg",
+	    (char *)"video/quicktime",
+	    (char *)"video/vivo",
+	    (char *)"video/x-avi",
+	    (char *)"video/x-mng",
+	    (char *)"video/x-ms-asf",
+	    (char *)"video/x-ms-wmv",
+	    (char *)"video/x-msvideo",
+	    (char *)"video/x-nsv",
+	    (char *)"video/x-real-video",
 	    NULL
 	  }
 	},
-	{ N_("Picture"),
-	  { "application/vnd.oasis.opendocument.image",
-	    "application/x-krita",
-	    "image/bmp",
-	    "image/cgm",
-	    "image/gif",
-	    "image/jpeg",
-	    "image/jpeg2000",
-	    "image/png",
-	    "image/svg+xml",
-	    "image/tiff",
-	    "image/x-compressed-xcf",
-	    "image/x-pcx",
-	    "image/x-photo-cd",
-	    "image/x-psd",
-	    "image/x-tga",
-	    "image/x-xcf",
+	{ (char *)N_("Picture"),
+	  { (char *)"application/vnd.oasis.opendocument.image",
+	    (char *)"application/x-krita",
+	    (char *)"image/bmp",
+	    (char *)"image/cgm",
+	    (char *)"image/gif",
+	    (char *)"image/jpeg",
+	    (char *)"image/jpeg2000",
+	    (char *)"image/png",
+	    (char *)"image/svg+xml",
+	    (char *)"image/tiff",
+	    (char *)"image/x-compressed-xcf",
+	    (char *)"image/x-pcx",
+	    (char *)"image/x-photo-cd",
+	    (char *)"image/x-psd",
+	    (char *)"image/x-tga",
+	    (char *)"image/x-xcf",
 	    NULL
 	  }
 	},
-	{ N_("Illustration"),
-	  { "application/illustrator",
-	    "application/vnd.corel-draw",
-	    "application/vnd.stardivision.draw",
-	    "application/vnd.oasis.opendocument.graphics",
-	    "application/x-dia-diagram",
-	    "application/x-karbon",
-	    "application/x-killustrator",
-	    "application/x-kivio",
-	    "application/x-kontour",
-	    "application/x-wpg",
+	{ (char *)N_("Illustration"),
+	  { (char *)"application/illustrator",
+	    (char *)"application/vnd.corel-draw",
+	    (char *)"application/vnd.stardivision.draw",
+	    (char *)"application/vnd.oasis.opendocument.graphics",
+	    (char *)"application/x-dia-diagram",
+	    (char *)"application/x-karbon",
+	    (char *)"application/x-killustrator",
+	    (char *)"application/x-kivio",
+	    (char *)"application/x-kontour",
+	    (char *)"application/x-wpg",
 	    NULL
 	  }
 	},
-	{ N_("Spreadsheet"),
-	  { "application/vnd.lotus-1-2-3",
-	    "application/vnd.ms-excel",
-	    "application/vnd.stardivision.calc",
-	    "application/vnd.sun.xml.calc",
-	    "application/vnd.oasis.opendocument.spreadsheet",
-	    "application/x-applix-spreadsheet",
-	    "application/x-gnumeric",
-	    "application/x-kspread",
-	    "application/x-kspread-crypt",
-	    "application/x-quattropro",
-	    "application/x-sc",
-	    "application/x-siag",
+	{ (char *)N_("Spreadsheet"),
+	  { (char *)"application/vnd.lotus-1-2-3",
+	    (char *)"application/vnd.ms-excel",
+	    (char *)"application/vnd.stardivision.calc",
+	    (char *)"application/vnd.sun.xml.calc",
+	    (char *)"application/vnd.oasis.opendocument.spreadsheet",
+	    (char *)"application/x-applix-spreadsheet",
+	    (char *)"application/x-gnumeric",
+	    (char *)"application/x-kspread",
+	    (char *)"application/x-kspread-crypt",
+	    (char *)"application/x-quattropro",
+	    (char *)"application/x-sc",
+	    (char *)"application/x-siag",
 	    NULL
 	  }
 	},
-	{ N_("Presentation"),
-	  { "application/vnd.ms-powerpoint",
-	    "application/vnd.sun.xml.impress",
-	    "application/vnd.oasis.opendocument.presentation",
-	    "application/x-magicpoint",
-	    "application/x-kpresenter",
+	{ (char *)N_("Presentation"),
+	  { (char *)"application/vnd.ms-powerpoint",
+	    (char *)"application/vnd.sun.xml.impress",
+	    (char *)"application/vnd.oasis.opendocument.presentation",
+	    (char *)"application/x-magicpoint",
+	    (char *)"application/x-kpresenter",
 	    NULL
 	  }
 	},
-	{ N_("Pdf / Postscript"),
-	  { "application/pdf",
-	    "application/postscript",
-	    "application/x-dvi",
-	    "image/x-eps",
+	{ (char *)N_("Pdf / Postscript"),
+	  { (char *)"application/pdf",
+	    (char *)"application/postscript",
+	    (char *)"application/x-dvi",
+	    (char *)"image/x-eps",
 	    NULL
 	  }
 	},
-	{ N_("Text File"),
-	  { "text/plain",
+	{ (char *)N_("Text File"),
+	  { (char *)"text/plain",
 	    NULL
 	  }
 	}
@@ -514,7 +514,7 @@ type_add_custom_type (NemoQueryEditorRow *row,
 {
 	GtkTreeModel *model;
 	GtkListStore *store;
-	
+
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (row->type_widget));
 	store = GTK_LIST_STORE (model);
 
@@ -563,18 +563,18 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 			if (description == NULL) {
 				description = g_strdup (mime_type);
 			}
-			
+
 			gtk_list_store_append (store, &it);
 			gtk_list_store_set (store, &it,
 					    0, description,
 					    1, mime_type,
 					    -1);
-			
+
 			g_free (mime_type);
 			g_free (description);
 		}
 		g_list_free (mime_infos);
-		
+
 		toplevel = gtk_widget_get_toplevel (GTK_WIDGET (combo_box));
 		dialog = gtk_dialog_new_with_buttons (_("Select type"),
 						      GTK_WINDOW (toplevel),
@@ -583,14 +583,14 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 						      _("Select"), GTK_RESPONSE_OK,
 						      NULL);
 		gtk_window_set_default_size (GTK_WINDOW (dialog), 400, 600);
-			
+
 		scrolled = gtk_scrolled_window_new (NULL, NULL);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
 						GTK_POLICY_AUTOMATIC,
 						GTK_POLICY_AUTOMATIC);
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolled),
 						     GTK_SHADOW_IN);
-		
+
 		gtk_widget_show (scrolled);
 		gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), scrolled, TRUE, TRUE, 6);
 
@@ -599,7 +599,7 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 					 GTK_TREE_MODEL (store));
 		gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), 0,
 						      GTK_SORT_ASCENDING);
-		
+
 		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
 
@@ -612,7 +612,7 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 								   NULL);
 		gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (treeview), FALSE);
-		
+
 		gtk_widget_show (treeview);
 		gtk_container_add (GTK_CONTAINER (scrolled), treeview);
 
@@ -634,7 +634,7 @@ type_combo_changed (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 
 		gtk_widget_destroy (dialog);
 	}
-	
+
 	nemo_query_editor_changed (row->editor);
 }
 
@@ -650,7 +650,7 @@ type_row_create_widgets (NemoQueryEditorRow *row)
 	store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	combo = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
 	g_object_unref (store);
-	
+
 	cell = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell,
@@ -679,15 +679,15 @@ type_row_create_widgets (NemoQueryEditorRow *row)
 	gtk_list_store_set (store, &iter, 0, _("Other Type..."), 3, TRUE, -1);
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
-	
+
 	g_signal_connect (combo, "changed",
 			  G_CALLBACK (type_combo_changed),
 			  row);
 
 	gtk_widget_show (combo);
-	
+
 	gtk_box_pack_start (GTK_BOX (row->hbox), combo, FALSE, FALSE, 0);
-	
+
 	return combo;
 }
 
@@ -745,7 +745,7 @@ all_group_types_in_list (char **group_types, GList *mime_types)
 				break;
 			}
 		}
-		
+
 		if (!found) {
 			return FALSE;
 		}
@@ -773,7 +773,7 @@ remove_group_types_from_list (char **group_types, GList *mime_types)
 				break;
 			}
 		}
-		
+
 		group_type++;
 	}
 	return mime_types;
@@ -798,7 +798,7 @@ type_add_rows_from_query (NemoQueryEditor    *editor,
 	if (mime_types == NULL) {
 		return;
 	}
-	
+
 	for (i = 0; i < G_N_ELEMENTS (mime_type_groups); i++) {
 		if (all_group_types_in_list (mime_type_groups[i].mimetypes,
 					     mime_types)) {
@@ -826,7 +826,7 @@ type_add_rows_from_query (NemoQueryEditor    *editor,
 
 		row = nemo_query_editor_add_row (editor,
 						     NEMO_QUERY_EDITOR_ROW_TYPE);
-		
+
 		type_add_custom_type (row, mime_type, desc, &iter);
 		gtk_combo_box_set_active_iter  (GTK_COMBO_BOX (row->type_widget),
 						&iter);
@@ -845,7 +845,7 @@ get_next_free_type (NemoQueryEditor *editor)
 	gboolean found;
 	GList *l;
 
-	
+
 	for (type = 0; type < NEMO_QUERY_EDITOR_ROW_LAST; type++) {
 		found = FALSE;
 		for (l = editor->details->rows; l != NULL; l = l->next) {
@@ -870,7 +870,7 @@ remove_row_cb (GtkButton *clicked_button, NemoQueryEditorRow *row)
 	editor = row->editor;
 	gtk_container_remove (GTK_CONTAINER (editor->details->vbox),
 			      row->hbox);
-	
+
 	editor->details->rows = g_list_remove (editor->details->rows, row);
 
 	row_type[row->type].free_data (row);
@@ -905,7 +905,7 @@ row_type_combo_changed_cb (GtkComboBox *combo_box, NemoQueryEditorRow *row)
 	row->data = NULL;
 
 	row->type = type;
-	
+
 	create_type_widgets (row);
 
 	nemo_query_editor_changed (row->editor);
@@ -922,7 +922,7 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 	row = g_new0 (NemoQueryEditorRow, 1);
 	row->editor = editor;
 	row->type = type;
-	
+
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
 	row->hbox = hbox;
 	gtk_widget_show (hbox);
@@ -942,9 +942,9 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 
 	g_signal_connect (combo, "changed",
 			  G_CALLBACK (row_type_combo_changed_cb), row);
-	
+
 	create_type_widgets (row);
-	
+
 	button = gtk_button_new ();
 	image = gtk_image_new_from_stock (GTK_STOCK_REMOVE,
 					  GTK_ICON_SIZE_SMALL_TOOLBAR);
@@ -957,7 +957,7 @@ nemo_query_editor_add_row (NemoQueryEditor *editor,
 			  G_CALLBACK (remove_row_cb), row);
 	gtk_widget_set_tooltip_text (button,
 				     _("Remove this criterion from the search"));
-	
+
 	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
 	return row;
@@ -1019,7 +1019,7 @@ finish_first_line (NemoQueryEditor *editor, GtkWidget *hbox, gboolean use_go)
 
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (add_new_row_cb), editor);
-	
+
 	gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_set_tooltip_text (button,
@@ -1145,10 +1145,10 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
 
 	for (l = editor->details->rows; l != NULL; l = l->next) {
 		row = l->data;
-		
+
 		row_type[row->type].add_to_query (row, query);
 	}
-	
+
 	return query;
 }
 
@@ -1159,7 +1159,7 @@ nemo_query_editor_new (void)
 
 	editor = g_object_new (NEMO_TYPE_QUERY_EDITOR, NULL);
 	setup_widgets (NEMO_QUERY_EDITOR (editor));
-		
+
 	return editor;
 }
 
