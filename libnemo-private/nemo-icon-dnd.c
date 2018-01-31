@@ -4,7 +4,7 @@
 
    Copyright (C) 1999, 2000 Free Software Foundation
    Copyright (C) 2000 Eazel, Inc.
-   
+
    The Gnome Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License as
    published by the Free Software Foundation; either version 2 of the
@@ -24,10 +24,10 @@
             Darin Adler <darin@bentspoon.com>,
 	    Andy Hertzfeld <andy@eazel.com>
 	    Pavel Cisler <pavel@eazel.com>
-	    
+
 
    XDS support: Benedikt Meurer <benny@xfce.org> (adapted by Amos Brocco <amos.brocco@unifr.ch>)
-				
+
 */
 
 
@@ -64,19 +64,19 @@
 #include "nemo-debug.h"
 
 static const GtkTargetEntry drag_types [] = {
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
+	{ (char *)NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	{ (char *)NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
 };
 
 static const GtkTargetEntry drop_types [] = {
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	{ (char *)NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
 	/* prefer "_NETSCAPE_URL" over "text/uri-list" to satisfy web browsers. */
-	{ NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
-	{ NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
-	{ NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW },
+	{ (char *)NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
+	{ (char *)NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
+	{ (char *)NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
+	{ (char *)NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW },
 	/* Must be last: */
-	{ NEMO_ICON_DND_ROOTWINDOW_DROP_TYPE,  0, NEMO_ICON_DND_ROOTWINDOW_DROP }
+	{ (char *)NEMO_ICON_DND_ROOTWINDOW_DROP_TYPE,  0, NEMO_ICON_DND_ROOTWINDOW_DROP }
 };
 static void     stop_dnd_highlight         (GtkWidget      *widget);
 static void     dnd_highlight_queue_redraw (GtkWidget      *widget);
@@ -161,7 +161,7 @@ create_selection_shadow (NemoIconContainer *container,
 	if (list->next == NULL) {
 		return NULL;
 	}
-		
+
 	canvas = EEL_CANVAS (container);
 	gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
 
@@ -181,7 +181,7 @@ create_selection_shadow (NemoIconContainer *container,
 		(eel_canvas_item_new (EEL_CANVAS_GROUP (canvas->root),
 					eel_canvas_group_get_type (),
 					NULL));
-	
+
 	for (p = list; p != NULL; p = p->next) {
 		NemoDragSelectionItem *item;
 		int x1, y1, x2, y2;
@@ -197,7 +197,7 @@ create_selection_shadow (NemoIconContainer *container,
 		y1 = item->icon_y;
 		x2 = x1 + item->icon_width;
 		y2 = y1 + item->icon_height;
-			
+
 		if (x2 >= min_x && x1 <= max_x && y2 >= min_y && y1 <= max_y)
 			eel_canvas_item_new
 				(group,
@@ -247,7 +247,7 @@ canvas_rect_world_to_widget (EelCanvas *canvas,
 
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (canvas));
 	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (canvas));
-	
+
 	eel_canvas_world_to_window (canvas,
 				    world_rect->x0, world_rect->y0,
 				    &window_rect.x0, &window_rect.y0);
@@ -296,15 +296,15 @@ icon_get_data_binder (NemoIcon *icon, gpointer data)
 		return TRUE;
 	}
 
-	widget_rect = eel_irect_offset_by (widget_rect, 
+	widget_rect = eel_irect_offset_by (widget_rect,
 		- container->details->dnd_info->drag_info.start_x,
 		- container->details->dnd_info->drag_info.start_y);
 
-	widget_rect = eel_irect_scale_by (widget_rect, 
+	widget_rect = eel_irect_scale_by (widget_rect,
 		1 / EEL_CANVAS (container)->pixels_per_unit);
-	
+
 	/* pass the uri, mouse-relative x/y and icon width/height */
-	context->iteratee (uri, 
+	context->iteratee (uri,
 			   (int) widget_rect.x0,
 			   (int) widget_rect.y0,
 			   widget_rect.x1 - widget_rect.x0,
@@ -342,7 +342,7 @@ nemo_icon_container_each_selected_icon (NemoIconContainer *container,
  * values to the iteratee
  */
 static void
-each_icon_get_data_binder (NemoDragEachSelectedItemDataGet iteratee, 
+each_icon_get_data_binder (NemoDragEachSelectedItemDataGet iteratee,
 	gpointer iterator_context, gpointer data)
 {
 	IconGetDataBinderContext context;
@@ -410,14 +410,14 @@ nemo_icon_container_dropped_icon_feedback (GtkWidget *widget,
 
 	container = NEMO_ICON_CONTAINER (widget);
 	dnd_info = container->details->dnd_info;
-	
+
 	/* Delete old selection list. */
 	nemo_drag_destroy_selection_list (dnd_info->drag_info.selection_list);
 	dnd_info->drag_info.selection_list = NULL;
 
 	/* Delete old shadow if any. */
 	if (dnd_info->shadow != NULL) {
-		/* FIXME bugzilla.gnome.org 42484: 
+		/* FIXME bugzilla.gnome.org 42484:
 		 * Is a destroy really sufficient here? Who does the unref? */
 		eel_canvas_item_destroy (dnd_info->shadow);
 	}
@@ -443,7 +443,7 @@ get_direct_save_filename (GdkDragContext *context)
 	/* Zero-terminate the string */
 	prop_text = g_realloc (prop_text, prop_len + 1);
 	prop_text[prop_len] = '\0';
-	
+
 	/* Verify that the file name provided by the source is valid */
 	if (*prop_text == '\0' ||
 	    strchr ((const gchar *) prop_text, G_DIR_SEPARATOR) != NULL) {
@@ -451,7 +451,7 @@ get_direct_save_filename (GdkDragContext *context)
 		g_free (prop_text);
 		return NULL;
 	}
-	
+
 	return (gchar *) prop_text;
 }
 
@@ -461,21 +461,21 @@ set_direct_save_uri (GtkWidget *widget, GdkDragContext *context, NemoDragInfo *d
 	GFile *base, *child;
 	char *filename, *drop_target;
 	gchar *uri;
-	
+
 	drag_info->got_drop_data_type = TRUE;
 	drag_info->data_type = NEMO_ICON_DND_XDNDDIRECTSAVE;
-	
+
 	uri = NULL;
-	
+
 	filename = get_direct_save_filename (context);
-	drop_target = nemo_icon_container_find_drop_target (NEMO_ICON_CONTAINER (widget), 
+	drop_target = nemo_icon_container_find_drop_target (NEMO_ICON_CONTAINER (widget),
 								context, x, y, NULL, TRUE);
-	
+
 	if (drop_target && eel_uri_is_trash (drop_target)) {
 		g_free (drop_target);
 		drop_target = NULL; /* Cannot save to trash ...*/
 	}
-	
+
 	if (filename != NULL && drop_target != NULL) {
 		/* Resolve relative path */
 		base = g_file_new_for_uri (drop_target);
@@ -483,17 +483,17 @@ set_direct_save_uri (GtkWidget *widget, GdkDragContext *context, NemoDragInfo *d
 		uri = g_file_get_uri (child);
 		g_object_unref (base);
 		g_object_unref (child);
-		
+
 		/* Change the uri property */
 		gdk_property_change (gdk_drag_context_get_source_window (context),
 				     gdk_atom_intern (NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, FALSE),
 				     gdk_atom_intern ("text/plain", FALSE), 8,
 				     GDK_PROP_MODE_REPLACE, (const guchar *) uri,
 				     strlen (uri));
-		
+
 		drag_info->direct_save_uri = uri;
-	} 
-	
+	}
+
 	g_free (filename);
 	g_free (drop_target);
 }
@@ -515,7 +515,7 @@ get_data_on_first_target_we_support (GtkWidget *widget, GdkDragContext *context,
 							    G_N_ELEMENTS (drop_types));
 		gtk_target_list_add_text_targets (drop_types_list_root, NEMO_ICON_DND_TEXT);
 	}
-	
+
 	if (nemo_icon_container_get_is_desktop (NEMO_ICON_CONTAINER (widget))) {
 		list = drop_types_list_root;
 	} else {
@@ -596,7 +596,7 @@ nemo_icon_container_item_at (NemoIconContainer *container,
 	/* build the hit-test rectangle. Base the size on the scale factor to ensure that it is
 	 * non-empty even at the smallest scale factor
 	 */
-	
+
 	size = MAX (1, 1 + (1 / EEL_CANVAS (container)->pixels_per_unit));
 	point.x0 = x;
 	point.y0 = y;
@@ -606,7 +606,7 @@ nemo_icon_container_item_at (NemoIconContainer *container,
 	for (p = container->details->icons; p != NULL; p = p->next) {
 		NemoIcon *icon;
 		icon = p->data;
-		
+
 		eel_canvas_w2c (EEL_CANVAS (container),
 				point.x0,
 				point.y0,
@@ -621,7 +621,7 @@ nemo_icon_container_item_at (NemoIconContainer *container,
 			return icon;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -648,14 +648,14 @@ nemo_icon_container_selection_items_local (NemoIconContainer *container,
 
 	/* get the URI associated with the container */
 	container_uri_string = get_container_uri (container);
-	
+
 	if (eel_uri_is_desktop (container_uri_string)) {
 		result = nemo_drag_items_on_desktop (items);
 	} else {
 		result = nemo_drag_items_local (container_uri_string, items);
 	}
 	g_free (container_uri_string);
-	
+
 	return result;
 }
 
@@ -683,7 +683,7 @@ receive_dropped_netscape_url (NemoIconContainer *container, const char *encoded_
 /* handle dropped uri list */
 static void
 receive_dropped_uri_list (NemoIconContainer *container, const char *uri_list, GdkDragContext *context, int x, int y)
-{	
+{
 	char *drop_target;
 
 	if (uri_list == NULL) {
@@ -704,7 +704,7 @@ receive_dropped_uri_list (NemoIconContainer *container, const char *uri_list, Gd
 /* handle dropped text */
 static void
 receive_dropped_text (NemoIconContainer *container, const char *text, GdkDragContext *context, int x, int y)
-{	
+{
 	char *drop_target;
 
 	if (text == NULL) {
@@ -712,7 +712,7 @@ receive_dropped_text (NemoIconContainer *container, const char *text, GdkDragCon
 	}
 
 	drop_target = nemo_icon_container_find_drop_target (container, context, x, y, NULL, TRUE);
-	
+
 	g_signal_emit_by_name (container, "handle_text",
 			       text,
 			       drop_target,
@@ -774,7 +774,7 @@ auto_scroll_timeout_callback (gpointer data)
 
 	/* Clear the old dnd highlight frame */
 	dnd_highlight_queue_redraw (widget);
-	
+
 	if (!nemo_icon_container_scroll (container, (int)x_scroll_delta, (int)y_scroll_delta)) {
 		/* the scroll value got pinned to a min or max adjustment value,
 		 * we ended up not scrolling
@@ -784,13 +784,13 @@ auto_scroll_timeout_callback (gpointer data)
 
 	/* Make sure the dnd highlight frame is redrawn */
 	dnd_highlight_queue_redraw (widget);
-	
+
 	/* update cached drag start offsets */
 	container->details->dnd_info->drag_info.start_x -= x_scroll_delta;
 	container->details->dnd_info->drag_info.start_y -= y_scroll_delta;
 
 	/* Due to a glitch in GtkLayout, whe need to do an explicit draw of the exposed
-	 * area. 
+	 * area.
 	 * Calculate the size of the area we need to draw
 	 */
 	gtk_widget_get_allocation (widget, &allocation);
@@ -859,7 +859,7 @@ get_icon_from_drag_info (NemoIconContainer     *container,
         nemo_file_set_is_desktop_orphan (file, FALSE);
         nemo_file_set_monitor_number (file, monitor);
         nemo_icon_container_add (container, NEMO_ICON_CONTAINER_ICON_DATA (file));
-        
+
         icon = nemo_icon_container_get_icon_by_uri (container, item->uri);
     }
 
@@ -997,7 +997,7 @@ handle_nonlocal_move (NemoIconContainer *container,
 		source_uris = g_list_prepend (source_uris, ((NemoDragSelectionItem *)p->data)->uri);
 	}
 	source_uris = g_list_reverse (source_uris);
-	
+
 	is_rtl = nemo_icon_container_is_layout_rtl (container);
 
 	source_item_locations = g_array_new (FALSE, TRUE, sizeof (GdkPoint));
@@ -1007,7 +1007,7 @@ handle_nonlocal_move (NemoIconContainer *container,
 		 */
 		source_item_locations = g_array_set_size (source_item_locations,
 			g_list_length (container->details->dnd_info->drag_info.selection_list));
-			
+
         for (index = 0, p = container->details->dnd_info->drag_info.selection_list; p != NULL; index++, p = p->next) {
             item_x = ((NemoDragSelectionItem *)p->data)->icon_x;
             if (is_rtl)
@@ -1057,7 +1057,7 @@ nemo_icon_container_find_drop_target (NemoIconContainer *container,
 	NemoFile *file;
 	char *icon_uri;
 	char *container_uri;
-	
+
 	if (icon_hit) {
 		*icon_hit = FALSE;
 	}
@@ -1067,14 +1067,14 @@ nemo_icon_container_find_drop_target (NemoIconContainer *container,
 	}
 
 	canvas_widget_to_world (EEL_CANVAS (container), x, y, &world_x, &world_y);
-	
-	/* FIXME bugzilla.gnome.org 42485: 
+
+	/* FIXME bugzilla.gnome.org 42485:
 	 * These "can_accept_items" tests need to be done by
 	 * the icon view, not here. This file is not supposed to know
 	 * that the target is a file.
 	 */
 
-	/* Find the item we hit with our drop, if any */	
+	/* Find the item we hit with our drop, if any */
 	drop_target_icon = nemo_icon_container_item_at (container, world_x, world_y);
 	if (drop_target_icon != NULL) {
 		icon_uri = nemo_icon_container_get_icon_uri (container, drop_target_icon);
@@ -1089,7 +1089,7 @@ nemo_icon_container_find_drop_target (NemoIconContainer *container,
 				 */
 				drop_target_icon = NULL;
 			}
-			
+
 			g_free (icon_uri);
 			nemo_file_unref (file);
 		}
@@ -1108,10 +1108,10 @@ nemo_icon_container_find_drop_target (NemoIconContainer *container,
 			g_free (container_uri);
 			container_uri = nemo_get_desktop_directory_uri ();
 		}
-		
+
 		return container_uri;
 	}
-	
+
 	if (icon_hit) {
 		*icon_hit = TRUE;
 	}
@@ -1398,7 +1398,7 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 					    y + gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container))),
 					    &world_x, &world_y);
 
-		drop_target = nemo_icon_container_find_drop_target (container, 
+		drop_target = nemo_icon_container_find_drop_target (container,
 									context, x, y, &icon_hit, FALSE);
 
 		local_move_only = FALSE;
@@ -1534,7 +1534,7 @@ nemo_icon_dnd_update_drop_target (NemoIconContainer *container,
 	NemoFile *file;
 	double world_x, world_y;
 	char *uri;
-	
+
 	g_assert (NEMO_IS_ICON_CONTAINER (container));
 
 	canvas_widget_to_world (EEL_CANVAS (container), x, y, &world_x, &world_y);
@@ -1542,7 +1542,7 @@ nemo_icon_dnd_update_drop_target (NemoIconContainer *container,
 	/* Find the item we hit with our drop, if any. */
 	icon = nemo_icon_container_item_at (container, world_x, world_y);
 
-	/* FIXME bugzilla.gnome.org 42485: 
+	/* FIXME bugzilla.gnome.org 42485:
 	 * These "can_accept_items" tests need to be done by
 	 * the icon view, not here. This file is not supposed to know
 	 * that the target is a file.
@@ -1572,7 +1572,7 @@ nemo_icon_container_free_drag_data (NemoIconContainer *container)
 	NemoIconDndInfo *dnd_info;
 
 	dnd_info = container->details->dnd_info;
-	
+
 	dnd_info->drag_info.got_drop_data_type = FALSE;
 
 	if (dnd_info->shadow != NULL) {
@@ -1600,7 +1600,7 @@ drag_leave_callback (GtkWidget *widget,
 	NemoIconDndInfo *dnd_info;
 
 	dnd_info = NEMO_ICON_CONTAINER (widget)->details->dnd_info;
-	
+
 	if (dnd_info->shadow != NULL)
 		eel_canvas_item_hide (dnd_info->shadow);
 
@@ -1635,7 +1635,7 @@ drag_begin_callback (GtkWidget      *widget,
         /* compute the image's offset */
 	eel_canvas_item_get_bounds (EEL_CANVAS_ITEM (container->details->drag_icon->item),
 				    &x1, &y1, &x2, &y2);
-	eel_canvas_world_to_window (EEL_CANVAS (container), 
+	eel_canvas_world_to_window (EEL_CANVAS (container),
 				    x1, y1,  &winx, &winy);
         x_offset = start_x - winx;
         y_offset = start_y - winy;
@@ -1654,7 +1654,7 @@ nemo_icon_dnd_begin_drag (NemoIconContainer *container,
 			      int                    start_y)
 {
 	NemoIconDndInfo *dnd_info;
-	
+
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 	g_return_if_fail (event != NULL);
 
@@ -1667,7 +1667,7 @@ nemo_icon_dnd_begin_drag (NemoIconContainer *container,
 	dnd_info->drag_info.start_x = start_x -
 		gtk_adjustment_get_value (gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container)));
 	dnd_info->drag_info.start_y = start_y -
-		gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container)));	
+		gtk_adjustment_get_value (gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container)));
 
 	/* start the drag */
 	gtk_drag_begin (GTK_WIDGET (container),
@@ -1685,7 +1685,7 @@ drag_highlight_draw (GtkWidget *widget,
 	gint width, height;
 	GdkWindow *window;
 	GtkStyleContext *style;
-	
+
         window = gtk_widget_get_window (widget);
         width = gdk_window_get_width (window);
         height = gdk_window_get_height (window);
@@ -1712,9 +1712,9 @@ dnd_highlight_queue_redraw (GtkWidget *widget)
 	NemoIconDndInfo *dnd_info;
 	int width, height;
 	GtkAllocation allocation;
-	
+
 	dnd_info = NEMO_ICON_CONTAINER (widget)->details->dnd_info;
-	
+
 	if (!dnd_info->highlighted) {
 		return;
 	}
@@ -1745,7 +1745,7 @@ start_dnd_highlight (GtkWidget *widget)
 {
 	NemoIconDndInfo *dnd_info;
 	GtkWidget *toplevel;
-	
+
 	dnd_info = NEMO_ICON_CONTAINER (widget)->details->dnd_info;
 
 	toplevel = gtk_widget_get_toplevel (widget);
@@ -1767,7 +1767,7 @@ static void
 stop_dnd_highlight (GtkWidget *widget)
 {
 	NemoIconDndInfo *dnd_info;
-	
+
 	dnd_info = NEMO_ICON_CONTAINER (widget)->details->dnd_info;
 
 	if (dnd_info->highlighted) {
@@ -1839,7 +1839,7 @@ drag_drop_callback (GtkWidget *widget,
 	dnd_info->drag_info.drop_occured = TRUE;
 
 	get_data_on_first_target_we_support (widget, context, time, x, y);
-	
+
 	return TRUE;
 }
 
@@ -1859,9 +1859,9 @@ nemo_icon_dnd_end_drag (NemoIconContainer *container)
 }
 
 /** this callback is called in 2 cases.
-    It is called upon drag_motion events to get the actual data 
+    It is called upon drag_motion events to get the actual data
     In that case, it just makes sure it gets the data.
-    It is called upon drop_drop events to execute the actual 
+    It is called upon drop_drop events to execute the actual
     actions on the received action. In that case, it actually first makes sure
     that we have got the data then processes it.
 */
@@ -2013,7 +2013,7 @@ drag_data_received_callback (GtkWidget *widget,
             break;
 		}
 		gtk_drag_finish (context, success, FALSE, time);
-		
+
 		nemo_icon_container_free_drag_data (NEMO_ICON_CONTAINER (widget));
 
 		set_drop_target (NEMO_ICON_CONTAINER (widget), NULL);
@@ -2029,7 +2029,7 @@ nemo_icon_dnd_init (NemoIconContainer *container)
 {
 	GtkTargetList *targets;
 	int n_elements;
-	
+
 	g_return_if_fail (container != NULL);
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
@@ -2056,13 +2056,13 @@ nemo_icon_dnd_init (NemoIconContainer *container)
 	gtk_target_list_add_text_targets (targets, NEMO_ICON_DND_TEXT);
 
 	/* Messages for outgoing drag. */
-	g_signal_connect (container, "drag_begin", 
+	g_signal_connect (container, "drag_begin",
 			  G_CALLBACK (drag_begin_callback), NULL);
 	g_signal_connect (container, "drag_data_get",
 			  G_CALLBACK (drag_data_get_callback), NULL);
 	g_signal_connect (container, "drag_end",
 			  G_CALLBACK (drag_end_callback), NULL);
-	
+
 	/* Messages for incoming drag. */
 	g_signal_connect (container, "drag_data_received",
 			  G_CALLBACK (drag_data_received_callback), NULL);
