@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* fm-list-model.h - a GtkTreeModel for file lists. 
+/* fm-list-model.h - a GtkTreeModel for file lists.
 
    Copyright (C) 2001, 2002 Anders Carlsson
    Copyright (C) 2003, Soeren Sandmann
@@ -85,7 +85,7 @@ struct NemoListModelDetails {
 
 typedef struct {
 	NemoListModel *model;
-	
+
 	GList *path_list;
 } DragDataGetInfo;
 
@@ -110,8 +110,8 @@ G_DEFINE_TYPE_WITH_CODE (NemoListModel, nemo_list_model, G_TYPE_OBJECT,
 						nemo_list_model_multi_drag_source_init));
 
 static const GtkTargetEntry drag_types [] = {
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
+	{ (char *)NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	{ (char *)NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
 };
 
 static GtkTargetList *drag_target_list = NULL;
@@ -164,7 +164,7 @@ nemo_list_model_get_column_type (GtkTreeModel *tree_model, int index)
 	case NEMO_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN:
 		return G_TYPE_BOOLEAN;
 	default:
-		if (index < NEMO_LIST_MODEL_NUM_COLUMNS + NEMO_LIST_MODEL (tree_model)->details->columns->len) {
+		if (index < (int)(NEMO_LIST_MODEL_NUM_COLUMNS + NEMO_LIST_MODEL (tree_model)->details->columns->len)) {
 			return G_TYPE_STRING;
 		} else {
 			return G_TYPE_INVALID;
@@ -190,10 +190,10 @@ nemo_list_model_get_iter (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkTreePa
 	GSequenceIter *ptr;
 	FileEntry *file_entry;
 	int i, d;
-	
+
 	model = (NemoListModel *)tree_model;
 	ptr = NULL;
-	
+
 	files = model->details->files;
 	for (d = 0; d < gtk_tree_path_get_depth (path); d++) {
 		i = gtk_tree_path_get_indices (path)[d];
@@ -208,7 +208,7 @@ nemo_list_model_get_iter (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkTreePa
 	}
 
 	nemo_list_model_ptr_to_iter (model, ptr, iter);
-	
+
 	return TRUE;
 }
 
@@ -222,14 +222,14 @@ nemo_list_model_get_path (GtkTreeModel *tree_model, GtkTreeIter *iter)
 
 
 	model = (NemoListModel *)tree_model;
-	
+
 	g_return_val_if_fail (iter->stamp == model->details->stamp, NULL);
 
 	if (g_sequence_iter_is_end (iter->user_data)) {
 		/* FIXME is this right? */
 		return NULL;
 	}
-	
+
 	path = gtk_tree_path_new ();
 	ptr = iter->user_data;
 	while (ptr != NULL) {
@@ -279,7 +279,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 	int i;
 	NemoFileIconFlags flags;
     cairo_surface_t *surface;
-	
+
 	model = (NemoListModel *)tree_model;
 
 	g_return_if_fail (model->details->stamp == iter->stamp);
@@ -287,7 +287,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 
 	file_entry = g_sequence_get (iter->user_data);
 	file = file_entry->file;
-	
+
 	switch (column) {
 	case NEMO_LIST_MODEL_FILE_COLUMN:
 		g_value_init (value, NEMO_TYPE_FILE);
@@ -318,7 +318,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 				NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
 			if (model->details->drag_view != NULL) {
 				GtkTreePath *path_a, *path_b;
-				
+
 				gtk_tree_view_get_drag_dest_row (model->details->drag_view,
 								 &path_a,
 								 NULL);
@@ -328,7 +328,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 					if (gtk_tree_path_compare (path_a, path_b) == 0) {
 						flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 					}
-						
+
 					gtk_tree_path_free (path_a);
 					gtk_tree_path_free (path_b);
 				}
@@ -345,18 +345,18 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
             if (s < icon_size)
                 icon_size = s;
 
-            bad_ratio = nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale > w ||
-                        nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale > h;
+            bad_ratio = (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > w ||
+                        (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > h;
 
 			gicon = G_ICON (pixbuf);
 
 			/* render emblems with GEmblemedIcon */
 			parent_file = nemo_file_get_parent (file);
 			i = 0;
-			emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+			emblems_to_ignore[i++] = (char *)NEMO_FILE_EMBLEM_NAME_TRASH;
 			if (parent_file) {
 				if (!nemo_file_can_write (parent_file)) {
-					emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
+					emblems_to_ignore[i++] = (char *)NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
 				}
 				nemo_file_unref (parent_file);
 			}
@@ -407,21 +407,21 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 		break;
 	case NEMO_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN:
 		g_value_init (value, G_TYPE_BOOLEAN);
-		
+
                 g_value_set_boolean (value, file != NULL && nemo_file_can_rename (file));
                 break;
  	default:
- 		if (column >= NEMO_LIST_MODEL_NUM_COLUMNS || column < NEMO_LIST_MODEL_NUM_COLUMNS + model->details->columns->len) {
+ 		if (column >= NEMO_LIST_MODEL_NUM_COLUMNS || column < (int)(NEMO_LIST_MODEL_NUM_COLUMNS + model->details->columns->len)) {
 			NemoColumn *nemo_column;
 			GQuark attribute;
 			nemo_column = model->details->columns->pdata[column - NEMO_LIST_MODEL_NUM_COLUMNS];
-			
+
 			g_value_init (value, G_TYPE_STRING);
-			g_object_get (nemo_column, 
-				      "attribute_q", &attribute, 
+			g_object_get (nemo_column,
+				      "attribute_q", &attribute,
 				      NULL);
 			if (file != NULL) {
-				str = nemo_file_get_string_attribute_with_default_q (file, 
+				str = nemo_file_get_string_attribute_with_default_q (file,
 											 attribute);
 				g_value_take_string (value, str);
 			} else if (attribute == attribute_name_q) {
@@ -459,7 +459,7 @@ nemo_list_model_iter_children (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkT
 	FileEntry *file_entry;
 
 	model = (NemoListModel *)tree_model;
-	
+
 	if (parent == NULL) {
 		files = model->details->files;
 	} else {
@@ -470,7 +470,7 @@ nemo_list_model_iter_children (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkT
 	if (files == NULL || g_sequence_get_length (files) == 0) {
 		return FALSE;
 	}
-	
+
 	iter->stamp = model->details->stamp;
 	iter->user_data = g_sequence_get_begin_iter (files);
 
@@ -481,7 +481,7 @@ static gboolean
 nemo_list_model_iter_has_child (GtkTreeModel *tree_model, GtkTreeIter *iter)
 {
 	FileEntry *file_entry;
-	
+
 	if (iter == NULL) {
 		return !nemo_list_model_is_empty (NEMO_LIST_MODEL (tree_model));
 	}
@@ -519,7 +519,7 @@ nemo_list_model_iter_nth_child (GtkTreeModel *tree_model, GtkTreeIter *iter, Gtk
 	FileEntry *file_entry;
 
 	model = (NemoListModel *)tree_model;
-	
+
 	if (parent != NULL) {
 		file_entry = g_sequence_get (parent->user_data);
 		files = file_entry->files;
@@ -544,18 +544,18 @@ nemo_list_model_iter_parent (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkTre
 {
 	NemoListModel *model;
 	FileEntry *file_entry;
-	
+
 	model = (NemoListModel *)tree_model;
-	
+
 	file_entry = g_sequence_get (child->user_data);
-	
+
 	if (file_entry->parent == NULL) {
 		return FALSE;
 	}
 
 	iter->stamp = model->details->stamp;
 	iter->user_data = file_entry->parent->ptr;
-	
+
 	return TRUE;
 }
 
@@ -571,7 +571,7 @@ lookup_file (NemoListModel *model, NemoFile *file,
 		parent_ptr = g_hash_table_lookup (model->details->directory_reverse_map,
 						  directory);
 	}
-	
+
 	if (parent_ptr) {
 		file_entry = g_sequence_get (parent_ptr);
 		ptr = g_hash_table_lookup (file_entry->reverse_map, file);
@@ -582,7 +582,7 @@ lookup_file (NemoListModel *model, NemoFile *file,
 	if (ptr) {
 		g_assert (((FileEntry *)g_sequence_get (ptr))->file == file);
 	}
-	
+
 	return ptr;
 }
 
@@ -598,7 +598,7 @@ dir_to_iters (struct GetIters *data,
 	      GHashTable *reverse_map)
 {
 	GSequenceIter *ptr;
-	
+
 	ptr = g_hash_table_lookup (reverse_map, data->file);
 	if (ptr) {
 		GtkTreeIter *iter;
@@ -629,7 +629,7 @@ nemo_list_model_get_all_iters_for_file (NemoListModel *model, NemoFile *file)
 	data.file = file;
 	data.model = model;
 	data.iters = NULL;
-	
+
 	dir_to_iters (&data, model->details->top_reverse_map);
 	g_hash_table_foreach (model->details->directory_reverse_map,
 			      file_to_iter_cb, &data);
@@ -646,14 +646,14 @@ nemo_list_model_get_first_iter_for_file (NemoListModel          *model,
 	gboolean res;
 
 	res = FALSE;
-	
+
 	list = nemo_list_model_get_all_iters_for_file (model, file);
 	if (list != NULL) {
 		res = TRUE;
 		*iter = *(GtkTreeIter *)list->data;
 	}
 	g_list_free_full (list, g_free);
-	
+
 	return res;
 }
 
@@ -671,7 +671,7 @@ nemo_list_model_get_tree_iter_from_file (NemoListModel *model, NemoFile *file,
 	}
 
 	nemo_list_model_ptr_to_iter (model, ptr, iter);
-	
+
 	return TRUE;
 }
 
@@ -689,7 +689,7 @@ nemo_list_model_file_entry_compare_func (gconstpointer a,
 
 	file_entry1 = (FileEntry *)a;
 	file_entry2 = (FileEntry *)b;
-	
+
 	if (file_entry1->file != NULL && file_entry2->file != NULL) {
 		result = nemo_file_compare_for_sort_by_attribute_q (file_entry1->file, file_entry2->file,
 									model->details->sort_attribute,
@@ -735,12 +735,12 @@ nemo_list_model_sort_file_entries (NemoListModel *model, GSequence *files, GtkTr
 	if (length <= 1) {
 		return;
 	}
-	
+
 	/* generate old order of GSequenceIter's */
 	old_order = g_new (GSequenceIter *, length);
 	for (i = 0; i < length; ++i) {
 		GSequenceIter *ptr = g_sequence_get_iter_at_pos (files, i);
-		
+
 		file_entry = g_sequence_get (ptr);
 		if (file_entry->files != NULL) {
 			gtk_tree_path_append_index (path, i);
@@ -799,16 +799,16 @@ nemo_list_model_get_sort_column_id (GtkTreeSortable *sortable,
 {
 	NemoListModel *model;
 	int id;
-	
+
 	model = (NemoListModel *)sortable;
-	
-	id = nemo_list_model_get_sort_column_id_from_attribute 
+
+	id = nemo_list_model_get_sort_column_id_from_attribute
 		(model, model->details->sort_attribute);
-	
+
 	if (id == -1) {
 		return FALSE;
 	}
-	
+
 	if (sort_column_id != NULL) {
 		*sort_column_id = id;
 	}
@@ -875,36 +875,36 @@ each_path_get_data_binder (NemoDragEachSelectedItemDataGet data_get,
 		if (file) {
 			gtk_tree_view_get_cell_area
 				(info->model->details->drag_view,
-				 path, 
+				 path,
 				 column,
 				 &cell_area);
-				
+
 			uri = nemo_file_get_uri (file);
-				
-			(*data_get) (uri, 
+
+			(*data_get) (uri,
 				     0,
 				     cell_area.y - info->model->details->drag_begin_y,
-				     cell_area.width, cell_area.height, 
+				     cell_area.width, cell_area.height,
 				     data);
-				
+
 			g_free (uri);
-			
+
 			nemo_file_unref (file);
 		}
-		
+
 		gtk_tree_path_free (path);
 	}
 }
 
 static gboolean
-nemo_list_model_multi_drag_data_get (EggTreeMultiDragSource *drag_source, 
-					 GList *path_list, 
+nemo_list_model_multi_drag_data_get (EggTreeMultiDragSource *drag_source,
+					 GList *path_list,
 					 GtkSelectionData *selection_data)
 {
 	NemoListModel *model;
 	DragDataGetInfo context;
 	guint target_info;
-	
+
 	model = NEMO_LIST_MODEL (drag_source);
 
 	context.model = model;
@@ -942,14 +942,14 @@ add_dummy_row (NemoListModel *model, FileEntry *parent_entry)
 	FileEntry *dummy_file_entry;
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	
+
 	dummy_file_entry = g_new0 (FileEntry, 1);
 	dummy_file_entry->parent = parent_entry;
 	dummy_file_entry->ptr = g_sequence_insert_sorted (parent_entry->files, dummy_file_entry,
 							  nemo_list_model_file_entry_compare_func, model);
 	iter.stamp = model->details->stamp;
 	iter.user_data = dummy_file_entry->ptr;
-	
+
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
 	gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
 	gtk_tree_path_free (path);
@@ -981,16 +981,16 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 		g_warning ("file already in tree (parent_ptr: %p)!!!\n", parent_ptr);
 		return FALSE;
 	}
-	
+
 	file_entry = g_new0 (FileEntry, 1);
 	file_entry->file = nemo_file_ref (file);
 	file_entry->parent = NULL;
 	file_entry->subdirectory = NULL;
 	file_entry->files = NULL;
-	
+
 	files = model->details->files;
 	parent_hash = model->details->top_reverse_map;
-	
+
 	replace_dummy = FALSE;
 
 	if (parent_ptr != NULL) {
@@ -1009,7 +1009,7 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 				/* replace the dummy loading entry */
 				model->details->stamp++;
 				g_sequence_remove (dummy_ptr);
-				
+
 				replace_dummy = TRUE;
 			}
 		}
@@ -1022,7 +1022,7 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
                                                             nemo_list_model_file_entry_compare_func, model);
 
 	g_hash_table_insert (parent_hash, file, file_entry->ptr);
-	
+
 	iter.stamp = model->details->stamp;
 	iter.user_data = file_entry->ptr;
 
@@ -1036,7 +1036,7 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
     gboolean add_child = FALSE;
 
     if (nemo_file_is_directory (file)) {
-        gint count;
+        guint count;
         if (nemo_file_get_directory_item_count (file, &count, NULL)) {
             add_child = count > 0;
         } else {
@@ -1085,7 +1085,7 @@ nemo_list_model_file_changed (NemoListModel *model, NemoFile *file,
 
 	if (pos_before != pos_after) {
 		/* The file moved, we need to send rows_reordered */
-		
+
 		parent_file_entry = ((FileEntry *)g_sequence_get (ptr))->parent;
 
 		if (parent_file_entry == NULL) {
@@ -1118,7 +1118,7 @@ nemo_list_model_file_changed (NemoListModel *model, NemoFile *file,
 		gtk_tree_path_free (parent_path);
 		g_free (new_order);
 	}
-	
+
 	nemo_list_model_ptr_to_iter (model, ptr, &iter);
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
 	gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
@@ -1147,7 +1147,7 @@ nemo_list_model_remove (NemoListModel *model, GtkTreeIter *iter)
 
 	ptr = iter->user_data;
 	file_entry = g_sequence_get (ptr);
-	
+
 	if (file_entry->files != NULL) {
 		while (g_sequence_get_length (file_entry->files) > 0) {
 			child_ptr = g_sequence_get_begin_iter (file_entry->files);
@@ -1164,11 +1164,11 @@ nemo_list_model_remove (NemoListModel *model, GtkTreeIter *iter)
 				gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
 				gtk_tree_path_free (path);
 			}
-			
+
 			/* the parent iter didn't actually change */
 			iter->stamp = model->details->stamp;
 		}
-			
+
 	}
 
 	if (file_entry->file != NULL) { /* Don't try to remove dummy row */
@@ -1196,13 +1196,13 @@ nemo_list_model_remove (NemoListModel *model, GtkTreeIter *iter)
 		g_hash_table_remove (model->details->directory_reverse_map,
 				     file_entry->subdirectory);
 	}
-	
+
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), iter);
-	
+
 	g_sequence_remove (ptr);
 	model->details->stamp++;
 	gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
-	
+
 	gtk_tree_path_free (path);
 
 	if (parent_file_entry && g_sequence_get_length (parent_file_entry->files) == 0) {
@@ -1239,7 +1239,7 @@ nemo_list_model_clear_directory (NemoListModel *model, GSequence *files)
 		if (file_entry->files != NULL) {
 			nemo_list_model_clear_directory (model, file_entry->files);
 		}
-		
+
 		iter.stamp = model->details->stamp;
 		nemo_list_model_remove (model, &iter);
 	}
@@ -1260,10 +1260,10 @@ nemo_list_model_file_for_path (NemoListModel *model, GtkTreePath *path)
 	GtkTreeIter iter;
 
 	file = NULL;
-	if (gtk_tree_model_get_iter (GTK_TREE_MODEL (model), 
+	if (gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
 				     &iter, path)) {
-		gtk_tree_model_get (GTK_TREE_MODEL (model), 
-				    &iter, 
+		gtk_tree_model_get (GTK_TREE_MODEL (model),
+				    &iter,
 				    NEMO_LIST_MODEL_FILE_COLUMN, &file,
 				    -1);
 	}
@@ -1276,7 +1276,7 @@ nemo_list_model_load_subdirectory (NemoListModel *model, GtkTreePath *path, Nemo
 	GtkTreeIter iter;
 	FileEntry *file_entry;
 	NemoDirectory *subdirectory;
-	
+
 	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, path)) {
 		return FALSE;
 	}
@@ -1295,7 +1295,7 @@ nemo_list_model_load_subdirectory (NemoListModel *model, GtkTreePath *path, Nemo
 		g_warning ("Already in directory_reverse_map, failing\n");
 		return FALSE;
 	}
-	
+
 	file_entry->subdirectory = subdirectory,
 	g_hash_table_insert (model->details->directory_reverse_map,
 			     subdirectory, file_entry->ptr);
@@ -1304,7 +1304,7 @@ nemo_list_model_load_subdirectory (NemoListModel *model, GtkTreePath *path, Nemo
 	/* Return a ref too */
 	nemo_directory_ref (subdirectory);
 	*directory = subdirectory;
-	
+
 	return TRUE;
 }
 
@@ -1323,7 +1323,7 @@ nemo_list_model_unload_subdirectory (NemoListModel *model, GtkTreeIter *iter)
 	}
 
 	file_entry->loaded = 0;
-	
+
 	/* Remove all children */
 	while (g_sequence_get_length (file_entry->files) > 0) {
 		child_ptr = g_sequence_get_begin_iter (file_entry->files);
@@ -1376,8 +1376,8 @@ nemo_list_model_get_sort_column_id_from_attribute (NemoListModel *model,
 		return -1;
 	}
 
-	/* Hack - the preferences dialog sets modification_date for some 
-	 * rather than date_modified for some reason.  Make sure that 
+	/* Hack - the preferences dialog sets modification_date for some
+	 * rather than date_modified for some reason.  Make sure that
 	 * works. */
 	if (attribute == attribute_modification_date_q) {
 		attribute = attribute_date_modified_q;
@@ -1386,17 +1386,17 @@ nemo_list_model_get_sort_column_id_from_attribute (NemoListModel *model,
 	for (i = 0; i < model->details->columns->len; i++) {
 		NemoColumn *column;
 		GQuark column_attribute;
-		
-		column = 
+
+		column =
 			NEMO_COLUMN (model->details->columns->pdata[i]);
-		g_object_get (G_OBJECT (column), 
-			      "attribute_q", &column_attribute, 
+		g_object_get (G_OBJECT (column),
+			      "attribute_q", &column_attribute,
 			      NULL);
 		if (column_attribute == attribute) {
 			return NEMO_LIST_MODEL_NUM_COLUMNS + i;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -1410,7 +1410,7 @@ nemo_list_model_get_attribute_from_sort_column_id (NemoListModel *model,
 
 	index = sort_column_id - NEMO_LIST_MODEL_NUM_COLUMNS;
 
-	if (index < 0 || index >= model->details->columns->len) {
+	if (index < 0 || index >= (int)model->details->columns->len) {
 		g_warning ("unknown sort column id: %d", sort_column_id);
 		return 0;
 	}
@@ -1439,6 +1439,8 @@ nemo_list_model_get_zoom_level_from_column_id (int column)
 		return NEMO_ZOOM_LEVEL_LARGER;
 	case NEMO_LIST_MODEL_LARGEST_ICON_COLUMN:
 		return NEMO_ZOOM_LEVEL_LARGEST;
+        default:
+                break;
 	}
 
 	g_return_val_if_reached (NEMO_ZOOM_LEVEL_STANDARD);
@@ -1462,7 +1464,8 @@ nemo_list_model_get_column_id_from_zoom_level (NemoZoomLevel zoom_level)
 		return NEMO_LIST_MODEL_LARGER_ICON_COLUMN;
 	case NEMO_ZOOM_LEVEL_LARGEST:
 		return NEMO_LIST_MODEL_LARGEST_ICON_COLUMN;
-    default: 
+        case NEMO_ZOOM_LEVEL_NULL:
+    default:
         g_return_val_if_reached (NEMO_LIST_MODEL_STANDARD_ICON_COLUMN);
 	}
 }
@@ -1476,7 +1479,7 @@ nemo_list_model_set_drag_view (NemoListModel *model,
 	g_return_if_fail (model != NULL);
 	g_return_if_fail (NEMO_IS_LIST_MODEL (model));
 	g_return_if_fail (!view || GTK_IS_TREE_VIEW (view));
-	
+
 	model->details->drag_view = view;
 	model->details->drag_begin_x = drag_begin_x;
 	model->details->drag_begin_y = drag_begin_y;
@@ -1493,7 +1496,7 @@ nemo_list_model_get_drag_target_list (void)
 	return target_list;
 }
 
-int               
+int
 nemo_list_model_add_column (NemoListModel *model,
 				NemoColumn *column)
 {
@@ -1507,12 +1510,12 @@ int
 nemo_list_model_get_column_number (NemoListModel *model,
 				       const char *column_name)
 {
-	int i;
+	guint i;
 
 	for (i = 0; i < model->details->columns->len; i++) {
 		NemoColumn *column;
 		char *name;
-		
+
 		column = model->details->columns->pdata[i];
 
 		g_object_get (G_OBJECT (column), "name", &name, NULL);
@@ -1531,7 +1534,7 @@ static void
 nemo_list_model_dispose (GObject *object)
 {
 	NemoListModel *model;
-	int i;
+	guint i;
 
 	model = NEMO_LIST_MODEL (object);
 
@@ -1547,7 +1550,7 @@ nemo_list_model_dispose (GObject *object)
 		g_sequence_free (model->details->files);
 		model->details->files = NULL;
 	}
-	
+
 	if (model->details->top_reverse_map) {
 		g_hash_table_destroy (model->details->top_reverse_map);
 		model->details->top_reverse_map = NULL;
@@ -1597,7 +1600,7 @@ nemo_list_model_class_init (NemoListModelClass *klass)
 	attribute_name_q = g_quark_from_static_string ("name");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
-	
+
 	object_class = (GObjectClass *)klass;
 	object_class->finalize = nemo_list_model_finalize;
 	object_class->dispose = nemo_list_model_dispose;
@@ -1662,7 +1665,7 @@ nemo_list_model_subdirectory_done_loading (NemoListModel *model, NemoDirectory *
 	FileEntry *file_entry, *dummy_entry;
 	GSequenceIter *parent_ptr, *dummy_ptr;
 	GSequence *files;
-	
+
 	if (model == NULL || model->details->directory_reverse_map == NULL) {
 		return;
 	}
@@ -1671,7 +1674,7 @@ nemo_list_model_subdirectory_done_loading (NemoListModel *model, NemoDirectory *
 	if (parent_ptr == NULL) {
 		return;
 	}
-	
+
 	file_entry = g_sequence_get (parent_ptr);
 	files = file_entry->files;
 
@@ -1685,10 +1688,10 @@ nemo_list_model_subdirectory_done_loading (NemoListModel *model, NemoDirectory *
 		if (dummy_entry->file == NULL) {
 			/* was the dummy file */
 			file_entry->loaded = 1;
-			
+
 			iter.stamp = model->details->stamp;
 			iter.user_data = dummy_ptr;
-			
+
 			path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
 			gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
 			gtk_tree_path_free (path);
