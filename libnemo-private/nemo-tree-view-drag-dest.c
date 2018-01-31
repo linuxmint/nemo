@@ -19,12 +19,12 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
  * Boston, MA 02110-1335, USA.
- * 
+ *
  * Author: Dave Camp <dave@ximian.com>
  * XDS support: Benedikt Meurer <benny@xfce.org> (adapted by Amos Brocco <amos.brocco@unifr.ch>)
  */
 
-/* nemo-tree-view-drag-dest.c: Handles drag and drop for treeviews which 
+/* nemo-tree-view-drag-dest.c: Handles drag and drop for treeviews which
  *                                 contain a hierarchy of files
  */
 
@@ -86,12 +86,12 @@ G_DEFINE_TYPE (NemoTreeViewDragDest, nemo_tree_view_drag_dest,
 	       G_TYPE_OBJECT);
 
 static const GtkTargetEntry drag_types [] = {
-	{ NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	{ (char *)NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
 	/* prefer "_NETSCAPE_URL" over "text/uri-list" to satisfy web browsers. */
-	{ NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
-	{ NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
-	{ NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
-	{ NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
+	{ (char *)NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
+	{ (char *)NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
+	{ (char *)NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
+	{ (char *)NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
 };
 
 
@@ -106,7 +106,7 @@ gtk_tree_view_vertical_autoscroll (GtkTreeView *tree_view)
 	int y;
 	int offset;
 	float value;
-	
+
 	window = gtk_tree_view_get_bin_window (tree_view);
 	vadjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (tree_view));
 
@@ -114,11 +114,11 @@ gtk_tree_view_vertical_autoscroll (GtkTreeView *tree_view)
 	pointer = gdk_device_manager_get_client_pointer (manager);
 	gdk_window_get_device_position (window, pointer,
 					NULL, &y, NULL);
-	
+
 	y += gtk_adjustment_get_value (vadjustment);
 
 	gtk_tree_view_get_visible_rect (tree_view, &visible_rect);
-	
+
 	offset = y - (visible_rect.y + 2 * AUTO_SCROLL_MARGIN);
 	if (offset > 0) {
 		offset = y - (visible_rect.y + visible_rect.height - 2 * AUTO_SCROLL_MARGIN);
@@ -136,7 +136,7 @@ static int
 scroll_timeout (gpointer data)
 {
 	GtkTreeView *tree_view = GTK_TREE_VIEW (data);
-	
+
 	gtk_tree_view_vertical_autoscroll (tree_view);
 
 	return TRUE;
@@ -156,11 +156,11 @@ expand_timeout (gpointer data)
 {
 	GtkTreeView *tree_view;
 	GtkTreePath *drop_path;
-	
+
 	tree_view = GTK_TREE_VIEW (data);
-	
+
 	gtk_tree_view_get_drag_dest_row (tree_view, &drop_path, NULL);
-	
+
 	if (drop_path) {
 		gtk_tree_view_expand_row (tree_view, drop_path, FALSE);
 		gtk_tree_path_free (drop_path);
@@ -217,9 +217,9 @@ set_widget_highlight (NemoTreeViewDragDest *dest, gboolean highlight)
 		dest->details->highlight_id = 0;
 		gtk_widget_queue_draw (GTK_WIDGET (dest->details->tree_view));
 	}
-	
+
 	if (highlight && !dest->details->highlight_id) {
-		dest->details->highlight_id = 
+		dest->details->highlight_id =
 			g_signal_connect_object (dest->details->tree_view,
 						 "draw",
 						 G_CALLBACK (highlight_draw),
@@ -240,8 +240,8 @@ set_drag_dest_row (NemoTreeViewDragDest *dest,
 			 GTK_TREE_VIEW_DROP_INTO_OR_BEFORE);
 	} else {
 		set_widget_highlight (dest, TRUE);
-		gtk_tree_view_set_drag_dest_row (dest->details->tree_view, 
-						 NULL, 
+		gtk_tree_view_set_drag_dest_row (dest->details->tree_view,
+						 NULL,
 						 0);
 	}
 }
@@ -255,13 +255,13 @@ clear_drag_dest_row (NemoTreeViewDragDest *dest)
 
 static gboolean
 get_drag_data (NemoTreeViewDragDest *dest,
-	       GdkDragContext *context, 
+	       GdkDragContext *context,
 	       guint32 time)
 {
 	GdkAtom target;
-	
-	target = gtk_drag_dest_find_target (GTK_WIDGET (dest->details->tree_view), 
-					    context, 
+
+	target = gtk_drag_dest_find_target (GTK_WIDGET (dest->details->tree_view),
+					    context,
 					    NULL);
 
 	if (target == GDK_NONE) {
@@ -306,9 +306,9 @@ static char *
 get_root_uri (NemoTreeViewDragDest *dest)
 {
 	char *uri;
-	
+
 	g_signal_emit (dest, signals[GET_ROOT_URI], 0, &uri);
-	
+
 	return uri;
 }
 
@@ -317,7 +317,7 @@ file_for_path (NemoTreeViewDragDest *dest, GtkTreePath *path)
 {
 	NemoFile *file;
 	char *uri;
-	
+
 	if (path) {
 		g_signal_emit (dest, signals[GET_FILE_FOR_PATH], 0, path, &file);
 	} else {
@@ -327,10 +327,10 @@ file_for_path (NemoTreeViewDragDest *dest, GtkTreePath *path)
 		if (uri != NULL) {
 			file = nemo_file_get_by_uri (uri);
 		}
-		
+
 		g_free (uri);
 	}
-	
+
 	return file;
 }
 
@@ -340,7 +340,7 @@ get_drop_path (NemoTreeViewDragDest *dest,
 {
 	NemoFile *file;
 	GtkTreePath *ret;
-	
+
 	if (!path || !dest->details->have_drag_data) {
 		return NULL;
 	}
@@ -365,7 +365,7 @@ get_drop_path (NemoTreeViewDragDest *dest,
 		}
 	}
 	nemo_file_unref (file);
-	
+
 	return ret;
 }
 
@@ -380,21 +380,21 @@ get_drop_target_uri_for_path (NemoTreeViewDragDest *dest,
 	if (file == NULL) {
 		return NULL;
 	}
-	
+
 	target = nemo_file_get_drop_target_uri (file);
 	nemo_file_unref (file);
-	
+
 	return target;
 }
 
 static guint
-get_drop_action (NemoTreeViewDragDest *dest, 
+get_drop_action (NemoTreeViewDragDest *dest,
 		 GdkDragContext *context,
 		 GtkTreePath *path)
 {
 	char *drop_target;
 	int action;
-	
+
 	if (!dest->details->have_drag_data ||
 	    (dest->details->drag_type == NEMO_ICON_DND_GNOME_ICON_LIST &&
 	     dest->details->drag_list == NULL)) {
@@ -404,7 +404,7 @@ get_drop_action (NemoTreeViewDragDest *dest,
 	switch (dest->details->drag_type) {
 	case NEMO_ICON_DND_GNOME_ICON_LIST :
 		drop_target = get_drop_target_uri_for_path (dest, path);
-		
+
 		if (!drop_target) {
 			return 0;
 		}
@@ -417,9 +417,9 @@ get_drop_action (NemoTreeViewDragDest *dest,
                                                  &dest->details->desktop_dnd_can_delete_source);
 
 		g_free (drop_target);
-		
+
 		return action;
-		
+
 	case NEMO_ICON_DND_NETSCAPE_URL:
 		drop_target = get_drop_target_uri_for_path (dest, path);
 
@@ -432,7 +432,7 @@ get_drop_action (NemoTreeViewDragDest *dest,
 		g_free (drop_target);
 
 		return action;
-		
+
 	case NEMO_ICON_DND_URI_LIST :
 		drop_target = get_drop_target_uri_for_path (dest, path);
 
@@ -448,7 +448,8 @@ get_drop_action (NemoTreeViewDragDest *dest,
 	case NEMO_ICON_DND_RAW:
 	case NEMO_ICON_DND_XDNDDIRECTSAVE:
 		return GDK_ACTION_COPY;
-
+    default:
+        break;
 	}
 
 	return 0;
@@ -476,7 +477,6 @@ drag_motion_callback (GtkWidget *widget,
 
 	gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (widget),
 					   x, y, &path, &pos);
-	
 
 	if (!dest->details->have_drag_data) {
 		res = get_drag_data (dest, context, time);
@@ -487,7 +487,7 @@ drag_motion_callback (GtkWidget *widget,
 	}
 
 	drop_path = get_drop_path (dest, path);
-	
+
 	action = 0;
 	bin_window = gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget));
 	if (bin_window != NULL) {
@@ -501,7 +501,7 @@ drag_motion_callback (GtkWidget *widget,
 
 	gtk_tree_view_get_drag_dest_row (GTK_TREE_VIEW (widget), &old_drop_path,
 					 NULL);
-	
+
 	if (action) {
 		set_drag_dest_row (dest, drop_path);
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
@@ -521,23 +521,23 @@ drag_motion_callback (GtkWidget *widget,
 		clear_drag_dest_row (dest);
 		remove_expand_timeout (dest);
 	}
-	
+
 	if (path) {
 		gtk_tree_path_free (path);
 	}
-	
+
 	if (drop_path) {
 		gtk_tree_path_free (drop_path);
 	}
-	
+
 	if (old_drop_path) {
 		gtk_tree_path_free (old_drop_path);
 	}
-	
+
 	if (dest->details->scroll_id == 0) {
-		dest->details->scroll_id = 
-			g_timeout_add (150, 
-				       scroll_timeout, 
+		dest->details->scroll_id =
+			g_timeout_add (150,
+				       scroll_timeout,
 				       dest->details->tree_view);
 	}
 
@@ -572,7 +572,7 @@ get_drop_target_uri_at_pos (NemoTreeViewDragDest *dest, int x, int y)
 	GtkTreePath *drop_path;
 	GtkTreeViewDropPosition pos;
 
-	gtk_tree_view_get_dest_row_at_pos (dest->details->tree_view, x, y, 
+	gtk_tree_view_get_dest_row_at_pos (dest->details->tree_view, x, y,
 					   &path, &pos);
 
 	drop_path = get_drop_path (dest, path);
@@ -619,7 +619,7 @@ receive_uris (NemoTreeViewDragDest *dest,
 		if (!nemo_drag_uris_local (drop_target, source_uris)
 			|| real_action != GDK_ACTION_MOVE) {
 			g_signal_emit (dest, signals[MOVE_COPY_ITEMS], 0,
-				       source_uris, 
+				       source_uris,
 				       drop_target,
 				       real_action,
 				       x, y);
@@ -642,7 +642,7 @@ receive_dropped_icons (NemoTreeViewDragDest *dest,
 	if (!dest->details->drag_list) {
 		return;
 	}
-	
+
 	source_uris = NULL;
 	for (l = dest->details->drag_list; l != NULL; l = l->next) {
 		source_uris = g_list_prepend (source_uris,
@@ -652,7 +652,7 @@ receive_dropped_icons (NemoTreeViewDragDest *dest,
 	source_uris = g_list_reverse (source_uris);
 
 	receive_uris (dest, context, source_uris, x, y);
-	
+
 	g_list_free (source_uris);
 }
 
@@ -767,16 +767,16 @@ receive_xds (NemoTreeViewDragDest *dest,
 	selection_format = gtk_selection_data_get_format (dest->details->drag_data);
 	selection_length = gtk_selection_data_get_length (dest->details->drag_data);
 
-	if (selection_format == 8 
-	    && selection_length == 1 
+	if (selection_format == 8
+	    && selection_length == 1
 	    && selection_data[0] == 'F') {
 		gtk_drag_get_data (widget, context,
 		                  gdk_atom_intern (NEMO_ICON_DND_RAW_TYPE,
 		                                  FALSE),
 		                  time);
 		return FALSE;
-	} else if (selection_format == 8 
-		   && selection_length == 1 
+	} else if (selection_format == 8
+		   && selection_length == 1
 		   && selection_data[0] == 'S') {
 		g_assert (dest->details->direct_save_uri != NULL);
 		location = g_file_new_for_uri (dest->details->direct_save_uri);
@@ -804,16 +804,16 @@ drag_data_received_callback (GtkWidget *widget,
 	const gchar *tmp;
 	int length;
 	gboolean success, finished;
-	
+
 	dest = NEMO_TREE_VIEW_DRAG_DEST (data);
 
 	if (!dest->details->have_drag_data) {
 		dest->details->have_drag_data = TRUE;
 		dest->details->drag_type = info;
-		dest->details->drag_data = 
+		dest->details->drag_data =
 			gtk_selection_data_copy (selection_data);
 		if (info == NEMO_ICON_DND_GNOME_ICON_LIST) {
-			dest->details->drag_list = 
+			dest->details->drag_list =
 				nemo_drag_build_selection_list (selection_data);
 		}
 	}
@@ -848,6 +848,8 @@ drag_data_received_callback (GtkWidget *widget,
 			finished = receive_xds (dest, widget, time, context, x, y);
 			success = TRUE;
 			break;
+        default:
+            break;
 		}
 
 		if (finished) {
@@ -938,7 +940,7 @@ set_direct_save_uri (NemoTreeViewDragDest *dest,
 static gboolean
 drag_drop_callback (GtkWidget *widget,
 		    GdkDragContext *context,
-		    int x, 
+		    int x,
 		    int y,
 		    guint32 time,
 		    gpointer data)
@@ -948,9 +950,9 @@ drag_drop_callback (GtkWidget *widget,
 	GdkAtom target;
 
 	dest = NEMO_TREE_VIEW_DRAG_DEST (data);
-	
-	target = gtk_drag_dest_find_target (GTK_WIDGET (dest->details->tree_view), 
-					    context, 
+
+	target = gtk_drag_dest_find_target (GTK_WIDGET (dest->details->tree_view),
+					    context,
 					    NULL);
 	if (target == GDK_NONE) {
 		return FALSE;
@@ -974,7 +976,7 @@ drag_drop_callback (GtkWidget *widget,
 	remove_scroll_timeout (dest);
 	remove_expand_timeout (dest);
 	clear_drag_dest_row (dest);
-	
+
 	return TRUE;
 }
 
@@ -985,7 +987,7 @@ tree_view_weak_notify (gpointer user_data,
 	NemoTreeViewDragDest *dest;
 
 	dest = NEMO_TREE_VIEW_DRAG_DEST (user_data);
-	
+
 	remove_scroll_timeout (dest);
 	remove_expand_timeout (dest);
 
@@ -996,7 +998,7 @@ static void
 nemo_tree_view_drag_dest_dispose (GObject *object)
 {
 	NemoTreeViewDragDest *dest;
-	
+
 	dest = NEMO_TREE_VIEW_DRAG_DEST (object);
 
 	if (dest->details->tree_view) {
@@ -1004,7 +1006,7 @@ nemo_tree_view_drag_dest_dispose (GObject *object)
 				     tree_view_weak_notify,
 				     dest);
 	}
-	
+
 	remove_scroll_timeout (dest);
 	remove_expand_timeout (dest);
 
@@ -1015,7 +1017,7 @@ static void
 nemo_tree_view_drag_dest_finalize (GObject *object)
 {
 	NemoTreeViewDragDest *dest;
-	
+
 	dest = NEMO_TREE_VIEW_DRAG_DEST (object);
 	free_drag_data (dest);
 
@@ -1035,13 +1037,13 @@ nemo_tree_view_drag_dest_class_init (NemoTreeViewDragDestClass *class)
 	GObjectClass *gobject_class;
 
 	gobject_class = G_OBJECT_CLASS (class);
-	
+
 	gobject_class->dispose = nemo_tree_view_drag_dest_dispose;
 	gobject_class->finalize = nemo_tree_view_drag_dest_finalize;
 
 	g_type_class_add_private (class, sizeof (NemoTreeViewDragDestDetails));
 
-	signals[GET_ROOT_URI] = 
+	signals[GET_ROOT_URI] =
 		g_signal_new ("get_root_uri",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
@@ -1050,7 +1052,7 @@ nemo_tree_view_drag_dest_class_init (NemoTreeViewDragDestClass *class)
 			      NULL, NULL,
 			      g_cclosure_marshal_generic,
 			      G_TYPE_STRING, 0);
-	signals[GET_FILE_FOR_PATH] = 
+	signals[GET_FILE_FOR_PATH] =
 		g_signal_new ("get_file_for_path",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
@@ -1067,7 +1069,7 @@ nemo_tree_view_drag_dest_class_init (NemoTreeViewDragDestClass *class)
 			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass,
 					       move_copy_items),
 			      NULL, NULL,
-			      
+
 			      g_cclosure_marshal_generic,
 			      G_TYPE_NONE, 5,
 			      G_TYPE_POINTER,
@@ -1079,7 +1081,7 @@ nemo_tree_view_drag_dest_class_init (NemoTreeViewDragDestClass *class)
 		g_signal_new ("handle_netscape_url",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass, 
+			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass,
 					       handle_netscape_url),
 			      NULL, NULL,
 			      g_cclosure_marshal_generic,
@@ -1093,7 +1095,7 @@ nemo_tree_view_drag_dest_class_init (NemoTreeViewDragDestClass *class)
 		g_signal_new ("handle_uri_list",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass, 
+			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass,
 					       handle_uri_list),
 			      NULL, NULL,
 			      g_cclosure_marshal_generic,
@@ -1107,7 +1109,7 @@ nemo_tree_view_drag_dest_class_init (NemoTreeViewDragDestClass *class)
 		g_signal_new ("handle_text",
 			      G_TYPE_FROM_CLASS (class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass, 
+			      G_STRUCT_OFFSET (NemoTreeViewDragDestClass,
 					       handle_text),
 			      NULL, NULL,
 			      g_cclosure_marshal_generic,
@@ -1142,7 +1144,7 @@ nemo_tree_view_drag_dest_new (GtkTreeView *tree_view)
 {
 	NemoTreeViewDragDest *dest;
 	GtkTargetList *targets;
-	
+
 	dest = g_object_new (NEMO_TYPE_TREE_VIEW_DRAG_DEST, NULL);
 
 	dest->details->tree_view = tree_view;
@@ -1150,7 +1152,7 @@ nemo_tree_view_drag_dest_new (GtkTreeView *tree_view)
     dest->details->desktop_dnd_can_delete_source = FALSE;
 	g_object_weak_ref (G_OBJECT (dest->details->tree_view),
 			   tree_view_weak_notify, dest);
-	
+
 	gtk_drag_dest_set (GTK_WIDGET (tree_view),
 			   0, drag_types, G_N_ELEMENTS (drag_types),
 			   GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_ASK);
@@ -1170,10 +1172,10 @@ nemo_tree_view_drag_dest_new (GtkTreeView *tree_view)
 				 "drag_drop",
 				 G_CALLBACK (drag_drop_callback),
 				 dest, 0);
-	g_signal_connect_object (tree_view, 
+	g_signal_connect_object (tree_view,
 				 "drag_data_received",
 				 G_CALLBACK (drag_data_received_callback),
 				 dest, 0);
-	
+
 	return dest;
 }
