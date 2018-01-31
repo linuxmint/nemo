@@ -38,15 +38,6 @@
 #mesondefine LOCALEDIR
 #mesondefine LOCALE_DIR
 
-
-
-
-// Defined if we meet the minimum version for
-//   g_content_type_get_generic_icon_name
-#mesondefine GENERIC_ICON_API
-
-
-
 // Define to 1 if you have the <malloc.h> header file.
 #mesondefine HAVE_MALLOC_H
 

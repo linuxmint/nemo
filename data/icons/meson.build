@@ -71,3 +71,4 @@ foreach icon : privateIcons
     install_dir: join_paths(get_option('datadir'), 'nemo', 'icons', theme, size, context)
   )
 endforeach
+

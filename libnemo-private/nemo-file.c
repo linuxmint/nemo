@@ -6423,10 +6423,6 @@ struct {
     { "x-office-spreadsheet", N_("Spreadsheet") },
 };
 
-/* FIXME: remove this ifdef once we no longer need support for < 2.34 glib */
-
-#ifdef GENERIC_ICON_API
-
 static char *
 get_basic_type_for_mime_type (const char *mime_type)
 {
@@ -6453,42 +6449,6 @@ get_basic_type_for_mime_type (const char *mime_type)
 
     return basic_type;
 }
-
-#else
-
-static char *
-get_basic_type_for_mime_type (const char *mime_type)
-{
-    char *basic_type = NULL;
-
-    GIcon *icon;
-    icon = g_content_type_get_icon (mime_type);
-    const gchar * const *icon_names = g_themed_icon_get_names (G_THEMED_ICON (icon));
-
-    if (icon_names != NULL) {
-        int i, j;
-        for (j = 0; j < g_strv_length ((gchar **) icon_names); j++) {
-            for (i = 0; i < G_N_ELEMENTS (mime_type_map); i++) {
-                if (strcmp (mime_type_map[i].icon_name, icon_names[j]) == 0) {
-                    basic_type = g_strdup (gettext (mime_type_map[i].display_name));
-                    break;
-                }
-            }
-            if (basic_type != NULL)
-                break;
-        }
-    }
-
-    if (basic_type == NULL) {
-        basic_type = g_strdup (_("Unknown"));
-    }
-
-    g_object_unref (icon);
-
-    return basic_type;
-}
-
-#endif
 
 static char *
 get_description (NemoFile     *file,

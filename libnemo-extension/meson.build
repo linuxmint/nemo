@@ -82,6 +82,6 @@ pkgconfig.generate(filebase: 'libnemo-extension',
     'nemo',
   ],
   variables: [
-    'extensiondir=${prefix}/@0@/nemo/extensions-3.0'.format(get_option('libdir')),
+    'extensiondir=@0@'.format(nemoExtensionPath)
   ],
 )

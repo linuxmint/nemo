@@ -1,4 +1,6 @@
 #!/bin/bash
-data/extract_action_strings data
-xgettext --from-code=UTF-8 --keyword=_ --keyword=N_ --output=nemo.pot src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c data/action_i18n_strings.py generate_additional_file
-xgettext --join-existing  -L Glade src/*.glade --output=nemo.pot
+data/nemo-actions/extract_action_strings data/nemo-actions
+xgettext --from-code=UTF-8 --keyword=_ --keyword=N_ --output=nemo.pot \
+    src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c         \
+    data/nemo-actions/action_i18n_strings.py generate_additional_file
+xgettext --join-existing  -L Glade gresources/*.glade --output=nemo.pot

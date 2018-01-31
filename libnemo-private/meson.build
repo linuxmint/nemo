@@ -110,14 +110,6 @@ nemo_private = declare_dependency(
   dependencies: nemo_private_deps,
 )
 
-
-dataConf = configuration_data()
-gschemaFile = configure_file(
-  input : 'org.nemo.gschema.xml.in',
-  output: 'org.nemo.gschema.xml',
-  configuration: dataConf
-)
-
-install_data(gschemaFile,
-  install_dir: join_paths(get_option('datadir'), 'glib-2.0', 'schemas')
+install_data('org.nemo.gschema.xml',
+    install_dir: join_paths(get_option('datadir'), 'glib-2.0', 'schemas')
 )
