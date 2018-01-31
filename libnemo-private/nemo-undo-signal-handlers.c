@@ -46,21 +46,21 @@ typedef struct {
 } EditableUndoObjectData;
 
 
-static void restore_editable_from_undo_snapshot_callback (GObject 	*target, 
+static void restore_editable_from_undo_snapshot_callback (GObject 	*target,
 							  gpointer 	callback_data);
 static void editable_register_edit_undo 		 (GtkEditable 	*editable);
 static void free_editable_object_data 			 (gpointer 	data);
 
 /* nemo_undo_set_up_nemo_entry_for_undo
- * 
- * Functions and callback methods to handle undo 
+ *
+ * Functions and callback methods to handle undo
  * in a NemoEntry
  */
 
-static void 
+static void
 nemo_entry_user_changed_callback (NemoEntry *entry)
-{		
-	/* Register undo transaction */	
+{
+	/* Register undo transaction */
 	editable_register_edit_undo (GTK_EDITABLE (entry));
 }
 
@@ -68,14 +68,14 @@ void
 nemo_undo_set_up_nemo_entry_for_undo (NemoEntry *entry)
 {
 	EditableUndoObjectData *data;
-	
+
 	if (!NEMO_IS_ENTRY (entry) ) {
 		return;
 	}
 
 	data = g_new(EditableUndoObjectData, 1);
 	data->undo_registered = FALSE;
-	g_object_set_data_full (G_OBJECT (entry), "undo_registered", 
+	g_object_set_data_full (G_OBJECT (entry), "undo_registered",
 				data, free_editable_object_data);
 
 	/* Connect to entry signals */
@@ -98,46 +98,46 @@ nemo_undo_tear_down_nemo_entry_for_undo (NemoEntry *entry)
 }
 
 /* nemo_undo_set_up_nemo_entry_for_undo
- * 
- * Functions and callback methods to handle undo 
+ *
+ * Functions and callback methods to handle undo
  * in a NemoEntry
  */
 
-static void 
+static void
 free_editable_undo_data (gpointer data)
 {
 	EditableUndoData *undo_data;
 
 	undo_data = (EditableUndoData *) data;
-	
+
 	g_free (undo_data->undo_text);
 	g_free (undo_data);
 }
 
-static void 
+static void
 free_editable_object_data (gpointer data)
 {
 	g_free (data);
 }
 
 
-static void 
+static void
 editable_insert_text_callback (GtkEditable *editable)
 {
-	/* Register undo transaction */	
+	/* Register undo transaction */
 	editable_register_edit_undo (editable);
 }
 
-static void 
+static void
 editable_delete_text_callback (GtkEditable *editable)
 {
-	/* Register undo transaction */	
+	/* Register undo transaction */
 	editable_register_edit_undo (editable);
 }
 
 static void
 editable_register_edit_undo (GtkEditable *editable)
-{	
+{
 	EditableUndoData *undo_data;
 	EditableUndoObjectData *undo_info;
 	gpointer data;
@@ -153,17 +153,17 @@ editable_register_edit_undo (GtkEditable *editable)
 		return;
 	}
 
-	undo_info = (EditableUndoObjectData *)data;		
+	undo_info = (EditableUndoObjectData *)data;
 	if (undo_info->undo_registered) {
 		return;
 	}
-	
+
 	undo_data = g_new0 (EditableUndoData, 1);
 	undo_data->undo_text = gtk_editable_get_chars (editable, 0, -1);
 	undo_data->position = gtk_editable_get_position (editable);
 	gtk_editable_get_selection_bounds (editable,
-					   &undo_data->selection_start,
-					   &undo_data->selection_end);
+					   (int *)&undo_data->selection_start,
+					   (int *)&undo_data->selection_end);
 
 	nemo_undo_register
 		(G_OBJECT (editable),
@@ -183,7 +183,7 @@ void
 nemo_undo_set_up_editable_for_undo (GtkEditable *editable)
 {
 	EditableUndoObjectData *data;
-	
+
 	if (!GTK_IS_EDITABLE (editable) ) {
 		return;
 	}
@@ -197,7 +197,7 @@ nemo_undo_set_up_editable_for_undo (GtkEditable *editable)
 
 	data = g_new (EditableUndoObjectData, 1);
 	data->undo_registered = FALSE;
-	g_object_set_data_full (G_OBJECT (editable), "undo_registered", 
+	g_object_set_data_full (G_OBJECT (editable), "undo_registered",
 				data, free_editable_object_data);
 }
 
@@ -216,7 +216,7 @@ nemo_undo_tear_down_editable_for_undo (GtkEditable *editable)
 }
 
 /* restore_editable_from_undo_snapshot_callback
- * 
+ *
  * Restore edited text.
  */
 static void
@@ -227,7 +227,7 @@ restore_editable_from_undo_snapshot_callback (GObject *target, gpointer callback
 	EditableUndoData *undo_data;
 	EditableUndoObjectData *data;
 	gint position;
-	
+
 	editable = GTK_EDITABLE (target);
 	undo_data = (EditableUndoData *) callback_data;
 
@@ -237,13 +237,13 @@ restore_editable_from_undo_snapshot_callback (GObject *target, gpointer callback
 		g_warning ("Undo regisetred flag not found");
 		return;
 	}
-	
+
 	/* Reset the registered flag so we get a new item for future editing. */
 	data->undo_registered = FALSE;
 
 	/* Register a new undo transaction for redo. */
 	editable_register_edit_undo (editable);
-	
+
 	/* Restore the text. */
 	position = 0;
 	gtk_editable_delete_text (editable, 0, -1);
@@ -258,9 +258,9 @@ restore_editable_from_undo_snapshot_callback (GObject *target, gpointer callback
 	gtk_editable_select_region (editable, 0, 0);
 
 	/* Restore selection */
-	gtk_editable_select_region (editable, undo_data->selection_start, 
+	gtk_editable_select_region (editable, undo_data->selection_start,
 			   	    undo_data->selection_end);
-	
+
 	/* Set the i-beam to the saved position */
 	gtk_editable_set_position (editable, undo_data->position);
 
