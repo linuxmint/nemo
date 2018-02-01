@@ -48,14 +48,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NEMO_DND_URI_LIST_TYPE 	  "text/uri-list"
-#define NEMO_DND_TEXT_PLAIN_TYPE 	  "text/plain"
+#define NEMO_DND_URI_LIST_TYPE 	  (char *)"text/uri-list"
+#define NEMO_DND_TEXT_PLAIN_TYPE  (char *)"text/plain"
 
 struct NemoLocationBarDetails {
 	NemoEntry *entry;
-	
+
 	char *last_location;
-	
+
 	guint idle_id;
 };
 
@@ -98,11 +98,11 @@ nemo_location_bar_get_window (GtkWidget *bar)
  * Get the GFile represented by the text in the location bar.
  **/
 static GFile *
-nemo_location_bar_get_location (NemoLocationBar *bar) 
+nemo_location_bar_get_location (NemoLocationBar *bar)
 {
 	char *user_location;
 	GFile *location;
-	
+
 	user_location = gtk_editable_get_chars (GTK_EDITABLE (bar->details->entry), 0, -1);
 	location = g_file_parse_name (user_location);
 	g_free (user_location);
@@ -163,15 +163,15 @@ drag_data_received_callback (GtkWidget *widget,
 	if (name_count > 1) {
 		prompt = g_strdup_printf (ngettext("Do you want to view %d location?",
 						   "Do you want to view %d locations?",
-						   name_count), 
+						   name_count),
 					  name_count);
 		detail = g_strdup_printf (ngettext("This will open %d separate window.",
 						   "This will open %d separate windows.",
 						   name_count),
-					  name_count);			  
+					  name_count);
 		/* eel_run_simple_dialog should really take in pairs
 		 * like gtk_dialog_new_with_buttons() does. */
-		new_windows_for_extras = eel_run_simple_dialog 
+		new_windows_for_extras = eel_run_simple_dialog
 			(GTK_WIDGET (window),
 			 TRUE,
 			 GTK_MESSAGE_QUESTION,
@@ -182,7 +182,7 @@ drag_data_received_callback (GtkWidget *widget,
 
 		g_free (prompt);
 		g_free (detail);
-		
+
 		if (!new_windows_for_extras) {
 			g_strfreev (names);
 			gtk_drag_finish (context, FALSE, FALSE, time);
@@ -190,7 +190,7 @@ drag_data_received_callback (GtkWidget *widget,
 		}
 	}
 
-	nemo_location_bar_set_location (self, names[0]);	
+	nemo_location_bar_set_location (self, names[0]);
 	emit_location_changed (self);
 
 	if (new_windows_for_extras) {
@@ -285,9 +285,9 @@ nemo_location_bar_update_icon (NemoLocationBar *bar)
        const char *current_text;
        GFile *location;
        GFile *last_location;
-       
+
        if (bar->details->last_location == NULL){
-               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
+               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry),
                                                              NEMO_LOCATION_ENTRY_ACTION_GOTO);
                return;
        }
@@ -295,12 +295,12 @@ nemo_location_bar_update_icon (NemoLocationBar *bar)
        current_text = gtk_entry_get_text (GTK_ENTRY (bar->details->entry));
        location = g_file_parse_name (current_text);
        last_location = g_file_parse_name (bar->details->last_location);
-       
+
        if (g_file_equal (last_location, location)) {
-               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
+               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry),
                                                              NEMO_LOCATION_ENTRY_ACTION_CLEAR);
-       } else {                 
-               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry), 
+       } else {
+               nemo_location_entry_set_secondary_action (NEMO_LOCATION_ENTRY (bar->details->entry),
                                                              NEMO_LOCATION_ENTRY_ACTION_GOTO);
        }
 
@@ -333,7 +333,7 @@ void
 nemo_location_bar_activate (NemoLocationBar *bar)
 {
 	/* Put the keyboard focus in the text field when switching to this mode,
-	 * and select all text for easy overtyping 
+	 * and select all text for easy overtyping
 	 */
 	gtk_widget_grab_focus (GTK_WIDGET (bar->details->entry));
 	nemo_entry_select_all (bar->details->entry);
@@ -360,7 +360,7 @@ finalize (GObject *object)
 		g_source_remove (bar->details->idle_id);
 		bar->details->idle_id = 0;
 	}
-	
+
 	g_free (bar->details->last_location);
 	bar->details->last_location = NULL;
 
@@ -420,7 +420,7 @@ nemo_location_bar_init (NemoLocationBar *bar)
     gtk_container_set_border_width (GTK_CONTAINER (event_box), 4);
 
 	entry = nemo_location_entry_new ();
-	
+
 	g_signal_connect_object (entry, "activate",
 				 G_CALLBACK (editable_activate_callback), bar, G_CONNECT_AFTER);
     g_signal_connect_object (entry, "changed",
@@ -435,7 +435,7 @@ nemo_location_bar_init (NemoLocationBar *bar)
 			  G_CALLBACK (button_pressed_callback), NULL);
 
 	/* Drag source */
-	gtk_drag_source_set (GTK_WIDGET (event_box), 
+	gtk_drag_source_set (GTK_WIDGET (event_box),
 			     GDK_BUTTON1_MASK | GDK_BUTTON3_MASK,
 			     drag_types, G_N_ELEMENTS (drag_types),
 			     GDK_ACTION_COPY | GDK_ACTION_LINK);
@@ -450,7 +450,7 @@ nemo_location_bar_init (NemoLocationBar *bar)
 	g_signal_connect (bar, "drag_data_received",
 			  G_CALLBACK (drag_data_received_callback), NULL);
 
-	bar->details->entry = NEMO_ENTRY (entry);	
+	bar->details->entry = NEMO_ENTRY (entry);
 
 	gtk_widget_show_all (GTK_WIDGET (bar));
 }
@@ -474,7 +474,7 @@ nemo_location_bar_set_location (NemoLocationBar *bar,
 
 	g_assert (location != NULL);
 
-	/* Note: This is called in reaction to external changes, and 
+	/* Note: This is called in reaction to external changes, and
 	 * thus should not emit the LOCATION_CHANGED signal. */
 
 	if (eel_uri_is_search (location)) {
@@ -490,7 +490,7 @@ nemo_location_bar_set_location (NemoLocationBar *bar,
 	}
 
 	/* remember the original location for later comparison */
-	
+
 	if (bar->details->last_location != location) {
 		g_free (bar->details->last_location);
 		bar->details->last_location = g_strdup (location);
