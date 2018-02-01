@@ -99,7 +99,7 @@ add_clicked_cb (GtkButton *button,
 }
 
 static void
-remove_clicked_cb (GtkMenuItem *item, 
+remove_clicked_cb (GtkMenuItem *item,
 		   gpointer user_data)
 {
 	NemoMimeApplicationChooser *chooser = user_data;
@@ -117,7 +117,7 @@ remove_clicked_cb (GtkMenuItem *item,
 					       error->message,
 					       GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (chooser))));
 			g_error_free (error);
-			
+
 		}
 
 		gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
@@ -140,7 +140,7 @@ populate_popup_cb (GtkAppChooserWidget *widget,
 		item = gtk_menu_item_new_with_label (_("Forget association"));
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 		gtk_widget_show (item);
-		
+
 		g_signal_connect (item, "activate",
 				  G_CALLBACK (remove_clicked_cb), chooser);
 	}
@@ -151,7 +151,7 @@ reset_clicked_cb (GtkButton *button,
                   gpointer   user_data)
 {
 	NemoMimeApplicationChooser *chooser;
-	
+
 	chooser = NEMO_MIME_APPLICATION_CHOOSER (user_data);
 
 	g_app_info_reset_type_associations (chooser->details->content_type);
@@ -238,7 +238,7 @@ application_selected_cb (GtkAppChooserWidget *widget,
     if (chooser->details->dialog_ok)
         gtk_widget_set_sensitive (chooser->details->dialog_ok, TRUE);
 
-	g_object_unref (default_app);
+    g_object_unref (default_app);
 }
 
 static void
@@ -360,7 +360,7 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
                                              GTK_ENTRY_ICON_SECONDARY,
                                              NULL);
         }
-        
+
         gtk_widget_set_sensitive (chooser->details->set_as_default_button, FALSE);
         gtk_widget_set_sensitive (chooser->details->add_button, FALSE);
 
@@ -390,9 +390,9 @@ static char *
 get_extension (const char *basename)
 {
 	char *p;
-	
+
 	p = strrchr (basename, '.');
-	
+
 	if (p && *(p + 1) != '\0') {
 		return g_strdup (p + 1);
 	} else {
@@ -491,7 +491,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	gtk_label_set_line_wrap (GTK_LABEL (chooser->details->label), TRUE);
 	gtk_label_set_line_wrap_mode (GTK_LABEL (chooser->details->label),
 				      PANGO_WRAP_WORD_CHAR);
-	gtk_box_pack_start (GTK_BOX (chooser), chooser->details->label, 
+	gtk_box_pack_start (GTK_BOX (chooser), chooser->details->label,
 			    FALSE, FALSE, 0);
 
 	gtk_widget_show (chooser->details->label);
@@ -588,7 +588,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (button), filter);
 
  	button = gtk_button_new_with_label (_("Add to list"));
-	g_signal_connect (button, "clicked", 
+	g_signal_connect (button, "clicked",
 			  G_CALLBACK (add_clicked_cb),
 			  chooser);
 	gtk_widget_show (button);
@@ -605,7 +605,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 	chooser->details->set_as_default_button = button;
 
     button = gtk_button_new_with_label (_("Reset to system defaults"));
-    g_signal_connect (button, "clicked", 
+    g_signal_connect (button, "clicked",
               G_CALLBACK (reset_clicked_cb),
               chooser);
     gtk_widget_show (button);
