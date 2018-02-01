@@ -2,24 +2,24 @@
 
    nemo-vfs-file.c: Subclass of NemoFile to help implement the
    virtual trash directory.
- 
+
    Copyright (C) 1999, 2000, 2001 Eazel, Inc.
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public
    License along with this program; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
    Boston, MA 02110-1335, USA.
-  
+
    Author: Darin Adler <darin@bentspoon.com>
 */
 
@@ -33,7 +33,7 @@
 
 G_DEFINE_TYPE (NemoVFSFile, nemo_vfs_file, NEMO_TYPE_FILE);
 
-static void             
+static void
 vfs_file_monitor_add (NemoFile *file,
 		      gconstpointer client,
 		      NemoFileAttributes attributes)
@@ -41,15 +41,15 @@ vfs_file_monitor_add (NemoFile *file,
 	nemo_directory_monitor_add_internal
 		(file->details->directory, file,
 		 client, TRUE, attributes, NULL, NULL);
-}   
-			   
+}
+
 static void
 vfs_file_monitor_remove (NemoFile *file,
 			 gconstpointer client)
 {
 	nemo_directory_monitor_remove_internal
 		(file->details->directory, file, client);
-}			      
+}
 
 static void
 vfs_file_call_when_ready (NemoFile *file,
@@ -147,7 +147,7 @@ vfs_file_set_metadata (NemoFile           *file,
 	char *gio_key;
 
 	info = g_file_info_new ();
-	
+
 	gio_key = g_strconcat ("metadata::", key, NULL);
 	if (value != NULL) {
 		g_file_info_set_attribute_string (info, gio_key, value);
@@ -199,7 +199,7 @@ vfs_file_set_metadata_as_list (NemoFile           *file,
 }
 
 static gboolean
-vfs_file_get_item_count (NemoFile *file, 
+vfs_file_get_item_count (NemoFile *file,
 			 guint *count,
 			 gboolean *count_unreadable)
 {
@@ -338,6 +338,8 @@ vfs_file_get_date (NemoFile *file,
 			*date = file->details->ctime;
 		}
 		return TRUE;
+        default:
+                break;
 	}
 	return FALSE;
 }
@@ -397,7 +399,7 @@ vfs_file_mount (NemoFile                   *file,
 	NemoFileOperation *op;
 	GError *error;
 	GFile *location;
-	
+
 	if (file->details->type != G_FILE_TYPE_MOUNTABLE) {
 		if (callback) {
 			error = NULL;
@@ -439,9 +441,9 @@ vfs_file_unmount_callback (GObject *source_object,
 	error = NULL;
 	unmounted = g_file_unmount_mountable_with_operation_finish (G_FILE (source_object),
 								    res, &error);
-	
+
     if (!unmounted &&
-	error->domain == G_IO_ERROR && 
+	error->domain == G_IO_ERROR &&
 	(error->code == G_IO_ERROR_FAILED_HANDLED ||
 	 error->code == G_IO_ERROR_CANCELLED)) {
 	    g_error_free (error);
@@ -463,7 +465,7 @@ vfs_file_unmount (NemoFile                   *file,
 {
 	NemoFileOperation *op;
 	GFile *location;
-	
+
 	op = nemo_file_operation_new (file, callback, callback_data);
 	if (cancellable) {
 		g_object_unref (op->cancellable);
@@ -502,7 +504,7 @@ vfs_file_eject_callback (GObject *source_object,
 		g_error_free (error);
 		error = NULL;
 	}
-	
+
 	nemo_file_operation_complete (op, G_FILE (source_object), error);
 	if (error) {
 		g_error_free (error);
@@ -518,7 +520,7 @@ vfs_file_eject (NemoFile                   *file,
 {
 	NemoFileOperation *op;
 	GFile *location;
-	
+
 	op = nemo_file_operation_new (file, callback, callback_data);
 	if (cancellable) {
 		g_object_unref (op->cancellable);
