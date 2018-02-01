@@ -140,9 +140,7 @@ get_keyfile (void)
 void
 nemo_desktop_metadata_init (void)
 {
-    GKeyFile *file;
-
-    file = get_keyfile ();
+    get_keyfile ();
 }
 
 void
