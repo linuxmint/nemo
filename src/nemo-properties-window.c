@@ -88,12 +88,12 @@
 static GHashTable *windows;
 static GHashTable *pending_lists;
 
-struct NemoPropertiesWindowDetails {	
+struct NemoPropertiesWindowDetails {
 	GList *original_files;
 	GList *target_files;
-	
+
 	GtkStack *stack;
-	
+
 	GtkGrid *basic_grid;
 
 	GtkWidget *icon_button;
@@ -135,10 +135,10 @@ struct NemoPropertiesWindowDetails {
 	guint long_operation_underway;
 
  	GList *changed_files;
- 	
+
  	guint64 volume_capacity;
  	guint64 volume_free;
-	
+
 	GdkRGBA used_color;
 	GdkRGBA free_color;
 	GdkRGBA used_stroke_color;
@@ -174,8 +174,8 @@ enum {
 };
 
 static const GtkTargetEntry target_table[] = {
-	{ "text/uri-list",  0, TARGET_URI_LIST },
-	{ "x-special/gnome-icon-list",  0, TARGET_GNOME_URI_LIST },
+	{ (char *)"text/uri-list",  0, TARGET_URI_LIST },
+	{ (char *)"x-special/gnome-icon-list",  0, TARGET_GNOME_URI_LIST },
 };
 
 #define DIRECTORY_CONTENTS_UPDATE_INTERVAL	200 /* milliseconds */
@@ -225,9 +225,9 @@ static void name_field_activate                   (NemoEntry *name_field,
 						   gpointer callback_data);
 static GtkLabel *attach_ellipsizing_value_label   (GtkGrid *grid,
 						   GtkWidget *sibling,
-						   const char *initial_text, 
+						   const char *initial_text,
 						   PangoEllipsizeMode ellipsize_mode);
-						   
+
 static GtkWidget* create_pie_widget 		  (NemoPropertiesWindow *window);
 
 G_DEFINE_TYPE (NemoPropertiesWindow, nemo_properties_window, GTK_TYPE_DIALOG);
@@ -237,15 +237,15 @@ is_multi_file_window (NemoPropertiesWindow *window)
 {
 	GList *l;
 	int count;
-	
+
 	count = 0;
-	
+
 	for (l = window->details->original_files; l != NULL; l = l->next) {
-		if (!nemo_file_is_gone (NEMO_FILE (l->data))) {			
+		if (!nemo_file_is_gone (NEMO_FILE (l->data))) {
 			count++;
 			if (count > 1) {
 				return TRUE;
-			}	
+			}
 		}
 	}
 
@@ -270,7 +270,7 @@ get_not_gone_original_file_count (NemoPropertiesWindow *window)
 }
 
 static NemoFile *
-get_original_file (NemoPropertiesWindow *window) 
+get_original_file (NemoPropertiesWindow *window)
 {
 	g_return_val_if_fail (!is_multi_file_window (window), NULL);
 
@@ -300,7 +300,7 @@ get_target_file_for_original_file (NemoFile *file)
 				target_file = nemo_file_get (location);
 				g_object_unref (location);
 			}
-			
+
 			g_object_unref (link);
 		}
         } else {
@@ -310,7 +310,7 @@ get_target_file_for_original_file (NemoFile *file)
 			g_free (uri_to_display);
 		}
 	}
-	
+
 	if (target_file != NULL) {
 		return target_file;
 	}
@@ -369,7 +369,7 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 		NemoFile *file;
 
 		file = NEMO_FILE (l->data);
-		
+
 		if (!icon) {
 			icon = nemo_file_get_icon (file, NEMO_ICON_SIZE_STANDARD, 0, icon_scale,
                                        NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
@@ -434,7 +434,7 @@ uri_is_local_image (const char *uri)
 {
 	GdkPixbuf *pixbuf;
 	char *image_path;
-	
+
 	image_path = g_filename_from_uri (uri, NULL, NULL);
 	if (image_path == NULL) {
 		return FALSE;
@@ -442,7 +442,7 @@ uri_is_local_image (const char *uri)
 
 	pixbuf = gdk_pixbuf_new_from_file (image_path, NULL);
 	g_free (image_path);
-	
+
 	if (pixbuf == NULL) {
 		return FALSE;
 	}
@@ -458,9 +458,9 @@ reset_icon (NemoPropertiesWindow *properties_window)
 
 	for (l = properties_window->details->original_files; l != NULL; l = l->next) {
 		NemoFile *file;
-		
+
 		file = NEMO_FILE (l->data);
-		
+
 		nemo_file_set_metadata (file,
 					    NEMO_METADATA_KEY_ICON_SCALE,
 					    NULL, NULL);
@@ -471,7 +471,7 @@ reset_icon (NemoPropertiesWindow *properties_window)
 }
 
 
-static void  
+static void
 nemo_properties_window_drag_data_received (GtkWidget *widget, GdkDragContext *context,
 					       int x, int y,
 					       GtkSelectionData *selection_data,
@@ -480,7 +480,7 @@ nemo_properties_window_drag_data_received (GtkWidget *widget, GdkDragContext *co
 	char **uris;
 	gboolean exactly_one;
 	GtkImage *image;
- 	GtkWindow *window; 
+ 	GtkWindow *window;
 
 	image = GTK_IMAGE (widget);
  	window = GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (image)));
@@ -492,10 +492,10 @@ nemo_properties_window_drag_data_received (GtkWidget *widget, GdkDragContext *co
 	if (!exactly_one) {
 		eel_show_error_dialog
 			(_("You cannot assign more than one custom icon at a time!"),
-			 _("Please drag just one image to set a custom icon."), 
+			 _("Please drag just one image to set a custom icon."),
 			 window);
-	} else {		
-		if (uri_is_local_image (uris[0])) {			
+	} else {
+		if (uri_is_local_image (uris[0])) {
 			set_icon (uris[0], NEMO_PROPERTIES_WINDOW (window));
 		} else {
 			GFile *f;
@@ -504,9 +504,9 @@ nemo_properties_window_drag_data_received (GtkWidget *widget, GdkDragContext *co
 			if (!g_file_is_native (f)) {
 				eel_show_error_dialog
 					(_("The file that you dropped is not local."),
-					 _("You can only use local images as custom icons."), 
+					 _("You can only use local images as custom icons."),
 					 window);
-				
+
 			} else {
 				eel_show_error_dialog
 					(_("The file that you dropped is not an image."),
@@ -514,7 +514,7 @@ nemo_properties_window_drag_data_received (GtkWidget *widget, GdkDragContext *co
 					 window);
 			}
 			g_object_unref (f);
-		}		
+		}
 	}
 	g_strfreev (uris);
 }
@@ -539,7 +539,7 @@ create_image_widget (NemoPropertiesWindow *window,
 
 		/* prepare the image to receive dropped objects to assign custom images */
 		gtk_drag_dest_set (GTK_WIDGET (image),
-				   GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, 
+				   GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP,
 				   target_table, G_N_ELEMENTS (target_table),
 				   GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
@@ -577,10 +577,10 @@ set_name_field (NemoPropertiesWindow *window,
 		}
 
 		if (use_label) {
-			window->details->name_field = GTK_WIDGET 
+			window->details->name_field = GTK_WIDGET
 				(attach_ellipsizing_value_label (window->details->basic_grid,
 								 GTK_WIDGET (window->details->name_label),
-								 name, 
+								 name,
 								 PANGO_ELLIPSIZE_END));
 		} else {
 			window->details->name_field = nemo_entry_new ();
@@ -591,7 +591,7 @@ set_name_field (NemoPropertiesWindow *window,
 						 GTK_WIDGET (window->details->name_label),
 						 GTK_POS_RIGHT, 1, 1);
 			gtk_label_set_mnemonic_widget (GTK_LABEL (window->details->name_label), window->details->name_field);
-			
+
 			/* FIXME bugzilla.gnome.org 42151:
 			 * With this (and one place elsewhere in this file, not sure which is the
 			 * trouble-causer) code in place, bug 2151 happens (crash on quit). Since
@@ -614,9 +614,9 @@ set_name_field (NemoPropertiesWindow *window,
 
 		gtk_widget_show (window->details->name_field);
 	}
-	/* Only replace text if the file's name has changed. */ 
+	/* Only replace text if the file's name has changed. */
 	else if (original_name == NULL || strcmp (original_name, name) != 0) {
-		
+
 		if (use_label) {
 			gtk_label_set_text (GTK_LABEL (window->details->name_field), name);
 		} else {
@@ -648,7 +648,7 @@ update_name_field (NemoPropertiesWindow *window)
 		char *name;
 		gboolean first;
 		GList *l;
-		
+
 		str = g_string_new ("");
 
 		first = TRUE;
@@ -659,9 +659,9 @@ update_name_field (NemoPropertiesWindow *window)
 			if (!nemo_file_is_gone (file)) {
 				if (!first) {
 					g_string_append (str, ", ");
-				} 
+				}
 				first = FALSE;
-				
+
 				name = nemo_file_get_display_name (file);
 				g_string_append (str, name);
 				g_free (name);
@@ -692,7 +692,7 @@ update_name_field (NemoPropertiesWindow *window)
 
 		set_name_field (window, original_name, current_name);
 
-		if (original_name == NULL || 
+		if (original_name == NULL ||
 		    g_strcmp0 (original_name, current_name) != 0) {
 			g_object_set_data_full (G_OBJECT (window->details->name_field),
 						"original_name",
@@ -736,8 +736,8 @@ rename_callback (NemoFile *file, GFile *res_loc, GError *error, gpointer callbac
 
 	/* Complain to user if rename failed. */
 	if (error != NULL) {
-		nemo_report_error_renaming_file (file, 
-						     window->details->pending_name, 
+		nemo_report_error_renaming_file (file,
+						     window->details->pending_name,
 						     error,
 						     GTK_WINDOW (window));
 		if (window->details->name_field != NULL) {
@@ -761,13 +761,13 @@ name_field_done_editing (NemoEntry *name_field, NemoPropertiesWindow *window)
 	NemoFile *file;
 	char *new_name;
 	const char *original_name;
-	
+
 	g_return_if_fail (NEMO_IS_ENTRY (name_field));
 
 	/* Don't apply if the dialog has more than one file */
 	if (is_multi_file_window (window)) {
 		return;
-	}	
+	}
 
 	file = get_original_file (window);
 
@@ -789,7 +789,7 @@ name_field_done_editing (NemoEntry *name_field, NemoPropertiesWindow *window)
 		/* Don't rename if not changed since we read the display name.
 		   This is needed so that we don't save the display name to the
 		   file when nothing is changed */
-		if (strcmp (new_name, original_name) != 0) {		
+		if (strcmp (new_name, original_name) != 0) {
 			set_pending_name (window, new_name);
 			g_object_ref (window);
 			nemo_file_rename (file, new_name,
@@ -846,7 +846,7 @@ update_properties_window_title (NemoPropertiesWindow *window)
 			g_free (name);
 		}
 	}
-	
+
   	gtk_window_set_title (GTK_WINDOW (window), title);
 
 	g_free (title);
@@ -871,7 +871,7 @@ static void
 refresh_extension_pages (NemoPropertiesWindow *window)
 {
 	clear_extension_pages (window);
-	append_extension_pages (window);	
+	append_extension_pages (window);
 }
 
 static void
@@ -888,7 +888,7 @@ remove_from_dialog (NemoPropertiesWindow *window,
 	if (index == -1) {
 		index = g_list_index (window->details->original_files, file);
 		g_return_if_fail (index != -1);
-	}	
+	}
 
 	original_link = g_list_nth (window->details->original_files, index);
 	target_link = g_list_nth (window->details->target_files, index);
@@ -897,7 +897,7 @@ remove_from_dialog (NemoPropertiesWindow *window,
 
 	original_file = NEMO_FILE (original_link->data);
 	target_file = NEMO_FILE (target_link->data);
-	
+
 	window->details->original_files = g_list_remove_link (window->details->original_files, original_link);
 	g_list_free (original_link);
 
@@ -918,7 +918,7 @@ remove_from_dialog (NemoPropertiesWindow *window,
 
 	nemo_file_unref (original_file);
 	nemo_file_unref (target_file);
-	
+
 }
 
 static gboolean
@@ -927,7 +927,7 @@ mime_list_equal (GList *a, GList *b)
 	while (a && b) {
 		if (strcmp (a->data, b->data)) {
 			return FALSE;
-		}	
+		}
 		a = a->next;
 		b = b->next;
 	}
@@ -940,7 +940,7 @@ get_mime_list (NemoPropertiesWindow *window)
 {
 	GList *ret;
 	GList *l;
-	
+
 	ret = NULL;
 	for (l = window->details->target_files; l != NULL; l = l->next) {
 		ret = g_list_append (ret, nemo_file_get_mime_type (NEMO_FILE (l->data)));
@@ -950,7 +950,7 @@ get_mime_list (NemoPropertiesWindow *window)
 }
 
 static void
-properties_window_update (NemoPropertiesWindow *window, 
+properties_window_update (NemoPropertiesWindow *window,
 			  GList *files)
 {
 	GList *l;
@@ -972,11 +972,11 @@ properties_window_update (NemoPropertiesWindow *window,
 			/* Remove the file from the property dialog */
 			remove_from_dialog (window, changed_file);
 			changed_file = NULL;
-			
+
 			if (window->details->original_files == NULL) {
 				return;
 			}
-		}		
+		}
 		if (changed_file == NULL ||
 		    g_list_find (window->details->original_files, changed_file)) {
 			dirty_original = TRUE;
@@ -1002,11 +1002,11 @@ properties_window_update (NemoPropertiesWindow *window,
 		for (l = window->details->permission_buttons; l != NULL; l = l->next) {
 			permission_button_update (window, GTK_TOGGLE_BUTTON (l->data));
 		}
-		
+
 		for (l = window->details->permission_combos; l != NULL; l = l->next) {
 			permission_combo_update (window, GTK_COMBO_BOX (l->data));
 		}
-		
+
 		for (l = window->details->value_fields; l != NULL; l = l->next) {
 			value_field_update (window, GTK_LABEL (l->data));
 		}
@@ -1018,7 +1018,7 @@ properties_window_update (NemoPropertiesWindow *window,
 		window->details->mime_list = mime_list;
 	} else {
 		if (!mime_list_equal (window->details->mime_list, mime_list)) {
-			refresh_extension_pages (window);			
+			refresh_extension_pages (window);
 		}
 
 		g_list_free_full (window->details->mime_list, g_free);
@@ -1030,13 +1030,13 @@ static gboolean
 update_files_callback (gpointer data)
 {
  	NemoPropertiesWindow *window;
- 
+
  	window = NEMO_PROPERTIES_WINDOW (data);
- 
+
 	window->details->update_files_timeout_id = 0;
 
 	properties_window_update (window, window->details->changed_files);
-	
+
 	if (window->details->original_files == NULL) {
 		/* Close the window if no files are left */
 		gtk_widget_destroy (GTK_WIDGET (window));
@@ -1044,7 +1044,7 @@ update_files_callback (gpointer data)
 		nemo_file_list_free (window->details->changed_files);
 		window->details->changed_files = NULL;
 	}
-	
+
  	return FALSE;
  }
 
@@ -1052,7 +1052,7 @@ static void
 schedule_files_update (NemoPropertiesWindow *window)
  {
  	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
- 
+
 	if (window->details->update_files_timeout_id == 0) {
 		window->details->update_files_timeout_id
 			= g_timeout_add (FILES_UPDATE_INTERVAL,
@@ -1067,15 +1067,15 @@ file_list_attributes_identical (GList *file_list, const char *attribute_name)
 	gboolean identical;
 	char *first_attr;
 	GList *l;
-	
+
 	first_attr = NULL;
 	identical = TRUE;
-	
+
 	for (l = file_list; l != NULL; l = l->next) {
 		NemoFile *file;
 
 		file = NEMO_FILE (l->data);
-	
+
 		if (nemo_file_is_gone (file)) {
 			continue;
 		}
@@ -1099,20 +1099,20 @@ file_list_attributes_identical (GList *file_list, const char *attribute_name)
 }
 
 static char *
-file_list_get_string_attribute (GList *file_list, 
+file_list_get_string_attribute (GList *file_list,
 				const char *attribute_name,
 				const char *inconsistent_value)
 {
 	if (file_list_attributes_identical (file_list, attribute_name)) {
 		GList *l;
-		
+
 		for (l = file_list; l != NULL; l = l->next) {
 			NemoFile *file;
-			
+
 			file = NEMO_FILE (l->data);
 			if (!nemo_file_is_gone (file)) {
 				return nemo_file_get_string_attribute_with_default
-					(file, 
+					(file,
 					 attribute_name);
 			}
 		}
@@ -1136,7 +1136,7 @@ file_list_all_directories (GList *file_list)
 }
 
 static void
-value_field_update_internal (GtkLabel *label, 
+value_field_update_internal (GtkLabel *label,
 			     GList *file_list)
 {
 	const char *attribute_name;
@@ -1148,7 +1148,7 @@ value_field_update_internal (GtkLabel *label,
 
 	attribute_name = g_object_get_data (G_OBJECT (label), "file_attribute");
 	inconsistent_string = g_object_get_data (G_OBJECT (label), "inconsistent_string");
-	attribute_value = file_list_get_string_attribute (file_list, 
+	attribute_value = file_list_get_string_attribute (file_list,
 							  attribute_name,
 							  inconsistent_string);
 	if (!strcmp (attribute_name, "type") && strcmp (attribute_value, inconsistent_string)) {
@@ -1176,9 +1176,9 @@ value_field_update (NemoPropertiesWindow *window, GtkLabel *label)
 
 	use_original = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), "show_original"));
 
-	value_field_update_internal (label, 
+	value_field_update_internal (label,
 				     (use_original ?
-				      window->details->original_files : 
+				      window->details->original_files :
 				      window->details->target_files));
 }
 
@@ -1221,7 +1221,7 @@ attach_label (GtkGrid *grid,
 	}
 
 	return GTK_LABEL (label_field);
-}	      
+}
 
 static GtkLabel *
 attach_value_label (GtkGrid *grid,
@@ -1234,7 +1234,7 @@ attach_value_label (GtkGrid *grid,
 static GtkLabel *
 attach_ellipsizing_value_label (GtkGrid *grid,
 				GtkWidget *sibling,
-				const char *initial_text, 
+				const char *initial_text,
 				PangoEllipsizeMode ellipsize_mode)
 {
 	return attach_label (grid, sibling, initial_text, ellipsize_mode, TRUE, FALSE);
@@ -1265,7 +1265,7 @@ attach_value_field_ellipsizing (NemoPropertiesWindow *window,
 	window->details->value_fields = g_list_prepend (window->details->value_fields,
 							value_field);
 	return GTK_WIDGET(value_field);
-}			     
+}
 
 static GtkWidget*
 attach_value_field (NemoPropertiesWindow *window,
@@ -1275,9 +1275,9 @@ attach_value_field (NemoPropertiesWindow *window,
 		    const char *inconsistent_string,
 		    gboolean show_original)
 {
-	return attach_value_field_ellipsizing (window, 
+	return attach_value_field_ellipsizing (window,
 					       grid, sibling,
-					       file_attribute_name, 
+					       file_attribute_name,
 					       inconsistent_string,
 					       show_original,
 					       PANGO_ELLIPSIZE_NONE);
@@ -1588,7 +1588,7 @@ synch_groups_combo_box (GtkComboBox *combo_box, NemoFile *file)
 	current_group_name = nemo_file_get_group_name (file);
 	current_group_index = tree_model_get_entry_index (model, 0, current_group_name);
 
-	/* If current group wasn't in list, we prepend it (with a separator). 
+	/* If current group wasn't in list, we prepend it (with a separator).
 	 * This can happen if the current group is an id with no matching
 	 * group in the groups file.
 	 */
@@ -1626,7 +1626,7 @@ combo_box_row_separator_func (GtkTreeModel *model,
 	} else {
 		ret = FALSE;
 	}
-	
+
   	g_free (text);
   	return ret;
 }
@@ -1653,7 +1653,7 @@ attach_combo_box (GtkGrid *grid,
 		gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
 		gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (combo_box), renderer,
 					       "text", 0);
-		
+
 	}
 	gtk_widget_show (combo_box);
 
@@ -1673,7 +1673,7 @@ attach_combo_box (GtkGrid *grid,
 				 GTK_POS_RIGHT, 1, 1);
 
 	return GTK_COMBO_BOX (combo_box);
-}		    	
+}
 
 static GtkComboBox*
 attach_group_combo_box (GtkGrid *grid,
@@ -1696,7 +1696,7 @@ attach_group_combo_box (GtkGrid *grid,
 			       (GClosureNotify)nemo_file_unref, 0);
 
 	return combo_box;
-}	
+}
 
 static void
 owner_change_callback (NemoFile *file,
@@ -1921,7 +1921,7 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 	owner_name = nemo_file_get_string_attribute (file, "owner");
 	owner_index = tree_model_get_entry_index (model, 0, owner_name);
 
-	/* If owner wasn't in list, we prepend it (with a separator). 
+	/* If owner wasn't in list, we prepend it (with a separator).
 	 * This can happen if the owner is an id with no matching
 	 * identifier in the passwords file.
 	 */
@@ -1957,7 +1957,7 @@ synch_user_menu (GtkComboBox *combo_box, NemoFile *file)
 
 	g_free (owner_name);
 	g_list_free_full (users, g_free);
-}	
+}
 
 static GtkComboBox*
 attach_owner_combo_box (GtkGrid *grid,
@@ -1973,7 +1973,7 @@ attach_owner_combo_box (GtkGrid *grid,
 	/* Connect to signal to update menu when file changes. */
 	g_signal_connect_object (file, "changed",
 				 G_CALLBACK (synch_user_menu),
-				 combo_box, G_CONNECT_SWAPPED);	
+				 combo_box, G_CONNECT_SWAPPED);
 	g_signal_connect_data (combo_box, "changed",
 			       G_CALLBACK (changed_owner_callback),
 			       nemo_file_ref (file),
@@ -2045,9 +2045,9 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 		}
 
 		if (nemo_file_is_directory (file)) {
-			file_status = nemo_file_get_deep_counts (file, 
+			file_status = nemo_file_get_deep_counts (file,
 					 &directory_count,
-					 &file_count, 
+					 &file_count,
 					 &file_unreadable,
                      &hidden_count,
 					 &file_size,
@@ -2058,7 +2058,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			if (file_unreadable) {
 				unreadable_directory_count = TRUE;
 			}
-			
+
 			if (file_status != NEMO_REQUEST_DONE) {
 				status = file_status;
 			}
@@ -2067,7 +2067,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			total_size += nemo_file_get_size (file);
 		}
 	}
-	
+
 	/* If we've already displayed the total once, don't do another visible
 	 * count-up if the deep_count happens to get invalidated.
 	 * But still display the new total, since it might have changed.
@@ -2079,7 +2079,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 
 	text = NULL;
 	used_two_lines = FALSE;
-	
+
 	if (total_count == 0) {
 		switch (status) {
 		case NEMO_REQUEST_DONE:
@@ -2088,26 +2088,28 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			} else {
 				text = g_strdup (_("unreadable"));
 			}
-			
+
 			break;
+                case NEMO_REQUEST_NOT_STARTED:
+                case NEMO_REQUEST_IN_PROGRESS:
 		default:
 			text = g_strdup ("...");
 		}
 	} else {
-		char *size_str;        
+		char *size_str;
 		int prefix;
 		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 		size_str = g_format_size_full (total_size, prefix);
         if (total_hidden > 0) {
-        	text = g_strdup_printf (ngettext("%1$s item (and %2$s hidden), with size %3$s", "%1$s items (and %2$s hidden), totalling %3$s", total_count), 
+        	text = g_strdup_printf (ngettext("%1$s item (and %2$s hidden), with size %3$s", "%1$s items (and %2$s hidden), totalling %3$s", total_count),
         		g_strdup_printf("%'d", total_count),
         		g_strdup_printf("%'d", total_hidden),
         		size_str);
         } else {
-        	text = g_strdup_printf (ngettext("%1$s item, with size %2$s", "%1$s items, totalling %2$s", total_count), 
+        	text = g_strdup_printf (ngettext("%1$s item, with size %2$s", "%1$s items, totalling %2$s", total_count),
         		g_strdup_printf("%'d", total_count),
         		size_str);
-        }		
+        }
 		g_free (size_str);
 
 		if (unreadable_directory_count != 0) {
@@ -2186,21 +2188,21 @@ attach_directory_contents_value_field (NemoPropertiesWindow *window,
 	window->details->directory_contents_value_field = value_field;
 
 	gtk_label_set_line_wrap (value_field, TRUE);
-	
+
 	/* Fill in the initial value. */
 	directory_contents_value_field_update (window);
- 
+
 	for (l = window->details->target_files; l; l = l->next) {
 		file = NEMO_FILE (l->data);
 		nemo_file_recompute_deep_counts (file);
-		
+
 		g_signal_connect_object (file,
 					 "updated_deep_count_in_progress",
 					 G_CALLBACK (schedule_directory_contents_update),
 					 window, G_CONNECT_SWAPPED);
 	}
-	
-	return value_field;	
+
+	return value_field;
 }
 
 static GtkLabel *
@@ -2208,7 +2210,7 @@ attach_title_field (GtkGrid *grid,
 		    const char *title)
 {
 	return attach_label (grid, NULL, title, PANGO_ELLIPSIZE_NONE, FALSE, TRUE);
-}		      
+}
 
 #define INCONSISTENT_STATE_STRING \
 	"\xE2\x80\x92"
@@ -2216,7 +2218,7 @@ attach_title_field (GtkGrid *grid,
 static void
 append_title_value_pair (NemoPropertiesWindow *window,
 			 GtkGrid *grid,
-			 const char *title, 
+			 const char *title,
  			 const char *file_attribute_name,
 			 const char *inconsistent_state,
 			 gboolean show_original)
@@ -2228,7 +2230,7 @@ append_title_value_pair (NemoPropertiesWindow *window,
 	value = attach_value_field (window, grid, GTK_WIDGET (title_label),
 				    file_attribute_name,
 				    inconsistent_state,
-				    show_original); 
+				    show_original);
 	gtk_label_set_mnemonic_widget (title_label, value);
 }
 
@@ -2238,7 +2240,7 @@ append_title_and_ellipsizing_value (NemoPropertiesWindow *window,
 				    const char *title,
 				    const char *file_attribute_name,
 				    const char *inconsistent_state,
-				    gboolean show_original, 
+				    gboolean show_original,
 				    PangoEllipsizeMode ellipsize_mode)
 {
 	GtkLabel *title_label;
@@ -2264,7 +2266,7 @@ append_directory_contents_fields (NemoPropertiesWindow *window,
 	window->details->directory_contents_title_field = title_field;
 	gtk_label_set_line_wrap (title_field, TRUE);
 
-	value_field = attach_directory_contents_value_field 
+	value_field = attach_directory_contents_value_field
 		(window, grid, GTK_WIDGET (title_field));
 
 	gtk_label_set_mnemonic_widget (title_field, GTK_WIDGET(value_field));
@@ -2310,7 +2312,7 @@ create_page_with_vbox (GtkStack *stack,
 	g_object_set_data_full (G_OBJECT (vbox), "help-uri", g_strdup (help_uri), g_free);
 
 	return vbox;
-}		       
+}
 
 static GtkWidget *
 append_blank_row (GtkGrid *grid)
@@ -2346,7 +2348,7 @@ create_grid_with_standard_properties (void)
 	grid = gtk_grid_new ();
 	gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
 	gtk_grid_set_row_spacing (GTK_GRID (grid), ROW_PAD);
-	gtk_grid_set_column_spacing (GTK_GRID (grid), 12);	
+	gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
 	gtk_widget_show (grid);
 
@@ -2354,7 +2356,7 @@ create_grid_with_standard_properties (void)
 }
 
 static gboolean
-is_merged_trash_directory (NemoFile *file) 
+is_merged_trash_directory (NemoFile *file)
 {
 	char *file_uri;
 	gboolean result;
@@ -2371,11 +2373,11 @@ is_computer_directory (NemoFile *file)
 {
 	char *file_uri;
 	gboolean result;
-	
+
 	file_uri = nemo_file_get_uri (file);
 	result = strcmp (file_uri, "computer:///") == 0;
 	g_free (file_uri);
-	
+
 	return result;
 }
 
@@ -2384,11 +2386,11 @@ is_network_directory (NemoFile *file)
 {
 	char *file_uri;
 	gboolean result;
-	
+
 	file_uri = nemo_file_get_uri (file);
 	result = strcmp (file_uri, "network:///") == 0;
 	g_free (file_uri);
-	
+
 	return result;
 }
 
@@ -2397,11 +2399,11 @@ is_burn_directory (NemoFile *file)
 {
 	char *file_uri;
 	gboolean result;
-	
+
 	file_uri = nemo_file_get_uri (file);
 	result = strcmp (file_uri, "burn:///") == 0;
 	g_free (file_uri);
-	
+
 	return result;
 }
 
@@ -2419,7 +2421,7 @@ is_recent_directory (NemoFile *file)
 }
 
 static gboolean
-should_show_custom_icon_buttons (NemoPropertiesWindow *window) 
+should_show_custom_icon_buttons (NemoPropertiesWindow *window)
 {
 	if (is_multi_file_window (window)) {
 		return FALSE;
@@ -2429,9 +2431,9 @@ should_show_custom_icon_buttons (NemoPropertiesWindow *window)
 }
 
 static gboolean
-should_show_file_type (NemoPropertiesWindow *window) 
+should_show_file_type (NemoPropertiesWindow *window)
 {
-	if (!is_multi_file_window (window) 
+	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
@@ -2444,9 +2446,9 @@ should_show_file_type (NemoPropertiesWindow *window)
 }
 
 static gboolean
-should_show_location_info (NemoPropertiesWindow *window) 
+should_show_location_info (NemoPropertiesWindow *window)
 {
-	if (!is_multi_file_window (window) 
+	if (!is_multi_file_window (window)
 	    && (is_merged_trash_directory (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
@@ -2458,7 +2460,7 @@ should_show_location_info (NemoPropertiesWindow *window)
 }
 
 static gboolean
-should_show_accessed_date (NemoPropertiesWindow *window) 
+should_show_accessed_date (NemoPropertiesWindow *window)
 {
 	/* Accessed date for directory seems useless. If we some
 	 * day decide that it is useful, we should separately
@@ -2518,7 +2520,7 @@ should_show_volume_usage (NemoPropertiesWindow *window)
 {
 	NemoFile 		*file;
 	gboolean 		success = FALSE;
-	
+
 	if (is_multi_file_window (window)) {
 		return FALSE;
 	}
@@ -2549,10 +2551,10 @@ paint_used_legend (GtkWidget *widget,
 	GtkAllocation allocation;
 
 	gtk_widget_get_allocation (widget, &allocation);
-	
+
   	width  = allocation.width;
   	height = allocation.height;
-  	
+
 	window = NEMO_PROPERTIES_WINDOW (data);
 
 	cairo_rectangle  (cr,
@@ -2578,10 +2580,10 @@ paint_free_legend (GtkWidget *widget,
 
 	window = NEMO_PROPERTIES_WINDOW (data);
 	gtk_widget_get_allocation (widget, &allocation);
-	
+
   	width  = allocation.width;
   	height = allocation.height;
-  
+
 	cairo_rectangle (cr,
 			 2,
 			 2,
@@ -2600,7 +2602,7 @@ paint_pie_chart (GtkWidget *widget,
 		 cairo_t *cr,
 		 gpointer data)
 {
-  	
+
   	NemoPropertiesWindow *window;
 	gint width, height;
 	double free, used;
@@ -2639,40 +2641,40 @@ paint_pie_chart (GtkWidget *widget,
 	} else {
 		radius = height / 2 - 8;
 	}
-	
+
 	if (angle1 != 2 * G_PI && angle1 != 0) {
 		angle1 = angle1 + split;
 	}
-		
+
 	if (angle2 != 2 * G_PI && angle2 != 0) {
 		angle2 = angle2 - split;
 	}
-	
+
 	if (used > 0) {
 		if (free != 0) {
 			cairo_move_to (cr,xc,yc);
 		}
-		
+
 		cairo_arc (cr, xc, yc, radius, angle1, angle2);
-		
+
 		if (free != 0) {
 			cairo_line_to (cr,xc,yc);
 		}
-		
+
 		gdk_cairo_set_source_rgba (cr, &window->details->used_color);
 		cairo_fill_preserve (cr);
-		
+
 		gdk_cairo_set_source_rgba (cr, &window->details->used_stroke_color);
 		cairo_stroke (cr);
 	}
-	
+
 	if (free > 0) {
 		if (used != 0) {
 			cairo_move_to (cr,xc,yc);
 		}
-	
+
 		cairo_arc_negative (cr, xc, yc, radius, angle1, angle2);
-	
+
 		if (used != 0) {
 			cairo_line_to (cr,xc,yc);
 		}
@@ -2700,18 +2702,18 @@ rgb_to_hls (gdouble *r,
   gdouble blue;
   gdouble h, l, s;
   gdouble delta;
-  
+
   red = *r;
   green = *g;
   blue = *b;
-  
+
   if (red > green)
     {
       if (red > blue)
         max = red;
       else
         max = blue;
-      
+
       if (green < blue)
         min = green;
       else
@@ -2723,24 +2725,24 @@ rgb_to_hls (gdouble *r,
         max = green;
       else
         max = blue;
-      
+
       if (red < blue)
         min = red;
       else
         min = blue;
     }
-  
+
   l = (max + min) / 2;
   s = 0;
   h = 0;
-  
+
   if (max != min)
     {
       if (l <= 0.5)
         s = (max - min) / (max + min);
       else
         s = (max - min) / (2 - max - min);
-      
+
       delta = max -min;
       if (red == max)
         h = (green - blue) / delta;
@@ -2748,12 +2750,12 @@ rgb_to_hls (gdouble *r,
         h = 2 + (blue - red) / delta;
       else if (blue == max)
         h = 4 + (red - green) / delta;
-      
+
       h *= 60;
       if (h < 0.0)
         h += 360;
     }
-  
+
   *r = h;
   *g = l;
   *b = s;
@@ -2769,16 +2771,16 @@ hls_to_rgb (gdouble *h,
   gdouble saturation;
   gdouble m1, m2;
   gdouble r, g, b;
-  
+
   lightness = *l;
   saturation = *s;
-  
+
   if (lightness <= 0.5)
     m2 = lightness * (1 + saturation);
   else
     m2 = lightness + saturation - lightness * saturation;
   m1 = 2 * lightness - m2;
-  
+
   if (saturation == 0)
     {
       *h = lightness;
@@ -2792,7 +2794,7 @@ hls_to_rgb (gdouble *h,
         hue -= 360;
       while (hue < 0)
         hue += 360;
-      
+
       if (hue < 60)
         r = m1 + (m2 - m1) * hue / 60;
       else if (hue < 180)
@@ -2801,13 +2803,13 @@ hls_to_rgb (gdouble *h,
         r = m1 + (m2 - m1) * (240 - hue) / 60;
       else
         r = m1;
-      
+
       hue = *h;
       while (hue > 360)
         hue -= 360;
       while (hue < 0)
         hue += 360;
-      
+
       if (hue < 60)
         g = m1 + (m2 - m1) * hue / 60;
       else if (hue < 180)
@@ -2816,13 +2818,13 @@ hls_to_rgb (gdouble *h,
         g = m1 + (m2 - m1) * (240 - hue) / 60;
       else
         g = m1;
-      
+
       hue = *h - 120;
       while (hue > 360)
         hue -= 360;
       while (hue < 0)
         hue += 360;
-      
+
       if (hue < 60)
         b = m1 + (m2 - m1) * hue / 60;
       else if (hue < 180)
@@ -2831,7 +2833,7 @@ hls_to_rgb (gdouble *h,
         b = m1 + (m2 - m1) * (240 - hue) / 60;
       else
         b = m1;
-      
+
       *h = r;
       *l = g;
       *s = b;
@@ -2845,11 +2847,11 @@ _pie_style_shade (GdkRGBA *a,
   gdouble red;
   gdouble green;
   gdouble blue;
-  
+
   red = a->red;
   green = a->green;
   blue = a->blue;
-  
+
   rgb_to_hls (&red, &green, &blue);
 
   green *= k;
@@ -2857,15 +2859,15 @@ _pie_style_shade (GdkRGBA *a,
     green = 1.0;
   else if (green < 0.0)
     green = 0.0;
-  
+
   blue *= k;
   if (blue > 1.0)
     blue = 1.0;
   else if (blue < 0.0)
     blue = 0.0;
-  
+
   hls_to_rgb (&red, &green, &blue);
-  
+
   b->red = red;
   b->green = green;
   b->blue = blue;
@@ -2873,7 +2875,7 @@ _pie_style_shade (GdkRGBA *a,
 }
 
 
-static GtkWidget* 
+static GtkWidget*
 create_pie_widget (NemoPropertiesWindow *window)
 {
 	NemoFile		*file;
@@ -2894,16 +2896,16 @@ create_pie_widget (NemoPropertiesWindow *window)
 	GFile *location;
 	GFileInfo *info;
 	int prefix;
-	
+
 	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
 	capacity = g_format_size_full (window->details->volume_capacity, prefix);
 	free 	 = g_format_size_full (window->details->volume_free, prefix);
-	used 	 = g_format_size_full (window->details->volume_capacity - window->details->volume_free, prefix);	
-	
+	used 	 = g_format_size_full (window->details->volume_capacity - window->details->volume_free, prefix);
+
 	file = get_original_file (window);
-	
+
 	uri = nemo_file_get_activation_uri (file);
-	
+
 	grid = GTK_GRID (gtk_grid_new ());
 	gtk_container_set_border_width (GTK_CONTAINER (grid), 5);
 	gtk_grid_set_column_spacing (GTK_GRID (grid), 5);
@@ -2925,7 +2927,7 @@ create_pie_widget (NemoPropertiesWindow *window)
 
 	_pie_style_shade (&window->details->used_color, &window->details->used_stroke_color, 0.7);
 	_pie_style_shade (&window->details->free_color, &window->details->free_stroke_color, 0.7);
-	
+
 	pie_canvas = gtk_drawing_area_new ();
 	gtk_widget_set_size_request (pie_canvas, 200, 200);
 
@@ -2941,7 +2943,7 @@ create_pie_widget (NemoPropertiesWindow *window)
 	gtk_widget_set_halign (free_canvas, GTK_ALIGN_CENTER);
 	gtk_widget_set_size_request (free_canvas, 20, 20);
 	/* Translators: "free" refers to the capacity of the filesystem */
-	free_label = gtk_label_new (g_strconcat (free, " ", _("free"), NULL));  
+	free_label = gtk_label_new (g_strconcat (free, " ", _("free"), NULL));
 
 	capacity_label = gtk_label_new (g_strconcat (_("Total capacity:"), " ", capacity, NULL));
 	fstype_label = gtk_label_new (NULL);
@@ -2956,11 +2958,11 @@ create_pie_widget (NemoPropertiesWindow *window)
 			gtk_label_set_text (GTK_LABEL (fstype_label), str);
 			g_free (str);
 		}
-		
+
 		g_object_unref (info);
 	}
 	g_object_unref (location);
-	
+
 	g_free (uri);
 	g_free (capacity);
 	g_free (used);
@@ -2983,14 +2985,14 @@ create_pie_widget (NemoPropertiesWindow *window)
 				 GTK_POS_BOTTOM, 2, 1);
 	gtk_grid_attach_next_to (grid, fstype_label, capacity_label,
 				 GTK_POS_BOTTOM, 2, 1);
-	
+
 	g_signal_connect (pie_canvas, "draw",
 			  G_CALLBACK (paint_pie_chart), window);
 	g_signal_connect (used_canvas, "draw",
 			  G_CALLBACK (paint_used_legend), window);
 	g_signal_connect (free_canvas, "draw",
 			  G_CALLBACK (paint_free_legend), window);
-	        
+
 	return GTK_WIDGET (grid);
 }
 
@@ -3002,9 +3004,9 @@ create_volume_usage_widget (NemoPropertiesWindow *window)
 	NemoFile *file;
 	GFile *location;
 	GFileInfo *info;
-	
+
 	file = get_original_file (window);
-	
+
 	uri = nemo_file_get_activation_uri (file);
 
 	location = g_file_new_for_uri (uri);
@@ -3016,16 +3018,16 @@ create_volume_usage_widget (NemoPropertiesWindow *window)
 
 		g_object_unref (info);
 	} else {
-		window->details->volume_capacity = 0;		
-		window->details->volume_free = 0;		
+		window->details->volume_capacity = 0;
+		window->details->volume_free = 0;
 	}
-	
+
 	g_object_unref (location);
-	
+
 	piewidget = create_pie_widget (window);
-	                   
-        gtk_widget_show_all (piewidget);            
-        
+
+        gtk_widget_show_all (piewidget);
+
 	return piewidget;
 }
 
@@ -3039,7 +3041,7 @@ create_basic_page (NemoPropertiesWindow *window)
 	GtkWidget *hbox, *vbox;
 	hbox = create_page_with_hbox (window->details->stack, "basic", _("Basic"),
 				      "help:gnome-help/nemo-file-properties-basic");
-	
+
 	/* Icon pixmap */
 
 	icon_pixmap_widget = create_image_widget (
@@ -3048,7 +3050,7 @@ create_basic_page (NemoPropertiesWindow *window)
 
 	icon_aligner = gtk_alignment_new (1, 0, 0, 0);
 	gtk_widget_show (icon_aligner);
-	
+
 	gtk_container_add (GTK_CONTAINER (icon_aligner), icon_pixmap_widget);
 	gtk_box_pack_start (GTK_BOX (hbox), icon_aligner, FALSE, FALSE, 0);
 
@@ -3087,14 +3089,14 @@ create_basic_page (NemoPropertiesWindow *window)
 		box = nemo_desktop_item_properties_make_box (label_size_group,
 								 window->details->target_files);
 
-		gtk_grid_attach_next_to (window->details->basic_grid, box, 
+		gtk_grid_attach_next_to (window->details->basic_grid, box,
 					 GTK_WIDGET (window->details->name_label),
 					 GTK_POS_BOTTOM, 2, 1);
 	}
 
 	if (should_show_file_type (window)) {
 		append_title_and_ellipsizing_value (window, grid,
-						    _("Type:"), 
+						    _("Type:"),
 						    "type",
 						    INCONSISTENT_STATE_STRING,
 						    FALSE,
@@ -3102,8 +3104,8 @@ create_basic_page (NemoPropertiesWindow *window)
 	}
 
 	if (should_show_link_target (window)) {
-		append_title_and_ellipsizing_value (window, grid, 
-						    _("Link target:"), 
+		append_title_and_ellipsizing_value (window, grid,
+						    _("Link target:"),
 						    "link_target",
 						    INCONSISTENT_STATE_STRING,
 						    FALSE,
@@ -3114,7 +3116,7 @@ create_basic_page (NemoPropertiesWindow *window)
 	    nemo_file_is_directory (get_target_file (window))) {
 		append_directory_contents_fields (window, grid);
 	} else {
-		append_title_value_pair (window, grid, _("Size:"), 
+		append_title_value_pair (window, grid, _("Size:"),
 					 "size_detail",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
@@ -3123,10 +3125,10 @@ create_basic_page (NemoPropertiesWindow *window)
 	append_blank_row (grid);
 
 	if (should_show_location_info (window)) {
-		append_title_and_ellipsizing_value (window, grid, _("Location:"), 
+		append_title_and_ellipsizing_value (window, grid, _("Location:"),
 						    "where",
 						    INCONSISTENT_STATE_STRING,
-						    location_show_original (window), 
+						    location_show_original (window),
 						    PANGO_ELLIPSIZE_MIDDLE);
 
 		append_title_and_ellipsizing_value (window, grid,
@@ -3140,11 +3142,11 @@ create_basic_page (NemoPropertiesWindow *window)
 	if (should_show_accessed_date (window)) {
 		append_blank_row (grid);
 
-		append_title_value_pair (window, grid, _("Accessed:"), 
+		append_title_value_pair (window, grid, _("Accessed:"),
 					 "date_accessed_full",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
-		append_title_value_pair (window, grid, _("Modified:"), 
+		append_title_value_pair (window, grid, _("Modified:"),
 					 "date_modified_full",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
@@ -3153,7 +3155,7 @@ create_basic_page (NemoPropertiesWindow *window)
 	if (should_show_free_space (window)) {
 		append_blank_row (grid);
 
-		append_title_value_pair (window, grid, _("Free space:"), 
+		append_title_value_pair (window, grid, _("Free space:"),
 					 "free_space",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
@@ -3167,7 +3169,7 @@ create_basic_page (NemoPropertiesWindow *window)
 	}
 }
 
-static gboolean 
+static gboolean
 files_has_directory (NemoPropertiesWindow *window)
 {
 	GList *l;
@@ -3178,13 +3180,13 @@ files_has_directory (NemoPropertiesWindow *window)
 		if (nemo_file_is_directory (file)) {
 			return TRUE;
 		}
-		
+
 	}
 
 	return FALSE;
 }
 
-static gboolean 
+static gboolean
 files_has_changable_permissions_directory (NemoPropertiesWindow *window)
 {
 	GList *l;
@@ -3197,14 +3199,14 @@ files_has_changable_permissions_directory (NemoPropertiesWindow *window)
 		    nemo_file_can_set_permissions (file)) {
 			return TRUE;
 		}
-		
+
 	}
 
 	return FALSE;
 }
 
 
-static gboolean 
+static gboolean
 files_has_file (NemoPropertiesWindow *window)
 {
 	GList *l;
@@ -3215,7 +3217,7 @@ files_has_file (NemoPropertiesWindow *window)
 		if (!nemo_file_is_directory (file)) {
 			return TRUE;
 		}
-		
+
 	}
 
 	return FALSE;
@@ -3227,7 +3229,7 @@ start_long_operation (NemoPropertiesWindow *window)
 	if (window->details->long_operation_underway == 0) {
 		/* start long operation */
 		GdkCursor * cursor;
-		
+
 		cursor = gdk_cursor_new (GDK_WATCH);
 		gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), cursor);
 		g_object_unref (cursor);
@@ -3257,7 +3259,7 @@ permission_change_callback (NemoFile *file,
 
 	window = NEMO_PROPERTIES_WINDOW (callback_data);
 	end_long_operation (window);
-	
+
 	/* Report the error if it's an error. */
 	nemo_report_error_setting_permissions (file, error, NULL);
 
@@ -3273,7 +3275,7 @@ update_permissions (NemoPropertiesWindow *window,
 		    gboolean use_original)
 {
 	GList *l;
-	
+
 	for (l = window->details->target_files; l != NULL; l = l->next) {
 		NemoFile *file;
 		guint32 permissions;
@@ -3283,7 +3285,7 @@ update_permissions (NemoPropertiesWindow *window,
 		if (!nemo_file_can_get_permissions (file)) {
 			continue;
 		}
-	
+
 		if (!apply_to_both_folder_and_dir &&
 		    ((nemo_file_is_directory (file) && !is_folder) ||
 		     (!nemo_file_is_directory (file) && is_folder))) {
@@ -3307,7 +3309,7 @@ update_permissions (NemoPropertiesWindow *window,
 			(file, permissions,
 			 permission_change_callback,
 			 window);
-	}	
+	}
 }
 
 static gboolean
@@ -3327,13 +3329,13 @@ initial_permission_state_consistent (NemoPropertiesWindow *window,
 		guint32 permissions;
 
 		file = l->data;
-		
+
 		if (!both_folder_and_dir &&
 		    ((nemo_file_is_directory (file) && !is_folder) ||
 		     (!nemo_file_is_directory (file) && is_folder))) {
 			continue;
 		}
-		
+
 		permissions = GPOINTER_TO_INT (g_hash_table_lookup (window->details->initial_permissions,
 								    file));
 
@@ -3343,10 +3345,10 @@ initial_permission_state_consistent (NemoPropertiesWindow *window,
 				/* Not fully on or off -> inconsistent */
 				return FALSE;
 			}
-				
+
 			first_permissions = permissions;
 			first = FALSE;
-				
+
 		} else if ((permissions & mask) != first_permissions) {
 			/* Not same permissions as first -> inconsistent */
 			return FALSE;
@@ -3356,14 +3358,14 @@ initial_permission_state_consistent (NemoPropertiesWindow *window,
 }
 
 static void
-permission_button_toggled (GtkToggleButton *button, 
+permission_button_toggled (GtkToggleButton *button,
 			   NemoPropertiesWindow *window)
 {
 	gboolean is_folder, is_special;
 	guint32 permission_mask;
 	gboolean inconsistent;
 	gboolean on;
-	
+
 	permission_mask = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 							      "permission"));
 	is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
@@ -3373,7 +3375,7 @@ permission_button_toggled (GtkToggleButton *button,
 
 	if (gtk_toggle_button_get_active (button)
 	    && !gtk_toggle_button_get_inconsistent (button)) {
-		/* Go to the initial state unless the initial state was 
+		/* Go to the initial state unless the initial state was
 		   consistent, or we support recursive apply */
 		inconsistent = TRUE;
 		on = TRUE;
@@ -3391,15 +3393,15 @@ permission_button_toggled (GtkToggleButton *button,
 		inconsistent = FALSE;
 		on = FALSE;
 	}
-	
-	g_signal_handlers_block_by_func (G_OBJECT (button), 
+
+	g_signal_handlers_block_by_func (G_OBJECT (button),
 					 G_CALLBACK (permission_button_toggled),
 					 window);
 
 	gtk_toggle_button_set_active (button, on);
 	gtk_toggle_button_set_inconsistent (button, inconsistent);
 
-	g_signal_handlers_unblock_by_func (G_OBJECT (button), 
+	g_signal_handlers_unblock_by_func (G_OBJECT (button),
 					   G_CALLBACK (permission_button_toggled),
 					   window);
 
@@ -3432,14 +3434,14 @@ permission_button_update (NemoPropertiesWindow *window,
 		 */
 		return;
 	}
-	
+
 	button_permission = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 								"permission"));
 	is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 							"is-folder"));
 	is_special = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 							 "is-special"));
-	
+
 	all_set = TRUE;
 	all_unset = TRUE;
 	all_cannot_set = TRUE;
@@ -3461,7 +3463,7 @@ permission_button_update (NemoPropertiesWindow *window,
 		}
 
 		no_match = FALSE;
-		
+
 		file_permissions = nemo_file_get_permissions (file);
 
 		if ((file_permissions & button_permission) == button_permission) {
@@ -3484,8 +3486,8 @@ permission_button_update (NemoPropertiesWindow *window,
 		sensitive |= window->details->has_recursive_apply;
 	}
 
-	
-	g_signal_handlers_block_by_func (G_OBJECT (button), 
+
+	g_signal_handlers_block_by_func (G_OBJECT (button),
 					 G_CALLBACK (permission_button_toggled),
 					 window);
 
@@ -3497,26 +3499,26 @@ permission_button_update (NemoPropertiesWindow *window,
 					    (!is_folder && no_match));
 	gtk_widget_set_sensitive (GTK_WIDGET (button), sensitive);
 
-	g_signal_handlers_unblock_by_func (G_OBJECT (button), 
+	g_signal_handlers_unblock_by_func (G_OBJECT (button),
 					   G_CALLBACK (permission_button_toggled),
 					   window);
 }
 
 static void
 set_up_permissions_checkbox (NemoPropertiesWindow *window,
-			     GtkWidget *check_button, 
+			     GtkWidget *check_button,
 			     guint32 permission,
 			     gboolean is_folder)
 {
 	/* Load up the check_button with data we'll need when updating its state. */
-        g_object_set_data (G_OBJECT (check_button), "permission", 
+        g_object_set_data (G_OBJECT (check_button), "permission",
 			   GINT_TO_POINTER (permission));
-        g_object_set_data (G_OBJECT (check_button), "properties_window", 
+        g_object_set_data (G_OBJECT (check_button), "properties_window",
 			   window);
 	g_object_set_data (G_OBJECT (check_button), "is-folder",
 			   GINT_TO_POINTER (is_folder));
-	
-	window->details->permission_buttons = 
+
+	window->details->permission_buttons =
 		g_list_prepend (window->details->permission_buttons,
 				check_button);
 
@@ -3537,7 +3539,7 @@ add_permissions_checkbox_with_label (NemoPropertiesWindow *window,
 {
 	GtkWidget *check_button;
 	gboolean a11y_enabled;
-	
+
 	check_button = gtk_check_button_new_with_mnemonic (label);
 	gtk_widget_show (check_button);
 
@@ -3548,8 +3550,8 @@ add_permissions_checkbox_with_label (NemoPropertiesWindow *window,
 		gtk_container_add (GTK_CONTAINER (grid), check_button);
 	}
 
-	set_up_permissions_checkbox (window, 
-				     check_button, 
+	set_up_permissions_checkbox (window,
+				     check_button,
 				     permission_to_check,
 				     is_folder);
 
@@ -3581,7 +3583,7 @@ add_permissions_checkbox (NemoPropertiesWindow *window,
 		label = _("E_xecute");
 	}
 
-	return add_permissions_checkbox_with_label (window, grid, 
+	return add_permissions_checkbox_with_label (window, grid,
 						    sibling,
 						    label,
 						    permission_to_check,
@@ -3591,7 +3593,7 @@ add_permissions_checkbox (NemoPropertiesWindow *window,
 
 enum {
 	UNIX_PERM_SUID = S_ISUID,
-	UNIX_PERM_SGID = S_ISGID,	
+	UNIX_PERM_SGID = S_ISGID,
 	UNIX_PERM_STICKY = 01000,	/* S_ISVTX not defined on all systems */
 	UNIX_PERM_USER_READ = S_IRUSR,
 	UNIX_PERM_USER_WRITE = S_IWUSR,
@@ -3625,7 +3627,7 @@ static guint32 vfs_perms[3][3] = {
 	{UNIX_PERM_OTHER_READ, UNIX_PERM_OTHER_WRITE, UNIX_PERM_OTHER_EXEC},
 };
 
-static guint32 
+static guint32
 permission_to_vfs (PermissionType type, PermissionValue perm)
 {
 	guint32 vfs_perm;
@@ -3641,7 +3643,7 @@ permission_to_vfs (PermissionType type, PermissionValue perm)
 	if (perm & PERMISSION_EXEC) {
 		vfs_perm |= vfs_perms[type][2];
 	}
-	
+
 	return vfs_perm;
 }
 
@@ -3662,7 +3664,7 @@ permission_from_vfs (PermissionType type, guint32 vfs_perm)
 	if (vfs_perm & vfs_perms[type][2]) {
 		perm |= PERMISSION_EXEC;
 	}
-	
+
 	return perm;
 }
 
@@ -3686,9 +3688,9 @@ permission_combo_changed (GtkWidget *combo, NemoPropertiesWindow *window)
 	}
 
 	vfs_mask = permission_to_vfs (type, mask);
-	
+
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
-	
+
 	if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo),  &iter)) {
 		return;
 	}
@@ -3714,13 +3716,13 @@ permission_combo_add_multiple_choice (GtkComboBox *combo, GtkTreeIter *iter)
 	do {
 		gboolean multi;
 		gtk_tree_model_get (model, iter, 2, &multi, -1);
-		
+
 		if (multi) {
 			found = TRUE;
 			break;
 		}
 	} while (gtk_tree_model_iter_next (model, iter));
-	
+
 	if (!found) {
 		gtk_list_store_append (store, iter);
 		gtk_list_store_set (store, iter, 0, "---", 1, 0, 2, TRUE, -1);
@@ -3743,7 +3745,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 	gboolean is_multi;
 
 	model = gtk_combo_box_get_model (combo);
-	
+
 	is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "is-folder"));
 	type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "permission-type"));
 
@@ -3759,7 +3761,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 		 */
 		return;
 	}
-	
+
 	no_files = TRUE;
 	no_dirs = TRUE;
 	all_dir_same = TRUE;
@@ -3768,7 +3770,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 	all_file_perm = 0;
 	all_dir_cannot_set = TRUE;
 	all_file_cannot_set = TRUE;
-	
+
 	for (l = window->details->target_files; l != NULL; l = l->next) {
 		NemoFile *file;
 		guint32 file_permissions;
@@ -3784,7 +3786,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 		} else {
 			mask = PERMISSION_READ|PERMISSION_WRITE;
 		}
-		
+
 		file_permissions = nemo_file_get_permissions (file);
 
 		perm = permission_from_vfs (type, file_permissions) & mask;
@@ -3796,7 +3798,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 			} else if (perm != all_dir_perm) {
 				all_dir_same = FALSE;
 			}
-			
+
 			if (nemo_file_can_set_permissions (file)) {
 				all_dir_cannot_set = FALSE;
 			}
@@ -3807,7 +3809,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 			} else if (perm != all_file_perm) {
 				all_file_same = FALSE;
 			}
-			
+
 			if (nemo_file_can_set_permissions (file)) {
 				all_file_cannot_set = FALSE;
 			}
@@ -3829,7 +3831,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 		found = FALSE;
 		gtk_tree_model_get_iter_first (model, &iter);
 		do {
-			int current_perm;
+			PermissionValue current_perm;
 			gtk_tree_model_get (model, &iter, 1, &current_perm, -1);
 
 			if (current_perm == all_perm) {
@@ -3841,7 +3843,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 		if (!found) {
 			GString *str;
 			str = g_string_new ("");
-			
+
 			if (!(all_perm & PERMISSION_READ)) {
 				/* translators: this gets concatenated to "no read",
 				 * "no access", etc. (see following strings)
@@ -3853,9 +3855,9 @@ permission_combo_update (NemoPropertiesWindow *window,
 			} else {
 				g_string_append (str, _("read"));
 			}
-			
+
 			g_string_append (str, ", ");
-			
+
 			if (!(all_perm & PERMISSION_WRITE)) {
 				g_string_append (str, _("no "));
 			}
@@ -3873,22 +3875,22 @@ permission_combo_update (NemoPropertiesWindow *window,
 				}
 				g_string_append (str, _("access"));
 			}
-			
+
 			gtk_list_store_append (store, &iter);
 			gtk_list_store_set (store, &iter,
 					    0, str->str,
 					    1, all_perm, -1);
-			
+
 			g_string_free (str, TRUE);
 		}
 	} else {
 		permission_combo_add_multiple_choice (combo, &iter);
 	}
 
-	g_signal_handlers_block_by_func (G_OBJECT (combo), 
+	g_signal_handlers_block_by_func (G_OBJECT (combo),
 					 G_CALLBACK (permission_combo_changed),
 					 window);
-	
+
 	gtk_combo_box_set_active_iter (combo, &iter);
 
 	/* Also enable if no files found (for recursive
@@ -3901,7 +3903,7 @@ permission_combo_update (NemoPropertiesWindow *window,
 	}
 	gtk_widget_set_sensitive (GTK_WIDGET (combo), sensitive);
 
-	g_signal_handlers_unblock_by_func (G_OBJECT (combo), 
+	g_signal_handlers_unblock_by_func (G_OBJECT (combo),
 					   G_CALLBACK (permission_combo_changed),
 					   window);
 
@@ -3925,7 +3927,7 @@ add_permissions_combo_box (NemoPropertiesWindow *window, GtkGrid *grid,
 	} else {
 		label = attach_title_field (grid, _("File access:"));
 	}
-	
+
 	store = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_BOOLEAN);
 	combo = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
 
@@ -3962,18 +3964,18 @@ add_permissions_combo_box (NemoPropertiesWindow *window, GtkGrid *grid,
 
 	g_object_unref (store);
 
-	window->details->permission_combos = 
+	window->details->permission_combos =
 		g_list_prepend (window->details->permission_combos,
 				combo);
 
 	g_signal_connect (combo, "changed", G_CALLBACK (permission_combo_changed), window);
-	
+
 	cell = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell,
 					"text", 0,
 					NULL);
-	
+
 	gtk_label_set_mnemonic_widget (label, combo);
 	gtk_widget_show (combo);
 
@@ -4003,8 +4005,8 @@ append_special_execution_checkbox (NemoPropertiesWindow *window,
 						   NULL);
 	}
 
-	set_up_permissions_checkbox (window, 
-				     check_button, 
+	set_up_permissions_checkbox (window,
+				     check_button,
 				     permission_to_check,
 				     FALSE);
 	g_object_set_data (G_OBJECT (check_button), "is-special",
@@ -4032,9 +4034,9 @@ all_can_get_permissions (GList *file_list)
 	GList *l;
 	for (l = file_list; l != NULL; l = l->next) {
 		NemoFile *file;
-		
+
 		file = NEMO_FILE (l->data);
-		
+
 		if (!nemo_file_can_get_permissions (file)) {
 			return FALSE;
 		}
@@ -4049,7 +4051,7 @@ all_can_set_permissions (GList *file_list)
 	GList *l;
 	for (l = file_list; l != NULL; l = l->next) {
 		NemoFile *file;
-		
+
 		file = NEMO_FILE (l->data);
 
 		if (!nemo_file_can_set_permissions (file)) {
@@ -4068,13 +4070,13 @@ get_initial_permissions (GList *file_list)
 
 	ret = g_hash_table_new (g_direct_hash,
 				g_direct_equal);
-	
+
 	for (l = file_list; l != NULL; l = l->next) {
 		guint32 permissions;
 		NemoFile *file;
-		
+
 		file = NEMO_FILE (l->data);
-		
+
 		permissions = nemo_file_get_permissions (file);
 		g_hash_table_insert (ret, file,
 				     GINT_TO_POINTER (permissions));
@@ -4107,14 +4109,14 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 	} else {
 		owner_label = attach_title_field (page_grid, _("Owner:"));
 		/* Static text in this case. */
-		value = attach_value_field (window, 
+		value = attach_value_field (window,
 					    page_grid, GTK_WIDGET (owner_label),
 					    "owner",
 					    INCONSISTENT_STATE_STRING,
-					    FALSE); 
+					    FALSE);
 		gtk_label_set_mnemonic_widget (owner_label, value);
 	}
-	
+
 	if (has_directory) {
 		add_permissions_combo_box (window, page_grid,
 					   PERMISSION_USER, TRUE, FALSE);
@@ -4138,14 +4140,14 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 		group_label = attach_title_field (page_grid, _("Group:"));
 
 		/* Static text in this case. */
-		value = attach_value_field (window, page_grid, 
-					    GTK_WIDGET (group_label), 
+		value = attach_value_field (window, page_grid,
+					    GTK_WIDGET (group_label),
 					    "group",
 					    INCONSISTENT_STATE_STRING,
-					    FALSE); 
+					    FALSE);
 		gtk_label_set_mnemonic_widget (group_label, value);
 	}
-	
+
 	if (has_directory) {
 		add_permissions_combo_box (window, page_grid,
 					   PERMISSION_GROUP, TRUE,
@@ -4158,7 +4160,7 @@ create_simple_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 	}
 
 	append_blank_slim_row (page_grid);;
-	
+
 	if (has_directory) {
 		add_permissions_combo_box (window, page_grid,
 					   PERMISSION_OTHER, TRUE,
@@ -4193,7 +4195,7 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 	GtkLabel *other_perm_label;
 	GtkGrid *check_button_grid;
 	GtkWidget *w;
-	
+
 	owner_perm_label = attach_title_field (page_grid, _("Owner:"));
 	group_perm_label = attach_title_field (page_grid, _("Group:"));
 	other_perm_label = attach_title_field (page_grid, _("Others:"));
@@ -4204,9 +4206,9 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 	gtk_grid_attach_next_to (page_grid, GTK_WIDGET (check_button_grid),
 				 GTK_WIDGET (owner_perm_label),
 				 GTK_POS_RIGHT, 1, 3);
-	
+
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      NULL,
 				      PERMISSIONS_CHECKBOXES_READ,
 				      UNIX_PERM_USER_READ,
@@ -4214,7 +4216,7 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 				      is_folder);
 
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      w,
 				      PERMISSIONS_CHECKBOXES_WRITE,
 				      UNIX_PERM_USER_WRITE,
@@ -4230,39 +4232,39 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 				      is_folder);
 
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      NULL,
 				      PERMISSIONS_CHECKBOXES_READ,
 				      UNIX_PERM_GROUP_READ,
 				      group_perm_label,
 				      is_folder);
-	
+
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      w,
 				      PERMISSIONS_CHECKBOXES_WRITE,
 				      UNIX_PERM_GROUP_WRITE,
 				      group_perm_label,
 				      is_folder);
-	
+
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      w,
 				      PERMISSIONS_CHECKBOXES_EXECUTE,
 				      UNIX_PERM_GROUP_EXEC,
 				      group_perm_label,
 				      is_folder);
-	
+
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      NULL,
 				      PERMISSIONS_CHECKBOXES_READ,
 				      UNIX_PERM_OTHER_READ,
 				      other_perm_label,
 				      is_folder);
-	
+
 	w = add_permissions_checkbox (window,
-				      check_button_grid, 
+				      check_button_grid,
 				      w,
 				      PERMISSIONS_CHECKBOXES_WRITE,
 				      UNIX_PERM_OTHER_WRITE,
@@ -4270,7 +4272,7 @@ create_permission_checkboxes (NemoPropertiesWindow *window,
 				      is_folder);
 
 	add_permissions_checkbox (window,
-				  check_button_grid, 
+				  check_button_grid,
 				  w,
 				  PERMISSIONS_CHECKBOXES_EXECUTE,
 				  UNIX_PERM_OTHER_EXEC,
@@ -4288,7 +4290,7 @@ create_advanced_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 	gboolean has_directory, has_file;
 
 	if (!is_multi_file_window (window) && nemo_file_can_set_owner (get_target_file (window))) {
-		
+
 		owner_label  = attach_title_field (page_grid, _("_Owner:"));
 		/* Combo box in this case. */
 		owner_combo_box = attach_owner_combo_box (page_grid,
@@ -4301,15 +4303,15 @@ create_advanced_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 
 		owner_label = attach_title_field (page_grid, _("Owner:"));
 		/* Static text in this case. */
-		value = attach_value_field (window, 
+		value = attach_value_field (window,
 					    page_grid,
 					    GTK_WIDGET (owner_label),
 					    "owner",
 					    INCONSISTENT_STATE_STRING,
-					    FALSE); 
+					    FALSE);
 		gtk_label_set_mnemonic_widget (owner_label, value);
 	}
-	
+
 	if (!is_multi_file_window (window) && nemo_file_can_set_group (get_target_file (window))) {
 		group_label = attach_title_field (page_grid, _("_Group:"));
 
@@ -4325,7 +4327,7 @@ create_advanced_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 		attach_value_field (window, page_grid, GTK_WIDGET (group_label),
 				    "group",
 				    INCONSISTENT_STATE_STRING,
-				    FALSE); 
+				    FALSE);
 	}
 
 	append_blank_slim_row (page_grid);
@@ -4350,9 +4352,9 @@ create_advanced_permissions (NemoPropertiesWindow *window, GtkGrid *page_grid)
 
 	append_blank_slim_row (page_grid);
 	append_special_execution_flags (window, page_grid);
-	
+
 	append_title_value_pair
-		(window, page_grid, _("Text view:"), 
+		(window, page_grid, _("Text view:"),
 		 "permissions", INCONSISTENT_STATE_STRING,
 		 FALSE);
 }
@@ -4384,7 +4386,7 @@ apply_recursive_clicked (GtkWidget *recursive_button,
 	GtkTreeIter iter;
 	PermissionType type;
 	int new_perm, mask;
-	
+
 	file_permission = 0;
 	file_permission_mask = 0;
 	dir_permission = 0;
@@ -4393,11 +4395,11 @@ apply_recursive_clicked (GtkWidget *recursive_button,
 	/* Advanced mode and execute checkbox: */
 	for (l = window->details->permission_buttons; l != NULL; l = l->next) {
 		button = l->data;
-		
+
 		if (gtk_toggle_button_get_inconsistent (GTK_TOGGLE_BUTTON (button))) {
 			continue;
 		}
-		
+
 		active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
 		p = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 							"permission"));
@@ -4405,7 +4407,7 @@ apply_recursive_clicked (GtkWidget *recursive_button,
 								"is-folder"));
 		is_special = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
 								 "is-special"));
-		
+
 		if (is_folder || is_special) {
 			dir_permission_mask |= p;
 			if (active) {
@@ -4422,29 +4424,29 @@ apply_recursive_clicked (GtkWidget *recursive_button,
 	/* Simple mode, minus exec checkbox */
 	for (l = window->details->permission_combos; l != NULL; l = l->next) {
 		combo = l->data;
-		
+
 		if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo),  &iter)) {
 			continue;
 		}
-		
+
 		type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "permission-type"));
 		is_folder = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo),
 								"is-folder"));
-		
+
 		model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
 		gtk_tree_model_get (model, &iter, 1, &new_perm, 2, &use_original, -1);
 		if (use_original) {
 			continue;
 		}
 		vfs_new_perm = permission_to_vfs (type, new_perm);
-		
+
 		if (is_folder) {
 			mask = PERMISSION_READ|PERMISSION_WRITE|PERMISSION_EXEC;
 		} else {
 			mask = PERMISSION_READ|PERMISSION_WRITE;
 		}
 		vfs_mask = permission_to_vfs (type, mask);
-		
+
 		if (is_folder) {
 			dir_permission_mask |= vfs_mask;
 			dir_permission |= vfs_new_perm;
@@ -4492,22 +4494,22 @@ create_permissions_page (NemoPropertiesWindow *window)
 	file_list = window->details->original_files;
 
 	window->details->initial_permissions = NULL;
-	
+
 	if (all_can_get_permissions (file_list) && all_can_get_permissions (window->details->target_files)) {
 		window->details->initial_permissions = get_initial_permissions (window->details->target_files);
 		window->details->has_recursive_apply = files_has_changable_permissions_directory (window);
-		
+
 		if (!all_can_set_permissions (file_list)) {
 			add_prompt_and_separator (
-				vbox, 
+				vbox,
 				_("You are not the owner, so you cannot change these permissions."));
 		}
 
 		page_grid = GTK_GRID (create_grid_with_standard_properties ());
 
 		gtk_widget_show (GTK_WIDGET (page_grid));
-		gtk_box_pack_start (GTK_BOX (vbox), 
-				    GTK_WIDGET (page_grid), 
+		gtk_box_pack_start (GTK_BOX (vbox),
+				    GTK_WIDGET (page_grid),
 				    TRUE, TRUE, 0);
 
 		if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS)) {
@@ -4517,18 +4519,18 @@ create_permissions_page (NemoPropertiesWindow *window)
 		}
 
 		append_blank_slim_row (page_grid);
-	
+
 #ifdef HAVE_SELINUX
 		append_title_value_pair
-			(window, page_grid, _("SELinux context:"), 
+			(window, page_grid, _("SELinux context:"),
 			 "selinux_context", INCONSISTENT_STATE_STRING,
 			 FALSE);
 #endif
 		append_title_value_pair
-			(window, page_grid, _("Last changed:"), 
+			(window, page_grid, _("Last changed:"),
 			 "date_permissions", INCONSISTENT_STATE_STRING,
 			 FALSE);
-	
+
 		if (window->details->has_recursive_apply) {
 			hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 			gtk_widget_show (hbox);
@@ -4536,7 +4538,7 @@ create_permissions_page (NemoPropertiesWindow *window)
 			gtk_container_add_with_properties (GTK_CONTAINER (page_grid), hbox,
 							   "width", 2,
 							   NULL);
-		
+
 			button = gtk_button_new_with_mnemonic (_("Apply Permissions to Enclosed Files"));
 			gtk_widget_show (button);
 			gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
@@ -4552,7 +4554,7 @@ create_permissions_page (NemoPropertiesWindow *window)
 		} else {
 			prompt_text = g_strdup (_("The permissions of the selected file could not be determined."));
 		}
-		
+
 		add_prompt (vbox, prompt_text, TRUE);
 		g_free (prompt_text);
 	}
@@ -4563,30 +4565,30 @@ append_extension_pages (NemoPropertiesWindow *window)
 {
 	GList *providers;
 	GList *p;
-	
+
  	providers = nemo_module_get_extensions_for_type (NEMO_TYPE_PROPERTY_PAGE_PROVIDER);
-	
+
 	for (p = providers; p != NULL; p = p->next) {
 		NemoPropertyPageProvider *provider;
 		GList *pages;
 		GList *l;
 
 		provider = NEMO_PROPERTY_PAGE_PROVIDER (p->data);
-		
-		pages = nemo_property_page_provider_get_pages 
+
+		pages = nemo_property_page_provider_get_pages
 			(provider, window->details->original_files);
-		
+
 		for (l = pages; l != NULL; l = l->next) {
 			NemoPropertyPage *page;
 			GtkWidget *page_widget;
 			GtkLabel *label;
-			
+
 			page = NEMO_PROPERTY_PAGE (l->data);
 
-			g_object_get (G_OBJECT (page), 
-				      "page", &page_widget, "label", &label, 
+			g_object_get (G_OBJECT (page),
+				      "page", &page_widget, "label", &label,
 				      NULL);
-			
+
 			gtk_container_set_border_width (GTK_CONTAINER (page_widget),
 					                STACK_INNER_BORDER);
 			gtk_stack_add_titled(window->details->stack,
@@ -4594,7 +4596,7 @@ append_extension_pages (NemoPropertiesWindow *window)
 					     gtk_label_get_text(label),
 					     gtk_label_get_text(label));
 
-			g_object_set_data (G_OBJECT (page_widget), 
+			g_object_set_data (G_OBJECT (page_widget),
 					   "is-extension-page",
 					   page);
 
@@ -4611,7 +4613,7 @@ append_extension_pages (NemoPropertiesWindow *window)
 }
 
 static gboolean
-should_show_permissions (NemoPropertiesWindow *window) 
+should_show_permissions (NemoPropertiesWindow *window)
 {
 	NemoFile *file;
 
@@ -4637,7 +4639,7 @@ get_pending_key (GList *file_list)
 	GList *uris;
 	GString *key;
 	char *ret;
-	
+
 	uris = NULL;
 	for (l = file_list; l != NULL; l = l->next) {
 		uris = g_list_prepend (uris, nemo_file_get_uri (NEMO_FILE (l->data)));
@@ -4659,7 +4661,7 @@ get_pending_key (GList *file_list)
 }
 
 static StartupData *
-startup_data_new (GList *original_files, 
+startup_data_new (GList *original_files,
 		  GList *target_files,
 		  const char *pending_key,
 		  GtkWidget *parent_widget,
@@ -4703,7 +4705,7 @@ file_changed_callback (NemoFile *file, gpointer user_data)
 	if (!g_list_find (window->details->changed_files, file)) {
 		nemo_file_ref (file);
 		window->details->changed_files = g_list_prepend (window->details->changed_files, file);
-		
+
 		schedule_files_update (window);
 	}
 }
@@ -4732,15 +4734,15 @@ should_show_open_with (NemoPropertiesWindow *window)
 	 * Also don't show it for folders. Changing the default app for folders
 	 * leads to all sort of hard to understand errors.
 	 */
-	
+
 	if (is_multi_file_window (window)) {
 		if (!file_list_attributes_identical (window->details->original_files,
 						     "mime_type")) {
 			return FALSE;
 		} else {
-			
+
 			GList *l;
-			
+
 			for (l = window->details->original_files; l; l = l->next) {
 				file = NEMO_FILE (l->data);
 				if (nemo_file_is_directory (file) ||
@@ -4748,7 +4750,7 @@ should_show_open_with (NemoPropertiesWindow *window)
 					return FALSE;
 				}
 			}
-		}		
+		}
 	} else {
 		file = get_original_file (window);
 		if (nemo_file_is_directory (file) ||
@@ -4802,7 +4804,7 @@ create_properties_window (StartupData *startup_data)
 	window = NEMO_PROPERTIES_WINDOW (gtk_widget_new (NEMO_TYPE_PROPERTIES_WINDOW, NULL));
 
 	window->details->original_files = nemo_file_list_copy (startup_data->original_files);
-	
+
 	window->details->target_files = nemo_file_list_copy (startup_data->target_files);
 
 	gtk_window_set_wmclass (GTK_WINDOW (window), "file_properties", "Nemo");
@@ -4840,25 +4842,25 @@ create_properties_window (StartupData *startup_data)
 			NEMO_FILE_ATTRIBUTE_LINK_INFO;
 
 		nemo_file_monitor_add (file,
-					   &window->details->original_files, 
-					   attributes);	
+					   &window->details->original_files,
+					   attributes);
 	}
-	
+
 	for (l = window->details->target_files; l != NULL; l = l->next) {
 		NemoFile *file;
 		NemoFileAttributes attributes;
 
 		file = NEMO_FILE (l->data);
-		
+
 		attributes = 0;
 		if (nemo_file_is_directory (file)) {
 			attributes |= NEMO_FILE_ATTRIBUTE_DEEP_COUNTS;
 		}
-		
+
 		attributes |= NEMO_FILE_ATTRIBUTE_INFO;
 		nemo_file_monitor_add (file, &window->details->target_files, attributes);
-	}	
-		
+	}
+
 	for (l = window->details->target_files; l != NULL; l = l->next) {
 		g_signal_connect_object (NEMO_FILE (l->data),
 					 "changed",
@@ -4949,14 +4951,14 @@ get_target_file_list (GList *original_files)
 {
 	GList *ret;
 	GList *l;
-	
+
 	ret = NULL;
-	
+
 	for (l = original_files; l != NULL; l = l->next) {
 		NemoFile *target;
-		
+
 		target = get_target_file_for_original_file (NEMO_FILE (l->data));
-		
+
 		ret = g_list_prepend (ret, target);
 	}
 
@@ -4970,9 +4972,9 @@ add_window (NemoPropertiesWindow *window)
 {
 	if (!is_multi_file_window (window)) {
 		g_hash_table_insert (windows,
-				     get_original_file (window), 
+				     get_original_file (window),
 				     window);
-		g_object_set_data (G_OBJECT (window), "window_key", 
+		g_object_set_data (G_OBJECT (window), "window_key",
 				   get_original_file (window));
 	}
 }
@@ -4993,7 +4995,7 @@ get_existing_window (GList *file_list)
 {
 	if (!file_list->next) {
 		return g_hash_table_lookup (windows, file_list->data);
-	}	
+	}
 
 	return NULL;
 }
@@ -5008,7 +5010,7 @@ static void
 parent_widget_destroyed_callback (GtkWidget *widget, gpointer callback_data)
 {
 	g_assert (widget == ((StartupData *)callback_data)->parent_widget);
-	
+
 	remove_pending ((StartupData *)callback_data, TRUE, TRUE, FALSE);
 }
 
@@ -5017,9 +5019,9 @@ cancel_call_when_ready_callback (gpointer key,
 				 gpointer value,
 				 gpointer user_data)
 {
-	nemo_file_cancel_call_when_ready 
-		(NEMO_FILE (key), 
-		 is_directory_ready_callback, 
+	nemo_file_cancel_call_when_ready
+		(NEMO_FILE (key),
+		 is_directory_ready_callback,
 		 user_data);
 }
 
@@ -5033,10 +5035,10 @@ remove_pending (StartupData *startup_data,
 		g_hash_table_foreach (startup_data->pending_files,
 				      cancel_call_when_ready_callback,
 				      startup_data);
-				      
+
 	}
 	if (cancel_timed_wait) {
-		eel_timed_wait_stop 
+		eel_timed_wait_stop
 			(cancel_create_properties_window_callback, startup_data);
 	}
 	if (cancel_destroy_handler && startup_data->parent_widget) {
@@ -5055,20 +5057,20 @@ is_directory_ready_callback (NemoFile *file,
 			     gpointer data)
 {
 	StartupData *startup_data;
-	
+
 	startup_data = data;
-	
+
 	g_hash_table_remove (startup_data->pending_files, file);
 
 	if (g_hash_table_size (startup_data->pending_files) == 0) {
 		NemoPropertiesWindow *new_window;
-		
+
 		new_window = create_properties_window (startup_data);
-		
+
 		add_window (new_window);
-		
+
 		remove_pending (startup_data, FALSE, TRUE, TRUE);
-		
+
 		gtk_window_present (GTK_WINDOW (new_window));
 	}
 }
@@ -5077,7 +5079,7 @@ is_directory_ready_callback (NemoFile *file,
 void
 nemo_properties_window_present (GList       *original_files,
 				    GtkWidget   *parent_widget,
-				    const gchar *startup_id) 
+				    const gchar *startup_id)
 {
 	GList *l, *next;
 	GtkWidget *parent_window;
@@ -5093,11 +5095,11 @@ nemo_properties_window_present (GList       *original_files,
 	if (windows == NULL) {
 		windows = g_hash_table_new (NULL, NULL);
 	}
-	
+
 	if (pending_lists == NULL) {
 		pending_lists = g_hash_table_new (g_str_hash, g_str_equal);
 	}
-	
+
 	/* Look to see if there's already a window for this file. */
 	existing_window = get_existing_window (original_files);
 	if (existing_window != NULL) {
@@ -5113,7 +5115,7 @@ nemo_properties_window_present (GList       *original_files,
 
 
 	pending_key = get_pending_key (original_files);
-	
+
 	/* Look to see if we're already waiting for a window for this file. */
 	if (g_hash_table_lookup (pending_lists, pending_key) != NULL) {
 		return;
@@ -5121,7 +5123,7 @@ nemo_properties_window_present (GList       *original_files,
 
 	target_files = get_target_file_list (original_files);
 
-	startup_data = startup_data_new (original_files, 
+	startup_data = startup_data_new (original_files,
 					 target_files,
 					 pending_key,
 					 parent_widget,
@@ -5131,9 +5133,9 @@ nemo_properties_window_present (GList       *original_files,
 	g_free(pending_key);
 
 	/* Wait until we can tell whether it's a directory before showing, since
-	 * some one-time layout decisions depend on that info. 
+	 * some one-time layout decisions depend on that info.
 	 */
-	
+
 	g_hash_table_insert (pending_lists, startup_data->pending_key, startup_data->pending_key);
 	if (parent_widget) {
 		g_signal_connect (parent_widget, "destroy",
@@ -5210,7 +5212,7 @@ real_destroy (GtkWidget *object)
 	}
 	nemo_file_list_free (window->details->original_files);
 	window->details->original_files = NULL;
-	
+
 	for (l = window->details->target_files; l != NULL; l = l->next) {
 		nemo_file_monitor_remove (NEMO_FILE (l->data), &window->details->target_files);
 	}
@@ -5219,7 +5221,7 @@ real_destroy (GtkWidget *object)
 
 	nemo_file_list_free (window->details->changed_files);
 	window->details->changed_files = NULL;
- 
+
 	window->details->name_field = NULL;
 
 	g_list_free (window->details->permission_buttons);
@@ -5331,7 +5333,7 @@ set_icon (const char* icon_uri, NemoPropertiesWindow *properties_window)
 				if (real_icon_uri == NULL) {
 					real_icon_uri = g_strdup (icon_uri);
 				}
-			
+
 				nemo_file_set_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL, real_icon_uri);
 				nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_SCALE, NULL, NULL);
 
