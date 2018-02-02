@@ -1,24 +1,24 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
 
    nemo-desktop-link-monitor.c: singleton that manages the links
-    
+
    Copyright (C) 2003 Red Hat, Inc.
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public
    License along with this program; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
    Boston, MA 02110-1335, USA.
-  
+
    Author: Alexander Larsson <alexl@redhat.com>
 */
 
@@ -43,7 +43,7 @@
 struct NemoDesktopLinkMonitorDetails {
 	GVolumeMonitor *volume_monitor;
 	NemoDirectory *desktop_dir;
-	
+
 	NemoDesktopLink *home_link;
 	NemoDesktopLink *computer_link;
 	NemoDesktopLink *trash_link;
@@ -92,7 +92,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 
 		if (g_mount_can_eject (mount)) {
 			eel_run_simple_dialog
-				(parent_view, 
+				(parent_view,
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
@@ -101,7 +101,7 @@ volume_delete_dialog (GtkWidget *parent_view,
 				 GTK_STOCK_OK, NULL);
 		} else {
 			eel_run_simple_dialog
-				(parent_view, 
+				(parent_view,
 				 FALSE,
 				 GTK_MESSAGE_ERROR,
 				 dialog_str,
@@ -127,6 +127,7 @@ nemo_desktop_link_monitor_delete_link (NemoDesktopLinkMonitor *monitor,
 	case NEMO_DESKTOP_LINK_NETWORK:
 		/* just ignore. We don't allow you to delete these */
 		break;
+        case NEMO_DESKTOP_LINK_MOUNT:
 	default:
 		volume_delete_dialog (parent_view, link);
 		break;
@@ -160,7 +161,7 @@ nemo_desktop_link_monitor_make_filename_unique (NemoDesktopLinkMonitor *monitor,
 {
 	char *unique_name;
 	int i;
-	
+
 	i = 2;
 	unique_name = g_strdup (filename);
 	while (volume_file_name_used (monitor, unique_name)) {
@@ -239,7 +240,7 @@ remove_mount_link (NemoDesktopLinkMonitor *monitor,
 
 static void
 mount_added_callback (GVolumeMonitor *volume_monitor,
-		      GMount *mount, 
+		      GMount *mount,
 		      NemoDesktopLinkMonitor *monitor)
 {
 	create_mount_link (monitor, mount);
@@ -248,7 +249,7 @@ mount_added_callback (GVolumeMonitor *volume_monitor,
 
 static void
 mount_removed_callback (GVolumeMonitor *volume_monitor,
-			GMount *mount, 
+			GMount *mount,
 			NemoDesktopLinkMonitor *monitor)
 {
 	remove_mount_link (monitor, mount);
@@ -256,7 +257,7 @@ mount_removed_callback (GVolumeMonitor *volume_monitor,
 
 static void
 mount_changed_callback (GVolumeMonitor *volume_monitor,
-			GMount *mount, 
+			GMount *mount,
 			NemoDesktopLinkMonitor *monitor)
 {
 	/* TODO: update the mount with other details */
