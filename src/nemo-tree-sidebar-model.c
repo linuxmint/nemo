@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* 
+/*
  * Copyright C) 2000, 2001 Eazel, Inc
  * Copyright (C) 2002 Anders Carlsson
  * Copyright (C) 2002 Bent Spoon Software
@@ -81,7 +81,7 @@ struct TreeNode {
 	int dummy_child_ref_count;
 	int all_children_ref_count;
     guint icon_scale;
-	
+
 	NemoDirectory *directory;
 	guint done_loading_id;
 	guint files_added_id;
@@ -97,8 +97,8 @@ struct TreeNode {
 
 struct FMTreeModelDetails {
 	int stamp;
-	
-	TreeNode *root_node;	
+
+	TreeNode *root_node;
 
 	guint monitoring_update_idle_id;
 
@@ -133,7 +133,7 @@ G_DEFINE_TYPE_WITH_CODE (FMTreeModel, fm_tree_model, G_TYPE_OBJECT,
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
 						fm_tree_model_tree_model_init));
 
-static GtkTreeModelFlags 
+static GtkTreeModelFlags
 fm_tree_model_get_flags (GtkTreeModel *tree_model)
 {
 	return GTK_TREE_MODEL_ITERS_PERSIST;
@@ -252,7 +252,7 @@ tree_node_parent (TreeNode *node, TreeNode *parent)
 	g_assert (node->next == NULL);
 
 	first_child = parent->first_child;
-	
+
 	node->parent = parent;
 	node->root = parent->root;
 	node->next = first_child;
@@ -288,7 +288,7 @@ get_menu_icon_for_file (TreeNode *node,
 			emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
 		}
 	}
-	
+
 	emblems_to_ignore[i++] = NULL;
 
 	emblem = NULL;
@@ -368,7 +368,7 @@ tree_node_update_display_name (TreeNode *node)
 	/* don't update root node display names */
 	if (node->parent == NULL) {
 		return FALSE;
-	} 
+	}
 	display_name = nemo_file_get_display_name (node->file);
 	if (strcmp (display_name, node->display_name) == 0) {
 		g_free (display_name);
@@ -485,7 +485,7 @@ get_parent_node_from_file (FMTreeModelRoot *root, NemoFile *file)
 {
 	NemoFile *parent_file;
 	TreeNode *parent_node;
-	
+
 	parent_file = nemo_file_get_parent (file);
 	parent_node = get_node_from_file (root, parent_file);
 	nemo_file_unref (parent_file);
@@ -653,7 +653,7 @@ report_node_inserted (FMTreeModel *model, TreeNode *node)
     gboolean add_child = FALSE;
 
 	if (node->directory != NULL) {
-        gint count;
+        guint count;
         if (nemo_file_get_directory_item_count (node->file, &count, NULL)) {
             add_child = count > 0 || node->parent == NULL;
         } else {
@@ -755,7 +755,7 @@ destroy_node (FMTreeModel *model, TreeNode *node)
 	/* Report row_deleted before actually deleting */
 	gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
 	gtk_tree_path_free (path);
-	
+
 	destroy_node_without_reporting (model, node);
 
 	if (tree_node_has_dummy_child (parent)) {
@@ -805,7 +805,7 @@ update_node_without_reporting (FMTreeModel *model, TreeNode *node)
 	gboolean changed;
 
 	changed = FALSE;
-	
+
 	if (node->directory == NULL &&
 	    (nemo_file_is_directory (node->file) || node->parent == NULL)) {
 		node->directory = nemo_directory_get_for_file (node->file);
@@ -869,7 +869,7 @@ reparent_node (FMTreeModel *model, TreeNode *node)
 	/* Report row_deleted before actually deleting */
 	gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
 	gtk_tree_path_free (path);
-	
+
 	abandon_node_ref_count (model, node);
 	tree_node_unparent (model, node);
 
@@ -930,7 +930,7 @@ update_node (FMTreeModel *model, TreeNode *node)
 
 	has_dummy_child = tree_node_has_dummy_child (node);
 	has_directory = node->directory != NULL;
-	
+
 	if (had_dummy_child != has_dummy_child) {
 		if (has_dummy_child) {
 			report_dummy_row_inserted (model, node);
@@ -1058,7 +1058,7 @@ get_tree_monitor_attributes (void)
 		NEMO_FILE_ATTRIBUTES_FOR_ICON |
 		NEMO_FILE_ATTRIBUTE_INFO |
 		NEMO_FILE_ATTRIBUTE_LINK_INFO;
-	
+
 	return attributes;
 }
 
@@ -1076,14 +1076,14 @@ start_monitoring_directory (FMTreeModel *model, TreeNode *node)
 	g_assert (node->files_changed_id == 0);
 
 	directory = node->directory;
-	
+
 	node->done_loading_id = g_signal_connect
 		(directory, "done_loading",
 		 G_CALLBACK (done_loading_callback), node->root);
-	node->files_added_id = g_signal_connect 
+	node->files_added_id = g_signal_connect
 		(directory, "files_added",
 		 G_CALLBACK (files_changed_callback), node->root);
-	node->files_changed_id = g_signal_connect 
+	node->files_changed_id = g_signal_connect
 		(directory, "files_changed",
 		 G_CALLBACK (files_changed_callback), node->root);
 
@@ -1116,7 +1116,7 @@ fm_tree_model_get_column_type (GtkTreeModel *model, int index)
 	default:
 		g_assert_not_reached ();
 	}
-	
+
 	return G_TYPE_INVALID;
 }
 
@@ -1217,7 +1217,7 @@ fm_tree_model_get_path (GtkTreeModel *model, GtkTreeIter *iter)
 	parent_iter.user_data3 = NULL;
 
 	path = fm_tree_model_get_path (model, &parent_iter);
-	
+
 	gtk_tree_path_append_index (path, tree_node_get_child_index (parent, node));
 
 	return path;
@@ -1272,7 +1272,7 @@ fm_tree_model_iter_next (GtkTreeModel *model, GtkTreeIter *iter)
 
 	g_return_val_if_fail (FM_IS_TREE_MODEL (model), FALSE);
 	g_return_val_if_fail (iter_is_valid (FM_TREE_MODEL (model), iter), FALSE);
-	
+
 	node = iter->user_data;
 
 	if (node == NULL) {
@@ -1292,7 +1292,7 @@ fm_tree_model_iter_children (GtkTreeModel *model, GtkTreeIter *iter, GtkTreeIter
 
 	g_return_val_if_fail (FM_IS_TREE_MODEL (model), FALSE);
 	g_return_val_if_fail (iter_is_valid (FM_TREE_MODEL (model), parent_iter), FALSE);
-	
+
 	parent = parent_iter->user_data;
 	if (parent == NULL) {
 		return make_iter_invalid (iter);
@@ -1307,7 +1307,7 @@ fm_tree_model_iter_children (GtkTreeModel *model, GtkTreeIter *iter, GtkTreeIter
 static gboolean
 fm_tree_model_iter_parent (GtkTreeModel *model, GtkTreeIter *iter, GtkTreeIter *child_iter)
 {	TreeNode *child, *parent;
-	
+
 	g_return_val_if_fail (FM_IS_TREE_MODEL (model), FALSE);
 	g_return_val_if_fail (iter_is_valid (FM_TREE_MODEL (model), child_iter), FALSE);
 
@@ -1340,7 +1340,7 @@ fm_tree_model_iter_has_child (GtkTreeModel *model, GtkTreeIter *iter)
 		   node && node->file ? nemo_file_get_uri (node->file) : "no name",
 		   has_child ? "has child" : "no child");
 #endif
-		   
+
 	return has_child;
 }
 
@@ -1349,10 +1349,10 @@ fm_tree_model_iter_n_children (GtkTreeModel *model, GtkTreeIter *iter)
 {
 	TreeNode *parent, *node;
 	int n;
-	
+
 	g_return_val_if_fail (FM_IS_TREE_MODEL (model), FALSE);
 	g_return_val_if_fail (iter == NULL || iter_is_valid (FM_TREE_MODEL (model), iter), FALSE);
-	
+
 	if (iter == NULL) {
 		return 1;
 	}
@@ -1377,11 +1377,11 @@ fm_tree_model_iter_nth_child (GtkTreeModel *model, GtkTreeIter *iter,
 	FMTreeModel *tree_model;
 	TreeNode *parent, *node;
 	int i;
-	
+
 	g_return_val_if_fail (FM_IS_TREE_MODEL (model), FALSE);
 	g_return_val_if_fail (parent_iter == NULL
 			      || iter_is_valid (FM_TREE_MODEL (model), parent_iter), FALSE);
-	
+
 	tree_model = FM_TREE_MODEL (model);
 
 	if (parent_iter == NULL) {
@@ -1406,7 +1406,7 @@ fm_tree_model_iter_nth_child (GtkTreeModel *model, GtkTreeIter *iter,
 		}
 	}
 
-	return make_iter_for_node (node, iter, parent_iter->stamp);	
+	return make_iter_for_node (node, iter, parent_iter->stamp);
 }
 
 static void
@@ -1433,7 +1433,7 @@ update_monitoring_idle_callback (gpointer callback_data)
 
 	model = FM_TREE_MODEL (callback_data);
 	model->details->monitoring_update_idle_id = 0;
-	for (node = model->details->root_node; node != NULL; node = node->next) { 
+	for (node = model->details->root_node; node != NULL; node = node->next) {
 		update_monitoring (model, node);
 	}
 	return FALSE;
@@ -1550,7 +1550,7 @@ fm_tree_model_add_root_uri (FMTreeModel *model, const char *root_uri, const char
 	NemoFile *file;
 	TreeNode *node, *cnode;
 	FMTreeModelRoot *newroot;
-	
+
 	file = nemo_file_get_by_uri (root_uri);
 
 	newroot = tree_model_root_new (model);
@@ -1613,7 +1613,7 @@ fm_tree_model_remove_root_uri (FMTreeModel *model, const char *uri)
 
 	if (node) {
 		/* remove the node */
-		
+
 		if (node->mount) {
 			g_object_unref (node->mount);
 			node->mount = NULL;
@@ -1625,7 +1625,7 @@ fm_tree_model_remove_root_uri (FMTreeModel *model, const char *uri)
 		/* Report row_deleted before actually deleting */
 		gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
 		gtk_tree_path_free (path);
-		
+
 		if (node->prev) {
 			node->prev->next = node->next;
 		}
@@ -1635,7 +1635,7 @@ fm_tree_model_remove_root_uri (FMTreeModel *model, const char *uri)
 		if (node == model->details->root_node) {
 			model->details->root_node = node->next;
 		}
-		
+
 		/* destroy the root identifier */
 		root = node->root;
 		destroy_node_without_reporting (model, node);
@@ -1650,7 +1650,7 @@ fm_tree_model_new (void)
 	FMTreeModel *model;
 
 	model = g_object_new (FM_TYPE_TREE_MODEL, NULL);
-	
+
 	return model;
 }
 
@@ -1722,17 +1722,17 @@ fm_tree_model_iter_compare_roots (FMTreeModel *model,
 	g_return_val_if_fail (FM_IS_TREE_MODEL (model), 0);
 	g_return_val_if_fail (iter_is_valid (model, iter_a), 0);
 	g_return_val_if_fail (iter_is_valid (model, iter_b), 0);
-	
+
 	a = iter_a->user_data;
 	b = iter_b->user_data;
-	
+
 	g_assert (a != NULL && a->parent == NULL);
 	g_assert (b != NULL && b->parent == NULL);
 
 	if (a == b) {
 		return 0;
 	}
-	
+
 	for (n = model->details->root_node; n != NULL; n = n->next) {
 		if (n == a) {
 			return -1;
@@ -1819,7 +1819,7 @@ fm_tree_model_set_highlight_for_files (FMTreeModel *model,
 	}
 
 	if (files != NULL) {
-		model->details->highlighted_files = 
+		model->details->highlighted_files =
 			nemo_file_list_copy (files);
 		g_list_foreach (model->details->highlighted_files,
 		                (GFunc) do_update_node, model);
