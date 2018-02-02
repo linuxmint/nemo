@@ -1,24 +1,24 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
 
    nemo-monitor.c: file and directory change monitoring for nemo
- 
+
    Copyright (C) 2000, 2001 Eazel, Inc.
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public
    License along with this program; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
    Boston, MA 02110-1335, USA.
-  
+
    Authors: Seth Nickell <seth@eazel.com>
             Darin Adler <darin@bentspoon.com>
 	    Alex Graveley <alex@ximian.com>
@@ -45,11 +45,11 @@ nemo_monitor_active (void)
 	GFileMonitor *dir_monitor;
 	GFile *file;
 
-	if (tried_monitor == FALSE) {	
+	if (tried_monitor == FALSE) {
 		file = g_file_new_for_path (g_get_home_dir ());
 		dir_monitor = g_file_monitor_directory (file, G_FILE_MONITOR_NONE, NULL, NULL);
 		g_object_unref (file);
-		
+
 		monitor_success = (dir_monitor != NULL);
 		if (dir_monitor) {
 			g_object_unref (dir_monitor);
@@ -106,7 +106,7 @@ dir_changed (GFileMonitor* monitor,
 	     gpointer user_data)
 {
 	char *uri, *to_uri;
-	
+
 	uri = g_file_get_uri (child);
 	to_uri = NULL;
 	if (other_file) {
@@ -114,6 +114,10 @@ dir_changed (GFileMonitor* monitor,
 	}
 
 	switch (event_type) {
+        case G_FILE_MONITOR_EVENT_MOVED:
+        case G_FILE_MONITOR_EVENT_RENAMED:
+        case G_FILE_MONITOR_EVENT_MOVED_IN:
+        case G_FILE_MONITOR_EVENT_MOVED_OUT:
 	default:
 	case G_FILE_MONITOR_EVENT_CHANGED:
 		/* ignore */
@@ -128,7 +132,7 @@ dir_changed (GFileMonitor* monitor,
 	case G_FILE_MONITOR_EVENT_CREATED:
 		nemo_file_changes_queue_file_added (child);
 		break;
-		
+
 	case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
 		/* TODO: Do something */
 		break;
@@ -142,7 +146,7 @@ dir_changed (GFileMonitor* monitor,
 
     schedule_call_consume_changes ();
 }
- 
+
 NemoMonitor *
 nemo_monitor_directory (GFile *location)
 {
@@ -174,7 +178,7 @@ nemo_monitor_directory (GFile *location)
 	return ret;
 }
 
-void 
+void
 nemo_monitor_cancel (NemoMonitor *monitor)
 {
 	if (monitor->monitor != NULL) {
