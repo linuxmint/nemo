@@ -1100,6 +1100,8 @@ generate_initial_job_details (NemoProgressInfo *info,
                             g_list_length (files)),
                             src_name, dest_name);
             break;
+        case OP_KIND_TRUST:
+        case OP_KIND_CREATE:
         default:
             break;
     }
@@ -2631,7 +2633,13 @@ report_count_progress (CommonJob *job,
 	char *s;
 
 	switch (source_info->op) {
+
+    case OP_KIND_LINK:  /* FIXME */
+    case OP_KIND_CREATE:
+    case OP_KIND_PERMISSIONS:
+    case OP_KIND_TRUST:
 	default:
+    case OP_KIND_DUPE:
 	case OP_KIND_COPY:
 		s = f (ngettext("Preparing to copy %'d file (%S)",
 		                "Preparing to copy %'d files (%S)",
@@ -2651,6 +2659,7 @@ report_count_progress (CommonJob *job,
 		       source_info->num_files, source_info->num_bytes);
 		break;
 	case OP_KIND_TRASH:
+    case OP_KIND_EMPTY_TRASH:
 		s = f (ngettext("Preparing to trash %'d file",
 		                "Preparing to trash %'d files",
 		                source_info->num_files),
@@ -2680,14 +2689,20 @@ static char *
 get_scan_primary (OpKind kind)
 {
 	switch (kind) {
+    case OP_KIND_PERMISSIONS:  /* FIXME */
+    case OP_KIND_LINK:
+    case OP_KIND_CREATE:
+    case OP_KIND_TRUST:
 	default:
 	case OP_KIND_COPY:
+    case OP_KIND_DUPE:
 		return f (_("Error while copying."));
 	case OP_KIND_MOVE:
 		return f (_("Error while moving."));
 	case OP_KIND_DELETE:
 		return f (_("Error while deleting."));
 	case OP_KIND_TRASH:
+    case OP_KIND_EMPTY_TRASH:
 		return f (_("Error while moving files to trash."));
 	}
 }
@@ -6254,7 +6269,7 @@ create_job (GIOSchedulerJob *io_job,
 			}
 
 		} else {
-			data = "";
+			data = NULL;
 			length = 0;
 			if (job->src_data) {
 				data = job->src_data;
