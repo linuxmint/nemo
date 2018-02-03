@@ -137,6 +137,7 @@ nemo_interesting_folder_bar_constructed (GObject *obj)
                                          INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC);
             gtk_widget_set_tooltip_text (w, _("View additional information about creating scripts"));
             break;
+        case TYPE_NONE_FOLDER:
         default:
             label = gtk_label_new ("undefined");
             break;
