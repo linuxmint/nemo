@@ -192,7 +192,7 @@ real_add_file (NemoView *view, NemoFile *file, NemoDirectory *directory)
     NemoIconContainer *icon_container;
 
     g_assert (directory == nemo_view_get_model (view));
-    
+
     icon_view = NEMO_ICON_VIEW (view);
     icon_container = get_icon_container (icon_view);
 
@@ -343,12 +343,12 @@ nemo_desktop_icon_view_handle_middle_click (NemoIconContainer *icon_container,
 		gdk_device_ungrab (pointer, GDK_CURRENT_TIME);
 	}
 
-	
+
 	if (keyboard != NULL) {
 		gdk_device_ungrab (keyboard, GDK_CURRENT_TIME);
 	}
 
-	/* Stop the event because we don't want anyone else dealing with it. */	
+	/* Stop the event because we don't want anyone else dealing with it. */
 	gdk_flush ();
 	g_signal_stop_emission_by_name (icon_container, "middle_click");
 
@@ -367,7 +367,7 @@ nemo_desktop_icon_view_handle_middle_click (NemoIconContainer *icon_container,
 	x_event.state = event->state;
 	x_event.button = event->button;
 	x_event.same_screen = True;
-	
+
 	/* Send it to the root window, the window manager will handle it. */
 	XSendEvent (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), GDK_ROOT_WINDOW (), True,
 		    ButtonPressMask, (XEvent *) &x_event);
@@ -418,7 +418,7 @@ do_desktop_rescan (gpointer data)
 	if (desktop_icon_view->details->pending_rescan) {
 		return TRUE;
 	}
-	
+
 	if (stat (desktop_directory, &buf) == -1) {
 		return TRUE;
 	}
@@ -475,7 +475,7 @@ static void
 font_changed_callback (gpointer callback_data)
 {
  	g_return_if_fail (NEMO_IS_DESKTOP_ICON_VIEW (callback_data));
-	
+
 	nemo_desktop_icon_view_update_icon_container_fonts (NEMO_DESKTOP_ICON_VIEW (callback_data));
 }
 
@@ -532,7 +532,7 @@ nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view)
             (desktop_icon_view, "begin_loading",
              G_CALLBACK (delayed_init), desktop_icon_view, 0);
     }
-    
+
     nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
     nemo_icon_container_set_is_desktop (icon_container, TRUE);
 
@@ -543,7 +543,7 @@ nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view)
     allocation.x = 0;
     allocation.y = 0;
     gtk_widget_set_allocation (GTK_WIDGET (icon_container), &allocation);
-    
+
     gtk_widget_queue_resize (GTK_WIDGET (icon_container));
 
     hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (icon_container));
@@ -560,7 +560,7 @@ nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view)
 
     nemo_view_set_show_foreign (NEMO_VIEW (desktop_icon_view),
                     FALSE);
-    
+
     /* Set our default layout mode */
     nemo_icon_container_set_layout_mode (icon_container,
                          gtk_widget_get_direction (GTK_WIDGET(icon_container)) == GTK_TEXT_DIR_RTL ?
@@ -631,7 +631,7 @@ trash_link_is_selection (NemoView *view)
 	gboolean result;
 
 	result = FALSE;
-	
+
 	selection = nemo_view_get_selection (view);
 
 	if ((g_list_length (selection) == 1) &&
@@ -646,7 +646,7 @@ trash_link_is_selection (NemoView *view)
 			g_object_unref (link);
 		}
 	}
-	
+
 	nemo_file_list_free (selection);
 
 	return result;
@@ -738,7 +738,7 @@ real_merge_menus (NemoView *view)
 	action_group = gtk_action_group_new ("DesktopViewActions");
 	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
 	desktop_view->details->desktop_action_group = action_group;
-	gtk_action_group_add_actions (action_group, 
+	gtk_action_group_add_actions (action_group,
 				      desktop_view_entries, G_N_ELEMENTS (desktop_view_entries),
 				      view);
 
@@ -778,12 +778,12 @@ nemo_desktop_icon_view_supports_uri (const char *uri,
 }
 
 static NemoViewInfo nemo_desktop_icon_view = {
-	NEMO_DESKTOP_ICON_VIEW_ID,
-	"Desktop View",
-	"_Desktop",
-	N_("The desktop view encountered an error."),
-	N_("The desktop view encountered an error while starting up."),
-	"Display this location with the desktop view.",
+	(char *)NEMO_DESKTOP_ICON_VIEW_ID,
+	(char *)"Desktop View",
+	(char *)"_Desktop",
+	(char *)N_("The desktop view encountered an error."),
+	(char *)N_("The desktop view encountered an error while starting up."),
+	(char *)"Display this location with the desktop view.",
 	nemo_desktop_icon_view_create,
 	nemo_desktop_icon_view_supports_uri
 };
@@ -793,7 +793,7 @@ nemo_desktop_icon_view_register (void)
 {
 	nemo_desktop_icon_view.error_label = _(nemo_desktop_icon_view.error_label);
 	nemo_desktop_icon_view.startup_error_label = _(nemo_desktop_icon_view.startup_error_label);
-	
+
 	nemo_view_factory_register (&nemo_desktop_icon_view);
 }
 
