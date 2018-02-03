@@ -1,17 +1,17 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
 
    Copyright (C) 1999, 2000, 2001 Eazel, Inc.
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public
    License along with this program; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
@@ -73,7 +73,7 @@ nemo_file_changes_queue_get (void)
 }
 
 static void
-nemo_file_changes_queue_add_common (NemoFileChangesQueue *queue, 
+nemo_file_changes_queue_add_common (NemoFileChangesQueue *queue,
 	NemoFileChange *new_item)
 {
 	/* enqueue the new queue item while locking down the list */
@@ -145,7 +145,7 @@ nemo_file_changes_queue_file_moved (GFile *from,
 }
 
 void
-nemo_file_changes_queue_schedule_position_set (GFile *location, 
+nemo_file_changes_queue_schedule_position_set (GFile *location,
 						   GdkPoint point,
                            int monitor)
 {
@@ -183,7 +183,7 @@ nemo_file_changes_queue_get_change (NemoFileChangesQueue *queue)
 	NemoFileChange *result;
 
 	g_assert (queue != NULL);
-	
+
 	/* dequeue the tail item while locking down the list */
 	g_mutex_lock (&queue->mutex);
 
@@ -242,7 +242,7 @@ position_set_list_free (GList *list)
 
 /* go through changes in the change queue, send ones with the same kind
  * in a list to the different nemo_directory_notify calls
- */ 
+ */
 void
 nemo_file_changes_consume_changes (gboolean consume_all)
 {
@@ -254,7 +254,6 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 	guint chunk_count;
 	NemoFileChangesQueue *queue;
 	gboolean flush_needed;
-	
 
 	additions = NULL;
 	changes = NULL;
@@ -263,10 +262,10 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 	position_set_requests = NULL;
 
 	queue = nemo_file_changes_queue_get();
-		
+
 	/* Consume changes from the queue, stuffing them into one of three lists,
 	 * keep doing it while the changes are of the same kind, then send them off.
-	 * This is to ensure that the changes get sent off in the same order that they 
+	 * This is to ensure that the changes get sent off in the same order that they
 	 * arrived.
 	 */
 	for (chunk_count = 0; ; chunk_count++) {
@@ -282,34 +281,34 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 				&& change->kind != CHANGE_FILE_ADDED
 				&& change->kind != CHANGE_POSITION_SET
 				&& change->kind != CHANGE_POSITION_REMOVE;
-			
+
 			flush_needed |= changes != NULL
 				&& change->kind != CHANGE_FILE_CHANGED;
-			
+
 			flush_needed |= moves != NULL
 				&& change->kind != CHANGE_FILE_MOVED
 				&& change->kind != CHANGE_POSITION_SET
 				&& change->kind != CHANGE_POSITION_REMOVE;
-			
+
 			flush_needed |= deletions != NULL
 				&& change->kind != CHANGE_FILE_REMOVED;
-			
+
 			flush_needed |= position_set_requests != NULL
 				&& change->kind != CHANGE_POSITION_SET
 				&& change->kind != CHANGE_POSITION_REMOVE
 				&& change->kind != CHANGE_FILE_ADDED
 				&& change->kind != CHANGE_FILE_MOVED;
-			
+
 			flush_needed |= !consume_all && chunk_count >= CONSUME_CHANGES_MAX_CHUNK;
 				/* we have reached the chunk maximum */
 		}
-		
+
 		if (flush_needed) {
-			/* Send changes we collected off. 
+			/* Send changes we collected off.
 			 * At one time we may only have one of the lists
 			 * contain changes.
 			 */
-			
+
 			if (deletions != NULL) {
 				deletions = g_list_reverse (deletions);
 				nemo_directory_notify_files_removed (deletions);
@@ -346,7 +345,7 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 			/* we are done */
 			return;
 		}
-		
+
 		/* add the new change to the list */
 		switch (change->kind) {
 		case CHANGE_FILE_ADDED:
@@ -373,7 +372,7 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 			position_set->location = change->from;
 			position_set->set = TRUE;
 			position_set->point = change->point;
-            position_set->monitor = change->monitor;
+                        position_set->monitor = change->monitor;
 			position_set_requests = g_list_prepend (position_set_requests,
 								position_set);
 			break;
@@ -386,11 +385,13 @@ nemo_file_changes_consume_changes (gboolean consume_all)
 								position_set);
 			break;
 
+                case CHANGE_FILE_INITIAL:
+
 		default:
 			g_assert_not_reached ();
 			break;
 		}
 
 		g_free (change);
-	}	
+	}
 }
