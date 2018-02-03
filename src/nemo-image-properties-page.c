@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* 
+/*
  * Copyright (C) 2004 Red Hat, Inc
  * Copyright (c) 2007 Novell, Inc.
  *
@@ -161,16 +161,16 @@ static char *
 exif_string_to_utf8 (const char *exif_str)
 {
 	char *utf8_str;
-	
+
 	if (g_utf8_validate (exif_str, -1, NULL)) {
 		return g_strdup (exif_str);
 	}
-	
+
 	utf8_str = g_locale_to_utf8 (exif_str, -1, NULL, NULL, NULL);
 	if (utf8_str != NULL) {
 		return utf8_str;
 	}
-	
+
 	return eel_make_valid_utf8 (exif_str);
 }
 
@@ -193,13 +193,13 @@ exif_content_callback (ExifContent *content, gpointer data)
 }
 
 static char *
-exifdata_get_tag_name_utf8 (ExifTag tag) 
+exifdata_get_tag_name_utf8 (ExifTag tag)
 {
 	return exif_string_to_utf8 (exif_tag_get_name (tag));
 }
 
 static char *
-exifdata_get_tag_value_utf8 (ExifData *data, ExifTag tag) 
+exifdata_get_tag_value_utf8 (ExifData *data, ExifTag tag)
 {
 	struct ExifAttribute attribute;
 	char *utf8_value;
@@ -207,7 +207,7 @@ exifdata_get_tag_value_utf8 (ExifData *data, ExifTag tag)
 	attribute.tag = tag;
 	attribute.value = NULL;
 	attribute.found = FALSE;
-	
+
 	exif_data_foreach_content (data, exif_content_callback, &attribute);
 
 	if (attribute.found) {
@@ -224,7 +224,7 @@ static gboolean
 append_tag_value_pair (NemoImagePropertiesPage *page,
 		       ExifData *data,
 		       ExifTag   tag,
-		       char     *description) 
+		       char     *description)
 {
         char *utf_attribute;
         char *utf_value;
@@ -276,7 +276,7 @@ append_xmp_value_pair (NemoImagePropertiesPage *page,
 
 				str = g_string_new (NULL);
 
-				while (xmp_iterator_next (iter, NULL, NULL, value, &options) 
+				while (xmp_iterator_next (iter, NULL, NULL, value, &options)
 				       && !XMP_IS_PROP_QUALIFIER(options)) {
 					if (!first) {
 						g_string_append_printf (str, ", ");
@@ -480,7 +480,7 @@ file_read_callback (GObject      *object,
 
 	if (count_read > 0) {
 
-		g_assert (count_read <= sizeof(page->details->buffer));
+		g_assert (count_read <= (int)sizeof(page->details->buffer));
 
 #ifdef HAVE_EXIF
 		exif_still_loading = exif_loader_write (page->details->exifldr,
@@ -536,7 +536,7 @@ file_read_callback (GObject      *object,
 }
 
 static void
-size_prepared_callback (GdkPixbufLoader *loader, 
+size_prepared_callback (GdkPixbufLoader *loader,
 			int              width,
 			int              height,
 			gpointer         callback_data)
@@ -570,7 +570,7 @@ file_open_callback (GObject      *object,
 
 	file = G_FILE (object);
 	uri = g_file_get_uri (file);
-	
+
 	error = NULL;
 	stream = g_file_read_finish (file, res, &error);
 	if (stream) {
@@ -653,7 +653,7 @@ load_location (NemoImagePropertiesPage *page,
 	data = g_new0 (FileOpenData, 1);
 	data->page = page;
 	data->info = info;
-	
+
 	g_file_read_async (file,
 			   0,
 			   page->details->cancellable,
@@ -680,7 +680,7 @@ static void
 nemo_image_properties_page_init (NemoImagePropertiesPage *page)
 {
 	GtkWidget *sw;
-	
+
 	page->details = G_TYPE_INSTANCE_GET_PRIVATE (page,
 						     NEMO_TYPE_IMAGE_PROPERTIES_PAGE,
 						     NemoImagePropertiesPageDetails);
@@ -745,14 +745,14 @@ get_property_pages (NemoPropertyPageProvider *provider,
 	NemoFileInfo *file;
 
 	char *mime_type;
-	
+
 	/* Only show the property page if 1 file is selected */
 	if (!files || files->next != NULL) {
 		return NULL;
 	}
 
 	pages = NULL;
-	
+
         file = NEMO_FILE_INFO (files->data);
 
 	mime_type = nemo_file_info_get_mime_type (file);
@@ -774,7 +774,7 @@ get_property_pages (NemoPropertyPageProvider *provider,
 	return pages;
 }
 
-static void 
+static void
 property_page_provider_iface_init (NemoPropertyPageProviderIface *iface)
 {
 	iface->get_pages = get_property_pages;

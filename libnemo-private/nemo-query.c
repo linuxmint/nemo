@@ -80,7 +80,7 @@ nemo_query_get_text (NemoQuery *query)
 	return g_strdup (query->details->text);
 }
 
-void 
+void
 nemo_query_set_text (NemoQuery *query, const char *text)
 {
 	g_free (query->details->text);
@@ -92,7 +92,7 @@ nemo_query_get_location (NemoQuery *query)
 {
 	return g_strdup (query->details->location_uri);
 }
-	
+
 void
 nemo_query_set_location (NemoQuery *query, const char *uri)
 {
@@ -146,9 +146,9 @@ encode_home_uri (const char *uri)
 	} else {
 		encoded_uri = uri;
 	}
-	
+
 	g_free (home_uri);
-	
+
 	return g_markup_escape_text (encoded_uri, -1);
 }
 
@@ -164,10 +164,10 @@ decode_home_uri (const char *uri)
 		home_uri = nemo_get_home_directory_uri ();
 
 		decoded_uri = g_strconcat (home_uri, "/", uri, NULL);
-		
+
 		g_free (home_uri);
 	}
-		
+
 	return decoded_uri;
 }
 
@@ -236,7 +236,7 @@ text_cb (GMarkupParseContext *ctx,
 	info = (ParserInfo *) user_data;
 
 	t = g_strndup (text, text_len);
-	
+
 	if (info->in_text) {
 		nemo_query_set_text (info->query, t);
 	} else if (info->in_location) {
@@ -246,7 +246,7 @@ text_cb (GMarkupParseContext *ctx,
 	} else if (info->in_mimetypes && info->in_mimetype) {
 		nemo_query_add_mime_type (info->query, t);
 	}
-	
+
 	g_free (t);
 
 }
@@ -278,10 +278,6 @@ nemo_query_parse_xml (char *xml, gsize xml_len)
 	ParserInfo info = { NULL };
 	GMarkupParseContext *ctx;
 
-	if (xml_len == -1) {
-		xml_len = strlen (xml);
-	}
-	
 	info.query = nemo_query_new ();
 	info.in_text = FALSE;
 	info.error = FALSE;
@@ -305,11 +301,11 @@ nemo_query_load (char *file)
 	NemoQuery *query;
 	char *xml;
 	gsize xml_len;
-	
+
 	if (!g_file_test (file, G_FILE_TEST_EXISTS)) {
 		return NULL;
 	}
-	
+
 
 	g_file_get_contents (file, &xml, &xml_len, NULL);
 
@@ -356,7 +352,7 @@ nemo_query_to_xml (NemoQuery *query)
 		}
 		g_string_append (xml, "   </mimetypes>\n");
 	}
-	
+
 	g_string_append (xml, "</query>\n");
 
 	return g_string_free (xml, FALSE);
@@ -374,7 +370,7 @@ nemo_query_save (NemoQuery *query, char *file)
 	xml = nemo_query_to_xml (query);
 	g_file_set_contents (file, xml, strlen (xml), &err);
 	g_free (xml);
-	
+
 	if (err != NULL) {
 		res = FALSE;
 		g_error_free (err);
