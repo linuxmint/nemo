@@ -33,7 +33,7 @@ struct _NemoIconInfo
 	gboolean sole_owner;
 	gint64 last_use_time;
 	GdkPixbuf *pixbuf;
-	
+
 	gboolean got_embedded_rect;
 	GdkRectangle embedded_rect;
 	gint n_attach_points;
@@ -73,9 +73,9 @@ pixbuf_toggle_notify (gpointer      info,
 		      gboolean      is_last_ref)
 {
 	NemoIconInfo  *icon = info;
-	
+
 	if (is_last_ref) {
-		icon->sole_owner = TRUE;	
+		icon->sole_owner = TRUE;
 		g_object_remove_toggle_ref (object,
 					    pixbuf_toggle_notify,
 					    info);
@@ -128,7 +128,7 @@ nemo_icon_info_new_for_pixbuf (GdkPixbuf *pixbuf,
 
 	if (pixbuf) {
 		icon->pixbuf = g_object_ref (pixbuf);
-	} 
+	}
 
     icon->orig_scale = scale;
 
@@ -202,7 +202,7 @@ reap_old_icon (gpointer  key,
 	gboolean *reapable_icons_left = user_info;
 
 	if (icon->sole_owner) {
-		if (time_now - icon->last_use_time > 30 * MICROSEC_PER_SEC) {
+		if (time_now - icon->last_use_time > (gint64)(30 * MICROSEC_PER_SEC)) {
 			/* This went unused 30 secs ago. reap */
 			return TRUE;
 		} else {
@@ -210,7 +210,7 @@ reap_old_icon (gpointer  key,
 			*reapable_icons_left = TRUE;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -222,19 +222,19 @@ reap_cache (gpointer data)
 	reapable_icons_left = TRUE;
 
 	time_now = g_get_monotonic_time ();
-	
+
 	if (loadable_icon_cache) {
 		g_hash_table_foreach_remove (loadable_icon_cache,
 					     reap_old_icon,
 					     &reapable_icons_left);
 	}
-	
+
 	if (themed_icon_cache) {
 		g_hash_table_foreach_remove (themed_icon_cache,
 					     reap_old_icon,
 					     &reapable_icons_left);
 	}
-	
+
 	if (reapable_icons_left) {
 		return TRUE;
 	} else {
@@ -259,7 +259,7 @@ nemo_icon_info_clear_caches (void)
 	if (loadable_icon_cache) {
 		g_hash_table_remove_all (loadable_icon_cache);
 	}
-	
+
 	if (themed_icon_cache) {
 		g_hash_table_remove_all (themed_icon_cache);
 	}
@@ -337,14 +337,14 @@ nemo_icon_info_lookup (GIcon *icon,
                int scale)
 {
 	NemoIconInfo *icon_info;
-	
+
 	if (G_IS_LOADABLE_ICON (icon)) {
         GdkPixbuf *pixbuf;
 
 		LoadableIconKey lookup_key;
 		LoadableIconKey *key;
 		GInputStream *stream;
-		
+
 		if (loadable_icon_cache == NULL) {
 			loadable_icon_cache =
 				g_hash_table_new_full ((GHashFunc)loadable_icon_key_hash,
@@ -352,7 +352,7 @@ nemo_icon_info_lookup (GIcon *icon,
 						       (GDestroyNotify) loadable_icon_key_free,
 						       (GDestroyNotify) g_object_unref);
 		}
-		
+
 		lookup_key.icon = icon;
 		lookup_key.size = size;
 
@@ -397,7 +397,7 @@ nemo_icon_info_lookup (GIcon *icon,
 						       (GDestroyNotify) themed_icon_key_free,
 						       (GDestroyNotify) g_object_unref);
 		}
-		
+
 		names = g_themed_icon_get_names (G_THEMED_ICON (icon));
 
 		icon_theme = gtk_icon_theme_get_default ();
@@ -425,9 +425,9 @@ nemo_icon_info_lookup (GIcon *icon,
 			g_object_unref (gtkicon_info);
 			return g_object_ref (icon_info);
 		}
-		
+
 		icon_info = nemo_icon_info_new_for_icon_info (gtkicon_info, scale);
-		
+
 		key = themed_icon_key_new (filename, size);
 		g_hash_table_insert (themed_icon_cache, key, icon_info);
 
@@ -506,7 +506,7 @@ nemo_icon_info_get_pixbuf_nodefault (NemoIconInfo  *icon)
 						 icon);
 		}
 	}
-	
+
 	return res;
 }
 
@@ -527,8 +527,8 @@ nemo_icon_info_get_pixbuf (NemoIconInfo *icon)
 						nemo_default_file_icon_width * 4, /* stride */
 						NULL, /* don't destroy info */
 						NULL);
-	} 
-	
+	}
+
 	return res;
 }
 
@@ -544,7 +544,7 @@ nemo_icon_info_get_pixbuf_nodefault_at_size (NemoIconInfo  *icon,
 
 	if (pixbuf == NULL)
 	  return NULL;
-	  
+
 	w = gdk_pixbuf_get_width (pixbuf) / icon->orig_scale;
 	h = gdk_pixbuf_get_height (pixbuf) / icon->orig_scale;
 	s = MAX (w, h);
@@ -649,7 +649,7 @@ nemo_icon_info_get_used_name (NemoIconInfo  *icon)
 
 /* Return nominal icon size for given zoom level.
  * @zoom_level: zoom level for which to find matching icon size.
- * 
+ *
  * Return value: icon size between NEMO_ICON_SIZE_SMALLEST and
  * NEMO_ICON_SIZE_LARGEST, inclusive.
  */
@@ -728,7 +728,7 @@ nemo_get_icon_size_for_stock_size (GtkIconSize size)
 
   if (gtk_icon_size_lookup (size, &w, &h)) {
     return MAX (w, h);
-  } 
+  }
   return NEMO_ICON_SIZE_STANDARD;
 }
 
@@ -746,7 +746,7 @@ nemo_icon_get_emblem_size_for_icon_size (guint size)
 		return 16;
 	if (size >= 16)
 		return 12;
-	
+
 	return 0; /* no emblems for smaller sizes */
 }
 
