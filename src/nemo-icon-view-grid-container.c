@@ -85,7 +85,7 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 	g_assert (NEMO_IS_FILE (file));
 	icon_view = get_icon_view (container);
 	g_return_val_if_fail (icon_view != NULL, NULL);
-	
+
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
@@ -97,7 +97,7 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
 
-	emblems_to_ignore = nemo_view_get_emblem_names_to_exclude 
+	emblems_to_ignore = nemo_view_get_emblem_names_to_exclude
 		(NEMO_VIEW (icon_view));
 	emblem_icons = nemo_file_get_emblem_icons (file,
 						       emblems_to_ignore);
@@ -122,8 +122,8 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
         if (s < size)
             size = s;
 
-        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
-                    nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
+        bad_ratio = (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
+                    (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
 
         if (bad_ratio)
             goto skip_emblem; /* Would prefer to not use goto, but
@@ -188,7 +188,7 @@ nemo_icon_view_grid_container_start_monitor_top_left (NemoIconContainer *contain
 {
 	NemoFile *file;
 	NemoFileAttributes attributes;
-		
+
 	file = (NemoFile *) data;
 
 	g_assert (NEMO_IS_FILE (file));
@@ -272,7 +272,7 @@ quarkv_length (GQuark *attributes)
  * beneath an icon. The result is dependent on zoom level and possibly
  * user configuration. Don't free the result.
  * @view: NemoIconView to query.
- * 
+ *
  **/
 static GQuark *
 nemo_icon_view_grid_container_get_icon_text_attribute_names (NemoIconContainer *container,
@@ -356,7 +356,7 @@ nemo_icon_view_grid_container_get_icon_text (NemoIconContainer *container,
 		*additional_text = text_array[0];
 	} else {
 		*additional_text = g_strjoinv ("\n", text_array);
-		
+
 		for (i = 0; i < j; i++) {
 			g_free (text_array[i]);
 		}
@@ -387,7 +387,7 @@ get_sort_category (NemoFile *file)
 	SortCategory category;
 
 	category = SORT_OTHER;
-	
+
 	if (NEMO_IS_DESKTOP_ICON_FILE (file)) {
 		link = nemo_desktop_icon_file_get_link (NEMO_DESKTOP_ICON_FILE (file));
 		if (link != NULL) {
@@ -413,8 +413,8 @@ get_sort_category (NemoFile *file)
 			}
 			g_object_unref (link);
 		}
-	} 
-	
+	}
+
 	return category;
 }
 
@@ -770,7 +770,7 @@ nemo_icon_view_grid_container_icon_set_position (NemoIconContainer *container,
                                             double             x,
                                             double             y)
 {
-    double pixels_per_unit; 
+    double pixels_per_unit;
     int container_left, container_top, container_right, container_bottom;
     int x1, x2, y1, y2;
     int container_x, container_y, container_width, container_height;
@@ -825,7 +825,7 @@ nemo_icon_view_grid_container_icon_set_position (NemoIconContainer *container,
     if (icon->y == ICON_UNPOSITIONED_VALUE) {
         icon->y = 0;
     }
-    
+
     eel_canvas_item_move (EEL_CANVAS_ITEM (icon->item),
                 x - icon->x,
                 y - icon->y);
@@ -853,7 +853,7 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
     details = container->details;
 
     emit_signal = FALSE;
-    
+
     if (icon == nemo_icon_container_get_icon_being_renamed (container)) {
         nemo_icon_container_end_renaming_mode (container, TRUE);
     }
@@ -877,7 +877,7 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
         position.monitor = current_monitor;
         g_signal_emit_by_name (container, "icon_position_changed", icon->data, &position);
     }
-    
+
     if (raise) {
         nemo_icon_container_icon_raise (container, icon);
     }
@@ -951,7 +951,7 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
         nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
     }
 
-    /* If name of icon being renamed was changed from elsewhere, end renaming mode. 
+    /* If name of icon being renamed was changed from elsewhere, end renaming mode.
      * Alternatively, we could replace the characters in the editable text widget
      * with the new name, but that could cause timing problems if the user just
      * happened to be typing at that moment.
@@ -981,7 +981,7 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
         diff = (new_width - old_width) / 2;
         nemo_icon_container_move_icon (container, icon, (int)icon->x - diff, (int)icon->y, 1.0, FALSE, TRUE, TRUE);
         nemo_icon_canvas_item_invalidate_label_size (icon->item);
-        gtk_widget_queue_draw (container);
+        gtk_widget_queue_draw (GTK_WIDGET(container));
     }
 
     /* Let the pixbufs go. */
@@ -1495,7 +1495,7 @@ update_layout_constants (NemoIconContainer *container)
     NemoViewLayoutConstants *constants;
     gdouble scale, h_adjust, v_adjust;
 
-    update_auto_strv_as_quarks (nemo_icon_view_preferences, 
+    update_auto_strv_as_quarks (nemo_icon_view_preferences,
                                 NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
                                 &(NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes));
 
@@ -1612,7 +1612,7 @@ nemo_icon_view_grid_container_get_max_layout_lines (NemoIconContainer  *containe
 static void
 captions_changed_callback (NemoIconContainer *container)
 {
-    update_auto_strv_as_quarks (nemo_icon_view_preferences, 
+    update_auto_strv_as_quarks (nemo_icon_view_preferences,
                                 NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
                                 &(NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes));
 
@@ -1679,7 +1679,7 @@ nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_contain
                               G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
                               NEMO_ICON_CONTAINER (icon_container));
 
-    g_signal_connect_swapped (nemo_icon_view_preferences, 
+    g_signal_connect_swapped (nemo_icon_view_preferences,
                               "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
                               G_CALLBACK (captions_changed_callback),
                               NEMO_ICON_CONTAINER (icon_container));
