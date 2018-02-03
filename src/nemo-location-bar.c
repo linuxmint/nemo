@@ -417,7 +417,7 @@ nemo_location_bar_init (NemoLocationBar *bar)
 
     event_box = gtk_event_box_new ();
     gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE);
-    gtk_container_set_border_width (GTK_CONTAINER (event_box), 4);
+    gtk_container_set_border_width (GTK_CONTAINER (event_box), 2);
 
 	entry = nemo_location_entry_new ();
 
