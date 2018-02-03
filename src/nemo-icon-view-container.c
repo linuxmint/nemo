@@ -38,6 +38,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
+#include <libnemo-private/nemo-desktop-utils.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_ICON_CONTAINER
 #include "nemo-debug.h"
@@ -63,7 +64,7 @@ static void find_empty_location (NemoIconContainer *container,
                                  NemoIcon *icon,
                                  int start_x,
                                  int start_y,
-                                 int *x, 
+                                 int *x,
                                  int *y);
 
 G_DEFINE_TYPE (NemoIconViewContainer, nemo_icon_view_container, NEMO_TYPE_ICON_CONTAINER);
@@ -104,7 +105,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	g_assert (NEMO_IS_FILE (file));
 	icon_view = get_icon_view (container);
 	g_return_val_if_fail (icon_view != NULL, NULL);
-	
+
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
@@ -114,7 +115,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
 
-	emblems_to_ignore = nemo_view_get_emblem_names_to_exclude 
+	emblems_to_ignore = nemo_view_get_emblem_names_to_exclude
 		(NEMO_VIEW (icon_view));
 	emblem_icons = nemo_file_get_emblem_icons (file,
 						       emblems_to_ignore);
@@ -139,8 +140,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
         if (s < size)
             size = s;
 
-        bad_ratio = nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
-                    nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
+        bad_ratio = (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
+                    (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
 
         if (bad_ratio)
             goto skip_emblem; /* Would prefer to not use goto, but
@@ -205,7 +206,7 @@ nemo_icon_view_container_start_monitor_top_left (NemoIconContainer *container,
 {
 	NemoFile *file;
 	NemoFileAttributes attributes;
-		
+
 	file = (NemoFile *) data;
 
 	g_assert (NEMO_IS_FILE (file));
@@ -281,10 +282,10 @@ nemo_icon_view_container_get_icon_text_attributes_from_preferences (void)
 	static GQuark *attributes = NULL;
 
 	if (attributes == NULL) {
-		update_auto_strv_as_quarks (nemo_icon_view_preferences, 
+		update_auto_strv_as_quarks (nemo_icon_view_preferences,
 					    NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
 					    &attributes);
-		g_signal_connect (nemo_icon_view_preferences, 
+		g_signal_connect (nemo_icon_view_preferences,
 				  "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
 				  G_CALLBACK (update_auto_strv_as_quarks),
 				  &attributes);
@@ -337,7 +338,7 @@ quarkv_length (GQuark *attributes)
  * beneath an icon. The result is dependent on zoom level and possibly
  * user configuration. Don't free the result.
  * @view: NemoIconView to query.
- * 
+ *
  **/
 static GQuark *
 nemo_icon_view_container_get_icon_text_attribute_names (NemoIconContainer *container,
@@ -441,7 +442,7 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 		*additional_text = text_array[0];
 	} else {
 		*additional_text = g_strjoinv ("\n", text_array);
-		
+
 		for (i = 0; i < j; i++) {
 			g_free (text_array[i]);
 		}
@@ -472,7 +473,7 @@ get_sort_category (NemoFile *file)
 	SortCategory category;
 
 	category = SORT_OTHER;
-	
+
 	if (NEMO_IS_DESKTOP_ICON_FILE (file)) {
 		link = nemo_desktop_icon_file_get_link (NEMO_DESKTOP_ICON_FILE (file));
 		if (link != NULL) {
@@ -498,8 +499,8 @@ get_sort_category (NemoFile *file)
 			}
 			g_object_unref (link);
 		}
-	} 
-	
+	}
+
 	return category;
 }
 
@@ -518,13 +519,13 @@ fm_desktop_icon_container_icons_compare (NemoIconContainer *container,
 
 	directory_view = NEMO_VIEW (NEMO_ICON_VIEW_CONTAINER (container)->view);
 	g_return_val_if_fail (directory_view != NULL, 0);
-	
+
 	category_a = get_sort_category (file_a);
 	category_b = get_sort_category (file_b);
 
 	if (category_a == category_b) {
-		return nemo_file_compare_for_sort 
-			(file_a, file_b, NEMO_FILE_SORT_BY_DISPLAY_NAME, 
+		return nemo_file_compare_for_sort
+			(file_a, file_b, NEMO_FILE_SORT_BY_DISPLAY_NAME,
 			 nemo_view_should_sort_directories_first (directory_view),
 			 FALSE);
 	}
@@ -685,7 +686,7 @@ lay_down_one_line (NemoIconContainer *container,
         icon = p->data;
 
         position = &g_array_index (positions, NemoCanvasRects, i++);
-        
+
         if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
             y_offset = (max_height - position->height) / 2;
         } else {
@@ -773,7 +774,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
 
     positions = g_array_new (FALSE, FALSE, sizeof (NemoCanvasRects));
     gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
-    
+
     /* Lay out icons a line at a time. */
     canvas_width = nemo_icon_container_get_canvas_width (container, allocation);
     max_icon_width = max_text_width = 0.0;
@@ -805,7 +806,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     line_start = icons;
     y = start_y + GET_VIEW_CONSTANT (container, container_pad_top);
     i = 0;
-    
+
     max_height_above = 0;
     max_height_below = 0;
     for (p = icons; p != NULL; p = p->next) {
@@ -839,18 +840,18 @@ lay_down_icons_horizontal (NemoIconContainer *container,
             }
 
             lay_down_one_line (container, line_start, p, y, max_height_above, positions, FALSE);
-            
+
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
                 y += max_height_above + max_height_below + GET_VIEW_CONSTANT (container, icon_pad_bottom);
             } else {
                 /* Advance to next line. */
                 y += max_height_below + GET_VIEW_CONSTANT (container, icon_pad_bottom);
             }
-            
+
             line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? GET_VIEW_CONSTANT (container, icon_pad_left) : 0;
             line_start = p;
             i = 0;
-            
+
             max_height_above = height_above;
             max_height_below = height_below;
         } else {
@@ -861,7 +862,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                 max_height_below = height_below;
             }
         }
-        
+
         g_array_set_size (positions, i + 1);
         position = &g_array_index (positions, NemoCanvasRects, i++);
         position->width = icon_width;
@@ -891,7 +892,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                 /* Advance to the baseline. */
                 y += GET_VIEW_CONSTANT (container, icon_pad_top) + max_height_above;
             }
-        
+
         lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
     }
 
@@ -1052,7 +1053,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
     /* Determine which icons have and have not been placed */
     placed_icons = NULL;
     unplaced_icons = NULL;
-    
+
     total = g_list_length (container->details->icons);
     new_length = g_list_length (icons);
     placed = total - new_length;
@@ -1080,13 +1081,13 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 nemo_placement_grid_mark_icon
                     (grid, (NemoIcon*)p->data);
             }
-            
+
             /* Place unplaced icons in the best locations */
             for (p = unplaced_icons; p != NULL; p = p->next) {
                 icon = p->data;
-                
+
                 icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
-                
+
                 /* Start the icon in the first column */
                 x = GET_VIEW_CONSTANT (container, desktop_pad_horizontal) + (GET_VIEW_CONSTANT (container, snap_size_x) / 2) - ((icon_rect.x1 - icon_rect.x0) / 2);
                 y = GET_VIEW_CONSTANT (container, desktop_pad_vertical) + GET_VIEW_CONSTANT (container, snap_size_y) - (icon_rect.y1 - icon_rect.y0);
@@ -1104,11 +1105,11 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
 
             nemo_placement_grid_free (grid);
         }
-        
+
         g_list_free (placed_icons);
         g_list_free (unplaced_icons);
     } else {
-        /* There are no placed icons.  Just lay them down using our rules */        
+        /* There are no placed icons.  Just lay them down using our rules */
         x = GET_VIEW_CONSTANT (container, desktop_pad_horizontal);
 
         while (icons != NULL) {
@@ -1119,11 +1120,11 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
 
             should_snap = !(container->details->tighter_layout && !container->details->keep_aligned);
 
-            
+
             y = GET_VIEW_CONSTANT (container, desktop_pad_vertical);
 
             max_width = 0;
-            
+
             /* Calculate max width for column */
             for (p = icons; p != NULL; p = p->next) {
                 icon = p->data;
@@ -1144,7 +1145,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                     baseline = SNAP_CEIL_VERTICAL (baseline);
                     y = baseline - (icon_rect.y1 - icon_rect.y0);
                 }
-                    
+
                 /* Check and see if we need to move to a new column */
                 if (y != GET_VIEW_CONSTANT (container, desktop_pad_vertical) && y + icon_height_for_bound_check > height) {
                     break;
@@ -1153,7 +1154,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 if (max_width < icon_width) {
                     max_width = icon_width;
                 }
-                
+
                 y += icon_height + GET_VIEW_CONSTANT (container, desktop_pad_vertical);
             }
 
@@ -1166,7 +1167,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 center_x = SNAP_CEIL_HORIZONTAL (center_x);
                 column_width = (center_x - x) + (max_width / 2);
             }
-            
+
             /* Lay out column */
             for (p = icons; p != NULL; p = p->next) {
                 icon = p->data;
@@ -1177,7 +1178,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 nemo_icon_container_icon_get_bounding_box (container, icon, NULL, &y1, NULL, &y2,
                                BOUNDS_USAGE_FOR_ENTIRE_ITEM);
                 icon_height_for_bound_check = y2 - y1;
-                
+
                 icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
 
                 if (should_snap) {
@@ -1185,7 +1186,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                     baseline = SNAP_CEIL_VERTICAL (baseline);
                     y = baseline - (icon_rect.y1 - icon_rect.y0);
                 }
-                
+
                 /* Check and see if we need to move to a new column */
                 if (y != GET_VIEW_CONSTANT (container, desktop_pad_vertical) && y > height - icon_height_for_bound_check &&
                     /* Make sure we lay out at least one icon per column, to make progress */
@@ -1197,7 +1198,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
                 nemo_icon_container_icon_set_position (container, icon,
                            center_x - (icon_rect.x1 - icon_rect.x0) / 2,
                            y);
-                
+
                 icon->saved_ltr_x = icon->x;
                 y += icon_height + GET_VIEW_CONSTANT (container, desktop_pad_vertical);
             }
@@ -1208,7 +1209,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
     /* These modes are special. We freeze all of our positions
      * after we do the layout.
      */
-    /* FIXME bugzilla.gnome.org 42478: 
+    /* FIXME bugzilla.gnome.org 42478:
      * This should not be tied to the direction of layout.
      * It should be a separate switch.
      */
@@ -1224,7 +1225,7 @@ nemo_icon_view_container_lay_down_icons (NemoIconContainer *container, GList *ic
     case NEMO_ICON_LAYOUT_R_L_T_B:
         lay_down_icons_horizontal (container, icons, start_y);
         break;
-        
+
     case NEMO_ICON_LAYOUT_T_B_L_R:
     case NEMO_ICON_LAYOUT_T_B_R_L:
         if (nemo_icon_container_get_is_desktop (container)) {
@@ -1233,7 +1234,7 @@ nemo_icon_view_container_lay_down_icons (NemoIconContainer *container, GList *ic
             lay_down_icons_vertical (container, icons, start_y);
         }
         break;
-        
+
     default:
         g_assert_not_reached ();
     }
@@ -1291,7 +1292,7 @@ snap_position (NemoIconContainer *container,
     int total_height;
     EelDRect icon_position;
     GtkAllocation allocation;
-    
+
     icon_position = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
     icon_width = icon_position.x1 - icon_position.x0;
     icon_height = icon_position.y1 - icon_position.y0;
@@ -1362,7 +1363,7 @@ nemo_icon_view_container_icon_set_position (NemoIconContainer *container,
                                             double             x,
                                             double             y)
 {
-    double pixels_per_unit; 
+    double pixels_per_unit;
     int container_left, container_top, container_right, container_bottom;
     int x1, x2, y1, y2;
     int container_x, container_y, container_width, container_height;
@@ -1420,7 +1421,7 @@ nemo_icon_view_container_icon_set_position (NemoIconContainer *container,
     if (icon->y == ICON_UNPOSITIONED_VALUE) {
         icon->y = 0;
     }
-    
+
     eel_canvas_item_move (EEL_CANVAS_ITEM (icon->item),
                 x - icon->x,
                 y - icon->y);
@@ -1441,11 +1442,11 @@ nemo_icon_view_container_move_icon (NemoIconContainer *container,
     NemoIconContainerDetails *details;
     gboolean emit_signal;
     NemoIconPosition position;
-    
+
     details = container->details;
-    
+
     emit_signal = FALSE;
-    
+
     if (icon == nemo_icon_container_get_icon_being_renamed (container)) {
         nemo_icon_container_end_renaming_mode (container, TRUE);
     }
@@ -1454,7 +1455,7 @@ nemo_icon_view_container_move_icon (NemoIconContainer *container,
         icon->scale = scale;
         nemo_icon_container_update_icon (container, icon);
         if (update_position) {
-            nemo_icon_container_redo_layout (container); 
+            nemo_icon_container_redo_layout (container);
             emit_signal = TRUE;
         }
     }
@@ -1471,7 +1472,7 @@ nemo_icon_view_container_move_icon (NemoIconContainer *container,
 
         icon->saved_ltr_x = nemo_icon_container_is_layout_rtl (container) ? nemo_icon_container_get_mirror_x_position (container, icon, icon->x) : icon->x;
     }
-    
+
     if (emit_signal) {
         position.x = icon->saved_ltr_x;
         position.y = icon->y;
@@ -1479,12 +1480,12 @@ nemo_icon_view_container_move_icon (NemoIconContainer *container,
         position.monitor =  nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
         g_signal_emit_by_name (container, "icon_position_changed", icon->data, &position);
     }
-    
+
     if (raise) {
         nemo_icon_container_icon_raise (container, icon);
     }
 
-    /* FIXME bugzilla.gnome.org 42474: 
+    /* FIXME bugzilla.gnome.org 42474:
      * Handling of the scroll region is inconsistent here. In
      * the scale-changing case, redo_layout is called, which updates the
      * scroll region appropriately. In other cases, it's up to the
@@ -1522,7 +1523,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
     gboolean large_embedded_text;
     gboolean embedded_text_needs_loading;
     gboolean has_open_window;
-    
+
     if (icon == NULL) {
         return;
     }
@@ -1550,7 +1551,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
     large_embedded_text = icon_size > ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT;
     icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
                                  &embedded_text,
-                                 icon == details->drop_target,                               
+                                 icon == details->drop_target,
                                  large_embedded_text, &embedded_text_needs_loading,
                                  &has_open_window);
 
@@ -1568,12 +1569,12 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                                        &embedded_text_rect);
 
     g_object_unref (icon_info);
- 
+
     if (has_embedded_text_rect && embedded_text_needs_loading) {
         icon->is_monitored = TRUE;
         nemo_icon_container_start_monitor_top_left (container, icon->data, icon, large_embedded_text);
     }
-    
+
     nemo_icon_container_get_icon_text (container,
                            icon->data,
                            &editable_text,
@@ -1597,7 +1598,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
         nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
     }
 
-    /* If name of icon being renamed was changed from elsewhere, end renaming mode. 
+    /* If name of icon being renamed was changed from elsewhere, end renaming mode.
      * Alternatively, we could replace the characters in the editable text widget
      * with the new name, but that could cause timing problems if the user just
      * happened to be typing at that moment.
@@ -1632,7 +1633,7 @@ find_empty_location (NemoIconContainer *container,
              NemoIcon *icon,
              int start_x,
              int start_y,
-             int *x, 
+             int *x,
              int *y)
 {
     double icon_width, icon_height;
@@ -1663,7 +1664,7 @@ find_empty_location (NemoIconContainer *container,
     height_for_bound_check = icon_position.y1 - icon_position.y0;
 
     pixbuf_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
-    
+
     /* Start the icon on a grid location */
     snap_position (container, icon, &start_x, &start_y);
 
@@ -1677,7 +1678,7 @@ find_empty_location (NemoIconContainer *container,
         gboolean need_new_column;
 
         collision = FALSE;
-        
+
         nemo_placement_grid_canvas_position_to_grid_position (grid,
                           icon_position,
                           &grid_position);
@@ -1688,7 +1689,7 @@ find_empty_location (NemoIconContainer *container,
             !nemo_placement_grid_position_is_free (grid, grid_position)) {
             icon_position.y0 += GET_VIEW_CONSTANT (container, snap_size_y);
             icon_position.y1 = icon_position.y0 + icon_height;
-            
+
             if (need_new_column) {
                 /* Move to the next column */
                 icon_position.y0 = GET_VIEW_CONSTANT (container, desktop_pad_vertical) + GET_VIEW_CONSTANT (container, snap_size_y) - (pixbuf_rect.y1 - pixbuf_rect.y0);
@@ -1696,11 +1697,11 @@ find_empty_location (NemoIconContainer *container,
                     icon_position.y0 += GET_VIEW_CONSTANT (container, snap_size_y);
                 }
                 icon_position.y1 = icon_position.y0 + icon_height;
-                
+
                 icon_position.x0 += GET_VIEW_CONSTANT (container, snap_size_x);
                 icon_position.x1 = icon_position.x0 + icon_width;
             }
-                
+
             collision = TRUE;
         }
     } while (collision && (icon_position.x1 < canvas_width));
@@ -1717,8 +1718,8 @@ nemo_icon_view_container_align_icons (NemoIconContainer *container)
     NemoPlacementGrid *grid;
 
     unplaced_icons = g_list_copy (container->details->icons);
-    
-    unplaced_icons = g_list_sort (unplaced_icons, 
+
+    unplaced_icons = g_list_sort (unplaced_icons,
                       compare_icons_by_position);
 
     if (nemo_icon_container_is_layout_rtl (container)) {
@@ -1739,7 +1740,7 @@ nemo_icon_view_container_align_icons (NemoIconContainer *container)
         icon = l->data;
         x = icon->saved_ltr_x;
         y = icon->y;
-        find_empty_location (container, grid, 
+        find_empty_location (container, grid,
                      icon, x, y, &x, &y);
 
         nemo_icon_container_icon_set_position (container, icon, x, y);
@@ -1848,7 +1849,7 @@ nemo_icon_view_container_finish_adding_new_icons (NemoIconContainer *container)
     new_icons = container->details->new_icons;
     container->details->new_icons = NULL;
 
-    current_monitor = nemo_desktop_utils_get_monitor_for_widget (container);
+    current_monitor = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET(container));
 
     /* Position most icons (not unpositioned manual-layout icons). */
     new_icons = g_list_reverse (new_icons);
@@ -1898,7 +1899,7 @@ nemo_icon_view_container_finish_adding_new_icons (NemoIconContainer *container)
             x = icon->x;
             y = icon->y;
 
-            find_empty_location (container, grid, 
+            find_empty_location (container, grid,
                          icon, x, y, &x, &y);
 
             nemo_icon_container_icon_set_position (container, icon, x, y);
@@ -1926,7 +1927,7 @@ nemo_icon_view_container_finish_adding_new_icons (NemoIconContainer *container)
     /* Position the unpositioned manual layout icons. */
     if (no_position_icons != NULL) {
         g_assert (!container->details->auto_layout);
-        
+
         nemo_icon_container_sort_icons (container, &no_position_icons);
         if (nemo_icon_container_get_is_desktop (container)) {
             NEMO_ICON_CONTAINER_GET_CLASS (container)->lay_down_icons (container, no_position_icons, GET_VIEW_CONSTANT (container, container_pad_top));
