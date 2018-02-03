@@ -42,16 +42,16 @@ eel_str_double_underscores (const char *string)
 	const char *p;
 	char *q;
 	char *escaped;
-	
+
 	if (string == NULL) {
 		return NULL;
 	}
-	
+
 	underscores = 0;
 	for (p = string; *p != '\0'; p++) {
 		underscores += (*p == '_');
 	}
-	
+
 	if (underscores == 0) {
 		return g_strdup (string);
 	}
@@ -65,7 +65,7 @@ eel_str_double_underscores (const char *string)
 		*q = *p;
 	}
 	*q = '\0';
-	
+
 	return escaped;
 }
 
@@ -154,8 +154,8 @@ eel_str_capitalize (const char *string)
 
 /* Note: eel_string_ellipsize_* that use a length in pixels
  * rather than characters can be found in eel_gdk_extensions.h
- * 
- * FIXME bugzilla.eazel.com 5089: 
+ *
+ * FIXME bugzilla.eazel.com 5089:
  * we should coordinate the names of eel_string_ellipsize_*
  * and eel_str_*_truncate so that they match better and reflect
  * their different behavior.
@@ -201,7 +201,7 @@ eel_str_middle_truncate (const char *string,
 	g_utf8_strncpy (truncated, string, num_left_chars);
 	strcat (truncated, delimter);
 	strcat (truncated, g_utf8_offset_to_pointer  (string, length - num_right_chars));
-	
+
 	return truncated;
 }
 
@@ -286,7 +286,7 @@ typedef struct {
 	int arg_pos;
 	int width_pos;
 	int width_format_index;
-	int precision_pos;  
+	int precision_pos;
 	int precision_format_index;
 } ConversionInfo;
 
@@ -308,16 +308,16 @@ static const char *
 get_position (const char *format, int *i)
 {
 	const char *p;
-	
+
 	p = format;
-	
+
 	if (g_ascii_isdigit (*p)) {
 		p++;
-		
+
 		while (g_ascii_isdigit (*p)) {
 			p++;
 		}
-		
+
 		if (*p == '$') {
 			if (i != NULL) {
 				*i = atoi (format) - 1;
@@ -325,7 +325,7 @@ get_position (const char *format, int *i)
 			return p + 1;
 		}
 	}
-	
+
 	return format;
 }
 
@@ -349,9 +349,9 @@ get_arg_type_from_format (EelPrintfHandler *custom_handlers,
 {
 	int i;
 	char c;
-	
+
 	c = format[len-1];
-	
+
 	if (custom_handlers != NULL) {
 		for (i = 0; custom_handlers[i].character != 0; i++) {
 			if (custom_handlers[i].character == c) {
@@ -359,7 +359,7 @@ get_arg_type_from_format (EelPrintfHandler *custom_handlers,
 			}
 		}
 	}
-	
+
 	switch (c) {
 	case 'd':
 	case 'i':
@@ -398,6 +398,8 @@ get_arg_type_from_format (EelPrintfHandler *custom_handlers,
 	case 'p':
 	case 'n':
 		return ARG_TYPE_POINTER;
+        default:
+            break;
 	}
 	return ARG_TYPE_INVALID;
 }
@@ -411,12 +413,12 @@ skip_argv (va_list *va,
 		custom_handlers[-type - 1].skip (va);
 		return;
 	}
-	
+
 	switch (type) {
 	default:
 	case ARG_TYPE_INVALID:
 		return;
-		
+
 	case ARG_TYPE_INT:
 		(void) va_arg (*va, int);
 		break;
@@ -467,7 +469,7 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 	GString *f, *str;
 	const char *flags, *width, *prec, *mod, *pos;
 	char *s;
-	
+
 	num_args = 0;
 	for (p = format; *p != 0; p++) {
 		if (*p == '%') {
@@ -477,10 +479,10 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 			}
 		}
 	}
-	
+
 	args = g_new0 (ArgType, num_args * 3 + 1);
 	conversions = g_new0 (ConversionInfo, num_args);
-	
+
 	/* i indexes conversions, j indexes args */
 	i = 0; j = 0;
 	p = format;
@@ -494,25 +496,25 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 			p++;
 			continue;
 		}
-		
+
 		/* We got a real conversion: */
 		f = g_string_new ("%");
 		conversions[i].start = p - 1;
-		
+
 		/* First comes the positional arg */
-		
+
 		pos = p;
 		p = get_position (p, NULL);
-		
+
 		/* Then flags */
 		flags = p;
 		while (is_flag (*p)) {
 			p++;
 		}
 		g_string_append_len (f, flags, p - flags);
-		
+
 		/* Field width */
-		
+
 		if (*p == '*') {
 			p++;
 			p = get_position (p, &j);
@@ -525,17 +527,17 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 			width = p;
 			while (g_ascii_isdigit (*p)) {
 				p++;
-			}      
+			}
 			g_string_append_len (f, width, p - width);
 		}
-		
+
 		/* Precision */
 		conversions[i].precision_pos = -1;
 		conversions[i].precision_format_index = -1;
 		if (*p == '.') {
 			g_string_append_c (f, '.');
 			p++;
-			
+
 			if (*p == '*') {
 				p++;
 				p = get_position (p, &j);
@@ -546,73 +548,73 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 				prec = p;
 				while (g_ascii_isdigit (*p) || *p == '-') {
 					p++;
-				}      
+				}
 				g_string_append_len (f, prec, p - prec);
 			}
 		}
-		
+
 		/* length modifier */
-		
+
 		mod = p;
-		
+
 		while (is_length_modifier (*p)) {
 			p++;
 		}
-		
+
 		/* conversion specifier */
 		if (*p != 0)
 			p++;
-		
+
 		g_string_append_len (f, mod, p - mod);
-		
+
 		get_position (pos, &j);
 		args[j] = get_arg_type_from_format (custom, mod, p - mod);
 		conversions[i].arg_pos = j++;
 		conversions[i].format = f;
 		conversions[i].end = p;
-		
+
 		i++;
 	}
-	
+
 	g_assert (i == num_args);
-	
+
 	str = g_string_new ("");
-	
+
 	p = format;
 	for (i = 0; i < num_args; i++) {
 		g_string_append_len (str, p, conversions[i].start - p);
 		p = conversions[i].end;
-		
+
 		if (conversions[i].precision_pos != -1) {
 			char *val;
-			
+
 			G_VA_COPY(va, va_orig);
 			skip_to_arg (&va, args, custom, conversions[i].precision_pos);
 			val = g_strdup_vprintf ("%d", va);
 			va_end (va);
-			
+
 			g_string_insert (conversions[i].format,
 					 conversions[i].precision_format_index,
 					 val);
-			
+
 			g_free (val);
 		}
-		
+
 		if (conversions[i].width_pos != -1) {
 			char *val;
-			
+
 			G_VA_COPY(va, va_orig);
 			skip_to_arg (&va, args, custom, conversions[i].width_pos);
 			val = g_strdup_vprintf ("%d", va);
 			va_end (va);
-			
+
 			g_string_insert (conversions[i].format,
 					 conversions[i].width_format_index,
 					 val);
-			
+
 			g_free (val);
 		}
-		
+
 		G_VA_COPY(va, va_orig);
 		skip_to_arg (&va, args, custom, conversions[i].arg_pos);
 		type = args[conversions[i].arg_pos];
@@ -624,14 +626,14 @@ eel_strdup_vprintf_with_custom (EelPrintfHandler *custom,
 			g_string_append_vprintf (str, conversions[i].format->str, va);
 		}
 		va_end (va);
-		
+
 		g_string_free (conversions[i].format, TRUE);
 	}
 	g_string_append (str, p);
-	
+
 	g_free (args);
 	g_free (conversions);
-	
+
 	return g_string_free (str, FALSE);
 }
 
@@ -642,11 +644,11 @@ eel_strdup_printf_with_custom (EelPrintfHandler *handlers,
 {
 	va_list va;
 	char *res;
-	
+
 	va_start (va, format);
 	res = eel_strdup_vprintf_with_custom (handlers, format, va);
 	va_end (va);
-	
+
 	return res;
 }
 
@@ -677,7 +679,7 @@ eel_ref_str_new (const char *string)
 	if (string == NULL) {
 		return NULL;
 	}
-	
+
 	return eel_ref_str_new_internal (string, 1);
 }
 
@@ -689,7 +691,7 @@ eel_ref_str_get_unique (const char *string)
 	if (string == NULL) {
 		return NULL;
 	}
-	
+
 	G_LOCK (unique_ref_strs);
 	if (unique_ref_strs == NULL) {
 		unique_ref_strs =
@@ -703,7 +705,7 @@ eel_ref_str_get_unique (const char *string)
 		res = eel_ref_str_new_internal (string, 0x80000001);
 		g_hash_table_insert (unique_ref_strs, res, res);
 	}
-	
+
 	G_UNLOCK (unique_ref_strs);
 
 	return res;
@@ -728,7 +730,7 @@ eel_ref_str_unref (eel_ref_str str)
 
 	if (str == NULL)
 		return;
-	
+
 	count = (volatile gint *)((char *)str - sizeof (gint));
 
  retry_atomic_decrement:
@@ -741,7 +743,7 @@ eel_ref_str_unref (eel_ref_str str)
 		if (g_atomic_int_add (count, -1) == 0x80000001) {
 			g_hash_table_remove (unique_ref_strs, (char *)str);
 			g_free ((char *)count);
-		} 
+		}
 		G_UNLOCK (unique_ref_strs);
 	} else if (!g_atomic_int_compare_and_exchange (count,
 						       old_ref, old_ref - 1)) {
@@ -757,17 +759,17 @@ verify_printf (const char *format, ...)
 {
 	va_list va;
 	char *orig, *new;
-	
+
 	va_start (va, format);
 	orig = g_strdup_vprintf (format, va);
 	va_end (va);
-	
+
 	va_start (va, format);
 	new = eel_strdup_vprintf_with_custom (NULL, format, va);
 	va_end (va);
-	
+
 	EEL_CHECK_STRING_RESULT (new, orig);
-	
+
 	g_free (orig);
 }
 
@@ -775,9 +777,9 @@ static char *
 custom1_to_string (char *format, va_list va)
 {
 	int i;
-	
+
 	i = va_arg (va, int);
-	
+
 	return g_strdup_printf ("c1-%d-", i);
 }
 
@@ -791,9 +793,9 @@ static char *
 custom2_to_string (char *format, va_list va)
 {
 	char *s;
-	
+
 	s = va_arg (va, char *);
-	
+
 	return g_strdup_printf ("c2-%s-", s);
 }
 
@@ -814,11 +816,11 @@ verify_custom (const char *orig, const char *format, ...)
 {
 	char *new;
 	va_list va;
-	
+
 	va_start (va, format);
 	new = eel_strdup_vprintf_with_custom (handlers, format, va);
 	va_end (va);
-	
+
 	EEL_CHECK_STRING_RESULT (new, orig);
 }
 

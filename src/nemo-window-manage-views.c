@@ -63,7 +63,7 @@
 #define DEBUG_FLAG NEMO_DEBUG_WINDOW
 #include <libnemo-private/nemo-debug.h>
 
-/* FIXME bugzilla.gnome.org 41243: 
+/* FIXME bugzilla.gnome.org 41243:
  * We should use inheritance instead of these special cases
  * for the desktop window.
  */
@@ -119,7 +119,7 @@ set_displayed_location (NemoWindowSlot *slot, GFile *location)
                 recreate = !g_file_equal (bookmark_location, location);
                 g_object_unref (bookmark_location);
         }
-        
+
     if (recreate) {
         /* We've changed locations, must recreate bookmark for current location. */
         g_clear_object (&slot->last_location_bookmark);
@@ -172,7 +172,7 @@ handle_go_back (NemoWindowSlot *slot,
 									     slot->location_change_distance)),
 					 location);
 	g_assert (slot->location != NULL);
-	
+
 	/* Move current location to Forward list */
 
 	check_last_bookmark_location_matches_slot (slot);
@@ -181,7 +181,7 @@ handle_go_back (NemoWindowSlot *slot,
 	slot->forward_list = g_list_prepend (slot->forward_list,
 					     slot->last_location_bookmark);
 	g_object_ref (slot->forward_list->data);
-				
+
 	/* Move extra links from Back to Forward list */
 	for (i = 0; i < slot->location_change_distance; ++i) {
 		bookmark = NEMO_BOOKMARK (slot->back_list->data);
@@ -190,7 +190,7 @@ handle_go_back (NemoWindowSlot *slot,
 		slot->forward_list =
 			g_list_prepend (slot->forward_list, bookmark);
 	}
-	
+
 	/* One bookmark falls out of back/forward lists and becomes viewed location */
 	link = slot->back_list;
 	slot->back_list = g_list_remove_link (slot->back_list, link);
@@ -212,15 +212,15 @@ handle_go_forward (NemoWindowSlot *slot,
 									     slot->location_change_distance)),
 					 location);
 	g_assert (slot->location != NULL);
-				
+
 	/* Move current location to Back list */
 	check_last_bookmark_location_matches_slot (slot);
-	
+
 	/* Use the first bookmark in the history list rather than creating a new one. */
 	slot->back_list = g_list_prepend (slot->back_list,
 						     slot->last_location_bookmark);
 	g_object_ref (slot->back_list->data);
-	
+
 	/* Move extra links from Forward to Back list */
 	for (i = 0; i < slot->location_change_distance; ++i) {
 		bookmark = NEMO_BOOKMARK (slot->forward_list->data);
@@ -229,7 +229,7 @@ handle_go_forward (NemoWindowSlot *slot,
 		slot->back_list =
 			g_list_prepend (slot->forward_list, bookmark);
 	}
-	
+
 	/* One bookmark falls out of back/forward lists and becomes viewed location */
 	link = slot->forward_list;
 	slot->forward_list = g_list_remove_link (slot->forward_list, link);
@@ -243,9 +243,9 @@ handle_go_elsewhere (NemoWindowSlot *slot,
 {
 	/* Clobber the entire forward list, and move displayed location to back list */
 	nemo_window_slot_clear_forward_list (slot);
-		
+
 	if (slot->location != NULL) {
-		/* If we're returning to the same uri somehow, don't put this uri on back list. 
+		/* If we're returning to the same uri somehow, don't put this uri on back list.
 		 * This also avoids a problem where set_displayed_location
 		 * didn't update last_location_bookmark since the uri didn't change.
 		 */
@@ -378,6 +378,8 @@ update_history (NemoWindowSlot *slot,
         case NEMO_LOCATION_CHANGE_FORWARD:
                 handle_go_forward (slot, new_location);
                 return;
+        default:
+            break;
         }
 	g_return_if_fail (FALSE);
 }
@@ -565,7 +567,7 @@ nemo_window_slot_get_content_view_id (NemoWindowSlot *slot)
 }
 
 gboolean
-nemo_window_slot_content_view_matches_iid (NemoWindowSlot *slot, 
+nemo_window_slot_content_view_matches_iid (NemoWindowSlot *slot,
 					       const char *iid)
 {
 	if (slot->content_view == NULL) {
@@ -592,7 +594,7 @@ report_callback (NemoWindowSlot *slot,
 
 /*
  * begin_location_change
- * 
+ *
  * Change a window slot's location.
  * @window: The NemoWindow whose location should be changed.
  * @location: A url specifying the location to load
@@ -646,7 +648,7 @@ begin_location_change (NemoWindowSlot *slot,
 		}
 
 		if (parent != NULL) {
-			new_selection = parent_selection = 
+			new_selection = parent_selection =
 				g_list_prepend (NULL, nemo_file_get (from_folder));
 			g_object_unref (parent);
 		}
@@ -661,7 +663,7 @@ begin_location_change (NemoWindowSlot *slot,
 
 	g_assert (slot->pending_location == NULL);
 	g_assert (slot->pending_selection == NULL);
-	
+
 	slot->pending_location = g_object_ref (location);
         slot->location_change_type = type;
         slot->location_change_distance = distance;
@@ -711,7 +713,7 @@ begin_location_change (NemoWindowSlot *slot,
         }
 
 	/* Get the info needed for view selection */
-	
+
         slot->determine_view_file = nemo_file_get (location);
 	g_assert (slot->determine_view_file != NULL);
 
@@ -731,7 +733,7 @@ typedef struct {
 	NemoWindowSlot *slot;
 } MountNotMountedData;
 
-static void 
+static void
 mount_not_mounted_callback (GObject *source_object,
 			    GAsyncResult *res,
 			    gpointer user_data)
@@ -755,7 +757,7 @@ mount_not_mounted_callback (GObject *source_object,
 	slot->mount_cancellable = NULL;
 
 	slot->determine_view_file = nemo_file_get (slot->pending_location);
-	
+
 	error = NULL;
 	if (!g_file_mount_enclosing_volume_finish (G_FILE (source_object), res, &error)) {
 		slot->mount_error = error;
@@ -830,7 +832,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 		g_clear_object (&slot->pending_location);
 		g_free (slot->pending_scroll_to);
-	
+
 		slot->pending_location = nemo_file_get_parent_location (file);
 		slot->pending_selection = g_list_prepend (NULL, nemo_file_ref (file));
 		slot->determine_view_file = parent_file;
@@ -840,7 +842,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		nemo_file_call_when_ready (slot->determine_view_file,
 					       NEMO_FILE_ATTRIBUTE_INFO,
 					       got_file_info_for_view_selection_callback,
-					       slot);		
+					       slot);
 
 		nemo_file_unref (file);
 
@@ -849,9 +851,9 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 	nemo_file_unref (parent_file);
 	location = slot->pending_location;
-	
+
 	view_id = NULL;
-	
+
         if (error == NULL ||
 	    (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_NOT_SUPPORTED)) {
 		/* We got the information we need, now pick what view to use: */
@@ -861,7 +863,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		/* Look in metadata for view */
 		view_id = nemo_global_preferences_get_ignore_view_metadata () ? g_strdup (nemo_window_get_ignore_meta_view_id (window)) :
                                                                         nemo_file_get_metadata (file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
-		if (view_id != NULL && 
+		if (view_id != NULL &&
 		    !nemo_view_factory_view_supports_uri (view_id,
 							      location,
 							      nemo_file_get_file_type (file),
@@ -887,7 +889,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
             g_free (uri);
             g_free (name);
 
-			if (view_id != NULL && 
+			if (view_id != NULL &&
 			    !nemo_view_factory_view_supports_uri (view_id,
 								      location,
 								      nemo_file_get_file_type (file),
@@ -896,7 +898,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 				view_id = NULL;
 			}
 		}
-		
+
 		g_free (mimetype);
 	}
 
@@ -913,19 +915,19 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 		if (!gtk_widget_get_visible (GTK_WIDGET (window))) {
 			/* Destroy never-had-a-chance-to-be-seen window. This case
-			 * happens when a new window cannot display its initial URI. 
+			 * happens when a new window cannot display its initial URI.
 			 */
 			/* if this is the only window, we don't want to quit, so we redirect it to home */
 
 			app = nemo_application_get_singleton ();
-			
+
 			if (g_list_length (gtk_application_get_windows (GTK_APPLICATION (app))) == 1) {
 				/* the user could have typed in a home directory that doesn't exist,
 				   in which case going home would cause an infinite loop, so we
 				   better test for that */
 
 				if (!nemo_is_root_directory (location)) {
-					if (!nemo_is_home_directory (location)) {	
+					if (!nemo_is_home_directory (location)) {
 						nemo_window_slot_go_home (slot, FALSE);
 					} else {
 						GFile *root;
@@ -962,7 +964,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 				g_signal_connect_object (viewed_file, "changed",
 							 G_CALLBACK (viewed_file_changed_callback), slot, 0);
 				nemo_file_unref (viewed_file);
-			
+
 				/* Leave the location bar showing the bad location that the user
 				 * typed (or maybe achieved by dragging or something). Many times
 				 * the mistake will just be an easily-correctable typo. The user
@@ -971,7 +973,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 			}
 		}
 	}
-	
+
 	nemo_file_unref (file);
 }
 
@@ -1057,13 +1059,13 @@ load_new_location (NemoWindowSlot *slot,
 
 	selection_copy = eel_g_object_list_copy (selection);
 	view = NULL;
-	
+
 	/* Note, these may recurse into report_load_underway */
         if (slot->content_view != NULL && tell_current_content_view) {
 		view = slot->content_view;
 		nemo_view_load_location (slot->content_view, location);
         }
-	
+
         if (slot->new_content_view != NULL && tell_new_content_view &&
 	    (!tell_current_content_view ||
 	     slot->new_content_view != slot->content_view) ) {
@@ -1267,14 +1269,14 @@ slot_add_extension_extra_widgets (NemoWindowSlot *slot)
 	GtkWidget *widget;
 	char *uri;
 	NemoWindow *window;
-	
+
 	providers = nemo_module_get_extensions_for_type (NEMO_TYPE_LOCATION_WIDGET_PROVIDER);
 	window = nemo_window_slot_get_window (slot);
 
 	uri = g_file_get_uri (slot->location);
 	for (l = providers; l != NULL; l = l->next) {
 		NemoLocationWidgetProvider *provider;
-		
+
 		provider = NEMO_LOCATION_WIDGET_PROVIDER (l->data);
 		widget = nemo_location_widget_provider_get_widget (provider, uri, GTK_WIDGET (window));
 		if (widget != NULL) {
@@ -1355,7 +1357,7 @@ found_content_type_cb (const char **x_content_types,
 {
 	NemoWindowSlot *slot;
 	FindMountData *data = user_data;
-	
+
 	if (g_cancellable_is_cancelled (data->cancellable)) {
 		goto out;
 	}
@@ -1397,7 +1399,7 @@ found_mount_cb (GObject *source_object,
 							      data);
 		return;
 	}
-	
+
 	data->slot->find_mount_cancellable = NULL;
 
  out:
@@ -1460,7 +1462,7 @@ update_for_new_location (NemoWindowSlot *slot)
 
 	if (location_really_changed) {
 		nemo_window_slot_remove_extra_location_widgets (slot);
-		
+
 		directory = nemo_directory_get (slot->location);
 
 		if (nemo_directory_is_in_trash (directory)) {
@@ -1476,7 +1478,7 @@ update_for_new_location (NemoWindowSlot *slot)
 			g_cancellable_cancel (slot->find_mount_cancellable);
 			slot->find_mount_cancellable = NULL;
 		}
-		
+
 		data = g_new (FindMountData, 1);
 		data->slot = slot;
 		data->cancellable = g_cancellable_new ();
@@ -1484,7 +1486,7 @@ update_for_new_location (NemoWindowSlot *slot)
 
 		slot->find_mount_cancellable = data->cancellable;
 		g_file_find_enclosing_mount_async (slot->location,
-						   G_PRIORITY_DEFAULT, 
+						   G_PRIORITY_DEFAULT,
 						   data->cancellable,
 						   found_mount_cb,
 						   data);
@@ -1613,7 +1615,7 @@ static void
 cancel_location_change (NemoWindowSlot *slot)
 {
 	GList *selection;
-	
+
         if (slot->pending_location != NULL
             && slot->location != NULL
             && slot->content_view != NULL) {
@@ -1662,27 +1664,27 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 			error_message = g_strdup_printf
 				(_("Could not display \"%s\"."),
 				 uri_for_display);
-			detail_message = g_strdup 
+			detail_message = g_strdup
 				(_("Nemo has no installed viewer capable of displaying the folder."));
 		} else {
 			error_message = g_strdup_printf
 				(_("Could not display \"%s\"."),
 				 uri_for_display);
-			detail_message = g_strdup 
+			detail_message = g_strdup
 				(_("The location is not a folder."));
 		}
 	} else if (error->domain == G_IO_ERROR) {
 		switch (error->code) {
 		case G_IO_ERROR_NOT_FOUND:
 			error_message = g_strdup_printf
-				(_("Could not find \"%s\"."), 
+				(_("Could not find \"%s\"."),
 				 uri_for_display);
-			detail_message = g_strdup 
+			detail_message = g_strdup
 				(_("Please check the spelling and try again."));
 			break;
 		case G_IO_ERROR_NOT_SUPPORTED:
 			scheme_string = g_file_get_uri_scheme (location);
-				
+
 			error_message = g_strdup_printf (_("Could not display \"%s\"."),
 							 uri_for_display);
 			if (scheme_string != NULL) {
@@ -1698,13 +1700,13 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 							 uri_for_display);
 			detail_message = g_strdup (_("Unable to mount the location."));
 			break;
-			
+
 		case G_IO_ERROR_PERMISSION_DENIED:
 			error_message = g_strdup_printf (_("Could not display \"%s\"."),
 							 uri_for_display);
 			detail_message = g_strdup (_("Access was denied."));
 			break;
-			
+
 		case G_IO_ERROR_HOST_NOT_FOUND:
 			/* This case can be hit for user-typed strings like "foo" due to
 			 * the code that guesses web addresses when there's no initial "/".
@@ -1719,18 +1721,18 @@ display_view_selection_failure (NemoWindow *window, NemoFile *file,
 		case G_IO_ERROR_FAILED_HANDLED:
 			g_free (uri_for_display);
 			return;
-			
+
 		default:
 			break;
 		}
 	}
-	
+
 	if (error_message == NULL) {
 		error_message = g_strdup_printf (_("Could not display \"%s\"."),
 						 uri_for_display);
 		detail_message = g_strdup_printf (_("Error: %s\nPlease select another viewer and try again."), error->message);
 	}
-	
+
 	eel_show_error_dialog (error_message, detail_message, NULL);
 
 	g_free (uri_for_display);
@@ -1747,7 +1749,7 @@ nemo_window_slot_stop_loading (NemoWindowSlot *slot)
 	window = nemo_window_slot_get_window (slot);
 
 	nemo_view_stop_loading (slot->content_view);
-	
+
 	if (slot->new_content_view != NULL) {
 		window->details->temporarily_ignore_view_signals = TRUE;
 		nemo_view_stop_loading (slot->new_content_view);
@@ -1796,7 +1798,7 @@ nemo_window_slot_set_content_view (NemoWindowSlot *slot,
             slot->pending_scroll_to = nemo_view_get_first_visible_file (slot->content_view);
     }
 	slot->location_change_type = NEMO_LOCATION_CHANGE_RELOAD;
-	
+
         create_content_view (slot, id);
 }
 
@@ -1804,7 +1806,7 @@ void
 nemo_window_manage_views_close_slot (NemoWindowSlot *slot)
 {
 	if (slot->content_view != NULL) {
-		nemo_window_disconnect_content_view (nemo_window_slot_get_window (slot), 
+		nemo_window_disconnect_content_view (nemo_window_slot_get_window (slot),
 							 slot->content_view);
 	}
 
@@ -1813,7 +1815,7 @@ nemo_window_manage_views_close_slot (NemoWindowSlot *slot)
 }
 
 void
-nemo_window_back_or_forward (NemoWindow *window, 
+nemo_window_back_or_forward (NemoWindow *window,
 				 gboolean back,
 				 guint distance,
 				 NemoWindowOpenFlags flags)
