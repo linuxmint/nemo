@@ -55,7 +55,7 @@ nemo_empty_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *directo
 	if (!timer) timer = g_timer_new ();
 
 	g_timer_start (timer);
-	icon = nemo_file_get_icon_pixbuf (file, nemo_get_icon_size_for_zoom_level (NEMO_ZOOM_LEVEL_STANDARD), TRUE, 0);
+	icon = nemo_file_get_icon_pixbuf (file, nemo_get_icon_size_for_zoom_level (NEMO_ZOOM_LEVEL_STANDARD), TRUE, 0, NEMO_FILE_ICON_FLAGS_NONE);
 
 	elaps = g_timer_elapsed (timer, NULL);
 	g_timer_stop (timer);
