@@ -2356,19 +2356,6 @@ create_grid_with_standard_properties (void)
 }
 
 static gboolean
-is_merged_trash_directory (NemoFile *file)
-{
-	char *file_uri;
-	gboolean result;
-
-	file_uri = nemo_file_get_uri (file);
-	result = strcmp (file_uri, "trash:///") == 0;
-	g_free (file_uri);
-
-	return result;
-}
-
-static gboolean
 is_computer_directory (NemoFile *file)
 {
 	char *file_uri;
@@ -2408,19 +2395,6 @@ is_burn_directory (NemoFile *file)
 }
 
 static gboolean
-is_recent_directory (NemoFile *file)
-{
-   char *file_uri;
-   gboolean result;
-
-   file_uri = nemo_file_get_uri (file);
-   result = strcmp (file_uri, "recent:///") == 0;
-   g_free (file_uri);
-
-   return result;
-}
-
-static gboolean
 should_show_custom_icon_buttons (NemoPropertiesWindow *window)
 {
 	if (is_multi_file_window (window)) {
@@ -2434,7 +2408,7 @@ static gboolean
 should_show_file_type (NemoPropertiesWindow *window)
 {
 	if (!is_multi_file_window (window)
-	    && (is_merged_trash_directory (get_target_file (window)) ||
+	    && (nemo_file_is_in_trash (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
@@ -2449,7 +2423,7 @@ static gboolean
 should_show_location_info (NemoPropertiesWindow *window)
 {
 	if (!is_multi_file_window (window)
-	    && (is_merged_trash_directory (get_target_file (window)) ||
+	    && (nemo_file_is_in_trash (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
@@ -2500,10 +2474,10 @@ should_show_free_space (NemoPropertiesWindow *window)
 {
 
 	if (!is_multi_file_window (window)
-	    && (is_merged_trash_directory (get_target_file (window)) ||
+	    && (nemo_file_is_in_trash (get_target_file (window)) ||
 		is_computer_directory (get_target_file (window)) ||
 		is_network_directory (get_target_file (window)) ||
-        is_recent_directory (get_target_file (window)) ||
+        nemo_file_is_in_recent (get_target_file (window)) ||
 		is_burn_directory (get_target_file (window)))) {
 		return FALSE;
 	}
@@ -4623,8 +4597,8 @@ should_show_permissions (NemoPropertiesWindow *window)
 	 * really file system objects.
 	 */
 	if (!is_multi_file_window (window)
-	    && (is_merged_trash_directory (file) ||
-            is_recent_directory (file) ||
+	    && (nemo_file_is_in_trash (file) ||
+            nemo_file_is_in_recent (file) ||
             is_computer_directory (file))) {
 		return FALSE;
 	}
@@ -4716,7 +4690,7 @@ is_a_special_file (NemoFile *file)
 	if (file == NULL ||
 	    NEMO_IS_DESKTOP_ICON_FILE (file) ||
 	    nemo_file_is_nemo_link (file) ||
-	    is_merged_trash_directory (file) ||
+	    nemo_file_is_in_trash (file) ||
 	    is_computer_directory (file)) {
 		return TRUE;
 	}
