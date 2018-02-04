@@ -34,7 +34,7 @@ typedef enum {
 } RunState;
 
 typedef struct {
-    NemoCinnamonDBus *proxy;
+    NemoCinnamon *proxy;
     NemoActionManager *action_manager;
 
     GdkScreen *fallback_screen;
@@ -126,10 +126,10 @@ get_run_state (NemoDesktopManager *manager)
 
     error = NULL;
 
-    if (!nemo_cinnamon_dbus_call_get_run_state_sync (priv->proxy,
-                                                     &ret,
-                                                     NULL,
-                                                     &error)) {
+    if (!nemo_cinnamon_call_get_run_state_sync (priv->proxy,
+                                                &ret,
+                                                NULL,
+                                                &error)) {
 
         DEBUG ("Attempting proxy call 'GetRunState' failed, resorting to fallback mode: %s",
                error ? error->message : NULL);
@@ -165,16 +165,15 @@ get_n_monitors (NemoDesktopManager *manager)
 
     error = NULL;
 
-    if (!nemo_cinnamon_dbus_call_get_monitors_sync (priv->proxy,
-                                                    &monitors,
-                                                    NULL,
-                                                    &error)) {
+    if (!nemo_cinnamon_call_get_monitors_sync (priv->proxy,
+                                               &monitors,
+                                               NULL,
+                                               &error)) {
 
         DEBUG ("Attempting proxy call 'GetMonitors' failed, retrieving n_monitors via GdkScreen: %s",
                error ? error->message : NULL);
 
         g_clear_error (&error);
-
         n_monitors = nemo_desktop_utils_get_num_monitors ();
 
         goto out;
@@ -227,17 +226,16 @@ get_window_rect_for_monitor (NemoDesktopManager *manager,
         goto out;
     }
 
-    if (!nemo_cinnamon_dbus_call_get_monitor_work_rect_sync (priv->proxy,
-                                                             monitor,
-                                                             &out_rect_var,
-                                                             NULL,
-                                                             &error)) {
+    if (!nemo_cinnamon_call_get_monitor_work_rect_sync (priv->proxy,
+                                                        monitor,
+                                                        &out_rect_var,
+                                                        NULL,
+                                                        &error)) {
 
         DEBUG ("Attempting proxy call 'GetMonitorWorkRect' failed, retrieving n_monitors via GdkScreen: %s",
                error ? error->message : NULL);
 
         g_clear_error (&error);
-
         nemo_desktop_utils_get_monitor_geometry (monitor, &out_rect);
 
         goto out;
@@ -558,7 +556,7 @@ on_proxy_created (GObject      *source,
     NemoDesktopManager *manager = NEMO_DESKTOP_MANAGER (user_data);
     FETCH_PRIV (manager);
 
-    priv->proxy = nemo_cinnamon_dbus_proxy_new_for_bus_finish (res, NULL);
+    priv->proxy = nemo_cinnamon_proxy_new_for_bus_finish (res, NULL);
 
     if (priv->proxy == NULL) {
         g_warning ("Cinnamon proxy unsuccessful, applying default behavior");
@@ -713,13 +711,13 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
     if (is_cinnamon_desktop ()) {
          g_message ("nemo-desktop: session is cinnamon, establishing proxy");
 
-        nemo_cinnamon_dbus_proxy_new_for_bus (G_BUS_TYPE_SESSION,
-                                              G_DBUS_PROXY_FLAGS_NONE,
-                                              "org.Cinnamon",
-                                              "/org/Cinnamon",
-                                              NULL,
-                                              (GAsyncReadyCallback) on_proxy_created,
-                                              manager);
+        nemo_cinnamon_proxy_new_for_bus (G_BUS_TYPE_SESSION,
+                                         G_DBUS_PROXY_FLAGS_NONE,
+                                         "org.Cinnamon",
+                                         "/org/Cinnamon",
+                                         NULL,
+                                         (GAsyncReadyCallback) on_proxy_created,
+                                         manager);
     } else {
         g_message ("nemo-desktop: session is not cinnamon (checked XDG_SESSION_DESKTOP,"
                    "DESKTOP_SESSION environment variables.) Applying default behavior");

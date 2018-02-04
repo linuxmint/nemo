@@ -1,34 +1,33 @@
 #!/usr/bin/make -f
 
-TYPELIBDIR=$(shell pkg-config gobject-introspection-1.0 --variable libdir | sed -e 's/.//')
-
-CONFIGURE_EXTRA_FLAGS = --libexecdir=/usr/lib/nemo \
-                        --disable-update-mimedb \
-			--enable-gtk-doc \
-			--enable-selinux=no \
-			--enable-compile-warnings=yes \
-			--enable-silent-rules
+CONFIGURE_EXTRA_FLAGS = \
+	--prefix=/usr \
+	-D deprecated_warnings=false \
+	-D gtk_doc=true \
+	-D selinux=false
 
 export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 
 
 %:
-	dh $@ --parallel --with autoreconf,gir
-
-override_dh_autoreconf:
-	NOCONFIGURE=yes dh_autoreconf --as-needed -- ./autogen.sh
+	dh $@ --parallel --with gir
 
 override_dh_auto_configure:
-	dh_auto_configure -- $(CONFIGURE_EXTRA_FLAGS)
+	mkdir -p build
+	meson build $(CONFIGURE_EXTRA_FLAGS)
+
+override_dh_auto_build:
+	ninja -C build
 
 override_dh_auto_test:
+	# ninja -C build test
 
 override_dh_strip:
 	dh_strip --dbg-package=nemo-dbg
 
-override_dh_install:
-	sed 's@TYPELIBDIR@${TYPELIBDIR}@' debian/gir1.2-nemo-3.0.install.in > debian/gir1.2-nemo-3.0.install
-	dh_install --list-missing
+override_dh_auto_install:
+	DESTDIR=${CURDIR}/debian/tmp \
+	ninja -C build install
 
 override_dh_makeshlibs:
 	dh_makeshlibs -Xusr/lib/nemo/extensions-3.0/

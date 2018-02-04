@@ -2,9 +2,8 @@ Source: nemo
 Section: gnome
 Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
-Build-Depends: debhelper (>= 8),
-               dh-autoreconf,
-               autoconf-archive,
+Build-Depends: debhelper (>= 9),
+               meson,
                gnome-pkg-tools (>= 0.13),
                libglib2.0-dev (>= 2.45.7),
                libatk1.0-dev (>= 1.32.0),

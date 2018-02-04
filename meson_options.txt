@@ -1,0 +1,8 @@
+option('deprecated_warnings', type : 'boolean', value : false)
+option('exif',          type : 'boolean', value : true)
+option('xmp',           type : 'boolean', value : true)
+option('gtk_doc',       type : 'boolean', value : true)
+option('selinux',       type : 'boolean', value : false)
+option('empty-view',    type : 'boolean', value : true)
+option('enable-tracker',type : 'combo',
+     choices : ['true', 'false', 'auto'], value : 'false')

@@ -543,7 +543,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	}
 
 	if (version) {
-		g_print ("nemo " PACKAGE_VERSION "\n");
+		g_print ("nemo " VERSION "\n");
 		goto out;
 	}
 
