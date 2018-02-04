@@ -54,6 +54,5 @@ GType         nemo_action_manager_get_type             (void);
 NemoActionManager   *nemo_action_manager_new           (void);
 GList *       nemo_action_manager_list_actions (NemoActionManager *action_manager);
 gchar *       nemo_action_manager_get_user_directory_path (void);
-gchar *       nemo_action_manager_get_sys_directory_path (void);
 
 #endif /* NEMO_ACTION_MANAGER_H */

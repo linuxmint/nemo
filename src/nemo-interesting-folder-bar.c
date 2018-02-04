@@ -66,13 +66,13 @@ interesting_folder_bar_response_cb (GtkInfoBar *infobar,
 
     switch (response_id) {
         case INTERESTING_FOLDER_BAR_ACTION_OPEN_DOC:
-            f = g_file_new_for_path ("/usr/share/nemo/actions/sample.nemo_action");
+            f = g_file_new_for_path (NEMO_DATADIR "/actions/sample.nemo_action");
             if (g_file_query_exists (f, NULL))
                 nemo_view_activate_file (bar->priv->view, nemo_file_get (f), NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW);
             g_object_unref (f);
             break;
         case INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC:
-            f = g_file_new_for_path ("/usr/share/nemo/script-info.md");
+            f = g_file_new_for_path (NEMO_DATADIR "/script-info.md");
             if (g_file_query_exists (f, NULL))
                 nemo_view_activate_file (bar->priv->view, nemo_file_get (f), NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW);
             g_object_unref (f);

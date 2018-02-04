@@ -136,36 +136,40 @@ remove_directory_from_actions_directory_list (NemoActionManager *action_manager,
 static void
 set_up_actions_directories (NemoActionManager *action_manager)
 {
-
-    gchar *sys_path = nemo_action_manager_get_sys_directory_path ();
-    gchar *sys_uri = g_filename_to_uri (sys_path, NULL, NULL);
-
-    gchar *user_path = g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
-
-    if (!g_file_test (user_path, G_FILE_TEST_EXISTS)) {
-        g_mkdir_with_parents (user_path, DEFAULT_NEMO_DIRECTORY_MODE);
-    }
-
-    gchar *user_uri = g_filename_to_uri (user_path, NULL, NULL);
-
-    if (action_manager->actions_directory_list != NULL) {
-        nemo_directory_list_free (action_manager->actions_directory_list);
-    }
-
     NemoDirectory *dir;
+    gchar *path, *uri;
+    gchar **data_dirs;
+    guint i;
 
-    dir = nemo_directory_get_by_uri (user_uri);
+    data_dirs = (gchar **) g_get_system_data_dirs ();
+
+    for (i = 0; i < g_strv_length (data_dirs); i++) {
+        path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
+        uri = g_filename_to_uri (path, NULL, NULL);
+
+        dir = nemo_directory_get_by_uri (uri);
+
+        add_directory_to_actions_directory_list (action_manager, dir);
+
+        nemo_directory_unref (dir);
+        g_clear_pointer (&path, g_free);
+        g_clear_pointer (&uri, g_free);
+    }
+
+    path = nemo_action_manager_get_user_directory_path ();
+    uri = g_filename_to_uri (path, NULL, NULL);
+
+    if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+        g_mkdir_with_parents (path, DEFAULT_NEMO_DIRECTORY_MODE);
+    }
+
+    dir = nemo_directory_get_by_uri (uri);
+
     add_directory_to_actions_directory_list (action_manager, dir);
-    nemo_directory_unref (dir);
 
-    dir = nemo_directory_get_by_uri (sys_uri);
-    add_directory_to_actions_directory_list (action_manager, dir);
     nemo_directory_unref (dir);
-
-    g_free (sys_path);
-    g_free (sys_uri);
-    g_free (user_path);
-    g_free (user_uri);
+    g_clear_pointer (&path, g_free);
+    g_clear_pointer (&uri, g_free);
 }
 
 static char *
@@ -357,10 +361,4 @@ gchar *
 nemo_action_manager_get_user_directory_path (void)
 {
     return g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
-}
-
-gchar *
-nemo_action_manager_get_sys_directory_path (void)
-{
-    return g_build_filename (NEMO_DATADIR, "actions", NULL);
 }
