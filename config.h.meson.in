@@ -1,0 +1,67 @@
+#pragma once
+// config.h.in.  Generated from configure.ac by autoheader.
+
+// Define to the version of this package.
+#mesondefine VERSION
+
+// Enable debug code
+#mesondefine ENABLE_DEBUG
+
+// ***** Enable features
+
+// define to enable the empty view that is used for performance measurement
+#mesondefine ENABLE_EMPTY_VIEW
+// Define to enable Tracker support
+#mesondefine ENABLE_TRACKER
+// Define to enable xmp support
+#mesondefine HAVE_EXEMPI
+// Define to enable EXIF support
+#mesondefine HAVE_EXIF
+// Define if libselinux is available
+#mesondefine HAVE_SELINUX
+
+
+
+// ***** Localisation
+
+// always defined to indicate that i18n is enabled
+#mesondefine ENABLE_NLS
+#mesondefine HAVE_GETTEXT
+
+// the gettext translation domain
+#mesondefine GETTEXT_PACKAGE
+
+// Define to 1 if you have the <locale.h> header file.
+#mesondefine HAVE_LOCALE_H
+
+// path for translations
+#mesondefine LOCALEDIR
+#mesondefine LOCALE_DIR
+
+
+
+
+// Defined if we meet the minimum version for
+//   g_content_type_get_generic_icon_name
+#mesondefine GENERIC_ICON_API
+
+
+
+// Define to 1 if you have the <malloc.h> header file.
+#mesondefine HAVE_MALLOC_H
+
+// Define to 1 if you have the `mallopt' function.
+#mesondefine HAVE_MALLOPT
+
+
+// Define to 1 if you have the <sys/mount.h> header file.
+#mesondefine HAVE_SYS_MOUNT_H
+
+// Define to 1 if you have the <sys/param.h> header file.
+#mesondefine HAVE_SYS_PARAM_H
+
+// Define to 1 if you have the <sys/vfs.h> header file.
+#mesondefine HAVE_SYS_VFS_H
+
+// Define to 1 if you have the <X11/XF86keysym.h> header file.
+#mesondefine HAVE_X11_XF86KEYSYM_H
