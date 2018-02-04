@@ -5,56 +5,56 @@ public_icons_themes = \
 	$(NULL)
 
 public_icons = \
-	hicolor_apps_16x16_nemo.png \
-	hicolor_apps_22x22_nemo.png \
-	hicolor_apps_24x24_nemo.png \
-	hicolor_apps_32x32_nemo.png \
-	hicolor_apps_scalable_nemo.svg \
-	hicolor_actions_16x16_nemo-eject.png \
-    hicolor_actions_16x16_menu-bullet.png \
-    hicolor_actions_16x16_menu-sort-up.png \
-    hicolor_actions_16x16_menu-sort-up-free.png \
-    hicolor_actions_16x16_menu-sort-down.png \
-    hicolor_actions_16x16_menu-sort-down-free.png \
-    hicolor_actions_16x16_menu-sort-right.png \
-    hicolor_actions_16x16_menu-sort-right-free.png \
-    hicolor_actions_16x16_menu-sort-left.png \
-    hicolor_actions_16x16_menu-sort-left-free.png \
-    hicolor_actions_16x16_menu-none.png \
-	hicolor_actions_32x32_nemo-eject.png \
-	hicolor_actions_scalable_view-compact-symbolic.svg \
-	hicolor_actions_scalable_location-symbolic.svg \
-	hicolor_actions_scalable_sidebar-hide-symbolic.svg \
-	hicolor_actions_scalable_sidebar-show-symbolic.svg \
-	hicolor_actions_scalable_sidebar-tree-symbolic.svg \
-	hicolor_actions_scalable_sidebar-places-symbolic.svg \
-	hicolor_actions_scalable_expand-menu-symbolic.svg \
-	hicolor_actions_scalable_expand-menu-hover-symbolic.svg \
-	hicolor_actions_scalable_collapse-menu-symbolic.svg \
-	hicolor_actions_scalable_collapse-menu-hover-symbolic.svg \
-	hicolor_status_48x48_progress-0.png \
-	hicolor_status_48x48_progress-10.png \
-	hicolor_status_48x48_progress-20.png \
-	hicolor_status_48x48_progress-30.png \
-	hicolor_status_48x48_progress-40.png \
-	hicolor_status_48x48_progress-50.png \
-	hicolor_status_48x48_progress-60.png \
-	hicolor_status_48x48_progress-70.png \
-	hicolor_status_48x48_progress-80.png \
-	hicolor_status_48x48_progress-90.png \
-	hicolor_status_48x48_progress-100.png \
+	hicolor/apps/16x16/nemo.png \
+	hicolor/apps/22x22/nemo.png \
+	hicolor/apps/24x24/nemo.png \
+	hicolor/apps/32x32/nemo.png \
+	hicolor/apps/scalable/nemo.svg \
+	hicolor/actions/16x16/nemo-eject.png \
+    hicolor/actions/16x16/menu-bullet.png \
+    hicolor/actions/16x16/menu-sort-up.png \
+    hicolor/actions/16x16/menu-sort-up-free.png \
+    hicolor/actions/16x16/menu-sort-down.png \
+    hicolor/actions/16x16/menu-sort-down-free.png \
+    hicolor/actions/16x16/menu-sort-right.png \
+    hicolor/actions/16x16/menu-sort-right-free.png \
+    hicolor/actions/16x16/menu-sort-left.png \
+    hicolor/actions/16x16/menu-sort-left-free.png \
+    hicolor/actions/16x16/menu-none.png \
+	hicolor/actions/32x32/nemo-eject.png \
+	hicolor/actions/scalable/view-compact-symbolic.svg \
+	hicolor/actions/scalable/location-symbolic.svg \
+	hicolor/actions/scalable/sidebar-hide-symbolic.svg \
+	hicolor/actions/scalable/sidebar-show-symbolic.svg \
+	hicolor/actions/scalable/sidebar-tree-symbolic.svg \
+	hicolor/actions/scalable/sidebar-places-symbolic.svg \
+	hicolor/actions/scalable/expand-menu-symbolic.svg \
+	hicolor/actions/scalable/expand-menu-hover-symbolic.svg \
+	hicolor/actions/scalable/collapse-menu-symbolic.svg \
+	hicolor/actions/scalable/collapse-menu-hover-symbolic.svg \
+	hicolor/status/48x48/progress-0.png \
+	hicolor/status/48x48/progress-10.png \
+	hicolor/status/48x48/progress-20.png \
+	hicolor/status/48x48/progress-30.png \
+	hicolor/status/48x48/progress-40.png \
+	hicolor/status/48x48/progress-50.png \
+	hicolor/status/48x48/progress-60.png \
+	hicolor/status/48x48/progress-70.png \
+	hicolor/status/48x48/progress-80.png \
+	hicolor/status/48x48/progress-90.png \
+	hicolor/status/48x48/progress-100.png \
 	$(NULL)
 
 private_icons = \
-	hicolor_emblems_16x16_emblem-note.png \
-	hicolor_emblems_24x24_emblem-note.png \
-	hicolor_emblems_48x48_emblem-note.png \
+	hicolor/emblems/16x16/emblem-note.png \
+	hicolor/emblems/24x24/emblem-note.png \
+	hicolor/emblems/48x48/emblem-note.png \
 	$(NULL)
 
 noinst_DATA = \
-	hicolor_apps_16x16_nemo.svg \
-	hicolor_apps_22x22_nemo.svg \
-	hicolor_apps_32x32_nemo.svg \
+	hicolor/apps/16x16/nemo.svg \
+	hicolor/apps/22x22/nemo.svg \
+	hicolor/apps/32x32/nemo.svg \
 	$(NULL)
 
 EXTRA_DIST = \
@@ -83,35 +83,35 @@ update-icon-cache:
 
 install-icons:
 	for icon in $(public_icons); do \
-		THEME=`echo $$icon | cut -d_ -f1`; \
-		CONTEXT=`echo $$icon | cut -d_ -f2`; \
-		SIZE=`echo $$icon | cut -d_ -f3`; \
-		ICONFILE=`echo $$icon | cut -d_ -f4`; \
+		THEME=`echo $$icon | cut -d/ -f1`; \
+		CONTEXT=`echo $$icon | cut -d/ -f2`; \
+		SIZE=`echo $$icon | cut -d/ -f3`; \
+		ICONFILE=`echo $$icon | cut -d/ -f4`; \
 		mkdir -p $(DESTDIR)$(datadir)/icons/$$THEME/$$SIZE/$$CONTEXT; \
 		$(INSTALL_DATA) $(srcdir)/$$icon $(DESTDIR)$(datadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
 	done; \
 	for icon in $(private_icons); do \
-		THEME=`echo $$icon | cut -d_ -f1`; \
-		CONTEXT=`echo $$icon | cut -d_ -f2`; \
-		SIZE=`echo $$icon | cut -d_ -f3`; \
-		ICONFILE=`echo $$icon | cut -d_ -f4`; \
+		THEME=`echo $$icon | cut -d/ -f1`; \
+		CONTEXT=`echo $$icon | cut -d/ -f2`; \
+		SIZE=`echo $$icon | cut -d/ -f3`; \
+		ICONFILE=`echo $$icon | cut -d/ -f4`; \
 		mkdir -p $(DESTDIR)$(pkgdatadir)/icons/$$THEME/$$SIZE/$$CONTEXT; \
 		$(INSTALL_DATA) $(srcdir)/$$icon $(DESTDIR)$(pkgdatadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
 	done
 
 uninstall-icons:
 	-for icon in $(public_icons); do \
-		THEME=`echo $$icon | cut -d_ -f1`; \
-		CONTEXT=`echo $$icon | cut -d_ -f2`; \
-		SIZE=`echo $$icon | cut -d_ -f3`; \
-		ICONFILE=`echo $$icon | cut -d_ -f4`; \
+		THEME=`echo $$icon | cut -d/ -f1`; \
+		CONTEXT=`echo $$icon | cut -d/ -f2`; \
+		SIZE=`echo $$icon | cut -d/ -f3`; \
+		ICONFILE=`echo $$icon | cut -d/ -f4`; \
 		rm -f $(DESTDIR)$(datadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
 	done; \
 	for icon in $(private_icons); do \
-		THEME=`echo $$icon | cut -d_ -f1`; \
-		CONTEXT=`echo $$icon | cut -d_ -f2`; \
-		SIZE=`echo $$icon | cut -d_ -f3`; \
-		ICONFILE=`echo $$icon | cut -d_ -f4`; \
+		THEME=`echo $$icon | cut -d/ -f1`; \
+		CONTEXT=`echo $$icon | cut -d/ -f2`; \
+		SIZE=`echo $$icon | cut -d/ -f3`; \
+		ICONFILE=`echo $$icon | cut -d/ -f4`; \
 		rm -f $(DESTDIR)$(pkgdatadir)/icons/$$THEME/$$SIZE/$$CONTEXT/$$ICONFILE; \
 	done
 
