@@ -25,11 +25,11 @@ class Main:
 '''
                 """ % (dt.utcnow())
             outstring += "\n"
-            for fn in action_files:
+            for fn in sorted(action_files):
                 keyfile = GLib.KeyFile.new()
                 if keyfile.load_from_file(fn, GLib.KeyFileFlags.NONE):
                     if keyfile.has_group(GROUP):
-                        friendly_fn = os.path.split(fn)[1].replace(".", "_")
+                        friendly_fn = '_' + os.path.split(fn)[1].replace(".", "_").replace("-", "_")
                         try:
                             name = keyfile.get_string(GROUP, "Name")
                             name_line = '%s_Name = _("%s")\n' % (friendly_fn, name)

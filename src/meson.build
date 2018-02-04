@@ -168,3 +168,11 @@ nemo_extensions_list = executable('nemo-extensions-list',
   install: true,
   install_dir: libExecPath,
 )
+
+test('check-nemo',
+  nemo,
+  args: [
+    '--check',
+    '--g-fatal-warnings',
+  ],
+)

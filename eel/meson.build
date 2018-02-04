@@ -37,12 +37,15 @@ eel = declare_dependency(
 )
 
 
-test('Eel test',
+test('check-eel',
   executable('check-program',
     'check-program.c',
     dependencies: eel,
     include_directories: [ rootInclude, ],
-    install: false
+    install: false,
   ),
-  args: ['--g-fatal-warnings', '--sm-disable']
+  args: [
+    '--g-fatal-warnings',
+    '--sm-disable',
+  ],
 )
