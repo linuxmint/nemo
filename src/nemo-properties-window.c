@@ -236,7 +236,7 @@ static gboolean
 is_multi_file_window (NemoPropertiesWindow *window)
 {
 	GList *l;
-	int count;
+	guint count;
 
 	count = 0;
 
@@ -5345,10 +5345,10 @@ update_preview_callback (GtkFileChooser *icon_chooser,
 			scale = (double)gdk_pixbuf_get_height (pixbuf) /
 				gdk_pixbuf_get_width (pixbuf);
 
-			scaled_pixbuf = gnome_desktop_thumbnail_scale_down_pixbuf
-				(pixbuf,
-				 PREVIEW_IMAGE_WIDTH,
-				 scale * PREVIEW_IMAGE_WIDTH);
+			scaled_pixbuf = gdk_pixbuf_scale_simple (pixbuf,
+                                                     PREVIEW_IMAGE_WIDTH,
+                                                     scale * PREVIEW_IMAGE_WIDTH,
+                                                     GDK_INTERP_BILINEAR);
 			g_object_unref (pixbuf);
 			pixbuf = scaled_pixbuf;
 		}
