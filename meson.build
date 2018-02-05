@@ -146,7 +146,7 @@ rootInclude = include_directories('.')
 nemoDataPath      = join_paths(get_option('prefix'), get_option('datadir'), 'nemo')
 libExecPath       = join_paths(get_option('prefix'), get_option('libexecdir'))
 # Keep this constant, in case some extensions are behind in being updated...
-nemoExtensionPath = join_paths(get_option('prefix'), 'lib', 'nemo', 'extensions-3.0')
+nemoExtensionPath = join_paths(get_option('prefix'), get_option('libdir'), 'nemo', 'extensions-3.0')
 
 nemo_definitions =  [
   '-DNEMO_DATADIR="@0@"'.format(nemoDataPath),
