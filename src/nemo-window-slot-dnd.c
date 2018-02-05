@@ -325,8 +325,8 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
   NemoDragSlotProxyInfo *drag_info;
 
   const GtkTargetEntry targets[] = {
-    { NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
-    { NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL }
+    { (char *)NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+    { (char *)NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL }
   };
   GtkTargetList *target_list;
 
