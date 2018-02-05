@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
 
-/* eel-vfs-extensions.c - gnome-vfs extensions.  Its likely some of these will 
+/* eel-vfs-extensions.c - gnome-vfs extensions.  Its likely some of these will
                           be part of gnome-vfs in the future.
 
    Copyright (C) 1999, 2000 Eazel, Inc.
@@ -124,6 +124,8 @@ eel_filename_get_extension_offset (const char *filename)
 		if (strcmp (end, ".gz") == 0 ||
 		    strcmp (end, ".bz2") == 0 ||
 		    strcmp (end, ".sit") == 0 ||
+                    strcmp (end, ".bz") == 0 ||
+                    strcmp (end, ".xz") == 0 ||
 		    strcmp (end, ".Z") == 0) {
 			end2 = end - 1;
 			while (end2 > start &&
