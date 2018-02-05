@@ -3917,6 +3917,8 @@ icon_cell_renderer_func (GtkTreeViewColumn *column,
 	} else {
 		g_object_set (cell,
 			      "visible", TRUE,
+                  "xpad", 3,
+                  "ypad", 2,
 			      NULL);
 	}
 }
