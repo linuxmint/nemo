@@ -62,7 +62,7 @@ mimeFile_translated = custom_target('nemo.xml',
   ],
   install: true,
   install_dir: join_paths(get_option('datadir'), 'mime', 'packages'),
-  build_by_default: true,
+  build_always: true,
 )
 
 ################################################################################

@@ -2,7 +2,7 @@
 
 # https://github.com/linuxmint/nemo
 project('nemo', 'c', version: '3.6.5',
-  meson_version: '>=0.40.0'
+  meson_version: '>=0.37.0'
 )
 
 # 1. If the library code has changed at all since last release, then increment revision.
