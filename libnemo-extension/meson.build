@@ -62,6 +62,7 @@ gnome.generate_gir(nemo_extension_lib,
   namespace: 'Nemo',
   includes: [ 'Gtk-3.0', 'Gio-2.0', 'GLib-2.0', ],
   include_directories: [ rootInclude, ],
+  install_dir_typelib: join_paths(go_intr.get_pkgconfig_variable('libdir'), 'girepository-1.0'),
   install: true,
 )
 

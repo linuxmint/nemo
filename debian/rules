@@ -2,6 +2,7 @@
 
 CONFIGURE_EXTRA_FLAGS = \
 	--prefix=/usr \
+	--libdir=/usr/lib \
 	--libexecdir=/usr/lib/nemo \
 	-D deprecated_warnings=false \
 	-D gtk_doc=true \
