@@ -6269,7 +6269,7 @@ create_job (GIOSchedulerJob *io_job,
 			}
 
 		} else {
-			data = NULL;
+			data = "";
 			length = 0;
 			if (job->src_data) {
 				data = job->src_data;
