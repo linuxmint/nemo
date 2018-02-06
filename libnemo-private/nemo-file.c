@@ -4108,7 +4108,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	 * of the original file.
 	 */
 	if (file->details->thumbnail_path == NULL &&
-	    nemo_file_get_size (file) > (int)cached_thumbnail_limit) {
+	    nemo_file_get_size (file) > cached_thumbnail_limit) {
 		return FALSE;
 	}
 
