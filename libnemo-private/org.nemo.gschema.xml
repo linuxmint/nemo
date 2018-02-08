@@ -160,6 +160,11 @@
       <summary>Show Compact View button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
+    <key type="b" name="show-root-warning">
+      <default>true</default>
+      <summary>Show warning when opening as root</summary>
+      <description>If set to true, then Nemo show warning message when run Nemo as root user.</description>
+    </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
       <summary>Whether to ask for confirmation when deleting files, or emptying Trash</summary>
