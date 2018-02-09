@@ -15,11 +15,11 @@ export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 	dh $@ --parallel --with gir
 
 override_dh_auto_configure:
-	mkdir -p build
-	meson build $(CONFIGURE_EXTRA_FLAGS)
+	mkdir -p debian/build
+	meson debian/build $(CONFIGURE_EXTRA_FLAGS)
 
 override_dh_auto_build:
-	ninja -C build
+	ninja -C debian/build
 
 override_dh_auto_test:
 	# ninja -C build test
@@ -29,7 +29,7 @@ override_dh_strip:
 
 override_dh_auto_install:
 	DESTDIR=${CURDIR}/debian/tmp \
-	ninja -C build install
+	ninja -C debian/build install
 
 override_dh_makeshlibs:
 	dh_makeshlibs -Xusr/lib/nemo/extensions-3.0/

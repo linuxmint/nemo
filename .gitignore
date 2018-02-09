@@ -45,4 +45,4 @@ debian/files
 *.substvars
 *.debhelper
 
-build
+debian/build
