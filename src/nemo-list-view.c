@@ -1540,16 +1540,17 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
 	view->details->last_sort_attr = sort_attr;
 }
 
-static void
+static gboolean
 editable_focus_out_cb (GtkWidget *widget,
 		       GdkEvent *event,
 		       gpointer user_data)
 {
 	NemoListView *view = user_data;
-    g_clear_object (&view->details->editable_widget);
 
 	nemo_view_set_is_renaming (NEMO_VIEW (view), FALSE);
 	nemo_view_unfreeze_updates (NEMO_VIEW (view));
+
+    return GDK_EVENT_PROPAGATE;
 }
 
 static void
