@@ -61,9 +61,6 @@ typedef struct {
 GType      nemo_query_editor_get_type     	   (void);
 GtkWidget* nemo_query_editor_new          	   (void);
 
-gboolean       nemo_query_editor_handle_event (NemoQueryEditor *editor,
-						   GdkEventKey         *event);
-
 NemoQuery *nemo_query_editor_get_query   (NemoQueryEditor *editor);
 void           nemo_query_editor_set_query   (NemoQueryEditor *editor,
 						  NemoQuery       *query);

@@ -74,7 +74,6 @@ struct NemoQueryEditorDetails {
 
 	GList *rows;
 	char *last_set_query_text;
-	gboolean got_preedit;
 };
 
 enum {
@@ -112,119 +111,6 @@ static NemoQueryEditorRowOps row_type[] = {
 };
 
 G_DEFINE_TYPE (NemoQueryEditor, nemo_query_editor, GTK_TYPE_BOX);
-
-/* taken from gtk/gtktreeview.c */
-static void
-send_focus_change (GtkWidget *widget,
-                   GdkDevice *device,
-		   gboolean   in)
-{
-	GdkDeviceManager *device_manager;
-	GList *devices, *d;
-
-	device_manager = gdk_display_get_device_manager (gtk_widget_get_display (widget));
-	devices = gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_MASTER);
-	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_SLAVE));
-	devices = g_list_concat (devices, gdk_device_manager_list_devices (device_manager, GDK_DEVICE_TYPE_FLOATING));
-
-	for (d = devices; d; d = d->next) {
-		GdkDevice *dev = d->data;
-		GdkEvent *fevent;
-		GdkWindow *window;
-
-		if (gdk_device_get_source (dev) != GDK_SOURCE_KEYBOARD)
-			continue;
-
-		window = gtk_widget_get_window (widget);
-
-		/* Skip non-master keyboards that haven't
-		 * selected for events from this window
-		 */
-		if (gdk_device_get_device_type (dev) != GDK_DEVICE_TYPE_MASTER &&
-		    !gdk_window_get_device_events (window, dev))
-			continue;
-
-		fevent = gdk_event_new (GDK_FOCUS_CHANGE);
-
-		fevent->focus_change.type = GDK_FOCUS_CHANGE;
-		fevent->focus_change.window = g_object_ref (window);
-		fevent->focus_change.in = in;
-		gdk_event_set_device (fevent, device);
-
-		gtk_widget_send_focus_change (widget, fevent);
-
-		gdk_event_free (fevent);
-	}
-
-	g_list_free (devices);
-}
-
-static void
-entry_focus_hack (GtkWidget *entry,
-		  GdkDevice *device)
-{
-	GtkEntryClass *entry_class;
-	GtkWidgetClass *entry_parent_class;
-
-	/* Grab focus will select all the text.  We don't want that to happen, so we
-	 * call the parent instance and bypass the selection change.  This is probably
-	 * really non-kosher. */
-	entry_class = g_type_class_peek (GTK_TYPE_ENTRY);
-	entry_parent_class = g_type_class_peek_parent (entry_class);
-	(entry_parent_class->grab_focus) (entry);
-
-	/* send focus-in event */
-	send_focus_change (entry, device, TRUE);
-}
-
-static void
-entry_preedit_changed_cb (GtkEntry            *entry,
-			  gchar               *preedit,
-			  NemoQueryEditor *editor)
-{
-	editor->details->got_preedit = TRUE;
-}
-
-gboolean
-nemo_query_editor_handle_event (NemoQueryEditor *editor,
-				    GdkEventKey         *event)
-{
-	GdkEvent *new_event;
-	gboolean handled = FALSE;
-	gulong id;
-	gboolean retval;
-	gboolean text_changed;
-	char *old_text;
-	const char *new_text;
-
-	editor->details->got_preedit = FALSE;
-	if (!gtk_widget_get_realized (editor->details->entry)) {
-		gtk_widget_realize (editor->details->entry);
-	}
-
-	old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (editor->details->entry)));
-
-	id = g_signal_connect (editor->details->entry, "preedit-changed",
-			       G_CALLBACK (entry_preedit_changed_cb), editor);
-
-	new_event = gdk_event_copy ((GdkEvent *) event);
-	g_object_unref (((GdkEventKey *) new_event)->window);
-	((GdkEventKey *) new_event)->window = g_object_ref
-		(gtk_widget_get_window (editor->details->entry));
-	retval = gtk_widget_event (editor->details->entry, new_event);
-	gdk_event_free (new_event);
-
-	g_signal_handler_disconnect (editor->details->entry, id);
-
-	new_text = gtk_entry_get_text (GTK_ENTRY (editor->details->entry));
-	text_changed = strcmp (old_text, new_text) != 0;
-	g_free (old_text);
-
-	handled = (editor->details->got_preedit) || (retval && text_changed);
-	editor->details->got_preedit = FALSE;
-
-	return handled;
-}
 
 static void
 nemo_query_editor_dispose (GObject *object)
@@ -267,7 +153,7 @@ nemo_query_editor_grab_focus (GtkWidget *widget)
 	NemoQueryEditor *editor = NEMO_QUERY_EDITOR (widget);
 
 	if (gtk_widget_get_visible (widget)) {
-		entry_focus_hack (editor->details->entry, gtk_get_current_event_device ());
+		gtk_entry_grab_focus_without_selecting (GTK_ENTRY (editor->details->entry));
 	}
 }
 

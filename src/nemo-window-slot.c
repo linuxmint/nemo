@@ -53,13 +53,6 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-gboolean
-nemo_window_slot_handle_event (NemoWindowSlot *slot,
-				   GdkEventKey        *event)
-{
-	return nemo_query_editor_handle_event (slot->query_editor, event);
-}
-
 static void
 sync_search_directory (NemoWindowSlot *slot)
 {
