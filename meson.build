@@ -167,9 +167,10 @@ subdir('libnemo-private')
 subdir('gresources')
 subdir('src')
 subdir('test')
-subdir('docs')
 
-
+if gtkdoc_enabled
+  subdir('docs')
+endif
 
 message('\n'.join(['',
 '        @0@-@1@'.format(meson.project_name(), meson.project_version()),
