@@ -1193,7 +1193,7 @@ prep_selection (NemoIconContainer *container,
                 if (item->got_icon_position) {
                     gint y_shift;
 
-                    if (icon->item) {
+                    if (icon && icon->item) {
                         gdouble y1, y2;
 
                         y1 = y2 = 0;
