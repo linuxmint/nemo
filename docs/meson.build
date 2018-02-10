@@ -4,7 +4,9 @@ install_man(
   'nemo-connect-server.1',
 )
 
-subdir('reference')
+if gtkdoc_enabled
+  subdir('reference')
+endif
 
 # Just for Dist
 extraMans = [
