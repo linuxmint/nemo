@@ -139,14 +139,16 @@ static void
 action_home_callback (GtkAction *action,
 		      gpointer user_data)
 {
-	NemoWindow *window;
-	NemoWindowSlot *slot;
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        NemoWindow *window;
+        NemoWindowSlot *slot;
 
-	window = NEMO_WINDOW (user_data);
-	slot = nemo_window_get_active_slot (window);
+        window = NEMO_WINDOW (user_data);
 
-	nemo_window_slot_go_home (slot,
-				      nemo_event_get_window_open_flags ());
+        slot = nemo_window_get_active_slot (window);
+
+        nemo_window_slot_go_home (slot, nemo_event_get_window_open_flags ());
+    }
 }
 
 static void
