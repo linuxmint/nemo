@@ -178,6 +178,14 @@ G_DEFINE_TYPE_WITH_CODE (EelEditableLabel, eel_editable_label, GTK_TYPE_MISC,
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_EDITABLE, eel_editable_label_editable_init));
 
 static void
+eel_editable_label_queue_resize (GtkWidget *label)
+{
+    if (gtk_widget_is_drawable (label)) {
+        gtk_widget_queue_resize (label);
+    }
+}
+
+static void
 add_move_binding (GtkBindingSet  *binding_set,
 		  guint           keyval,
 		  guint           modmask,
@@ -715,7 +723,7 @@ eel_editable_label_set_justify (EelEditableLabel        *label,
       eel_editable_label_recompute (label);
       
       g_object_notify (G_OBJECT (label), "justify");
-      gtk_widget_queue_resize (GTK_WIDGET (label));
+      eel_editable_label_queue_resize (GTK_WIDGET (label));
     }
 }
 
@@ -773,7 +781,7 @@ eel_editable_label_set_line_wrap (EelEditableLabel *label,
       label->wrap = wrap;
       g_object_notify (G_OBJECT (label), "wrap");
       
-      gtk_widget_queue_resize (GTK_WIDGET (label));
+      eel_editable_label_queue_resize (GTK_WIDGET (label));
     }
 }
 
@@ -788,7 +796,7 @@ eel_editable_label_set_line_wrap_mode (EelEditableLabel *label,
     {
       label->wrap_mode = mode;
       
-      gtk_widget_queue_resize (GTK_WIDGET (label));
+      eel_editable_label_queue_resize (GTK_WIDGET (label));
     }
   
 }
@@ -2265,7 +2273,7 @@ eel_editable_label_delete_text (EelEditableLabel *label,
       eel_editable_label_select_region_index (label, anchor, end);
       
       eel_editable_label_recompute (label);  
-      gtk_widget_queue_resize (GTK_WIDGET (label));
+      eel_editable_label_queue_resize (GTK_WIDGET (label));
       
       g_object_notify (G_OBJECT (label), "text");
       g_signal_emit_by_name (GTK_EDITABLE (label), "changed");
@@ -2319,7 +2327,7 @@ eel_editable_label_insert_text (EelEditableLabel *label,
   *index += new_text_length;
 
   eel_editable_label_recompute (label);  
-  gtk_widget_queue_resize (GTK_WIDGET (label));
+  eel_editable_label_queue_resize (GTK_WIDGET (label));
 
   g_object_thaw_notify (G_OBJECT (label));
   g_signal_emit_by_name (GTK_EDITABLE (label), "changed");
@@ -2382,7 +2390,7 @@ eel_editable_label_preedit_changed_cb (GtkIMContext *context,
   g_free (preedit_string);
 
   eel_editable_label_recompute (label);  
-  gtk_widget_queue_resize (GTK_WIDGET (label));
+  eel_editable_label_queue_resize (GTK_WIDGET (label));
 }
 
 static gboolean
