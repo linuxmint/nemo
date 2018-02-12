@@ -1953,9 +1953,8 @@ apply_columns_settings (NemoListView *list_view,
 	NemoFile *file;
 	GList *old_view_columns, *view_columns;
 	GHashTable *visible_columns_hash;
-	GtkTreeViewColumn *prev_view_column;
 	GList *l;
-	int i;
+    gint i, prev_view_column;
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
@@ -2010,17 +2009,14 @@ apply_columns_settings (NemoListView *list_view,
 	}
 	g_list_free (old_view_columns);
 
-	/* show new columns from the configuration */
-	for (l = view_columns; l != NULL; l = l->next) {
-        gtk_tree_view_column_set_visible (l->data, TRUE);
-	}
+    prev_view_column = 0;
+    for (l = view_columns; l != NULL; l = l->next) {
+        gtk_tree_view_remove_column (list_view->details->tree_view, g_object_ref (l->data));
+        gtk_tree_view_insert_column (list_view->details->tree_view, l->data, prev_view_column ++);
 
-	/* place columns in the correct order */
-	prev_view_column = NULL;
-	for (l = view_columns; l != NULL; l = l->next) {
-		gtk_tree_view_move_column_after (list_view->details->tree_view, l->data, prev_view_column);
-		prev_view_column = l->data;
-	}
+        gtk_tree_view_column_set_visible (l->data, TRUE);
+        g_object_unref (l->data);
+    }
 
 	g_list_free (view_columns);
 }

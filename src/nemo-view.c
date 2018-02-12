@@ -3949,7 +3949,7 @@ queue_pending_files (NemoView *view,
 
 	*pending_list = g_list_concat (file_and_directory_list_from_files (directory, files),
 				       *pending_list);
-l
+
     schedule_timeout_display_of_pending_files (view, view->details->update_interval);
 }
 
