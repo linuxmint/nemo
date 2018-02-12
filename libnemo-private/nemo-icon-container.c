@@ -6603,12 +6603,14 @@ nemo_icon_container_set_layout_mode (NemoIconContainer *container,
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
 	container->details->layout_mode = mode;
-	nemo_icon_container_invalidate_labels (container);
 
 	container->details->needs_resort = TRUE;
-	nemo_icon_container_redo_layout (container);
 
-	g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
+    if (gtk_widget_get_realized (GTK_WIDGET (container))) {
+        nemo_icon_container_invalidate_labels (container);
+        nemo_icon_container_redo_layout (container);
+        g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
+    }
 }
 
 void
