@@ -5192,8 +5192,6 @@ nemo_icon_container_clear (NemoIconContainer *container)
 
  	g_hash_table_destroy (details->icon_set);
  	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
-
-	nemo_icon_container_update_scroll_region (container);
 }
 
 gboolean

@@ -434,6 +434,7 @@ nemo_icon_view_clear (NemoView *view)
 	file_list = NULL;
 	nemo_icon_container_for_each (icon_container, list_covers, &file_list);
 	nemo_icon_container_clear (icon_container);
+    nemo_icon_container_update_scroll_region (icon_container);
 	g_slist_foreach (file_list, (GFunc)unref_cover, NULL);
 	g_slist_free (file_list);
 }
