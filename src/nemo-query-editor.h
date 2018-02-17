@@ -28,43 +28,26 @@
 
 #include <libnemo-private/nemo-query.h>
 
-#define NEMO_TYPE_QUERY_EDITOR nemo_query_editor_get_type()
-#define NEMO_QUERY_EDITOR(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_QUERY_EDITOR, NemoQueryEditor))
-#define NEMO_QUERY_EDITOR_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_QUERY_EDITOR, NemoQueryEditorClass))
-#define NEMO_IS_QUERY_EDITOR(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_QUERY_EDITOR))
-#define NEMO_IS_QUERY_EDITOR_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_QUERY_EDITOR))
-#define NEMO_QUERY_EDITOR_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_QUERY_EDITOR, NemoQueryEditorClass))
+G_BEGIN_DECLS
 
-typedef struct NemoQueryEditorDetails NemoQueryEditorDetails;
+#define NEMO_TYPE_QUERY_EDITOR (nemo_query_editor_get_type ())
 
-typedef struct NemoQueryEditor {
-	GtkBox parent;
-	NemoQueryEditorDetails *details;
-} NemoQueryEditor;
+G_DECLARE_FINAL_TYPE (NemoQueryEditor, nemo_query_editor, NEMO, QUERY_EDITOR, GtkBox)
 
-typedef struct {
-	GtkBoxClass parent_class;
+GtkWidget* nemo_query_editor_new                (void);
 
-	void (* changed) (NemoQueryEditor  *editor,
-			  NemoQuery        *query,
-			  gboolean              reload);
-	void (* cancel)   (NemoQueryEditor *editor);
-} NemoQueryEditorClass;
+NemoQuery   *nemo_query_editor_get_query          (NemoQueryEditor *editor);
+void         nemo_query_editor_set_query          (NemoQueryEditor *editor,
+                                                   NemoQuery       *query);
+GFile       *nemo_query_editor_get_location       (NemoQueryEditor *editor);
+void         nemo_query_editor_set_location       (NemoQueryEditor *editor,
+                                                   GFile           *location);
+void         nemo_query_editor_set_active         (NemoQueryEditor *editor,
+                                                   gchar           *base_uri,
+                                                   gboolean         active);
+gboolean     nemo_query_editor_get_active         (NemoQueryEditor *editor);
+const gchar *nemo_query_editor_get_base_uri       (NemoQueryEditor *editor);
 
-#include "nemo-window-slot.h"
+G_END_DECLS
 
-GType      nemo_query_editor_get_type     	   (void);
-GtkWidget* nemo_query_editor_new          	   (void);
-
-NemoQuery *nemo_query_editor_get_query   (NemoQueryEditor *editor);
-void           nemo_query_editor_set_query   (NemoQueryEditor *editor,
-						  NemoQuery       *query);
-GFile *        nemo_query_editor_get_location (NemoQueryEditor *editor);
-void           nemo_query_editor_set_location (NemoQueryEditor *editor,
-						   GFile               *location);
 #endif /* NEMO_QUERY_EDITOR_H */

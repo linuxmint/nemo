@@ -174,8 +174,10 @@ ensure_query_editor (NemoWindowSlot *slot)
 
 	update_query_editor (slot);
 
-	gtk_revealer_set_reveal_child (GTK_REVEALER (slot->query_editor_revealer),
-				       TRUE); 	
+    nemo_query_editor_set_active (NEMO_QUERY_EDITOR (slot->query_editor),
+                                  nemo_window_slot_get_location_uri (slot),
+                                  TRUE);
+
 	gtk_widget_grab_focus (GTK_WIDGET (slot->query_editor));
 }
 
@@ -194,13 +196,19 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 							       G_CALLBACK (query_editor_cancel_callback), slot);
 
 	} else {
-		gtk_revealer_set_reveal_child (GTK_REVEALER (slot->query_editor_revealer),
-				       FALSE);		
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
-		slot->qe_changed_id = 0;
-		g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
-		slot->qe_cancel_id = 0;
-		nemo_query_editor_set_query (slot->query_editor, NULL);
+        nemo_query_editor_set_active (NEMO_QUERY_EDITOR (slot->query_editor), NULL, FALSE);
+
+        if (slot->qe_changed_id > 0) {
+            g_signal_handler_disconnect (slot->query_editor, slot->qe_changed_id);
+            slot->qe_changed_id = 0;
+        }
+
+        if (slot->qe_cancel_id > 0) {
+            g_signal_handler_disconnect (slot->query_editor, slot->qe_cancel_id);
+            slot->qe_cancel_id = 0;
+        }
+
+        nemo_query_editor_set_query (slot->query_editor, NULL);
 	}
 }
 
@@ -267,11 +275,8 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	gtk_widget_show (extras_vbox);
 
 	slot->query_editor = NEMO_QUERY_EDITOR (nemo_query_editor_new ());
-	slot->query_editor_revealer = gtk_revealer_new ();
-	gtk_container_add (GTK_CONTAINER (slot->query_editor_revealer),
-			   GTK_WIDGET (slot->query_editor));
-	gtk_widget_show_all (slot->query_editor_revealer);
-	nemo_window_slot_add_extra_location_widget (slot, slot->query_editor_revealer);
+
+	nemo_window_slot_add_extra_location_widget (slot, slot->query_editor);
 
 	slot->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->view_overlay,
@@ -709,7 +714,7 @@ remove_all_extra_location_widgets (GtkWidget *widget,
 	NemoDirectory *directory;
 
 	directory = nemo_directory_get (slot->location);
-	if (widget != GTK_WIDGET (slot->query_editor_revealer)) {
+	if (widget != GTK_WIDGET (slot->query_editor)) {
 		gtk_container_remove (GTK_CONTAINER (slot->extra_location_widgets), widget);
 	}
 

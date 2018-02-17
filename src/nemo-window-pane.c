@@ -736,14 +736,15 @@ action_show_hide_search_callback (GtkAction *action,
 	} else {
 		/* Do nothing if the query editor is not visible to begin with,
 		   i.e. if toggle action was due to switching from a search tab */
-		if (gtk_revealer_get_reveal_child (GTK_REVEALER (slot->query_editor_revealer))) {
+		if (nemo_query_editor_get_active (NEMO_QUERY_EDITOR (slot->query_editor))) {
 			GFile *location = NULL;
 
 			restore_focus_widget (pane);
 
-			/* Use the location bar as the return location */
 			if (slot->query_editor != NULL) {
-		 	  	location = nemo_query_editor_get_location (slot->query_editor);
+                /* If closing the search bar, restore the original location */
+                location = g_file_new_for_uri (nemo_query_editor_get_base_uri (slot->query_editor));
+
 				/* Last try: use the home directory as the return location */
 				if (location == NULL) {
 					location = g_file_new_for_path (g_get_home_dir ());
@@ -1116,7 +1117,7 @@ nemo_window_pane_sync_search_widgets (NemoWindowPane *pane)
 		/* If we're not in a search directory, make sure the query editor visibility matches the
 		   search button due to a quirk when switching tabs. TODO: Another approach would be to
 		   leave the editor visible and toggle the search button true. Which is better? */
-		if (gtk_revealer_get_reveal_child (GTK_REVEALER (slot->query_editor_revealer))) {
+		if (nemo_query_editor_get_active (NEMO_QUERY_EDITOR (slot->query_editor))) {
 			nemo_window_slot_set_query_editor_visible (slot, FALSE);
 		}
 	    	toggle_toolbar_search_button (pane, FALSE);
