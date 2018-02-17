@@ -1595,7 +1595,7 @@ center_pane_divider (GtkWidget  *paned,
      * things like the trash bar will force unwanted resizes */
 
     g_object_set (G_OBJECT (paned),
-                  "position-set", TRUE,
+                  "position", gtk_widget_get_allocated_width (paned) / 2,
                   NULL);
 
     g_signal_handlers_disconnect_by_func (G_OBJECT (paned), center_pane_divider, NULL);
