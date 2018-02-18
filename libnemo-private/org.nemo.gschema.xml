@@ -367,6 +367,10 @@
       <default>false</default>
       <summary>If true, double click left on blank area will go to parent folder</summary>
     </key>
+    <key name="saved-searches" type="as">
+      <default>[]</default>
+      <summary>List of saved search strings</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

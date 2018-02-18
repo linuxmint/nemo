@@ -30,6 +30,7 @@
 #include <gio/gio.h>
 
 #include <eel/eel-glib-extensions.h>
+#include <libnemo-private/nemo-global-preferences.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 
@@ -37,11 +38,14 @@ typedef struct
 {
     GtkWidget *infobar;
 	GtkWidget *entry;
+    GtkWidget *menu;
 
 	gboolean change_frozen;
 	guint typing_timeout_id;
 	gboolean is_visible;
 	GtkWidget *vbox;
+
+    gchar **faves;
 
 	char *current_uri;
     char *base_uri;
@@ -72,6 +76,10 @@ static void nemo_query_editor_changed_force (NemoQueryEditor *editor,
 						 gboolean             force);
 static void nemo_query_editor_changed (NemoQueryEditor *editor);
 
+static void on_saved_searches_setting_changed (GSettings *settings,
+                                               gchar     *key,
+                                               gpointer   user_data);
+
 static void
 nemo_query_editor_dispose (GObject *object)
 {
@@ -85,6 +93,13 @@ nemo_query_editor_dispose (GObject *object)
 		g_source_remove (editor->priv->typing_timeout_id);
 		editor->priv->typing_timeout_id = 0;
 	}
+
+    g_clear_object (&editor->priv->menu);
+
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          on_saved_searches_setting_changed,
+                                          editor);
+
 	G_OBJECT_CLASS (nemo_query_editor_parent_class)->dispose (object);
 }
 
@@ -164,6 +179,177 @@ typing_timeout_cb (gpointer user_data)
 
 #define TYPING_TIMEOUT 250
 
+static gchar *
+construct_favorite_entry (const gchar *uri,
+                          const gchar *key)
+{
+    return g_strdup_printf ("%s::%s", uri, key);
+}
+
+static gboolean
+parse_favorite_entry (const gchar  *favorite_entry,
+                      gchar       **uri,
+                      gchar       **key)
+{
+    gchar **split;
+
+    split = g_strsplit (favorite_entry, "::", 2);
+
+    if (split == NULL || g_strv_length (split) < 2) {
+        *key = NULL;
+        *uri = NULL;
+        return FALSE;
+    }
+
+    *uri = g_strdup (split[0]);
+    *key = g_strdup (split[1]);
+
+    g_strfreev (split);
+
+    return TRUE;
+}
+
+static gboolean
+is_search_criteria_in_faves (NemoQueryEditor *editor,
+                             const gchar     *key)
+{
+    gint i, length;
+    gboolean ret;
+
+    length = g_strv_length (editor->priv->faves);
+
+    if (length == 0) {
+        return FALSE;
+    }
+
+    ret = FALSE;
+
+    for (i = 0; i < length; i++) {
+        gchar *favorite_uri, *favorite_key;
+
+        if (parse_favorite_entry (editor->priv->faves[i],
+                                  &favorite_uri,
+                                  &favorite_key)) {
+            if (g_strcmp0 (editor->priv->current_uri, favorite_uri) == 0) {
+                if (g_strcmp0 (key, favorite_key) == 0) {
+                    ret = TRUE;
+                    break;
+                }
+            }
+
+            g_free (favorite_uri);
+            g_free (favorite_key);
+        }
+    }
+
+    return ret;
+}
+
+static void
+add_key_to_faves (NemoQueryEditor *editor,
+                  const gchar     *entry)
+{
+    gint i;
+    GPtrArray *array;
+
+    array = g_ptr_array_new ();
+
+    g_ptr_array_add (array, g_strdup (entry));
+
+    if (editor->priv->faves != NULL) {
+        for (i = 0; i < g_strv_length (editor->priv->faves); i++) {
+            g_ptr_array_add (array, g_strdup (editor->priv->faves[i]));
+        }
+    }
+
+    g_ptr_array_add (array, NULL);
+
+    g_signal_handlers_block_by_func (nemo_preferences,
+                                     on_saved_searches_setting_changed,
+                                     editor);
+
+    g_settings_set_strv (nemo_preferences,
+                         NEMO_PREFERENCES_SAVED_SEARCHES,
+                         (const gchar * const *) array->pdata);
+
+    g_signal_handlers_unblock_by_func (nemo_preferences,
+                                       on_saved_searches_setting_changed,
+                                       editor);
+
+    editor->priv->faves = (gchar **) g_ptr_array_free (array, FALSE);
+}
+
+static void
+remove_key_from_faves (NemoQueryEditor *editor,
+                       const gchar     *entry)
+{
+    gint i;
+    gchar *key, *uri;
+    GPtrArray *array;
+
+    if (!parse_favorite_entry (entry, &uri, &key)) {
+        return;
+    }
+
+    array = g_ptr_array_new ();
+
+    if (editor->priv->faves != NULL) {
+        for (i = 0; i < g_strv_length (editor->priv->faves); i++) {
+            gchar *favorite_key, *favorite_uri;
+
+            if (parse_favorite_entry (editor->priv->faves[i],
+                                      &favorite_uri,
+                                      &favorite_key)) {
+                if (g_strcmp0 (key, favorite_key) != 0 ||
+                    g_strcmp0 (uri, favorite_uri) != 0) {
+                    g_ptr_array_add (array, g_strdup (editor->priv->faves[i]));
+                }
+
+                g_free (favorite_key);
+                g_free (favorite_uri);
+            }
+        }
+    }
+
+    g_ptr_array_add (array, NULL);
+
+    g_signal_handlers_block_by_func (nemo_preferences,
+                                     on_saved_searches_setting_changed,
+                                     editor);
+
+    g_settings_set_strv (nemo_preferences,
+                         NEMO_PREFERENCES_SAVED_SEARCHES,
+                         (const gchar * const *) array->pdata);
+
+    g_signal_handlers_unblock_by_func (nemo_preferences,
+                                       on_saved_searches_setting_changed,
+                                       editor);
+
+    g_free (key);
+    g_free (uri);
+
+    editor->priv->faves = (gchar **) g_ptr_array_free (array, FALSE);
+}
+
+static void
+update_fav_icon (NemoQueryEditor *editor)
+{
+    const gchar *current_key;
+
+    current_key = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+
+    if (is_search_criteria_in_faves (editor, current_key)) {
+        gtk_entry_set_icon_from_icon_name (GTK_ENTRY (editor->priv->entry),
+                                           GTK_ENTRY_ICON_SECONDARY,
+                                           "starred-symbolic");
+        return;
+    }
+
+    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (editor->priv->entry),
+                                       GTK_ENTRY_ICON_SECONDARY,
+                                       "non-starred-symbolic");
+}
+
 static void
 entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
 {
@@ -171,14 +357,318 @@ entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
 		return;
 	}
 
-	if (editor->priv->typing_timeout_id > 0) {
-		g_source_remove (editor->priv->typing_timeout_id);
-	}
+    if (editor->priv->typing_timeout_id > 0) {
+        g_source_remove (editor->priv->typing_timeout_id);
+        editor->priv->typing_timeout_id = 0;
+    }
+
+    update_fav_icon (editor);
+
+    if (strlen (gtk_entry_get_text (GTK_ENTRY (editor->priv->entry))) < 3) {
+        return;
+    }
 
 	editor->priv->typing_timeout_id =
 		g_timeout_add (TYPING_TIMEOUT,
 			       typing_timeout_cb,
 			       editor);
+}
+
+static void
+get_markup_for_fave (NemoQueryEditor *editor,
+                     const gchar     *favorite,
+                     gchar          **loc_markup,
+                     gchar          **key_markup)
+{
+    GFile *location;
+    gchar *favorite_key, *favorite_location;
+    gchar *location_string;
+
+    if (!parse_favorite_entry (favorite, &favorite_location, &favorite_key)) {
+        *loc_markup = NULL;
+        *key_markup = NULL;
+        return;
+    }
+
+    location = g_file_new_for_uri (favorite_location);
+    location_string = nemo_compute_search_title_for_location (location);
+
+    *loc_markup = g_strdup_printf (_("in <tt><b>%s</b></tt>"), location_string);
+    *key_markup = g_strdup_printf (_("Search for <b>%s</b>"), favorite_key);
+
+    g_free (favorite_location);
+    g_free (favorite_key);
+    g_free (location_string);
+    g_object_unref (location);
+}
+
+static void
+on_menu_item_activated (GtkMenuItem *item,
+                        gpointer     user_data)
+{
+    NemoQueryEditor *editor;
+    NemoQuery *query;
+    const gchar *fave_entry;
+    gchar *favorite_key, *favorite_location;
+
+    editor = NEMO_QUERY_EDITOR (user_data);
+
+    fave_entry = g_object_get_data (G_OBJECT (item),
+                                   "fave-entry");
+
+    if (parse_favorite_entry (fave_entry, &favorite_location, &favorite_key)) {
+        query = nemo_query_new ();
+
+        nemo_query_set_location (query, favorite_location);
+        nemo_query_set_text (query, favorite_key);
+
+        nemo_query_editor_set_query (editor, query);
+        nemo_query_editor_changed (editor);
+        update_fav_icon (editor);
+
+        g_free (favorite_location);
+        g_free (favorite_key);
+    }
+}
+
+static gboolean
+on_menu_item_key_press (GtkWidget    *widget,
+                        GdkEvent     *event,
+                        gpointer user_data)
+{
+    if (event->key.state == 0 && event->key.keyval == GDK_KEY_Delete) {
+        NemoQueryEditor *editor;
+        GtkWidget *item;
+        const gchar *fave_entry;
+
+        editor = NEMO_QUERY_EDITOR (user_data);
+
+        item = gtk_menu_shell_get_selected_item (GTK_MENU_SHELL (widget));
+
+        if (item == NULL) {
+            return GDK_EVENT_PROPAGATE;
+        }
+
+        fave_entry = g_object_get_data (G_OBJECT (item),
+                                        "fave-entry");
+
+        remove_key_from_faves (editor, fave_entry);
+
+        gtk_widget_set_sensitive (item, FALSE);
+        update_fav_icon (editor);
+
+        return GDK_EVENT_STOP;
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+
+#if !GTK_CHECK_VERSION (3, 22, 0)
+static void
+menu_position_function (GtkMenu  *menu,
+                        gint     *x,
+                        gint     *y,
+                        gboolean *push_in,
+                        gpointer  user_data)
+{
+    NemoQueryEditor *editor;
+    GtkWidget *parent;
+    GtkAllocation menu_allocation;
+    gint window_x, window_y, translated_x, translated_y;
+
+    g_return_if_fail (NEMO_IS_QUERY_EDITOR (user_data));
+
+    editor = NEMO_QUERY_EDITOR (user_data);
+
+    parent = gtk_widget_get_toplevel (GTK_WIDGET (editor));
+
+    gtk_widget_translate_coordinates (editor->priv->entry,
+                                      parent,
+                                      0, 0,
+                                      &translated_x,
+                                      &translated_y);
+
+    gdk_window_get_position (gtk_widget_get_window (parent), &window_x, &window_y);
+
+    gtk_widget_get_allocation (GTK_WIDGET (menu), &menu_allocation);
+
+    *x = translated_x + window_x;
+    *y = translated_y + window_y - menu_allocation.height;
+    *push_in = TRUE;
+}
+#endif
+
+static void
+popup_favorites (NemoQueryEditor *editor,
+                 GdkEvent        *event,
+                 gboolean         use_pointer_location)
+{
+    GtkWidget *menu, *item, *item_child;
+    GtkSizeGroup *group;
+    gchar **faves;
+    gint i;
+
+    g_clear_object (&editor->priv->menu);
+    editor->priv->menu = menu = g_object_ref_sink (gtk_menu_new ());
+
+    group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+    faves = editor->priv->faves;
+
+    for (i = 0; i < g_strv_length (faves); i++) {
+        GtkWidget *label;
+        gchar *loc_markup, *key_markup;
+
+        get_markup_for_fave (editor,
+                             faves[i],
+                             &loc_markup,
+                             &key_markup);
+
+        if (loc_markup == NULL || key_markup == NULL) {
+            continue;
+        }
+
+        item = gtk_menu_item_new();
+
+        item_child = gtk_bin_get_child (GTK_BIN (item));
+
+        if (item_child != NULL) {
+            gtk_widget_destroy (item_child);
+        }
+
+        item_child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 10);
+        gtk_container_add (GTK_CONTAINER (item), item_child);
+
+        label = gtk_label_new (NULL);
+
+        gtk_label_set_markup (GTK_LABEL (label), key_markup);
+        gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+        gtk_box_pack_start (GTK_BOX (item_child), label, FALSE, FALSE, 0);
+        gtk_size_group_add_widget (group, label);
+
+        label = gtk_label_new (NULL);
+
+        gtk_label_set_markup (GTK_LABEL (label), loc_markup);
+        gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+        gtk_box_pack_start (GTK_BOX (item_child), label, FALSE, FALSE, 0);
+
+        g_object_set_data_full (G_OBJECT (item),
+                                "fave-entry",
+                                g_strdup (faves[i]),
+                                (GDestroyNotify) g_free);
+
+        g_free (loc_markup);
+        g_free (key_markup);
+
+        gtk_widget_show_all (GTK_WIDGET (item));
+
+        gtk_menu_attach (GTK_MENU (menu), item, 0, 1, i, i + 1);
+
+        g_signal_connect (item,
+                          "activate",
+                          G_CALLBACK (on_menu_item_activated),
+                          editor);
+    }
+
+    g_object_unref (group);
+
+    g_signal_connect (menu,
+                      "key-press-event",
+                      G_CALLBACK (on_menu_item_key_press),
+                      editor);
+
+#if GTK_CHECK_VERSION (3, 22, 0)
+    if (use_pointer_location) {
+        gtk_menu_popup_at_pointer (GTK_MENU (menu), event);
+    } else {
+        gtk_menu_popup_at_widget (GTK_MENU (menu),
+                                  editor->priv->entry,
+                                  GDK_GRAVITY_NORTH_WEST,
+                                  GDK_GRAVITY_SOUTH_WEST,
+                                  event);
+    }
+#else
+    if (use_pointer_location) {
+        gtk_menu_popup (GTK_MENU (menu),
+                        NULL, NULL, NULL, NULL,
+                        3,
+                        gtk_get_current_event_time ());
+    } else {
+        gtk_menu_popup (GTK_MENU (menu),
+                        NULL, NULL,
+                        (GtkMenuPositionFunc) menu_position_function,
+                        editor,
+                        0,
+                        gtk_get_current_event_time ());
+    }
+#endif
+}
+
+static gboolean
+on_key_press_event (GtkWidget    *widget,
+                    GdkEvent     *event,
+                    gpointer user_data)
+{
+    if (event->key.state == 0 && event->key.keyval == GDK_KEY_Up) {
+        popup_favorites (NEMO_QUERY_EDITOR (user_data), event, FALSE);
+        return GDK_EVENT_STOP;
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+
+static void
+fave_icon_clicked_cb (GtkWidget             *widget,
+                      GtkEntryIconPosition   position,
+                      GdkEvent              *event,
+                      gpointer               user_data)
+{
+    NemoQueryEditor *editor;
+    const gchar *current_key;
+
+    if (position == GTK_ENTRY_ICON_PRIMARY) {
+        return;
+    }
+
+    editor = NEMO_QUERY_EDITOR (user_data);
+
+    current_key = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+
+    if (event->button.state == 0 && event->button.button == 1) {
+        gchar *entry;
+
+        if (strlen (current_key) < 3) {
+            return;
+        }
+
+        entry = construct_favorite_entry (editor->priv->current_uri, current_key);
+
+        if (is_search_criteria_in_faves (editor, current_key)) {
+            remove_key_from_faves (editor, entry);
+        } else {
+            add_key_to_faves (editor, entry);
+        }
+
+        g_free (entry);
+
+        update_fav_icon (editor);
+    } else {
+        popup_favorites (editor, event, TRUE);
+    }
+}
+
+static void
+on_saved_searches_setting_changed (GSettings *settings,
+                                   gchar     *key,
+                                   gpointer   user_data)
+{
+    NemoQueryEditor *editor;
+
+    g_return_if_fail (NEMO_IS_QUERY_EDITOR (user_data));
+
+    editor = NEMO_QUERY_EDITOR (user_data);
+
+    editor->priv->faves = g_settings_get_strv (settings, key);
 }
 
 static void
@@ -193,6 +683,10 @@ nemo_query_editor_init (NemoQueryEditor *editor)
     priv = editor->priv;
 
     priv->base_uri = NULL;
+    priv->menu = NULL;
+
+    priv->faves = g_settings_get_strv (nemo_preferences,
+                                       NEMO_PREFERENCES_SAVED_SEARCHES);
 
     gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
@@ -201,11 +695,13 @@ nemo_query_editor_init (NemoQueryEditor *editor)
     gtk_widget_set_no_show_all (priv->infobar, TRUE);
     gtk_info_bar_set_message_type (GTK_INFO_BAR (priv->infobar), GTK_MESSAGE_OTHER);
 
-    priv->entry = gtk_search_entry_new ();
+    priv->entry = gtk_entry_new ();
     gtk_box_pack_start (GTK_BOX (gtk_info_bar_get_content_area (GTK_INFO_BAR (priv->infobar))),
                        priv->entry,
                        TRUE, TRUE, 0);
     gtk_widget_show (priv->entry);
+
+    gtk_entry_set_placeholder_text (GTK_ENTRY (priv->entry), _("Type to search or arrow-up to select a favorite"));
 
     g_signal_connect (priv->entry,
                       "activate",
@@ -217,12 +713,40 @@ nemo_query_editor_init (NemoQueryEditor *editor)
                       G_CALLBACK (entry_changed_cb),
                       editor);
 
+    g_signal_connect (priv->entry,
+                      "key-press-event",
+                      G_CALLBACK (on_key_press_event),
+                      editor);
+
+    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (priv->entry),
+                                       GTK_ENTRY_ICON_PRIMARY,
+                                       "edit-find-symbolic");
+
+    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (priv->entry),
+                                       GTK_ENTRY_ICON_SECONDARY,
+                                       "non-starred-symbolic");
+
+    gtk_entry_set_icon_tooltip_text (GTK_ENTRY (priv->entry),
+                                     GTK_ENTRY_ICON_SECONDARY,
+                                     _("Click to save or forget a favorite search. "
+                                       "Right-click to display favorites."));
+
+    g_signal_connect (priv->entry,
+                      "icon-press",
+                      G_CALLBACK (fave_icon_clicked_cb),
+                      editor);
+
     separator = gtk_separator_new (GTK_ORIENTATION_VERTICAL);
     gtk_box_pack_start (GTK_BOX (editor), separator, TRUE, TRUE, 0);
 
     g_object_bind_property (priv->infobar, "visible",
                             separator, "visible",
                             G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
+
+    g_signal_connect (nemo_preferences,
+                      "changed::" NEMO_PREFERENCES_SAVED_SEARCHES,
+                      G_CALLBACK (on_saved_searches_setting_changed),
+                      editor);
 
     gtk_widget_show (GTK_WIDGET (editor));
 }
@@ -322,6 +846,7 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 
 	editor->priv->change_frozen = TRUE;
 	gtk_entry_set_text (GTK_ENTRY (editor->priv->entry), text);
+    gtk_widget_grab_focus (editor->priv->entry);
 
 	g_free (editor->priv->current_uri);
 	editor->priv->current_uri = NULL;
@@ -349,6 +874,8 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
 
         g_clear_pointer (&editor->priv->base_uri, g_free);
         editor->priv->base_uri = base_uri;
+
+        update_fav_icon (editor);
     } else {
         gtk_widget_hide (editor->priv->infobar);
     }

@@ -123,11 +123,21 @@ nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 char *
 nemo_query_to_readable_string (NemoQuery *query)
 {
+    GFile *file;
+    gchar *location_title;
+
 	if (!query || !query->details->text || query->details->text[0] == '\0') {
 		return g_strdup (_("Search"));
 	}
 
-	return g_strdup_printf (_("Search for \"%s\""), query->details->text);
+    file = g_file_new_for_uri (query->details->location_uri);
+    location_title = nemo_compute_search_title_for_location (file);
+
+    g_object_unref (file);
+
+    return g_strdup_printf (_("Search for \"%s\" in \"%s\""), query->details->text, location_title);
+
+    g_free (location_title);
 }
 
 static char *

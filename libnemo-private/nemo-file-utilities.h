@@ -61,7 +61,7 @@ void     nemo_create_templates_directory         (void);
 char *   nemo_get_searches_directory             (void);
 
 char *	 nemo_compute_title_for_location	     (GFile *file);
-
+char *   nemo_compute_search_title_for_location (GFile *location);
 /* This function returns something that needs to be freed with g_free,
  * is not NULL, but is not garaunteed to exist */
 char *   nemo_get_desktop_directory_uri_no_create (void);

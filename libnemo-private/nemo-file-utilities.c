@@ -98,6 +98,35 @@ nemo_compute_title_for_location (GFile *location)
     return title;
 }
 
+// TODO: Maybe this can replace nemo_compute_title_for_location() all around?
+char *
+nemo_compute_search_title_for_location (GFile *location)
+{
+    GFile *home_file;
+    gchar *location_string;
+
+    if (nemo_is_home_directory (location)) {
+        return g_strdup (_("Home"));
+    }
+
+    home_file = g_file_new_for_path (g_get_home_dir ());
+
+    location_string = NULL;
+
+    location_string = g_file_get_relative_path (home_file, location);
+
+    if (location_string == NULL) {
+        if (g_file_is_native (location)) {
+            location_string = g_file_get_path (location);
+        } else {
+            location_string = g_file_get_uri (location);
+        }
+    }
+
+    g_object_unref (home_file);
+
+    return location_string;
+}
 
 /**
  * nemo_get_user_directory:

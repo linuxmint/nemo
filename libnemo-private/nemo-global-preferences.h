@@ -259,6 +259,8 @@ typedef enum
 
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
 
+#define NEMO_PREFERENCES_SAVED_SEARCHES                "saved-searches"
+
 void nemo_global_preferences_init                      (void);
 void nemo_global_preferences_finalize                  (void);
 char *nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void);
