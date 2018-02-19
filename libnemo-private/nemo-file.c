@@ -2121,51 +2121,62 @@ get_link_files (NemoFile *target_file)
 		g_free (uri);
 
         if (link_files) {
-            /* We keep a hash table of uri keys with lists of NemoFiles attached, to keep
-             * track of what files point to a particular uri.
-             *
-             * When a file gets updated, it fetches the potential list of any files that
-             * are actually links to itself.  If our original file is also actually a symbolic
-             * link that points to to one of these link files, we'll end up triggering a cyclic
-             * update - one file triggers an update for the other, which in turn triggers an update
-             * back to the original file, and so on.
-             *
-             * So we check if target_file is itself a link.  If it is, we compare its symbolic
-             * target location with the location of the returned link_files.  We skip any that match
-             * (meaning, any link-back files that are themselves the target of the current symbolic link
-             * file.
-             */
-            GList *derecursed = NULL;
-            GList *l;
+            if (!nemo_file_is_symbolic_link (target_file)) {
+                return nemo_file_list_copy (*link_files);
+            } else {
+                /* We keep a hash table of uri keys with lists of NemoFiles attached, to keep
+                 * track of what files point to a particular uri.
+                 *
+                 * When a file gets updated, it fetches the potential list of any files that
+                 * are actually links to itself.  If our original file is also actually a symbolic
+                 * link that points to to one of these link files, we'll end up triggering a cyclic
+                 * update - one file triggers an update for the other, which in turn triggers an update
+                 * back to the original file, and so on.
+                 *
+                 * So we check if target_file is itself a link.  If it is, we compare its symbolic
+                 * target location with the location of the returned link_files.  We skip any that match
+                 * (meaning, any link-back files that are themselves the target of the current symbolic link
+                 * file.
+                 */
+                GList *derecursed = NULL;
+                GList *l;
 
-            l = *link_files;
+                l = *link_files;
 
-            while (l != NULL) {
-                NemoFile *link_file;
+                while (l != NULL) {
+                    NemoFile *link_file;
+                    gboolean add;
 
-                link_file = NEMO_FILE (l->data);
+                    add = TRUE;
 
-                if (nemo_file_is_symbolic_link (target_file)) {
-                    gchar *target_symlink_uri = nemo_file_get_symbolic_link_target_uri (target_file);
-                    gchar *link_uri = nemo_file_get_uri (link_file);
+                    link_file = NEMO_FILE (l->data);
 
-                    GFile *target_symlink_gfile = g_file_new_for_uri (target_symlink_uri);
-                    GFile *link_gfile = g_file_new_for_uri (link_uri);
+                    if (nemo_file_is_symbolic_link (target_file)) {
+                        gchar *target_symlink_uri = nemo_file_get_symbolic_link_target_uri (target_file);
+                        gchar *link_uri = nemo_file_get_uri (link_file);
 
-                    if (!g_file_equal (target_symlink_gfile, link_gfile)) {
+                        GFile *target_symlink_gfile = g_file_new_for_uri (target_symlink_uri);
+                        GFile *link_gfile = g_file_new_for_uri (link_uri);
+
+                        if (g_file_equal (target_symlink_gfile, link_gfile)) {
+                            add = FALSE;
+                        }
+
+                        g_object_unref (target_symlink_gfile);
+                        g_object_unref (link_gfile);
+                        g_free (target_symlink_uri);
+                        g_free (link_uri);
+                    }
+
+                    if (add) {
                         derecursed = g_list_prepend (derecursed, nemo_file_ref (link_file));
                     }
 
-                    g_object_unref (target_symlink_gfile);
-                    g_object_unref (link_gfile);
-                    g_free (target_symlink_uri);
-                    g_free (link_uri);
+                    l = l->next;
                 }
 
-                l = l->next;
+                return derecursed;
             }
-
-            return derecursed;
         }
     }
 
