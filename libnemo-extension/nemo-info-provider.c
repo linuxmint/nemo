@@ -103,11 +103,11 @@ nemo_info_provider_update_complete_invoke (GClosure *update_complete,
 
 	g_value_init (&args[0], NEMO_TYPE_INFO_PROVIDER);
 	g_value_init (&args[1], G_TYPE_POINTER);
-	g_value_init (&args[2], NEMO_TYPE_OPERATION_RESULT);
+	g_value_init (&args[2], G_TYPE_INT);
 
 	g_value_set_object (&args[0], provider);
 	g_value_set_pointer (&args[1], handle);
-	g_value_set_enum (&args[2], result);
+	g_value_set_int (&args[2], result);
 
 	g_closure_invoke (update_complete, &return_val, 3, args, NULL);
 

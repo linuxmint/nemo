@@ -33,8 +33,6 @@
 
 G_BEGIN_DECLS
 
-#define NEMO_TYPE_OPERATION_RESULT (nemo_operation_result_get_type ())
-
 /* Handle for asynchronous interfaces.  These are opaque handles that must
  * be unique within an extension object.  These are returned by operations
  * that return NEMO_OPERATION_IN_PROGRESS */
@@ -54,8 +52,6 @@ typedef enum {
 	 * operation is complete. */
 	NEMO_OPERATION_IN_PROGRESS
 } NemoOperationResult;
-
-GType nemo_operation_result_get_type (void);
 
 void nemo_module_initialize (GTypeModule  *module);
 void nemo_module_shutdown   (void);

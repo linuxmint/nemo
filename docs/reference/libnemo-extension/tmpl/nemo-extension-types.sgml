@@ -42,15 +42,6 @@ nemo-extension-types
 @NEMO_OPERATION_FAILED: 
 @NEMO_OPERATION_IN_PROGRESS: 
 
-<!-- ##### FUNCTION nemo_operation_result_get_type ##### -->
-<para>
-
-</para>
-
-@void: 
-@Returns: 
-
-
 <!-- ##### FUNCTION nemo_module_initialize ##### -->
 <para>
 

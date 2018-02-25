@@ -3,7 +3,6 @@ nemo_extension_sources = [
   'nemo-column-provider.c',
   'nemo-column.c',
   'nemo-extension-i18n.h',
-  'nemo-extension-types.c',
   'nemo-extension-private.h',
   'nemo-file-info.c',
   'nemo-info-provider.c',

@@ -187,10 +187,8 @@ NEMO_PROPERTY_PAGE_GET_CLASS
 
 <SECTION>
 <FILE>nemo-extension-types</FILE>
-NEMO_TYPE_OPERATION_RESULT
 NemoOperationHandle
 NemoOperationResult
-nemo_operation_result_get_type
 nemo_module_initialize
 nemo_module_shutdown
 nemo_module_list_types
