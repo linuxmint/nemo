@@ -4134,18 +4134,21 @@ static void
 extension_info_cancel (NemoDirectory *directory)
 {
 	if (directory->details->extension_info_in_progress != NULL) {
-		if (directory->details->extension_info_idle) {
+		if (directory->details->extension_info_idle > 0) {
 			g_source_remove (directory->details->extension_info_idle);
+			directory->details->extension_info_idle = 0;
 		} else {
 			nemo_info_provider_cancel_update 
 				(directory->details->extension_info_provider,
 				 directory->details->extension_info_in_progress);
+            g_closure_invalidate (directory->details->extension_info_closure);
 		}
 
 		directory->details->extension_info_in_progress = NULL;
 		directory->details->extension_info_file = NULL;
 		directory->details->extension_info_provider = NULL;
-		directory->details->extension_info_idle = 0;
+        g_closure_unref (directory->details->extension_info_closure);
+        directory->details->extension_info_closure = NULL;
 
 		async_job_end (directory, "extension info");
 	}
@@ -4215,6 +4218,8 @@ info_provider_idle_callback (gpointer user_data)
 		directory->details->extension_info_provider = NULL;
 		directory->details->extension_info_in_progress = NULL;
 		directory->details->extension_info_idle = 0;
+        g_closure_unref (directory->details->extension_info_closure);
+        directory->details->extension_info_closure = NULL;
 		
 		finish_info_provider (directory, file, response->provider);
 	}
@@ -4274,6 +4279,8 @@ extension_info_start (NemoDirectory *directory,
      * be NULL during finish_info_provider. */
     nemo_directory_ref (directory);
 
+    handle = NULL;
+
 	update_complete = g_cclosure_new (G_CALLBACK (info_provider_callback),
 					  directory,
 					  NULL);
@@ -4286,16 +4293,17 @@ extension_info_start (NemoDirectory *directory,
 		 update_complete, 
 		 &handle);
 
-	g_closure_unref (update_complete);
-
 	if (result == NEMO_OPERATION_COMPLETE ||
 	    result == NEMO_OPERATION_FAILED) {
+        g_closure_unref (update_complete);
+
 		finish_info_provider (directory, file, provider);
 		async_job_end (directory, "extension info");
 	} else {
 		directory->details->extension_info_in_progress = handle;
 		directory->details->extension_info_provider = provider;
 		directory->details->extension_info_file = file;
+        directory->details->extension_info_closure = update_complete;
 	}
 }
 

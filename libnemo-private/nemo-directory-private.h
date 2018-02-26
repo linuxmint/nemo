@@ -119,6 +119,7 @@ struct NemoDirectoryDetails
 	NemoInfoProvider *extension_info_provider;
 	NemoOperationHandle *extension_info_in_progress;
 	guint extension_info_idle;
+    GClosure * extension_info_closure;
 
 	ThumbnailState *thumbnail_state;
 

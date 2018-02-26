@@ -33,24 +33,35 @@
 
 G_BEGIN_DECLS
 
-/* Handle for asynchronous interfaces.  These are opaque handles that must
+/**
+ * NemoOperationHandle:
+ *
+ * Handle for asynchronous interfaces.  These are opaque handles that must
  * be unique within an extension object.  These are returned by operations
- * that return NEMO_OPERATION_IN_PROGRESS */
+ * that return NEMO_OPERATION_IN_PROGRESS.
+ *
+ * For python extensions, the handle is a dummy struct created by the nemo
+ * python bindings on the extension's behalf.  It can be used as a unique
+ * key for a dict, for instance, for keeping track of multiple operations
+ * at once.
+ */
 typedef struct _NemoOperationHandle NemoOperationHandle;
 
+/**
+ * NemoOperationResult:
+ * @NEMO_OPERATION_COMPLETE: Returned if the call succeeded, and the extension is done
+ *  with the request.
+ * @NEMO_OPERATION_FAILED: Returned if the call failed.
+ * @NEMO_OPERATION_IN_PROGRESS: Returned if the extension has begun an async operation.
+ *  For C extensions, if this is returned, the extension must set the handle parameter.
+ *  For python extensions, handle is already filled, and unique, and can be used for
+ *  identifying purposes within the extension.  In either case, the extension must call
+ *  the callback closure when the operation is complete (complete_invoke.)
+ */
 typedef enum {
-	/* Returned if the call succeeded, and the extension is done 
-	 * with the request */
-	NEMO_OPERATION_COMPLETE,
-
-	/* Returned if the call failed */
-	NEMO_OPERATION_FAILED,
-
-	/* Returned if the extension has begun an async operation. 
-	 * If this is returned, the extension must set the handle 
-	 * parameter and call the callback closure when the 
-	 * operation is complete. */
-	NEMO_OPERATION_IN_PROGRESS
+    NEMO_OPERATION_COMPLETE,
+    NEMO_OPERATION_FAILED,
+    NEMO_OPERATION_IN_PROGRESS
 } NemoOperationResult;
 
 void nemo_module_initialize (GTypeModule  *module);

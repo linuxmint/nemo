@@ -296,6 +296,22 @@ nemo_file_info_add_string_attribute (NemoFileInfo *file,
 		(file, attribute_name, value);
 }
 
+/**
+ * nemo_file_info_invalidate_extension_info:
+ * @file: a #NemoFile
+ *
+ * Notifies nemo to re-run info provider extensions on the given file.
+ *
+ * This is useful if you have an extension that listens or responds to some external
+ * interface for changes to local file metadata (such as a cloud drive changing file emblems.)
+ *
+ * When a change such as this occurs, call this on the file in question, and nemo will
+ * schedule a call to extension->update_file_info to update its own internal metadata.
+ *
+ * NOTE: This does *not* need to be called on the tail end of a update_full/update_complete
+ * asynchronous extension.  Prior to Nemo 3.6 this was indeed the case, however, due to a
+ * recursion issue in nemo-directory-async.c (see nemo 9e67417f8f09.)
+ */
 void
 nemo_file_info_invalidate_extension_info (NemoFileInfo *file)
 {
