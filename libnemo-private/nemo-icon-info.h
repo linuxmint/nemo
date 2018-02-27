@@ -77,8 +77,8 @@ GdkPixbuf *           nemo_icon_info_get_pixbuf_nodefault_at_size (NemoIconInfo 
 GdkPixbuf *           nemo_icon_info_get_pixbuf_at_size           (NemoIconInfo  *icon,
 								       gsize              forced_size);
 GdkPixbuf *           nemo_icon_info_get_desktop_pixbuf_at_size (NemoIconInfo  *icon,
-                                                                 gsize          max_width,
-                                                                 gsize          max_height);
+                                                                 gsize          max_height,
+                                                                 gsize          max_width);
 gboolean              nemo_icon_info_get_embedded_rect            (NemoIconInfo  *icon,
 								       GdkRectangle      *rectangle);
 gboolean              nemo_icon_info_get_attach_points            (NemoIconInfo  *icon,
