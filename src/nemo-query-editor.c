@@ -382,7 +382,7 @@ get_markup_for_fave (NemoQueryEditor *editor,
 {
     GFile *location;
     gchar *favorite_key, *favorite_location;
-    gchar *location_string;
+    gchar *location_string, *mnemonic_key;
 
     if (!parse_favorite_entry (favorite, &favorite_location, &favorite_key)) {
         *loc_markup = NULL;
@@ -393,12 +393,15 @@ get_markup_for_fave (NemoQueryEditor *editor,
     location = g_file_new_for_uri (favorite_location);
     location_string = nemo_compute_search_title_for_location (location);
 
+    mnemonic_key = g_strdup_printf ("_%s", favorite_key);
+
     *loc_markup = g_strdup_printf (_("in <tt><b>%s</b></tt>"), location_string);
-    *key_markup = g_strdup_printf (_("Search for <b>%s</b>"), favorite_key);
+    *key_markup = g_strdup_printf (_("Search for <b>%s</b>"), mnemonic_key);
 
     g_free (favorite_location);
     g_free (favorite_key);
     g_free (location_string);
+    g_free (mnemonic_key);
     g_object_unref (location);
 }
 
@@ -541,7 +544,7 @@ popup_favorites (NemoQueryEditor *editor,
 
         label = gtk_label_new (NULL);
 
-        gtk_label_set_markup (GTK_LABEL (label), key_markup);
+        gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), key_markup);
         gtk_label_set_xalign (GTK_LABEL (label), 0.0);
         gtk_box_pack_start (GTK_BOX (item_child), label, FALSE, FALSE, 0);
         gtk_size_group_add_widget (group, label);
