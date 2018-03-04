@@ -3372,7 +3372,7 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 
 	item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
 	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item),
-				       gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
+				       gtk_image_new_from_icon_name ("folder-open-symbolic", GTK_ICON_SIZE_MENU));
 	g_signal_connect (item, "activate",
 			  G_CALLBACK (open_shortcut_cb), sidebar);
 	gtk_widget_show (item);
@@ -3408,7 +3408,7 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 	item = gtk_image_menu_item_new_with_label (_("Remove"));
 	sidebar->popup_menu_remove_item = item;
 	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item),
-				 gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU));
+				 gtk_image_new_from_icon_name ("list-remove-symbolic", GTK_ICON_SIZE_MENU));
 	g_signal_connect (item, "activate",
 		    G_CALLBACK (remove_shortcut_cb), sidebar);
 	gtk_widget_show (item);
