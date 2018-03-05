@@ -192,7 +192,8 @@ static void                 switch_to_manual_layout                   (NemoIconV
 static void                 update_layout_menus                       (NemoIconView     *view);
 static NemoFileSortType get_default_sort_order                    (NemoFile         *file,
 								       gboolean             *reversed);
-static void                 nemo_icon_view_clear                  (NemoView         *view);
+static void                 nemo_icon_view_clear_full                 (NemoView *view,
+                                                                       gboolean  destroying);
 static const SortCriterion *get_sort_criterion_by_metadata_text (const char *metadata_text);
 static void		    nemo_icon_view_remove_file (NemoView *view, NemoFile *file, NemoDirectory *directory);
 
@@ -205,7 +206,7 @@ nemo_icon_view_destroy (GtkWidget *object)
 
 	icon_view = NEMO_ICON_VIEW (object);
 
-	nemo_icon_view_clear (NEMO_VIEW (object));
+	nemo_icon_view_clear_full (NEMO_VIEW (object), TRUE);
 
         if (icon_view->details->react_to_icon_change_idle_id != 0) {
                 g_source_remove (icon_view->details->react_to_icon_change_idle_id);
@@ -419,7 +420,7 @@ unref_cover (NemoIconData *data, gpointer callback_data)
 }
 
 static void
-nemo_icon_view_clear (NemoView *view)
+nemo_icon_view_clear_full (NemoView *view, gboolean destroying)
 {
 	NemoIconContainer *icon_container;
 	GSList *file_list;
@@ -434,9 +435,19 @@ nemo_icon_view_clear (NemoView *view)
 	file_list = NULL;
 	nemo_icon_container_for_each (icon_container, list_covers, &file_list);
 	nemo_icon_container_clear (icon_container);
-    nemo_icon_container_update_scroll_region (icon_container);
+
+    if (!destroying) {
+        nemo_icon_container_update_scroll_region (icon_container);
+    }
+
 	g_slist_foreach (file_list, (GFunc)unref_cover, NULL);
 	g_slist_free (file_list);
+}
+
+static void
+nemo_icon_view_clear (NemoView *view)
+{
+    nemo_icon_view_clear_full (view, FALSE);
 }
 
 static gboolean
