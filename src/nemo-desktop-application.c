@@ -34,6 +34,7 @@
 #include "nemo-desktop-icon-grid-view.h"
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
+#include "nemo-freedesktop-dbus.h"
 
 #include "nemo-desktop-manager.h"
 #include "nemo-image-properties-page.h"
@@ -69,6 +70,7 @@ G_DEFINE_TYPE (NemoDesktopApplication, nemo_desktop_application, NEMO_TYPE_APPLI
 
 struct _NemoDesktopApplicationPriv {
     NemoDesktopManager *desktop_manager;
+    NemoFreedesktopDBus *fdb_manager;
 };
 
 static void
@@ -82,6 +84,10 @@ nemo_desktop_application_init (NemoDesktopApplication *application)
 static void
 nemo_desktop_application_finalize (GObject *object)
 {
+    NemoDesktopApplication *app = NEMO_DESKTOP_APPLICATION (object);
+
+    g_clear_object (&app->priv->fdb_manager);
+
     G_OBJECT_CLASS (nemo_desktop_application_parent_class)->finalize (object);
 }
 
@@ -330,6 +336,8 @@ nemo_desktop_application_continue_startup (NemoApplication *app)
     nemo_application_check_required_directory (app, nemo_get_desktop_directory ());
     nemo_application_check_required_directory (app, nemo_get_user_directory ());
 
+    NEMO_DESKTOP_APPLICATION (app)->priv->fdb_manager = nemo_freedesktop_dbus_new ();
+
 	/* register views */
 	nemo_desktop_icon_view_register ();
     nemo_desktop_icon_grid_view_register ();
@@ -361,6 +369,46 @@ nemo_desktop_application_open (GApplication *app,
     /* FIXME: how to do this? */
 }
 
+static void
+nemo_desktop_application_open_location (NemoApplication     *application,
+                                        GFile               *location,
+                                        GFile               *selection,
+                                        const char          *startup_id)
+{
+    GAppInfo *appinfo;
+    GError *error = NULL;
+    GList *sel_list = NULL;
+
+    appinfo = g_app_info_get_default_for_type ("inode/directory", TRUE);
+
+    if (!appinfo) {
+        g_warning ("Cannot launch file browser, no mimetype handler for inode/directory");
+        return;
+    }
+
+    if (selection != NULL) {
+        sel_list = g_list_prepend (sel_list, selection);
+    } else if (location != NULL) {
+        sel_list = g_list_prepend (sel_list, location);
+    }
+
+    if (!g_app_info_launch (appinfo, sel_list, NULL, &error)) {
+        gchar *uri;
+
+        uri = g_file_get_uri (selection);
+        g_warning ("Could not launch file browser to display file: %s\n", uri);
+
+        g_free (uri);
+        g_clear_error (&error);
+    }
+
+    if (sel_list != NULL) {
+        g_list_free (sel_list);
+    }
+
+    g_clear_object (&appinfo);
+}
+
 static NemoWindow *
 nemo_desktop_application_create_window (NemoApplication *application,
                                         GdkScreen       *screen)
@@ -386,6 +434,7 @@ nemo_desktop_application_class_init (NemoDesktopApplicationClass *class)
     nemo_app_class->continue_startup = nemo_desktop_application_continue_startup;
     nemo_app_class->create_window = nemo_desktop_application_create_window;
     nemo_app_class->continue_quit = nemo_desktop_application_continue_quit;
+    nemo_app_class->open_location = nemo_desktop_application_open_location;
 
     g_type_class_add_private (class, sizeof (NemoDesktopApplicationPriv));
 }
