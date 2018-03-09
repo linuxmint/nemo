@@ -229,7 +229,7 @@ action_reload_callback (GtkAction *action,
 	NemoWindowSlot *slot;
 
 	slot = nemo_window_get_active_slot (NEMO_WINDOW (user_data));
-	nemo_window_slot_queue_reload (slot);
+	nemo_window_slot_queue_reload (slot, TRUE);
 }
 
 static NemoView *

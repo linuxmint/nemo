@@ -1641,7 +1641,7 @@ nemo_window_reload (NemoWindow *window)
 {
 	NemoWindowSlot *active_slot;
 	active_slot = nemo_window_get_active_slot (window);
-	nemo_window_slot_queue_reload (active_slot);
+	nemo_window_slot_queue_reload (active_slot, TRUE);
 }
 
 static gboolean

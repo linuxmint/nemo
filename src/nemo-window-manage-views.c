@@ -1899,8 +1899,28 @@ nemo_window_slot_force_reload (NemoWindowSlot *slot)
 	g_list_free_full (selection, g_object_unref);
 }
 
+static void
+clear_thumbnails_for_view (NemoView *view)
+{
+    NemoDirectory *directory;
+    GList *file_list, *l;
+
+    directory = nemo_view_get_model (view);
+
+    file_list = nemo_directory_get_file_list (directory);
+
+    for (l = file_list; l != NULL; l = l->next) {
+        NemoFile *file = NEMO_FILE (l->data);
+
+        nemo_file_delete_thumbnail (file);
+    }
+
+    nemo_file_list_free (file_list);
+}
+
 void
-nemo_window_slot_queue_reload (NemoWindowSlot *slot)
+nemo_window_slot_queue_reload (NemoWindowSlot *slot,
+                               gboolean        clear_thumbs)
 {
 	g_assert (NEMO_IS_WINDOW_SLOT (slot));
 
@@ -1915,6 +1935,10 @@ nemo_window_slot_queue_reload (NemoWindowSlot *slot)
 		slot->needs_reload = TRUE;
 		return;
 	}
+
+    if (clear_thumbs) {
+        clear_thumbnails_for_view (slot->content_view);
+    }
 
 	nemo_window_slot_force_reload (slot);
 }

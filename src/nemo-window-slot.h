@@ -133,7 +133,8 @@ void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
 GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
 char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
 
-void nemo_window_slot_queue_reload (NemoWindowSlot *slot);
+void nemo_window_slot_queue_reload (NemoWindowSlot *slot,
+                                    gboolean        clear_thumbs);
 void nemo_window_slot_force_reload (NemoWindowSlot *slot);
 
 /* convenience wrapper without selection and callback/user_data */

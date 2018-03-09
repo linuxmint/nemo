@@ -4196,6 +4196,24 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 	return FALSE;
 }
 
+void
+nemo_file_delete_thumbnail (NemoFile *file)
+{
+    if (file->details->thumbnail_path == NULL) {
+        return;
+    }
+
+    gint success;
+
+    success = g_unlink (file->details->thumbnail_path);
+
+    if (success != 0) {
+        g_warning ("Could not remove thumb for '%s'.  The thumbnail path is '%s'",
+                   file->details->display_name,
+                   file->details->thumbnail_path);
+    }
+}
+
 static void
 prepend_icon_name (const char *name,
 		   GThemedIcon *icon)

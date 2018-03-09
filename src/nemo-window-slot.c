@@ -305,7 +305,7 @@ view_end_loading_cb (NemoView       *view,
 		     		 NemoWindowSlot *slot)
 {
 	if (slot->needs_reload) {
-		nemo_window_slot_queue_reload (slot);
+		nemo_window_slot_queue_reload (slot, FALSE);
 		slot->needs_reload = FALSE;
 	}
 }
