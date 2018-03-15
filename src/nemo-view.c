@@ -8389,11 +8389,11 @@ static const GtkActionEntry directory_view_entries[] = {
 				 G_CALLBACK (action_location_open_in_new_tab_callback) },
 
   /* name, stock id */         { NEMO_ACTION_LOCATION_CUT, "edit-cut-symbolic",
-  /* label, accelerator */       NULL, "",
+  /* label, accelerator */       N_("Cut"), "",
   /* tooltip */                  N_("Prepare this folder to be moved with a Paste command"),
 				 G_CALLBACK (action_location_cut_callback) },
   /* name, stock id */         { NEMO_ACTION_LOCATION_COPY, "edit-copy-symbolic",
-  /* label, accelerator */       NULL, "",
+  /* label, accelerator */       N_("Copy"), "",
   /* tooltip */                  N_("Prepare this folder to be copied with a Paste command"),
 				 G_CALLBACK (action_location_copy_callback) },
   /* name, stock id */         { NEMO_ACTION_LOCATION_PASTE_FILES_INTO, "edit-paste-symbolic",
