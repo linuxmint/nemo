@@ -2011,8 +2011,22 @@ apply_columns_settings (NemoListView *list_view,
 
     prev_view_column = 0;
     for (l = view_columns; l != NULL; l = l->next) {
+        /* see bug: https://github.com/GNOME/gtk/commit/497e877755f1fa1
+         * In certain gtk versions (older, 3.18.9 confirmed) the column's button
+         * widget gets lost/leaked, and a new button made upon re-adding to the tree view.
+         * As a result, we have to make sure the new button has our signal handler on it.
+         * This has been fixed, but it's easier to remove and re-add the handler than
+         * figure out exactly which releases this issue applies to */
+        g_signal_handlers_disconnect_by_func (gtk_tree_view_column_get_button (l->data),
+                                              column_header_clicked, list_view);
+
         gtk_tree_view_remove_column (list_view->details->tree_view, g_object_ref (l->data));
         gtk_tree_view_insert_column (list_view->details->tree_view, l->data, prev_view_column ++);
+
+        g_signal_connect (gtk_tree_view_column_get_button (l->data),
+                          "button-press-event",
+                          G_CALLBACK (column_header_clicked),
+                          list_view);
 
         gtk_tree_view_column_set_visible (l->data, TRUE);
         g_object_unref (l->data);
