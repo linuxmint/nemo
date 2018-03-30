@@ -598,6 +598,7 @@ nemo_window_constructed (GObject *self)
 	window->details->content_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_set_hexpand (window->details->content_paned, TRUE);
 	gtk_widget_set_vexpand (window->details->content_paned, TRUE);
+	gtk_paned_set_wide_handle (GTK_PANED (window->details->content_paned), TRUE);
 
 	gtk_container_add (GTK_CONTAINER (grid), window->details->content_paned);
 	gtk_widget_show (window->details->content_paned);
