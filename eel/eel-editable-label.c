@@ -180,7 +180,7 @@ G_DEFINE_TYPE_WITH_CODE (EelEditableLabel, eel_editable_label, GTK_TYPE_MISC,
 static void
 eel_editable_label_queue_resize (GtkWidget *label)
 {
-    if (gtk_widget_is_drawable (label)) {
+    if (gtk_widget_get_realized (label)) {
         gtk_widget_queue_resize (label);
     }
 }
