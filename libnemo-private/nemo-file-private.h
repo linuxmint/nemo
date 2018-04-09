@@ -72,6 +72,7 @@ struct NemoFileDetails
 	time_t atime; /* 0 is unknown */
 	time_t mtime; /* 0 is unknown */
 	time_t ctime; /* 0 is unknown */
+    time_t btime; /* 0 is unknown */
 	
 	char *symlink_name;
 	
@@ -154,6 +155,10 @@ struct NemoFileDetails
 	eel_boolean_bit get_info_failed               : 1;
 	eel_boolean_bit file_info_is_up_to_date       : 1;
 	
+    eel_boolean_bit got_btime                     : 1;
+    eel_boolean_bit get_btime_failed              : 1;
+    eel_boolean_bit btime_is_up_to_date           : 1;
+
 	eel_boolean_bit got_directory_count           : 1;
 	eel_boolean_bit directory_count_failed        : 1;
 	eel_boolean_bit directory_count_is_up_to_date : 1;

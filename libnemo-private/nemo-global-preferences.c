@@ -97,7 +97,8 @@ nemo_global_preferences_get_tooltip_flags (void)
         flags |= NEMO_FILE_TOOLTIP_FLAGS_ACCESS_DATE;
     if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_TOOLTIP_FULL_PATH))
         flags |= NEMO_FILE_TOOLTIP_FLAGS_PATH;
-
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_TOOLTIP_CREATED_DATE))
+        flags |= NEMO_FILE_TOOLTIP_FLAGS_CREATED_DATE;
     return flags;
 }
 

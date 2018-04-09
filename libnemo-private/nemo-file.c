@@ -137,6 +137,10 @@ static GQuark attribute_name_q,
 	attribute_accessed_date_q,
 	attribute_date_accessed_q,
 	attribute_date_accessed_full_q,
+    attribute_creation_date_q,
+    attribute_date_created_q,
+    attribute_date_created_full_q,
+    attribute_date_created_with_time_q,
 	attribute_mime_type_q,
 	attribute_size_detail_q,
 	attribute_deep_size_q,
@@ -495,6 +499,7 @@ nemo_file_clear_info (NemoFile *file)
 	file->details->mtime = 0;
 	file->details->atime = 0;
 	file->details->ctime = 0;
+    file->details->btime = 0;
 	file->details->trash_time = 0;
 	g_free (file->details->symlink_name);
 	file->details->symlink_name = NULL;
@@ -2867,6 +2872,9 @@ get_time (NemoFile *file,
 	case NEMO_DATE_TYPE_ACCESSED:
 		time = file->details->atime;
 		break;
+    case NEMO_DATE_TYPE_CREATED:
+        time = file->details->btime;
+        break;
 	case NEMO_DATE_TYPE_TRASHED:
 		time = file->details->trash_time;
 		break;
@@ -3328,6 +3336,12 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
+        case NEMO_FILE_SORT_BY_BTIME:
+            result = compare_by_time (file_1, file_2, NEMO_DATE_TYPE_CREATED);
+            if (result == 0) {
+                result = compare_by_full_path (file_1, file_2);
+            }
+            break;
 		case NEMO_FILE_SORT_BY_TRASHED_TIME:
 			result = compare_by_time (file_1, file_2, NEMO_DATE_TYPE_TRASHED);
 			if (result == 0) {
@@ -3383,17 +3397,31 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
                                NEMO_FILE_SORT_BY_DETAILED_TYPE,
                                directories_first,
                                reversed);
-	} else if (attribute == attribute_modification_date_q || attribute == attribute_date_modified_q || attribute == attribute_date_modified_with_time_q || attribute == attribute_date_modified_full_q) {
+	} else if (attribute == attribute_modification_date_q ||
+               attribute == attribute_date_modified_q ||
+               attribute == attribute_date_modified_with_time_q ||
+               attribute == attribute_date_modified_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_MTIME,
 						       directories_first,
 						       reversed);
-        } else if (attribute == attribute_accessed_date_q || attribute == attribute_date_accessed_q || attribute == attribute_date_accessed_full_q) {
+    } else if (attribute == attribute_accessed_date_q ||
+               attribute == attribute_date_accessed_q ||
+               attribute == attribute_date_accessed_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_ATIME,
 						       directories_first,
 						       reversed);
-        } else if (attribute == attribute_trashed_on_q || attribute == attribute_trashed_on_full_q) {
+    } else if (attribute == attribute_creation_date_q ||
+               attribute == attribute_date_created_q ||
+               attribute == attribute_date_created_with_time_q ||
+               attribute == attribute_date_created_full_q) {
+        return nemo_file_compare_for_sort (file_1, file_2,
+                               NEMO_FILE_SORT_BY_BTIME,
+                               directories_first,
+                               reversed);
+    } else if (attribute == attribute_trashed_on_q ||
+               attribute == attribute_trashed_on_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TRASHED_TIME,
 						       directories_first,
@@ -4653,6 +4681,7 @@ nemo_file_get_date (NemoFile *file,
 	g_return_val_if_fail (date_type == NEMO_DATE_TYPE_CHANGED
 			      || date_type == NEMO_DATE_TYPE_ACCESSED
 			      || date_type == NEMO_DATE_TYPE_MODIFIED
+                  || date_type == NEMO_DATE_TYPE_CREATED
 			      || date_type == NEMO_DATE_TYPE_TRASHED
 			      || date_type == NEMO_DATE_TYPE_PERMISSIONS_CHANGED, FALSE);
 
@@ -6374,6 +6403,21 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 							 NEMO_DATE_TYPE_ACCESSED,
 							 NEMO_DATE_FORMAT_FULL);
 	}
+    if (attribute_q == attribute_date_created_q) {
+        return nemo_file_get_date_as_string (file,
+                             NEMO_DATE_TYPE_CREATED,
+                             NEMO_DATE_FORMAT_REGULAR);
+    }
+    if (attribute_q == attribute_date_created_full_q) {
+        return nemo_file_get_date_as_string (file,
+                             NEMO_DATE_TYPE_CREATED,
+                             NEMO_DATE_FORMAT_FULL);
+    }
+    if (attribute_q == attribute_date_created_with_time_q) {
+        return nemo_file_get_date_as_string (file,
+                             NEMO_DATE_TYPE_CREATED,
+                             NEMO_DATE_FORMAT_REGULAR_WITH_TIME);
+    }
 	if (attribute_q == attribute_trashed_on_q) {
 		return nemo_file_get_date_as_string (file,
 							 NEMO_DATE_TYPE_TRASHED,
@@ -6550,7 +6594,11 @@ nemo_file_is_date_sort_attribute_q (GQuark attribute_q)
 	    attribute_q == attribute_trashed_on_q ||
 	    attribute_q == attribute_trashed_on_full_q ||
 	    attribute_q == attribute_date_permissions_q ||
-	    attribute_q == attribute_date_permissions_full_q) {
+	    attribute_q == attribute_date_permissions_full_q ||
+        attribute_q == attribute_creation_date_q ||
+        attribute_q == attribute_date_created_q ||
+        attribute_q == attribute_date_created_full_q ||
+        attribute_q == attribute_date_created_with_time_q) {
 		return TRUE;
 	}
 
@@ -7672,6 +7720,14 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
         g_free (tmp);
     }
 
+    if (flags & NEMO_FILE_TOOLTIP_FLAGS_CREATED_DATE) {
+        date = nemo_file_get_date_as_string (file, NEMO_DATE_TYPE_CREATED, TRUE);
+        tmp = g_strdup_printf (_("Created: %s"), date);
+        g_free (date);
+        string = add_line (string, tmp, TRUE);
+        g_free (tmp);
+    }
+
     if (flags & NEMO_FILE_TOOLTIP_FLAGS_PATH) {
         NemoFile *parent = nemo_file_get_parent (file);
         tmp = nemo_file_get_path (parent);
@@ -7809,6 +7865,12 @@ invalidate_file_info (NemoFile *file)
 }
 
 static void
+invalidate_btime (NemoFile *file)
+{
+    file->details->btime_is_up_to_date = FALSE;
+}
+
+static void
 invalidate_link_info (NemoFile *file)
 {
 	file->details->link_info_is_up_to_date = FALSE;
@@ -7868,6 +7930,9 @@ nemo_file_invalidate_attributes_internal (NemoFile *file,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		invalidate_file_info (file);
 	}
+    if (REQUEST_WANTS_TYPE (request, REQUEST_BTIME)) {
+        invalidate_btime (file);
+    }
 	if (REQUEST_WANTS_TYPE (request, REQUEST_LINK_INFO)) {
 		invalidate_link_info (file);
 	}
@@ -7956,7 +8021,8 @@ nemo_file_get_all_attributes (void)
 		NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_MIME_TYPES |
 		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO |
 		NEMO_FILE_ATTRIBUTE_THUMBNAIL |
-		NEMO_FILE_ATTRIBUTE_MOUNT;
+		NEMO_FILE_ATTRIBUTE_MOUNT |
+        NEMO_FILE_ATTRIBUTE_BTIME;
 }
 
 void
@@ -8416,6 +8482,10 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_accessed_date_q = g_quark_from_static_string ("accessed_date");
 	attribute_date_accessed_q = g_quark_from_static_string ("date_accessed");
 	attribute_date_accessed_full_q = g_quark_from_static_string ("date_accessed_full");
+    attribute_creation_date_q = g_quark_from_static_string ("creation_date");
+    attribute_date_created_q = g_quark_from_static_string ("date_created");
+    attribute_date_created_full_q = g_quark_from_static_string ("date_created_full");
+    attribute_date_created_with_time_q = g_quark_from_static_string ("date_created_with_time");
 	attribute_mime_type_q = g_quark_from_static_string ("mime_type");
 	attribute_size_detail_q = g_quark_from_static_string ("size_detail");
 	attribute_deep_size_q = g_quark_from_static_string ("deep_size");

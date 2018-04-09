@@ -242,6 +242,7 @@ typedef enum
 #define NEMO_PREFERENCES_TOOLTIP_FILE_TYPE             "tooltips-show-file-type"
 #define NEMO_PREFERENCES_TOOLTIP_MOD_DATE              "tooltips-show-mod-date"
 #define NEMO_PREFERENCES_TOOLTIP_ACCESS_DATE           "tooltips-show-access-date"
+#define NEMO_PREFERENCES_TOOLTIP_CREATED_DATE          "tooltips-show-birth-date"
 #define NEMO_PREFERENCES_TOOLTIP_FULL_PATH             "tooltips-show-path"
 
 #define NEMO_PREFERENCES_DISABLE_MENU_WARNING          "disable-menu-warning"

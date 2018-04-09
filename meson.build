@@ -134,6 +134,25 @@ conf.set('ENABLE_NLS', cc.has_header('libintl.h'))
 conf.set('HAVE_GETTEXT', true)
 conf.set('HAVE_LOCALE_H', cc.has_header('locale.h'))
 
+# STATX Support check
+statx_supported = cc.compiles(
+'''
+#define _GNU_SOURCE
+#include <linux/stat.h>
+
+struct statx stxbuf;
+'''
+)
+
+if not statx_supported
+    message('WARNING: No native statx support (Kernel < 4.11) - using compatibility wrappers.')
+else
+    message('Native statx support used.')
+endif
+
+conf.set10('NATIVE_STATX', statx_supported)
+# End STATX
+
 configure_file(
   input : 'config.h.meson.in',
   output: 'config.h',

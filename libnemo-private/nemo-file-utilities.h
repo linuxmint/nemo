@@ -113,5 +113,13 @@ gchar *nemo_get_drive_icon_name (GDrive *drive);
 gchar *nemo_get_best_guess_file_mimetype (const gchar *filename,
                                           GFileInfo   *info,
                                           goffset      size);
+void nemo_query_btime_async (GFile               *file,
+                             GCancellable        *cancellable,
+                             GAsyncReadyCallback  callback,
+                             gpointer             user_data);
+
+time_t nemo_query_btime_finish (GFile         *file,
+                                GAsyncResult  *res,
+                                GError       **error);
 
 #endif /* NEMO_FILE_UTILITIES_H */

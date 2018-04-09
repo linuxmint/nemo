@@ -3124,6 +3124,10 @@ create_basic_page (NemoPropertiesWindow *window)
 					 "date_modified_full",
 					 INCONSISTENT_STATE_STRING,
 					 FALSE);
+        append_title_value_pair (window, grid, _("Created:"),
+                     "date_created_full",
+                     INCONSISTENT_STATE_STRING,
+                     FALSE);
 	}
 
 	if (should_show_free_space (window)) {

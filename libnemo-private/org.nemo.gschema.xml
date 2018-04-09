@@ -345,6 +345,11 @@
       <summary>Show file accessed date in tooltip</summary>
       <description>If true, tooltips will show their accessed date.</description>
     </key>
+    <key name="tooltips-show-birth-date" type="b">
+      <default>false</default>
+      <summary>Show file creation (birth) date in tooltip</summary>
+      <description>If true, tooltips will show their creation date.</description>
+    </key>
     <key name="tooltips-show-path" type="b">
       <default>false</default>
       <summary>Show full path in tooltip</summary>

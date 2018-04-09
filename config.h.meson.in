@@ -56,3 +56,10 @@
 
 // Define to 1 if you have the <X11/XF86keysym.h> header file.
 #mesondefine HAVE_X11_XF86KEYSYM_H
+
+// Define to 1 if statx is supported by the kernel (defined in
+// /usr/include/stat.h). Lack of support by the build machine
+// does not preclude support at runtime (under a valid kernel,)
+// we just construct the definitons ourselves instead. Runtime
+// support is still checked at runtime (safely.) 
+#mesondefine NATIVE_STATX

@@ -72,6 +72,29 @@ get_builtin_columns (void)
 					       "label", _("Date Modified"),
 					       "description", _("The date the file was modified."),
 					       NULL));
+    columns = g_list_append (columns,
+                 g_object_new (NEMO_TYPE_COLUMN,
+                           "name", "date_modified_with_time",
+                           "attribute", "date_modified_with_time",
+                           "label", _("Modified - Time"),
+                           "description", _("The date the file was modified."),
+                           "xalign", 1.0,
+                           NULL));
+
+    columns = g_list_append (columns,
+                 g_object_new (NEMO_TYPE_COLUMN,
+                           "name", "date_created",
+                           "attribute", "date_created",
+                           "label", _("Date Created"),
+                           "description", _("The date the file was created."),
+                           NULL));
+    columns = g_list_append (columns,
+                 g_object_new (NEMO_TYPE_COLUMN,
+                           "name", "date_created_with_time",
+                           "attribute", "date_created_with_time",
+                           "label", _("Created - Time"),
+                           "description", _("The date the file was created."),
+                           NULL));
 
 	columns = g_list_append (columns,
 				 g_object_new (NEMO_TYPE_COLUMN,
@@ -135,14 +158,6 @@ get_builtin_columns (void)
 					       "attribute", "where",
 					       "label", _("Location"),
 					       "description", _("The location of the file."),
-					       NULL));
-	columns = g_list_append (columns,
-				 g_object_new (NEMO_TYPE_COLUMN,
-					       "name", "date_modified_with_time",
-					       "attribute", "date_modified_with_time",
-					       "label", _("Modified - Time"),
-					       "description", _("The date the file was modified."),
-					       "xalign", 1.0,
 					       NULL));
 
 	return columns;

@@ -32,6 +32,7 @@
 #include "nemo-file-operations.h"
 #include "nemo-search-directory.h"
 #include "nemo-signaller.h"
+#include "nemo-statx.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
@@ -1733,6 +1734,61 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
 
     return mime_type;
 }
+
+static void
+query_btime_async_thread (GTask         *task,
+                          gpointer       object,
+                          gpointer       task_data,
+                          GCancellable  *cancellable)
+{
+    gchar *path;
+    time_t btime;
+
+    btime = 0;
+
+    path = g_file_get_path (G_FILE (object));
+
+    if (path != NULL) {
+        btime = get_file_btime (path);
+        g_free (path);
+    }
+
+    if (btime > 0) {
+        /* Conveniently, gssize is the same as time_t */
+        g_task_return_int (task, (gssize) btime);
+    } else {
+        g_task_return_error (task,
+                             g_error_new (G_FILE_ERROR,
+                                          G_FILE_ERROR_FAILED,
+                                          "statx failed or not supported"));
+    }
+}
+
+void
+nemo_query_btime_async (GFile               *file,
+                        GCancellable        *cancellable,
+                        GAsyncReadyCallback  callback,
+                        gpointer             user_data)
+{
+  GTask *task;
+
+  task = g_task_new (file, cancellable, callback, user_data);
+  g_task_set_priority (task, G_PRIORITY_DEFAULT);
+  g_task_run_in_thread (task, query_btime_async_thread);
+  g_object_unref (task);
+}
+
+time_t
+nemo_query_btime_finish (GFile         *file,
+                             GAsyncResult  *res,
+                             GError       **error)
+{
+  g_return_val_if_fail (g_task_is_valid (res, file), -1);
+
+  return (time_t) g_task_propagate_int (G_TASK (res), error);
+}
+
+/* End copied section */
 
 #if !defined (NEMO_OMIT_SELF_CHECK)
 
