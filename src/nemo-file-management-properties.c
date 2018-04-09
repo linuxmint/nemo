@@ -1013,6 +1013,12 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 		gtk_window_set_screen (GTK_WINDOW (dialog), gtk_window_get_screen(window));
 	}
 
+    /* gets rid of a 2px internal border from a GtkContainer style property
+     * for some reason this manifests possibly because we're messing with internal
+     * widgets in the glade file.  Glade doesn't support this, and will delete
+     * border-width being set on this widget from the builder file. */
+    gtk_container_set_border_width (GTK_CONTAINER (gtk_builder_get_object (builder, "dialog-vbox1")), 0);
+
     stack_switcher = GTK_WIDGET (gtk_builder_get_object (builder, "stack-switcher"));
 
     gint min_width, nat_width;
