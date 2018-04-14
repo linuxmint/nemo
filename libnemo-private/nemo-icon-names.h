@@ -31,7 +31,7 @@
 /* Icons not provided by fd.o naming spec or nemo itself */
 #define NEMO_ICON_BURN		"nemo-cd-burner"
 
-
+#define NEMO_ICON_SYMBOLIC_COMPUTER      "computer-symbolic"
 #define NEMO_ICON_SYMBOLIC_DESKTOP       "user-desktop-symbolic"
 #define NEMO_ICON_SYMBOLIC_FILESYSTEM    "drive-harddisk-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER        "folder-symbolic"

@@ -1457,42 +1457,6 @@ button_clicked_cb (GtkWidget *button,
     g_signal_emit (path_bar, path_bar_signals [PATH_CLICKED], 0, button_data->path);
 }
 
-static NemoIconInfo *
-get_type_icon_info (ButtonData *button_data, gint scale)
-{
-    switch (button_data->type)
-        {
-        case ROOT_BUTTON:
-            return nemo_icon_info_lookup_from_name (NEMO_ICON_FILESYSTEM,
-                                    NEMO_PATH_BAR_ICON_SIZE, scale);
-
-        case HOME_BUTTON:
-            return nemo_icon_info_lookup_from_name (NEMO_ICON_HOME,
-                                    NEMO_PATH_BAR_ICON_SIZE, scale);
-
-        case DESKTOP_BUTTON:
-            return nemo_icon_info_lookup_from_name (NEMO_ICON_DESKTOP,
-                                    NEMO_PATH_BAR_ICON_SIZE, scale);
-        case XDG_BUTTON:
-            return nemo_icon_info_lookup_from_name (button_data->xdg_icon,
-                                NEMO_PATH_BAR_ICON_SIZE, scale);
-        case NORMAL_BUTTON:
-            if (button_data->is_base_dir) {
-                return nemo_file_get_icon (button_data->file,
-                                   NEMO_PATH_BAR_ICON_SIZE, 0,
-                                   scale,
-                                   NEMO_FILE_ICON_FLAGS_NONE);
-            }
-            return NULL;
-        case DEFAULT_LOCATION_BUTTON:
-        case MOUNT_BUTTON:
-        default:
-            return NULL;
-        }
-
-    return NULL;
-}
-
 static void
 button_data_free (ButtonData *button_data)
 {
@@ -1561,8 +1525,8 @@ set_label_padding_size (ButtonData *button_data)
 static void
 nemo_path_bar_update_button_appearance (ButtonData *button_data, gint scale)
 {
-    NemoIconInfo *icon_info;
-    GdkPixbuf *pixbuf;
+    GIcon *gicon;
+
     const gchar *dir_name = get_dir_name (button_data);
 
     if (button_data->label != NULL) {
@@ -1582,31 +1546,29 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data, gint scale)
     }
 
     if (button_data->image != NULL) {
-        if (button_data->custom_icon) {
-            cairo_surface_t *surface;
-            surface = gdk_cairo_surface_create_from_pixbuf (button_data->custom_icon, scale, NULL);
-            g_object_set (GTK_IMAGE (button_data->image), "surface", surface, NULL);
-            gtk_widget_show (GTK_WIDGET (button_data->image));
-        } else {
-            icon_info = get_type_icon_info (button_data, scale);
+        switch (button_data->type) {
+            case ROOT_BUTTON:
+                gicon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FILESYSTEM);
+                break;
+            case HOME_BUTTON:
+            case DESKTOP_BUTTON:
+            case XDG_BUTTON:
+                gicon = nemo_file_get_control_icon (button_data->file);
+                break;
+            case NORMAL_BUTTON:
+                if (button_data->is_base_dir) {
+                    gicon = nemo_file_get_control_icon (button_data->file);
+                    break;
+                }
+            case DEFAULT_LOCATION_BUTTON:
+            case MOUNT_BUTTON:
+            default:
+                gicon = NULL;
+         }
 
-            pixbuf = NULL;
-
-            if (icon_info != NULL) {
-                pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, NEMO_PATH_BAR_ICON_SIZE);
-                g_object_unref (icon_info);
-            }
-
-            if (pixbuf != NULL) {
-                cairo_surface_t *surface;
-                surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, scale, NULL);
-                g_object_set (GTK_IMAGE (button_data->image), "surface", surface, NULL);
-                gtk_widget_show (GTK_WIDGET (button_data->image));
-                g_object_unref (pixbuf);
-            } else {
-                gtk_widget_hide (GTK_WIDGET (button_data->image));
-            }
-        }
+        gtk_image_set_from_gicon (GTK_IMAGE (button_data->image),
+                                  gicon,
+                                  GTK_ICON_SIZE_MENU);
     }
 
 }
@@ -1718,25 +1680,25 @@ setup_button_type (ButtonData       *button_data,
         }
     } else if (path_bar->priv->xdg_documents_path != NULL && g_file_equal (location, path_bar->priv->xdg_documents_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_DOCUMENTS);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_DOCUMENTS);
     } else if (path_bar->priv->xdg_download_path != NULL && g_file_equal (location, path_bar->priv->xdg_download_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_DOWNLOAD);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_DOWNLOAD);
     } else if (path_bar->priv->xdg_music_path != NULL && g_file_equal (location, path_bar->priv->xdg_music_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_MUSIC);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_MUSIC);
     } else if (path_bar->priv->xdg_pictures_path != NULL && g_file_equal (location, path_bar->priv->xdg_pictures_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_PICTURES);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_PICTURES);
     } else if (path_bar->priv->xdg_templates_path != NULL && g_file_equal (location, path_bar->priv->xdg_templates_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_TEMPLATES);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES);
     } else if (path_bar->priv->xdg_videos_path != NULL && g_file_equal (location, path_bar->priv->xdg_videos_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_VIDEOS);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS);
     } else if (path_bar->priv->xdg_public_path != NULL && g_file_equal (location, path_bar->priv->xdg_public_path)) {
         button_data->type = XDG_BUTTON;
-        button_data->xdg_icon = g_strdup (NEMO_ICON_FOLDER_PUBLIC_SHARE);
+        button_data->xdg_icon = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_PUBLIC_SHARE);
     } else if (setup_file_path_mounted_mount (location, button_data,
                                               gtk_widget_get_scale_factor (GTK_WIDGET (path_bar)))) {
         /* already setup */

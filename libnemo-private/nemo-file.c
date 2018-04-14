@@ -4395,7 +4395,11 @@ get_symbolic_icon_for_file (NemoFile *file)
         return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES);
     }
 
-    return g_content_type_get_symbolic_icon (file->details->mime_type);
+    if (file->details->mime_type != NULL) {
+        return g_content_type_get_symbolic_icon (file->details->mime_type);
+    } else {
+        return NULL;
+    }
 }
 
 GIcon *

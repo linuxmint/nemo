@@ -5149,6 +5149,18 @@ add_place_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gc
                                             view);
 }
 
+// FIXME: duplicated in nemo-places-sidebar.c
+static GIcon *
+get_mount_gicon (GMount *mount)
+{
+    GIcon *icon;
+
+    if (g_mount_can_eject (mount)) {
+        return g_themed_icon_new ("media-removable-symbolic");
+    }
+
+    return g_mount_get_symbolic_icon (mount);
+}
 
 static void
 reset_move_copy_to_menu (NemoView *view)
@@ -5292,7 +5304,7 @@ reset_move_copy_to_menu (NemoView *view)
                 }
             }
 
-            icon = g_mount_get_icon (mount);
+            icon = get_mount_gicon (mount);
             mount_uri = g_file_get_uri (root);
             name = g_mount_get_name (mount);
 
@@ -5334,7 +5346,7 @@ reset_move_copy_to_menu (NemoView *view)
                     mount = g_volume_get_mount (volume);
                     if (mount != NULL) {
                         /* Show mounted volume in the sidebar */
-                        icon = g_mount_get_icon (mount);
+                        icon = get_mount_gicon (mount);
                         root = g_mount_get_default_location (mount);
                         mount_uri = g_file_get_uri (root);
                         name = g_mount_get_name (mount);
@@ -5382,7 +5394,7 @@ reset_move_copy_to_menu (NemoView *view)
 
             mount = g_volume_get_mount (volume);
             if (mount != NULL) {
-                icon = g_mount_get_icon (mount);
+                icon = get_mount_gicon (mount);
                 root = g_mount_get_default_location (mount);
                 mount_uri = g_file_get_uri (root);
 
@@ -5423,7 +5435,7 @@ reset_move_copy_to_menu (NemoView *view)
         for (l = network_mounts; l != NULL; l = l->next) {
             mount = l->data;
             root = g_mount_get_default_location (mount);
-            icon = g_mount_get_icon (mount);
+            icon = get_mount_gicon (mount);
             mount_uri = g_file_get_uri (root);
             name = g_mount_get_name (mount);
 
@@ -8465,11 +8477,11 @@ static const GtkActionEntry directory_view_entries[] = {
 				N_("_Desktop"), NULL,
 				N_("Move the current selection to the desktop"),
 				G_CALLBACK (action_move_to_desktop_callback) },
-                               {NEMO_ACTION_BROWSE_MOVE_TO, GTK_STOCK_DIRECTORY,
+                               {NEMO_ACTION_BROWSE_MOVE_TO, "document-open-symbolic",
                 N_("Browse…"), NULL,
                 N_("Browse for a folder to move the selection to"),
                 G_CALLBACK (action_browse_for_move_to_folder_callback) },
-                               {NEMO_ACTION_BROWSE_COPY_TO, GTK_STOCK_DIRECTORY,
+                               {NEMO_ACTION_BROWSE_COPY_TO, "document-open-symbolic",
                 N_("Browse…"), NULL,
                 N_("Browse for a folder to copy the selection to"),
                 G_CALLBACK (action_browse_for_copy_to_folder_callback) }
