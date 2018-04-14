@@ -77,7 +77,7 @@
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
-	GtkCellRenderer    *eject_icon_cell_renderer;
+    GtkCellRenderer    *eject_icon_cell_renderer;
 	char 	           *uri;
 	GtkTreeStore       *store;
     GtkTreeModel       *store_filter;
@@ -123,8 +123,6 @@ typedef struct {
 	gboolean mounting;
 	NemoWindowSlot *go_to_after_mount_slot;
 	NemoWindowOpenFlags go_to_after_mount_flags;
-
-	GtkTreePath *eject_highlight_path;
 
     NotifyNotification *unmount_notify;
 
@@ -330,61 +328,6 @@ decrement_bookmark_breakpoint (NemoPlacesSidebar *sidebar)
     g_signal_handlers_unblock_by_func (nemo_window_state, breakpoint_changed_cb, sidebar);
 }
 
-static cairo_surface_t *
-get_eject_icon (NemoPlacesSidebar *sidebar,
-		gboolean highlighted)
-{
-	GdkPixbuf *eject;
-	GtkIconInfo *icon_info;
-	GIcon *icon;
-	int icon_size;
-	GtkIconTheme *icon_theme;
-	GtkStyleContext *style;
-	GtkStateFlags state;
-    cairo_surface_t *surface;
-    gint scale = 1;
-
-    scale = gtk_widget_get_scale_factor (GTK_WIDGET (sidebar));
-	icon_theme = gtk_icon_theme_get_default ();
-	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	icon = g_themed_icon_new ("media-eject-symbolic");
-	icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, icon, icon_size, scale, 0);
-
-	style = gtk_widget_get_style_context (GTK_WIDGET (sidebar));
-	gtk_style_context_save (style);
-
-	if (icon_info != NULL) {
-		state = gtk_widget_get_state_flags (GTK_WIDGET (sidebar));
-		gtk_style_context_add_class (style, GTK_STYLE_CLASS_IMAGE);
-
-		if (highlighted) {
-			state |= GTK_STATE_FLAG_PRELIGHT;
-		}
-
-		gtk_style_context_set_state (style, state);
-
-		eject = gtk_icon_info_load_symbolic_for_context (icon_info,
-								 style,
-								 NULL,
-								 NULL);
-
-		g_object_unref (icon_info);
-	} else {
-		GtkIconSet *icon_set;
-
-		gtk_style_context_set_state (style, GTK_STATE_FLAG_NORMAL);
-		icon_set = gtk_style_context_lookup_icon_set (style, GTK_STOCK_MISSING_IMAGE);
-		eject = gtk_icon_set_render_icon_pixbuf (icon_set, style, GTK_ICON_SIZE_MENU);
-	}
-
-	gtk_style_context_restore (style);
-	g_object_unref (icon);
-
-	surface = gdk_cairo_surface_create_from_pixbuf (eject, scale, NULL);
-    g_object_unref (eject);
-    return surface;
-}
-
 static gboolean
 should_show_desktop (void)
 {
@@ -457,7 +400,6 @@ add_place (NemoPlacesSidebar *sidebar,
        GtkTreeIter cat_iter)
 {
 	GtkTreeIter           iter;
-	cairo_surface_t      *eject;
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
 
@@ -476,12 +418,6 @@ add_place (NemoPlacesSidebar *sidebar,
 		show_eject_button = (show_unmount || show_eject);
 	}
 
-	if (show_eject_button) {
-        eject = get_eject_icon (sidebar, FALSE);
-	} else {
-		eject = NULL;
-	}
-
 	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
 	gtk_tree_store_set (sidebar->store, &iter,
 			    PLACES_SIDEBAR_COLUMN_ICON, icon,
@@ -496,7 +432,7 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
 			    PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-			    PLACES_SIDEBAR_COLUMN_EJECT_ICON, eject,
+			    PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "media-eject-symbolic" : NULL,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
                 PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
@@ -3584,113 +3520,6 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 	return FALSE;
 }
 
-static void
-update_eject_buttons (NemoPlacesSidebar *sidebar,
-		      GtkTreePath 	    *path)
-{
-	GtkTreeIter iter, store_iter;
-	gboolean icon_visible, path_same;
-
-	icon_visible = TRUE;
-
-	if (path == NULL && sidebar->eject_highlight_path == NULL) {
-		/* Both are null - highlight up to date */
-		return;
-	}
-
-	path_same = (path != NULL) &&
-		(sidebar->eject_highlight_path != NULL) &&
-		(gtk_tree_path_compare (sidebar->eject_highlight_path, path) == 0);
-
-	if (path_same) {
-		/* Same path - highlight up to date */
-		return;
-	}
-
-	if (path) {
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
-					 &iter,
-					 path);
-
-		gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter),
-				    &iter,
-				    PLACES_SIDEBAR_COLUMN_EJECT, &icon_visible,
-				    -1);
-	}
-
-	if (!icon_visible || path == NULL || !path_same) {
-		/* remove highlighting and reset the saved path, as we are leaving
-		 * an eject button area.
-		 */
-		if (sidebar->eject_highlight_path) {
-			gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
-						 &iter,
-						 sidebar->eject_highlight_path);
-
-            gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
-                                                              &store_iter,
-                                                              &iter);
-
-            gtk_tree_store_set (sidebar->store,
-                                &store_iter,
-                                PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, FALSE),
-                                -1);
-
-			gtk_tree_path_free (sidebar->eject_highlight_path);
-			sidebar->eject_highlight_path = NULL;
-		}
-
-		if (!icon_visible) {
-			return;
-		}
-	}
-
-	if (path != NULL) {
-		/* add highlighting to the selected path, as the icon is visible and
-		 * we're hovering it.
-		 */
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store_filter),
-					 &iter,
-					 path);
-
-        gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (sidebar->store_filter),
-                                                          &store_iter,
-                                                          &iter);
-
-        gtk_tree_store_set (sidebar->store,
-                            &store_iter,
-                            PLACES_SIDEBAR_COLUMN_EJECT_ICON, get_eject_icon (sidebar, TRUE),
-                            -1);
-
-		sidebar->eject_highlight_path = gtk_tree_path_copy (path);
-	}
-}
-
-static gboolean
-bookmarks_motion_event_cb (GtkWidget             *widget,
-			   GdkEventMotion        *event,
-			   NemoPlacesSidebar *sidebar)
-{
-	GtkTreePath *path;
-
-	path = NULL;
-
-	if (over_eject_button (sidebar, event->x, event->y, &path)) {
-		update_eject_buttons (sidebar, path);
-		gtk_tree_path_free (path);
-
-		return TRUE;
-	}
-
-	update_eject_buttons (sidebar, NULL);
-
-	return FALSE;
-}
-
-/* Callback used when a button is pressed on the shortcuts list.
- * We trap button 3 to bring up a popup menu, and button 2 to
- * open in a new tab.
- */
 static gboolean
 bookmarks_button_press_event_cb (GtkWidget             *widget,
 				 GdkEventButton        *event,
@@ -4133,7 +3962,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (eject_col, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-					     "surface", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+					     "icon-name", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
 					     NULL);
 
 	/* normal text renderer */
@@ -4250,8 +4079,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 			  G_CALLBACK (bookmarks_popup_menu_cb), sidebar);
 	g_signal_connect (tree_view, "button-press-event",
 			  G_CALLBACK (bookmarks_button_press_event_cb), sidebar);
-	g_signal_connect (tree_view, "motion-notify-event",
-			  G_CALLBACK (bookmarks_motion_event_cb), sidebar);
 	g_signal_connect (tree_view, "button-release-event",
 			  G_CALLBACK (bookmarks_button_release_event_cb), sidebar);
     g_signal_connect (tree_view, "row-expanded",
@@ -4294,11 +4121,6 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	free_drag_data (sidebar);
     g_clear_object (&sidebar->unmount_notify);
-
-	if (sidebar->eject_highlight_path != NULL) {
-		gtk_tree_path_free (sidebar->eject_highlight_path);
-		sidebar->eject_highlight_path = NULL;
-	}
 
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
@@ -4545,7 +4367,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
-		CAIRO_GOBJECT_TYPE_SURFACE,
+		G_TYPE_STRING,
 		G_TYPE_INT,
 		G_TYPE_STRING,
         G_TYPE_INT,
