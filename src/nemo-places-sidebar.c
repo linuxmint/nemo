@@ -826,7 +826,7 @@ update_places (NemoPlacesSidebar *sidebar)
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
     mount_uri = (char *)"trash:///"; /* No need to strdup */
-    icon = nemo_trash_monitor_get_icon ();
+    icon = nemo_trash_monitor_get_symbolic_icon ();
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
                            _("Trash"), icon, mount_uri,

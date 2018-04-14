@@ -247,14 +247,10 @@ trash_state_changed_cb (NemoTrashMonitor *monitor,
         button_data = BUTTON_DATA (list->data);
         if (g_file_equal (file, button_data->path)) {
             GIcon *icon;
-            NemoIconInfo *icon_info;
-            GdkPixbuf *pixbuf;
 
-            icon = nemo_trash_monitor_get_icon ();
-            icon_info = nemo_icon_info_lookup (icon, NEMO_PATH_BAR_ICON_SIZE,
-                                               gtk_widget_get_scale_factor (GTK_WIDGET (path_bar)));
-            pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, NEMO_PATH_BAR_ICON_SIZE);
-            gtk_image_set_from_pixbuf (GTK_IMAGE (button_data->image), pixbuf);
+            icon = nemo_trash_monitor_get_symbolic_icon ();
+
+            gtk_image_set_from_gicon (GTK_IMAGE (button_data->image), icon, GTK_ICON_SIZE_MENU);
         }
     }
     g_object_unref (file);

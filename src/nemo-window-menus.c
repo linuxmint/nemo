@@ -460,7 +460,7 @@ trash_state_changed_cb (NemoTrashMonitor *monitor,
 	action_group = nemo_window_get_main_action_group (window);
 	action = gtk_action_group_get_action (action_group, "Go to Trash");
 
-	gicon = nemo_trash_monitor_get_icon ();
+	gicon = nemo_trash_monitor_get_symbolic_icon ();
 
 	if (gicon) {
 		g_object_set (action, "gicon", gicon, NULL);
