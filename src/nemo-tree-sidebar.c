@@ -1337,7 +1337,7 @@ create_popup_menu (FMTreeView *view)
 	eel_gtk_menu_append_separator (GTK_MENU (popup));
 	
 	/* add the "move to trash" menu item */
-	menu_image = gtk_image_new_from_icon_name (NEMO_ICON_TRASH_FULL,
+	menu_image = gtk_image_new_from_icon_name (NEMO_ICON_SYMBOLIC_TRASH_FULL,
 						   GTK_ICON_SIZE_MENU);
 	gtk_widget_show (menu_image);
 	menu_item = gtk_image_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));

@@ -9466,7 +9466,7 @@ real_update_location_menu (NemoView *view)
 		      "tooltip", tip,
 		      "icon-name", (file != NULL &&
 				    nemo_file_is_in_trash (file)) ?
-		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
+		      NEMO_ICON_DELETE : NEMO_ICON_SYMBOLIC_TRASH_FULL,
 		      NULL);
 	gtk_action_set_sensitive (action, can_delete_file);
 	gtk_action_set_visible (action, show_delete);
@@ -9803,7 +9803,7 @@ real_update_menus (NemoView *view)
 		      "label", label,
 		      "tooltip", tip,
 		      "icon-name", all_selected_items_in_trash (view) ?
-		      NEMO_ICON_DELETE : NEMO_ICON_TRASH_FULL,
+		      NEMO_ICON_DELETE : NEMO_ICON_SYMBOLIC_TRASH_FULL,
 		      NULL);
 	gtk_action_set_sensitive (action, can_delete_files);
 
