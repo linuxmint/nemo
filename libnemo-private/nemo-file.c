@@ -36,6 +36,7 @@
 #include "nemo-file-operations.h"
 #include "nemo-file-utilities.h"
 #include "nemo-global-preferences.h"
+#include "nemo-icon-names.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-link.h"
 #include "nemo-metadata.h"
@@ -2544,6 +2545,17 @@ update_info_internal (NemoFile *file,
 		file->details->icon = g_object_ref (icon);
 	}
 
+    icon = g_file_info_get_symbolic_icon (info);
+    if (!g_icon_equal (icon, file->details->symbolic_icon)) {
+        changed = TRUE;
+
+        if (file->details->symbolic_icon) {
+            g_object_unref (file->details->symbolic_icon);
+        }
+
+        file->details->symbolic_icon = g_object_ref (icon);
+    }
+
 	thumbnail_path =  g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
 
 	if (g_strcmp0 (file->details->thumbnail_path, thumbnail_path) != 0) {
@@ -4338,43 +4350,66 @@ nemo_file_get_gicon (NemoFile *file,
 	return g_themed_icon_new ("text-x-generic");
 }
 
+
 GIcon *
-nemo_file_get_emblemed_icon (NemoFile *file,
-                             NemoFileIconFlags flags)
+get_symbolic_icon_for_file (NemoFile *file)
 {
-    GIcon *gicon, *emblem_icon, *emblemed_icon;
-    GEmblem *emblem;
-    GList *emblem_icons, *l;
-    char *emblems_to_ignore[3];
-    int i;
-
-    gicon = nemo_file_get_gicon (file, flags);
-
-    i = 0;
-    emblems_to_ignore[i++] = (char *)NEMO_FILE_EMBLEM_NAME_TRASH;
-    emblems_to_ignore[i++] = (char *)NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
-    emblems_to_ignore[i++] = NULL;
-
-    emblem = NULL;
-    emblem_icons = nemo_file_get_emblem_icons (file,
-    emblems_to_ignore);
-
-    emblemed_icon = g_emblemed_icon_new (gicon, NULL);
-    g_object_unref (gicon);
-
-    /* pick only the first emblem we can render for the tree view */
-    for (l = emblem_icons; l != NULL; l = l->next) {
-        emblem_icon = l->data;
-        if (nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
-            emblem = g_emblem_new (emblem_icon);
-            g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon), emblem);
-            g_object_unref (emblem);
-        }
+    if (nemo_file_is_home (file)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_HOME);
     }
 
-    g_list_free_full (emblem_icons, g_object_unref);
+    // Special folders (XDG)
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DESKTOP)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_DESKTOP);
+    }
 
-    return emblemed_icon;
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOCUMENTS)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_DOCUMENTS);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOWNLOAD)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_DOWNLOAD);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_MUSIC)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_MUSIC);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_PICTURES)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_PICTURES);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_PUBLIC_SHARE)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_PUBLIC_SHARE);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_VIDEOS)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS);
+    }
+
+    if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
+        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES);
+    }
+
+    return g_content_type_get_symbolic_icon (file->details->mime_type);
+}
+
+GIcon *
+nemo_file_get_control_icon (NemoFile *file)
+{
+    GIcon *gicon;
+
+    if (file->details->symbolic_icon != NULL) {
+        gicon = g_object_ref (file->details->symbolic_icon);
+    } else {
+        gicon = get_symbolic_icon_for_file (file);
+    }
+
+    return gicon;
 }
 
 static gint

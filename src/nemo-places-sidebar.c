@@ -347,7 +347,7 @@ get_eject_icon (NemoPlacesSidebar *sidebar,
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (sidebar));
 	icon_theme = gtk_icon_theme_get_default ();
 	icon_size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	icon = g_themed_icon_new ("nemo-eject");
+	icon = g_themed_icon_new ("media-eject-symbolic");
 	icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme, icon, icon_size, scale, 0);
 
 	style = gtk_widget_get_style_context (GTK_WIDGET (sidebar));
@@ -718,7 +718,19 @@ get_gicon (const gchar *uri)
 {
     NemoFile *file = nemo_file_get_by_uri (uri);
 
-    return nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE);
+    return nemo_file_get_control_icon (file);
+}
+
+static GIcon *
+get_mount_gicon (GMount *mount)
+{
+    GIcon *icon;
+
+    if (g_mount_can_eject (mount)) {
+        return g_themed_icon_new ("media-removable-symbolic");
+    }
+
+    return g_mount_get_symbolic_icon (mount);
 }
 
 static void
@@ -848,7 +860,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     if (recent_is_supported ()) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
-        icon = g_themed_icon_new ("folder-recent");
+        icon = g_themed_icon_new ("document-open-recent-symbolic");
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                               SECTION_COMPUTER,
                               _("Recent"), icon, mount_uri,
@@ -860,7 +872,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* file system root */
     mount_uri = (char *)"file:///"; /* No need to strdup */
-    icon = g_themed_icon_new (NEMO_ICON_FILESYSTEM);
+    icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FILESYSTEM);
     full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
     tooltip = g_strdup_printf (_("Open the contents of the File System\n%s"), tooltip_info);
     g_free (tooltip_info);
@@ -958,7 +970,7 @@ update_places (NemoPlacesSidebar *sidebar)
             }
         }
 
-        icon = g_mount_get_icon (mount);
+        icon = get_mount_gicon (mount);
         mount_uri = g_file_get_uri (root);
         name = g_mount_get_name (mount);
         tooltip = g_file_get_parse_name (root);
@@ -999,7 +1011,7 @@ update_places (NemoPlacesSidebar *sidebar)
                 mount = g_volume_get_mount (volume);
                 if (mount != NULL) {
                     /* Show mounted volume in the sidebar */
-                    icon = g_mount_get_icon (mount);
+                    icon = get_mount_gicon (mount);
                     root = g_mount_get_default_location (mount);
                     mount_uri = g_file_get_uri (root);
                     name = g_mount_get_name (mount);
@@ -1031,7 +1043,7 @@ update_places (NemoPlacesSidebar *sidebar)
                      * cue that the user should remember to yank out the media if
                      * he just unmounted it.
                      */
-                    icon = g_volume_get_icon (volume);
+                    icon = g_volume_get_symbolic_icon (volume);
                     name = g_volume_get_name (volume);
                     tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name,
                                                g_volume_get_identifier (volume,
@@ -1059,7 +1071,7 @@ update_places (NemoPlacesSidebar *sidebar)
                  * work.. but it's also for human beings who like to turn off media detection
                  * in the OS to save battery juice.
                  */
-                icon = g_drive_get_icon (drive);
+                icon = g_drive_get_symbolic_icon (drive);
                 name = g_drive_get_name (drive);
                 tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
@@ -1099,7 +1111,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
         mount = g_volume_get_mount (volume);
         if (mount != NULL) {
-            icon = g_mount_get_icon (mount);
+            icon = get_mount_gicon (mount);
             root = g_mount_get_default_location (mount);
             mount_uri = g_file_get_uri (root);
             full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
@@ -1121,7 +1133,7 @@ update_places (NemoPlacesSidebar *sidebar)
             g_free (mount_uri);
         } else {
             /* see comment above in why we add an icon for an unmounted mountable volume */
-            icon = g_volume_get_icon (volume);
+            icon = g_volume_get_symbolic_icon (volume);
             name = g_volume_get_name (volume);
             cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                                    SECTION_DEVICES,
@@ -1148,7 +1160,7 @@ update_places (NemoPlacesSidebar *sidebar)
 			network_mounts = g_list_prepend (network_mounts, mount);
 			continue;
 		} else {
-			icon = g_volume_get_icon (volume);
+			icon = g_volume_get_symbolic_icon (volume);
 			name = g_volume_get_name (volume);
 			tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
@@ -1169,7 +1181,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	for (l = network_mounts; l != NULL; l = l->next) {
 		mount = l->data;
 		root = g_mount_get_default_location (mount);
-		icon = g_mount_get_icon (mount);
+		icon = get_mount_gicon (mount);
 		mount_uri = g_file_get_uri (root);
 		name = g_mount_get_name (mount);
 		tooltip = g_file_get_parse_name (root);
@@ -1189,7 +1201,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
 	/* network:// */
  	mount_uri = (char *)"network:///"; /* No need to strdup */
-	icon = g_themed_icon_new (NEMO_ICON_NETWORK);
+	icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_NETWORK);
 	cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                 		   SECTION_NETWORK,
                 		   _("Network"), icon,

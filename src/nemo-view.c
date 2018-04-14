@@ -5185,9 +5185,9 @@ reset_move_copy_to_menu (NemoView *view)
     g_free (mount_uri);
 
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_HOME);
-    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_HOME);
-    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
 
     g_object_unref (file);
     mount_uri = nemo_get_desktop_directory_uri ();
@@ -5195,9 +5195,9 @@ reset_move_copy_to_menu (NemoView *view)
     g_free (mount_uri);
 
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_DESKTOP);
-    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
     action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_DESKTOP);
-    gtk_action_set_gicon (action, nemo_file_get_emblemed_icon (file, NEMO_FILE_ICON_FLAGS_NONE));
+    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
 
     g_object_unref (file);
 

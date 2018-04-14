@@ -95,9 +95,9 @@ update_icon (NemoTrashMonitor *trash_monitor)
 	g_clear_object (&trash_monitor->details->icon);
 
 	if (trash_monitor->details->empty) {
-		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH);
+		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_TRASH);
 	} else {
-		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH_FULL);
+		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_TRASH_FULL);
 	}
 }
 

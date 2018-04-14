@@ -91,6 +91,7 @@ struct NemoFileDetails
 	goffset deep_size;
 
 	GIcon *icon;
+    GIcon *symbolic_icon;
 	
 	char *thumbnail_path;
     eel_boolean_bit thumbnail_access_problem : 1;

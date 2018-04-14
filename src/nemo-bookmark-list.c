@@ -676,14 +676,7 @@ load_bookmark_metadata_file (NemoBookmarkList *list)
             NemoBookmarkMetadata *meta = nemo_bookmark_metadata_new ();
 
             meta->bookmark_name = g_strdup (items[i]);
-            meta->icon_uri = g_key_file_get_string (kfile,
-                                                    items[i],
-                                                    KEY_ICON_URI,
-                                                    NULL);
-            meta->icon_name = g_key_file_get_string (kfile,
-                                                     items[i],
-                                                     KEY_ICON_NAME,
-                                                     NULL);
+
             meta->emblems = g_key_file_get_string_list (kfile,
                                                         items[i],
                                                         KEY_ICON_EMBLEMS,
@@ -861,18 +854,6 @@ save_bookmark_metadata_file (NemoBookmarkList *list)
 
         if (data == NULL)
             continue;
-
-        if (data->icon_uri)
-            g_key_file_set_string (kfile,
-                                   nemo_bookmark_get_name (bookmark),
-                                   KEY_ICON_URI,
-                                   data->icon_uri);
-
-        if (data->icon_name)
-            g_key_file_set_string (kfile,
-                                   nemo_bookmark_get_name (bookmark),
-                                   KEY_ICON_NAME,
-                                   data->icon_name);
 
         if (data->emblems) {
             g_key_file_set_string_list (kfile,

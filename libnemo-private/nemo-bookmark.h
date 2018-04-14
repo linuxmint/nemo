@@ -53,8 +53,6 @@ struct NemoBookmark {
 typedef struct
 {
   gchar  *bookmark_name;
-  gchar  *icon_name;
-  gchar  *icon_uri;
   gchar **emblems;
 } NemoBookmarkMetadata;
 
