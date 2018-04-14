@@ -4410,7 +4410,17 @@ nemo_file_get_control_icon (NemoFile *file)
     if (file->details->symbolic_icon != NULL) {
         gicon = g_object_ref (file->details->symbolic_icon);
     } else {
-        gicon = get_symbolic_icon_for_file (file);
+        gchar *uri;
+
+        uri = nemo_file_get_uri (file);
+
+        if (eel_uri_is_search (uri)) {
+            gicon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
+        } else {
+            gicon = get_symbolic_icon_for_file (file);
+        }
+
+        g_free (uri);
     }
 
     return gicon;

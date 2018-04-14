@@ -1467,6 +1467,19 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 	return NULL;
 }
 
+GIcon *nemo_get_mount_gicon (GMount *mount)
+{
+    GIcon *icon;
+
+    g_return_val_if_fail (mount != NULL, NULL);
+
+    if (g_mount_can_eject (mount)) {
+        return g_themed_icon_new ("media-removable-symbolic");
+    }
+
+    return g_mount_get_symbolic_icon (mount);
+}
+
 #if !defined (NEMO_OMIT_SELF_CHECK)
 
 void

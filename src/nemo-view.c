@@ -5149,19 +5149,6 @@ add_place_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gc
                                             view);
 }
 
-// FIXME: duplicated in nemo-places-sidebar.c
-static GIcon *
-get_mount_gicon (GMount *mount)
-{
-    GIcon *icon;
-
-    if (g_mount_can_eject (mount)) {
-        return g_themed_icon_new ("media-removable-symbolic");
-    }
-
-    return g_mount_get_symbolic_icon (mount);
-}
-
 static void
 reset_move_copy_to_menu (NemoView *view)
 {
@@ -5304,7 +5291,7 @@ reset_move_copy_to_menu (NemoView *view)
                 }
             }
 
-            icon = get_mount_gicon (mount);
+            icon = nemo_get_mount_gicon (mount);
             mount_uri = g_file_get_uri (root);
             name = g_mount_get_name (mount);
 
@@ -5346,7 +5333,7 @@ reset_move_copy_to_menu (NemoView *view)
                     mount = g_volume_get_mount (volume);
                     if (mount != NULL) {
                         /* Show mounted volume in the sidebar */
-                        icon = get_mount_gicon (mount);
+                        icon = nemo_get_mount_gicon (mount);
                         root = g_mount_get_default_location (mount);
                         mount_uri = g_file_get_uri (root);
                         name = g_mount_get_name (mount);
@@ -5394,7 +5381,7 @@ reset_move_copy_to_menu (NemoView *view)
 
             mount = g_volume_get_mount (volume);
             if (mount != NULL) {
-                icon = get_mount_gicon (mount);
+                icon = nemo_get_mount_gicon (mount);
                 root = g_mount_get_default_location (mount);
                 mount_uri = g_file_get_uri (root);
 
@@ -5435,7 +5422,7 @@ reset_move_copy_to_menu (NemoView *view)
         for (l = network_mounts; l != NULL; l = l->next) {
             mount = l->data;
             root = g_mount_get_default_location (mount);
-            icon = get_mount_gicon (mount);
+            icon = nemo_get_mount_gicon (mount);
             mount_uri = g_file_get_uri (root);
             name = g_mount_get_name (mount);
 

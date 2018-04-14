@@ -106,4 +106,5 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 						   GCancellable *cancellable,
 						   gpointer user_data);
 
+GIcon *nemo_get_mount_gicon (GMount *mount);
 #endif /* NEMO_FILE_UTILITIES_H */

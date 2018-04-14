@@ -657,18 +657,6 @@ get_gicon (const gchar *uri)
     return nemo_file_get_control_icon (file);
 }
 
-static GIcon *
-get_mount_gicon (GMount *mount)
-{
-    GIcon *icon;
-
-    if (g_mount_can_eject (mount)) {
-        return g_themed_icon_new ("media-removable-symbolic");
-    }
-
-    return g_mount_get_symbolic_icon (mount);
-}
-
 static void
 update_places (NemoPlacesSidebar *sidebar)
 {
@@ -906,7 +894,7 @@ update_places (NemoPlacesSidebar *sidebar)
             }
         }
 
-        icon = get_mount_gicon (mount);
+        icon = nemo_get_mount_gicon (mount);
         mount_uri = g_file_get_uri (root);
         name = g_mount_get_name (mount);
         tooltip = g_file_get_parse_name (root);
@@ -947,7 +935,7 @@ update_places (NemoPlacesSidebar *sidebar)
                 mount = g_volume_get_mount (volume);
                 if (mount != NULL) {
                     /* Show mounted volume in the sidebar */
-                    icon = get_mount_gicon (mount);
+                    icon = nemo_get_mount_gicon (mount);
                     root = g_mount_get_default_location (mount);
                     mount_uri = g_file_get_uri (root);
                     name = g_mount_get_name (mount);
@@ -1047,7 +1035,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
         mount = g_volume_get_mount (volume);
         if (mount != NULL) {
-            icon = get_mount_gicon (mount);
+            icon = nemo_get_mount_gicon (mount);
             root = g_mount_get_default_location (mount);
             mount_uri = g_file_get_uri (root);
             full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
@@ -1117,7 +1105,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	for (l = network_mounts; l != NULL; l = l->next) {
 		mount = l->data;
 		root = g_mount_get_default_location (mount);
-		icon = get_mount_gicon (mount);
+		icon = nemo_get_mount_gicon (mount);
 		mount_uri = g_file_get_uri (root);
 		name = g_mount_get_name (mount);
 		tooltip = g_file_get_parse_name (root);
