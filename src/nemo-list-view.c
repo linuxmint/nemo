@@ -98,6 +98,8 @@ struct NemoListViewDetails {
 	gboolean menus_ready;
 	gboolean active;
 
+    gboolean rubber_banding;
+
 	GHashTable *columns;
 	GtkWidget *column_editor;
 
@@ -581,9 +583,9 @@ motion_notify_callback (GtkWidget *widget,
 
 	view = NEMO_LIST_VIEW (callback_data);
 
-	if (event->window != gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget))) {
-		return FALSE;
-	}
+    if (event->window != gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget))) {
+        return GDK_EVENT_PROPAGATE;
+    }
 
 	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
 		GtkTreePath *old_hover_path;
@@ -607,27 +609,68 @@ motion_notify_callback (GtkWidget *widget,
 		}
 	}
 
-	if (view->details->drag_button != 0) {
-		if (!source_target_list) {
-			source_target_list = nemo_list_model_get_drag_target_list ();
-		}
+    /* If we're already rubber-banding, we can skip all of this logic and just let the parent
+     * class continue to handle selection */
+    if (view->details->drag_button != 0 && !view->details->rubber_banding) {
+        GtkTreePath *path;
+        GtkTreeSelection *selection;
+        gboolean is_new_self_selection;
 
-		if (gtk_drag_check_threshold (widget,
-					      view->details->drag_x,
-					      view->details->drag_y,
-					      event->x,
-					      event->y)) {
-			gtk_drag_begin
-				(widget,
-				 source_target_list,
-				 GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_ASK,
-				 view->details->drag_button,
-				 (GdkEvent*)event);
-		}
-		return TRUE;
-	}
+        selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 
-	return FALSE;
+        gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget),
+                           event->x, event->y,
+                           &path,
+                           NULL, NULL, NULL);
+
+        /* This looks complicated but it's just verbose:  We'll only consider allowing rubber-banding
+         * to begin if the following are TRUE: a) The current row is the only row currently selected,
+         * and  b) This is the first click that's been made on this row - meaning, the button-press-event
+         * that preceded this motion-event was the one that caused this row to be selected. */
+        is_new_self_selection = gtk_tree_selection_count_selected_rows (selection) == 1 &&
+                                gtk_tree_selection_path_is_selected (selection, path) &&
+                                (!view->details->double_click_path[1] ||
+                                (view->details->double_click_path[1] &&
+                                gtk_tree_path_compare (view->details->double_click_path[0],
+                                                       view->details->double_click_path[1]) != 0));
+
+        gtk_tree_path_free (path);
+
+        /* We also want to further restrict rubber-banding to be initiated only in blank areas of the row.
+         * This allows DnD to operate on a new selection like before, when the motion begins over text or
+         * icons */
+        if (is_new_self_selection && gtk_tree_view_is_blank_at_pos (GTK_TREE_VIEW (widget),
+                                                                    event->x, event->y,
+                                                                    NULL, NULL, NULL, NULL)) {
+            /* If this is a candidate for rubber-banding, track that state in the view, and allow the event
+             * to continue into Gtk (which handles rubber-band selection for us) */
+            view->details->rubber_banding = TRUE;
+
+            return GDK_EVENT_PROPAGATE;
+        }
+
+        /* All other cases, allow DnD to potentially begin */
+        if (!source_target_list) {
+            source_target_list = nemo_list_model_get_drag_target_list ();
+        }
+
+        if (gtk_drag_check_threshold (widget,
+                                      view->details->drag_x,
+                                      view->details->drag_y,
+                                      event->x,
+                                      event->y)) {
+            gtk_drag_begin (widget,
+                            source_target_list,
+                            GDK_ACTION_MOVE | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_ASK,
+                            view->details->drag_button,
+                            (GdkEvent*) event);
+        }
+
+        /* The event is handled by the DnD begin, don't propagate further */
+        return GDK_EVENT_STOP;
+    }
+
+    return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
@@ -1176,6 +1219,8 @@ button_release_callback (GtkWidget *widget,
 	NemoListView *view;
 
 	view = NEMO_LIST_VIEW (callback_data);
+
+    view->details->rubber_banding = FALSE;
 
 	if (event->button == view->details->drag_button) {
 		stop_drag_check (view);
@@ -2103,6 +2148,9 @@ create_and_set_up_tree_view (NemoListView *view)
 	gchar **default_column_order, **default_visible_columns;
 
 	view->details->tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
+
+    gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (view->details->tree_view), TRUE);
+
 	view->details->columns = g_hash_table_new_full (g_str_hash,
 							g_str_equal,
 							(GDestroyNotify) g_free,
