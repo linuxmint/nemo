@@ -5608,7 +5608,6 @@ add_extension_action_for_files (NemoView *view,
 	gboolean sensitive, priority;
     gboolean separator;
 	GtkAction *action;
-	GdkPixbuf *pixbuf;
     GtkWidget *widget_a, *widget_b;
 	ExtensionActionCallbackData *data;
 
@@ -5628,11 +5627,15 @@ add_extension_action_for_files (NemoView *view,
                                  tip,
                                  NULL);
         if (icon != NULL) {
-            pixbuf = nemo_ui_get_menu_icon (icon, GTK_WIDGET (view));
-            if (pixbuf != NULL) {
-                gtk_action_set_gicon (action, G_ICON (pixbuf));
-                g_object_unref (pixbuf);
+            GIcon *gicon;
+
+            if (g_str_has_suffix (icon, "-symbolic")) {
+                gicon = g_themed_icon_new (icon);
+            } else {
+                gicon = NULL;
             }
+
+            gtk_action_set_gicon (action, gicon);
         }
     } else if (separator) {
         action = nemo_separator_action_new (name);
