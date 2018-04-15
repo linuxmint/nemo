@@ -62,7 +62,7 @@ nemo_trash_monitor_finalize (GObject *object)
 		g_object_unref (trash_monitor->details->icon);
 	}
     if (trash_monitor->details->symbolic_icon) {
-        g_object_unref (trash_monitor->details->icon);
+        g_object_unref (trash_monitor->details->symbolic_icon);
     }
 	if (trash_monitor->details->file_monitor) {
 		g_object_unref (trash_monitor->details->file_monitor);
