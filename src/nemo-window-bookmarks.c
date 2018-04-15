@@ -335,8 +335,6 @@ nemo_menus_append_bookmark_to_menu (NemoWindow *window,
 	path = g_strdup_printf ("%s/%s", parent_path, action_name);
 	menuitem = gtk_ui_manager_get_widget (window->details->ui_manager,
 					      path);
-	gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem),
-						   TRUE);
 
 	g_free (path);
 }

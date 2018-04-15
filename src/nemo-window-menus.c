@@ -769,32 +769,6 @@ static const char* icon_entries[] = {
 	"/MenuBar/Other Menus/Go/Edit Location"
 };
 
-/**
- * refresh_go_menu:
- *
- * Refresh list of bookmarks at end of Go menu to match centralized history list.
- * @window: The NemoWindow whose Go menu will be refreshed.
- **/
-static void
-nemo_window_initialize_go_menu (NemoWindow *window)
-{
-	GtkUIManager *ui_manager;
-	GtkWidget *menuitem;
-	guint i;
-
-	ui_manager = nemo_window_get_ui_manager (NEMO_WINDOW (window));
-
-	for (i = 0; i < G_N_ELEMENTS (icon_entries); i++) {
-		menuitem = gtk_ui_manager_get_widget (
-				ui_manager,
-				icon_entries[i]);
-		if (menuitem) {
-			gtk_image_menu_item_set_always_show_image (
-					GTK_IMAGE_MENU_ITEM (menuitem), TRUE);
-		}
-	}
-}
-
 static void
 action_new_window_callback (GtkAction *action,
                             gpointer user_data)
@@ -1758,7 +1732,6 @@ nemo_window_initialize_menus (NemoWindow *window)
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-shell-ui.xml", NULL);
 
 	nemo_window_initialize_trash_icon_monitor (window);
-	nemo_window_initialize_go_menu (window);
 }
 
 void
