@@ -3899,7 +3899,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	g_object_set (cell,
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "weight-set", TRUE,
-		      "ypad", 6,
+		      "ypad", 0,
 		      "xpad", 0,
 		      NULL);
 	gtk_tree_view_column_set_cell_data_func (col, cell,
