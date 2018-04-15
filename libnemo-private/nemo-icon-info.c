@@ -750,26 +750,6 @@ nemo_icon_get_emblem_size_for_icon_size (guint size)
 	return 0; /* no emblems for smaller sizes */
 }
 
-gboolean
-nemo_icon_theme_can_render (GThemedIcon *icon)
-{
-	GtkIconTheme *icon_theme;
-	const gchar * const *names;
-	gint idx;
-
-	names = g_themed_icon_get_names (icon);
-
-	icon_theme = gtk_icon_theme_get_default ();
-
-	for (idx = 0; names[idx] != NULL; idx++) {
-		if (gtk_icon_theme_has_icon (icon_theme, names[idx])) {
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 GIcon *
 nemo_user_special_directory_get_gicon (GUserDirectory directory)
 {

@@ -368,16 +368,14 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 			/* pick only the first emblem we can render for the list view */
 			for (l = emblem_icons; !bad_ratio && l != NULL; l = l->next) {
 				emblem_icon = l->data;
-				if (nemo_icon_theme_can_render (G_THEMED_ICON (emblem_icon))) {
-					emblem = g_emblem_new (emblem_icon);
-					emblemed_icon = g_emblemed_icon_new (gicon, emblem);
+				emblem = g_emblem_new (emblem_icon);
+				emblemed_icon = g_emblemed_icon_new (gicon, emblem);
 
-					g_object_unref (gicon);
-					g_object_unref (emblem);
-					gicon = emblemed_icon;
+				g_object_unref (gicon);
+				g_object_unref (emblem);
+				gicon = emblemed_icon;
 
-					break;
-				}
+				break;
 			}
 
 			g_list_free_full (emblem_icons, g_object_unref);
