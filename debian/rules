@@ -2,8 +2,8 @@
 
 CONFIGURE_EXTRA_FLAGS = \
 	--prefix=/usr \
-	--libdir=/usr/lib \
-	--libexecdir=/usr/lib/nemo \
+	--libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+	--libexecdir=/usr/lib/$(DEB_HOST_MULTIARCH)/nemo \
 	-D deprecated_warnings=false \
 	-D gtk_doc=true \
 	-D selinux=false
