@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Nemo
 Upstream-Contact: Linux Mint Project <root@linuxmint.com>
 Source: https://github.com/linuxmint/nemo
@@ -94,12 +94,15 @@ Files: COPYING.LIB
        libnemo-extension/nemo-property-page.h
        libnemo-private/nemo-bookmark.c
        libnemo-private/nemo-bookmark.h
+       libnemo-private/nemo-centered-placement-grid.c
        libnemo-private/nemo-clipboard.c
        libnemo-private/nemo-clipboard.h
        libnemo-private/nemo-column-chooser.c
        libnemo-private/nemo-column-chooser.h
        libnemo-private/nemo-column-utilities.c
        libnemo-private/nemo-column-utilities.h
+       libnemo-private/nemo-context-menu-menu-item.c
+       libnemo-private/nemo-context-menu-menu-item.h
        libnemo-private/nemo-dnd.c
        libnemo-private/nemo-dnd.h
        libnemo-private/nemo-entry.c
@@ -118,11 +121,13 @@ Files: COPYING.LIB
        libnemo-private/nemo-icon-dnd.h
        libnemo-private/nemo-icon-info.c
        libnemo-private/nemo-icon-private.h
+       libnemo-private/nemo-icon.h
        libnemo-private/nemo-metadata.c
        libnemo-private/nemo-mime-application-chooser.c
        libnemo-private/nemo-mime-application-chooser.h
        libnemo-private/nemo-module.c
        libnemo-private/nemo-module.h
+       libnemo-private/nemo-placement-grid.c
        libnemo-private/nemo-program-choosing.c
        libnemo-private/nemo-program-choosing.h
        libnemo-private/nemo-selection-canvas-item.c
@@ -141,6 +146,8 @@ Files: COPYING.LIB
        libnemo-private/nemo-widget-menu-item.c
        libnemo-private/nemo-widget-menu-item.h
        src/nemo-autorun-software.c
+       src/nemo-desktop-icon-grid-view.c
+       src/nemo-desktop-icon-grid-view.h
        src/nemo-desktop-icon-view.c
        src/nemo-desktop-icon-view.h
        src/nemo-empty-view.c
@@ -153,6 +160,8 @@ Files: COPYING.LIB
        src/nemo-floating-bar.h
        src/nemo-icon-view-container.c
        src/nemo-icon-view-container.h
+       src/nemo-icon-view-grid-container.c
+       src/nemo-icon-view-grid-container.h
        src/nemo-icon-view.c
        src/nemo-icon-view.h
        src/nemo-list-model.c
@@ -175,17 +184,17 @@ Files: COPYING.LIB
 Copyright: 2001-2002, Anders Carlsson
            2001-2002, Anders Carlsson <andersca@gnu.org>
            2002, Anders Carlsson, Sun Microsystems, Inc
-           2000, Eazel, Inc
+           1999-2001, Eazel, Inc
            2000-2001, Eazel, Inc.mou
            1997-2000, Free Software Foundation
            2006, Free Software Foundation, Inc
            1999-2000, Free Software Foundaton
            2002, Jan Arne Petersen
-           2003, Novell, Inc
+           2003-2004, Novell, Inc
            1995-1997, Peter Mattis, Spencer Kimball and Josh MacDonald
            2005, Raffaele Sandrini
            2011, Red Hat Inc
-           2001, Red Hat, Inc
+           2001-2011, Red Hat, Inc
            2007, Red Hat, Inc., Alexander Larsson <alexl@redhat.com>
            2004, Red Hat, Inc., Jonathan Blandford <jrb@gnome.org>
            2009, Red Hatl, Inc
