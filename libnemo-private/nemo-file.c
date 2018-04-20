@@ -7264,6 +7264,23 @@ nemo_file_is_in_recent (NemoFile *file)
    return nemo_directory_is_in_recent (file->details->directory);
 }
 
+/**
+ * nemo_file_is_in_admin
+ *
+ * Check if this file is using admin backend.
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: TRUE if @file is using admin backend.
+ *
+ **/
+gboolean
+nemo_file_is_in_admin (NemoFile *file)
+{
+    g_assert (NEMO_IS_FILE (file));
+
+    return nemo_directory_is_in_admin (file->details->directory);
+}
+
 GError *
 nemo_file_get_file_info_error (NemoFile *file)
 {

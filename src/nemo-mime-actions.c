@@ -1544,16 +1544,33 @@ activate_files (ActivateParameters *parameters)
 
 
 		for (l = open_in_view_files; l != NULL; l = l->next) {
-			GFile *f;
+			GFile *initial_location, *final_location;
 			/* The ui should ask for navigation or object windows
 			 * depending on what the current one is */
 			file = NEMO_FILE (l->data);
 
 			uri = nemo_file_get_activation_uri (file);
-			f = g_file_new_for_uri (uri);
-            nemo_window_slot_open_location (parameters->slot, f, flags);
-			g_object_unref (f);
-			g_free (uri);
+			initial_location = g_file_new_for_uri (uri);
+
+            if (g_file_is_native (initial_location) &&
+                (nemo_file_is_in_admin (file) ||
+                 !nemo_file_can_read (file) ||
+                 !nemo_file_can_execute (file))) {
+                gchar *file_path = NULL;
+
+                g_free (uri);
+
+                file_path = g_file_get_path (initial_location);
+                uri = g_strconcat ("admin://", file_path, NULL);
+            }
+
+            final_location = g_file_new_for_uri (uri);
+
+            nemo_window_slot_open_location (parameters->slot, final_location, flags);
+
+            g_clear_object (&initial_location);
+            g_clear_object (&final_location);
+            g_free (uri);
 		}
 	}
 
