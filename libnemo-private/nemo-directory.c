@@ -550,6 +550,19 @@ nemo_directory_is_in_recent (NemoDirectory *directory)
 }
 
 gboolean
+nemo_directory_is_in_admin (NemoDirectory *directory)
+{
+    g_assert (NEMO_IS_DIRECTORY (directory));
+
+    if (directory->details->location == NULL)
+    {
+        return FALSE;
+    }
+
+    return g_file_has_uri_scheme (directory->details->location, "admin");
+}
+
+gboolean
 nemo_directory_are_all_files_seen (NemoDirectory *directory)
 {
 	g_return_val_if_fail (NEMO_IS_DIRECTORY (directory), FALSE);
