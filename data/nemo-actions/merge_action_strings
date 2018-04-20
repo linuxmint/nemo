@@ -41,7 +41,7 @@ class Main:
 
         for fn in self.in_keyfiles.keys():
             action_fn = os.path.split(fn)[1].replace(".in", "")
-            action_path = os.path.join("..", "files", "usr", "share", "nemo", "actions", action_fn)
+            action_path = os.path.join("..", "..", "files", "usr", "share", "nemo", "actions", action_fn)
             outstring, length = self.in_keyfiles[fn].to_data()
             if os.path.exists(action_path):
                 os.remove(action_path)
