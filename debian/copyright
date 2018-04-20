@@ -74,7 +74,6 @@ Files: COPYING.LIB
        libnemo-extension/nemo-column.c
        libnemo-extension/nemo-column.h
        libnemo-extension/nemo-extension-private.h
-       libnemo-extension/nemo-extension-types.c
        libnemo-extension/nemo-extension-types.h
        libnemo-extension/nemo-file-info.c
        libnemo-extension/nemo-file-info.h
@@ -202,15 +201,8 @@ Copyright: 2001-2002, Anders Carlsson
            2002, Sun Microsystems, Inc
 License: LGPL-2+
 
-Files: INSTALL
-       m4/ltoptions.m4
-       m4/ltsugar.m4
-       m4/ltversion.m4
-       m4/lt~obsolete.m4
-       po/Makefile.in.in
-Copyright: 2004-2009, Free Software Foundation
-           2004-2009, Free Software Foundation, Inc
-           2004-2008, Rodney Dawes <dobey.pwns@gmail.com>
+Files: po/Makefile.in.in
+Copyright: 2004-2008, Rodney Dawes <dobey.pwns@gmail.com>
            1995-1997, Ulrich Drepper <drepper@gnu.ai.mit.edu>
 License: Permissive
  This file is free software; the Free Software Foundation gives
