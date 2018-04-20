@@ -39,3 +39,10 @@ override_dh_makeshlibs:
 
 override_dh_installmime:
 	dh_installmime -pnemo-data
+
+# with dh11 replace with dh_missing
+# debian/not-installed wildcard support introduced in debhelper 11.1
+# --list-missing will be default in compat 12
+override_dh_install:
+	dh_install --list-missing
+
