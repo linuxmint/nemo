@@ -1,3 +1,233 @@
+nemo (3.8.0) tara; urgency=medium
+
+  [ Tobias Göbel ]
+  * also use exec-arg from org.cinnamon.desktop.default-applications.terminal when using "open in terminal"
+
+  [ Michael Webster ]
+  * nemo-icon-view-grid-container.c: add missing position shift prior snapping a semi-positioned icon.  This was causing the free position check to potentially check the wrong grid spot, causing shifting positions.
+  * nemo-icon-dnd.c: when calculating drop position, use the overall canvas item's y center, rather than just the icon's center.  This is makes the final aligned position more closely match the drag actor's apparent position.
+  * nemo-desktop-manager: scale the window x and y positions, as well as size when retrieving geometry from cinnamon.
+  * nemo-icon-dnd.c: fix missing semicolon
+  * nemo-icon-view-grid-container.c: Don't allow the vertical adjustment to calculate out to more than half of the grid snap height, this will cause grid checks to evaluate incorrectly.
+  * nemo-icon-container: only mark (pseudo)-desktop icons as transient if keep_align is active.  This restores reasonable behavior for non-keep-aligned desktops, and prevents icon movement when refreshing and during startup.
+
+  [ Jason Hicks ]
+  * Fix left pane in dual pane mode reverting to minimum width
+  * Add g_return_val_if_fail to the beginning of reposition_paned
+
+  [ Bilal Elmoussaoui ]
+  * Rename Nemo icon from places to nemo (#1687)
+
+  [ Michael Webster ]
+  * debian/control: remove python3-polib from build deps, no longer needed.
+  * nemo-window.c: listen for a position change on the split-view paned widget when adding a new pane.  When GtkPaned's position property hasn't been explicitly set, it auto-adjusts to keep panes equal-sized.
+  * nemo-places-sidebar-.c: Get rid of old hack for the sidebar.  It was intended originally to make sure enough vertical height was given to the scrolled container children in their various states (collapsed categories.)  It does not appear to be necessary any more, and now causes gtk theme issues.
+
+  [ Clement Lefebvre ]
+  * Add CI configuration
+
+  [ Simon Brown ]
+  * nemo-directory-async: correct some signed/unsigned warnings (#1698)
+  * eel-editable-label: remove indentation warning (#1695)
+  * nemo-list-view: remove indentation warnings (#1697)
+  * nemo-list-model: silence indentation warning (#1696)
+  * nemo-bookmarks-window: rename some shadowed variables (#1694)
+  * nemo-file-operations: rename some shadowed variables causing warnings (#1693)
+  * nemo-query-editor: resolve shadow variable and signed/unsigned warnings (#1700)
+  * nemo-script-config-widget: correct some signed/unsigned warnings (#1701)
+  * nemo-action-manager: remove redundant redeclarations (#1702)
+  * nemo-cell-renderer-disk: remove redundant redeclaration (#1703)
+  * nemo-file: fix a couple of signed/unsigned warnings (#1704)
+
+  [ Naman Kanakiya ]
+  * Add options to preview thumbnails for up to 16GB and 32GB (#1707)
+
+  [ Simon Brown ]
+  * nemo-icon-info: correct various compiler warnings (#1716)
+  * nemo-navigation-action: stop compile warnings from switch statements (#1715)
+  * nemo-window-pane: correct some indentation causing a warning message (#1709)
+  * remove some redundant redeclarations causing warnings (#1708)
+  * nemo-view: remove some compile warnings (#1710)
+  * correct some signed/unsigned compiler warnings (#1711)
+  * nemo-icon-dnd: add default cases to remove compile warnings (#1712)
+  * nemo-file-management-properties: rename shadow variable (#1717)
+  * change some old style function definitions to avoid warnings (#1718)
+  * nemo-bookmark: remove compile warnings (#1719)
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c, nemo-action.c: Replace g_drive_is_media_removable with g_drive_is_removable.
+
+  [ Simon Brown ]
+  * remove some signed/unsigned compiler warnings (#1720)
+  * nemo-desktop-metadata correct wrong type of variable passed as parameter (#1721)
+  * nemo-search-engine-simple: resolve a couple of compile warnings (#1722)
+  * nemo-job-queue:  resolve some compiler warnings (#1741)
+  * nemo-undo-signal-handlers: resolve a couple of compiler errors (#1740)
+  * eel-gtk-extensions: resolve signed/unsigned compile warnings (#1739)
+  * nemo-file-utilities:  remove a couple of const compile warnings (#1736)
+  * nemo-icon-canvas-item: treat switch compiler warnings (#1735)
+  * nemo-tree-view-drag-dest: Fix some compile warnings (#1734)
+  * nemo-pathbar: resolve various compile warnings (#1733)
+  * nemo-query-editor: resolve some const compile warnings (#1732)
+  * nemo-list-model.c: resolve various compiler warnings (#1731)
+  * nemo-list-view: resolve some compiler warnings (#1729)
+  * nemo-file: resolve a number of compiler warnings (#1738)
+  * nemo-connect-server-dialog  resolve various compiler warnings (#1724)
+  * nemo-window-menus resolve a signed/unsigned warning (#1725)
+  * nemo-desktop-icon-grip-view Treat switch and const warnings (#1726)
+  * nemo-extension-config-widget: resolve some signed/unsigned warnings (#1727)
+  * nemo-icon-view: resolve various compiler warnings (#1728)
+  * nemo-icon-container -remove some switch warnings (#1723)
+  * resolve some const compiler warnings (#1742)
+  * nemo-view: resolve some const warning messages (#1743)
+  * remove a couple of unused variables causing warnings (#1744)
+  * nemo-properties-window: resolve a couple of compile warnings (#1745)
+  * nemo-vfs-file:  add default to switch to avoid warning (#1746)
+
+  [ Michael Webster ]
+  * nemo-window-slot.c: remove padding from extra_location_widgets box.
+
+  [ Simon Brown ]
+  * nemo-desktop-icon-view: resolve some const warnings (#1757)
+  * nemo-file-changes-queue: resolve a switch warning (#1756)
+  * nemo-desktop-link-monitor: resolve a switch warning (#1753)
+  * nemo-places-sidebar: resolve various compile warnings (#1754)
+  * nemo-mime-application-chooser:  resolve misleading indentation warning (#1749)
+  * nemo-file-operations: resolve some switch warnings (#1747)
+  * nemo-tree-sidebar: correct an int to an unsigned (#1752)
+  * nemo-monitor: resolve some switch compiler warnings (#1751)
+  * nemo-icon-view-container: resolve a couple of compile warnings (#1758)
+  * nemo-icon-view-grid-container: resolve a couple of compiler warnings (#1759)
+  * add some default switch statements to avoid warnings (#1760)
+  * resolve some signed/unsigned warnings (#1761)
+
+  [ JosephMcc ]
+  * [gtk3.22] Pathbar style (#1765)
+
+  [ Germán Franco ]
+  * Use symbolic icons (#1764)
+
+  [ Simon Brown ]
+  * nemo-window-slow-dnd:  resolve a couple of const warnings (#1763)
+  * nemo-interesting-folder: add additional case to switch to avoid warning (#1762)
+  * nemo-window: check for an active slot when updating cursor (#1767)
+  * nemo-properties-window: use utility functions if available (#1768)
+  * nemo-properties-window: use gdk_pixbuf_scale_simple () (#1766)
+  * eel-vfs-extensions: update filename extensions (#1769)
+
+  [ JosephMcc ]
+  * nemo-places-sidebar: Cleanup spacing (#1664)
+
+  [ Félix Piédallu ]
+  * Add Meson Build System support * Modify Autotools build for icons
+  * New debian/rules meson-enabled
+  * Fix sources: use other version macro, fix fn call
+
+  [ Michael Webster ]
+  * meson: some cleanup, fixes, organizing.
+  * actions: fully support all system data paths, but respect the install prefix for looking up fixed resources.
+  * Fix lmde3 build, don't build empty view by default.
+
+  [ Leigh Scott ]
+  * Make the libExecPath usable
+  * Fix libexec path
+  * Fix path
+  * Remove hardcoded path
+
+  [ Michael Webster ]
+  * Fix libdir location to match autotools build (usr/lib), but make sure typelib still goes where it belongs.
+
+  [ Clement Lefebvre ]
+  * Revert "also use exec-arg from org.cinnamon.desktop.default-applications.terminal when using "open in terminal""
+  * Fix thumbmails generation
+
+  [ Simon Brown ]
+  * nemo-file-operations: revert a change that might be backfiring (#1774)
+
+  [ Michael Webster ]
+  * nemo-view.c: Don't try to update undo menu items in a non-active slot.
+
+  [ Mochamad Arifin ]
+  * fix open as root error
+
+  [ Michael Webster ]
+  * debian: Move build dir to debian/build
+  * nemo-list-view.c: Don't clear the editable on focus-out, this will get done properly when we chain up.  We need to propagate the focus-out-event signal, which the callback wasn't doing.
+  * Don't build/install gtkdocs by default
+  * oops - gtk_doc option should only affect the reference folder..
+  * nemo-icon-dnd.c: Fix segfault when dragging from nemo to nemo-desktop
+  * search: Use newer GtkEntry method for focusing search box, remove custom code.
+  * nemo-window-menus.c: Ignore 'go home' shortcut on the desktop.
+  * nemo-view.c: Allow view display of files to commence even while loading is ongoing, instead of waiting until files are entirely finished loading.
+  * eel-editable-label.c: Don't queue a redraw on unrealized labels.
+  * nemo-icon-container.c: Don't perform relayouts on an unrealized container.
+  * nemo-list-view.c: Remove and re-add columns rather than moving them. This prevents negative allocation warnings during the move calls.
+  * eel-canvas.c: Don't update the scroll region when clearing the canvas to destroy it.
+  * query editor: Simplify, remove additional filters, just a simple filename search.
+  * nemo-window.c: Go back to explicitly setting half the width for the split-pane's position property, rather than counting on it to fall that way naturally.  The natural position can be affected by sizing demands of the panes' children.
+  * search: Add a more convenient way for saving searches.
+  * nemo-file.c: Avoid recursion when updating symbolic links that point to each other.  See inline notes.
+  * nemo-file.c: Small fix and optimization for 40dc6ae1ed9d24b0c - return the full link_file list as before if the target file is not a link, and only check if the file is a link one time.
+  * libnemo-extension: Remove custom enum code for NemoOperationResult - it's not necessary in modern builds due to introspection.
+  * info provider extensions: Improvements to info provider extension operations.
+  * nemo-query-editor.c: Add mnemonic to popup search keys for quick selection.
+  * nemo-query-editor.c: Inhibit faves popup if the list is empty, filter out typical keyboard modifiers during clicks on the favorite icon.
+  * nemo-desktop-application.c: Allow nemo-desktop to provide coverage for the org.freedesktop.FileManager1 dbus interface.
+  * nemo-icon-view.c: Be more selective when updating the scroll region.
+  * refresh/reload: When reacting to a user-initiated view refresh, regenerate any thumbnails as well.
+
+  [ JosephMcc ]
+  * nemo-properties-window: Stop using stock buttons (#1800)
+  * prefs-window: Don't use stock buttons (#1801)
+  * menus: Convert most icons to symbolic versions (#1798)
+
+  [ Michael Webster ]
+  * nemo-list-view.c: Re-apply right-click column handler when reloading column settings (see inline notes, this only affects certain Gtk versions.)
+  * nemo-view.c: Add label to directory menu Cut and Copy (needed now that we are no longer using GTK_STOCK_*
+  * nemo-view.c: make mnemonics for Cut, Copy, Paste match Gtk's.
+
+  [ Mike Tzou ]
+  * Fix function argument order (#1791)
+
+  [ Michael Webster ]
+  * Check for realized instead of mapped/visible to prevent needless resize calculations (and associated warnings.)
+  * nemo-file-management-properties: Fix 2px border width surrounding content (see comments.)
+  * Use symbolic icons for the places sidebar
+  * places-sidebar.c: Use symbolic for eject button
+  * More symbolic conversion
+  * nemo-trash-monitor.c: Add a new path for the symbolic icon.  Our file views need a non-symbolic icon.
+  * More symbolic fixes, cleanup in pathbar.
+  * Missed a few trash icons...
+  * extensions: Show symbolic icons properly, hide the icon if it's not a symbolic name.
+  * Add rubber-band selection to the list view.
+  * nemo-places-sidebar.c: remove vertical padding for headers.  This is unnecessary, and looks bad when a theme has increased spacing between all rows.
+  * go menu, bookmarks menu: respect the menu-images setting.
+  * nemo-trash-monitor.c: Fix copy-paste typo.
+  * nemo-icon-info.c: Stop using gtk_icon_theme_has_icon() - it returns false negative when attempting to check for icons that have been added using gtk_icon_theme_append_search_path().  This entire branch of functionality is considered 'legacy' and not recommended, but for dropbox emblems, where more than one package may attempt to provide them, putting them in the (recommended) hicolor icon folder won't work.
+
+  [ NikoKrause ]
+  * Use media-mount icon for right-click action (#1813)
+  * Eject/unmount icon & new folder icon (#1811)
+
+  [ Fabio Fantoni ]
+  * debian: wrap-and-sort -bst
+  * update debian/copyright
+  * improve debian/control
+  * Bump debhelper build-dep and compat to 10
+  * debian: try to restore multiarch with meson without debhelper 11
+  * add debian/not-installed
+  * Force UTF8 to workaround build error
+  * debian: add missed part of multiarch restore
+  * debian: add a nemo lintian override
+  * debian/rules: list missed files in dh_install
+  * circleci: remove mint18 job
+  * debian/control: remove very old breaks
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT file and generate files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 20 Apr 2018 12:17:46 +0100
+
 nemo (3.6.5) sylvia; urgency=medium
 
   [ Michael Webster ]
