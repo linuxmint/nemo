@@ -100,7 +100,6 @@ nemo_private_lib = static_library('nemo-private',
   nemo_private_sources,
   dependencies: nemo_private_deps,
   include_directories: [ rootInclude, ],
-  install: true,
   c_args: nemo_definitions,
 )
 
