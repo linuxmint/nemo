@@ -106,5 +106,7 @@ void nemo_get_x_content_types_for_mount_async (GMount *mount,
 						   GCancellable *cancellable,
 						   gpointer user_data);
 
-GIcon *nemo_get_mount_gicon (GMount *mount);
+gchar *nemo_get_mount_icon_name (GMount *mount);
+gchar *nemo_get_volume_icon_name (GVolume *volume);
+gchar *nemo_get_drive_icon_name (GDrive *drive);
 #endif /* NEMO_FILE_UTILITIES_H */

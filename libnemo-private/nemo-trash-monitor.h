@@ -62,7 +62,7 @@ GType			nemo_trash_monitor_get_type				(void);
 NemoTrashMonitor   *nemo_trash_monitor_get 				(void);
 gboolean		nemo_trash_monitor_is_empty 			(void);
 GIcon                  *nemo_trash_monitor_get_icon                         (void);
-GIcon                  *nemo_trash_monitor_get_symbolic_icon                (void);
+gchar                  *nemo_trash_monitor_get_symbolic_icon_name           (void);
 
 void		        nemo_trash_monitor_add_new_trash_directories        (void);
 

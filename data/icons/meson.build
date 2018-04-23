@@ -26,6 +26,7 @@ publicIcons = [
   'hicolor/actions/scalable/expand-menu-hover-symbolic.svg',
   'hicolor/actions/scalable/collapse-menu-symbolic.svg',
   'hicolor/actions/scalable/collapse-menu-hover-symbolic.svg',
+  'hicolor/places/scalable/nemo-bookmark-not-found-symbolic.svg',
   'hicolor/status/48x48/progress-0.png',
   'hicolor/status/48x48/progress-10.png',
   'hicolor/status/48x48/progress-20.png',

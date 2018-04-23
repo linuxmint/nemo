@@ -37,7 +37,7 @@
 struct NemoTrashMonitorDetails {
 	gboolean empty;
 	GIcon *icon;
-    GIcon *symbolic_icon;
+    const gchar *symbolic_icon_name;
 	GFileMonitor *file_monitor;
 };
 
@@ -61,9 +61,7 @@ nemo_trash_monitor_finalize (GObject *object)
 	if (trash_monitor->details->icon) {
 		g_object_unref (trash_monitor->details->icon);
 	}
-    if (trash_monitor->details->symbolic_icon) {
-        g_object_unref (trash_monitor->details->symbolic_icon);
-    }
+
 	if (trash_monitor->details->file_monitor) {
 		g_object_unref (trash_monitor->details->file_monitor);
 	}
@@ -100,10 +98,10 @@ update_icon (NemoTrashMonitor *trash_monitor)
 
 	if (trash_monitor->details->empty) {
 		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH);
-        trash_monitor->details->symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_TRASH);
+        trash_monitor->details->symbolic_icon_name = NEMO_ICON_SYMBOLIC_TRASH;
 	} else {
 		trash_monitor->details->icon = g_themed_icon_new (NEMO_ICON_TRASH_FULL);
-        trash_monitor->details->symbolic_icon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_TRASH_FULL);
+        trash_monitor->details->symbolic_icon_name = NEMO_ICON_SYMBOLIC_TRASH_FULL;
 	}
 }
 
@@ -249,14 +247,14 @@ nemo_trash_monitor_get_icon (void)
 	return NULL;
 }
 
-GIcon *
-nemo_trash_monitor_get_symbolic_icon (void)
+gchar *
+nemo_trash_monitor_get_symbolic_icon_name (void)
 {
     NemoTrashMonitor *monitor;
 
     monitor = nemo_trash_monitor_get ();
-    if (monitor->details->symbolic_icon) {
-        return g_object_ref (monitor->details->symbolic_icon);
+    if (monitor->details->symbolic_icon_name) {
+        return g_strdup (monitor->details->symbolic_icon_name);
     }
     return NULL;
 }

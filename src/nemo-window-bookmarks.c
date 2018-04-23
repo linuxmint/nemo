@@ -191,7 +191,7 @@ connect_proxy_cb (GtkActionGroup *action_group,
                   gpointer dummy)
 {
 	GtkLabel *label;
-	GIcon *icon;
+	const gchar *icon_name;
 
 	if (!GTK_IS_MENU_ITEM (proxy))
 		return;
@@ -202,11 +202,11 @@ connect_proxy_cb (GtkActionGroup *action_group,
 	gtk_label_set_ellipsize (label, PANGO_ELLIPSIZE_END);
 	gtk_label_set_max_width_chars (label, MENU_ITEM_MAX_WIDTH_CHARS);
 
-	icon = g_object_get_data (G_OBJECT (action), "menu-icon");
+	icon_name = g_object_get_data (G_OBJECT (action), "menu-icon-name");
 
-	if (icon != NULL) {
+	if (icon_name != NULL) {
 		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (proxy),
-					       gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU));
+					       gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU));
 	}
 }
 
@@ -290,7 +290,7 @@ nemo_menus_append_bookmark_to_menu (NemoWindow *window,
 	char action_name[128];
 	const char *name;
 	char *path;
-	GIcon *icon;
+	gchar *icon_name;
 	GtkAction *action;
 	GtkWidget *menuitem;
 
@@ -301,7 +301,7 @@ nemo_menus_append_bookmark_to_menu (NemoWindow *window,
 	name = nemo_bookmark_get_name (bookmark);
 
 	/* Create menu item with pixbuf */
-	icon = nemo_bookmark_get_icon (bookmark);
+	icon_name = nemo_bookmark_get_icon_name (bookmark);
 
 	g_snprintf (action_name, sizeof (action_name), "%s%d", parent_id, index_in_parent);
 
@@ -310,9 +310,9 @@ nemo_menus_append_bookmark_to_menu (NemoWindow *window,
 				 _("Go to the location specified by this bookmark"),
 				 NULL);
 	
-	g_object_set_data_full (G_OBJECT (action), "menu-icon",
-				icon,
-				g_object_unref);
+	g_object_set_data_full (G_OBJECT (action), "menu-icon-name",
+				icon_name,
+				g_free);
 
 	g_signal_connect_data (action, "activate",
 			       G_CALLBACK (activate_bookmark_in_menu_item),

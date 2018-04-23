@@ -74,13 +74,13 @@ typedef struct NemoBookmarkClass NemoBookmarkClass;
 GType                 nemo_bookmark_get_type               (void);
 NemoBookmark *    nemo_bookmark_new                    (GFile                *location,
                                                         const char           *custom_name,
-                                                        GIcon                *icon,
+                                                        const char           *icon_name,
                                                         NemoBookmarkMetadata *md);
 NemoBookmark *    nemo_bookmark_copy                   (NemoBookmark      *bookmark);
 const char *          nemo_bookmark_get_name               (NemoBookmark      *bookmark);
 GFile *               nemo_bookmark_get_location           (NemoBookmark      *bookmark);
 char *                nemo_bookmark_get_uri                (NemoBookmark      *bookmark);
-GIcon *               nemo_bookmark_get_icon               (NemoBookmark      *bookmark);
+gchar *               nemo_bookmark_get_icon_name          (NemoBookmark      *bookmark);
 gboolean	      nemo_bookmark_get_has_custom_name    (NemoBookmark      *bookmark);		
 void                  nemo_bookmark_set_custom_name        (NemoBookmark      *bookmark,
 								const char            *new_name);		
