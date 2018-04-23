@@ -455,17 +455,17 @@ trash_state_changed_cb (NemoTrashMonitor *monitor,
 {
 	GtkActionGroup *action_group;
 	GtkAction *action;
-	GIcon *gicon;
+    gchar *icon_name;
 
 	action_group = nemo_window_get_main_action_group (window);
 	action = gtk_action_group_get_action (action_group, "Go to Trash");
 
-	gicon = nemo_trash_monitor_get_symbolic_icon ();
+    icon_name = nemo_trash_monitor_get_symbolic_icon_name ();
 
-	if (gicon) {
-		g_object_set (action, "gicon", gicon, NULL);
-		g_object_unref (gicon);
-	}
+    if (icon_name) {
+        g_object_set (action, "icon-name", icon_name, NULL);
+        g_clear_pointer (&icon_name, g_free);
+    }
 }
 
 static void

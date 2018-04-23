@@ -2545,17 +2545,6 @@ update_info_internal (NemoFile *file,
 		file->details->icon = g_object_ref (icon);
 	}
 
-    icon = g_file_info_get_symbolic_icon (info);
-    if (!g_icon_equal (icon, file->details->symbolic_icon)) {
-        changed = TRUE;
-
-        if (file->details->symbolic_icon) {
-            g_object_unref (file->details->symbolic_icon);
-        }
-
-        file->details->symbolic_icon = g_object_ref (icon);
-    }
-
 	thumbnail_path =  g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
 
 	if (g_strcmp0 (file->details->thumbnail_path, thumbnail_path) != 0) {
@@ -4351,79 +4340,102 @@ nemo_file_get_gicon (NemoFile *file,
 }
 
 
-GIcon *
-get_symbolic_icon_for_file (NemoFile *file)
+static const gchar *
+get_symbolic_icon_name_for_file (NemoFile *file)
 {
     if (nemo_file_is_home (file)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_HOME);
+        return NEMO_ICON_SYMBOLIC_HOME;
     }
 
     // Special folders (XDG)
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DESKTOP)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_DESKTOP);
+        return NEMO_ICON_SYMBOLIC_DESKTOP;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOCUMENTS)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_DOCUMENTS);
+        return NEMO_ICON_SYMBOLIC_FOLDER_DOCUMENTS;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_DOWNLOAD)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_DOWNLOAD);
+        return NEMO_ICON_SYMBOLIC_FOLDER_DOWNLOAD;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_MUSIC)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_MUSIC);
+        return NEMO_ICON_SYMBOLIC_FOLDER_MUSIC;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_PICTURES)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_PICTURES);
+        return NEMO_ICON_SYMBOLIC_FOLDER_PICTURES;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_PUBLIC_SHARE)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_PUBLIC_SHARE);
+        return NEMO_ICON_SYMBOLIC_FOLDER_PUBLIC_SHARE;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES);
+        return NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_VIDEOS)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS);
+        return NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS;
     }
 
     if (nemo_file_is_user_special_directory (file, G_USER_DIRECTORY_TEMPLATES)) {
-        return g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES);
+        return NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES;
     }
 
-    if (file->details->mime_type != NULL) {
-        return g_content_type_get_symbolic_icon (file->details->mime_type);
-    } else {
-        return NULL;
-    }
+    return NULL;
 }
 
-GIcon *
-nemo_file_get_control_icon (NemoFile *file)
+gchar *
+nemo_file_get_control_icon_name (NemoFile *file)
 {
-    GIcon *gicon;
+    gchar *uri;
+    gchar *icon_name;
 
-    if (file->details->symbolic_icon != NULL) {
-        gicon = g_object_ref (file->details->symbolic_icon);
+    icon_name = NULL;
+
+    uri = nemo_file_get_uri (file);
+
+    if (eel_uri_is_search (uri)) {
+        icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
     } else {
-        gchar *uri;
+        const gchar *static_name;
 
-        uri = nemo_file_get_uri (file);
+        static_name = get_symbolic_icon_name_for_file (file);
 
-        if (eel_uri_is_search (uri)) {
-            gicon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
+        if (static_name != NULL) {
+            icon_name = g_strdup (static_name);
         } else {
-            gicon = get_symbolic_icon_for_file (file);
-        }
+            GFile *location;
 
-        g_free (uri);
+            location = nemo_file_get_location (file);
+
+            if (!g_file_is_native (location)) {
+                icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_REMOTE);
+            } else if (file->details->mime_type != NULL) {
+                GIcon *gicon;
+
+                gicon = g_content_type_get_symbolic_icon (file->details->mime_type);
+
+                if (G_IS_THEMED_ICON (gicon)) {
+                    icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+                }
+
+                g_object_unref (gicon);
+            }
+
+            g_object_unref (location);
+        }
     }
 
-    return gicon;
+    g_free (uri);
+
+    if (icon_name == NULL) {
+        icon_name = g_strdup ("text-x-generic");
+    }
+
+    return icon_name;
 }
 
 static gint

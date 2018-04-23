@@ -86,7 +86,7 @@ typedef struct {
     NemoFile *file;
     unsigned int file_changed_signal_id;
 
-    GIcon *mount_icon;
+    gchar *mount_icon_name;
     /* flag to indicate its the base folder in the URI */
     gboolean is_base_dir;
 
@@ -239,11 +239,13 @@ trash_state_changed_cb (NemoTrashMonitor *monitor,
         ButtonData *button_data;
         button_data = BUTTON_DATA (list->data);
         if (g_file_equal (file, button_data->path)) {
-            GIcon *icon;
+            gchar *icon_name;
 
-            icon = nemo_trash_monitor_get_symbolic_icon ();
+            icon_name = nemo_trash_monitor_get_symbolic_icon_name ();
 
-            gtk_image_set_from_gicon (GTK_IMAGE (button_data->image), icon, GTK_ICON_SIZE_MENU);
+            gtk_image_set_from_icon_name (GTK_IMAGE (button_data->image), icon_name, GTK_ICON_SIZE_MENU);
+
+            g_clear_pointer (&icon_name, g_free);
         }
     }
     g_object_unref (file);
@@ -1450,7 +1452,7 @@ button_data_free (ButtonData *button_data)
     g_object_unref (button_data->path);
     g_free (button_data->dir_name);
 
-    g_clear_object (&button_data->mount_icon);
+    g_clear_pointer (&button_data->mount_icon_name, g_free);
 
     if (button_data->file != NULL) {
         g_signal_handler_disconnect (button_data->file,
@@ -1509,7 +1511,7 @@ set_label_padding_size (ButtonData *button_data)
 static void
 nemo_path_bar_update_button_appearance (ButtonData *button_data)
 {
-    GIcon *gicon;
+    gchar *icon_name;
 
     const gchar *dir_name = get_dir_name (button_data);
 
@@ -1529,34 +1531,38 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
         }
     }
 
+    icon_name = NULL;
+
     if (button_data->image != NULL) {
         switch (button_data->type) {
             case ROOT_BUTTON:
-                gicon = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FILESYSTEM);
+                icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FILESYSTEM);
                 break;
             case HOME_BUTTON:
             case DESKTOP_BUTTON:
             case XDG_BUTTON:
-                gicon = nemo_file_get_control_icon (button_data->file);
+                icon_name = nemo_file_get_control_icon_name (button_data->file);
                 break;
             case NORMAL_BUTTON:
                 if (button_data->is_base_dir) {
-                    gicon = nemo_file_get_control_icon (button_data->file);
+                    icon_name = nemo_file_get_control_icon_name (button_data->file);
                     break;
                 }
             case DEFAULT_LOCATION_BUTTON:
             case MOUNT_BUTTON:
-                if (button_data->mount_icon) {
-                    gicon = button_data->mount_icon;
+                if (button_data->mount_icon_name) {
+                    icon_name = g_strdup (button_data->mount_icon_name);
                     break;
                 }
             default:
-                gicon = NULL;
+                icon_name = NULL;
          }
 
-        gtk_image_set_from_gicon (GTK_IMAGE (button_data->image),
-                                  gicon,
-                                  GTK_ICON_SIZE_MENU);
+        gtk_image_set_from_icon_name (GTK_IMAGE (button_data->image),
+                                      icon_name,
+                                      GTK_ICON_SIZE_MENU);
+
+        g_free (icon_name);
     }
 
 }
@@ -1604,7 +1610,7 @@ setup_file_path_mounted_mount (GFile *location, ButtonData *button_data)
             result = TRUE;
             /* set mount specific details in button_data */
             if (button_data) {
-                button_data->mount_icon = nemo_get_mount_gicon (mount);
+                button_data->mount_icon_name = nemo_get_mount_icon_name (mount);
                 button_data->dir_name = g_mount_get_name (mount);
                 button_data->type = MOUNT_BUTTON;
                 button_data->fake_root = TRUE;
@@ -1618,7 +1624,7 @@ setup_file_path_mounted_mount (GFile *location, ButtonData *button_data)
             result = TRUE;
             /* set mount specific details in button_data */
             if (button_data) {
-                button_data->mount_icon = nemo_get_mount_gicon (mount);
+                button_data->mount_icon_name = nemo_get_mount_icon_name (mount);
                 button_data->type = DEFAULT_LOCATION_BUTTON;
                 button_data->fake_root = TRUE;
             }

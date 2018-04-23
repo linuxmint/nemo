@@ -1467,17 +1467,68 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 	return NULL;
 }
 
-GIcon *nemo_get_mount_gicon (GMount *mount)
+gchar *nemo_get_mount_icon_name (GMount *mount)
 {
-    GIcon *icon;
+    GIcon *gicon;
+    gchar *icon_name;
 
     g_return_val_if_fail (mount != NULL, NULL);
 
     if (g_mount_can_eject (mount)) {
-        return g_themed_icon_new ("media-removable-symbolic");
+        return g_strdup ("media-removable-symbolic");
     }
 
-    return g_mount_get_symbolic_icon (mount);
+    gicon = g_mount_get_symbolic_icon (mount);
+
+    if (G_IS_THEMED_ICON (gicon)) {
+        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+    } else {
+        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+    }
+
+    g_object_unref (gicon);
+
+    return icon_name;
+}
+
+gchar *nemo_get_volume_icon_name (GVolume *volume)
+{
+    GIcon *gicon;
+    gchar *icon_name;
+
+    g_return_val_if_fail (volume != NULL, NULL);
+
+    gicon = g_volume_get_symbolic_icon (volume);
+
+    if (G_IS_THEMED_ICON (gicon)) {
+        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+    } else {
+        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+    }
+
+    g_object_unref (gicon);
+
+    return icon_name;
+}
+
+gchar *nemo_get_drive_icon_name (GDrive *drive)
+{
+    GIcon *gicon;
+    gchar *icon_name;
+
+    g_return_val_if_fail (drive != NULL, NULL);
+
+    gicon = g_drive_get_symbolic_icon (drive);
+
+    if (G_IS_THEMED_ICON (gicon)) {
+        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+    } else {
+        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+    }
+
+    g_object_unref (gicon);
+
+    return icon_name;
 }
 
 #if !defined (NEMO_OMIT_SELF_CHECK)

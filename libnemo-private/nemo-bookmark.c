@@ -52,7 +52,7 @@ enum {
 	PROP_NAME = 1,
 	PROP_CUSTOM_NAME,
 	PROP_LOCATION,
-	PROP_ICON,
+	PROP_ICON_NAME,
     PROP_METADATA,
 	NUM_PROPERTIES
 };
@@ -67,7 +67,7 @@ struct NemoBookmarkDetails
 	char *name;
 	gboolean has_custom_name;
 	GFile *location;
-	GIcon *icon;
+    gchar *icon_name;
 	NemoFile *file;
 
 	char *scroll_file;
@@ -94,24 +94,24 @@ nemo_bookmark_set_name_internal (NemoBookmark *bookmark,
 static void
 nemo_bookmark_update_icon (NemoBookmark *bookmark)
 {
-	GIcon *new_icon;
+    gchar *new_icon_name;
 
-	if (bookmark->details->file == NULL) {
-		return;
-	}
+    if (bookmark->details->file == NULL) {
+        return;
+    }
 
-	if (!nemo_file_is_not_yet_confirmed (bookmark->details->file) &&
-	    nemo_file_check_if_ready (bookmark->details->file,
-					  NEMO_FILE_ATTRIBUTES_FOR_ICON)) {
-		DEBUG ("%s: set new icon", nemo_bookmark_get_name (bookmark));
+    if (!nemo_file_is_not_yet_confirmed (bookmark->details->file) &&
+        nemo_file_check_if_ready (bookmark->details->file,
+                                  NEMO_FILE_ATTRIBUTES_FOR_ICON)) {
+        DEBUG ("%s: set new icon", nemo_bookmark_get_name (bookmark));
 
-		new_icon = nemo_file_get_control_icon (bookmark->details->file);
-		g_object_set (bookmark,
-			      "icon", new_icon,
-			      NULL);
+        new_icon_name = nemo_file_get_control_icon_name (bookmark->details->file);
+        g_object_set (bookmark,
+                      "icon-name", new_icon_name,
+                      NULL);
 
-		g_object_unref (new_icon);
-	}
+        g_free (new_icon_name);
+    }
 }
 
 static void
@@ -136,19 +136,21 @@ bookmark_set_name_from_ready_file (NemoBookmark *self,
 	g_free (display_name);
 }
 
-static GIcon *
-get_default_folder_icon (NemoBookmark *bookmark)
+static gchar *
+get_default_folder_icon_name (NemoBookmark *bookmark)
 {
-    GIcon *ret = NULL;
+    gchar *ret = NULL;
 
     if (g_file_is_native (bookmark->details->location)) {
-        ret = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER);
+        gchar *uri = g_file_get_uri (bookmark->details->location);
+
+        ret = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER);
     } else {
         gchar *uri = g_file_get_uri (bookmark->details->location);
         if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-            ret = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
+            ret = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
         } else {
-            ret = g_themed_icon_new (NEMO_ICON_SYMBOLIC_FOLDER_REMOTE);
+            ret = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_REMOTE);
         }
         g_free (uri);
     }
@@ -156,80 +158,60 @@ get_default_folder_icon (NemoBookmark *bookmark)
     return ret;
 }
 
-static GIcon *
+static gchar *
 construct_default_icon_from_metadata (NemoBookmark *bookmark)
 {
-    NemoBookmarkMetadata *md = bookmark->details->metadata;
-    GIcon *ret = NULL;
+    return get_default_folder_icon_name (bookmark);
 
-    ret = get_default_folder_icon (bookmark);
+/* TODO: Remove emblem stuff from bookmarks */
+    // if (ret != NULL && md->emblems != NULL) {
+    //     guint i = 0;
 
-    if (ret != NULL && md->emblems != NULL) {
-        guint i = 0;
+    //     GIcon *emb_icon;
+    //     GEmblem *emblem;
 
-        GIcon *emb_icon;
-        GEmblem *emblem;
+    //     emb_icon = g_themed_icon_new (md->emblems[i]);
+    //     emblem = g_emblem_new (emb_icon);
 
-        emb_icon = g_themed_icon_new (md->emblems[i]);
-        emblem = g_emblem_new (emb_icon);
+    //     ret = g_emblemed_icon_new (ret, emblem);
 
-        ret = g_emblemed_icon_new (ret, emblem);
+    //     i++;
 
-        i++;
+    //     while (i < g_strv_length (md->emblems)) {
+    //         emb_icon = g_themed_icon_new (md->emblems[i]);
+    //         emblem = g_emblem_new (emb_icon);
 
-        while (i < g_strv_length (md->emblems)) {
-            emb_icon = g_themed_icon_new (md->emblems[i]);
-            emblem = g_emblem_new (emb_icon);
+    //         g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (ret), emblem);
 
-            g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (ret), emblem);
+    //         i++;
+    //     }
+    // }
 
-            i++;
-        }
-    }
-
-    return ret;
+    // return ret;
 }
 
 static void
 nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 {
-    GIcon *icon, *emblemed_icon;
-    GIcon *folder = NULL;
-    GEmblem *emblem;
+    gchar *icon_name;
 
-    folder = NULL;
-
-    if (bookmark->details->metadata != NULL) {
-        folder = construct_default_icon_from_metadata (bookmark);
-    }
-
-    if (!folder)
-        folder = get_default_folder_icon (bookmark);
+    icon_name = construct_default_icon_from_metadata (bookmark);
 
     if (!nemo_bookmark_uri_get_exists (bookmark)) {
-        DEBUG ("%s: file does not exist, add emblem", nemo_bookmark_get_name (bookmark));
+        DEBUG ("%s: file does not exist, use special icon", nemo_bookmark_get_name (bookmark));
 
-        icon = g_themed_icon_new (GTK_STOCK_DIALOG_WARNING);
-        emblem = g_emblem_new (icon);
+        g_clear_pointer (&icon_name, g_free);
 
-        if (G_IS_EMBLEMED_ICON (folder))
-            g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (folder), emblem);
-        else {
-            emblemed_icon = g_emblemed_icon_new (folder, emblem);
-            folder = emblemed_icon;
-        }
-
-        g_object_unref (emblem);
-        g_object_unref (icon);
+        icon_name = g_strdup (NEMO_ICON_SYMBOLIC_MISSING_BOOKMARK);
     }
 
     DEBUG ("%s: setting icon to default", nemo_bookmark_get_name (bookmark));
 
     g_object_set (bookmark,
-              "icon", G_ICON (folder),
-              NULL);
+                  "icon-name", icon_name,
+                  NULL);
 
-    g_object_unref (folder);
+    g_free (icon_name);
 }
 
 static gboolean
@@ -345,7 +327,7 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 	/* Set icon based on available information. */
 	nemo_bookmark_update_icon (bookmark);
 
-	if (bookmark->details->icon == NULL) {
+	if (bookmark->details->icon_name == NULL) {
 		nemo_bookmark_set_icon_to_default (bookmark);
 	}
 
@@ -368,17 +350,16 @@ nemo_bookmark_set_property (GObject *object,
 				GParamSpec *pspec)
 {
 	NemoBookmark *self = NEMO_BOOKMARK (object);
-	GIcon *new_icon;
-
 	switch (property_id) {
-	case PROP_ICON:
-		new_icon = g_value_get_object (value);
+	case PROP_ICON_NAME:
+        ;
+        const gchar *new_icon_name;
 
-		if (new_icon != NULL && !g_icon_equal (self->details->icon, new_icon)) {
-			g_clear_object (&self->details->icon);
-			self->details->icon = g_object_ref (new_icon);
-		}
-
+        new_icon_name = g_value_get_string (value);
+        if (new_icon_name != NULL && g_strcmp0 (self->details->icon_name, new_icon_name) != 0) {
+            g_clear_pointer (&self->details->icon_name, g_free);
+            self->details->icon_name = g_strdup (new_icon_name);
+        }
 		break;
 	case PROP_LOCATION:
 		self->details->location = g_value_dup_object (value);
@@ -413,8 +394,8 @@ nemo_bookmark_get_property (GObject *object,
 	case PROP_NAME:
 		g_value_set_string (value, self->details->name);
 		break;
-	case PROP_ICON:
-		g_value_set_object (value, self->details->icon);
+	case PROP_ICON_NAME:
+		g_value_set_string (value, self->details->icon_name);
 		break;
 	case PROP_LOCATION:
 		g_value_set_object (value, self->details->location);
@@ -443,7 +424,7 @@ nemo_bookmark_finalize (GObject *object)
 	nemo_bookmark_disconnect_file (bookmark);
 
 	g_object_unref (bookmark->details->location);
-	g_clear_object (&bookmark->details->icon);
+	g_clear_pointer (&bookmark->details->icon_name, g_free);
 
     g_clear_pointer (&bookmark->details->metadata, nemo_bookmark_metadata_free);
 
@@ -502,11 +483,11 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 				     G_TYPE_FILE,
 				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
 
-	properties[PROP_ICON] =
-		g_param_spec_object ("icon",
-				     "Bookmark's icon",
-				     "The icon of this bookmark",
-				     G_TYPE_ICON,
+	properties[PROP_ICON_NAME] =
+		g_param_spec_string ("icon-name",
+				     "Bookmark's icon name",
+				     "The icon name for this bookmark",
+				     NULL,
 				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
     properties[PROP_METADATA] =
@@ -634,21 +615,21 @@ nemo_bookmark_copy (NemoBookmark *bookmark)
     return nemo_bookmark_new (bookmark->details->location,
                               bookmark->details->has_custom_name ?
                                   bookmark->details->name : NULL,
-                              bookmark->details->icon,
+                              bookmark->details->icon_name,
                               bookmark->details->metadata ?
                                   nemo_bookmark_metadata_copy (bookmark->details->metadata) : NULL);
 }
 
-GIcon *
-nemo_bookmark_get_icon (NemoBookmark *bookmark)
+gchar *
+nemo_bookmark_get_icon_name (NemoBookmark *bookmark)
 {
 	g_return_val_if_fail (NEMO_IS_BOOKMARK (bookmark), NULL);
 
 	/* Try to connect a file in case file exists now but didn't earlier. */
 	nemo_bookmark_connect_file (bookmark);
 
-	if (bookmark->details->icon) {
-		return g_object_ref (bookmark->details->icon);
+	if (bookmark->details->icon_name) {
+		return g_strdup (bookmark->details->icon_name);
 	}
 	return NULL;
 }
@@ -684,7 +665,7 @@ nemo_bookmark_get_uri (NemoBookmark *bookmark)
 NemoBookmark *
 nemo_bookmark_new (GFile                *location,
                    const gchar          *custom_name,
-                   GIcon                *icon,
+                   const gchar          *icon_name,
                    NemoBookmarkMetadata *md)
 {
 	NemoBookmark *new_bookmark;
@@ -697,7 +678,7 @@ nemo_bookmark_new (GFile                *location,
 
     new_bookmark = NEMO_BOOKMARK (g_object_new (NEMO_TYPE_BOOKMARK,
 						"location", location,
-						"icon", icon,
+						"icon-name", icon_name,
 						"name", name,
 						"custom-name", custom_name != NULL,
 						"metadata", md,
@@ -710,12 +691,14 @@ nemo_bookmark_new (GFile                *location,
 static GtkWidget *
 create_image_widget_for_bookmark (NemoBookmark *bookmark)
 {
-	GIcon *icon;
-	GtkWidget *widget;
+    GtkWidget *widget;
+    gchar *icon_name;
 
-	icon = nemo_bookmark_get_icon (bookmark);
-        widget = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
-	g_object_unref (icon);
+    icon_name = nemo_bookmark_get_icon_name (bookmark);
+
+    widget = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
+
+    g_free (icon_name);
 
 	return widget;
 }
