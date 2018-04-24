@@ -5005,7 +5005,7 @@ action_copy_bookmark_callback (GtkAction *action, gpointer callback_data)
 static void
 setup_bookmark_action(      char *action_name,
                       const char *bookmark_name,
-                           GIcon *icon,
+                      const char *icon_name,
                             char *mount_uri,
                     GtkUIManager *ui_manager,
                          gboolean move,
@@ -5020,7 +5020,7 @@ setup_bookmark_action(      char *action_name,
              bookmark_name,
              NULL,
              NULL);
-    gtk_action_set_gicon (action, icon);
+    gtk_action_set_icon_name (action, icon_name);
 
     if (move) {
         g_signal_connect_data (action, "activate",
@@ -5048,14 +5048,14 @@ setup_bookmark_action(      char *action_name,
 }
 
 static void
-add_bookmark_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gchar *mount_uri, gint index)
+add_bookmark_to_action (NemoView *view, const gchar *bookmark_name, const gchar *icon_name, gchar *mount_uri, gint index)
 {
     GtkUIManager *ui_manager;
     ui_manager = nemo_window_get_ui_manager (view->details->window);
 
     setup_bookmark_action(g_strdup_printf ("BM_MOVETO_POPUP_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             TRUE,
@@ -5066,7 +5066,7 @@ add_bookmark_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon,
 
     setup_bookmark_action(g_strdup_printf ("BM_COPYTO_POPUP_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             FALSE,
@@ -5077,7 +5077,7 @@ add_bookmark_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon,
 
     setup_bookmark_action(g_strdup_printf ("BM_MOVETO_MENU_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             TRUE,
@@ -5088,7 +5088,7 @@ add_bookmark_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon,
 
     setup_bookmark_action(g_strdup_printf ("BM_COPYTO_MENU_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             FALSE,
@@ -5099,14 +5099,14 @@ add_bookmark_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon,
 }
 
 static void
-add_place_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gchar *mount_uri, gint index)
+add_place_to_action (NemoView *view, const gchar *bookmark_name, const gchar *icon_name, gchar *mount_uri, gint index)
 {
     GtkUIManager *ui_manager;
     ui_manager = nemo_window_get_ui_manager (view->details->window);
 
     setup_bookmark_action(g_strdup_printf ("PLACE_MOVETO_POPUP_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             TRUE,
@@ -5117,7 +5117,7 @@ add_place_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gc
 
     setup_bookmark_action(g_strdup_printf ("PLACE_COPYTO_POPUP_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             FALSE,
@@ -5128,7 +5128,7 @@ add_place_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gc
 
     setup_bookmark_action(g_strdup_printf ("PLACE_MOVETO_MENU_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             TRUE,
@@ -5139,7 +5139,7 @@ add_place_to_action (NemoView *view, const gchar *bookmark_name, GIcon *icon, gc
 
     setup_bookmark_action(g_strdup_printf ("PLACE_COPYTO_MENU_%d", index),
                                             bookmark_name,
-                                            icon,
+                                            icon_name,
                                             mount_uri,
                                             ui_manager,
                                             FALSE,
@@ -5158,7 +5158,7 @@ reset_move_copy_to_menu (NemoView *view)
     GtkUIManager *ui_manager;
     GFile *root;
     const gchar *bookmark_name;
-    GIcon *icon;
+    gchar *icon_name;
     char *mount_uri;
 
     ui_manager = nemo_window_get_ui_manager (view->details->window);
@@ -5183,21 +5183,30 @@ reset_move_copy_to_menu (NemoView *view)
     file = nemo_file_get_by_uri (mount_uri);
     g_free (mount_uri);
 
-    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_HOME);
-    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
-    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_HOME);
-    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
+    icon_name = nemo_file_get_control_icon_name (file);
 
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_HOME);
+    gtk_action_set_icon_name (action, icon_name);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_HOME);
+    gtk_action_set_icon_name (action, icon_name);
+
+    g_clear_pointer (&icon_name, g_free);
     g_object_unref (file);
+
     mount_uri = nemo_get_desktop_directory_uri ();
     file = nemo_file_get_by_uri (mount_uri);
     g_free (mount_uri);
 
-    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_DESKTOP);
-    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
-    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_DESKTOP);
-    gtk_action_set_gicon (action, nemo_file_get_control_icon (file));
+    icon_name = nemo_file_get_control_icon_name (file);
 
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_COPY_TO_DESKTOP);
+    gtk_action_set_icon_name (action, icon_name);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group, NEMO_ACTION_MOVE_TO_DESKTOP);
+    gtk_action_set_icon_name (action, icon_name);
+
+    g_clear_pointer (&icon_name, g_free);
     g_object_unref (file);
 
     if (view->details->showing_bookmarks_in_to_menus) {
@@ -5218,17 +5227,17 @@ reset_move_copy_to_menu (NemoView *view)
             nemo_file_unref (file);
 
             bookmark_name = nemo_bookmark_get_name (bookmark);
-            icon = nemo_bookmark_get_icon (bookmark);
+            icon_name = nemo_bookmark_get_icon_name (bookmark);
             mount_uri = nemo_bookmark_get_uri (bookmark);
 
             add_bookmark_to_action (view,
                                     bookmark_name,
-                                    icon,
+                                    icon_name,
                                     mount_uri,
                                     index);
 
             g_object_unref (root);
-            g_object_unref (icon);
+            g_free (icon_name);
             g_free (mount_uri);
         }
     }
@@ -5291,19 +5300,19 @@ reset_move_copy_to_menu (NemoView *view)
                 }
             }
 
-            icon = nemo_get_mount_gicon (mount);
+            icon_name = nemo_get_mount_icon_name (mount);
             mount_uri = g_file_get_uri (root);
             name = g_mount_get_name (mount);
 
             add_place_to_action (view,
                                  name,
-                                 icon,
+                                 icon_name,
                                  mount_uri,
                                  index);
 
             g_object_unref (root);
             g_object_unref (mount);
-            g_object_unref (icon);
+            g_free (icon_name);
             g_free (name);
             g_free (mount_uri);
 
@@ -5333,20 +5342,20 @@ reset_move_copy_to_menu (NemoView *view)
                     mount = g_volume_get_mount (volume);
                     if (mount != NULL) {
                         /* Show mounted volume in the sidebar */
-                        icon = nemo_get_mount_gicon (mount);
+                        icon_name = nemo_get_mount_icon_name (mount);
                         root = g_mount_get_default_location (mount);
                         mount_uri = g_file_get_uri (root);
                         name = g_mount_get_name (mount);
 
                         add_place_to_action (view,
                                              name,
-                                             icon,
+                                             icon_name,
                                              mount_uri,
                                              index);
 
                         g_object_unref (root);
                         g_object_unref (mount);
-                        g_object_unref (icon);
+                        g_free (icon_name);
                         g_free (name);
                         g_free (mount_uri);
                         index++;
@@ -5381,7 +5390,7 @@ reset_move_copy_to_menu (NemoView *view)
 
             mount = g_volume_get_mount (volume);
             if (mount != NULL) {
-                icon = nemo_get_mount_gicon (mount);
+                icon_name = nemo_get_mount_icon_name (mount);
                 root = g_mount_get_default_location (mount);
                 mount_uri = g_file_get_uri (root);
 
@@ -5390,12 +5399,12 @@ reset_move_copy_to_menu (NemoView *view)
 
                 add_place_to_action (view,
                                      name,
-                                     icon,
+                                     icon_name,
                                      mount_uri,
                                      index);
 
                 g_object_unref (mount);
-                g_object_unref (icon);
+                g_free (icon_name);
                 g_free (name);
                 g_free (mount_uri);
                 index++;
@@ -5422,18 +5431,18 @@ reset_move_copy_to_menu (NemoView *view)
         for (l = network_mounts; l != NULL; l = l->next) {
             mount = l->data;
             root = g_mount_get_default_location (mount);
-            icon = nemo_get_mount_gicon (mount);
+            icon_name = nemo_get_mount_icon_name (mount);
             mount_uri = g_file_get_uri (root);
             name = g_mount_get_name (mount);
 
             add_place_to_action (view,
                                  name,
-                                 icon,
+                                 icon_name,
                                  mount_uri,
                                  index);
 
             g_object_unref (root);
-            g_object_unref (icon);
+            g_free (icon_name);
             g_free (name);
             g_free (mount_uri);
             index++;
