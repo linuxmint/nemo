@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-20 12:05+0100\n"
+"POT-Creation-Date: 2018-04-24 15:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3030,10 +3030,6 @@ msgstr ""
 
 #: src/nemo-window-menus.c:1366
 msgid "Select Tree as the default sidebar"
-msgstr ""
-
-#: src/nemo-window-menus.c:1378
-msgid "CompactView"
 msgstr ""
 
 #: src/nemo-window-menus.c:1399

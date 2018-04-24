@@ -1375,7 +1375,7 @@ static const GtkRadioActionEntry view_radio_entries[] = {
       N_("List View"), "<ctrl>2", N_("List View"),
       LIST_VIEW },
     { "CompactView", NULL,
-      N_("Compact View"), "<ctrl>3", N_("CompactView"),
+      N_("Compact View"), "<ctrl>3", N_("Compact View"),
       COMPACT_VIEW }
 };
 
