@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  cinnamon-l10n,
- debhelper (>= 10),
+ debhelper (>= 11.1~),
  dh-python,
  gobject-introspection,
  gtk-doc-tools (>= 1.4),
@@ -26,8 +26,7 @@ Build-Depends:
  libxml2-dev (>= 2.7.8),
  libxrender-dev,
  libxt-dev,
- meson,
- python,
+ meson (>= 0.40.0),
  python3,
  python3-gi,
  shared-mime-info (>= 0.50),
