@@ -8,7 +8,7 @@ Exec=cinnamon-settings desktop
 
 Selection=None
 
-Icon-Name=cs-desktop
+Icon-Name=preferences-desktop-display-symbolic
 
 Extensions=any;
 
