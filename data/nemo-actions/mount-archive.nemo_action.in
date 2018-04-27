@@ -10,7 +10,7 @@ Selection=s
 
 Mimetypes=application/x-7z-compressed;application/x-cd-image;application/x-cpio;application/x-rar;application/x-rar-compressed;application/x-7z-compressed-tar;application/x-bzip-compressed-tar;application/x-compressed-tar;application/x-tar;application/zip;
 
-Stock-Id=gtk-directory
+Icon-Name=mount-archive-symbolic
 
 Dependencies=/usr/lib/gvfs/gvfsd-archive;
 
