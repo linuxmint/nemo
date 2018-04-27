@@ -31,17 +31,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.627418"
-     inkscape:cx="13.43896"
-     inkscape:cy="9.4228229"
+     inkscape:cx="-2.1173884"
+     inkscape:cy="9.0692695"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      width="128px"
      height="128px"
      inkscape:showpageshadow="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="998"
+     inkscape:window-width="1280"
+     inkscape:window-height="747"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="0"
      showguides="true"
      inkscape:guide-bbox="true"
      showgrid="true"
@@ -176,8 +176,10 @@
        style="display:inline"
        transform="translate(-840.0002,470.00693)" />
     <path
-       style="color:#bebebe;display:inline;overflow:visible;visibility:visible;fill:#bebebe;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.78124988;marker:none;enable-background:new"
-       d="M 12.470703 9.4394531 C 12.239449 9.4268671 12.015549 9.5654358 11.839844 9.8671875 L 9.0878906 14.96875 C 8.8531299 15.392704 9.1102113 16 9.5703125 16 L 15.359375 16 C 15.791394 16 16.197646 15.489945 15.896484 14.96875 L 13.117188 9.8945312 C 12.941724 9.6101754 12.701957 9.452052 12.470703 9.4394531 z M 12 11 L 13 11 L 13 13 L 12 13 L 12 11 z M 12 14 L 13 14 L 13 15 L 12 15 L 12 14 z "
-       id="path18112" />
+       style="color:#bebebe;display:inline;overflow:visible;visibility:visible;fill:#f57900;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.78124988;marker:none;enable-background:new"
+       d="M 12.470703,9.4394531 C 12.239449,9.4268671 12.015549,9.5654358 11.839844,9.8671875 L 9.0878906,14.96875 C 8.8531299,15.392704 9.1102113,16 9.5703125,16 h 5.7890625 c 0.432019,0 0.838271,-0.510055 0.537109,-1.03125 L 13.117188,9.8945312 C 12.941724,9.6101754 12.701957,9.452052 12.470703,9.4394531 Z M 12,11 h 1 v 2 h -1 z m 0,3 h 1 v 1 h -1 z"
+       id="path18112"
+       class="warning"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
