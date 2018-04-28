@@ -8,7 +8,7 @@ Exec=cinnamon-desktop-editor -mnemo-launcher -d"%P"
 
 Selection=None
 
-Stock-Id=list-add-symbolic
+Icon-Name=list-add-symbolic
 
 Extensions=any;
 
