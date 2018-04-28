@@ -10618,11 +10618,17 @@ real_is_read_only (NemoView *view)
 		return TRUE;
 	}
 
-	file = nemo_view_get_directory_as_file (view);
-	if (file != NULL) {
-		return !nemo_file_can_write (file);
-	}
-	return FALSE;
+    file = nemo_view_get_directory_as_file (view);
+
+    if (file != NULL) {
+        if (nemo_file_is_in_admin (file)) {
+            return TRUE;
+        }
+
+        return !nemo_file_can_write (file);
+    }
+
+    return FALSE;
 }
 
 /**
