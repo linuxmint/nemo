@@ -569,19 +569,27 @@ sidebar_update_restore_selection (NemoPlacesSidebar *sidebar,
 static gint
 get_disk_full (GFile *file, gchar **tooltip_info)
 {
-    GFileInfo *info = g_file_query_filesystem_info (file,
-                                                    "filesystem::*",
-                                                    NULL,
-                                                    NULL);
-        guint64 k_used, k_total, k_free;
-        gint df_percent;
-        float fraction;
-        int prefix;
-        gchar *free_string;
+    GFileInfo *info;
+    GError *error;
+    guint64 k_used, k_total, k_free;
+    gint df_percent;
+    float fraction;
+    int prefix;
+    gchar *free_string;
 
+    error = NULL;
+    df_percent = -1;
+
+    info = g_file_query_filesystem_info (file,
+                                         "filesystem::*",
+                                         NULL,
+                                         &error);
+
+    if (info != NULL) {
         k_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
         k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
         k_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+
         fraction = ((float) k_used / (float) k_total) * 100.0;
         df_percent = (gint) rintf(fraction);
 
@@ -589,10 +597,19 @@ get_disk_full (GFile *file, gchar **tooltip_info)
         free_string = g_format_size_full (k_free, prefix);
 
         *tooltip_info = g_strdup_printf (_("Free space: %s"), free_string);
+
         g_free (free_string);
-        if (info != NULL)
-            g_object_unref (info);
-        return (df_percent > -1 && df_percent < 101) ? df_percent : 0;
+        g_object_unref (info);
+    }
+
+    if (error != NULL) {
+        DEBUG ("Couldn't get disk full info for: %s", error->message);
+
+        *tooltip_info = g_strdup (" ");
+        g_clear_error (&error);
+    }
+
+    return df_percent;
 }
 
 static gboolean
@@ -721,7 +738,7 @@ update_places (NemoPlacesSidebar *sidebar)
                            _("Home"), icon,
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
-                           full, home_on_different_fs (mount_uri),
+                           full, home_on_different_fs (mount_uri) && full > -1,
                            cat_iter);
     g_free (icon);
     sidebar->top_bookend_uri = g_strdup (mount_uri);
@@ -804,7 +821,7 @@ update_places (NemoPlacesSidebar *sidebar)
                            _("File System"), icon,
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
-                           full, TRUE,
+                           full, full > -1,
                            cat_iter);
     g_free (tooltip);
 
@@ -948,7 +965,7 @@ update_places (NemoPlacesSidebar *sidebar)
                                            SECTION_DEVICES,
                                            name, icon, mount_uri,
                                            drive, volume, mount, 0, tooltip,
-                                           full, TRUE,
+                                           full, full > -1,
                                            cat_iter);
                     g_object_unref (root);
                     g_object_unref (mount);
@@ -1046,7 +1063,7 @@ update_places (NemoPlacesSidebar *sidebar)
             cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                                    SECTION_DEVICES,
                                    name, icon, mount_uri,
-                                   NULL, volume, mount, 0, tooltip, full, TRUE,
+                                   NULL, volume, mount, 0, tooltip, full, full > -1,
                                    cat_iter);
             g_object_unref (mount);
             g_free (icon);

@@ -77,7 +77,7 @@ nemo_cell_renderer_disk_class_init (NemoCellRendererDiskClass *klass)
                                      g_param_spec_int ("disk-full-percent",
                                                        "Percentage",
                                                        "The fractional bar to display",
-                                                       0, 100, 0,
+                                                       -1, 100, 0,
                                                        G_PARAM_READWRITE));
 
     g_object_class_install_property (object_class,
