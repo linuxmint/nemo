@@ -1467,56 +1467,189 @@ nemo_get_cached_x_content_types_for_mount (GMount *mount)
 	return NULL;
 }
 
-gchar *nemo_get_mount_icon_name (GMount *mount)
+static void
+debug_icon_names (const gchar *format, ...)
 {
+    static gboolean debug_removable_device_icons = FALSE;
+    static gsize once_init = 0;
+
+    if (g_once_init_enter (&once_init)) {
+        debug_removable_device_icons = g_getenv ("NEMO_DEBUG_DEVICE_ICONS") != NULL;
+
+        g_once_init_leave (&once_init, 1);
+    }
+
+    if (!debug_removable_device_icons) {
+        return;
+    }
+
+    va_list args;
+    va_start (args, format);
+    g_logv (NULL, G_LOG_LEVEL_MESSAGE, format, args);
+    va_end(args);
+}
+
+static gboolean
+icon_name_is_non_specific (const gchar *icon_name)
+{
+    gint i;
+
+    static const char * non_specific_icon_names[] = { "drive-harddisk-usb-symbolic" };
+
+    for (i = 0; i < G_N_ELEMENTS (non_specific_icon_names); i++) {
+        if (g_strcmp0 (icon_name, non_specific_icon_names[i]) == 0) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+gchar *
+nemo_get_mount_icon_name (GMount *mount)
+{
+    GDrive *drive;
     GIcon *gicon;
     gchar *icon_name;
+    gchar *mount_icon_name;
+    gchar *dev_name;
 
     g_return_val_if_fail (mount != NULL, NULL);
 
-    if (g_mount_can_eject (mount)) {
-        return g_strdup ("media-removable-symbolic");
-    }
+    dev_name = g_mount_get_name (mount);
+    icon_name = NULL;
+    mount_icon_name = NULL;
 
     gicon = g_mount_get_symbolic_icon (mount);
 
     if (G_IS_THEMED_ICON (gicon)) {
-        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-    } else {
-        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+        mount_icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+
+        if (icon_name_is_non_specific (mount_icon_name)) {
+            debug_icon_names ("mount %s: icon name '%s' too non-specific", dev_name, mount_icon_name);
+        } else {
+            icon_name = g_strdup (mount_icon_name);
+        }
     }
 
-    g_object_unref (gicon);
+    g_clear_object (&gicon);
+
+    if (icon_name != NULL) {
+        debug_icon_names ("mount %s: icon name '%s' is being used", dev_name, icon_name);
+
+        g_free (dev_name);
+        g_free (mount_icon_name);
+
+        return icon_name;
+    }
+
+    drive = g_mount_get_drive (mount);
+
+    if (drive != NULL) {
+        gicon = g_drive_get_symbolic_icon (drive);
+        g_object_unref (drive);
+
+        if (G_IS_THEMED_ICON (gicon)) {
+            icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+        }
+
+        g_object_unref (gicon);
+    }
+
+    if (icon_name == NULL) {
+        if (mount_icon_name) {
+            icon_name = g_strdup (mount_icon_name);
+        } else {
+            icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+        }
+
+        debug_icon_names ("mount %s: no other good icon name found, using fallback of '%s'", dev_name, icon_name);
+    }
+
+    g_free (dev_name);
+    g_free (mount_icon_name);
 
     return icon_name;
 }
 
-gchar *nemo_get_volume_icon_name (GVolume *volume)
+gchar *
+nemo_get_volume_icon_name (GVolume *volume)
 {
+    GDrive *drive;
     GIcon *gicon;
     gchar *icon_name;
+    gchar *dev_name;
+    gchar *volume_icon_name;
 
     g_return_val_if_fail (volume != NULL, NULL);
+
+    dev_name = g_volume_get_name (volume);
+    icon_name = NULL;
+    volume_icon_name = NULL;
 
     gicon = g_volume_get_symbolic_icon (volume);
 
     if (G_IS_THEMED_ICON (gicon)) {
-        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-    } else {
-        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+        volume_icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+
+        if (icon_name_is_non_specific (volume_icon_name)) {
+            debug_icon_names ("volume %s: icon name '%s' too non-specific", dev_name, volume_icon_name);
+        } else {
+            icon_name = g_strdup (volume_icon_name);
+        }
     }
 
-    g_object_unref (gicon);
+    g_clear_object (&gicon);
+
+    if (icon_name != NULL) {
+        debug_icon_names ("volume %s: icon name '%s' is being used", dev_name, icon_name);
+
+        g_free (dev_name);
+        g_free (volume_icon_name);
+
+        return icon_name;
+    }
+
+    drive = g_volume_get_drive (volume);
+
+    if (drive != NULL) {
+        gicon = g_drive_get_symbolic_icon (drive);
+        g_object_unref (drive);
+
+        if (G_IS_THEMED_ICON (gicon)) {
+            icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
+        }
+
+        g_object_unref (gicon);
+    }
+
+    if (icon_name == NULL) {
+        if (volume_icon_name) {
+            icon_name = g_strdup (volume_icon_name);
+        } else {
+            icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
+
+        }
+
+        debug_icon_names ("volume %s: no good icon name found, using fallback of '%s'", dev_name, icon_name);
+    }
+
+    g_free (dev_name);
+    g_free (volume_icon_name);
 
     return icon_name;
 }
 
-gchar *nemo_get_drive_icon_name (GDrive *drive)
+gchar *
+nemo_get_drive_icon_name (GDrive *drive)
 {
     GIcon *gicon;
     gchar *icon_name;
+    gchar *dev_name;
 
     g_return_val_if_fail (drive != NULL, NULL);
+
+    dev_name = g_drive_get_name (drive);
 
     gicon = g_drive_get_symbolic_icon (drive);
 
@@ -1527,6 +1660,10 @@ gchar *nemo_get_drive_icon_name (GDrive *drive)
     }
 
     g_object_unref (gicon);
+
+    debug_icon_names ("drive %s: returning icon '%s'", dev_name, icon_name);
+
+    g_free (dev_name);
 
     return icon_name;
 }
