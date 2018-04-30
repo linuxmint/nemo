@@ -65,7 +65,7 @@ gnome.generate_gir(nemo_extension_lib,
   install: true,
 )
 
-if meson.version().version_compare('>=0.410.0')
+if meson.version().version_compare('>=0.41.0')
   pkgconfig.generate(filebase: 'libnemo-extension',
     name: 'libnemo-extension',
     description: 'A library to create Nemo view extensions',
