@@ -1,3 +1,38 @@
+nemo (3.8.1) tara; urgency=medium
+
+  [ Fabio Fantoni ]
+  * update debian/copyright (#1831)
+
+  [ Eli Schwartz ]
+  * meson: don't install libnemo-private.a
+
+  [ Clement Lefebvre ]
+  * l10n: Fix typo
+
+  [ Michael Webster ]
+  * symbolic control icons: Use icon names rather than gicons.  The gicon api does not support inherited icon themes.
+
+  [ NikoKrause ]
+  * Use symbolic icons in nemo-desktop actions
+  * add mount archive symbolic, fix bookmark icon
+
+  [ Michael Webster ]
+  * mime actions: Fix use of gvfs admin backend.
+  * nemo-view.c: Disallow creation of folders or files in admin:// - it does not properly set file permissions (the same reason copy/paste is not allowed either.)
+  * nemo-file-utilities.c: Improve symbolic icon logic for mounts, drives and volumes.  For mounts and volumes, check for too-generic icons and use the backing GDrive's icon instead.
+  * nemo-places-sidebar.c: Handle missing file info more gracefully. Some mounted devices (for example, phones,) don't support GFileInfo.
+
+  [ NikoKrause ]
+  * fix symbolic for desktop action (#1842)
+
+  [ Maximiliano Curia ]
+  * Revert license tweak done by db6414a (#1843)
+
+  [ Salamandar ]
+  * Fix build with old meson (#1844)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 30 Apr 2018 15:23:58 +0100
+
 nemo (3.8.0) tara; urgency=medium
 
   [ Tobias Göbel ]
