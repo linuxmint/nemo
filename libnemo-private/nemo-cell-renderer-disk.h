@@ -43,7 +43,7 @@ typedef struct _NemoCellRendererDiskClass NemoCellRendererDiskClass;
 
 struct _NemoCellRendererDisk {
 	GtkCellRendererText parent;
-    guint disk_full_percent;
+    gint disk_full_percent;
     gboolean show_disk_full_percent;
 };
 

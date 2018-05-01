@@ -393,9 +393,9 @@ add_place (NemoPlacesSidebar *sidebar,
 	   GDrive *drive,
 	   GVolume *volume,
 	   GMount *mount,
-	   const int index,
+	   int index,
 	   const char *tooltip,
-       const int df_percent,
+       int df_percent,
        gboolean show_df_percent,
        GtkTreeIter cat_iter)
 {
@@ -575,10 +575,12 @@ get_disk_full (GFile *file, gchar **tooltip_info)
     gint df_percent;
     float fraction;
     int prefix;
-    gchar *free_string;
+    gchar *size_string;
+    gchar *out_string;
 
     error = NULL;
     df_percent = -1;
+    out_string = NULL;
 
     info = g_file_query_filesystem_info (file,
                                          "filesystem::*",
@@ -590,24 +592,32 @@ get_disk_full (GFile *file, gchar **tooltip_info)
         k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
         k_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
 
-        fraction = ((float) k_used / (float) k_total) * 100.0;
-        df_percent = (gint) rintf(fraction);
+        if (k_total > 0) {
+            fraction = ((float) k_used / (float) k_total) * 100.0;
 
-        prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
-        free_string = g_format_size_full (k_free, prefix);
+            df_percent = (gint) rintf(fraction);
 
-        *tooltip_info = g_strdup_printf (_("Free space: %s"), free_string);
+            prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+            size_string = g_format_size_full (k_free, prefix);
 
-        g_free (free_string);
+            out_string = g_strdup_printf (_("Free space: %s"), size_string);
+
+            g_free (size_string);
+        }
+
         g_object_unref (info);
     }
 
     if (error != NULL) {
-        DEBUG ("Couldn't get disk full info for: %s", error->message);
-
-        *tooltip_info = g_strdup (" ");
+        g_printerr ("Couldn't get disk full info for: %s\n", error->message);
         g_clear_error (&error);
     }
+
+    if (out_string == NULL) {
+        out_string = g_strdup (" ");
+    }
+
+    *tooltip_info = out_string;
 
     return df_percent;
 }
