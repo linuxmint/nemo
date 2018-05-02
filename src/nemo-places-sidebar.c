@@ -702,7 +702,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
 	const gchar *bookmark_name;
 	gchar *icon;
-	GFile *root;
+	GFile *root, *df_file;
 	NemoWindowSlot *slot;
 	char *tooltip;
     gchar *tooltip_info;
@@ -740,7 +740,11 @@ update_places (NemoPlacesSidebar *sidebar)
     /* home folder */
     mount_uri = nemo_get_home_directory_uri ();
     icon = get_icon_name (mount_uri);
-    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+
+    df_file = g_file_new_for_uri (mount_uri);
+    full = get_disk_full (df_file, &tooltip_info);
+    g_clear_object (&df_file);
+
     tooltip = g_strdup_printf (_("Open your personal folder\n%s"), tooltip_info);
     g_free (tooltip_info);
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -823,7 +827,11 @@ update_places (NemoPlacesSidebar *sidebar)
     /* file system root */
     mount_uri = (char *)"file:///"; /* No need to strdup */
     icon = NEMO_ICON_SYMBOLIC_FILESYSTEM;
-    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+
+    df_file = g_file_new_for_uri (mount_uri);
+    full = get_disk_full (df_file, &tooltip_info);
+    g_clear_object (&df_file);
+
     tooltip = g_strdup_printf (_("Open the contents of the File System\n%s"), tooltip_info);
     g_free (tooltip_info);
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -964,7 +972,11 @@ update_places (NemoPlacesSidebar *sidebar)
                     root = g_mount_get_default_location (mount);
                     mount_uri = g_file_get_uri (root);
                     name = g_mount_get_name (mount);
-                    full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+
+                    df_file = g_file_new_for_uri (mount_uri);
+                    full = get_disk_full (df_file, &tooltip_info);
+                    g_clear_object (&df_file);
+
                     tooltip = g_strdup_printf (_("%s (%s)\n%s"),
                                                g_file_get_parse_name (root),
                                                g_volume_get_identifier (volume,
@@ -1063,7 +1075,11 @@ update_places (NemoPlacesSidebar *sidebar)
             icon = nemo_get_mount_icon_name (mount);
             root = g_mount_get_default_location (mount);
             mount_uri = g_file_get_uri (root);
-            full = get_disk_full (g_file_new_for_uri (mount_uri), &tooltip_info);
+
+            df_file = g_file_new_for_uri (mount_uri);
+            full = get_disk_full (df_file, &tooltip_info);
+            g_clear_object (&df_file);
+
             tooltip = g_strdup_printf (_("%s\n%s"),
                                        g_file_get_parse_name (root),
                                        tooltip_info);
