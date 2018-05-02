@@ -3463,7 +3463,7 @@ button_release_event (GtkWidget *widget,
 
 	if (event->button == RUBBERBAND_BUTTON && details->rubberband_info.active) {
 		stop_rubberbanding (container, event->time);
-		return TRUE;
+        return GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->button_release_event (widget, event);
 	}
 
 	if (event->button == details->drag_button) {
