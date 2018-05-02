@@ -1999,7 +1999,7 @@ apply_columns_settings (NemoListView *list_view,
 	GList *old_view_columns, *view_columns;
 	GHashTable *visible_columns_hash;
 	GList *l;
-    gint i, prev_view_column;
+    gint i;
 
 	file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
@@ -2054,30 +2054,56 @@ apply_columns_settings (NemoListView *list_view,
 	}
 	g_list_free (old_view_columns);
 
-    prev_view_column = 0;
-    for (l = view_columns; l != NULL; l = l->next) {
-        /* see bug: https://github.com/GNOME/gtk/commit/497e877755f1fa1
-         * In certain gtk versions (older, 3.18.9 confirmed) the column's button
-         * widget gets lost/leaked, and a new button made upon re-adding to the tree view.
-         * As a result, we have to make sure the new button has our signal handler on it.
-         * This has been fixed, but it's easier to remove and re-add the handler than
-         * figure out exactly which releases this issue applies to */
-        g_signal_handlers_disconnect_by_func (gtk_tree_view_column_get_button (l->data),
-                                              column_header_clicked, list_view);
+    /* see bug: https://github.com/GNOME/gtk/commit/497e877755f1fa1
+     * Explanation for branching - move_column_after generates useless logfile spam,
+     * and to avoid it, simply removing and adding columns in a different order works
+     * just as well.  The problem is, gtk versions < 3.22.25 lack the patch referenced
+     * in the above bug report.  An additional problem is that different pre-3.22.25
+     * versions behave differently depending on other code changes in GtkTreeViewColumn.
+     * Mint 18 (gtk 3.18.9) using the add/remove column method would make a new button
+     * widget upon reparenting, losing existing signal handlers.  In 3.22.11, however,
+     * (debian stretch, LMDE3,) we get a nice segfault.
+     *
+     * This may seem a long way to go for a clean log, but the warnings can accumulate
+     * quickly...
+     */
 
-        gtk_tree_view_remove_column (list_view->details->tree_view, g_object_ref (l->data));
-        gtk_tree_view_insert_column (list_view->details->tree_view, l->data, prev_view_column ++);
+    if (gtk_check_version (3, 22, 25) == NULL) {
+        gint prev_view_column;
 
-        g_signal_connect (gtk_tree_view_column_get_button (l->data),
-                          "button-press-event",
-                          G_CALLBACK (column_header_clicked),
-                          list_view);
+        prev_view_column = 0;
+        for (l = view_columns; l != NULL; l = l->next) {
+            g_signal_handlers_disconnect_by_func (gtk_tree_view_column_get_button (l->data),
+                                                  column_header_clicked, list_view);
 
-        gtk_tree_view_column_set_visible (l->data, TRUE);
-        g_object_unref (l->data);
+            gtk_tree_view_remove_column (list_view->details->tree_view, g_object_ref (l->data));
+            gtk_tree_view_insert_column (list_view->details->tree_view, l->data, prev_view_column ++);
+
+            g_signal_connect (gtk_tree_view_column_get_button (l->data),
+                              "button-press-event",
+                              G_CALLBACK (column_header_clicked),
+                              list_view);
+
+            gtk_tree_view_column_set_visible (l->data, TRUE);
+            g_object_unref (l->data);
+        }
+    } else {
+        GtkTreeViewColumn *prev_view_column;
+
+        /* show new columns from the configuration */
+        for (l = view_columns; l != NULL; l = l->next) {
+            gtk_tree_view_column_set_visible (l->data, TRUE);
+        }
+
+        /* place columns in the correct order */
+        prev_view_column = NULL;
+        for (l = view_columns; l != NULL; l = l->next) {
+            gtk_tree_view_move_column_after (list_view->details->tree_view, l->data, prev_view_column);
+            prev_view_column = l->data;
+        }
     }
 
-	g_list_free (view_columns);
+    g_list_free (view_columns);
 }
 
 static void
