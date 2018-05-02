@@ -84,8 +84,12 @@ nemo_private_sources = [
 ]
 
 nemo_private_deps = [
-  cinnamon, eel, gail, glib, gmodule, gtk, libexif, libxml, math, nemo_extension, x11,
+  cinnamon, eel, gail, glib, gmodule, gtk, libxml, math, nemo_extension, x11,
 ]
+
+if libexif_enabled
+  nemo_private_deps += libexif
+endif
 
 if tracker_enabled
   nemo_private_sources += 'nemo-search-engine-tracker.c'
