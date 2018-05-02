@@ -70,21 +70,10 @@ if meson.version().version_compare('>=0.41.0')
     name: 'libnemo-extension',
     description: 'A library to create Nemo view extensions',
     version: meson.project_version(),
-    requires: [
-      'gio-2.0',
-      'glib-2.0',
-      'gtk+-3.0',
-    ],
-    libraries: [
-      '-L${libdir}',
-      '-lnemo-extension',
-    ],
-    subdirs: [
-      'nemo',
-    ],
-    variables: [
-      'extensiondir=@0@'.format(nemoExtensionPath)
-    ],
+    requires: [ 'gio-2.0', 'glib-2.0', 'gtk+-3.0' ],
+    libraries: nemo_extension_lib,
+    subdirs: 'nemo',
+    variables: 'extensiondir=${libdir}/@0@/@1@'.format('nemo', 'extensions-3.0'),
   )
 else
   pc_conf = configuration_data()
