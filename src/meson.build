@@ -101,9 +101,16 @@ if enableEmptyView
   nemoCommon_sources += 'nemo-empty-view.c'
 endif
 
-nemo_deps = [ cinnamon, exempi, gail, glib, gtk, libexif, libnotif, libxml, math, x11,
+nemo_deps = [ cinnamon, gail, glib, gtk, libnotif, libxml, math, x11,
   egg, nemo_extension, nemo_private, xapp ]
 
+if exempi_enabled
+  nemo_deps += exempi
+endif
+
+if libexif_enabled
+  nemo_deps += libexif
+endif
 
 nemo = executable('nemo',
   nemoCommon_sources + nemoWindow_sources,
