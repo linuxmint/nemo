@@ -760,15 +760,6 @@ connect_proxy_cb (GtkActionGroup *action_group,
 			  G_CALLBACK (menu_item_deselect_cb), window);
 }
 
-static const char* icon_entries[] = {
-	"/MenuBar/Other Menus/Go/Home",
-	"/MenuBar/Other Menus/Go/Computer",
-	"/MenuBar/Other Menus/Go/Go to Templates",
-	"/MenuBar/Other Menus/Go/Go to Trash",
-	"/MenuBar/Other Menus/Go/Go to Network",
-	"/MenuBar/Other Menus/Go/Edit Location"
-};
-
 static void
 action_new_window_callback (GtkAction *action,
                             gpointer user_data)

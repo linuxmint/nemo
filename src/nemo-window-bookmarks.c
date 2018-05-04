@@ -289,10 +289,8 @@ nemo_menus_append_bookmark_to_menu (NemoWindow *window,
 	BookmarkHolder *bookmark_holder;
 	char action_name[128];
 	const char *name;
-	char *path;
 	gchar *icon_name;
 	GtkAction *action;
-	GtkWidget *menuitem;
 
 	g_assert (NEMO_IS_WINDOW (window));
 	g_assert (NEMO_IS_BOOKMARK (bookmark));
@@ -331,12 +329,6 @@ nemo_menus_append_bookmark_to_menu (NemoWindow *window,
 			       action_name,
 			       GTK_UI_MANAGER_MENUITEM,
 			       FALSE);
-
-	path = g_strdup_printf ("%s/%s", parent_path, action_name);
-	menuitem = gtk_ui_manager_get_widget (window->details->ui_manager,
-					      path);
-
-	g_free (path);
 }
 
 static void

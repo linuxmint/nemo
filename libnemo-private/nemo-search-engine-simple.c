@@ -87,9 +87,9 @@ strsplit_esc_n (const gchar *string,
 				gint *n_tokens)
 {
 	GSList *string_list = NULL, *slist;
-	gchar **str_array, *s;
+	gchar **str_array;
 	guint n = 0;
-	gchar *remainder;
+	const gchar *remainder, *s;
 
 	g_return_val_if_fail (string != NULL, NULL);
 	g_return_val_if_fail (delimiter != '\0', NULL);

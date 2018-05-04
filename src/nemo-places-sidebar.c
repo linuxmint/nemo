@@ -286,9 +286,7 @@ static gboolean get_overlay_scrolling_enabled (void)
         return overlay_scrolling_enabled == 1;
     }
 
-    gchar *val = NULL;
-
-    val = g_getenv ("GTK_OVERLAY_SCROLLING");
+    const gchar *val = g_getenv ("GTK_OVERLAY_SCROLLING");
 
     if (val == NULL || g_strcmp0 (val, "0") == 0) {
         overlay_scrolling_enabled = 0;
@@ -858,28 +856,28 @@ update_places (NemoPlacesSidebar *sidebar)
 
     cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
                                     _("Bookmarks"));
-    if (bookmark_index < bookmark_count) {
-        for (bookmark_index; bookmark_index < bookmark_count; ++bookmark_index) {
-            bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
-            root = nemo_bookmark_get_location (bookmark);
+    while (bookmark_index < bookmark_count) {
+        bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
-            bookmark_name = nemo_bookmark_get_name (bookmark);
-            icon = nemo_bookmark_get_icon_name (bookmark);
-            mount_uri = nemo_bookmark_get_uri (bookmark);
-            tooltip = g_file_get_parse_name (root);
+        root = nemo_bookmark_get_location (bookmark);
 
-            cat_iter = add_place (sidebar, PLACES_BOOKMARK,
-                                   SECTION_BOOKMARKS,
-                                   bookmark_name, icon, mount_uri,
-                                   NULL, NULL, NULL, bookmark_index,
-                                   tooltip, 0, FALSE,
-                                   cat_iter);
-            g_object_unref (root);
-            g_free (icon);
-            g_free (mount_uri);
-            g_free (tooltip);
-        }
+        bookmark_name = nemo_bookmark_get_name (bookmark);
+        icon = nemo_bookmark_get_icon_name (bookmark);
+        mount_uri = nemo_bookmark_get_uri (bookmark);
+        tooltip = g_file_get_parse_name (root);
+
+        cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                              SECTION_BOOKMARKS,
+                              bookmark_name, icon, mount_uri,
+                              NULL, NULL, NULL, bookmark_index,
+                              tooltip, 0, FALSE,
+                              cat_iter);
+        g_object_unref (root);
+        g_free (icon);
+        g_free (mount_uri);
+        g_free (tooltip);
+        ++bookmark_index;
     }
 
     /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
