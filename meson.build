@@ -81,7 +81,7 @@ xapp    = dependency('xapp',                        version: '>=1.0.3')
 
 # Facultative dependencies
 
-trackerChoice = get_option('enable-tracker')
+trackerChoice = get_option('tracker')
 tracker_enabled = false
 if trackerChoice != 'false'
   trackerRequired = (trackerChoice == 'true')
@@ -124,7 +124,7 @@ endif
 conf.set('HAVE_SELINUX', libselinux_enabled)
 
 
-enableEmptyView = get_option('empty-view')
+enableEmptyView = get_option('empty_view')
 conf.set10('ENABLE_EMPTY_VIEW', enableEmptyView)
 
 conf.set_quoted('GETTEXT_PACKAGE', 'nemo')
