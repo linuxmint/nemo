@@ -27,7 +27,7 @@ publicIcons = [
   'hicolor/actions/scalable/expand-menu-hover-symbolic.svg',
   'hicolor/actions/scalable/collapse-menu-symbolic.svg',
   'hicolor/actions/scalable/collapse-menu-hover-symbolic.svg',
-  'hicolor/places/scalable/nemo-bookmark-not-found-symbolic.svg',
+  'hicolor/devices/scalable/drive-removable-media-usb-symbolic.svg',
   'hicolor/status/48x48/progress-0.png',
   'hicolor/status/48x48/progress-10.png',
   'hicolor/status/48x48/progress-20.png',
@@ -39,6 +39,7 @@ publicIcons = [
   'hicolor/status/48x48/progress-80.png',
   'hicolor/status/48x48/progress-90.png',
   'hicolor/status/48x48/progress-100.png',
+  'hicolor/status/scalable/nemo-bookmark-not-found-symbolic.svg',
 ]
 privateIcons = [
   'hicolor/emblems/16x16/emblem-note.png',
