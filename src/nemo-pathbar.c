@@ -28,6 +28,8 @@
 
 #include "nemo-pathbar.h"
 
+#include <eel/eel-vfs-extensions.h>
+
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
@@ -1845,6 +1847,7 @@ make_directory_button (NemoPathBar  *path_bar,
     GFile *path;
     GtkWidget *child;
     ButtonData *button_data;
+    gchar *uri;
 
     path = nemo_file_get_location (file);
     child = NULL;
@@ -1913,7 +1916,13 @@ make_directory_button (NemoPathBar  *path_bar,
     g_signal_connect (button_data->button, "clicked", G_CALLBACK (button_clicked_cb), button_data);
     g_object_weak_ref (G_OBJECT (button_data->button), (GWeakNotify) button_data_free, button_data);
 
-    setup_button_drag_source (button_data);
+    uri = g_file_get_uri (path);
+
+    if (!eel_uri_is_search (uri)) {
+        setup_button_drag_source (button_data);
+    }
+
+    g_clear_pointer (&uri, g_free);
 
     nemo_drag_slot_proxy_init (button_data->button, button_data->file, NULL);
 

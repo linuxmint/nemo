@@ -1453,7 +1453,7 @@ update_for_new_location (NemoWindowSlot *slot)
 		/* Sync up and zoom action states */
 		nemo_window_sync_up_button (window);
 		nemo_window_sync_zoom_widgets (window);
-
+        nemo_window_sync_bookmark_action (window);
         nemo_window_sync_view_type (window);
 
 		/* Load menus from nemo extensions for this location */

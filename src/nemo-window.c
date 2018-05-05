@@ -51,6 +51,8 @@
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-string.h>
+#include <eel/eel-vfs-extensions.h>
+
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -1309,6 +1311,31 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 	gtk_action_set_sensitive (action, can_zoom);
 
     nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (window->details->nemo_status_bar));
+}
+
+void
+nemo_window_sync_bookmark_action (NemoWindow *window)
+{
+    NemoWindowSlot *slot;
+    GFile *location;
+    GtkAction *action;
+    gchar *uri;
+    slot = nemo_window_get_active_slot (window);
+    location = nemo_window_slot_get_location (slot);
+
+    if (!location) {
+        return;
+    }
+
+    uri = g_file_get_uri (location);
+
+    action = gtk_action_group_get_action (nemo_window_get_main_action_group (window),
+                                          NEMO_ACTION_ADD_BOOKMARK);
+
+    gtk_action_set_sensitive (action, !eel_uri_is_search (uri));
+
+    g_free (uri);
+    g_object_unref (location);
 }
 
 static void

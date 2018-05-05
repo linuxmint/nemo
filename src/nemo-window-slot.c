@@ -232,6 +232,7 @@ real_active (NemoWindowSlot *slot)
 	nemo_window_sync_allow_stop (window, slot);
 	nemo_window_sync_title (window, slot);
 	nemo_window_sync_zoom_widgets (window);
+    nemo_window_sync_bookmark_action (window);
 	nemo_window_pane_sync_location_widgets (slot->pane);
 	nemo_window_pane_sync_search_widgets (slot->pane);
 
