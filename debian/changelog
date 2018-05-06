@@ -1,3 +1,26 @@
+nemo (3.8.2) tara; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Fix potential divide by 0 (found in virtualbox, guest additions CD returns a GFileInfo, but the size fields we use for calculating disk full % come back all 0's.)
+  * nemo-places-sidebar.c: Fix some leaks - GFiles must be unreffed.
+  * nemo-list-view.c: Fix list view column ordering for LMDE (fixes segfault in Gtk 3.22.11)
+  * nemo-icon-container.c: chain the button release event up when ending a rubberband selection.  This allows the canvas to 'pick' the icon the release is over, and not cause the background context menu to be used (and all items get deselected) if the very next event is a right-click.
+
+  [ Soapux ]
+  * Make exempi and libexif dependencies optional (#1849)
+  * Update style of meson build options (#1850)
+
+  [ Michael Webster ]
+  * Disallow bookmarking of search result views.
+
+  [ NikoKrause ]
+  * add symbolic for usb and replace bookmark-not-found (#1852)
+
+  [ Germán Franco ]
+  * Fix some compiler warnings (#1851)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 06 May 2018 15:31:26 +0100
+
 nemo (3.8.1) tara; urgency=medium
 
   [ Fabio Fantoni ]
