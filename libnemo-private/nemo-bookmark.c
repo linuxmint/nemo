@@ -142,8 +142,6 @@ get_default_folder_icon_name (NemoBookmark *bookmark)
     gchar *ret = NULL;
 
     if (g_file_is_native (bookmark->details->location)) {
-        gchar *uri = g_file_get_uri (bookmark->details->location);
-
         ret = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER);
     } else {
         gchar *uri = g_file_get_uri (bookmark->details->location);
