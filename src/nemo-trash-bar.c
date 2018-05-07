@@ -59,12 +59,21 @@ selection_changed_cb (NemoView *view,
 		      NemoTrashBar *bar)
 {
 	int count;
+    gchar *uri;
+
+    uri = nemo_view_get_uri (view);
 
 	count = nemo_view_get_selection_count (view);
 
+    /* You can't currently restore individual files that aren't in the trash:/// root,
+     * so make the button insensitive if that's the case.  We should allow it (along with
+     * deleting individual files permanently) but it's not trivial. */
+
 	gtk_info_bar_set_response_sensitive (GTK_INFO_BAR (bar),
 					     TRASH_BAR_RESPONSE_RESTORE,
-					     (count > 0));
+					     (count > 0 && g_strcmp0 (uri, "trash:///") == 0));
+
+    g_free (uri);
 }
 
 static void

@@ -34,7 +34,6 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-icon-names.h>
-#include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-icon-dnd.h>
 
 #include "nemo-window.h"
@@ -228,31 +227,6 @@ desktop_location_changed_callback (gpointer user_data)
     update_button_types (path_bar);
 }
 
-static void
-trash_state_changed_cb (NemoTrashMonitor *monitor,
-                        gboolean state,
-                        NemoPathBar *path_bar)
-{
-    GFile *file;
-    GList *list;
-
-    file = g_file_new_for_uri ("trash:///");
-    for (list = path_bar->priv->button_list; list; list = list->next) {
-        ButtonData *button_data;
-        button_data = BUTTON_DATA (list->data);
-        if (g_file_equal (file, button_data->path)) {
-            gchar *icon_name;
-
-            icon_name = nemo_trash_monitor_get_symbolic_icon_name ();
-
-            gtk_image_set_from_icon_name (GTK_IMAGE (button_data->image), icon_name, GTK_ICON_SIZE_MENU);
-
-            g_clear_pointer (&icon_name, g_free);
-        }
-    }
-    g_object_unref (file);
-}
-
 static gboolean
 slider_timeout (gpointer user_data)
 {
@@ -400,11 +374,6 @@ nemo_path_bar_init (NemoPathBar *path_bar)
               G_CALLBACK (nemo_path_bar_slider_drag_leave),
               path_bar);
 
-    g_signal_connect (nemo_trash_monitor_get (),
-                      "trash_state_changed",
-                      G_CALLBACK (trash_state_changed_cb),
-                      path_bar);
-
     gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)), GTK_STYLE_CLASS_LINKED);
     gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (path_bar)), "path-bar");
 }
@@ -432,8 +401,6 @@ nemo_path_bar_finalize (GObject *object)
     g_clear_object (&path_bar->priv->xdg_templates_path);
     g_clear_object (&path_bar->priv->xdg_videos_path);
 
-    g_signal_handlers_disconnect_by_func (nemo_trash_monitor_get (),
-                          trash_state_changed_cb, path_bar);
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                           desktop_location_changed_callback,
                           path_bar);
