@@ -4400,8 +4400,12 @@ nemo_file_get_control_icon_name (NemoFile *file)
 
     if (eel_uri_is_search (uri)) {
         icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH);
-    } if (eel_uri_is_trash (uri)) {
+    } else if (eel_uri_is_trash (uri)) {
         icon_name = nemo_trash_monitor_get_symbolic_icon_name ();
+    } else if (eel_uri_is_recent (uri)) {
+        icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_RECENT);
+    } else if (eel_uri_is_network (uri)) {
+        icon_name = g_strdup (NEMO_ICON_SYMBOLIC_NETWORK);
     } else {
         const gchar *static_name;
 

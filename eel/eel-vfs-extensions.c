@@ -64,6 +64,12 @@ eel_uri_is_desktop (const char *uri)
 	return g_str_has_prefix (uri, EEL_DESKTOP_URI);
 }
 
+gboolean
+eel_uri_is_network (const char *uri)
+{
+    return g_str_has_prefix (uri, "smb:") || g_str_has_prefix (uri, "network:");
+}
+
 char *
 eel_make_valid_utf8 (const char *name)
 {

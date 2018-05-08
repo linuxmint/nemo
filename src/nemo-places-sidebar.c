@@ -813,7 +813,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     if (recent_is_supported ()) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
-        icon = "document-open-recent-symbolic";
+        icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT;
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                               SECTION_COMPUTER,
                               _("Recent"), icon, mount_uri,
