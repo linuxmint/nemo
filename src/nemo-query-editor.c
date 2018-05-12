@@ -616,7 +616,7 @@ on_key_press_event (GtkWidget    *widget,
                     GdkEvent     *event,
                     gpointer user_data)
 {
-    if (event->key.state == 0 && event->key.keyval == GDK_KEY_Up) {
+    if ((event->key.state & gtk_accelerator_get_default_mod_mask ()) == 0 && event->key.keyval == GDK_KEY_Up) {
         popup_favorites (NEMO_QUERY_EDITOR (user_data), event, FALSE);
         return GDK_EVENT_STOP;
     }
