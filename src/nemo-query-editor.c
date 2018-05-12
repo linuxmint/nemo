@@ -624,8 +624,6 @@ on_key_press_event (GtkWidget    *widget,
     return GDK_EVENT_PROPAGATE;
 }
 
-#define ALL_ACCELS_MASK (GDK_CONTROL_MASK | GDK_SHIFT_MASK | GDK_MOD1_MASK)
-
 static void
 fave_icon_clicked_cb (GtkWidget             *widget,
                       GtkEntryIconPosition   position,
@@ -643,7 +641,7 @@ fave_icon_clicked_cb (GtkWidget             *widget,
 
     current_key = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
 
-    if ((event->button.state & ALL_ACCELS_MASK) == 0 && event->button.button == 1) {
+    if ((event->button.state & gtk_accelerator_get_default_mod_mask ()) == 0 && event->button.button == 1) {
         gchar *entry;
 
         if (strlen (current_key) < 3) {
