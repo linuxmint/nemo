@@ -1030,6 +1030,8 @@ nemo_directory_notify_files_changed (GList *files)
 	GHashTable *changed_lists;
 	GList *node;
 	GFile *location;
+    GFile *parent;
+    NemoDirectory *dir;
 	NemoFile *file;
 
 	/* Make a list of changed files in each directory. */
@@ -1052,8 +1054,24 @@ nemo_directory_notify_files_changed (GList *files)
 			hash_table_list_prepend (changed_lists,
 						 file->details->directory,
 						 file);
-		}
-	}
+        } else {
+            parent = g_file_get_parent (location);
+            dir = nemo_directory_get_existing (parent);
+            if (dir != NULL && dir->details->new_files_in_progress != NULL &&
+                files != dir->details->new_files_in_progress_changes) {
+                dir->details->new_files_in_progress_changes = g_list_prepend (dir->details->new_files_in_progress_changes,
+                                                                              g_object_ref (location));
+            }
+
+            if (dir != NULL) {
+                nemo_directory_unref (dir);
+            }
+
+            if (parent != NULL) {
+                g_object_unref (parent);
+            }
+        }
+    }
 
 	/* Now send out the changed signals. */
 	g_hash_table_foreach (changed_lists, call_files_changed_unref_free_list, NULL);

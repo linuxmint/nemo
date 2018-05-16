@@ -105,6 +105,11 @@ struct NemoDirectoryDetails
 
 	GList *new_files_in_progress; /* list of NewFilesState * */
 
+	/* List of GFile's that received CHANGE events while new files were being added in
+	 * that same folder. We will process this CHANGE events after new_files_in_progress
+	 * list is finished. See Bug 703179 for a case when this happens. */
+	GList *new_files_in_progress_changes;
+
 	DirectoryCountState *count_in_progress;
 
 	NemoFile *deep_count_file;

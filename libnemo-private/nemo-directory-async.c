@@ -572,6 +572,12 @@ new_files_cancel (NemoDirectory *directory)
 		g_list_free (directory->details->new_files_in_progress);
 		directory->details->new_files_in_progress = NULL;
 	}
+
+    if (directory->details->new_files_in_progress_changes != NULL) {
+        g_list_free_full (directory->details->new_files_in_progress_changes,
+                          (GDestroyNotify) g_object_unref);
+        directory->details->new_files_in_progress_changes = NULL;
+    }
 }
 
 static int
@@ -830,6 +836,23 @@ should_skip_file (NemoDirectory *directory, GFileInfo *info)
 	return FALSE;
 }
 
+static void
+process_files_changed_while_being_added (NemoDirectory *directory)
+{
+    if (directory->details->new_files_in_progress_changes == NULL)
+    {
+        return;
+    }
+
+    directory->details->new_files_in_progress_changes = g_list_reverse (directory->details->new_files_in_progress_changes);
+
+    nemo_directory_notify_files_changed (directory->details->new_files_in_progress_changes);
+
+    g_list_free_full (directory->details->new_files_in_progress_changes,
+                      (GDestroyNotify) g_object_unref);
+    directory->details->new_files_in_progress_changes = NULL;
+}
+
 static gboolean
 dequeue_pending_idle_callback (gpointer callback_data)
 {
@@ -965,6 +988,10 @@ dequeue_pending_idle_callback (gpointer callback_data)
 
 		directory->details->directory_loaded_sent_notification = TRUE;
 	}
+
+    /* Process changes received for files while they were still
+     * being added. See Bug 703179 for a situation this happens. */
+    process_files_changed_while_being_added (directory);
 
  drain:
 	g_list_free_full (pending_file_info, g_object_unref);
