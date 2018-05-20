@@ -37,19 +37,19 @@
 G_BEGIN_DECLS
 
 #define NEMO_TYPE_INFO_PROVIDER           (nemo_info_provider_get_type ())
-#define NEMO_INFO_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_INFO_PROVIDER, NemoInfoProvider))
-#define NEMO_IS_INFO_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_INFO_PROVIDER))
-#define NEMO_INFO_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_INFO_PROVIDER, NemoInfoProviderIface))
 
-typedef struct _NemoInfoProvider       NemoInfoProvider;
-typedef struct _NemoInfoProviderIface  NemoInfoProviderIface;
+G_DECLARE_INTERFACE (NemoInfoProvider, nemo_info_provider,
+                     NEMO, INFO_PROVIDER,
+                     GObject)
+
+typedef NemoInfoProviderInterface NemoInfoProviderIface;
 
 typedef void (*NemoInfoProviderUpdateComplete) (NemoInfoProvider    *provider,
 						    NemoOperationHandle *handle,
 						    NemoOperationResult  result,
 						    gpointer                 user_data);
 
-struct _NemoInfoProviderIface {
+struct _NemoInfoProviderInterface {
 	GTypeInterface g_iface;
 
 	NemoOperationResult (*update_file_info) (NemoInfoProvider     *provider,
@@ -60,16 +60,16 @@ struct _NemoInfoProviderIface {
 						     NemoOperationHandle  *handle);
 };
 
+/* pre-G_DECLARE_INTERFACE/G_DEFINE_INTERFACE compatibility */
+#define NemoInfoProviderIface NemoInfoProviderInterface
+
 /* Interface Functions */
-GType                   nemo_info_provider_get_type               (void);
 NemoOperationResult nemo_info_provider_update_file_info       (NemoInfoProvider     *provider,
 								       NemoFileInfo         *file,
 								       GClosure                 *update_complete,
 								       NemoOperationHandle **handle);
 void                    nemo_info_provider_cancel_update          (NemoInfoProvider     *provider,
 								       NemoOperationHandle  *handle);
-
-
 
 /* Helper functions for implementations */
 void                    nemo_info_provider_update_complete_invoke (GClosure                 *update_complete,

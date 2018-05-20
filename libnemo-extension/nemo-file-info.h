@@ -31,11 +31,11 @@
 
 G_BEGIN_DECLS
 
-#define NEMO_TYPE_FILE_INFO           (nemo_file_info_get_type ())
-#define NEMO_FILE_INFO(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_FILE_INFO, NemoFileInfo))
-#define NEMO_IS_FILE_INFO(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_FILE_INFO))
-#define NEMO_FILE_INFO_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_FILE_INFO, NemoFileInfoIface))
+#define NEMO_TYPE_FILE_INFO (nemo_file_info_get_type ())
 
+G_DECLARE_INTERFACE (NemoFileInfo, nemo_file_info,
+                     NEMO, FILE_INFO,
+                     GObject)
 
 #ifndef NEMO_FILE_DEFINED
 #define NEMO_FILE_DEFINED
@@ -44,11 +44,7 @@ G_BEGIN_DECLS
 typedef struct NemoFile          NemoFile;
 #endif
 
-typedef NemoFile                  NemoFileInfo;
-typedef struct _NemoFileInfoIface NemoFileInfoIface;
-
-
-struct _NemoFileInfoIface 
+struct _NemoFileInfoInterface 
 {
 	GTypeInterface g_iface;
 
@@ -86,7 +82,6 @@ struct _NemoFileInfoIface
 
 GList            *nemo_file_info_list_copy            (GList            *files);
 void              nemo_file_info_list_free            (GList            *files);
-GType             nemo_file_info_get_type             (void);
 
 /* Return true if the file has been deleted */
 gboolean          nemo_file_info_is_gone              (NemoFileInfo *file);

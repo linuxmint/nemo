@@ -27,36 +27,26 @@
 
 #include <glib-object.h>
 
+
+G_DEFINE_INTERFACE (NemoLocationWidgetProvider, nemo_location_widget_provider, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-location-widget-provider
+ * @Title: NemoLocationWidgetProvider
+ * @Short_description: Allows a custom widget to be added to a Nemo view.
+
+ * This is an interface to allow the provision of a custom location widget 
+ * embedded at the top of the Nemo view.  It receives the current location, and
+ * can then determine whether or not the location is appropriate for a widget, and
+ * its contents.
+ *
+ * Be aware that this extension is queried for a new widget any time a view loads a
+ * new location, or reloads the current one.
+ **/
+
 static void
-nemo_location_widget_provider_base_init (gpointer g_class)
+nemo_location_widget_provider_default_init (NemoLocationWidgetProviderInterface *klass)
 {
-}
-
-GType                   
-nemo_location_widget_provider_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoLocationWidgetProviderIface),
-			nemo_location_widget_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoLocationWidgetProvider",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
 }
 
 /**

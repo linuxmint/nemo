@@ -27,43 +27,31 @@
 
 #include <glib-object.h>
 
+G_DEFINE_INTERFACE (NemoInfoProvider, nemo_info_provider, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-info-provider
+ * @Title: NemoInfoProvider
+ * @Short_description: An interface to allow collection of additional file info.
+ *
+ * This interface can be used to collect additional file info, generally used
+ * together with a #NemoColumnProvider.  It can be used as a synchronous or async
+ * interface.
+ *
+ * Additional, it can act in the background and notify Nemo when information has
+ * changed from some external source.
+ **/
+
 static void
-nemo_info_provider_base_init (gpointer g_class)
+nemo_info_provider_default_init (NemoInfoProviderInterface *klass)
 {
-}
-
-GType                   
-nemo_info_provider_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoInfoProviderIface),
-			nemo_info_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoInfoProvider",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
 }
 
 NemoOperationResult 
-nemo_info_provider_update_file_info (NemoInfoProvider *provider,
-					 NemoFileInfo *file,
-					 GClosure *update_complete,
-					 NemoOperationHandle **handle)
+nemo_info_provider_update_file_info (NemoInfoProvider     *provider,
+                                     NemoFileInfo         *file,
+                                     GClosure             *update_complete,
+                                     NemoOperationHandle **handle)
 {
 	g_return_val_if_fail (NEMO_IS_INFO_PROVIDER (provider),
 			      NEMO_OPERATION_FAILED);
@@ -78,8 +66,8 @@ nemo_info_provider_update_file_info (NemoInfoProvider *provider,
 }
 
 void
-nemo_info_provider_cancel_update (NemoInfoProvider *provider,
-				      NemoOperationHandle *handle)
+nemo_info_provider_cancel_update (NemoInfoProvider    *provider,
+                                  NemoOperationHandle *handle)
 {
 	g_return_if_fail (NEMO_IS_INFO_PROVIDER (provider));
 	g_return_if_fail (NEMO_INFO_PROVIDER_GET_IFACE (provider)->cancel_update != NULL);
@@ -90,10 +78,10 @@ nemo_info_provider_cancel_update (NemoInfoProvider *provider,
 }
 
 void
-nemo_info_provider_update_complete_invoke (GClosure *update_complete,
-					       NemoInfoProvider *provider,
-					       NemoOperationHandle *handle,
-					       NemoOperationResult result)
+nemo_info_provider_update_complete_invoke (GClosure            *update_complete,
+                                           NemoInfoProvider    *provider,
+                                           NemoOperationHandle *handle,
+                                           NemoOperationResult  result)
 {
 	GValue args[3] = { { 0, } };
 	GValue return_val = { 0, };
@@ -116,4 +104,3 @@ nemo_info_provider_update_complete_invoke (GClosure *update_complete,
 	g_value_unset (&args[2]);
 }
 
-					       

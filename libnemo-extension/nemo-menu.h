@@ -30,61 +30,16 @@
 #include <gtk/gtk.h>
 #include "nemo-extension-types.h"
 
-
 G_BEGIN_DECLS
 
 /* NemoMenu defines */
-#define NEMO_TYPE_MENU         (nemo_menu_get_type ())
-#define NEMO_MENU(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), NEMO_TYPE_MENU, NemoMenu))
-#define NEMO_MENU_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), NEMO_TYPE_MENU, NemoMenuClass))
-#define NEMO_IS_MENU(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), NEMO_TYPE_MENU))
-#define NEMO_IS_MENU_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), NEMO_TYPE_MENU))
-#define NEMO_MENU_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), NEMO_TYPE_MENU, NemoMenuClass))
+#define NEMO_TYPE_MENU         nemo_menu_get_type ()
+G_DECLARE_FINAL_TYPE (NemoMenu, nemo_menu, NEMO, MENU, GObject)
 /* NemoMenuItem defines */
-#define NEMO_TYPE_MENU_ITEM            (nemo_menu_item_get_type())
-#define NEMO_MENU_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_MENU_ITEM, NemoMenuItem))
-#define NEMO_MENU_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_MENU_ITEM, NemoMenuItemClass))
-#define NEMO_MENU_IS_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_MENU_ITEM))
-#define NEMO_MENU_IS_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), NEMO_TYPE_MENU_ITEM))
-#define NEMO_MENU_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), NEMO_TYPE_MENU_ITEM, NemoMenuItemClass))
-
-
-/* NemoMenu types */
-typedef struct _NemoMenu		NemoMenu;
-typedef struct _NemoMenuPrivate	NemoMenuPrivate;
-typedef struct _NemoMenuClass	NemoMenuClass;
-/* NemoMenuItem types */
-typedef struct _NemoMenuItem        NemoMenuItem;
-typedef struct _NemoMenuItemDetails NemoMenuItemDetails;
-typedef struct _NemoMenuItemClass   NemoMenuItemClass;
-
-
-/* NemoMenu structs */
-struct _NemoMenu {
-	GObject parent;
-	NemoMenuPrivate *priv;
-};
-
-struct _NemoMenuClass {
-	GObjectClass parent_class;
-};
-
-/* NemoMenuItem structs */
-struct _NemoMenuItem {
-	GObject parent;
-
-	NemoMenuItemDetails *details;
-};
-
-struct _NemoMenuItemClass {
-	GObjectClass parent;
-
-	void (*activate) (NemoMenuItem *item);
-};
-
+#define NEMO_TYPE_MENU_ITEM    nemo_menu_item_get_type()
+G_DECLARE_FINAL_TYPE (NemoMenuItem, nemo_menu_item, NEMO, MENU_ITEM, GObject)
 
 /* NemoMenu methods */
-GType		nemo_menu_get_type	(void);
 NemoMenu *	nemo_menu_new	(void);
 
 void	nemo_menu_append_item	(NemoMenu      *menu,
@@ -93,7 +48,6 @@ GList*	nemo_menu_get_items		(NemoMenu *menu);
 void	nemo_menu_item_list_free	(GList *item_list);
 
 /* NemoMenuItem methods */
-GType             nemo_menu_item_get_type      (void);
 NemoMenuItem *nemo_menu_item_new           (const char       *name,
 						    const char       *label,
 						    const char       *tip,
@@ -107,7 +61,6 @@ NemoMenuItem *nemo_menu_item_new_separator (const char *name);
 
 void nemo_menu_item_set_widget_a (NemoMenuItem *item, GtkWidget *widget);
 void nemo_menu_item_set_widget_b (NemoMenuItem *item, GtkWidget *widget);
-
 
 void              nemo_menu_item_activate      (NemoMenuItem *item);
 void              nemo_menu_item_set_submenu   (NemoMenuItem *item,

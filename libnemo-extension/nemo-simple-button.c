@@ -4,7 +4,21 @@
 #include "nemo-simple-button.h"
 #include <glib.h>
 
-G_DEFINE_TYPE (NemoSimpleButton, nemo_simple_button, GTK_TYPE_BUTTON);
+struct _NemoSimpleButton
+{
+  GtkButton parent_object;
+};
+
+G_DEFINE_TYPE (NemoSimpleButton, nemo_simple_button, GTK_TYPE_BUTTON)
+
+/**
+ * SECTION:nemo-simple-button
+ * @Title: NemoSimpleButton
+ * @Short_description: A stripped down #GtkButton for embedding in menu items.
+ *
+ * This button class is intended to be used in a #NemoMenuItem to allow some
+ * advanced functionality within a single item row.
+ **/
 
 static gboolean
 nemo_simple_button_button_release (GtkWidget      *widget,

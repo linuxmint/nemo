@@ -39,14 +39,14 @@
 G_BEGIN_DECLS
 
 #define NEMO_TYPE_LOCATION_WIDGET_PROVIDER           (nemo_location_widget_provider_get_type ())
-#define NEMO_LOCATION_WIDGET_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_LOCATION_WIDGET_PROVIDER, NemoLocationWidgetProvider))
-#define NEMO_IS_LOCATION_WIDGET_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_LOCATION_WIDGET_PROVIDER))
-#define NEMO_LOCATION_WIDGET_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_LOCATION_WIDGET_PROVIDER, NemoLocationWidgetProviderIface))
 
-typedef struct _NemoLocationWidgetProvider       NemoLocationWidgetProvider;
-typedef struct _NemoLocationWidgetProviderIface  NemoLocationWidgetProviderIface;
+G_DECLARE_INTERFACE (NemoLocationWidgetProvider, nemo_location_widget_provider,
+                     NEMO, LOCATION_WIDGET_PROVIDER,
+                     GObject)
 
-struct _NemoLocationWidgetProviderIface {
+typedef NemoLocationWidgetProviderInterface NemoLocationWidgetProviderIface;
+
+struct _NemoLocationWidgetProviderInterface {
 	GTypeInterface g_iface;
 
 	GtkWidget * (*get_widget) (NemoLocationWidgetProvider *provider,
@@ -55,10 +55,10 @@ struct _NemoLocationWidgetProviderIface {
 };
 
 /* Interface Functions */
-GType       nemo_location_widget_provider_get_type      (void);
 GtkWidget * nemo_location_widget_provider_get_widget    (NemoLocationWidgetProvider     *provider,
 							     const char                         *uri,
 							     GtkWidget                          *window);
+
 G_END_DECLS
 
 #endif

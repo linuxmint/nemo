@@ -11,43 +11,19 @@
 #include <glib-object.h>
 
 static void
-nemo_name_and_desc_provider_base_init (gpointer g_class)
+nemo_name_and_desc_provider_default_init (NemoNameAndDescProviderInterface *klass)
 {
 }
 
-GType                   
-nemo_name_and_desc_provider_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoNameAndDescProviderIface),
-			nemo_name_and_desc_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoNameAndDescProvider",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
-}
+G_DEFINE_INTERFACE (NemoNameAndDescProvider, nemo_name_and_desc_provider, G_TYPE_OBJECT)
 
 /**
  * nemo_name_and_desc_provider_get_name_and_desc:
  * @provider: a #NemoNameAndDescProvider
  *
  * Returns: (element-type gchar) (transfer full): a list of name:::desc
- * strings.
+ * strings.  Optionally, the name of a path executable can be appended as a
+ * third component of the list ('name:::desc:::foo-bar-preferences')
  */
 GList *
 nemo_name_and_desc_provider_get_name_and_desc (NemoNameAndDescProvider *provider)

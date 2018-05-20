@@ -34,7 +34,7 @@ nemo_extension_headers = [
 
 nemo_extension_incdir = include_directories('.')
 
-nemo_extension_deps = [ glib, gtk, eel ]
+nemo_extension_deps = [ glib, gtk ]
 
 nemo_extension_lib = shared_library('nemo-extension',
   nemo_extension_sources,

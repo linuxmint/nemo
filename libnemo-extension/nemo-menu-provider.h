@@ -39,14 +39,14 @@
 G_BEGIN_DECLS
 
 #define NEMO_TYPE_MENU_PROVIDER           (nemo_menu_provider_get_type ())
-#define NEMO_MENU_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_MENU_PROVIDER, NemoMenuProvider))
-#define NEMO_IS_MENU_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_MENU_PROVIDER))
-#define NEMO_MENU_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_MENU_PROVIDER, NemoMenuProviderIface))
 
-typedef struct _NemoMenuProvider       NemoMenuProvider;
-typedef struct _NemoMenuProviderIface  NemoMenuProviderIface;
+G_DECLARE_INTERFACE (NemoMenuProvider, nemo_menu_provider,
+                     NEMO, MENU_PROVIDER,
+                     GObject)
 
-struct _NemoMenuProviderIface {
+typedef NemoMenuProviderInterface NemoMenuProviderIface;
+
+struct _NemoMenuProviderInterface {
 	GTypeInterface g_iface;
 
 	GList *(*get_file_items)       (NemoMenuProvider *provider,
@@ -58,7 +58,6 @@ struct _NemoMenuProviderIface {
 };
 
 /* Interface Functions */
-GType                   nemo_menu_provider_get_type             (void);
 GList                  *nemo_menu_provider_get_file_items       (NemoMenuProvider *provider,
 								     GtkWidget            *window,
 								     GList                *files);

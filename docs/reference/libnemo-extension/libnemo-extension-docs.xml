@@ -17,17 +17,24 @@
     <chapter>
       <title>Extension Interfaces</title>
       <xi:include href="xml/nemo-column-provider.xml" />
-      <xi:include href="xml/nemo-column.xml" />
-      <xi:include href="xml/nemo-extension-types.xml" />
-      <xi:include href="xml/nemo-file-info.xml" />
       <xi:include href="xml/nemo-info-provider.xml" />
       <xi:include href="xml/nemo-location-widget-provider.xml" />
       <xi:include href="xml/nemo-menu-provider.xml" />
-      <xi:include href="xml/nemo-menu.xml" />
-      <xi:include href="xml/nemo-name-and-desc-provider.xml" />
+      <!-- <xi:include href="xml/nemo-name-and-desc-provider.xml" /> -->
       <xi:include href="xml/nemo-property-page-provider.xml" />
-      <xi:include href="xml/nemo-property-page.xml" />
     </chapter>
+
+    <chapter>
+      <title>Classes</title>
+      <xi:include href="xml/nemo-column.xml" />
+      <xi:include href="xml/nemo-file-info.xml" />
+      <xi:include href="xml/nemo-menu.xml" />
+      <xi:include href="xml/nemo-property-page.xml" />
+      <xi:include href="xml/nemo-simple-button.xml" />
+    </chapter>
+
+    <xi:include href="xml/nemo-extension-types.xml" />
+
 
   </part>
   <index>

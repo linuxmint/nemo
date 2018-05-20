@@ -1,29 +1,17 @@
 <SECTION>
 <FILE>nemo-location-widget-provider</FILE>
 NemoLocationWidgetProvider
-NemoLocationWidgetProviderIface
+NemoLocationWidgetProviderInterface
 nemo_location_widget_provider_get_widget
-<SUBSECTION Standard>
-NEMO_LOCATION_WIDGET_PROVIDER
-NEMO_IS_LOCATION_WIDGET_PROVIDER
-NEMO_TYPE_LOCATION_WIDGET_PROVIDER
-nemo_location_widget_provider_get_type
-NEMO_LOCATION_WIDGET_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
 <FILE>nemo-menu-provider</FILE>
 NemoMenuProvider
-NemoMenuProviderIface
+NemoMenuProviderInterface
 nemo_menu_provider_get_file_items
 nemo_menu_provider_get_background_items
 nemo_menu_provider_emit_items_updated_signal
-<SUBSECTION Standard>
-NEMO_MENU_PROVIDER
-NEMO_IS_MENU_PROVIDER
-NEMO_TYPE_MENU_PROVIDER
-nemo_menu_provider_get_type
-NEMO_MENU_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
@@ -61,40 +49,22 @@ NEMO_MENU_GET_CLASS
 <SECTION>
 <FILE>nemo-column-provider</FILE>
 NemoColumnProvider
-NemoColumnProviderIface
+NemoColumnProviderInterface
 nemo_column_provider_get_columns
-<SUBSECTION Standard>
-NEMO_COLUMN_PROVIDER
-NEMO_IS_COLUMN_PROVIDER
-NEMO_TYPE_COLUMN_PROVIDER
-nemo_column_provider_get_type
-NEMO_COLUMN_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
 <FILE>nemo-name-and-desc-provider</FILE>
 NemoNameAndDescProvider
-NemoNameAndDescProviderIface
+NemoNameAndDescProviderInterface
 nemo_name_and_desc_provider_get_name_and_desc
-<SUBSECTION Standard>
-NEMO_NAME_AND_DESC_PROVIDER
-NEMO_IS_NAME_AND_DESC_PROVIDER
-NEMO_TYPE_NAME_AND_DESC_PROVIDER
-nemo_name_and_desc_provider_get_type
-NEMO_NAME_AND_DESC_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
 <FILE>nemo-property-page-provider</FILE>
 NemoPropertyPageProvider
-NemoPropertyPageProviderIface
+NemoPropertyPageProviderInterface
 nemo_property_page_provider_get_pages
-<SUBSECTION Standard>
-NEMO_PROPERTY_PAGE_PROVIDER
-NEMO_IS_PROPERTY_PAGE_PROVIDER
-NEMO_TYPE_PROPERTY_PAGE_PROVIDER
-nemo_property_page_provider_get_type
-NEMO_PROPERTY_PAGE_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
@@ -145,28 +115,22 @@ NemoColumn
 nemo_column_new
 <SUBSECTION Standard>
 NEMO_COLUMN
-NEMO_INFO_IS_COLUMN
+NEMO_IS_COLUMN
 NEMO_TYPE_COLUMN
 nemo_column_get_type
 NEMO_COLUMN_CLASS
-NEMO_INFO_IS_COLUMN_CLASS
+NEMO_IS_COLUMN_CLASS
 NEMO_COLUMN_GET_CLASS
 </SECTION>
 
 <SECTION>
 <FILE>nemo-info-provider</FILE>
 NemoInfoProvider
-NemoInfoProviderIface
+NemoInfoProviderInterface
 NemoInfoProviderUpdateComplete
 nemo_info_provider_update_file_info
 nemo_info_provider_cancel_update
 nemo_info_provider_update_complete_invoke
-<SUBSECTION Standard>
-NEMO_INFO_PROVIDER
-NEMO_IS_INFO_PROVIDER
-NEMO_TYPE_INFO_PROVIDER
-nemo_info_provider_get_type
-NEMO_INFO_PROVIDER_GET_IFACE
 </SECTION>
 
 <SECTION>
@@ -198,3 +162,20 @@ nemo_module_list_types
 <FILE>nemo-menu-item</FILE>
 </SECTION>
 
+<SECTION>
+<FILE>nemo-simple-button</FILE>
+<TITLE>NemoSimpleButton</TITLE>
+NemoSimpleButton
+nemo_simple_button_new
+nemo_simple_button_new_from_icon_name
+nemo_simple_button_new_from_stock
+nemo_simple_button_new_from_file
+<SUBSECTION Standard>
+NEMO_SIMPLE_BUTTON
+NEMO_IS_SIMPLE_BUTTON
+NEMO_TYPE_SIMPLE_BUTTON
+nemo_simple_button_get_type
+NEMO_SIMPLE_BUTTON_CLASS
+NEMO_IS_SIMPLE_BUTTON_CLASS
+NEMO_SIMPLE_BUTTON_GET_CLASS
+</SECTION>

@@ -23,55 +23,41 @@
  *
  */
 
+
 #include <config.h>
 #include "nemo-menu-provider.h"
 
 #include <glib-object.h>
 
+G_DEFINE_INTERFACE (NemoMenuProvider, nemo_menu_provider, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-menu-provider
+ * @Title: NemoMenuProvider
+ * @Short_description: Allows additional menu items to be added to context menus.
+ *
+ * This interface allows custom menu entries to be inserted in the selection and
+ * background context menus.  Submenus and separators can also be generated.
+ *
+ **/
+
 static void
-nemo_menu_provider_base_init (gpointer g_class)
+nemo_menu_provider_default_init (NemoMenuProviderInterface *klass)
 {
-	static gboolean initialized = FALSE;
+    static gboolean initialized = FALSE;
 
-	if (!initialized)
-	{
-		/* This signal should be emited each time the extension modify the list of menu items */
-		g_signal_new ("items_updated",
-			NEMO_TYPE_MENU_PROVIDER,
-			G_SIGNAL_RUN_LAST,
-			0,
-			NULL, NULL,
-			g_cclosure_marshal_VOID__VOID,
-			G_TYPE_NONE, 0);
-		initialized = TRUE;
-	}
-}
-
-GType                   
-nemo_menu_provider_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoMenuProviderIface),
-			nemo_menu_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoMenuProvider",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
+    if (!initialized)
+    {
+        /* This signal should be emited each time the extension modify the list of menu items */
+        g_signal_new ("items_updated",
+            NEMO_TYPE_MENU_PROVIDER,
+            G_SIGNAL_RUN_LAST,
+            0,
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+        initialized = TRUE;
+    }
 }
 
 /**

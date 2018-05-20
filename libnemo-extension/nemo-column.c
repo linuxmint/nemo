@@ -37,15 +37,33 @@ enum {
 	LAST_PROP
 };
 
-struct _NemoColumnDetails {
-	char *name;
-	GQuark attribute;
-	char *label;
-	char *description;
-	float xalign;
+typedef struct
+{
+    char *name;
+    GQuark attribute;
+    char *label;
+    char *description;
+    float xalign;
+ } NemoColumnPrivate;
+
+struct _NemoColumn
+{
+    GObject parent_object;
+
+    NemoColumnPrivate *details;
 };
 
-G_DEFINE_TYPE (NemoColumn, nemo_column, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE (NemoColumn, nemo_column, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-column
+ * @Title: NemoColumn
+ * @Short_description: A column used in Nemo's  list view.
+ *
+ * A column is linked to a particular file attribute to display in the view.
+ * Many of these are built in to Nemo, but they can also be provided by
+ * a #NemoColumnProvider/#NemoInfoProvider extension.
+ **/
 
 /**
  * nemo_column_new:
@@ -176,8 +194,9 @@ nemo_column_finalize (GObject *object)
 static void
 nemo_column_init (NemoColumn *column)
 {
-	column->details = g_new0 (NemoColumnDetails, 1);
-	column->details->xalign = 0.0;
+    column->details = G_TYPE_INSTANCE_GET_PRIVATE (column, NEMO_TYPE_COLUMN, NemoColumnPrivate);
+
+    column->details->xalign = 0.0;
 }
 
 static void

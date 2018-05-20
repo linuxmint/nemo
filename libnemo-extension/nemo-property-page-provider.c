@@ -28,36 +28,20 @@
 
 #include <glib-object.h>
 
+G_DEFINE_INTERFACE (NemoPropertyPageProvider, nemo_property_page_provider, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-property-page-provider
+ * @Title: NemoPropertyPageProvider
+ * @Short_description: Allows additional file property pages to be added.
+ *
+ * This interface allows you to provide additional property pages for the right-click
+ * Properties menu item.  A new widget is requested each time the property page is opened.
+ **/
+
 static void
-nemo_property_page_provider_base_init (gpointer g_class)
+nemo_property_page_provider_default_init (NemoPropertyPageProviderInterface *klass)
 {
-}
-
-GType                   
-nemo_property_page_provider_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoPropertyPageProviderIface),
-			nemo_property_page_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoPropertyPageProvider",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
 }
 
 /**

@@ -13,23 +13,22 @@
 
 G_BEGIN_DECLS
 
-#define NEMO_TYPE_NAME_AND_DESC_PROVIDER           (nemo_name_and_desc_provider_get_type ())
-#define NEMO_NAME_AND_DESC_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_NAME_AND_DESC_PROVIDER, NemoNameAndDescProvider))
-#define NEMO_IS_NAME_AND_DESC_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_NAME_AND_DESC_PROVIDER))
-#define NEMO_NAME_AND_DESC_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_NAME_AND_DESC_PROVIDER, NemoNameAndDescProviderIface))
+#define NEMO_TYPE_NAME_AND_DESC_PROVIDER (nemo_name_and_desc_provider_get_type ())
 
-typedef struct _NemoNameAndDescProvider       NemoNameAndDescProvider;
-typedef struct _NemoNameAndDescProviderIface  NemoNameAndDescProviderIface;
+G_DECLARE_INTERFACE (NemoNameAndDescProvider, nemo_name_and_desc_provider,
+                     NEMO, NAME_AND_DESC_PROVIDER,
+                     GObject)
 
-struct _NemoNameAndDescProviderIface {
-	GTypeInterface g_iface;
+typedef NemoNameAndDescProviderInterface NemoNameAndDescProviderIface;
 
-	GList *(*get_name_and_desc) (NemoNameAndDescProvider *provider);
+struct _NemoNameAndDescProviderInterface {
+    GTypeInterface g_iface;
+
+    GList *(*get_name_and_desc) (NemoNameAndDescProvider *provider);
 };
 
 /* Interface Functions */
-GType                   nemo_name_and_desc_provider_get_type          (void);
-GList                  *nemo_name_and_desc_provider_get_name_and_desc (NemoNameAndDescProvider *provider);
+GList *nemo_name_and_desc_provider_get_name_and_desc (NemoNameAndDescProvider *provider);
 
 G_END_DECLS
 

@@ -38,21 +38,25 @@
 G_BEGIN_DECLS
 
 #define NEMO_TYPE_COLUMN_PROVIDER           (nemo_column_provider_get_type ())
-#define NEMO_COLUMN_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_COLUMN_PROVIDER, NemoColumnProvider))
-#define NEMO_IS_COLUMN_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_COLUMN_PROVIDER))
-#define NEMO_COLUMN_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_COLUMN_PROVIDER, NemoColumnProviderIface))
 
-typedef struct _NemoColumnProvider       NemoColumnProvider;
-typedef struct _NemoColumnProviderIface  NemoColumnProviderIface;
+G_DECLARE_INTERFACE (NemoColumnProvider, nemo_column_provider,
+                     NEMO, COLUMN_PROVIDER,
+                     GObject)
 
-struct _NemoColumnProviderIface {
-	GTypeInterface g_iface;
+typedef NemoColumnProviderInterface NemoColumnProviderIface;
 
-	GList *(*get_columns) (NemoColumnProvider *provider);
+/**
+ * NemoColumnProviderInterface:
+ * @g_iface: the parent class
+ * @get_columns: Fetch an array of @NemoColumn
+ */
+struct _NemoColumnProviderInterface {
+    GTypeInterface g_iface;
+
+    GList *(*get_columns) (NemoColumnProvider *provider);
 };
 
 /* Interface Functions */
-GType                   nemo_column_provider_get_type       (void);
 GList                  *nemo_column_provider_get_columns    (NemoColumnProvider *provider);
 
 G_END_DECLS

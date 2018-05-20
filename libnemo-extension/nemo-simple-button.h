@@ -9,28 +9,9 @@
 
 G_BEGIN_DECLS
 
-#define NEMO_TYPE_SIMPLE_BUTTON (nemo_simple_button_get_type())
+#define NEMO_TYPE_SIMPLE_BUTTON nemo_simple_button_get_type()
 
-#define NEMO_SIMPLE_BUTTON(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_SIMPLE_BUTTON, NemoSimpleButton))
-#define NEMO_SIMPLE_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_SIMPLE_BUTTON, NemoSimpleButtonClass))
-#define NEMO_IS_SIMPLE_BUTTON(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_SIMPLE_BUTTON))
-#define NEMO_IS_SIMPLE_BUTTON_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_SIMPLE_BUTTON))
-#define NEMO_SIMPLE_BUTTON_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_SIMPLE_BUTTON, NemoSimpleButtonClass))
-
-typedef struct _NemoSimpleButton NemoSimpleButton;
-typedef struct _NemoSimpleButtonClass NemoSimpleButtonClass;
-
-struct _NemoSimpleButton
-{
-  GtkButton parent;
-};
-
-struct _NemoSimpleButtonClass
-{
-  GtkButtonClass parent_class;
-};
-
-GType nemo_simple_button_get_type (void);
+G_DECLARE_FINAL_TYPE (NemoSimpleButton, nemo_simple_button, NEMO, SIMPLE_BUTTON, GtkButton)
 
 NemoSimpleButton *nemo_simple_button_new (void);
 NemoSimpleButton *nemo_simple_button_new_from_icon_name (const gchar *icon_name, int icon_size);

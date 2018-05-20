@@ -46,7 +46,7 @@ enum {
 	LAST_PROP
 };
 
-struct _NemoMenuItemDetails {
+typedef struct {
 	char *name;
 	char *label;
 	char *tip;
@@ -57,11 +57,18 @@ struct _NemoMenuItemDetails {
     GtkWidget *widget_a;
     GtkWidget *widget_b;
     gboolean separator;
+} NemoMenuItemPrivate;
+
+struct _NemoMenuItem
+{
+    GObject parent_class;
+
+    NemoMenuItemPrivate *details;
 };
 
-static guint signals[LAST_SIGNAL] = { 0 };
+G_DEFINE_TYPE_WITH_PRIVATE (NemoMenuItem, nemo_menu_item, G_TYPE_OBJECT)
 
-static GObjectClass *parent_class = NULL;
+static guint signals[LAST_SIGNAL] = { 0 };
 
 /**
  * nemo_menu_item_new:
@@ -345,17 +352,16 @@ nemo_menu_item_finalize (GObject *object)
         g_object_unref (item->details->widget_b);
     }
 
-	g_free (item->details);
-
-	G_OBJECT_CLASS (parent_class)->finalize (object);
+	G_OBJECT_CLASS (nemo_menu_item_parent_class)->finalize (object);
 }
 
 static void
-nemo_menu_item_instance_init (NemoMenuItem *item)
+nemo_menu_item_init (NemoMenuItem *item)
 {
-	item->details = g_new0 (NemoMenuItemDetails, 1);
-	item->details->sensitive = TRUE;
-	item->details->menu = NULL;
+    item->details = G_TYPE_INSTANCE_GET_PRIVATE (item, NEMO_TYPE_MENU_ITEM, NemoMenuItemPrivate);
+
+    item->details->sensitive = TRUE;
+    item->details->menu = NULL;
     item->details->widget_a = NULL;
     item->details->widget_b = NULL;
     item->details->separator = FALSE;
@@ -364,8 +370,6 @@ nemo_menu_item_instance_init (NemoMenuItem *item)
 static void
 nemo_menu_item_class_init (NemoMenuItemClass *class)
 {
-	parent_class = g_type_class_peek_parent (class);
-	
 	G_OBJECT_CLASS (class)->finalize = nemo_menu_item_finalize;
 	G_OBJECT_CLASS (class)->get_property = nemo_menu_item_get_property;
 	G_OBJECT_CLASS (class)->set_property = nemo_menu_item_set_property;
@@ -374,8 +378,7 @@ nemo_menu_item_class_init (NemoMenuItemClass *class)
                 g_signal_new ("activate",
                               G_TYPE_FROM_CLASS (class),
                               G_SIGNAL_RUN_LAST,
-                              G_STRUCT_OFFSET (NemoMenuItemClass, 
-					       activate),
+                              0,
                               NULL, NULL,
                               g_cclosure_marshal_VOID__VOID,
                               G_TYPE_NONE, 0); 
@@ -454,31 +457,3 @@ nemo_menu_item_class_init (NemoMenuItemClass *class)
                                    FALSE,
                                    G_PARAM_READWRITE));
 }
-
-GType 
-nemo_menu_item_get_type (void)
-{
-	static GType type = 0;
-	
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoMenuItemClass),
-			NULL,
-			NULL,
-			(GClassInitFunc)nemo_menu_item_class_init,
-			NULL,
-			NULL,
-			sizeof (NemoMenuItem),
-			0,
-			(GInstanceInitFunc)nemo_menu_item_instance_init
-		};
-		
-		type = g_type_register_static 
-			(G_TYPE_OBJECT, 
-			 "NemoMenuItem",
-			 &info, 0);
-	}
-
-	return type;
-}
-

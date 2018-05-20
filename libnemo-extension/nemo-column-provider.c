@@ -27,36 +27,22 @@
 
 #include <glib-object.h>
 
+G_DEFINE_INTERFACE (NemoColumnProvider, nemo_column_provider, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-column-provider
+ * @Title: NemoColumnProvider
+ * @Short_description: An interface to provide additional Nemo list view columns.
+ *
+ * This allows additional columns to be shown in the list view.  This interface
+ * generally needs to be used in tandem with a #NemoInfoProvider, to feed file
+ * info back to populate the column(s).
+ *
+ **/
+
 static void
-nemo_column_provider_base_init (gpointer g_class)
+nemo_column_provider_default_init (NemoColumnProviderInterface *klass)
 {
-}
-
-GType                   
-nemo_column_provider_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoColumnProviderIface),
-			nemo_column_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoColumnProvider",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
 }
 
 /**
@@ -64,15 +50,13 @@ nemo_column_provider_get_type (void)
  * @provider: a #NemoColumnProvider
  *
  * Returns: (element-type NemoColumn) (transfer full): the provided #NemoColumn objects
- */
+ **/
 GList *
 nemo_column_provider_get_columns (NemoColumnProvider *provider)
 {
 	g_return_val_if_fail (NEMO_IS_COLUMN_PROVIDER (provider), NULL);
 	g_return_val_if_fail (NEMO_COLUMN_PROVIDER_GET_IFACE (provider)->get_columns != NULL, NULL);
 
-	return NEMO_COLUMN_PROVIDER_GET_IFACE (provider)->get_columns 
-		(provider);
+	return NEMO_COLUMN_PROVIDER_GET_IFACE (provider)->get_columns (provider);
 }
 
-					       

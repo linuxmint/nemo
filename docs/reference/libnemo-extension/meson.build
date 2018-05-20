@@ -10,11 +10,12 @@ configure_file(
 
 gnome.gtkdoc('libnemo-extension',
   main_xml: 'libnemo-extension-docs.xml',
-  src_dir: nemo_extension_incdir,
-  dependencies: [ nemo_extension ],
+  src_dir: join_paths(meson.source_root(), 'libnemo-extension'),
+  dependencies: nemo_extension,
   install: true,
+  gobject_typesfile: 'libnemo-extension.types',
   install_dir: 'libnemo-extension',
-  scan_args: [ '--deprecated-guards="G_DISABLE_DEPRECATED"' ],
-  scanobjs_args: [ '--type-init-func="g_type_init()"', '--ignore-headers="config.h"' ],
-  mkdb_args: [ '--xml-mode', '--output-format=xml' ],
+  scan_args: [
+    '--rebuild-types',
+    '--ignore-headers="config.h"' ]
 )

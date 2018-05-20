@@ -39,14 +39,14 @@
 G_BEGIN_DECLS
 
 #define NEMO_TYPE_PROPERTY_PAGE_PROVIDER           (nemo_property_page_provider_get_type ())
-#define NEMO_PROPERTY_PAGE_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_PROPERTY_PAGE_PROVIDER, NemoPropertyPageProvider))
-#define NEMO_IS_PROPERTY_PAGE_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_PROPERTY_PAGE_PROVIDER))
-#define NEMO_PROPERTY_PAGE_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), NEMO_TYPE_PROPERTY_PAGE_PROVIDER, NemoPropertyPageProviderIface))
 
-typedef struct _NemoPropertyPageProvider       NemoPropertyPageProvider;
-typedef struct _NemoPropertyPageProviderIface  NemoPropertyPageProviderIface;
+G_DECLARE_INTERFACE (NemoPropertyPageProvider, nemo_property_page_provider,
+                     NEMO, PROPERTY_PAGE_PROVIDER,
+                     GObject)
 
-struct _NemoPropertyPageProviderIface {
+typedef NemoPropertyPageProviderInterface NemoPropertyPageProviderIface;
+
+struct _NemoPropertyPageProviderInterface {
 	GTypeInterface g_iface;
 
 	GList *(*get_pages) (NemoPropertyPageProvider     *provider,
@@ -54,7 +54,6 @@ struct _NemoPropertyPageProviderIface {
 };
 
 /* Interface Functions */
-GType                   nemo_property_page_provider_get_type  (void);
 GList                  *nemo_property_page_provider_get_pages (NemoPropertyPageProvider *provider,
 								   GList                        *files);
 

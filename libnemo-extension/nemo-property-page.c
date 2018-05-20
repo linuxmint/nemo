@@ -35,13 +35,30 @@ enum {
 	LAST_PROP
 };
 
-struct _NemoPropertyPageDetails {
-	char *name;
-	GtkWidget *label;
-	GtkWidget *page;	
+typedef struct {
+    char *name;
+    GtkWidget *label;
+    GtkWidget *page;
+} NemoPropertyPagePrivate;
+
+struct _NemoPropertyPage
+{
+    GObject parent_object;
+
+    NemoPropertyPagePrivate *details;
 };
 
-static GObjectClass *parent_class = NULL;
+G_DEFINE_TYPE_WITH_PRIVATE (NemoPropertyPage, nemo_property_page, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-property-page
+ * @Title: NemoPropertyPage
+ * @Short_description: A widget that can display additional info about a file.
+ *
+ * Additional stack pages for a file's properties window can be provided by a
+ * #NemoPropertyPageProvider.  An appropriate parent #GtkWidget is created (usually
+ * a container type,) along with a label for the stack switcher.
+ **/
 
 /**
  * nemo_property_page_new:
@@ -164,22 +181,18 @@ nemo_property_page_finalize (GObject *object)
 
 	g_free (page->details->name);
 
-	g_free (page->details);
-
-	G_OBJECT_CLASS (parent_class)->finalize (object);
+	G_OBJECT_CLASS (nemo_property_page_parent_class)->finalize (object);
 }
 
 static void
-nemo_property_page_instance_init (NemoPropertyPage *page)
+nemo_property_page_init (NemoPropertyPage *page)
 {
-	page->details = g_new0 (NemoPropertyPageDetails, 1);
+	page->details = G_TYPE_INSTANCE_GET_PRIVATE (page, NEMO_TYPE_PROPERTY_PAGE, NemoPropertyPagePrivate);
 }
 
 static void
 nemo_property_page_class_init (NemoPropertyPageClass *class)
 {
-	parent_class = g_type_class_peek_parent (class);
-	
 	G_OBJECT_CLASS (class)->finalize = nemo_property_page_finalize;
 	G_OBJECT_CLASS (class)->dispose = nemo_property_page_dispose;
 	G_OBJECT_CLASS (class)->get_property = nemo_property_page_get_property;
@@ -206,31 +219,4 @@ nemo_property_page_class_init (NemoPropertyPageClass *class)
 							      "Widget for the property page",
 							      GTK_TYPE_WIDGET,
 							      G_PARAM_READWRITE));
-}
-
-GType 
-nemo_property_page_get_type (void)
-{
-	static GType type = 0;
-	
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoPropertyPageClass),
-			NULL,
-			NULL,
-			(GClassInitFunc)nemo_property_page_class_init,
-			NULL,
-			NULL,
-			sizeof (NemoPropertyPage),
-			0,
-			(GInstanceInitFunc)nemo_property_page_instance_init
-		};
-		
-		type = g_type_register_static 
-			(G_TYPE_OBJECT, 
-			 "NemoPropertyPage",
-			 &info, 0);
-	}
-
-	return type;
 }

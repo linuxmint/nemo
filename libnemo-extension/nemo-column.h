@@ -30,32 +30,14 @@
 
 G_BEGIN_DECLS
 
-#define NEMO_TYPE_COLUMN            (nemo_column_get_type())
-#define NEMO_COLUMN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_COLUMN, NemoColumn))
-#define NEMO_COLUMN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_COLUMN, NemoColumnClass))
-#define NEMO_INFO_IS_COLUMN(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_COLUMN))
-#define NEMO_INFO_IS_COLUMN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), NEMO_TYPE_COLUMN))
-#define NEMO_COLUMN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), NEMO_TYPE_COLUMN, NemoColumnClass))
+#define NEMO_TYPE_COLUMN            nemo_column_get_type()
 
-typedef struct _NemoColumn        NemoColumn;
-typedef struct _NemoColumnDetails NemoColumnDetails;
-typedef struct _NemoColumnClass   NemoColumnClass;
+G_DECLARE_FINAL_TYPE (NemoColumn, nemo_column, NEMO, COLUMN, GObject)
 
-struct _NemoColumn {
-	GObject parent;
-
-	NemoColumnDetails *details;
-};
-
-struct _NemoColumnClass {
-	GObjectClass parent;
-};
-
-GType             nemo_column_get_type        (void);
 NemoColumn *  nemo_column_new             (const char     *name,
-						   const char     *attribute,
-						   const char     *label,
-						   const char     *description);
+                                           const char     *attribute,
+                                           const char     *label,
+                                           const char     *description);
 
 /* NemoColumn has the following properties:
  *   name (string)        - the identifier for the column

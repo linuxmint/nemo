@@ -34,6 +34,12 @@
 G_BEGIN_DECLS
 
 /**
+ * SECTION:nemo-extension-types
+ * @Title: Types and Enums
+ * @Short_description: Module initialization functions, enums, handle struct
+ **/
+
+/**
  * NemoOperationHandle:
  *
  * Handle for asynchronous interfaces.  These are opaque handles that must

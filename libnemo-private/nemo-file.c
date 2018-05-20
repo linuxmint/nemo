@@ -161,7 +161,7 @@ static GQuark attribute_name_q,
 	attribute_volume_q,
 	attribute_free_space_q;
 
-static void     nemo_file_info_iface_init                (NemoFileInfoIface *iface);
+static void     nemo_file_info_iface_init                (NemoFileInfoInterface *iface);
 
 static gboolean update_info_and_name                         (NemoFile          *file,
 							      GFileInfo             *info);
@@ -8564,7 +8564,7 @@ nemo_file_info_providers_done (NemoFile *file)
 }
 
 static void
-nemo_file_info_iface_init (NemoFileInfoIface *iface)
+nemo_file_info_iface_init (NemoFileInfoInterface *iface)
 {
 	iface->is_gone = nemo_file_is_gone;
 	iface->get_name = nemo_file_get_name;

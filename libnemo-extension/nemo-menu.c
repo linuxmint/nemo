@@ -27,12 +27,28 @@
 
 #include <glib.h>
 
-#define NEMO_MENU_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), NEMO_TYPE_MENU, NemoMenuPrivate))
-G_DEFINE_TYPE (NemoMenu, nemo_menu, G_TYPE_OBJECT);
-
-struct _NemoMenuPrivate {
+typedef struct {
 	GList *item_list;
+} NemoMenuPrivate;
+
+struct _NemoMenu
+{
+    GObject parent_class;
+
+    NemoMenuPrivate *priv;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE (NemoMenu, nemo_menu, G_TYPE_OBJECT)
+
+/**
+ * SECTION:nemo-menu
+ * @Title: NemoMenu
+ * @Short_description: A menu added to Nemo's context menus by an extension
+ *
+ * Menu items and submenus can be added to Nemo's selected item and background
+ * context menus by a #NemoMenuProvider.  Separators and embedded widgets are also
+ * possible (see #NemoSimpleButton.)
+ **/
 
 void
 nemo_menu_append_item (NemoMenu *menu, NemoMenuItem *item)
@@ -93,19 +109,16 @@ nemo_menu_finalize (GObject *object)
 static void
 nemo_menu_init (NemoMenu *menu)
 {
-	menu->priv = NEMO_MENU_GET_PRIVATE (menu);
+	menu->priv = G_TYPE_INSTANCE_GET_PRIVATE (menu, NEMO_TYPE_MENU, NemoMenuPrivate);
 
-	menu->priv->item_list = NULL;
+    menu->priv->item_list = NULL;
 }
 
 static void
 nemo_menu_class_init (NemoMenuClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	
-	g_type_class_add_private (klass, sizeof (NemoMenuPrivate));
-	
-	object_class->finalize = nemo_menu_finalize;
+    GObjectClass *object_class = G_OBJECT_CLASS (klass);
+    object_class->finalize = nemo_menu_finalize;
 }
 
 /* public constructors */

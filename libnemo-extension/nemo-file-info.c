@@ -23,7 +23,24 @@
 #include "nemo-file-info.h"
 #include "nemo-extension-private.h"
 
+G_DEFINE_INTERFACE (NemoFileInfo, nemo_file_info, G_TYPE_OBJECT)
+
 NemoFileInfo *(*nemo_file_info_getter) (GFile *location, gboolean create);
+
+/**
+ * SECTION:nemo-file-info
+ * @Title: NemoFileInfo
+ * @Short_description: A wrapper interface for extensions to access NemoFile info.
+ *
+ * This inteface is implemented by NemoFile and provides access to certain information
+ * regarding a given file object.  It is also used to add file attributes and notify
+ * a file of changes to those attribues when using a #NemoInfoProvider.
+ **/
+
+static void
+nemo_file_info_default_init (NemoFileInfoInterface *klass)
+{
+}
 
 /**
  * nemo_file_info_list_copy:
@@ -35,15 +52,15 @@ NemoFileInfo *(*nemo_file_info_getter) (GFile *location, gboolean create);
 GList *
 nemo_file_info_list_copy (GList *files)
 {
-	GList *ret;
-	GList *l;
-	
-	ret = g_list_copy (files);
-	for (l = ret; l != NULL; l = l->next) {
-		g_object_ref (G_OBJECT (l->data));
-	}
+    GList *ret;
+    GList *l;
+    
+    ret = g_list_copy (files);
+    for (l = ret; l != NULL; l = l->next) {
+        g_object_ref (G_OBJECT (l->data));
+    }
 
-	return ret;
+    return ret;
 }
 
 /**
@@ -55,45 +72,13 @@ nemo_file_info_list_copy (GList *files)
 void              
 nemo_file_info_list_free (GList *files)
 {
-	GList *l;
-	
-	for (l = files; l != NULL; l = l->next) {
-		g_object_unref (G_OBJECT (l->data));
-	}
-	
-	g_list_free (files);
-}
-
-static void
-nemo_file_info_base_init (gpointer g_class)
-{
-}
-
-GType                   
-nemo_file_info_get_type (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		const GTypeInfo info = {
-			sizeof (NemoFileInfoIface),
-			nemo_file_info_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
-		
-		type = g_type_register_static (G_TYPE_INTERFACE, 
-					       "NemoFileInfo",
-					       &info, 0);
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
-
-	return type;
+    GList *l;
+    
+    for (l = files; l != NULL; l = l->next) {
+        g_object_unref (G_OBJECT (l->data));
+    }
+    
+    g_list_free (files);
 }
 
 gboolean
