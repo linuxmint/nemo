@@ -52,6 +52,7 @@ static GDebugKey keys[] = {
   { "Undo", NEMO_DEBUG_UNDO },
   { "Actions", NEMO_DEBUG_ACTIONS },
   { "Desktop", NEMO_DEBUG_DESKTOP },
+  { "Thumbnails", NEMO_DEBUG_THUMBNAILS },
   { 0, }
 };
 
