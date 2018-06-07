@@ -10,7 +10,7 @@
 
  <action id="org.nemo.root">
    <description>Run Nemo with elevated privileges</description>
-   <message>Nemo</message>
+   <message gettext-domain="nemo">Files</message>
    <icon_name>gksu-root-terminal</icon_name>
    <defaults>
      <allow_any>no</allow_any>
