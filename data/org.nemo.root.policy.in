@@ -10,7 +10,7 @@
 
  <action id="org.nemo.root">
    <description>Run Nemo with elevated privileges</description>
-   <message>Please enter your password to run Nemo as root</message>
+   <message>Nemo</message>
    <icon_name>gksu-root-terminal</icon_name>
    <defaults>
      <allow_any>no</allow_any>
