@@ -380,7 +380,13 @@ idle_callback (gpointer data)
     info->queue_at_idle = FALSE;
 	
 	G_UNLOCK (progress_info);
-	
+
+    if (queue_at_idle) {
+        g_signal_emit (info,
+                   signals[QUEUED],
+                   0);
+    }
+
 	if (start_at_idle) {
 		g_signal_emit (info,
 			       signals[STARTED],
@@ -404,12 +410,6 @@ idle_callback (gpointer data)
 			       signals[FINISHED],
 			       0);
 	}
-	
-    if (queue_at_idle) {
-        g_signal_emit (info,
-                   signals[QUEUED],
-                   0);
-    }
 
 	g_object_unref (info);
 	
