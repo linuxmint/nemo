@@ -287,13 +287,7 @@ eel_pop_up_context_menu (GtkMenu *menu,
 		button = 0;
 	}
 
-	gtk_menu_popup (menu,					/* menu */
-			NULL,					/* parent_menu_shell */
-			NULL,					/* parent_menu_item */
-			NULL,					/* popup_position_func */
-			NULL,					/* popup_position_data */
-			button,					/* button */
-			event ? event->time : gtk_get_current_event_time ()); /* activate_time */
+	gtk_menu_popup_at_pointer (menu, (GdkEvent *) event);
 
 	g_object_ref_sink (menu);
 	g_object_unref (menu);
