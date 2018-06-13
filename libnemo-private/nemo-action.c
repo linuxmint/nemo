@@ -84,6 +84,8 @@ dbus_condition_free (gpointer data)
     DBusCondition *cond = (DBusCondition *) data;
     g_free (cond->name);
     g_bus_unwatch_name (cond->watch_id);
+
+    g_free (cond);
 }
 
 static void
@@ -518,10 +520,11 @@ nemo_action_constructed (GObject *object)
     g_free (icon_name);
     g_free (stock_id);
     g_free (exec);
-    g_strfreev (ext);
     g_free (parent_dir);
     g_free (quote_type_string);
     g_free (separator);
+    g_strfreev (ext);
+    g_strfreev (mimes);
     g_strfreev (conditions);
     g_key_file_free (key_file);
 }
@@ -1530,8 +1533,9 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
                     }
                 }
             }
-            g_free (filename);
         }
+
+        g_free (filename);
 
         if (mime_count > 0) {
             for (i = 0; i < mime_count; i++) {

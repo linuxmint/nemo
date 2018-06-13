@@ -4601,12 +4601,20 @@ nemo_file_get_icon (NemoFile *file,
 		icon = nemo_icon_info_lookup (gicon, size, scale);
 		if (nemo_icon_info_is_fallback (icon)) {
 			g_object_unref (icon);
-			icon = nemo_icon_info_lookup (g_themed_icon_new ("text-x-generic"), size, scale);
+            GIcon *generic = g_themed_icon_new ("text-x-generic");
+
+			icon = nemo_icon_info_lookup (generic, size, scale);
+            g_object_unref (generic);
 		}
 		g_object_unref (gicon);
 		return icon;
 	} else {
-		return nemo_icon_info_lookup (g_themed_icon_new ("text-x-generic"), size, scale);
+        GIcon *generic = g_themed_icon_new ("text-x-generic");
+
+        icon = nemo_icon_info_lookup (generic, size, scale);
+        g_object_unref (generic);
+
+		return icon;
 	}
 }
 
@@ -7683,6 +7691,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     ret = string->str;
 
     g_string_free (string, FALSE);
+    g_free (scheme);
 
     return ret;
 }

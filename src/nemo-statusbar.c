@@ -275,6 +275,8 @@ nemo_status_bar_constructed (GObject *object)
                                GTK_WIDGET (children->data),
                                TRUE, FALSE, 10, GTK_PACK_START);
 
+    g_list_free (children);
+
     nemo_status_bar_sync_button_states (bar);
 }
 

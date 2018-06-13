@@ -222,10 +222,10 @@ add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
     action = nemo_action_new (action_name, path);
 
     g_free (path);
+    g_free (uri);
+    g_free (action_name);
 
     if (action == NULL) {
-        g_free (uri);
-        g_free (action_name);
         return;
     }
 

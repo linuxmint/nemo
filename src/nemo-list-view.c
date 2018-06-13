@@ -936,7 +936,8 @@ clicked_within_slow_click_interval_on_text (NemoListView *view, GtkTreePath *pat
 
     GList *selected = gtk_tree_selection_get_selected_rows (selection, NULL);
     gint selected_count = g_list_length (selected);
-    g_list_free (selected);
+
+    g_list_free_full (selected, (GDestroyNotify) gtk_tree_path_free);
 
     if (selected_count != 1)
         return FALSE;
@@ -2140,6 +2141,8 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 		      "text", text,
 		      "underline", underline,
 		      NULL);
+
+    g_free (text);
 }
 
 static gboolean

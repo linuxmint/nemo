@@ -714,6 +714,9 @@ update_places (NemoPlacesSidebar *sidebar)
 	model = NULL;
 	last_uri = NULL;
 
+    g_clear_pointer (&sidebar->top_bookend_uri, g_free);
+    g_clear_pointer (&sidebar->bottom_bookend_uri, g_free);
+
 	selection = gtk_tree_view_get_selection (sidebar->tree_view);
 	if (gtk_tree_selection_get_selected (selection, &model, &last_iter)) {
 		gtk_tree_model_get (model,
@@ -965,20 +968,23 @@ update_places (NemoPlacesSidebar *sidebar)
 
                 mount = g_volume_get_mount (volume);
                 if (mount != NULL) {
+                    gchar *full_display_name, *volume_id;
                     /* Show mounted volume in the sidebar */
                     icon = nemo_get_mount_icon_name (mount);
                     root = g_mount_get_default_location (mount);
                     mount_uri = g_file_get_uri (root);
                     name = g_mount_get_name (mount);
 
+                    volume_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+                    full_display_name = g_file_get_parse_name (root);
+
                     df_file = g_file_new_for_uri (mount_uri);
                     full = get_disk_full (df_file, &tooltip_info);
                     g_clear_object (&df_file);
 
                     tooltip = g_strdup_printf (_("%s (%s)\n%s"),
-                                               g_file_get_parse_name (root),
-                                               g_volume_get_identifier (volume,
-                                                                        G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE),
+                                               full_display_name,
+                                               volume_id,
                                                tooltip_info);
                     g_free (tooltip_info);
                     cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
@@ -993,6 +999,8 @@ update_places (NemoPlacesSidebar *sidebar)
                     g_free (tooltip);
                     g_free (name);
                     g_free (mount_uri);
+                    g_free (volume_id);
+                    g_free (full_display_name);
                 } else {
                     /* Do show the unmounted volumes in the sidebar;
                      * this is so the user can mount it (in case automounting
@@ -1002,11 +1010,13 @@ update_places (NemoPlacesSidebar *sidebar)
                      * cue that the user should remember to yank out the media if
                      * he just unmounted it.
                      */
+                    gchar *volume_id;
                     icon = nemo_get_volume_icon_name (volume);
                     name = g_volume_get_name (volume);
-                    tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name,
-                                               g_volume_get_identifier (volume,
-                                                                        G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE));
+
+                    volume_id = g_volume_get_identifier (volume,
+                                                         G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+                    tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name, volume_id);
 
                     cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                                            SECTION_DEVICES,
@@ -1016,6 +1026,7 @@ update_places (NemoPlacesSidebar *sidebar)
                     g_free (icon);
                     g_free (name);
                     g_free (tooltip);
+                    g_free (volume_id);
                 }
                 g_object_unref (volume);
             }

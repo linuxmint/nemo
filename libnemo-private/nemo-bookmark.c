@@ -230,6 +230,8 @@ metadata_changed (NemoBookmark *bookmark)
         ret = nemo_bookmark_metadata_compare (data, md);
     }
 
+    nemo_bookmark_metadata_free (data);
+
     return ret;
 }
 
@@ -864,6 +866,10 @@ nemo_bookmark_metadata_compare (NemoBookmarkMetadata *d1,
 void
 nemo_bookmark_metadata_free (NemoBookmarkMetadata *metadata)
 {
+    if (metadata == NULL) {
+        return;
+    }
+
     g_free (metadata->bookmark_name);
     g_strfreev (metadata->emblems);
 
