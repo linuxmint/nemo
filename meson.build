@@ -1,7 +1,7 @@
 # Meson build file
 
 # https://github.com/linuxmint/nemo
-project('nemo', 'c', version: '3.8.3',
+project('nemo', 'c', version: '3.8.4',
   meson_version: '>=0.37.0'
 )
 
