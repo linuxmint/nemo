@@ -280,14 +280,22 @@ eel_pop_up_context_menu (GtkMenu *menu,
 	 */
 
 	if (event) {
-		button = event->type == GDK_BUTTON_RELEASE
-			? 0
-			: event->button;
+		button = event->type == GDK_BUTTON_RELEASE ? 0 : event->button;
 	} else {
 		button = 0;
 	}
 
-	gtk_menu_popup_at_pointer (menu, (GdkEvent *) event);
+    if (button > 0) {
+        gtk_menu_popup_at_pointer (menu, (GdkEvent *) event);
+    } else {
+        gtk_menu_popup (menu,                   /* menu */
+                        NULL,                   /* parent_menu_shell */
+                        NULL,                   /* parent_menu_item */
+                        NULL,                   /* popup_position_func */
+                        NULL,                   /* popup_position_data */
+                        button,                 /* button */
+                        event ? event->time : gtk_get_current_event_time ()); /* activate_time */
+    }
 
 	g_object_ref_sink (menu);
 	g_object_unref (menu);
