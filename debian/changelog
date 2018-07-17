@@ -1,3 +1,10 @@
+nemo (3.8.5) tara; urgency=medium
+
+  [ Michael Webster ]
+  * eel-gtk-extensions.c: Fix menu popups when a valid event is not provided.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 17 Jul 2018 09:43:41 +0200
+
 nemo (3.8.4) tara; urgency=medium
 
   [ Michael Webster ]
