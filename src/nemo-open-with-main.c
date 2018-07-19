@@ -35,11 +35,13 @@
 #include <stdlib.h>
 
 #include <eel/eel-stock-dialogs.h>
+#include <eel/eel-string.h>
 
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-mime-application-chooser.h>
 #include <libnemo-private/nemo-program-choosing.h>
+#include <libnemo-private/nemo-file-utilities.h>
 
 static void
 main_dialog_destroyed (GtkWidget *widget,
@@ -121,14 +123,15 @@ main (int argc, char *argv[])
 
 	nemo_global_preferences_init ();
 
-    const gchar *uri, *mime_type;
+    const gchar *uri, *basename;
+    gchar *mime_type;
 
     uri = argv[1];
 
     GFile *file = g_file_new_for_uri (uri);
 
     GFileInfo *info = g_file_query_info (file,
-                                         G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                                         G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE,
                                          G_FILE_QUERY_INFO_NONE,
                                          NULL, NULL);
 
@@ -139,7 +142,11 @@ main (int argc, char *argv[])
         exit(1);
     }
 
-    mime_type = g_file_info_get_content_type (info);
+    basename = g_file_get_basename (file);
+
+    mime_type = nemo_get_best_guess_file_mimetype (basename, info, g_file_info_get_size (info));
+
+    g_clear_pointer (&basename, g_free);
 
     dialog = gtk_dialog_new_with_buttons (_("Open with"),
                                           NULL,
@@ -154,6 +161,8 @@ main (int argc, char *argv[])
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
     GtkWidget *chooser = nemo_mime_application_chooser_new (uri, NULL, mime_type, ok_button);
+
+    eel_ref_str_unref (mime_type);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 

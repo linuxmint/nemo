@@ -2235,7 +2235,8 @@ update_info_internal (NemoFile *file,
 	time_t trash_time;
 	GTimeVal g_trash_time;
 	const char * time_string;
-	const char *symlink_name, *mime_type, *selinux_context, *name, *thumbnail_path;
+	const char *symlink_name, *selinux_context, *name, *thumbnail_path;
+    char *mime_type;
 	GFileType file_type;
 	GIcon *icon;
 	char *old_activation_uri;
@@ -2573,13 +2574,6 @@ update_info_internal (NemoFile *file,
 		file->details->symlink_name = g_strdup (symlink_name);
 	}
 
-	mime_type = g_file_info_get_content_type (info);
-	if (g_strcmp0 (eel_ref_str_peek (file->details->mime_type), mime_type) != 0) {
-		changed = TRUE;
-		eel_ref_str_unref (file->details->mime_type);
-		file->details->mime_type = eel_ref_str_get_unique (mime_type);
-	}
-
 	selinux_context = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_SELINUX_CONTEXT);
 	if (g_strcmp0 (file->details->selinux_context, selinux_context) != 0) {
 		changed = TRUE;
@@ -2652,6 +2646,14 @@ update_info_internal (NemoFile *file,
 				(file->details->directory, file, node);
 		}
 	}
+
+    mime_type = nemo_get_best_guess_file_mimetype (file->details->name, info, size);
+
+    if (g_strcmp0 (eel_ref_str_peek (file->details->mime_type), eel_ref_str_peek (mime_type)) != 0) {
+        changed = TRUE;
+        eel_ref_str_unref (file->details->mime_type);
+        file->details->mime_type = mime_type;
+    }
 
 	if (changed) {
 		add_to_link_hash_table (file);
