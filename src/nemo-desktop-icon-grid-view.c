@@ -120,7 +120,7 @@ static void     real_merge_menus                                  (NemoView     
 static void     real_update_menus                                 (NemoView        *view);
 static void     nemo_desktop_icon_grid_view_update_icon_container_fonts  (NemoDesktopIconGridView      *view);
 static void     font_changed_callback                             (gpointer                callback_data);
-static void     nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_grid_view);
+static void     nemo_desktop_icon_grid_view_constructed (GObject *object);
 static void     grid_adjust_prefs_changed_callback (NemoDesktopIconGridView *view);
 
 G_DEFINE_TYPE (NemoDesktopIconGridView, nemo_desktop_icon_grid_view, NEMO_TYPE_ICON_VIEW)
@@ -569,11 +569,14 @@ nemo_desktop_icon_grid_view_init (NemoDesktopIconGridView *desktop_icon_grid_vie
 }
 
 static void
-nemo_desktop_icon_grid_view_constructed (NemoDesktopIconGridView *desktop_icon_grid_view)
+nemo_desktop_icon_grid_view_constructed (GObject *object)
 {
+    NemoDesktopIconGridView *desktop_icon_grid_view;
     NemoIconContainer *icon_container;
     GtkAllocation allocation;
     GtkAdjustment *hadj, *vadj;
+
+    desktop_icon_grid_view = NEMO_DESKTOP_ICON_GRID_VIEW (object);
 
     G_OBJECT_CLASS (nemo_desktop_icon_grid_view_parent_class)->constructed (G_OBJECT (desktop_icon_grid_view));
 

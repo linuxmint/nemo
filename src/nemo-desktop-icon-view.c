@@ -86,7 +86,7 @@ static void     real_merge_menus                                  (NemoView     
 static void     real_update_menus                                 (NemoView        *view);
 static void     nemo_desktop_icon_view_update_icon_container_fonts  (NemoDesktopIconView      *view);
 static void     font_changed_callback                             (gpointer                callback_data);
-static void     nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view);
+static void     nemo_desktop_icon_view_constructed (GObject *object);
 
 G_DEFINE_TYPE (NemoDesktopIconView, nemo_desktop_icon_view, NEMO_TYPE_ICON_VIEW)
 
@@ -505,11 +505,14 @@ nemo_desktop_icon_view_init (NemoDesktopIconView *desktop_icon_view)
 }
 
 static void
-nemo_desktop_icon_view_constructed (NemoDesktopIconView *desktop_icon_view)
+nemo_desktop_icon_view_constructed (GObject *object)
 {
+    NemoDesktopIconView *desktop_icon_view;
     NemoIconContainer *icon_container;
     GtkAllocation allocation;
     GtkAdjustment *hadj, *vadj;
+
+    desktop_icon_view = NEMO_DESKTOP_ICON_VIEW (object);
 
     G_OBJECT_CLASS (nemo_desktop_icon_view_parent_class)->constructed (G_OBJECT (desktop_icon_view));
 

@@ -3634,7 +3634,6 @@ nemo_file_get_metadata_list (NemoFile *file,
 	GList *res;
 	guint id;
 	char **value;
-	int i;
 
 	g_return_val_if_fail (key != NULL, NULL);
 	g_return_val_if_fail (key[0] != '\0', NULL);
@@ -3647,7 +3646,12 @@ nemo_file_get_metadata_list (NemoFile *file,
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
     if (NEMO_FILE_GET_CLASS (file)->get_metadata_as_list) {
-        return NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key); /* FIXME this is not a GList */
+        gchar **meta_strv = NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key);
+
+        res = eel_strv_to_glist (meta_strv);
+
+        g_strfreev (meta_strv);
+        return res;
     }
 
 	id = nemo_metadata_get_id (key);
@@ -3656,11 +3660,7 @@ nemo_file_get_metadata_list (NemoFile *file,
 	value = g_hash_table_lookup (file->details->metadata, GUINT_TO_POINTER (id));
 
 	if (value) {
-		res = NULL;
-		for (i = 0; value[i] != NULL; i++) {
-			res = g_list_prepend (res, g_strdup (value[i]));
-		}
-		return g_list_reverse (res);
+        return eel_strv_to_glist (value);
 	}
 
 	return NULL;

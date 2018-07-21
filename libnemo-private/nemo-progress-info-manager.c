@@ -62,7 +62,7 @@ nemo_progress_info_manager_constructor (GType type,
 	GObject *retval;
 
 	if (singleton != NULL) {
-		return g_object_ref (singleton);
+		return g_object_ref (G_OBJECT (singleton));
 	}
 
 	retval = G_OBJECT_CLASS (nemo_progress_info_manager_parent_class)->constructor

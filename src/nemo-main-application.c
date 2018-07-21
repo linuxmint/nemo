@@ -324,7 +324,7 @@ open_window (NemoMainApplication *application,
 	uri = g_file_get_uri (location);
 	DEBUG ("Opening new window at uri %s", uri);
 
-	window = nemo_main_application_create_window (application,
+	window = nemo_main_application_create_window (NEMO_APPLICATION (application),
 						     screen);
 	nemo_window_go_to (window, location);
 

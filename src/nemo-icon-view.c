@@ -2655,9 +2655,12 @@ nemo_icon_view_finalize (GObject *object)
 }
 
 static void
-nemo_icon_view_constructed (NemoIconView *icon_view)
+nemo_icon_view_constructed (GObject *object)
 {
+    NemoIconView *icon_view;
     NemoIconContainer *icon_container;
+
+    icon_view = NEMO_ICON_VIEW (object);
 
     G_OBJECT_CLASS (nemo_icon_view_parent_class)->constructed (G_OBJECT (icon_view));
 

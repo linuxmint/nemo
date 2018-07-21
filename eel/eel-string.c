@@ -751,6 +751,30 @@ eel_ref_str_unref (eel_ref_str str)
 	}
 }
 
+GList *
+eel_strv_to_glist (gchar **strv)
+{
+    GList *list;
+    gint i;
+
+    if (strv == NULL) {
+        return NULL;
+    }
+
+    list = NULL;
+
+    i = 0;
+
+    while (strv[i] != NULL) {
+        list = g_list_prepend (list, g_strdup (strv[i]));
+
+        i++;
+    }
+
+    list = g_list_reverse (list);
+
+    return list;
+}
 
 #if !defined (EEL_OMIT_SELF_CHECK)
 

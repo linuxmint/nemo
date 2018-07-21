@@ -73,6 +73,7 @@ void        eel_ref_str_unref      (eel_ref_str  str);
 
 #define eel_ref_str_peek(__str) ((const char *)(__str))
 
+GList *eel_strv_to_glist (gchar **strv);
 
 typedef struct {
   char character;

@@ -277,7 +277,7 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 
 	slot->query_editor = NEMO_QUERY_EDITOR (nemo_query_editor_new ());
 
-	nemo_window_slot_add_extra_location_widget (slot, slot->query_editor);
+	nemo_window_slot_add_extra_location_widget (slot, GTK_WIDGET (slot->query_editor));
 
 	slot->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->view_overlay,
