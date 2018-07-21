@@ -1,3 +1,9 @@
+nemo (3.9.0) UNRELEASED; urgency=medium
+
+  * Version bump for dev.
+
+ -- Michael Webster <miketwebster@gmail.com>  Fri, 20 Jul 2018 20:54:03 -0400
+
 nemo (3.8.5) tara; urgency=medium
 
   [ Michael Webster ]
