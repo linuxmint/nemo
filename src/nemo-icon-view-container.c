@@ -81,13 +81,10 @@ get_icon_view (NemoIconContainer *container)
 
 static NemoIconInfo *
 nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
-					      NemoIconData      *data,
-					      int                    size,
-					      char                 **embedded_text,
-					      gboolean               for_drag_accept,
-					      gboolean               need_large_embeddded_text,
-					      gboolean              *embedded_text_needs_loading,
-					      gboolean              *has_window_open)
+                                          NemoIconData      *data,
+                                          int                size,
+                                          gboolean           for_drag_accept,
+					                      gboolean          *has_window_open)
 {
 	NemoIconView *icon_view;
 	char **emblems_to_ignore;
@@ -1513,15 +1510,8 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
     guint icon_size;
     guint min_image_size, max_image_size;
     NemoIconInfo *icon_info;
-    GdkPoint *attach_points;
-    int n_attach_points;
-    gboolean has_embedded_text_rect;
     GdkPixbuf *pixbuf;
     char *editable_text, *additional_text;
-    char *embedded_text;
-    GdkRectangle embedded_text_rect;
-    gboolean large_embedded_text;
-    gboolean embedded_text_needs_loading;
     gboolean has_open_window;
 
     if (icon == NULL) {
@@ -1547,13 +1537,11 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
     DEBUG ("Icon size, getting for size %d", icon_size);
 
     /* Get the icons. */
-    embedded_text = NULL;
-    large_embedded_text = icon_size > ICON_SIZE_FOR_LARGE_EMBEDDED_TEXT;
-    icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
-                                 &embedded_text,
-                                 icon == details->drop_target,
-                                 large_embedded_text, &embedded_text_needs_loading,
-                                 &has_open_window);
+    icon_info = nemo_icon_container_get_icon_images (container,
+                                                     icon->data,
+                                                     icon_size,
+                                                     icon == details->drop_target,
+                                                     &has_open_window);
 
     if (container->details->forced_icon_size > 0) {
         gint scale_factor;
@@ -1564,16 +1552,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
         pixbuf = nemo_icon_info_get_pixbuf (icon_info);
     }
 
-    nemo_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
-    has_embedded_text_rect = nemo_icon_info_get_embedded_rect (icon_info,
-                                       &embedded_text_rect);
-
     g_object_unref (icon_info);
-
-    if (has_embedded_text_rect && embedded_text_needs_loading) {
-        icon->is_monitored = TRUE;
-        nemo_icon_container_start_monitor_top_left (container, icon->data, icon, large_embedded_text);
-    }
 
     nemo_icon_container_get_icon_text (container,
                            icon->data,
@@ -1616,9 +1595,6 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                  NULL);
 
     nemo_icon_canvas_item_set_image (icon->item, pixbuf);
-    nemo_icon_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
-    nemo_icon_canvas_item_set_embedded_text_rect (icon->item, &embedded_text_rect);
-    nemo_icon_canvas_item_set_embedded_text (icon->item, embedded_text);
 
     /* Let the pixbufs go. */
     g_object_unref (pixbuf);

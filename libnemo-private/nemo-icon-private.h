@@ -383,10 +383,7 @@ void          nemo_icon_container_stop_monitor_top_left (NemoIconContainer *cont
 NemoIconInfo *nemo_icon_container_get_icon_images (NemoIconContainer *container,
                                                    NemoIconData      *data,
                                                    int                    size,
-                                                   char                 **embedded_text,
                                                    gboolean               for_drag_accept,
-                                                   gboolean               need_large_embeddded_text,
-                                                   gboolean              *embedded_text_needs_loading,
                                                    gboolean              *has_open_window);
 void          nemo_icon_container_get_icon_text (NemoIconContainer *container,
                                                  NemoIconData      *data,

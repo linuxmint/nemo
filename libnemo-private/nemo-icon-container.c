@@ -5507,20 +5507,17 @@ activate_selected_items_alternate (NemoIconContainer *container,
 
 NemoIconInfo *
 nemo_icon_container_get_icon_images (NemoIconContainer *container,
-					 NemoIconData      *data,
-					 int                    size,
-					 char                 **embedded_text,
-					 gboolean               for_drag_accept,
-					 gboolean               need_large_embeddded_text,
-					 gboolean              *embedded_text_needs_loading,
-					 gboolean              *has_open_window)
+                                     NemoIconData      *data,
+                                     int                size,
+                                     gboolean           for_drag_accept,
+                                     gboolean          *has_open_window)
 {
 	NemoIconContainerClass *klass;
 
 	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_images != NULL);
 
-	return klass->get_icon_images (container, data, size, embedded_text, for_drag_accept, need_large_embeddded_text, embedded_text_needs_loading, has_open_window);
+	return klass->get_icon_images (container, data, size, for_drag_accept, has_open_window);
 }
 
 static void

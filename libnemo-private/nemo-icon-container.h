@@ -141,10 +141,7 @@ typedef struct {
 	NemoIconInfo *(* get_icon_images)     (NemoIconContainer *container,
 						   NemoIconData *data,
 						   int icon_size,
-						   char **embedded_text,
 						   gboolean for_drag_accept,
-						   gboolean need_large_embeddded_text,
-						   gboolean *embedded_text_needs_loading,
 						   gboolean *has_window_open);
 	void         (* get_icon_text)            (NemoIconContainer *container,
 						   NemoIconData *data,

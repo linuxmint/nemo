@@ -63,10 +63,7 @@ static NemoIconInfo *
 nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 					      NemoIconData      *data,
 					      int                    size,
-					      char                 **embedded_text,
 					      gboolean               for_drag_accept,
-					      gboolean               need_large_embeddded_text,
-					      gboolean              *embedded_text_needs_loading,
 					      gboolean              *has_window_open)
 {
 	NemoIconView *icon_view;
@@ -894,11 +891,8 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
     NemoIconContainerDetails *details;
     guint icon_size;
     NemoIconInfo *icon_info;
-    GdkPoint *attach_points;
-    int n_attach_points;
     GdkPixbuf *pixbuf;
     char *editable_text, *additional_text;
-    gboolean embedded_text_needs_loading;
     gboolean has_open_window;
     gint scale_factor;
     EelIRect old_size, new_size;
@@ -919,17 +913,13 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
 
     /* Get the icons. */
     icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
-                                                     NULL,
                                                      icon == details->drop_target,
-                                                     FALSE, &embedded_text_needs_loading,
                                                      &has_open_window);
 
     scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (container));
     pixbuf = nemo_icon_info_get_desktop_pixbuf_at_size (icon_info,
                                                         icon_size * scale_factor,
                                                         GET_VIEW_CONSTANT (container, max_text_width_standard));
-
-    nemo_icon_info_get_attach_points (icon_info, &attach_points, &n_attach_points);
 
     g_object_unref (icon_info);
 
@@ -969,7 +959,6 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
                  NULL);
 
     nemo_icon_canvas_item_set_image (icon->item, pixbuf);
-    nemo_icon_canvas_item_set_attach_points (icon->item, attach_points, n_attach_points);
 
     nemo_icon_canvas_item_get_icon_canvas_rectangle (icon->item, &new_size);
 
