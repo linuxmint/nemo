@@ -5605,7 +5605,7 @@ get_menu_icon_for_file (NemoFile *file,
 
 	info = nemo_file_get_icon (file, size, 0, scale, 0);
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
-	g_object_unref (info);
+	nemo_icon_info_unref (info);
 
 	return pixbuf;
 }
@@ -8025,7 +8025,7 @@ action_connect_to_server_link_callback (GtkAction *action,
 	}
 
 	g_free (uri);
-	g_object_unref (icon);
+	nemo_icon_info_unref (icon);
 	g_free (name);
 }
 

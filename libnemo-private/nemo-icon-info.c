@@ -26,34 +26,93 @@
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 
-struct _NemoIconInfo
-{
-	GObject parent;
-
-	gboolean sole_owner;
-	gint64 last_use_time;
-	GdkPixbuf *pixbuf;
-
-    char *icon_name;
-    gint orig_scale;
-};
-
-struct _NemoIconInfoClass
-{
-	GObjectClass parent_class;
-};
-
 static void schedule_reap_cache (void);
 
-G_DEFINE_TYPE (NemoIconInfo,
-	       nemo_icon_info,
-	       G_TYPE_OBJECT);
+static void
+pixbuf_toggle_notify (gpointer      info,
+              GObject      *object,
+              gboolean      is_last_ref)
+{
+    NemoIconInfo  *icon = info;
+
+    if (is_last_ref) {
+        icon->sole_owner = TRUE;
+        g_object_remove_toggle_ref (object,
+                        pixbuf_toggle_notify,
+                        info);
+        icon->last_use_time = g_get_monotonic_time ();
+        schedule_reap_cache ();
+    }
+}
 
 static void
-nemo_icon_info_init (NemoIconInfo *icon)
+nemo_icon_info_free (NemoIconInfo *icon)
 {
+    g_return_if_fail (icon != NULL);
+
+    if (!icon->sole_owner && icon->pixbuf) {
+        g_object_remove_toggle_ref (G_OBJECT (icon->pixbuf),
+                                    pixbuf_toggle_notify,
+                                    icon);
+    }
+
+    if (icon->pixbuf) {
+        g_object_unref (icon->pixbuf);
+    }
+
+    g_free (icon->icon_name);
+
+    g_slice_free (NemoIconInfo, icon);
+}
+
+NemoIconInfo *
+nemo_icon_info_ref (NemoIconInfo *icon)
+{
+    g_return_val_if_fail (icon != NULL, NULL);
+
+    icon->ref_count++;
+
+    return icon;
+}
+
+void
+nemo_icon_info_unref (NemoIconInfo *icon)
+{
+    g_return_if_fail (icon != NULL);
+    g_return_if_fail (icon->ref_count > 0);
+
+    icon->ref_count--;
+
+    if (icon->ref_count == 0) {
+        nemo_icon_info_free (icon);
+    }
+}
+
+void
+nemo_icon_info_clear (NemoIconInfo **info)
+{
+    gpointer _info;
+
+    _info = *info;
+
+    if (_info) {
+        *info = NULL;
+        nemo_icon_info_unref (_info);
+    }
+}
+
+static NemoIconInfo *
+nemo_icon_info_create (void)
+{
+    NemoIconInfo *icon;
+
+    icon = g_slice_new0 (NemoIconInfo);
+
 	icon->last_use_time = g_get_monotonic_time ();
 	icon->sole_owner = TRUE;
+    icon->ref_count = 1;
+    
+    return icon;
 }
 
 gboolean
@@ -62,62 +121,13 @@ nemo_icon_info_is_fallback (NemoIconInfo  *icon)
   return icon->pixbuf == NULL;
 }
 
-static void
-pixbuf_toggle_notify (gpointer      info,
-		      GObject      *object,
-		      gboolean      is_last_ref)
-{
-	NemoIconInfo  *icon = info;
-
-	if (is_last_ref) {
-		icon->sole_owner = TRUE;
-		g_object_remove_toggle_ref (object,
-					    pixbuf_toggle_notify,
-					    info);
-		icon->last_use_time = g_get_monotonic_time ();
-		schedule_reap_cache ();
-	}
-}
-
-static void
-nemo_icon_info_finalize (GObject *object)
-{
-        NemoIconInfo *icon;
-
-        icon = NEMO_ICON_INFO (object);
-
-	if (!icon->sole_owner && icon->pixbuf) {
-		g_object_remove_toggle_ref (G_OBJECT (icon->pixbuf),
-					    pixbuf_toggle_notify,
-					    icon);
-	}
-
-	if (icon->pixbuf) {
-		g_object_unref (icon->pixbuf);
-	}
-	g_free (icon->icon_name);
-
-        G_OBJECT_CLASS (nemo_icon_info_parent_class)->finalize (object);
-}
-
-static void
-nemo_icon_info_class_init (NemoIconInfoClass *icon_info_class)
-{
-        GObjectClass *gobject_class;
-
-        gobject_class = (GObjectClass *) icon_info_class;
-
-        gobject_class->finalize = nemo_icon_info_finalize;
-
-}
-
 NemoIconInfo *
 nemo_icon_info_new_for_pixbuf (GdkPixbuf *pixbuf,
                                 gint      scale)
 {
 	NemoIconInfo *icon;
 
-	icon = g_object_new (NEMO_TYPE_ICON_INFO, NULL);
+	icon = nemo_icon_info_create ();
 
 	if (pixbuf) {
 		icon->pixbuf = g_object_ref (pixbuf);
@@ -136,7 +146,7 @@ nemo_icon_info_new_for_icon_info (GtkIconInfo *icon_info,
 	const char *filename;
 	char *basename, *p;
 
-	icon = g_object_new (NEMO_TYPE_ICON_INFO, NULL);
+	icon = nemo_icon_info_create ();
 
 	icon->pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
 
@@ -276,7 +286,7 @@ icon_key_free (IconKey *key)
 
 NemoIconInfo *
 nemo_icon_info_lookup (GIcon *icon,
-			   int size,
+               int size,
                int scale)
 {
     GtkIconTheme *icon_theme;
@@ -297,29 +307,30 @@ nemo_icon_info_lookup (GIcon *icon,
             loadable_icon_cache = g_hash_table_new_full ((GHashFunc) icon_key_hash,
                                                          (GEqualFunc) icon_key_equal,
                                                          (GDestroyNotify) icon_key_free,
-                                                         (GDestroyNotify) g_object_unref);
+                                                         (GDestroyNotify) nemo_icon_info_free);
         }
 
-		lookup_key.icon = icon;
-		lookup_key.size = size;
+        lookup_key.icon = icon;
+        lookup_key.size = size;
 
-		icon_info = g_hash_table_lookup (loadable_icon_cache, &lookup_key);
-		if (icon_info) {
-			return g_object_ref (icon_info);
-		}
+        icon_info = g_hash_table_lookup (loadable_icon_cache, &lookup_key);
+        if (icon_info) {
+            return nemo_icon_info_ref (icon_info);
+        }
 
-		pixbuf = NULL;
-		stream = g_loadable_icon_load (G_LOADABLE_ICON (icon),
-					       size * scale,
-					       NULL, NULL, NULL);
-		if (stream) {
-			pixbuf = gdk_pixbuf_new_from_stream_at_scale (stream,
-								      size * scale, size * scale,
+        pixbuf = NULL;
+        stream = g_loadable_icon_load (G_LOADABLE_ICON (icon),
+                           size * scale,
+                           NULL, NULL, NULL);
+
+        if (stream) {
+            pixbuf = gdk_pixbuf_new_from_stream_at_scale (stream,
+                                      size * scale, size * scale,
                                       TRUE,
-								      NULL, NULL);
-			g_input_stream_close (stream, NULL, NULL);
-			g_object_unref (stream);
-		}
+                                      NULL, NULL);
+            g_input_stream_close (stream, NULL, NULL);
+            g_object_unref (stream);
+        }
 
         if (!pixbuf) {
             gtkicon_info = gtk_icon_theme_lookup_icon_for_scale (icon_theme,
@@ -331,15 +342,15 @@ nemo_icon_info_lookup (GIcon *icon,
             pixbuf = gtk_icon_info_load_icon (gtkicon_info, NULL);
         }
 
-		icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
+        icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
 
-		key = icon_key_new (icon, size);
-		g_hash_table_insert (loadable_icon_cache, key, icon_info);
+        key = icon_key_new (icon, size);
+        g_hash_table_insert (loadable_icon_cache, key, icon_info);
 
         g_clear_object (&pixbuf);
 
-		return g_object_ref (icon_info);
-	} else  {
+        return nemo_icon_info_ref (icon_info);
+    } else  {
         IconKey lookup_key;
         IconKey *key;
 
@@ -347,7 +358,7 @@ nemo_icon_info_lookup (GIcon *icon,
             themed_icon_cache = g_hash_table_new_full ((GHashFunc) icon_key_hash,
                                                        (GEqualFunc) icon_key_equal,
                                                        (GDestroyNotify) icon_key_free,
-                                                       (GDestroyNotify) g_object_unref);
+                                                       (GDestroyNotify) nemo_icon_info_free);
         }
 
         lookup_key.icon = icon;
@@ -355,7 +366,7 @@ nemo_icon_info_lookup (GIcon *icon,
 
         icon_info = g_hash_table_lookup (themed_icon_cache, &lookup_key);
         if (icon_info) {
-            return g_object_ref (icon_info);
+            return nemo_icon_info_ref (icon_info);
         }
 
         gtkicon_info = NULL;
@@ -377,11 +388,11 @@ nemo_icon_info_lookup (GIcon *icon,
         icon_info = nemo_icon_info_new_for_icon_info (gtkicon_info, scale);
         g_object_unref (gtkicon_info);
 
-		key = icon_key_new (icon, size);
-		g_hash_table_insert (themed_icon_cache, key, icon_info);
+        key = icon_key_new (icon, size);
+        g_hash_table_insert (themed_icon_cache, key, icon_info);
 
-		return g_object_ref (icon_info);
-	}
+        return nemo_icon_info_ref (icon_info);
+    }
 }
 
 NemoIconInfo *

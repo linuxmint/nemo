@@ -379,12 +379,12 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
                                            NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
                                            NEMO_FILE_ICON_FLAGS_IGNORE_VISITING);
 			if (!new_icon || new_icon != icon) {
-				g_object_unref (icon);
-				g_object_unref (new_icon);
+				nemo_icon_info_unref (icon);
+				nemo_icon_info_unref (new_icon);
 				icon = NULL;
 				break;
 			}
-			g_object_unref (new_icon);
+			nemo_icon_info_unref (new_icon);
 		}
 	}
 
@@ -400,7 +400,7 @@ get_image_for_properties_window (NemoPropertiesWindow *window,
 		*icon_pixbuf = nemo_icon_info_get_pixbuf_at_size (icon, NEMO_ICON_SIZE_STANDARD);
 	}
 
-	g_object_unref (icon);
+	nemo_icon_info_unref (icon);
 }
 
 

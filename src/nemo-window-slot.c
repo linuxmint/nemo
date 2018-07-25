@@ -546,8 +546,8 @@ nemo_window_slot_update_icon (NemoWindowSlot *slot)
 				g_object_unref (pixbuf);
 			} 
 		}
-		
-		g_object_unref (info);
+
+        nemo_icon_info_unref (info);
 	}
 }
 

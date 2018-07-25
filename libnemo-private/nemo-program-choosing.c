@@ -144,7 +144,7 @@ nemo_launch_application_by_uri (GAppInfo *application,
 	if (icon) {
 		gdk_app_launch_context_set_icon_name (launch_context,
 							nemo_icon_info_get_used_name (icon));
-		g_object_unref (icon);
+		nemo_icon_info_unref (icon);
 	}
 	
 	error = NULL;

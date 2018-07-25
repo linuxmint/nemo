@@ -23,7 +23,6 @@
 
 #include <eel/eel-art-extensions.h>
 #include "nemo-icon-private.h"
-// #include "nemo-icon-info.h"
 #include "nemo-file.h"
 
 NemoCenteredPlacementGrid *

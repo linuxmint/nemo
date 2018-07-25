@@ -140,7 +140,7 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 			g_object_unref (emblem);
 		}
 
-		g_clear_object (&icon_info);
+		nemo_icon_info_clear (&icon_info);
 		icon_info = nemo_icon_info_lookup (emblemed_icon, size, scale);
         g_object_unref (emblemed_icon);
 
@@ -921,7 +921,7 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
                                                         icon_size * scale_factor,
                                                         GET_VIEW_CONSTANT (container, max_text_width_standard));
 
-    g_object_unref (icon_info);
+    nemo_icon_info_unref (icon_info);
 
     nemo_icon_container_get_icon_text (container,
                            icon->data,

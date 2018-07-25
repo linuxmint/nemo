@@ -130,7 +130,7 @@ nemo_ui_get_menu_icon (const char *icon_name,
 		info = nemo_icon_info_lookup_from_name (icon_name, size, scale);
 	}
 	pixbuf = nemo_icon_info_get_pixbuf_nodefault_at_size (info, size);
-	g_object_unref (info);
+	nemo_icon_info_unref (info);
 
 	return pixbuf;
 }

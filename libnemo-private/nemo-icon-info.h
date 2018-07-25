@@ -44,20 +44,19 @@ typedef enum {
 /* Maximum size of an icon that the icon factory will ever produce */
 #define NEMO_ICON_MAXIMUM_SIZE     320
 
-typedef struct _NemoIconInfo      NemoIconInfo;
-typedef struct _NemoIconInfoClass NemoIconInfoClass;
+typedef struct {
+    gint ref_count;
+    gboolean sole_owner;
+    gint64 last_use_time;
+    GdkPixbuf *pixbuf;
 
+    char *icon_name;
+    gint orig_scale;
+} NemoIconInfo;
 
-#define NEMO_TYPE_ICON_INFO                 (nemo_icon_info_get_type ())
-#define NEMO_ICON_INFO(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_ICON_INFO, NemoIconInfo))
-#define NEMO_ICON_INFO_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_ICON_INFO, NemoIconInfoClass))
-#define NEMO_IS_ICON_INFO(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_ICON_INFO))
-#define NEMO_IS_ICON_INFO_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_ICON_INFO))
-#define NEMO_ICON_INFO_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_ICON_INFO, NemoIconInfoClass))
-
-
-GType    nemo_icon_info_get_type (void) G_GNUC_CONST;
-
+NemoIconInfo *    nemo_icon_info_ref                          (NemoIconInfo      *icon);
+void              nemo_icon_info_unref                        (NemoIconInfo      *icon);
+void              nemo_icon_info_clear                        (NemoIconInfo     **info);
 NemoIconInfo *    nemo_icon_info_new_for_pixbuf               (GdkPixbuf         *pixbuf,
                                                                int                scale);
 NemoIconInfo *    nemo_icon_info_lookup                       (GIcon             *icon,

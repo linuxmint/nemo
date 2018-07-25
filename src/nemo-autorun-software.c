@@ -241,7 +241,7 @@ present_autorun_for_software_dialog (GMount *mount)
                 autorun (mount);
         }
 
-	g_object_unref (icon_info);
+	nemo_icon_info_unref (icon_info);
 	g_object_unref (pixbuf);
 	g_free (mount_name);
 }

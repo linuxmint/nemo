@@ -4623,7 +4623,6 @@ nemo_file_get_icon (NemoFile *file,
 
 	if (gicon) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
-
 		g_object_unref (gicon);
 		return icon;
 	} else {
@@ -4652,7 +4651,7 @@ nemo_file_get_icon_pixbuf (NemoFile *file,
 	} else {
 		pixbuf = nemo_icon_info_get_pixbuf (info);
 	}
-	g_object_unref (info);
+	nemo_icon_info_unref (info);
 
 	return pixbuf;
 }

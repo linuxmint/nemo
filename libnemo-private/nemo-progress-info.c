@@ -29,7 +29,6 @@
 #include <eel/eel-glib-extensions.h>
 #include "nemo-progress-info.h"
 #include "nemo-progress-info-manager.h"
-#include "nemo-icon-info.h"
 
 enum {
   CHANGED,
