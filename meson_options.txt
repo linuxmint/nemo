@@ -12,3 +12,5 @@ option('empty_view', type : 'boolean', value : false,
        description: 'Enable empty view')
 option('tracker',type : 'combo', choices : ['true', 'false', 'auto'], value : 'false',
        description: 'Tracker support')
+option('profiling', type : 'boolean', value : false,
+       description: 'keep frame pointers (for profiling purposes)')

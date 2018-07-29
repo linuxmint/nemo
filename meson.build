@@ -56,6 +56,11 @@ if not get_option('deprecated_warnings')
   )
 endif
 
+if get_option('profiling')
+    add_global_arguments('-fno-omit-frame-pointer',
+        language: 'c')
+endif
+
 ################################################################################
 # Find dependencies
 
