@@ -95,7 +95,6 @@ typedef struct {
     gint snap_size_x;
     gint snap_size_y;
     gint max_text_width_standard;
-    gint max_text_width_tighter;
     gint max_text_width_beside;
     gint max_text_width_beside_top_to_bottom;
     gint icon_vertical_adjust;
@@ -223,7 +222,6 @@ struct NemoIconContainerDetails {
 	gboolean single_click_mode;
 	gboolean auto_layout;
         gboolean stored_auto_layout;
-	gboolean tighter_layout;
         gboolean click_to_rename;
 
 	/* Whether for the vertical layout, all columns are supposed to

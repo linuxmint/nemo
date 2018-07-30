@@ -755,7 +755,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     double max_height_above, max_height_below;
     double height_above, height_below;
     double line_width;
-    gboolean gridded_layout;
     double grid_width;
     double max_text_width, max_icon_width;
     int icon_width;
@@ -797,8 +796,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         /* -1 prevents jitter */
     }
 
-    gridded_layout = !nemo_icon_container_is_tighter_layout (container);
-
     line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? GET_VIEW_CONSTANT (container, icon_pad_left) : 0;
     line_start = icons;
     y = start_y + GET_VIEW_CONSTANT (container, container_pad_top);
@@ -817,11 +814,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
         text_bounds = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
-        if (gridded_layout) {
-           icon_width = ceil ((bounds.x1 - bounds.x0)/grid_width) * grid_width;
-        } else {
-           icon_width = (bounds.x1 - bounds.x0) + GET_VIEW_CONSTANT (container, icon_pad_right) + 8; /* 8 pixels extra for fancy selection box */
-        }
+        icon_width = ceil ((bounds.x1 - bounds.x0)/grid_width) * grid_width;
 
         /* Calculate size above/below baseline */
         height_above = icon_bounds.y1 - bounds.y0;
@@ -866,11 +859,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         position->height = icon_bounds.y1 - icon_bounds.y0;
 
         if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-            if (gridded_layout) {
-                position->x_offset = max_icon_width + GET_VIEW_CONSTANT (container, icon_pad_left) + GET_VIEW_CONSTANT (container, icon_pad_right) - (icon_bounds.x1 - icon_bounds.x0);
-            } else {
-                position->x_offset = icon_width - ((icon_bounds.x1 - icon_bounds.x0) + (text_bounds.x1 - text_bounds.x0));
-            }
+            position->x_offset = max_icon_width + GET_VIEW_CONSTANT (container, icon_pad_left) + GET_VIEW_CONSTANT (container, icon_pad_right) - (icon_bounds.x1 - icon_bounds.x0);
             position->y_offset = 0;
         } else {
             position->x_offset = (icon_width - (icon_bounds.x1 - icon_bounds.x0)) / 2;
@@ -1115,7 +1104,7 @@ lay_down_icons_vertical_desktop (NemoIconContainer *container, GList *icons)
             int icon_height_for_bound_check;
             gboolean should_snap;
 
-            should_snap = !(container->details->tighter_layout && !container->details->keep_aligned);
+            should_snap = container->details->keep_aligned;
 
 
             y = GET_VIEW_CONSTANT (container, desktop_pad_vertical);
@@ -2164,7 +2153,6 @@ nemo_icon_view_container_construct (NemoIconViewContainer *icon_container,
     constants->snap_size_x = 78;
     constants->snap_size_y = 20;
     constants->max_text_width_standard = 135;
-    constants->max_text_width_tighter = 80;
     constants->max_text_width_beside = 90;
     constants->max_text_width_beside_top_to_bottom = 150;
 

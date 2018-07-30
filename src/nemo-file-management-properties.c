@@ -826,9 +826,6 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 			   NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
 
 	/* setup preferences */
-    bind_builder_bool (builder, nemo_icon_view_preferences,
-        NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_LAYOUT_WIDGET,
-        NEMO_PREFERENCES_ICON_VIEW_DEFAULT_USE_TIGHTER_LAYOUT);
 	bind_builder_bool (builder, nemo_icon_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET,
 			   NEMO_PREFERENCES_ICON_VIEW_LABELS_BESIDE_ICONS);

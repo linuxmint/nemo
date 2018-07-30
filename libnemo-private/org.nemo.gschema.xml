@@ -390,8 +390,7 @@
     </key>
     <key name="default-use-tighter-layout" type="b">
       <default>false</default>
-      <summary>Use tighter layout in new windows</summary>
-      <description>If true, icons will be laid out tighter by default in new windows.</description>
+      <summary>deprecated - not used</summary>
     </key>
     <key name="labels-beside-icons" type="b">
       <default>false</default>

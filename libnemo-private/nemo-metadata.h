@@ -41,7 +41,6 @@
 
 #define NEMO_METADATA_KEY_ICON_VIEW_ZOOM_LEVEL       	"nemo-icon-view-zoom-level"
 #define NEMO_METADATA_KEY_ICON_VIEW_AUTO_LAYOUT      	"nemo-icon-view-auto-layout"
-#define NEMO_METADATA_KEY_ICON_VIEW_TIGHTER_LAYOUT      "nemo-icon-view-tighter-layout"
 #define NEMO_METADATA_KEY_ICON_VIEW_SORT_BY          	"nemo-icon-view-sort-by"
 #define NEMO_METADATA_KEY_ICON_VIEW_SORT_REVERSED    	"nemo-icon-view-sort-reversed"
 #define NEMO_METADATA_KEY_ICON_VIEW_KEEP_ALIGNED            "nemo-icon-view-keep-aligned"

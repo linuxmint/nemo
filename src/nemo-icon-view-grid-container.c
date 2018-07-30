@@ -1660,7 +1660,6 @@ nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_contain
     constants->snap_size_x = BASE_SNAP_SIZE_X;
     constants->snap_size_y = BASE_SNAP_SIZE_Y;
     constants->max_text_width_standard = BASE_MAX_TEXT_WIDTH;
-    constants->max_text_width_tighter = 80; // Not used
     constants->max_text_width_beside = 90; // Not used
     constants->max_text_width_beside_top_to_bottom = 150; // Not used
     constants->icon_vertical_adjust = 20;

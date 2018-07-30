@@ -2074,29 +2074,29 @@ nemo_icon_canvas_item_set_renaming (NemoIconCanvasItem *item, gboolean state)
 double
 nemo_icon_canvas_item_get_max_text_width (NemoIconCanvasItem *item)
 {
-	EelCanvasItem *canvas_item;
-	NemoIconContainer *container;
+    EelCanvasItem *canvas_item;
+    NemoIconContainer *container;
 
-	canvas_item = EEL_CANVAS_ITEM (item);
-	container = NEMO_ICON_CONTAINER (canvas_item->canvas);
-    if (nemo_icon_container_is_tighter_layout (container)) {
-       return GET_VIEW_CONSTANT (container, max_text_width_tighter) * canvas_item->canvas->pixels_per_unit;
-    } else {
-        if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-           if (container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_L_R ||
-               container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_R_L) {
-               if (container->details->all_columns_same_width) {
-                   return GET_VIEW_CONSTANT (container, max_text_width_beside_top_to_bottom) * canvas_item->canvas->pixels_per_unit;
-               } else {
-                   return -1;
-               }
+    canvas_item = EEL_CANVAS_ITEM (item);
+    container = NEMO_ICON_CONTAINER (canvas_item->canvas);
+
+    if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
+        if (container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_L_R ||
+            container->details->layout_mode == NEMO_ICON_LAYOUT_T_B_R_L) {
+            /* compact view */
+            if (container->details->all_columns_same_width) {
+                return GET_VIEW_CONSTANT (container, max_text_width_beside_top_to_bottom) * canvas_item->canvas->pixels_per_unit;
             } else {
-                return GET_VIEW_CONSTANT (container, max_text_width_beside) * canvas_item->canvas->pixels_per_unit;
+                return -1;
             }
         } else {
-           return GET_VIEW_CONSTANT (container, max_text_width_standard) * canvas_item->canvas->pixels_per_unit;
+            /* normal icon view with labels-beside-icons */
+            return GET_VIEW_CONSTANT (container, max_text_width_beside) * canvas_item->canvas->pixels_per_unit;
         }
-	}
+    } else {
+        /* normal icon view */
+        return GET_VIEW_CONSTANT (container, max_text_width_standard) * canvas_item->canvas->pixels_per_unit;
+    }
 }
 
 void

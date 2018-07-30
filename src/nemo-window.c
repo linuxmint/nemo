@@ -1781,7 +1781,6 @@ nemo_window_init (NemoWindow *window)
     window->details->ignore_meta_column_order = NULL;
     window->details->ignore_meta_sort_column = NULL;
     window->details->ignore_meta_sort_direction = SORT_NULL;
-    window->details->ignore_meta_tighter_layout = TIGHTER_NULL;
 
 	/* This makes it possible for GTK+ themes to apply styling that is specific to Nemo
 	 * without affecting other GTK+ applications.
@@ -2205,18 +2204,6 @@ void
 nemo_window_set_ignore_meta_sort_direction (NemoWindow *window, gint direction)
 {
     window->details->ignore_meta_sort_direction = direction;
-}
-
-gint
-nemo_window_get_ignore_meta_tighter_layout (NemoWindow *window)
-{
-    return window->details->ignore_meta_tighter_layout;
-}
-
-void
-nemo_window_set_ignore_meta_tighter_layout (NemoWindow *window, gint tighter)
-{
-    window->details->ignore_meta_tighter_layout = tighter;
 }
 
 NemoWindowOpenFlags

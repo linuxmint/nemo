@@ -6590,33 +6590,6 @@ nemo_icon_container_get_horizontal_layout (NemoIconContainer *container)
     return container->details->horizontal;
 }
 
-/* Toggle the tighter layout boolean. */
-void
-nemo_icon_container_set_tighter_layout (NemoIconContainer *container,
-                                        gboolean tighter_layout)
-{
-   g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
-   g_return_if_fail (tighter_layout == FALSE || tighter_layout == TRUE);
-   if (container->details->tighter_layout == tighter_layout) {
-       return;
-   }
-
-   container->details->tighter_layout = tighter_layout;
-
-   if (container->details->auto_layout) {
-       invalidate_label_sizes (container);
-       nemo_icon_container_redo_layout (container);
-
-       g_signal_emit (container, signals[LAYOUT_CHANGED], 0);
-   } else {
-       /* in manual layout, label sizes still change, even though
-        * the icons don't move.
-        */
-       invalidate_label_sizes (container);
-       nemo_icon_container_request_update_all (container);
-   }
-}
-
 gboolean
 nemo_icon_container_is_keep_aligned (NemoIconContainer *container)
 {
@@ -6760,14 +6733,6 @@ nemo_icon_container_is_auto_layout (NemoIconContainer *container)
 	g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
 
 	return container->details->auto_layout;
-}
-
-gboolean
-nemo_icon_container_is_tighter_layout (NemoIconContainer *container)
-{
-   g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
-
-   return container->details->tighter_layout;
 }
 
 static void
