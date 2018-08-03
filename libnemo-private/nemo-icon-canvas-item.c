@@ -49,6 +49,7 @@
 
 /* gap between bottom of icon and start of text box */
 #define LABEL_OFFSET 1
+#define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
 
 /* special text height handling
@@ -656,7 +657,7 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
 
 	if (NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas)->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
 		if (!nemo_icon_container_is_layout_rtl (NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas))) {
-                	text_rectangle.x0 = icon_rectangle.x1;
+                	text_rectangle.x0 = icon_rectangle.x1 + LABEL_OFFSET_BESIDES;
                 	text_rectangle.x1 = text_rectangle.x0 + text_dx + text_width;
 		} else {
                 	text_rectangle.x1 = icon_rectangle.x0;
