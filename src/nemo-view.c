@@ -113,6 +113,7 @@
 
 #define MAX_QUEUED_UPDATES 500
 
+#define NEMO_VIEW_MENU_PATH_OPEN_PLACEHOLDER                  "/MenuBar/File/Open Placeholder"
 #define NEMO_VIEW_MENU_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER  "/MenuBar/File/Open Placeholder/Open With/Applications Placeholder"
 #define NEMO_VIEW_MENU_PATH_APPLICATIONS_PLACEHOLDER    	  "/MenuBar/File/Open Placeholder/Applications Placeholder"
 #define NEMO_VIEW_MENU_PATH_SCRIPTS_PLACEHOLDER               "/MenuBar/File/Open Placeholder/Scripts/Scripts Placeholder"
@@ -121,7 +122,8 @@
 #define NEMO_VIEW_MENU_PATH_NEW_DOCUMENTS_PLACEHOLDER  	  "/MenuBar/File/New Items Placeholder/New Documents/New Documents Placeholder"
 #define NEMO_VIEW_MENU_PATH_OPEN				  "/MenuBar/File/Open Placeholder/Open"
 
-#define NEMO_VIEW_POPUP_PATH_SELECTION			  "/selection"
+#define NEMO_VIEW_POPUP_PATH_SELECTION            "/selection"
+#define NEMO_VIEW_POPUP_PATH_OPEN_PLACEHOLDER	  "/selection/Open Placeholder"
 #define NEMO_VIEW_POPUP_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER "/selection/Open Placeholder/Open With/Applications Placeholder"
 #define NEMO_VIEW_POPUP_PATH_APPLICATIONS_PLACEHOLDER    	  "/selection/Open Placeholder/Applications Placeholder"
 #define NEMO_VIEW_POPUP_PATH_SCRIPTS_PLACEHOLDER    	  "/selection/Open Placeholder/Scripts/Scripts Placeholder"
@@ -4679,26 +4681,26 @@ menu_item_show_image (GtkUIManager *ui_manager,
 		      const char   *action_name,
                 gboolean    ignore_gtk_pref)
 {
-	char *path;
-	GtkWidget *menuitem;
+    GtkImageMenuItem *menuitem;
+    char *path;
+    gboolean show = TRUE;
+
+    path = g_strdup_printf ("%s/%s", parent_path, action_name);
+    menuitem = GTK_IMAGE_MENU_ITEM (gtk_ui_manager_get_widget (ui_manager,
+                                                               path));
+    g_free (path);
 
     if (!ignore_gtk_pref) {
-        gboolean show;
-
         g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
 
-        if (!show)
+        if (!show && !gtk_image_menu_item_get_always_show_image (menuitem)) {
             return;
+        }
     }
 
-	path = g_strdup_printf ("%s/%s", parent_path, action_name);
-	menuitem = gtk_ui_manager_get_widget (ui_manager,
-					      path);
-	if (menuitem != NULL) {
-		gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (menuitem),
-							   TRUE);
-	}
-	g_free (path);
+    if (menuitem != NULL) {
+        gtk_image_menu_item_set_always_show_image (menuitem, show);
+    }
 }
 
 static void
@@ -9586,7 +9588,6 @@ update_complex_popup_items (NemoView *view)
 static void
 real_update_menus (NemoView *view)
 {
-    GtkWidget *menuitem;
 	GList *selection, *l;
 	gint selection_count;
 	const char *tip, *label;
@@ -9613,7 +9614,6 @@ real_update_menus (NemoView *view)
 	GtkAction *action;
 	GAppInfo *app;
 	GIcon *app_icon;
-	// GtkWidget *menuitem;
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
 
@@ -9738,21 +9738,15 @@ real_update_menus (NemoView *view)
     g_object_unref (app_icon);
     g_free (label_with_underscore);
 
-    menuitem = gtk_ui_manager_get_widget (
-                          nemo_window_get_ui_manager (view->details->window),
-                          NEMO_VIEW_MENU_PATH_OPEN);
+    menu_item_show_image (nemo_window_get_ui_manager (view->details->window),
+                          NEMO_VIEW_MENU_PATH_OPEN_PLACEHOLDER,
+                          NEMO_ACTION_OPEN,
+                          FALSE);
 
-    /* Only force displaying the icon if it is an application icon */
-    gtk_image_menu_item_set_always_show_image (
-                           GTK_IMAGE_MENU_ITEM (menuitem), app_icon != NULL);
-
-    menuitem = gtk_ui_manager_get_widget (
-                          nemo_window_get_ui_manager (view->details->window),
-                          NEMO_VIEW_POPUP_PATH_OPEN);
-
-    /* Only force displaying the icon if it is an application icon */
-    gtk_image_menu_item_set_always_show_image (
-                           GTK_IMAGE_MENU_ITEM (menuitem), app_icon != NULL);
+    menu_item_show_image (nemo_window_get_ui_manager (view->details->window),
+                          NEMO_VIEW_POPUP_PATH_OPEN_PLACEHOLDER,
+                          NEMO_ACTION_OPEN_TOGGLE,
+                          FALSE);
 
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&

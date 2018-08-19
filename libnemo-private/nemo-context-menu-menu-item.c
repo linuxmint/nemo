@@ -54,12 +54,16 @@ set_action_image_temporary_visibility (NemoContextMenuMenuItem *item,
 {
     GtkWidget *image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (item));
 
+    if (!image) {
+        return;
+    }
+
     if (!visible) {
-        gtk_widget_set_visible (image, FALSE);
+        gtk_widget_set_visible (image,
+                                FALSE);
     } else {
-        if (gtk_image_menu_item_get_always_show_image (GTK_IMAGE_MENU_ITEM (item))) {
-            gtk_widget_set_visible (image, TRUE);
-        }
+        gtk_widget_set_visible (image,
+                                gtk_image_menu_item_get_always_show_image (GTK_IMAGE_MENU_ITEM (item)));
     }
 }
 
