@@ -929,18 +929,6 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
                            &additional_text,
                            FALSE);
 
-    if (container->details->show_desktop_tooltips) {
-        NemoFile *file = NEMO_FILE (icon->data);
-        gchar *tooltip_text;
-
-        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
-
-        nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
-        g_free (tooltip_text);
-    } else {
-        nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
-    }
-
     /* If name of icon being renamed was changed from elsewhere, end renaming mode.
      * Alternatively, we could replace the characters in the editable text widget
      * with the new name, but that could cause timing problems if the user just
@@ -1609,6 +1597,20 @@ captions_changed_callback (NemoIconContainer *container)
     nemo_icon_container_request_update_all (container);
 }
 
+static gchar *
+on_get_tooltip_text (NemoIconContainer *container,
+                     NemoFile          *file,
+                     gpointer           user_data)
+{
+    gchar *tooltip_text = NULL;
+
+    if (container->details->show_desktop_tooltips) {
+        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
+    }
+
+    return tooltip_text;
+}
+
 static void
 nemo_icon_view_grid_container_icon_added (NemoIconViewGridContainer *container,
                                           NemoIconData              *icon_data,
@@ -1672,6 +1674,11 @@ nemo_icon_view_grid_container_construct (NemoIconViewGridContainer *icon_contain
                               "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
                               G_CALLBACK (captions_changed_callback),
                               NEMO_ICON_CONTAINER (icon_container));
+
+    g_signal_connect (icon_container,
+                      "get-tooltip-text",
+                      G_CALLBACK (on_get_tooltip_text),
+                      NULL);
 
     return NEMO_ICON_CONTAINER (icon_container);
 }

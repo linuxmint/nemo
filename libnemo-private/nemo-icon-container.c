@@ -192,6 +192,7 @@ enum {
 	ICON_ADDED,
 	ICON_REMOVED,
 	CLEARED,
+    GET_TOOLTIP_TEXT,
 	LAST_SIGNAL
 };
 
@@ -4797,6 +4798,16 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
 		                g_cclosure_marshal_VOID__VOID,
 		                G_TYPE_NONE, 0);
 
+    signals[GET_TOOLTIP_TEXT]
+        = g_signal_new ("get-tooltip-text",
+                        G_TYPE_FROM_CLASS (class),
+                        G_SIGNAL_RUN_LAST,
+                        0,
+                        NULL, NULL,
+                        NULL,
+                        G_TYPE_STRING, 1,
+                        G_TYPE_POINTER);
+
 	/* GtkWidget class.  */
 
 	widget_class = GTK_WIDGET_CLASS (class);
@@ -6433,6 +6444,33 @@ nemo_icon_container_get_icon_drop_target_uri (NemoIconContainer *container,
 			 icon->data,
 			 &uri);
 	return uri;
+}
+
+void
+nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
+                                         NemoIconCanvasItem *item)
+{
+    NemoIcon *icon;
+    NemoFile *file;
+    char *text;
+
+    if (item == NULL) {
+        gtk_widget_set_tooltip_text (GTK_WIDGET (container), "");
+        return;
+    }
+
+    icon = item->user_data;
+    file = NEMO_FILE (icon->data);
+
+    text = NULL;
+    g_signal_emit (container,
+                   signals[GET_TOOLTIP_TEXT], 0,
+                   file,
+                   &text);
+
+    gtk_widget_set_tooltip_text (GTK_WIDGET (container), text);
+
+    g_free (text);
 }
 
 /* Call to reset the scroll region only if the container is not empty,

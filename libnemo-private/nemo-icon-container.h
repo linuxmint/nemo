@@ -372,5 +372,6 @@ void              nemo_icon_container_widget_to_file_operation_position (NemoIco
 									     GdkPoint              *position);
 
 void         nemo_icon_container_setup_tooltip_preference_callback (NemoIconContainer *container);
-
+void         nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
+                                                      NemoIconCanvasItem *item);
 #endif /* NEMO_ICON_CONTAINER_H */

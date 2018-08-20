@@ -1560,22 +1560,6 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                            &additional_text,
                            FALSE);
 
-    gboolean is_desktop = nemo_icon_container_get_is_desktop (container);
-
-    gboolean show_tooltip = (container->details->show_desktop_tooltips && is_desktop) ||
-                            (container->details->show_icon_view_tooltips && !is_desktop);
-
-    if (show_tooltip) {
-        NemoFile *file = NEMO_FILE (icon->data);
-        gchar *tooltip_text;
-
-        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
-
-        nemo_icon_canvas_item_set_tooltip_text (icon->item, tooltip_text);
-        g_free (tooltip_text);
-    } else {
-        nemo_icon_canvas_item_set_tooltip_text (icon->item, "");
-    }
 
     /* If name of icon being renamed was changed from elsewhere, end renaming mode.
      * Alternatively, we could replace the characters in the editable text widget
@@ -2031,6 +2015,26 @@ desktop_text_ellipsis_limit_changed_callback (gpointer callback_data)
     desktop_text_ellipsis_limit = pref;
 }
 
+static gchar *
+on_get_tooltip_text (NemoIconContainer *container,
+                     NemoFile          *file,
+                     gpointer           user_data)
+{
+    gboolean is_desktop, show_tooltip;
+    gchar *tooltip_text = NULL;
+
+    is_desktop = container->details->is_desktop;
+
+    show_tooltip = (container->details->show_desktop_tooltips && is_desktop) ||
+                   (container->details->show_icon_view_tooltips && !is_desktop);
+
+    if (show_tooltip) {
+        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
+    }
+
+    return tooltip_text;
+}
+
 static gint
 nemo_icon_view_container_get_max_layout_lines_for_pango (NemoIconContainer  *container)
 {
@@ -2120,6 +2124,8 @@ nemo_icon_view_container_init (NemoIconViewContainer *icon_container)
                       G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
                       NULL);
         desktop_text_ellipsis_limit_changed_callback (NULL);
+
+        g_signal_connect (icon_container, "get-tooltip-text", G_CALLBACK (on_get_tooltip_text), NULL);
 
         setup_prefs = TRUE;
     }
