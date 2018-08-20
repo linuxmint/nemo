@@ -159,12 +159,7 @@ nemo_icon_info_new_for_icon_info (GtkIconInfo *icon_info,
 typedef struct  {
 	GIcon *icon;
 	int size;
-} LoadableIconKey;
-
-typedef struct {
-	char *filename;
-	int size;
-} ThemedIconKey;
+} IconKey;
 
 static GHashTable *loadable_icon_cache = NULL;
 static GHashTable *themed_icon_cache = NULL;
@@ -247,25 +242,25 @@ nemo_icon_info_clear_caches (void)
 }
 
 static guint
-loadable_icon_key_hash (LoadableIconKey *key)
+icon_key_hash (IconKey *key)
 {
 	return g_icon_hash (key->icon) ^ key->size;
 }
 
 static gboolean
-loadable_icon_key_equal (const LoadableIconKey *a,
-			 const LoadableIconKey *b)
+icon_key_equal (const IconKey *a,
+                const IconKey *b)
 {
 	return a->size == b->size &&
 		g_icon_equal (a->icon, b->icon);
 }
 
-static LoadableIconKey *
-loadable_icon_key_new (GIcon *icon, int size)
+static IconKey *
+icon_key_new (GIcon *icon, int size)
 {
-	LoadableIconKey *key;
+	IconKey *key;
 
-	key = g_slice_new (LoadableIconKey);
+	key = g_slice_new (IconKey);
 	key->icon = g_object_ref (icon);
 	key->size = size;
 
@@ -273,43 +268,10 @@ loadable_icon_key_new (GIcon *icon, int size)
 }
 
 static void
-loadable_icon_key_free (LoadableIconKey *key)
+icon_key_free (IconKey *key)
 {
 	g_object_unref (key->icon);
-	g_slice_free (LoadableIconKey, key);
-}
-
-static guint
-themed_icon_key_hash (ThemedIconKey *key)
-{
-	return g_str_hash (key->filename) ^ key->size;
-}
-
-static gboolean
-themed_icon_key_equal (const ThemedIconKey *a,
-		       const ThemedIconKey *b)
-{
-	return a->size == b->size &&
-		g_str_equal (a->filename, b->filename);
-}
-
-static ThemedIconKey *
-themed_icon_key_new (const char *filename, int size)
-{
-	ThemedIconKey *key;
-
-	key = g_slice_new (ThemedIconKey);
-	key->filename = g_strdup (filename);
-	key->size = size;
-
-	return key;
-}
-
-static void
-themed_icon_key_free (ThemedIconKey *key)
-{
-	g_free (key->filename);
-	g_slice_free (ThemedIconKey, key);
+	g_slice_free (IconKey, key);
 }
 
 NemoIconInfo *
@@ -317,22 +279,26 @@ nemo_icon_info_lookup (GIcon *icon,
 			   int size,
                int scale)
 {
-	NemoIconInfo *icon_info;
+    GtkIconTheme *icon_theme;
+    GtkIconInfo *gtkicon_info;
 
-	if (G_IS_LOADABLE_ICON (icon)) {
+    NemoIconInfo *icon_info;
+
+    icon_theme = gtk_icon_theme_get_default ();
+
+    if (G_IS_LOADABLE_ICON (icon)) {
         GdkPixbuf *pixbuf;
 
-		LoadableIconKey lookup_key;
-		LoadableIconKey *key;
-		GInputStream *stream;
+        IconKey lookup_key;
+        IconKey *key;
+        GInputStream *stream;
 
-		if (loadable_icon_cache == NULL) {
-			loadable_icon_cache =
-				g_hash_table_new_full ((GHashFunc)loadable_icon_key_hash,
-						       (GEqualFunc)loadable_icon_key_equal,
-						       (GDestroyNotify) loadable_icon_key_free,
-						       (GDestroyNotify) g_object_unref);
-		}
+        if (loadable_icon_cache == NULL) {
+            loadable_icon_cache = g_hash_table_new_full ((GHashFunc) icon_key_hash,
+                                                         (GEqualFunc) icon_key_equal,
+                                                         (GDestroyNotify) icon_key_free,
+                                                         (GDestroyNotify) g_object_unref);
+        }
 
 		lookup_key.icon = icon;
 		lookup_key.size = size;
@@ -355,88 +321,67 @@ nemo_icon_info_lookup (GIcon *icon,
 			g_object_unref (stream);
 		}
 
+        if (!pixbuf) {
+            gtkicon_info = gtk_icon_theme_lookup_icon_for_scale (icon_theme,
+                                                                 "text-x-generic",
+                                                                 size,
+                                                                 scale,
+                                                                 0);
+
+            pixbuf = gtk_icon_info_load_icon (gtkicon_info, NULL);
+        }
+
 		icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
 
-		key = loadable_icon_key_new (icon, size);
+		key = icon_key_new (icon, size);
 		g_hash_table_insert (loadable_icon_cache, key, icon_info);
 
         g_clear_object (&pixbuf);
 
 		return g_object_ref (icon_info);
-	} else if (G_IS_THEMED_ICON (icon)) {
-		const char * const *names;
-		ThemedIconKey lookup_key;
-		ThemedIconKey *key;
-		GtkIconTheme *icon_theme;
-		GtkIconInfo *gtkicon_info;
-		const char *filename;
+	} else  {
+        IconKey lookup_key;
+        IconKey *key;
 
-		if (themed_icon_cache == NULL) {
-			themed_icon_cache =
-				g_hash_table_new_full ((GHashFunc)themed_icon_key_hash,
-						       (GEqualFunc)themed_icon_key_equal,
-						       (GDestroyNotify) themed_icon_key_free,
-						       (GDestroyNotify) g_object_unref);
-		}
-
-		names = g_themed_icon_get_names (G_THEMED_ICON (icon));
-
-		icon_theme = gtk_icon_theme_get_default ();
-		gtkicon_info = gtk_icon_theme_choose_icon_for_scale (icon_theme,
-                                                             (const char **)names,
-                                                             size,
-                                                             scale,
-                                                             0);
-
-		if (gtkicon_info == NULL) {
-			return nemo_icon_info_new_for_pixbuf (NULL, scale);
-		}
-
-		filename = gtk_icon_info_get_filename (gtkicon_info);
-		if (filename == NULL) {
-			g_object_unref (gtkicon_info);
-			return nemo_icon_info_new_for_pixbuf (NULL, scale);
-		}
-
-		lookup_key.filename = (char *)filename;
-		lookup_key.size = size;
-
-		icon_info = g_hash_table_lookup (themed_icon_cache, &lookup_key);
-		if (icon_info) {
-			g_object_unref (gtkicon_info);
-			return g_object_ref (icon_info);
-		}
-
-		icon_info = nemo_icon_info_new_for_icon_info (gtkicon_info, scale);
-
-		key = themed_icon_key_new (filename, size);
-		g_hash_table_insert (themed_icon_cache, key, icon_info);
-
-		g_object_unref (gtkicon_info);
-
-		return g_object_ref (icon_info);
-	} else {
-        GdkPixbuf *pixbuf;
-        GtkIconInfo *gtk_icon_info;
-
-        gtk_icon_info = gtk_icon_theme_lookup_by_gicon_for_scale (gtk_icon_theme_get_default (),
-                                                                  icon,
-                                                                  size,
-                                                                  scale,
-                                                                  0);
-        if (gtk_icon_info != NULL) {
-                pixbuf = gtk_icon_info_load_icon (gtk_icon_info, NULL);
-                g_object_unref (gtk_icon_info);
-        } else {
-                pixbuf = NULL;
+        if (themed_icon_cache == NULL) {
+            themed_icon_cache = g_hash_table_new_full ((GHashFunc) icon_key_hash,
+                                                       (GEqualFunc) icon_key_equal,
+                                                       (GDestroyNotify) icon_key_free,
+                                                       (GDestroyNotify) g_object_unref);
         }
 
-        icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
+        lookup_key.icon = icon;
+        lookup_key.size = size;
 
-        g_clear_object (&pixbuf);
+        icon_info = g_hash_table_lookup (themed_icon_cache, &lookup_key);
+        if (icon_info) {
+            return g_object_ref (icon_info);
+        }
 
-        return icon_info;
-    }
+        gtkicon_info = NULL;
+
+        gtkicon_info = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme,
+                                                                 icon,
+                                                                 size,
+                                                                 scale,
+                                                                 0);
+
+        if (!gtkicon_info) {
+            gtkicon_info = gtk_icon_theme_lookup_icon_for_scale (icon_theme,
+                                                                 "text-x-generic",
+                                                                 size,
+                                                                 scale,
+                                                                 0);
+        }
+
+        icon_info = nemo_icon_info_new_for_icon_info (gtkicon_info, scale);
+        g_object_unref (gtkicon_info);
+
+		key = icon_key_new (icon, size);
+		g_hash_table_insert (themed_icon_cache, key, icon_info);
+
+		return g_object_ref (icon_info);
+	}
 }
 
 NemoIconInfo *

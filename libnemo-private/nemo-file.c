@@ -4520,16 +4520,17 @@ nemo_file_get_icon (NemoFile *file,
 	DEBUG ("Called file_get_icon(), at size %d, force thumbnail %d", size,
 	       flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE);
 
-	if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
-		modified_size = size * scale;
-	} else {
-		modified_size = size * scale * cached_thumbnail_size / NEMO_ICON_SIZE_STANDARD;
-		DEBUG ("Modifying icon size to %d, as our cached thumbnail size is %d",
-		       modified_size, cached_thumbnail_size);
-	}
-
 	if (flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS &&
 	    nemo_file_should_show_thumbnail (file)) {
+
+        if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
+            modified_size = size * scale;
+        } else {
+            modified_size = size * scale * cached_thumbnail_size / NEMO_ICON_SIZE_STANDARD;
+            DEBUG ("Modifying icon size to %d, as our cached thumbnail size is %d",
+                   modified_size, cached_thumbnail_size);
+        }
+
 		if (file->details->thumbnail) {
 			int w, h, s;
 			double thumb_scale;
@@ -4629,18 +4630,12 @@ nemo_file_get_icon (NemoFile *file,
 
 	if (gicon) {
 		icon = nemo_icon_info_lookup (gicon, size, scale);
-		if (nemo_icon_info_is_fallback (icon)) {
-			g_object_unref (icon);
-            GIcon *generic = g_themed_icon_new ("text-x-generic");
 
-			icon = nemo_icon_info_lookup (generic, size, scale);
-            g_object_unref (generic);
-		}
 		g_object_unref (gicon);
 		return icon;
 	} else {
+        /* This is inefficient, but *very* unlikely to be hit */
         GIcon *generic = g_themed_icon_new ("text-x-generic");
-
         icon = nemo_icon_info_lookup (generic, size, scale);
         g_object_unref (generic);
 
