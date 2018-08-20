@@ -206,4 +206,6 @@ message('\n'.join(['',
 '',
 '    nemo-extension documentation: @0@'.format(gtkdoc_enabled),
 '    nemo-extension introspection: @0@'.format(true),
+'',
+'    perf profiling support:  @0@'.format(get_option('profiling'))
 ]))
