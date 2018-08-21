@@ -96,9 +96,9 @@
 #include <libnemo-private/nemo-debug.h>
 
 /* Minimum starting update inverval */
-#define UPDATE_INTERVAL_MIN 200
+#define UPDATE_INTERVAL_MIN 50
 /* Maximum update interval */
-#define UPDATE_INTERVAL_MAX 2000
+#define UPDATE_INTERVAL_MAX 2050
 /* Amount of miliseconds the update interval is increased */
 #define UPDATE_INTERVAL_INC 250
 /* Interval at which the update interval is increased */
