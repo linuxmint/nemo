@@ -720,11 +720,6 @@ nemo_query_editor_init (NemoQueryEditor *editor)
                       G_CALLBACK (entry_changed_cb),
                       editor);
 
-    g_signal_connect (priv->entry,
-                      "key-press-event",
-                      G_CALLBACK (on_key_press_event),
-                      editor);
-
     gtk_entry_set_icon_from_icon_name (GTK_ENTRY (priv->entry),
                                        GTK_ENTRY_ICON_PRIMARY,
                                        "edit-find-symbolic");
@@ -882,8 +877,17 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
         g_clear_pointer (&editor->priv->base_uri, g_free);
         editor->priv->base_uri = base_uri;
 
+        g_signal_connect (editor->priv->entry,
+                          "key-press-event",
+                          G_CALLBACK (on_key_press_event),
+                          editor);
+
         update_fav_icon (editor);
     } else {
+        g_signal_handlers_disconnect_by_func (editor->priv->entry,
+                                              on_key_press_event,
+                                              editor);
+
         gtk_widget_hide (editor->priv->infobar);
     }
 }
