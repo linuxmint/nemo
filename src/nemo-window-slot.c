@@ -65,6 +65,10 @@ sync_search_directory (NemoWindowSlot *slot)
 	g_assert (NEMO_IS_SEARCH_DIRECTORY (directory));
 
 	query = nemo_query_editor_get_query (slot->query_editor);
+
+    nemo_query_set_show_hidden (query,
+                                g_settings_get_boolean (nemo_preferences,
+                                                        NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
 	nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory),
 					     query);
 

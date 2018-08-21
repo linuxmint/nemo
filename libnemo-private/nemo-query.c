@@ -33,6 +33,7 @@ struct NemoQueryDetails {
 	char *text;
 	char *location_uri;
 	GList *mime_types;
+    gboolean show_hidden;
 };
 
 G_DEFINE_TYPE (NemoQuery, nemo_query, G_TYPE_OBJECT);
@@ -118,6 +119,18 @@ nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 {
 	query->details->mime_types = g_list_append (query->details->mime_types,
 						    g_strdup (mime_type));
+}
+
+void
+nemo_query_set_show_hidden (NemoQuery *query, gboolean hidden)
+{
+    query->details->show_hidden = hidden;
+}
+
+gboolean
+nemo_query_get_show_hidden (NemoQuery *query)
+{
+    return query->details->show_hidden;
 }
 
 char *

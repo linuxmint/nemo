@@ -59,6 +59,9 @@ GList *        nemo_query_get_mime_types     (NemoQuery *query);
 void           nemo_query_set_mime_types     (NemoQuery *query, GList *mime_types);
 void           nemo_query_add_mime_type      (NemoQuery *query, const char *mime_type);
 
+void           nemo_query_set_show_hidden    (NemoQuery *query, gboolean hidden);
+gboolean       nemo_query_get_show_hidden    (NemoQuery *query);
+
 char *         nemo_query_to_readable_string (NemoQuery *query);
 NemoQuery *nemo_query_load               (char *file);
 gboolean       nemo_query_save               (NemoQuery *query, char *file);

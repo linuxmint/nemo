@@ -28,6 +28,7 @@
 #include "nemo-file.h"
 #include "nemo-file-private.h"
 #include "nemo-file-utilities.h"
+#include "nemo-global-preferences.h"
 #include "nemo-search-engine.h"
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
@@ -139,6 +140,10 @@ start_or_stop_search_engine (NemoSearchDirectory *search, gboolean adding)
 		search->details->search_running = TRUE;
 		search->details->search_finished = FALSE;
 		ensure_search_engine (search);
+
+        nemo_query_set_show_hidden (search->details->query,
+                                    g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+
 		nemo_search_engine_set_query (search->details->engine, search->details->query);
 
 		reset_file_list (search);
@@ -604,6 +609,10 @@ search_force_reload (NemoDirectory *directory)
 	
 	if (search->details->search_running) {
 		nemo_search_engine_stop (search->details->engine);
+
+        nemo_query_set_show_hidden (search->details->query,
+                                    g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
+
 		nemo_search_engine_set_query (search->details->engine, search->details->query);
 		nemo_search_engine_start (search->details->engine);
 	}
@@ -707,7 +716,7 @@ search_dispose (GObject *object)
 		g_object_unref (search->details->engine);
 		search->details->engine = NULL;
 	}
-	
+
 	G_OBJECT_CLASS (nemo_search_directory_parent_class)->dispose (object);
 }
 

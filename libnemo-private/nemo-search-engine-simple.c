@@ -47,6 +47,8 @@ typedef struct {
 
 	gint n_processed_files;
 	GList *uri_hits;
+
+    gboolean show_hidden;
 } SearchThreadData;
 
 
@@ -157,6 +159,7 @@ search_thread_data_new (NemoSearchEngineSimple *engine,
 
 	data = g_new0 (SearchThreadData, 1);
 
+    data->show_hidden = nemo_query_get_show_hidden (query);
 	data->engine = engine;
 	data->directories = g_queue_new ();
 	data->visited = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
@@ -333,7 +336,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	}
 
 	while ((info = g_file_enumerator_next_file (enumerator, data->cancellable, NULL)) != NULL) {
-		if (g_file_info_get_is_hidden (info)) {
+		if (g_file_info_get_is_hidden (info) && !data->show_hidden) {
 			goto next;
 		}
 
