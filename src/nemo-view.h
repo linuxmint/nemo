@@ -156,7 +156,20 @@ struct NemoViewClass {
 	 * NemoFile pointers.
 	 */
 	GList *	(* get_selection) 	 	(NemoView *view);
-	
+
+    /* peek_selection is not a signal; it is just a function pointer for
+     * subclasses to replace (override). Subclasses must replace it
+     * with a function that returns a pointer to the existing container
+     * selection list.
+     */
+    GList * (* peek_selection)       (NemoView *view);
+
+    /* get_selection_count is not a signal; it is just a function pointer for
+     * subclasses to replace (override). Subclasses must replace it
+     * with a function that returns the current selection count.
+     */
+    gint    (* get_selection_count)       (NemoView *view);
+
 	/* get_selection_for_file_transfer  is a function pointer for
 	 * subclasses to replace (override). Subclasses must replace it
 	 * with a function that returns a newly-allocated GList of
@@ -388,6 +401,8 @@ void              nemo_view_new_file_with_initial_contents (NemoView *view,
 /* selection handling */
 int               nemo_view_get_selection_count        (NemoView      *view);
 GList *           nemo_view_get_selection              (NemoView      *view);
+GList *           nemo_view_peek_selection             (NemoView      *view);
+gint              nemo_view_get_selection_count        (NemoView      *view);
 void              nemo_view_set_selection              (NemoView      *view,
 							    GList             *selection);
 

@@ -4935,8 +4935,8 @@ nemo_icon_container_init (NemoIconContainer *container)
     container->details->tooltip_flags = nemo_global_preferences_get_tooltip_flags ();
 
     details->skip_rename_on_release = FALSE;
-
     details->dnd_grid = NULL;
+    details->current_selection_count = -1;
 }
 
 typedef struct {
@@ -5455,13 +5455,12 @@ activate_selected_items (NemoIconContainer *container)
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
-	selection = nemo_icon_container_get_selection (container);
+	selection = nemo_icon_container_peek_selection (container);
 	if (selection != NULL) {
 	  	g_signal_emit (container,
 				 signals[ACTIVATE], 0,
 				 selection);
 	}
-	g_list_free (selection);
 }
 
 static void
@@ -5473,7 +5472,7 @@ preview_selected_items (NemoIconContainer *container)
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
-	selection = nemo_icon_container_get_selection (container);
+	selection = nemo_icon_container_peek_selection (container);
 	locations = nemo_icon_container_get_selected_icon_locations (container);
 
 	for (idx = 0; idx < locations->len; idx++) {
@@ -5492,7 +5491,6 @@ preview_selected_items (NemoIconContainer *container)
 			       signals[ACTIVATE_PREVIEWER], 0,
 			       selection, locations);
 	}
-	g_list_free (selection);
 }
 
 static void
@@ -5922,6 +5920,24 @@ nemo_icon_container_reveal (NemoIconContainer *container, NemoIconData *data)
 	}
 }
 
+GList *
+nemo_icon_container_get_real_selection (NemoIconContainer *container)
+{
+    GList *list, *p;
+
+    list = NULL;
+    for (p = container->details->icons; p != NULL; p = p->next) {
+        NemoIcon *icon;
+
+        icon = p->data;
+        if (icon->is_selected) {
+            list = g_list_prepend (list, icon->data);
+        }
+    }
+
+    return g_list_reverse (list);
+}
+
 /**
  * nemo_icon_container_get_selection:
  * @container: An icon container.
@@ -5935,21 +5951,45 @@ nemo_icon_container_reveal (NemoIconContainer *container, NemoIconData *data)
 GList *
 nemo_icon_container_get_selection (NemoIconContainer *container)
 {
-	GList *list, *p;
-
 	g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), NULL);
 
-	list = NULL;
-	for (p = container->details->icons; p != NULL; p = p->next) {
-		NemoIcon *icon;
+    nemo_icon_container_update_selection (container);
 
-		icon = p->data;
-		if (icon->is_selected) {
-			list = g_list_prepend (list, icon->data);
-		}
-	}
+    return g_list_copy (container->details->current_selection);
+}
 
-	return g_list_reverse (list);
+/**
+ * nemo_icon_container_peek_selection:
+ * @container: An icon container.
+ *
+ * Get an exiting list of the icons currently selected in @container.
+ *
+ * Return value: A GList of the programmer-specified data associated to each
+ * selected icon, or NULL if no icon is selected.  This list belongs to the
+ * NemoIconContainer and should not be freed.
+ **/
+GList *
+nemo_icon_container_peek_selection (NemoIconContainer *container)
+{
+    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), NULL);
+
+    if (container->details->current_selection_count == -1) {
+        nemo_icon_container_update_selection (container);
+    }
+
+    return container->details->current_selection;
+}
+
+gint
+nemo_icon_container_get_selection_count (NemoIconContainer *container)
+{
+    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), 0);
+
+    if (container->details->current_selection_count == -1) {
+        nemo_icon_container_update_selection (container);
+    }
+
+    return container->details->current_selection_count;
 }
 
 static GList *
@@ -7297,11 +7337,10 @@ nemo_icon_container_accessible_do_action (AtkAction *accessible, int i)
 	container = NEMO_ICON_CONTAINER (widget);
 	switch (i) {
 	case ACTION_ACTIVATE :
-		selection = nemo_icon_container_get_selection (container);
+		selection = nemo_icon_container_peek_selection (container);
 
 		if (selection) {
 			g_signal_emit_by_name (container, "activate", selection);
-			g_list_free (selection);
 		}
 		break;
 	case ACTION_MENU :
@@ -8035,6 +8074,22 @@ nemo_icon_container_finish_adding_icon (NemoIconContainer *container,
                  G_CALLBACK (item_event_callback), container, 0);
 
     g_signal_emit (container, signals[ICON_ADDED], 0, icon->data);
+}
+
+void
+nemo_icon_container_update_selection (NemoIconContainer *container)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    if (container->details->current_selection != NULL) {
+        g_list_free (container->details->current_selection);
+
+        container->details->current_selection = NULL;
+        container->details->current_selection_count = 0;
+    }
+
+    container->details->current_selection = nemo_icon_container_get_real_selection (container);
+    container->details->current_selection_count = g_list_length (container->details->current_selection);
 }
 
 void

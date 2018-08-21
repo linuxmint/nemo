@@ -309,7 +309,10 @@ void              nemo_icon_container_select_all                    (NemoIconCon
 
 
 /* operations on the selection */
+void              nemo_icon_container_update_selection              (NemoIconContainer *container);
 GList     *       nemo_icon_container_get_selection                 (NemoIconContainer  *view);
+GList     *       nemo_icon_container_peek_selection                (NemoIconContainer  *view);
+gint              nemo_icon_container_get_selection_count           (NemoIconContainer  *container);
 void			  nemo_icon_container_invert_selection				(NemoIconContainer  *view);
 void              nemo_icon_container_set_selection                 (NemoIconContainer  *view,
 									 GList                  *selection);

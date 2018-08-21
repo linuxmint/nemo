@@ -117,6 +117,9 @@ struct NemoListViewDetails {
     gboolean show_tooltips;
 
     gboolean click_to_rename;
+
+    GList *current_selection;
+    gint current_selection_count;
 };
 
 struct SelectionForeachData {
@@ -142,6 +145,7 @@ static GdkCursor *              hand_cursor = NULL;
 static GtkTargetList *          source_target_list = NULL;
 
 static GList *nemo_list_view_get_selection                   (NemoView   *view);
+static void   nemo_list_view_update_selection                (NemoView *view);
 static GList *nemo_list_view_get_selection_for_file_transfer (NemoView   *view);
 static void   nemo_list_view_set_zoom_level                  (NemoListView        *view,
 								  NemoZoomLevel  new_level,
@@ -255,6 +259,8 @@ list_selection_changed_callback (GtkTreeSelection *selection, gpointer user_data
 	NemoView *view;
 
 	view = NEMO_VIEW (user_data);
+
+    nemo_list_view_update_selection (view);
 
 	nemo_view_notify_selection_changed (view);
 }
@@ -2928,6 +2934,46 @@ nemo_list_view_get_selection (NemoView *view)
 	return g_list_reverse (list);
 }
 
+static GList *
+nemo_list_view_peek_selection (NemoView *view)
+{
+    NemoListView *list_view = NEMO_LIST_VIEW (view);
+
+    if (list_view->details->current_selection_count == -1) {
+        nemo_list_view_update_selection (NEMO_VIEW (list_view));
+    }
+
+    return list_view->details->current_selection;
+}
+
+static gint
+nemo_list_view_get_selection_count (NemoView *view)
+{
+    NemoListView *list_view = NEMO_LIST_VIEW (view);
+
+    if (list_view->details->current_selection_count == -1) {
+        nemo_list_view_update_selection (NEMO_VIEW (list_view));
+    }
+
+    return list_view->details->current_selection_count;
+}
+
+static void
+nemo_list_view_update_selection (NemoView *view)
+{
+    NemoListView *list_view = NEMO_LIST_VIEW (view);
+
+    if (list_view->details->current_selection != NULL) {
+        g_list_free (list_view->details->current_selection);
+
+        list_view->details->current_selection = NULL;
+        list_view->details->current_selection_count = 0;
+    }
+
+    list_view->details->current_selection = nemo_list_view_get_selection (view);
+    list_view->details->current_selection_count = g_list_length (list_view->details->current_selection);
+}
+
 static void
 nemo_list_view_get_selection_for_file_transfer_foreach_func (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
 {
@@ -3812,6 +3858,8 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->file_changed = nemo_list_view_file_changed;
 	nemo_view_class->get_backing_uri = nemo_list_view_get_backing_uri;
 	nemo_view_class->get_selection = nemo_list_view_get_selection;
+    nemo_view_class->peek_selection = nemo_list_view_peek_selection;
+    nemo_view_class->get_selection_count = nemo_list_view_get_selection_count;
 	nemo_view_class->get_selection_for_file_transfer = nemo_list_view_get_selection_for_file_transfer;
 	nemo_view_class->get_item_count = nemo_list_view_get_item_count;
 	nemo_view_class->is_empty = nemo_list_view_is_empty;
@@ -3898,6 +3946,8 @@ nemo_list_view_init (NemoListView *list_view)
     nemo_list_view_click_to_rename_mode_changed (NEMO_VIEW (list_view));
 
 	nemo_list_view_sort_directories_first_changed (NEMO_VIEW (list_view));
+
+    list_view->details->current_selection_count = -1;
 
 	/* ensure that the zoom level is always set in begin_loading */
 	list_view->details->zoom_level = NEMO_ZOOM_LEVEL_SMALLEST - 1;

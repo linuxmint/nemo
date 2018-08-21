@@ -1280,6 +1280,26 @@ nemo_icon_view_get_selection (NemoView *view)
 	return list;
 }
 
+static GList *
+nemo_icon_view_peek_selection (NemoView *view)
+{
+    GList *list;
+
+    g_return_val_if_fail (NEMO_IS_ICON_VIEW (view), NULL);
+
+    list = nemo_icon_container_peek_selection (get_icon_container (NEMO_ICON_VIEW (view)));
+    nemo_file_list_ref (list);
+    return list;
+}
+
+static gint
+nemo_icon_view_get_selection_count (NemoView *view)
+{
+    g_return_val_if_fail (NEMO_IS_ICON_VIEW (view), 0);
+
+    return nemo_icon_container_get_selection_count (get_icon_container (NEMO_ICON_VIEW (view)));
+}
+
 static void
 count_item (NemoIconData *icon_data,
 	    gpointer callback_data)
@@ -1905,6 +1925,8 @@ selection_changed_callback (NemoIconContainer *container,
 {
 	g_assert (NEMO_IS_ICON_VIEW (icon_view));
 	g_assert (container == get_icon_container (icon_view));
+
+    nemo_icon_container_update_selection (container);
 
 	nemo_view_notify_selection_changed (NEMO_VIEW (icon_view));
 }
@@ -2761,7 +2783,9 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 	nemo_view_class->end_loading = nemo_icon_view_end_loading;
 	nemo_view_class->file_changed = nemo_icon_view_file_changed;
 	nemo_view_class->get_selected_icon_locations = nemo_icon_view_get_selected_icon_locations;
-	nemo_view_class->get_selection = nemo_icon_view_get_selection;
+    nemo_view_class->get_selection = nemo_icon_view_get_selection;
+    nemo_view_class->peek_selection = nemo_icon_view_peek_selection;
+	nemo_view_class->get_selection_count = nemo_icon_view_get_selection_count;
 	nemo_view_class->get_selection_for_file_transfer = nemo_icon_view_get_selection;
 	nemo_view_class->get_item_count = nemo_icon_view_get_item_count;
 	nemo_view_class->is_empty = nemo_icon_view_is_empty;

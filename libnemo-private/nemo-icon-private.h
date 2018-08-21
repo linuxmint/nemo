@@ -298,6 +298,9 @@ struct NemoIconContainerDetails {
 
 	eel_boolean_bit store_layout_timestamps : 1;
 	eel_boolean_bit store_layout_timestamps_when_finishing_new_icons : 1;
+
+    GList *current_selection;
+    gint current_selection_count;
 };
 
 typedef struct {
