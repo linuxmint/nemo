@@ -1031,29 +1031,50 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 		gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
 	}
 
-    gboolean add_child = FALSE;
-
     if (nemo_file_is_directory (file)) {
         guint count;
-        if (nemo_file_get_directory_item_count (file, &count, NULL)) {
-            add_child = count > 0;
-        } else {
-            add_child = TRUE;
+        file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
+
+        if (!nemo_file_get_directory_item_count (file, &count, NULL) || count > 0) {
+            add_dummy_row (model, file_entry);
+            gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
+                                                  path, &iter);
         }
     }
 
-    if (add_child) {
-        file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
-
-        add_dummy_row (model, file_entry);
-
-        gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
-                                                      path, &iter);
-    }
-
-	gtk_tree_path_free (path);
+    gtk_tree_path_free (path);
 
 	return TRUE;
+}
+
+static gboolean
+update_dummy_row (NemoListModel *model,
+                  NemoFile      *file,
+                  FileEntry     *file_entry)
+{
+    GSequence *files;
+    gboolean changed;
+    guint count;
+
+    changed = FALSE;
+
+    if (nemo_file_get_directory_item_count (file, &count, NULL)) {
+        if (count == 0) {
+            files = file_entry->files;
+            if (g_sequence_get_length (files) == 1) {
+                GSequenceIter *dummy_ptr = g_sequence_get_iter_at_pos (files, 0);
+                FileEntry *dummy_entry = g_sequence_get (dummy_ptr);
+
+                if (dummy_entry->file == NULL) {
+                    model->details->stamp++;
+                    g_sequence_remove (dummy_ptr);
+                    changed = TRUE;
+                }
+            }
+        }
+    }
+
+    return changed;
 }
 
 void
@@ -1119,8 +1140,17 @@ nemo_list_model_file_changed (NemoListModel *model, NemoFile *file,
 
 	nemo_list_model_ptr_to_iter (model, ptr, &iter);
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-	gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
-	gtk_tree_path_free (path);
+
+    gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+
+    if (nemo_file_is_directory (file)) {
+        if (update_dummy_row (model, file, g_sequence_get (ptr))) {
+            gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
+                                                  path, &iter);
+        }
+    }
+
+    gtk_tree_path_free (path);
 }
 
 gboolean
