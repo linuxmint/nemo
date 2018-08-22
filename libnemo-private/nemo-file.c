@@ -4734,8 +4734,9 @@ nemo_file_get_date_as_string (NemoFile       *file,
                               NemoDateCompactFormat  date_format)
 {
 	time_t file_time_raw;
-	GDateTime *file_date_time, *now;
-        GDateTime *today_midnight;
+    GDateTime *file_date_time, *file_date_time_utc;
+    GDateTime *today_midnight, *now;
+    GTimeZone *current_timezone;
 	gint days_ago;
 	gboolean use_24;
 	const gchar *format;
@@ -4746,9 +4747,13 @@ nemo_file_get_date_as_string (NemoFile       *file,
   	if (!nemo_file_get_date (file, date_type, &file_time_raw))
 		return NULL;
 
-  	file_date_time = g_date_time_new_from_unix_local (file_time_raw);
-	date_format_pref = g_settings_get_enum (nemo_preferences,
-						NEMO_PREFERENCES_DATE_FORMAT);
+    current_timezone = prefs_current_timezone;
+
+    file_date_time_utc = g_date_time_new_from_unix_utc (file_time_raw);
+    file_date_time = g_date_time_to_timezone (file_date_time_utc, current_timezone);
+    g_date_time_unref (file_date_time_utc);
+
+    date_format_pref = prefs_current_date_format;
 
 	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
 		result = g_date_time_format (file_date_time, "%c");
@@ -4758,23 +4763,26 @@ nemo_file_get_date_as_string (NemoFile       *file,
 		goto out;
 	}
 
-	if (date_format != NEMO_DATE_FORMAT_FULL) {
-		GDateTime *file_date;
+    if (date_format != NEMO_DATE_FORMAT_FULL) {
+        GDateTime *file_date;
 
-		now = g_date_time_new_now_local ();
-                today_midnight = g_date_time_new_local (g_date_time_get_year (now),
-                                                        g_date_time_get_month (now),
-                                                        g_date_time_get_day_of_month (now),
-                                                        0, 0, 0);
+        now = g_date_time_new_now (current_timezone);
 
-		file_date = g_date_time_new_local (g_date_time_get_year (file_date_time),
-                                                   g_date_time_get_month (file_date_time),
-                                                   g_date_time_get_day_of_month (file_date_time),
-                                                   0, 0, 0);
+        today_midnight = g_date_time_new (current_timezone,
+                                          g_date_time_get_year (now),
+                                          g_date_time_get_month (now),
+                                          g_date_time_get_day_of_month (now),
+                                          0, 0, 0);
 
-		days_ago = g_date_time_difference (today_midnight, file_date) / G_TIME_SPAN_DAY;
+        file_date = g_date_time_new (current_timezone,
+                                     g_date_time_get_year (file_date_time),
+                                     g_date_time_get_month (file_date_time),
+                                     g_date_time_get_day_of_month (file_date_time),
+                                     0, 0, 0);
 
-		use_24 = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
+        days_ago = g_date_time_difference (today_midnight, file_date) / G_TIME_SPAN_DAY;
+
+        use_24 = prefs_current_24h_time_format;
 
 		// Show only the time if date is on today
 		if (days_ago < 1) {

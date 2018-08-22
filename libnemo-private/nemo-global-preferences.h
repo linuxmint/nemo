@@ -285,6 +285,11 @@ GSettings *gnome_terminal_preferences;
 GSettings *cinnamon_privacy_preferences;
 GSettings *cinnamon_interface_preferences;
 
+/* Cached for fast access and used in nemo-file.c for constructing date/time strings */
+GTimeZone      *prefs_current_timezone;
+gboolean        prefs_current_24h_time_format;
+NemoDateFormat  prefs_current_date_format;
+
 GTimer    *nemo_startup_timer;
 
 gchar    **file_roller_mimetypes;

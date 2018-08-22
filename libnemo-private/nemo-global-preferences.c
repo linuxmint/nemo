@@ -38,6 +38,8 @@
 
 static gboolean ignore_view_metadata = FALSE;
 
+GFileMonitor *tz_mon;
+
 /*
  * Public functions
  */
@@ -170,6 +172,47 @@ cache_fileroller_mimetypes (void)
     }
 }
 
+static void
+on_time_data_changed (gpointer user_data)
+{
+    prefs_current_date_format = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT);
+    prefs_current_24h_time_format = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
+
+    if (prefs_current_timezone != NULL) {
+        g_time_zone_unref (prefs_current_timezone);
+    }
+
+    prefs_current_timezone = g_time_zone_new_local ();
+}
+
+static void
+setup_cached_time_data (void)
+{
+    GFile *tz;
+
+    prefs_current_timezone = NULL;
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_DATE_FORMAT,
+                              G_CALLBACK (on_time_data_changed), NULL);
+
+    g_signal_connect_swapped (cinnamon_interface_preferences,
+                              "changed::clock-use-24h",
+                              G_CALLBACK (on_time_data_changed), NULL);
+
+
+    tz = g_file_new_for_path ("/etc/localtime");
+
+    tz_mon = g_file_monitor_file (tz, 0, NULL, NULL);
+    g_object_unref (tz);
+
+    g_signal_connect_swapped (tz_mon,
+                              "changed",
+                              G_CALLBACK (on_time_data_changed), NULL);
+
+    on_time_data_changed (NULL);
+}
+
 void
 nemo_global_preferences_init (void)
 {
@@ -202,6 +245,8 @@ nemo_global_preferences_init (void)
                       "changed::" NEMO_PREFERENCES_IGNORE_VIEW_METADATA,
                       G_CALLBACK (ignore_view_metadata_cb), NULL);
 
+    setup_cached_time_data ();
+
     cache_fileroller_mimetypes ();
 }
 
@@ -209,4 +254,20 @@ void
 nemo_global_preferences_finalize (void)
 {
     g_strfreev (file_roller_mimetypes);
+    g_object_unref (tz_mon);
+
+    g_object_unref (nemo_preferences);
+    g_object_unref (nemo_window_state);
+    g_object_unref (nemo_icon_view_preferences);
+    g_object_unref (nemo_list_view_preferences);
+    g_object_unref (nemo_compact_view_preferences);
+    g_object_unref (nemo_desktop_preferences);
+    g_object_unref (nemo_tree_sidebar_preferences);
+    g_object_unref (nemo_plugin_preferences);
+    g_object_unref (gnome_lockdown_preferences);
+    g_object_unref (gnome_background_preferences);
+    g_object_unref (gnome_media_handling_preferences);
+    g_object_unref (gnome_terminal_preferences);
+    g_object_unref (cinnamon_privacy_preferences);
+    g_object_unref (cinnamon_interface_preferences);
 }
