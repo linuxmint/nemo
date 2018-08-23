@@ -1211,7 +1211,7 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 {
 
     NemoFile *file = nemo_file_get_existing_by_uri (uri);
-
+    gboolean enable_exec_button;
     char *primary, *secondary, *display_name;
     GtkWidget *dialog;
 
@@ -1224,37 +1224,49 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
     }
     parameters_special->file = nemo_file_ref (file);
 
-    primary = _("Unknown file type");
-    display_name = nemo_file_get_display_name (file);
-    secondary =
-        g_strdup_printf (_("The file \"%s\" has no known programs associated with it.  "
-                   "If you trust the source of this file, and have sufficient permissions, you can mark it executable and launch it.  "
-                   "Or, you can use the Open With dialog to pick a program to associate it with."
-                   ),
-                 display_name);
+    enable_exec_button = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_MIME_MAKE_EXECUTABLE);
 
     dialog = gtk_message_dialog_new (parameters->parent_window,
                      0,
                      GTK_MESSAGE_WARNING,
                      GTK_BUTTONS_NONE,
                      NULL);
+
+    primary = _("Unknown file type");
+    display_name = nemo_file_get_display_name (file);
+
+    if (enable_exec_button) {
+        secondary =
+            g_strdup_printf (_("The file \"%s\" has no known programs associated with it.  "
+                             "If you trust the source of this file, and have sufficient permissions, you can mark it executable and launch it.  "
+                             "Or, you can use the Open With dialog to pick a program to associate it with."
+                             ),
+                             display_name);
+
+        gtk_dialog_add_button (GTK_DIALOG (dialog),
+                               _("Make executable and run"), RESPONSE_RUN);
+    } else {
+        secondary = g_strdup_printf (_("The file \"%s\" has no known programs associated with it.  "
+                                     "Use the Open With dialog to pick a program to open it with."),
+                                     display_name);
+    }
+
     g_object_set (dialog,
               "text", primary,
               "secondary-text", secondary,
               NULL);
 
     gtk_dialog_add_button (GTK_DIALOG (dialog),
-                   _("Make executable and run"), RESPONSE_RUN);
-    gtk_dialog_add_button (GTK_DIALOG (dialog),
                    _("Choose a program"), RESPONSE_OPEN_WITH);
 
-    if (!nemo_file_can_set_permissions (file)) {
+    if (!nemo_file_can_set_permissions (file) && enable_exec_button) {
         GtkWidget *w = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), RESPONSE_RUN);
         gtk_widget_set_sensitive (w, FALSE);
     }
 
     gtk_dialog_add_button (GTK_DIALOG (dialog),
-                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
 
     g_signal_connect (dialog, "response",

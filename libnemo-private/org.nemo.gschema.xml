@@ -376,6 +376,10 @@
       <default>[]</default>
       <summary>List of saved search strings</summary>
     </key>
+    <key name="enable-mime-actions-make-executable" type="b">
+      <default>false</default>
+      <summary>Display the 'Make executable and run' button in the mime-action dialog (open an unknown filetype)</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

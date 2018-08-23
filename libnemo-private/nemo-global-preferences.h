@@ -260,6 +260,7 @@ typedef enum
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
 
 #define NEMO_PREFERENCES_SAVED_SEARCHES                "saved-searches"
+#define NEMO_PREFERENCES_SHOW_MIME_MAKE_EXECUTABLE     "enable-mime-actions-make-executable"
 
 void nemo_global_preferences_init                      (void);
 void nemo_global_preferences_finalize                  (void);
