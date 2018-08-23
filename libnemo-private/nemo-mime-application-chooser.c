@@ -51,8 +51,6 @@ struct _NemoMimeApplicationChooserDetails {
 	GtkWidget *set_as_default_button;
 	GtkWidget *open_with_widget;
 	GtkWidget *add_button;
-    GtkWidget *custom_picker;
-    GtkWidget *file_button;
     GAppInfo *custom_info;
     GtkWidget *custom_entry;
 
@@ -94,7 +92,6 @@ add_clicked_cb (GtkButton *button,
 
     gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
     g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -157,7 +154,6 @@ reset_clicked_cb (GtkButton *button,
 	g_app_info_reset_type_associations (chooser->details->content_type);
 	gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
 	g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -178,7 +174,6 @@ set_as_default_clicked_cb (GtkButton *button,
 
     gtk_app_chooser_refresh (GTK_APP_CHOOSER (chooser->details->open_with_widget));
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
-    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
     g_signal_emit_by_name (nemo_signaller_get_current (), "mime_data_changed");
 }
 
@@ -226,19 +221,17 @@ application_selected_cb (GtkAppChooserWidget *widget,
 
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), "");
 
-	default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
-	gtk_widget_set_sensitive (chooser->details->set_as_default_button,
-				  !g_app_info_equal (info, default_app));
+    default_app = g_app_info_get_default_for_type (chooser->details->content_type, FALSE);
+    gtk_widget_set_sensitive (chooser->details->set_as_default_button,
+                              (!default_app || !g_app_info_equal (info, default_app)));
 
 	gtk_widget_set_sensitive (chooser->details->add_button,
 				  app_info_can_add (info, chooser->details->content_type));
 
-    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser->details->file_button), "");
-
     if (chooser->details->dialog_ok)
         gtk_widget_set_sensitive (chooser->details->dialog_ok, TRUE);
 
-    g_object_unref (default_app);
+    g_clear_object (&default_app);
 }
 
 static void
@@ -370,12 +363,10 @@ custom_entry_changed_cb (GtkEditable *entry, gpointer user_data)
 }
 
 static void
-custom_app_set_cb (GtkFileChooserButton *button,
-                   gpointer user_data)
+custom_app_set (NemoMimeApplicationChooser *chooser,
+                GtkFileChooser             *dialog)
 {
-    NemoMimeApplicationChooser *chooser = user_data;
-
-    gchar *unescaped = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (button));
+    gchar *unescaped = gtk_file_chooser_get_filename (dialog);
     gchar *escaped = eel_str_escape_spaces (unescaped);
 
     gtk_entry_set_text (GTK_ENTRY (chooser->details->custom_entry), escaped);
@@ -477,9 +468,49 @@ exec_filter_func (const GtkFileFilterInfo *info, gpointer data)
 }
 
 static void
+on_file_chooser_button_clicked (GtkButton                  *button,
+                                NemoMimeApplicationChooser *chooser)
+{
+    GtkWidget *dialog;
+    GtkFileFilter *filter;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new (_("Custom application"),
+                                          NULL,
+                                          GTK_FILE_CHOOSER_ACTION_OPEN,
+                                          _("_Cancel"),
+                                          GTK_RESPONSE_CANCEL,
+                                          _("_Open"),
+                                          GTK_RESPONSE_ACCEPT,
+                                          NULL);
+
+    gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog),
+                                         g_get_home_dir ());
+
+    filter = gtk_file_filter_new ();
+
+    gtk_file_filter_add_custom (filter,
+                                GTK_FILE_FILTER_FILENAME,
+                                (GtkFileFilterFunc) exec_filter_func,
+                                NULL,
+                                NULL);
+
+    gtk_file_filter_set_name (filter, _("Executables"));
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+    res = gtk_dialog_run (GTK_DIALOG (dialog));
+
+    if (res == GTK_RESPONSE_ACCEPT) {
+        custom_app_set (chooser, GTK_FILE_CHOOSER (dialog));
+    }
+
+    gtk_widget_destroy (dialog);
+}
+
+static void
 nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 {
-	GtkWidget *box, *button, *w;
+	GtkWidget *box, *button;
 	GAppInfo *info;
 
 	gtk_container_set_border_width (GTK_CONTAINER (chooser), 8);
@@ -505,16 +536,6 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 			    TRUE, TRUE, 6);
 	gtk_widget_show (chooser->details->open_with_widget);
 
-	g_signal_connect (chooser->details->open_with_widget, "application-selected",
-			  G_CALLBACK (application_selected_cb),
-			  chooser);
-	g_signal_connect (chooser->details->open_with_widget, "populate-popup",
-			  G_CALLBACK (populate_popup_cb),
-			  chooser);
-    g_signal_connect (chooser->details->open_with_widget, "application-activated",
-              G_CALLBACK (application_activated_cb),
-              chooser);
-
     gtk_app_chooser_widget_set_show_other (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
                           TRUE);
     gtk_app_chooser_widget_set_show_recommended (GTK_APP_CHOOSER_WIDGET (chooser->details->open_with_widget),
@@ -530,7 +551,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
     gtk_widget_show (GTK_WIDGET (custom_label));
 
     GtkWidget *custom_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start (GTK_BOX (chooser), custom_box, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (chooser), custom_box, FALSE, FALSE, 6);
 
     GtkWidget *entry = gtk_entry_new ();
     gtk_box_pack_start (GTK_BOX (custom_box), entry, TRUE, TRUE, 0);
@@ -543,49 +564,22 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 
     chooser->details->custom_entry = entry;
 
-    button = gtk_file_chooser_button_new (_("Custom application"), GTK_FILE_CHOOSER_ACTION_OPEN);
+    button = gtk_button_new_from_icon_name ("document-open-symbolic", GTK_ICON_SIZE_BUTTON);
 
-    /* FIXME: I shouldn't do this, but this is the simplest way for 2.6 at this point to remove the
-       useless (and misleading) label and image in the file picker button - when a program is selected,
-       it dumps the path into the custom entry box, we don't need to show anything in the button.
-
-       These names are valid in GTK 3.10, .12, .14, .16 and master.
-
-       This should be replaced by a simple icon-only button that creates a GtkFileChooserDialog when
-       clicked.  A lot more changes involved there, postpone for 2.8
-     */
-
-    w = GTK_WIDGET (gtk_widget_get_template_child (button, GTK_TYPE_FILE_CHOOSER_BUTTON, "label"));
-    gtk_widget_hide (w);
-    w = GTK_WIDGET (gtk_widget_get_template_child (button, GTK_TYPE_FILE_CHOOSER_BUTTON, "image"));
-    gtk_widget_hide (w);
-
-    g_signal_connect (button, "file-set",
-                      G_CALLBACK (custom_app_set_cb),
+    g_signal_connect (button, "clicked",
+                      G_CALLBACK (on_file_chooser_button_clicked),
                       chooser);
+
     gtk_widget_show (button);
     gtk_box_pack_start (GTK_BOX (custom_box), button, FALSE, FALSE, 6);
 
-    chooser->details->file_button = button;
-
     gtk_widget_show_all (custom_box);
-
-    chooser->details->custom_picker = button;
 
 	box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_set_spacing (GTK_BOX (box), 6);
 	gtk_button_box_set_layout (GTK_BUTTON_BOX (box), GTK_BUTTONBOX_CENTER);
 	gtk_box_pack_start (GTK_BOX (chooser), box, FALSE, FALSE, 6);
 	gtk_widget_show (box);
-
-    GtkFileFilter *filter = gtk_file_filter_new ();
-    gtk_file_filter_add_custom (filter,
-                                GTK_FILE_FILTER_FILENAME,
-                                (GtkFileFilterFunc) exec_filter_func,
-                                NULL,
-                                NULL);
-    gtk_file_filter_set_name (filter, _("Executables"));
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (button), filter);
 
  	button = gtk_button_new_with_label (_("Add to list"));
 	g_signal_connect (button, "clicked",
@@ -619,6 +613,16 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 		g_object_unref (info);
 	}
 
+    g_signal_connect (chooser->details->open_with_widget, "application-selected",
+              G_CALLBACK (application_selected_cb),
+              chooser);
+    g_signal_connect (chooser->details->open_with_widget, "populate-popup",
+              G_CALLBACK (populate_popup_cb),
+              chooser);
+    g_signal_connect (chooser->details->open_with_widget, "application-activated",
+              G_CALLBACK (application_activated_cb),
+              chooser);
+
     gtk_widget_grab_focus (chooser->details->custom_entry);
 }
 
@@ -641,6 +645,8 @@ nemo_mime_application_chooser_constructed (GObject *object)
 
 	if (G_OBJECT_CLASS (nemo_mime_application_chooser_parent_class)->constructed != NULL)
 		G_OBJECT_CLASS (nemo_mime_application_chooser_parent_class)->constructed (object);
+
+    gtk_widget_set_halign (GTK_WIDGET (object), GTK_ALIGN_CENTER);
 
 	nemo_mime_application_chooser_build_ui (chooser);
 	nemo_mime_application_chooser_apply_labels (chooser);
