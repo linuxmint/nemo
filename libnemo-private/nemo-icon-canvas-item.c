@@ -77,8 +77,6 @@ struct NemoIconCanvasItemDetails {
     cairo_surface_t *rendered_surface;
 	char *editable_text;		/* Text that can be modified by a renaming function */
 	char *additional_text;		/* Text that cannot be modifed, such as file size, etc. */
-	GdkPoint *attach_points;
-	int n_attach_points;
 
 	/* Size of the text at current font. */
 	int text_dx;
@@ -118,13 +116,9 @@ struct NemoIconCanvasItemDetails {
 
 	guint is_visible : 1;
 
-	GdkRectangle embedded_text_rect;
-	char *embedded_text;
-
 	/* Cached PangoLayouts. Only used if the icon is visible */
 	PangoLayout *editable_text_layout;
 	PangoLayout *additional_text_layout;
-	PangoLayout *embedded_text_layout;
 
 	/* Cached rectangle in canvas coordinates */
 	EelIRect canvas_rect;
@@ -180,10 +174,6 @@ static PangoLayout *get_label_layout                 (PangoLayout               
 static gboolean hit_test_stretch_handle              (NemoIconCanvasItem        *item,
 						      EelIRect                       canvas_rect,
 						      GtkCornerType *corner);
-static void      draw_embedded_text                  (NemoIconCanvasItem        *icon_item,
-                                                      cairo_t                       *cr,
-						      int                            x,
-						      int                            y);
 
 static void       nemo_icon_canvas_item_ensure_bounds_up_to_date (NemoIconCanvasItem *icon_item);
 
@@ -219,7 +209,6 @@ nemo_icon_canvas_item_finalize (GObject *object)
 
 	g_free (details->editable_text);
 	g_free (details->additional_text);
-	g_free (details->attach_points);
 
     if (details->rendered_surface != NULL) {
         cairo_surface_destroy (details->rendered_surface);
@@ -232,12 +221,6 @@ nemo_icon_canvas_item_finalize (GObject *object)
 	if (details->additional_text_layout != NULL) {
 		g_object_unref (details->additional_text_layout);
 	}
-
-	if (details->embedded_text_layout != NULL) {
-		g_object_unref (details->embedded_text_layout);
-	}
-
-	g_free (details->embedded_text);
 
 	G_OBJECT_CLASS (nemo_icon_canvas_item_parent_class)->finalize (object);
 }
@@ -273,9 +256,7 @@ nemo_icon_canvas_item_invalidate_label_size (NemoIconCanvasItem *item)
 	if (item->details->additional_text_layout != NULL) {
 		pango_layout_context_changed (item->details->additional_text_layout);
 	}
-	if (item->details->embedded_text_layout != NULL) {
-		pango_layout_context_changed (item->details->embedded_text_layout);
-	}
+
 	nemo_icon_canvas_item_invalidate_bounds_cache (item);
 	item->details->text_width = -1;
 	item->details->text_height = -1;
@@ -509,8 +490,6 @@ nemo_icon_canvas_item_get_drag_surface (NemoIconCanvasItem *item)
 	icon_rect.x1 = item_offset_x + pix_width;
 	icon_rect.y1 = item_offset_y + pix_height;
 
-	draw_embedded_text (item, cr,
-			    item_offset_x, item_offset_y);
 	draw_label_text (item, cr, icon_rect);
 	cairo_destroy (cr);
 
@@ -549,52 +528,6 @@ nemo_icon_canvas_item_set_image (NemoIconCanvasItem *item,
 	nemo_icon_canvas_item_invalidate_bounds_cache (item);
 	eel_canvas_item_request_update (EEL_CANVAS_ITEM (item));
 }
-
-void
-nemo_icon_canvas_item_set_attach_points (NemoIconCanvasItem *item,
-					     GdkPoint *attach_points,
-					     int n_attach_points)
-{
-	g_free (item->details->attach_points);
-	item->details->attach_points = NULL;
-	item->details->n_attach_points = 0;
-
-	if (attach_points != NULL && n_attach_points != 0) {
-		item->details->attach_points = g_memdup (attach_points, n_attach_points * sizeof (GdkPoint));
-		item->details->n_attach_points = n_attach_points;
-	}
-
-	nemo_icon_canvas_item_invalidate_bounds_cache (item);
-}
-
-void
-nemo_icon_canvas_item_set_embedded_text_rect (NemoIconCanvasItem       *item,
-						  const GdkRectangle           *text_rect)
-{
-	item->details->embedded_text_rect = *text_rect;
-
-	nemo_icon_canvas_item_invalidate_bounds_cache (item);
-	eel_canvas_item_request_update (EEL_CANVAS_ITEM (item));
-}
-
-void
-nemo_icon_canvas_item_set_embedded_text (NemoIconCanvasItem       *item,
-					     const char                   *text)
-{
-	g_free (item->details->embedded_text);
-	item->details->embedded_text = g_strdup (text);
-
-	if (item->details->embedded_text_layout != NULL) {
-		if (text != NULL) {
-			pango_layout_set_text (item->details->embedded_text_layout, text, -1);
-		} else {
-			pango_layout_set_text (item->details->embedded_text_layout, "", -1);
-		}
-	}
-
-	eel_canvas_item_request_update (EEL_CANVAS_ITEM (item));
-}
-
 
 /* Recomputes the bounding box of a icon canvas item.
  * This is a generic implementation that could be used for any canvas item
@@ -1242,11 +1175,6 @@ nemo_icon_canvas_item_invalidate_label (NemoIconCanvasItem     *item)
 		g_object_unref (item->details->additional_text_layout);
 		item->details->additional_text_layout = NULL;
 	}
-
-	if (item->details->embedded_text_layout) {
-		g_object_unref (item->details->embedded_text_layout);
-		item->details->embedded_text_layout = NULL;
-	}
 }
 
 
@@ -1399,66 +1327,6 @@ map_surface (NemoIconCanvasItem *icon_item)
 	return icon_item->details->rendered_surface;
 }
 
-static void
-draw_embedded_text (NemoIconCanvasItem *item,
-                    cairo_t *cr,
-		    int x, int y)
-{
-	PangoLayout *layout;
-	PangoContext *context;
-	PangoFontDescription *desc;
-	GtkWidget *widget;
-	GtkStyleContext *style_context;
-    guint scale;
-
-	if (item->details->embedded_text == NULL ||
-	    item->details->embedded_text_rect.width == 0 ||
-	    item->details->embedded_text_rect.height == 0) {
-		return;
-	}
-
-	widget = GTK_WIDGET (EEL_CANVAS_ITEM (item)->canvas);
-
-	if (item->details->embedded_text_layout != NULL) {
-		layout = g_object_ref (item->details->embedded_text_layout);
-	} else {
-		context = gtk_widget_get_pango_context (widget);
-		layout = pango_layout_new (context);
-		pango_layout_set_text (layout, item->details->embedded_text, -1);
-
-		desc = pango_font_description_from_string ("monospace 6");
-		pango_layout_set_font_description (layout, desc);
-		pango_font_description_free (desc);
-
-		if (item->details->is_visible) {
-			item->details->embedded_text_layout = g_object_ref (layout);
-		}
-	}
-
-	style_context = gtk_widget_get_style_context (widget);
-	gtk_style_context_save (style_context);
-	gtk_style_context_add_class (style_context, "icon-embedded-text");
-
-	cairo_save (cr);
-
-    scale = gtk_widget_get_scale_factor (widget);
-
-	cairo_rectangle (cr,
-			 x + item->details->embedded_text_rect.x / scale,
-			 y + item->details->embedded_text_rect.y / scale,
-			 item->details->embedded_text_rect.width / scale,
-			 item->details->embedded_text_rect.height / scale);
-	cairo_clip (cr);
-
-	gtk_render_layout (style_context, cr,
-			   x + item->details->embedded_text_rect.x / scale,
-			   y + item->details->embedded_text_rect.y / scale,
-			   layout);
-
-	gtk_style_context_restore (style_context);
-	cairo_restore (cr);
-}
-
 /* Draw the icon item for non-anti-aliased mode. */
 static void
 nemo_icon_canvas_item_draw (EelCanvasItem *item,
@@ -1493,8 +1361,6 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
                              temp_surface,
                              icon_rect.x0, icon_rect.y0);
     cairo_surface_destroy (temp_surface);
-
-	draw_embedded_text (icon_item, cr, icon_rect.x0, icon_rect.y0);
 
 	/* Draw stretching handles (if necessary). */
 	draw_stretch_handles (icon_item, cr, &icon_rect);

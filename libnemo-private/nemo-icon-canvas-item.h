@@ -74,13 +74,6 @@ void        nemo_icon_canvas_item_set_emblems              (NemoIconCanvasItem  
 								GList                        *emblem_pixbufs);
 void        nemo_icon_canvas_item_set_show_stretch_handles (NemoIconCanvasItem       *item,
 								gboolean                      show_stretch_handles);
-void        nemo_icon_canvas_item_set_attach_points        (NemoIconCanvasItem       *item,
-								GdkPoint                     *attach_points,
-								int                           n_attach_points);
-void        nemo_icon_canvas_item_set_embedded_text_rect   (NemoIconCanvasItem       *item,
-								const GdkRectangle           *text_rect);
-void        nemo_icon_canvas_item_set_embedded_text        (NemoIconCanvasItem       *item,
-								const char                   *text);
 double      nemo_icon_canvas_item_get_max_text_width       (NemoIconCanvasItem       *item);
 const char *nemo_icon_canvas_item_get_editable_text        (NemoIconCanvasItem       *icon_item);
 void        nemo_icon_canvas_item_set_renaming             (NemoIconCanvasItem       *icon_item,
