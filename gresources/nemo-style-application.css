@@ -69,3 +69,22 @@ NemoDesktopWindow GtkPaned {
     text-shadow: none;
 }
 
+.nemo-window .nemo-inactive-pane .view, .nemo-window .nemo-inactive-pane iconview {
+    background-color: @theme_unfocused_bg_color;
+}
+
+.nemo-window .nemo-window-pane widget.entry {
+    border: 1px solid;
+    border-radius: 3px;
+    color: @theme_text_color;
+    border-color: @theme_selected_bg_color;
+    background-color: @theme_bg_color;
+}
+
+.nemo-window .nemo-window-pane widget.entry:selected {
+    border: 1px solid;
+    border-radius: 3px;
+    color: @theme_selected_text_color;
+    border-color: @theme_selected_bg_color;
+    background-color: @theme_selected_bg_color;
+}

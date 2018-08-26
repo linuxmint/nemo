@@ -13,6 +13,7 @@
     <file alias="icons/thumbnail_frame.png">thumbnail_frame.png</file>
     <file alias="icons/knob.png">knob.png</file>
     <file>nemo-style-fallback.css</file>
+    <file>nemo-style-fallback-mandatory.css</file>
     <file>nemo-style-application.css</file>
   </gresource>
 </gresources>
