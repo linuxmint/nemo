@@ -4834,7 +4834,7 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
 						 g_param_spec_boolean ("activate_prelight_icon_label",
 								     "Activate Prelight Icon Label",
 								     "Whether icon labels should make use of its prelight color in prelight state",
-								     FALSE,
+								     TRUE,
 								     G_PARAM_READABLE));
 }
 
