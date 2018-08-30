@@ -29,17 +29,36 @@ typedef enum {
  * be square. Since individual icons can be stretched,
  * each icon is not constrained to this nominal size.
  */
-#define NEMO_ICON_SIZE_SMALLEST	16
-#define NEMO_ICON_SIZE_SMALLER	24
-#define NEMO_ICON_SIZE_SMALL	32
-#define NEMO_ICON_SIZE_STANDARD	48
-#define NEMO_ICON_SIZE_LARGE	72
-#define NEMO_ICON_SIZE_LARGER	96
-#define NEMO_ICON_SIZE_LARGEST     192
+
+#define NEMO_COMPACT_FORCED_ICON_SIZE 16
+
+#define NEMO_LIST_ICON_SIZE_SMALLEST 16
+#define NEMO_LIST_ICON_SIZE_SMALLER  24
+#define NEMO_LIST_ICON_SIZE_SMALL    32
+#define NEMO_LIST_ICON_SIZE_STANDARD 48
+#define NEMO_LIST_ICON_SIZE_LARGE    72
+#define NEMO_LIST_ICON_SIZE_LARGER   96
+#define NEMO_LIST_ICON_SIZE_LARGEST  192
+
+#define NEMO_ICON_SIZE_SMALLEST 24
+#define NEMO_ICON_SIZE_SMALLER  32
+#define NEMO_ICON_SIZE_SMALL    48
+#define NEMO_ICON_SIZE_STANDARD 64
+#define NEMO_ICON_SIZE_LARGE    96
+#define NEMO_ICON_SIZE_LARGER   128
+#define NEMO_ICON_SIZE_LARGEST  256
 
 #define NEMO_DESKTOP_ICON_SIZE_SMALL 32
 #define NEMO_DESKTOP_ICON_SIZE_STANDARD 48
 #define NEMO_DESKTOP_ICON_SIZE_LARGE 64
+
+#define NEMO_ICON_TEXT_WIDTH_SMALLEST  0
+#define NEMO_ICON_TEXT_WIDTH_SMALLER   100
+#define NEMO_ICON_TEXT_WIDTH_SMALL     135
+#define NEMO_ICON_TEXT_WIDTH_STANDARD  135
+#define NEMO_ICON_TEXT_WIDTH_LARGE     135
+#define NEMO_ICON_TEXT_WIDTH_LARGER    128
+#define NEMO_ICON_TEXT_WIDTH_LARGEST   256
 
 /* Maximum size of an icon that the icon factory will ever produce */
 #define NEMO_ICON_MAXIMUM_SIZE     320
@@ -84,6 +103,8 @@ void                  nemo_icon_info_clear_caches                 (void);
 
 /* Relationship between zoom levels and icons sizes. */
 guint nemo_get_icon_size_for_zoom_level          (NemoZoomLevel  zoom_level);
+guint nemo_get_icon_text_width_for_zoom_level    (NemoZoomLevel  zoom_level);
+
 guint nemo_get_list_icon_size_for_zoom_level     (NemoZoomLevel  zoom_level);
 
 guint nemo_get_desktop_icon_size_for_zoom_level  (NemoZoomLevel  zoom_level);

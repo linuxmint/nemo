@@ -2459,7 +2459,7 @@ set_compact_view (NemoIconView *icon_view,
                                                                                                      NEMO_ICON_LAYOUT_T_B_R_L :
                                                                                                      NEMO_ICON_LAYOUT_T_B_L_R);
         nemo_icon_container_set_forced_icon_size (get_icon_container (icon_view),
-                                                  NEMO_ICON_SIZE_SMALLEST);
+                                                  NEMO_COMPACT_FORCED_ICON_SIZE);
     } else {
         nemo_icon_container_set_layout_mode (get_icon_container (icon_view),
                                              gtk_widget_get_direction (GTK_WIDGET(icon_view)) == GTK_TEXT_DIR_RTL ?

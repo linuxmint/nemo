@@ -337,7 +337,7 @@ nemo_icon_info_lookup (GIcon *icon,
                                                                  "text-x-generic",
                                                                  size,
                                                                  scale,
-                                                                 0);
+                                                                 GTK_ICON_LOOKUP_FORCE_SIZE);
 
             pixbuf = gtk_icon_info_load_icon (gtkicon_info, NULL);
         }
@@ -375,14 +375,14 @@ nemo_icon_info_lookup (GIcon *icon,
                                                                  icon,
                                                                  size,
                                                                  scale,
-                                                                 0);
+                                                                 GTK_ICON_LOOKUP_FORCE_SIZE);
 
         if (!gtkicon_info) {
             gtkicon_info = gtk_icon_theme_lookup_icon_for_scale (icon_theme,
                                                                  "text-x-generic",
                                                                  size,
                                                                  scale,
-                                                                 0);
+                                                                 GTK_ICON_LOOKUP_FORCE_SIZE);
         }
 
         icon_info = nemo_icon_info_new_for_icon_info (gtkicon_info, scale);
@@ -591,6 +591,31 @@ nemo_get_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 }
 
 guint
+nemo_get_icon_text_width_for_zoom_level (NemoZoomLevel  zoom_level)
+{
+    switch (zoom_level) {
+    case NEMO_ZOOM_LEVEL_SMALLEST:
+        return NEMO_ICON_TEXT_WIDTH_SMALLEST;
+    case NEMO_ZOOM_LEVEL_SMALLER:
+        return NEMO_ICON_TEXT_WIDTH_SMALLER;
+    case NEMO_ZOOM_LEVEL_SMALL:
+        return NEMO_ICON_TEXT_WIDTH_SMALL;
+    case NEMO_ZOOM_LEVEL_STANDARD:
+        return NEMO_ICON_TEXT_WIDTH_STANDARD;
+    case NEMO_ZOOM_LEVEL_LARGE:
+        return NEMO_ICON_TEXT_WIDTH_LARGE;
+    case NEMO_ZOOM_LEVEL_LARGER:
+        return NEMO_ICON_TEXT_WIDTH_LARGER;
+    case NEMO_ZOOM_LEVEL_LARGEST:
+        return NEMO_ICON_TEXT_WIDTH_LARGEST;
+    case NEMO_ZOOM_LEVEL_NULL:
+    default:
+        g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
+    }
+}
+
+
+guint
 nemo_get_desktop_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 {
     switch (zoom_level) {
@@ -615,19 +640,19 @@ nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
 {
     switch (zoom_level) {
     case NEMO_ZOOM_LEVEL_SMALLEST:
-        return NEMO_ICON_SIZE_SMALLEST;
+        return NEMO_LIST_ICON_SIZE_SMALLEST;
     case NEMO_ZOOM_LEVEL_SMALLER:
-        return NEMO_ICON_SIZE_SMALLEST;
+        return NEMO_LIST_ICON_SIZE_SMALLEST;
     case NEMO_ZOOM_LEVEL_SMALL:
-        return NEMO_ICON_SIZE_SMALLER;
+        return NEMO_LIST_ICON_SIZE_SMALLER;
     case NEMO_ZOOM_LEVEL_STANDARD:
-        return NEMO_ICON_SIZE_SMALL;
+        return NEMO_LIST_ICON_SIZE_SMALL;
     case NEMO_ZOOM_LEVEL_LARGE:
-        return NEMO_ICON_SIZE_STANDARD;
+        return NEMO_LIST_ICON_SIZE_STANDARD;
     case NEMO_ZOOM_LEVEL_LARGER:
-        return NEMO_ICON_SIZE_LARGE;
+        return NEMO_LIST_ICON_SIZE_LARGE;
     case NEMO_ZOOM_LEVEL_LARGEST:
-        return NEMO_ICON_SIZE_LARGER;
+        return NEMO_LIST_ICON_SIZE_LARGER;
     case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);

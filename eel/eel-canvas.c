@@ -1148,7 +1148,7 @@ eel_canvas_item_request_redraw (EelCanvasItem *item)
 	if (item->flags & EEL_CANVAS_ITEM_MAPPED)
 		eel_canvas_request_redraw (item->canvas,
 					   item->x1, item->y1,
-					   item->x2 + 1, item->y2 + 1);
+					   item->x2 + 1, item->y2 + 3);
 }
 
 

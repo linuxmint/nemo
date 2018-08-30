@@ -106,7 +106,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
-			NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
+            NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
+			NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
 
 	if (for_drag_accept) {
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
@@ -665,7 +666,8 @@ lay_down_one_line (NemoIconContainer *container,
            double y,
            double max_height,
            GArray *positions,
-           gboolean whole_text)
+           gboolean whole_text,
+           gint     gap)
 {
     GList *p;
     NemoIcon *icon;
@@ -677,7 +679,7 @@ lay_down_one_line (NemoIconContainer *container,
     is_rtl = nemo_icon_container_is_layout_rtl (container);
 
     /* Lay out the icons along the baseline. */
-    x = GET_VIEW_CONSTANT (container, icon_pad_left);
+    x = gap;
     i = 0;
     for (p = line_start; p != line_end; p = p->next) {
         icon = p->data;
@@ -739,6 +741,8 @@ lay_down_one_column (NemoIconContainer *container,
     }
 }
 
+#define LAYOUT_GAP 4
+
 static void
 lay_down_icons_horizontal (NemoIconContainer *container,
                GList *icons,
@@ -760,7 +764,11 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     int icon_width;
     int i;
     int num_columns;
+    double ppu;
+    int gap;
+    int device_canvas_width;
     GtkAllocation allocation;
+    gint icon_size, text_size, use_size;
 
     g_assert (NEMO_IS_ICON_CONTAINER (container));
 
@@ -775,6 +783,15 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     canvas_width = nemo_icon_container_get_canvas_width (container, allocation);
     max_icon_width = max_text_width = 0.0;
 
+    ppu = EEL_CANVAS (container)->pixels_per_unit;
+    gap = floor (LAYOUT_GAP / ppu);
+
+    device_canvas_width = floor (canvas_width * ppu);
+    icon_size = nemo_get_icon_size_for_zoom_level (container->details->zoom_level);
+    text_size = nemo_get_icon_text_width_for_zoom_level (container->details->zoom_level);
+
+    use_size = MAX (icon_size, text_size) + 15;
+
     if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
         /* Would it be worth caching these bounds for the next loop? */
         for (p = icons; p != NULL; p = p->next) {
@@ -787,18 +804,18 @@ lay_down_icons_horizontal (NemoIconContainer *container,
             max_text_width = MAX (max_text_width, ceil (text_bounds.x1 - text_bounds.x0));
         }
 
-        grid_width = max_icon_width + max_text_width + GET_VIEW_CONSTANT (container, icon_pad_left) + GET_VIEW_CONSTANT (container, icon_pad_right);
+        grid_width = max_icon_width + max_text_width + gap;
     } else {
-        num_columns = floor(canvas_width / GET_VIEW_CONSTANT (container, standard_icon_grid_width));
-        num_columns = fmax(num_columns, 1);
+        num_columns = device_canvas_width / use_size;
         /* Minimum of one column */
-        grid_width = canvas_width / num_columns - 1;
+        num_columns = MAX (num_columns, 1);
         /* -1 prevents jitter */
+        grid_width = (((device_canvas_width / num_columns) / ppu) - 1.0);
     }
 
-    line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? GET_VIEW_CONSTANT (container, icon_pad_left) : 0;
+    line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? gap : 0;
     line_start = icons;
-    y = start_y + GET_VIEW_CONSTANT (container, container_pad_top);
+    y = start_y + gap;
     i = 0;
 
     max_height_above = 0;
@@ -814,8 +831,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
         text_bounds = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
-        icon_width = ceil ((bounds.x1 - bounds.x0)/grid_width) * grid_width;
-
+        icon_width = grid_width;
         /* Calculate size above/below baseline */
         height_above = icon_bounds.y1 - bounds.y0;
         height_below = bounds.y1 - icon_bounds.y1;
@@ -823,22 +839,22 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         /* If this icon doesn't fit, it's time to lay out the line that's queued up. */
         if (line_start != p && line_width + icon_width >= canvas_width ) {
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-                y += GET_VIEW_CONSTANT (container, icon_pad_top);
+                y += gap;
             } else {
                 /* Advance to the baseline. */
-                y += GET_VIEW_CONSTANT (container, icon_pad_top) + max_height_above;
+                y += gap + max_height_above;
             }
 
-            lay_down_one_line (container, line_start, p, y, max_height_above, positions, FALSE);
+            lay_down_one_line (container, line_start, p, y, max_height_above, positions, FALSE, gap);
 
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-                y += max_height_above + max_height_below + GET_VIEW_CONSTANT (container, icon_pad_bottom);
+                y += max_height_above + max_height_below + gap;
             } else {
                 /* Advance to next line. */
-                y += max_height_below + GET_VIEW_CONSTANT (container, icon_pad_bottom);
+                y += max_height_below + gap;
             }
 
-            line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? GET_VIEW_CONSTANT (container, icon_pad_left) : 0;
+            line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? gap : 0;
             line_start = p;
             i = 0;
 
@@ -859,7 +875,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         position->height = icon_bounds.y1 - icon_bounds.y0;
 
         if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-            position->x_offset = max_icon_width + GET_VIEW_CONSTANT (container, icon_pad_left) + GET_VIEW_CONSTANT (container, icon_pad_right) - (icon_bounds.x1 - icon_bounds.x0);
+            position->x_offset = max_icon_width + (2 * gap) - (icon_bounds.x1 - icon_bounds.x0);
             position->y_offset = 0;
         } else {
             position->x_offset = (icon_width - (icon_bounds.x1 - icon_bounds.x0)) / 2;
@@ -873,13 +889,13 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     /* Lay down that last line of icons. */
     if (line_start != NULL) {
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-                y += GET_VIEW_CONSTANT (container, icon_pad_top);
+                y += gap;
             } else {
                 /* Advance to the baseline. */
-                y += GET_VIEW_CONSTANT (container, icon_pad_top) + max_height_above;
+                y += gap + max_height_above;
             }
 
-        lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE);
+        lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE, gap);
     }
 
     g_array_free (positions, TRUE);
@@ -900,6 +916,8 @@ lay_down_icons_vertical (NemoIconContainer *container,
     EelDRect text_bounds;
     GtkAllocation allocation;
 
+    double ppu;
+    int gap;
     double line_height;
 
     double max_height;
@@ -922,6 +940,9 @@ lay_down_icons_vertical (NemoIconContainer *container,
         return;
     }
 
+    ppu = EEL_CANVAS (container)->pixels_per_unit;
+    gap = floor (LAYOUT_GAP / ppu);
+
     positions = g_array_new (FALSE, FALSE, sizeof (NemoCanvasRects));
     gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
 
@@ -939,11 +960,11 @@ lay_down_icons_vertical (NemoIconContainer *container,
 
     max_width = max_icon_width + max_text_width;
     max_height = MAX (max_icon_height, max_text_height);
-    max_height_with_borders = GET_VIEW_CONSTANT (container, icon_pad_top) + max_height;
+    max_height_with_borders = gap + max_height;
 
-    max_bounds_height_with_borders = GET_VIEW_CONSTANT (container, icon_pad_top) + max_bounds_height;
+    max_bounds_height_with_borders = gap + max_bounds_height;
 
-    line_height = GET_VIEW_CONSTANT (container, icon_pad_top);
+    line_height = gap;
     line_start = icons;
     x = 0;
     i = 0;
@@ -961,7 +982,7 @@ lay_down_icons_vertical (NemoIconContainer *container,
          * it is better than visual glitches
          */
         if (line_start != p && line_height + (max_bounds_height_with_borders-1) >= canvas_height ) {
-            x += GET_VIEW_CONSTANT (container, icon_pad_left);
+            x += gap;
 
             /* correctly set (per-column) width */
             if (!container->details->all_columns_same_width) {
@@ -971,16 +992,16 @@ lay_down_icons_vertical (NemoIconContainer *container,
                 }
             }
 
-            lay_down_one_column (container, line_start, p, x, GET_VIEW_CONSTANT (container, container_pad_top), max_height_with_borders, positions);
+            lay_down_one_column (container, line_start, p, x, gap, max_height_with_borders, positions);
 
             /* Advance to next column. */
             if (container->details->all_columns_same_width) {
-                x += max_width + GET_VIEW_CONSTANT (container, icon_pad_right);
+                x += max_width + gap;
             } else {
-                x += max_width_in_column + GET_VIEW_CONSTANT (container, icon_pad_right);
+                x += max_width_in_column + gap;
             }
 
-            line_height = GET_VIEW_CONSTANT (container, icon_pad_top);
+            line_height = gap;
             line_start = p;
             i = 0;
 
@@ -1000,8 +1021,8 @@ lay_down_icons_vertical (NemoIconContainer *container,
             position->width = max_width;
         }
         position->height = max_height;
-        position->y_offset = GET_VIEW_CONSTANT (container, icon_pad_top);
-        position->x_offset = GET_VIEW_CONSTANT (container, icon_pad_left);
+        position->y_offset = gap;
+        position->x_offset = gap;
 
         position->x_offset += max_icon_width - ceil (icon_bounds.x1 - icon_bounds.x0);
 
@@ -1014,8 +1035,8 @@ lay_down_icons_vertical (NemoIconContainer *container,
 
     /* Lay down that last column of icons. */
     if (line_start != NULL) {
-        x += GET_VIEW_CONSTANT (container, icon_pad_left);
-        lay_down_one_column (container, line_start, NULL, x, GET_VIEW_CONSTANT (container, container_pad_top), max_height_with_borders, positions);
+        x += gap;
+        lay_down_one_column (container, line_start, NULL, x, gap, max_height_with_borders, positions);
     }
 
     g_array_free (positions, TRUE);
