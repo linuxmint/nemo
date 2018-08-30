@@ -2122,6 +2122,8 @@ nemo_icon_view_container_init (NemoIconViewContainer *icon_container)
 
     static gboolean setup_prefs = FALSE;
 
+    g_signal_connect (icon_container, "get-tooltip-text", G_CALLBACK (on_get_tooltip_text), NULL);
+
     if (!setup_prefs) {
         g_signal_connect_swapped (nemo_icon_view_preferences,
                       "changed::" NEMO_PREFERENCES_ICON_VIEW_TEXT_ELLIPSIS_LIMIT,
@@ -2134,8 +2136,6 @@ nemo_icon_view_container_init (NemoIconViewContainer *icon_container)
                       G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
                       NULL);
         desktop_text_ellipsis_limit_changed_callback (NULL);
-
-        g_signal_connect (icon_container, "get-tooltip-text", G_CALLBACK (on_get_tooltip_text), NULL);
 
         setup_prefs = TRUE;
     }
