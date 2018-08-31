@@ -37,6 +37,7 @@
 
 
 static gboolean ignore_view_metadata = FALSE;
+static gchar **file_roller_mimetypes = NULL;
 
 GFileMonitor *tz_mon;
 
@@ -129,47 +130,52 @@ ignore_view_metadata_cb (GSettings *settings,
     ignore_view_metadata = g_settings_get_boolean (settings, key);
 }
 
-static void
-cache_fileroller_mimetypes (void)
+gchar **
+nemo_global_preferences_get_fileroller_mimetypes (void)
 {
-    if (nemo_is_file_roller_installed ()) {
-        GAppInfo *app_info;
-        gchar ***results;
-        gchar **result;
-        gint i;
+    static gsize once_init = 0;
 
-        results = g_desktop_app_info_search ("file-roller");
+    if (g_once_init_enter (&once_init)) {
+        if (nemo_is_file_roller_installed ()) {
+            GAppInfo *app_info;
+            gchar ***results;
+            gchar **result;
+            gint i;
 
-        if (results != NULL && results[0] != NULL) {
-            const gchar *best;
+            results = g_desktop_app_info_search ("file-roller");
 
-            best = results[0][0];
+            if (results != NULL && results[0] != NULL) {
+                const gchar *best;
 
-            app_info = G_APP_INFO (g_desktop_app_info_new (best));
+                best = results[0][0];
 
-            if (app_info == NULL) {
-                g_warning ("Unable to retrieve list of file-roller mimetypes");
-                file_roller_mimetypes = NULL;
-                return;
+                app_info = G_APP_INFO (g_desktop_app_info_new (best));
+
+                if (app_info) {
+                    file_roller_mimetypes = g_strdupv ((gchar **) g_app_info_get_supported_types (app_info));
+                    g_object_unref (app_info);
+                }
+
+                if (app_info == NULL) {
+                    g_warning ("Unable to retrieve list of file-roller mimetypes");
+                }
+
+                i = 0;
+                result = results[i];
+
+                while (result != NULL) {
+                    g_strfreev (result);
+                    result = results[++i];
+                }
+
+                g_free (results);
             }
-
-            file_roller_mimetypes = g_strdupv ((gchar **) g_app_info_get_supported_types (app_info));
-
-            g_object_unref (app_info);
         }
 
-        i = 0;
-        result = results[i];
-
-        while (result != NULL) {
-            g_strfreev (result);
-            result = results[++i];
-        }
-
-        g_free (results);
-    } else {
-        file_roller_mimetypes = NULL;
+        g_once_init_leave (&once_init, 1);
     }
+
+    return file_roller_mimetypes;
 }
 
 static void
@@ -246,8 +252,6 @@ nemo_global_preferences_init (void)
                       G_CALLBACK (ignore_view_metadata_cb), NULL);
 
     setup_cached_time_data ();
-
-    cache_fileroller_mimetypes ();
 }
 
 void

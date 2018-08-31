@@ -269,6 +269,7 @@ char *nemo_global_preferences_get_desktop_iid (void);
 gboolean nemo_global_preferences_get_ignore_view_metadata (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 gboolean nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key);
+gchar **nemo_global_preferences_get_fileroller_mimetypes (void);
 
 GSettings *nemo_preferences;
 GSettings *nemo_icon_view_preferences;
@@ -291,8 +292,6 @@ gboolean        prefs_current_24h_time_format;
 NemoDateFormat  prefs_current_date_format;
 
 GTimer    *nemo_startup_timer;
-
-gchar    **file_roller_mimetypes;
 
 G_END_DECLS
 

@@ -7235,11 +7235,14 @@ gboolean
 nemo_file_is_archive (NemoFile *file)
 {
     gchar *mime_type;
+    gchar **file_roller_mimetypes;
     guint i;
 
     g_return_val_if_fail (file != NULL, FALSE);
 
     mime_type = nemo_file_get_mime_type (file);
+
+    file_roller_mimetypes = nemo_global_preferences_get_fileroller_mimetypes ();
 
     if (file_roller_mimetypes != NULL) {
         for (i = 0; i < g_strv_length (file_roller_mimetypes); i++) {
