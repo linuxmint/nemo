@@ -238,7 +238,7 @@ gboolean                nemo_file_should_show_directory_item_count  (NemoFile   
 gboolean                nemo_file_should_show_type                  (NemoFile                   *file);
 GList *                 nemo_file_get_keywords                      (NemoFile                   *file);
 GList *                 nemo_file_get_emblem_icons                  (NemoFile                   *file,
-									 char                          **exclude);
+                                                                     NemoFile                   *view_file);
 gboolean                nemo_file_get_directory_item_mime_types     (NemoFile                   *file,
 									 GList                         **mime_list);
 

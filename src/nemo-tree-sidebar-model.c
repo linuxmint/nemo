@@ -270,30 +270,22 @@ get_menu_icon_for_file (TreeNode *node,
                         NemoFile *file,
                         NemoFileIconFlags flags)
 {
+    NemoFile *parent_file;
 	GIcon *gicon, *emblem_icon, *emblemed_icon;
 	GEmblem *emblem;
 	int size;
 	GList *emblem_icons, *l;
-	char *emblems_to_ignore[3];
-	int i;
 
 	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
 	gicon = G_ICON (nemo_file_get_icon_pixbuf (file, size, TRUE, node->icon_scale, flags));
 
-	i = 0;
-	emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_TRASH;
+    parent_file = NULL;
 
 	if (node->parent && node->parent->file) {
-		if (!nemo_file_can_write (node->parent->file)) {
-			emblems_to_ignore[i++] = NEMO_FILE_EMBLEM_NAME_CANT_WRITE;
-		}
+        parent_file = node->parent->file;
 	}
 
-	emblems_to_ignore[i++] = NULL;
-
-	emblem = NULL;
-	emblem_icons = nemo_file_get_emblem_icons (node->file,
-						       emblems_to_ignore);
+	emblem_icons = nemo_file_get_emblem_icons (node->file, parent_file);
 
 	/* pick only the first emblem we can render for the tree view */
 	for (l = emblem_icons; l != NULL; l = l->next) {

@@ -67,7 +67,6 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 					      gboolean              *has_window_open)
 {
 	NemoIconView *icon_view;
-	char **emblems_to_ignore;
 	NemoFile *file;
 	NemoFileIconFlags flags;
 	NemoIconInfo *icon_info;
@@ -94,11 +93,8 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
 	}
 
-	emblems_to_ignore = nemo_view_get_emblem_names_to_exclude
-		(NEMO_VIEW (icon_view));
 	emblem_icons = nemo_file_get_emblem_icons (file,
-						       emblems_to_ignore);
-	g_strfreev (emblems_to_ignore);
+                                               nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)));
 
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
 	icon_info = nemo_file_get_icon (file, size, GET_VIEW_CONSTANT (container, max_text_width_standard), scale, flags);

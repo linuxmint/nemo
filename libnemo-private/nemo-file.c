@@ -3082,29 +3082,12 @@ prepend_automatic_keywords (NemoFile *file,
 			    GList *names)
 {
 	/* Prepend in reverse order. */
-	NemoFile *parent;
 
-	parent = nemo_file_get_parent (file);
-
-#ifdef TRASH_IS_FAST_ENOUGH
-	if (nemo_file_is_in_trash (file)) {
-		names = g_list_prepend
-			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_TRASH));
-	}
-#endif
 	if (file_has_note (file)) {
 		names = g_list_prepend
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_NOTE));
 	}
 
-	/* Trash files are assumed to be read-only,
-	 * so we want to ignore them here. */
-	if (!nemo_file_can_write (file) &&
-	    !nemo_file_is_in_trash (file) &&
-	    (parent == NULL || nemo_file_can_write (parent))) {
-		names = g_list_prepend
-			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_CANT_WRITE));
-	}
 	if (!nemo_file_can_read (file)) {
 		names = g_list_prepend
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_CANT_READ));
@@ -3113,11 +3096,6 @@ prepend_automatic_keywords (NemoFile *file,
 		names = g_list_prepend
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
 	}
-
-	if (parent) {
-		nemo_file_unref (parent);
-	}
-
 
 	return names;
 }
@@ -6833,19 +6811,19 @@ nemo_file_is_launchable (NemoFile *file)
  * Return the list of names of emblems that this file should display,
  * in canonical order.
  * @file: NemoFile representing the file in question.
+ * @view_file: NemoFile representing the view's directory_as_file.
  *
  * Returns: A list of emblem names.
  *
  **/
 GList *
 nemo_file_get_emblem_icons (NemoFile *file,
-				char **exclude)
+                            NemoFile *view_file)
 {
 	GList *keywords, *l;
 	GList *icons;
 	char *icon_names[2];
 	char *keyword;
-	int i;
 	GIcon *icon;
 
 	if (file == NULL) {
@@ -6857,34 +6835,15 @@ nemo_file_get_emblem_icons (NemoFile *file,
 	keywords = nemo_file_get_keywords (file);
 	keywords = prepend_automatic_keywords (file, keywords);
 
+    if (view_file && nemo_file_can_write (view_file)) {
+        if (!nemo_file_can_write (file) && !nemo_file_is_in_trash (file)) {
+            keywords = g_list_prepend (keywords, g_strdup (NEMO_FILE_EMBLEM_NAME_CANT_WRITE));
+        }
+    }
+
 	icons = NULL;
 	for (l = keywords; l != NULL; l = l->next) {
 		keyword = l->data;
-
-#ifdef TRASH_IS_FAST_ENOUGH
-		if (strcmp (keyword, NEMO_FILE_EMBLEM_NAME_TRASH) == 0) {
-			char *uri;
-			gboolean file_is_trash;
-			/* Leave out the trash emblem for the trash itself, since
-			 * putting a trash emblem on a trash icon is gilding the
-			 * lily.
-			 */
-			uri = nemo_file_get_uri (file);
-			file_is_trash = strcmp (uri, EEL_TRASH_URI) == 0;
-			g_free (uri);
-			if (file_is_trash) {
-				continue;
-			}
-		}
-#endif
-		if (exclude) {
-			for (i = 0; exclude[i] != NULL; i++) {
-				if (strcmp (exclude[i], keyword) == 0) {
-					continue;
-				}
-			}
-		}
-
 
 		icon_names[0] = g_strconcat ("emblem-", keyword, NULL);
 		icon_names[1] = keyword;
