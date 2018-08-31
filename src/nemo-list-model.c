@@ -264,19 +264,10 @@ static void
 nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int column, GValue *value)
 {
 	NemoListModel *model;
+    NemoFile *parent_file;
 	FileEntry *file_entry;
 	NemoFile *file;
 	char *str;
-	GdkPixbuf *icon, *rendered_icon;
-	GIcon *gicon, *emblemed_icon, *emblem_icon;
-	NemoIconInfo *icon_info;
-	GEmblem *emblem;
-	GList *emblem_icons, *l;
-	int icon_size, icon_scale;
-	NemoZoomLevel zoom_level;
-	NemoFile *parent_file;
-	NemoFileIconFlags flags;
-    cairo_surface_t *surface;
 
 	model = (NemoListModel *)tree_model;
 
@@ -308,6 +299,14 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 		g_value_init (value, CAIRO_GOBJECT_TYPE_SURFACE);
 
 		if (file != NULL) {
+            NemoFileIconFlags flags;
+            cairo_surface_t *surface;
+            int icon_size, icon_scale;
+            NemoZoomLevel zoom_level;
+            GdkPixbuf *icon, *rendered_icon;
+            NemoIconInfo *icon_info;
+            GList *emblem_icons, *l;
+
 			zoom_level = nemo_list_model_get_zoom_level_from_column_id (column);
 			icon_size = nemo_get_list_icon_size_for_zoom_level (zoom_level);
             icon_scale = nemo_list_model_get_icon_scale (model);
@@ -333,46 +332,53 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 				}
 			}
 
-            GdkPixbuf *pixbuf = nemo_file_get_icon_pixbuf (file, icon_size, TRUE, icon_scale, flags);
+            icon_info = nemo_file_get_icon (file, icon_size, 0, icon_scale, flags);
+            emblem_icons = nemo_file_get_emblem_icons (file, parent_file);
 
-            gint w, h, s;
-            gboolean bad_ratio;
-            w = gdk_pixbuf_get_width (pixbuf);
-            h = gdk_pixbuf_get_height (pixbuf);
+            if (emblem_icons) {
+                GdkPixbuf *initial_pixbuf;
+                GIcon *gicon, *emblemed_icon, *emblem_icon;
+                GEmblem *emblem;
+                gint w, h, s;
+                gboolean bad_ratio;
 
-            s = MAX (w, h);
-            if (s < icon_size)
-                icon_size = s;
+                initial_pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
 
-            bad_ratio = (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > w ||
-                        (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > h;
+                w = gdk_pixbuf_get_width (initial_pixbuf);
+                h = gdk_pixbuf_get_height (initial_pixbuf);
 
-			gicon = G_ICON (pixbuf);
+                s = MAX (w, h);
+                if (s < icon_size)
+                    icon_size = s;
 
-			/* render emblems with GEmblemedIcon */
-			emblem_icons = nemo_file_get_emblem_icons (file,
-								                       parent_file);
+                bad_ratio = (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > w ||
+                            (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > h;
 
-			/* pick only the first emblem we can render for the list view */
-			for (l = emblem_icons; !bad_ratio && l != NULL; l = l->next) {
-				emblem_icon = l->data;
-				emblem = g_emblem_new (emblem_icon);
-				emblemed_icon = g_emblemed_icon_new (gicon, emblem);
+                gicon = G_ICON (initial_pixbuf);
 
-				g_object_unref (gicon);
-				g_object_unref (emblem);
-				gicon = emblemed_icon;
+                /* pick only the first emblem we can render for the list view */
+                for (l = emblem_icons; !bad_ratio && l != NULL; l = l->next) {
+                    emblem_icon = l->data;
+                    emblem = g_emblem_new (emblem_icon);
+                    emblemed_icon = g_emblemed_icon_new (gicon, emblem);
 
-				break;
-			}
+                    g_object_unref (gicon);
+                    g_object_unref (emblem);
+                    gicon = emblemed_icon;
 
-			g_list_free_full (emblem_icons, g_object_unref);
+                    break;
+                }
 
-			icon_info = nemo_icon_info_lookup (gicon, icon_size, icon_scale);
+                nemo_icon_info_clear (&icon_info);
+                icon_info = nemo_icon_info_lookup (gicon, icon_size, icon_scale);
+
+                g_list_free_full (emblem_icons, g_object_unref);
+                g_object_unref (gicon);
+            }
+
 			icon = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
 
 			nemo_icon_info_unref (icon_info);
-			g_object_unref (gicon);
 
 			if (model->details->highlight_files != NULL &&
 			    g_list_find_custom (model->details->highlight_files,
