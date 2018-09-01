@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.0 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <requires lib="xapp" version="0.0"/>
   <object class="GtkListStore" id="model1">
     <columns>
       <!-- column-name gchararray -->
@@ -253,31 +254,29 @@
       </row>
     </data>
   </object>
-  <object class="GtkDialog" id="file_management_dialog">
+  <object class="GtkWindow" id="file_management_dialog">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">File Management Preferences</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
-    <property name="default_height">600</property>
+    <property name="default_height">530</property>
     <property name="type_hint">dialog</property>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="dialog-vbox1">
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
+        <child>
+          <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="closebutton1">
-                <property name="label" translatable="yes">Close</property>
+              <object class="XAppStackSidebar">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
+                <property name="can_focus">False</property>
+                <property name="stack">stack1</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -285,67 +284,15 @@
                 <property name="position">0</property>
               </packing>
             </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkToolbar" id="toolbar1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="toolbar_style">icons</property>
-            <child>
-              <object class="GtkToolItem" id="toolbutton1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkStackSwitcher" id="stack-switcher">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="stack">stack1</property>
-                  </object>
-                </child>
-                <style>
-                  <class name="raised"/>
-                </style>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <style>
-              <class name="primary-toolbar"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame" id="stack-frame">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
-            <property name="margin_top">5</property>
-            <property name="label_xalign">0</property>
             <child>
               <object class="GtkStack" id="stack1">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="transition_type">slide-left-right</property>
+                <property name="can_focus">False</property>
+                <property name="transition_type">crossfade</property>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <child>
                       <object class="GtkViewport" id="viewport2">
                         <property name="visible">True</property>
@@ -936,12 +883,13 @@
                   <packing>
                     <property name="name">views</property>
                     <property name="title" translatable="yes">Views</property>
+                    <property name="icon_name">view-grid-symbolic</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <child>
                       <object class="GtkViewport" id="viewport1">
                         <property name="visible">True</property>
@@ -1580,13 +1528,14 @@
                   <packing>
                     <property name="name">behavior</property>
                     <property name="title" translatable="yes">Behavior</property>
+                    <property name="icon_name">nemo-prefs-behavior-symbolic</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow3">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <child>
                       <object class="GtkViewport" id="viewport3">
                         <property name="visible">True</property>
@@ -1646,7 +1595,6 @@
                                           <object class="GtkBox" id="hbox28">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="margin_left">40</property>
                                             <child>
                                               <object class="GtkLabel" id="captions_label_0">
                                                 <property name="visible">True</property>
@@ -1680,7 +1628,6 @@
                                           <object class="GtkBox" id="hbox29">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="margin_left">40</property>
                                             <child>
                                               <object class="GtkLabel" id="captions_label_1">
                                                 <property name="visible">True</property>
@@ -1715,7 +1662,6 @@
                                           <object class="GtkBox" id="hbox30">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="margin_left">40</property>
                                             <child>
                                               <object class="GtkLabel" id="captions_label_2">
                                                 <property name="visible">True</property>
@@ -2183,13 +2129,14 @@
                   <packing>
                     <property name="name">display</property>
                     <property name="title" translatable="yes">Display</property>
+                    <property name="icon_name">nemo-prefs-display-symbolic</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow4">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <child>
                       <object class="GtkViewport" id="viewport4">
                         <property name="visible">True</property>
@@ -2198,13 +2145,12 @@
                           <object class="GtkBox" id="vbox29">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="border_width">12</property>
                             <property name="orientation">vertical</property>
-                            <property name="spacing">18</property>
                             <child>
                               <object class="GtkBox" id="vbox30">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="border_width">6</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">6</property>
                                 <child>
@@ -2273,13 +2219,14 @@
                   <packing>
                     <property name="name">list-columns</property>
                     <property name="title" translatable="yes">List Columns</property>
+                    <property name="icon_name">view-list-symbolic</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow5">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <child>
                       <object class="GtkViewport" id="viewport5">
                         <property name="visible">True</property>
@@ -2763,13 +2710,14 @@
                   <packing>
                     <property name="name">preview</property>
                     <property name="title" translatable="yes">Preview</property>
+                    <property name="icon_name">nemo-prefs-preview-symbolic</property>
                     <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow6">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <child>
                       <object class="GtkViewport" id="viewport6">
                         <property name="visible">True</property>
@@ -2819,7 +2767,7 @@
                                             <property name="receives_default">False</property>
                                             <property name="use_underline">True</property>
                                             <property name="xalign">0</property>
-                                            <property name="yalign">0.43999999761581421</property>
+                                            <property name="yalign">0.5</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -3044,32 +2992,26 @@
                   <packing>
                     <property name="name">toolbar</property>
                     <property name="title" translatable="yes">Toolbar</property>
+                    <property name="icon_name">nemo-prefs-toolbar-symbolic</property>
                     <property name="position">5</property>
                   </packing>
                 </child>
               </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
             </child>
-            <style>
-              <class name="view"/>
-            </style>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-7">closebutton1</action-widget>
-    </action-widgets>
-    <child>
-      <placeholder/>
-    </child>
-    <style>
-      <class name="nemo-properties-dialog"/>
-    </style>
   </object>
   <object class="GtkListStore" id="model9">
     <columns>
