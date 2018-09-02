@@ -29,6 +29,7 @@ publicIcons = [
   'hicolor/actions/scalable/collapse-menu-hover-symbolic.svg',
   'hicolor/categories/scalable/nemo-prefs-behavior-symbolic.svg',
   'hicolor/categories/scalable/nemo-prefs-display-symbolic.svg',
+  'hicolor/categories/scalable/nemo-prefs-plugins-symbolic.svg',
   'hicolor/categories/scalable/nemo-prefs-preview-symbolic.svg',
   'hicolor/categories/scalable/nemo-prefs-toolbar-symbolic.svg',
   'hicolor/devices/scalable/drive-removable-media-usb-symbolic.svg',

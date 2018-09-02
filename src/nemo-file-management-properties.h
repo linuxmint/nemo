@@ -30,7 +30,7 @@
 
 G_BEGIN_DECLS
 
-void nemo_file_management_properties_dialog_show (GtkWindow *window);
+void nemo_file_management_properties_dialog_show (GtkWindow *window, const gchar *initial_page);
 
 G_END_DECLS
 

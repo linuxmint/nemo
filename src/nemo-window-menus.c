@@ -44,7 +44,6 @@
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 #include "nemo-toolbar.h"
-#include "nemo-plugin-manager.h"
 
 #include <gtk/gtk.h>
 #include <gio/gio.h>
@@ -297,14 +296,18 @@ action_preferences_callback (GtkAction *action,
 
 	window = GTK_WINDOW (user_data);
 
-	nemo_file_management_properties_dialog_show (window);
+	nemo_file_management_properties_dialog_show (window, NULL);
 }
 
 static void
 action_plugins_callback (GtkAction *action,
                          gpointer user_data)
 {
-    nemo_plugin_manager_show ();
+    GtkWindow *window;
+
+    window = GTK_WINDOW (user_data);
+
+    nemo_file_management_properties_dialog_show (window, "plugins");
 }
 
 static void

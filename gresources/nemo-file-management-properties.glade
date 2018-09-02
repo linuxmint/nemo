@@ -256,6 +256,7 @@
   </object>
   <object class="GtkWindow" id="file_management_dialog">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">File Management Preferences</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
     <property name="default_height">530</property>
@@ -276,7 +277,7 @@
               <object class="XAppStackSidebar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="stack">stack1</property>
+                <property name="stack">page_stack</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -285,7 +286,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkStack" id="stack1">
+              <object class="GtkStack" id="page_stack">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="transition_type">crossfade</property>
@@ -2994,6 +2995,34 @@
                     <property name="title" translatable="yes">Toolbar</property>
                     <property name="icon_name">nemo-prefs-toolbar-symbolic</property>
                     <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow7">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <child>
+                      <object class="GtkViewport" id="viewport7">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkBox" id="plugin_box">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="name">plugins</property>
+                    <property name="title" translatable="yes">Plugins</property>
+                    <property name="icon_name">nemo-prefs-plugins-symbolic</property>
+                    <property name="position">6</property>
                   </packing>
                 </child>
               </object>

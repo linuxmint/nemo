@@ -40,6 +40,8 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-module.h>
 
+#include "nemo-plugin-manager.h"
+
 /* string enum preferences */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET "default_view_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET "icon_view_zoom_combobox"
@@ -433,6 +435,18 @@ nemo_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *buil
 }
 
 static void
+nemo_file_management_properties_dialog_setup_plugin_page (GtkBuilder *builder)
+{
+    GtkWidget *box;
+
+    box = GTK_WIDGET (gtk_builder_get_object (builder, "plugin_box"));
+
+    gtk_box_pack_start (GTK_BOX (box),
+                        GTK_WIDGET (nemo_plugin_manager_new ()),
+                        TRUE, TRUE, 0);
+}
+
+static void
 create_date_format_menu (GtkBuilder *builder)
 {
 	GtkComboBoxText *combo_box;
@@ -756,7 +770,9 @@ connect_quick_renames (GtkBuilder *builder)
 }
 
 static  void
-nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *window)
+nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
+                                              GtkWindow   *window,
+                                              const gchar *initial_page)
 {
 	GtkWidget *dialog;
 
@@ -988,6 +1004,7 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
+    nemo_file_management_properties_dialog_setup_plugin_page (builder);
 
     dialog = GTK_WIDGET (gtk_builder_get_object (builder, "file_management_dialog"));
 
@@ -1002,11 +1019,21 @@ nemo_file_management_properties_dialog_setup (GtkBuilder *builder, GtkWindow *wi
 
 	preferences_dialog = dialog;
 	g_object_add_weak_pointer (G_OBJECT (dialog), (gpointer *) &preferences_dialog);
+
+    if (initial_page != NULL) {
+        GtkStack *stack;
+
+        stack = GTK_STACK (gtk_builder_get_object (builder, "page_stack"));
+
+        gtk_stack_set_visible_child_name (stack, initial_page);
+    }
+
 	gtk_widget_show (dialog);
 }
 
 void
-nemo_file_management_properties_dialog_show (GtkWindow *window)
+nemo_file_management_properties_dialog_show (GtkWindow   *window,
+                                             const gchar *initial_page)
 {
 	GtkBuilder *builder;
 
@@ -1021,7 +1048,7 @@ nemo_file_management_properties_dialog_show (GtkWindow *window)
 				       "/org/nemo/nemo-file-management-properties.glade",
 				       NULL);
 
-	nemo_file_management_properties_dialog_setup (builder, window);
+	nemo_file_management_properties_dialog_setup (builder, window, initial_page);
 
 	g_object_unref (builder);
 }
