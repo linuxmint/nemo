@@ -57,7 +57,7 @@ static guchar
 lighten_component (guchar cur_value)
 {
 	int new_value = cur_value;
-	new_value += 24 + (new_value >> 3);
+	new_value += 10 + (new_value >> 3);
 	if (new_value > 255) {
 		new_value = 255;
 	}
