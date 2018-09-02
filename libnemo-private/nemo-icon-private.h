@@ -374,13 +374,7 @@ void          nemo_icon_container_get_all_icon_bounds (NemoIconContainer *contai
                                                        NemoIconCanvasItemBoundsUsage usage);
 void          nemo_icon_container_store_layout_timestamps_now (NemoIconContainer *container);
 void          nemo_icon_container_redo_layout (NemoIconContainer *container);
-void          nemo_icon_container_start_monitor_top_left (NemoIconContainer *container,
-                                                          NemoIconData *data,
-                                                          gconstpointer client,
-                                                          gboolean large_text);
-void          nemo_icon_container_stop_monitor_top_left (NemoIconContainer *container,
-                                                         NemoIconData *data,
-                                                         gconstpointer client);
+
 NemoIconInfo *nemo_icon_container_get_icon_images (NemoIconContainer *container,
                                                    NemoIconData      *data,
                                                    int                    size,

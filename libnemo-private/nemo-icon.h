@@ -69,9 +69,6 @@ typedef struct {
 	/* Whether this item is visible in the view. */
 	eel_boolean_bit is_visible : 1;
 
-	/* Whether a monitor was set on this icon. */
-	eel_boolean_bit is_monitored : 1;
-
 	eel_boolean_bit has_lazy_position : 1;
 } NemoIcon;
 

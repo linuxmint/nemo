@@ -193,40 +193,6 @@ nemo_icon_view_container_get_icon_description (NemoIconContainer *container,
 }
 
 static void
-nemo_icon_view_container_start_monitor_top_left (NemoIconContainer *container,
-						     NemoIconData      *data,
-						     gconstpointer          client,
-						     gboolean               large_text)
-{
-	NemoFile *file;
-	NemoFileAttributes attributes;
-
-	file = (NemoFile *) data;
-
-	g_assert (NEMO_IS_FILE (file));
-
-	attributes = NEMO_FILE_ATTRIBUTE_TOP_LEFT_TEXT;
-	if (large_text) {
-		attributes |= NEMO_FILE_ATTRIBUTE_LARGE_TOP_LEFT_TEXT;
-	}
-	nemo_file_monitor_add (file, client, attributes);
-}
-
-static void
-nemo_icon_view_container_stop_monitor_top_left (NemoIconContainer *container,
-						    NemoIconData      *data,
-						    gconstpointer          client)
-{
-	NemoFile *file;
-
-	file = (NemoFile *) data;
-
-	g_assert (NEMO_IS_FILE (file));
-
-	nemo_file_monitor_remove (file, client);
-}
-
-static void
 nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
 						      NemoIconData      *data)
 {
@@ -2090,8 +2056,6 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 	ic_class->get_icon_text = nemo_icon_view_container_get_icon_text;
 	ic_class->get_icon_images = nemo_icon_view_container_get_icon_images;
 	ic_class->get_icon_description = nemo_icon_view_container_get_icon_description;
-	ic_class->start_monitor_top_left = nemo_icon_view_container_start_monitor_top_left;
-	ic_class->stop_monitor_top_left = nemo_icon_view_container_stop_monitor_top_left;
 	ic_class->prioritize_thumbnailing = nemo_icon_view_container_prioritize_thumbnailing;
     ic_class->get_max_layout_lines_for_pango = nemo_icon_view_container_get_max_layout_lines_for_pango;
     ic_class->get_max_layout_lines = nemo_icon_view_container_get_max_layout_lines;

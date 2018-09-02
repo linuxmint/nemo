@@ -5165,7 +5165,6 @@ void
 nemo_icon_container_clear (NemoIconContainer *container)
 {
 	NemoIconContainerDetails *details;
-	NemoIcon *icon;
 	GList *p;
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
@@ -5188,12 +5187,6 @@ nemo_icon_container_clear (NemoIconContainer *container)
 	details->drop_target = NULL;
 
 	for (p = details->icons; p != NULL; p = p->next) {
-		icon = p->data;
-		if (icon->is_monitored) {
-			nemo_icon_container_stop_monitor_top_left (container,
-								       icon->data,
-								       icon);
-		}
 		icon_free (p->data);
 	}
 	g_list_free (details->icons);
@@ -5434,11 +5427,6 @@ icon_destroy (NemoIconContainer *container,
 		details->stretch_icon = NULL;
 	}
 
-	if (icon->is_monitored) {
-		nemo_icon_container_stop_monitor_top_left (container,
-							       icon->data,
-							       icon);
-	}
 	icon_free (icon);
 
 	if (was_selected) {
@@ -5550,34 +5538,6 @@ nemo_icon_container_unfreeze_updates (NemoIconContainer *container)
 
 	klass->unfreeze_updates (container);
 }
-
-void
-nemo_icon_container_start_monitor_top_left (NemoIconContainer *container,
-						NemoIconData *data,
-						gconstpointer client,
-						gboolean large_text)
-{
-	NemoIconContainerClass *klass;
-
-	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
-	g_assert (klass->start_monitor_top_left != NULL);
-
-	klass->start_monitor_top_left (container, data, client, large_text);
-}
-
-void
-nemo_icon_container_stop_monitor_top_left (NemoIconContainer *container,
-					       NemoIconData *data,
-					       gconstpointer client)
-{
-	NemoIconContainerClass *klass;
-
-	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
-	g_return_if_fail (klass->stop_monitor_top_left != NULL);
-
-	klass->stop_monitor_top_left (container, data, client);
-}
-
 
 static void
 nemo_icon_container_prioritize_thumbnailing (NemoIconContainer *container,

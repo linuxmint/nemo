@@ -157,13 +157,7 @@ typedef struct {
 						   NemoIconData *icon_b);
 	void         (* freeze_updates)           (NemoIconContainer *container);
 	void         (* unfreeze_updates)         (NemoIconContainer *container);
-	void         (* start_monitor_top_left)   (NemoIconContainer *container,
-						   NemoIconData *data,
-						   gconstpointer client,
-						   gboolean large_text);
-	void         (* stop_monitor_top_left)    (NemoIconContainer *container,
-						   NemoIconData *data,
-						   gconstpointer client);
+
 	void         (* prioritize_thumbnailing)  (NemoIconContainer *container,
 						   NemoIconData *data);
     gint         (* get_max_layout_lines_for_pango) (NemoIconContainer *container);
