@@ -221,11 +221,16 @@ refresh_widget (NemoExtensionConfigWidget *widget)
         gtk_container_add (GTK_CONTAINER (NEMO_CONFIG_BASE_WIDGET (widget)->listbox), empty_row);
         gtk_widget_set_sensitive (GTK_WIDGET (NEMO_CONFIG_BASE_WIDGET (widget)->listbox), FALSE);
     } else {
+        GtkSizeGroup *row_group, *name_group;
         GList *l;
         gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
         		                                 NEMO_PLUGIN_PREFERENCES_DISABLED_EXTENSIONS);
 
+        row_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
+        name_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
         for (l = widget->current_extensions; l != NULL; l=l->next) {
+            gchar *markup;
             ExtensionProxy *proxy = l->data;
 
             gboolean active = TRUE;
@@ -239,7 +244,7 @@ refresh_widget (NemoExtensionConfigWidget *widget)
             }
 
             GtkWidget *w;
-            GtkWidget *box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+            GtkWidget *box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 
             GtkWidget *button = gtk_check_button_new ();
 
@@ -248,26 +253,46 @@ refresh_widget (NemoExtensionConfigWidget *widget)
             gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 2);
 
             w = gtk_label_new (NULL);
-            gchar *markup = NULL;
+            markup = NULL;
 
             if (proxy->display_name == NULL)
-                markup = g_strdup_printf ("%s - <i>%s</i>", proxy->name, _("no information available"));
+                markup = g_strdup_printf ("<b>%s</b>", proxy->name);
             else
-                markup = g_strdup_printf ("%s - <i>%s</i>", proxy->display_name, proxy->desc);
+                markup = g_strdup_printf ("<b>%s</b>", proxy->display_name);
 
             gtk_label_set_markup (GTK_LABEL (w), markup);
-            g_free (markup);
+            gtk_label_set_xalign (GTK_LABEL (w), 0.0);
 
-            gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 2);
+            g_clear_pointer (&markup, g_free);
+
+            gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+            gtk_size_group_add_widget (name_group, w);
+
+            w = gtk_label_new (NULL);
+
+            if (proxy->display_name == NULL)
+                markup = g_strdup (_("no information available"));
+            else
+                markup = g_strdup_printf ("%s", proxy->desc);
+
+            gtk_label_set_markup (GTK_LABEL (w), markup);
+            g_clear_pointer (&markup, g_free);
+
+            gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 6);
 
             if (proxy->config_exec != NULL) {
                 button = gtk_link_button_new_with_label ("uri://dummy", _("Configure"));
                 g_signal_connect (button, "activate-link", G_CALLBACK (on_config_clicked), proxy);
+
                 gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 2);
+
+                gtk_widget_set_tooltip_text (button, "");
             }
 
             GtkWidget *row = gtk_list_box_row_new ();
             gtk_container_add (GTK_CONTAINER (row), box);
+
+            gtk_size_group_add_widget (row_group, row);
 
             gtk_widget_show_all (row);
             gtk_container_add (GTK_CONTAINER (NEMO_CONFIG_BASE_WIDGET (widget)->listbox), row);
