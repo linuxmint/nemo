@@ -56,6 +56,7 @@ static void nemo_widget_menu_item_set_use_action_appearance (NemoWidgetMenuItem 
 
 static gboolean activatable_update_child_widget (NemoWidgetMenuItem *widget_menu_item, GtkAction *action);
 
+static gboolean nemo_widget_menu_item_draw (GtkWidget *widget, cairo_t *cr);
 static void nemo_widget_menu_item_realize (GtkWidget *widget);
 static void nemo_widget_menu_item_unrealize (GtkWidget *widget);
 static void nemo_widget_menu_item_map (GtkWidget *widget);
@@ -87,6 +88,7 @@ nemo_widget_menu_item_class_init (NemoWidgetMenuItemClass *klass)
   widget_class->map = nemo_widget_menu_item_map;
   widget_class->unmap = nemo_widget_menu_item_unmap;
   widget_class->size_allocate = nemo_widget_menu_item_size_allocate;
+  widget_class->draw = nemo_widget_menu_item_draw;
 
   /**
    * NemoWidgetMenuItem:widget:
@@ -331,6 +333,12 @@ nemo_widget_menu_item_set_use_action_appearance (NemoWidgetMenuItem *widget_menu
 static void
 nemo_widget_menu_item_activate (GtkMenuItem *menu_item)
 {
+}
+
+static gboolean
+nemo_widget_menu_item_draw (GtkWidget *widget, cairo_t *cr)
+{
+  return GTK_WIDGET_CLASS (g_type_class_peek_parent (nemo_widget_menu_item_parent_class))->draw (widget, cr);
 }
 
 static void
