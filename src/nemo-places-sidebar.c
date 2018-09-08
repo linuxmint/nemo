@@ -2741,31 +2741,48 @@ unmount_shortcut_cb (GtkMenuItem           *item,
 }
 
 static void
+handle_mount_unmount_failure (const gchar *primary,
+                              GError      *error)
+{
+    const gchar *message = NULL;
+
+    if (error && error->code == G_IO_ERROR_FAILED_HANDLED) {
+        return;
+    }
+
+    if (error) {
+        message = error->message;
+    }
+
+    eel_show_error_dialog (primary,
+                           message,
+                           NULL);
+}
+
+static void
 drive_eject_cb (GObject *source_object,
 		GAsyncResult *res,
 		gpointer user_data)
 {
 	NemoWindow *window;
 	GError *error;
-	char *primary;
-	char *name;
 
 	window = user_data;
 	g_object_unref (window);
 
 	error = NULL;
 	if (!g_drive_eject_with_operation_finish (G_DRIVE (source_object), res, &error)) {
-		if (error->code != G_IO_ERROR_FAILED_HANDLED) {
-			name = g_drive_get_name (G_DRIVE (source_object));
-			primary = g_strdup_printf (_("Unable to eject %s"), name);
-			g_free (name);
-			eel_show_error_dialog (primary,
-					       error->message,
-				       NULL);
-			g_free (primary);
-		}
-		g_error_free (error);
-	}
+        char *name, *primary;
+
+        name = g_drive_get_name (G_DRIVE (source_object));
+        primary = g_strdup_printf (_("Unable to eject %s"), name);
+
+        handle_mount_unmount_failure (primary, error);
+
+        g_free (name);
+        g_free (primary);
+        g_clear_error (&error);
+    }
 }
 
 static void
@@ -2775,25 +2792,23 @@ volume_eject_cb (GObject *source_object,
 {
 	NemoWindow *window;
 	GError *error;
-	char *primary;
-	char *name;
 
 	window = user_data;
 	g_object_unref (window);
 
 	error = NULL;
 	if (!g_volume_eject_with_operation_finish (G_VOLUME (source_object), res, &error)) {
-		if (error->code != G_IO_ERROR_FAILED_HANDLED) {
-			name = g_volume_get_name (G_VOLUME (source_object));
-			primary = g_strdup_printf (_("Unable to eject %s"), name);
-			g_free (name);
-			eel_show_error_dialog (primary,
-					       error->message,
-					       NULL);
-			g_free (primary);
-		}
-		g_error_free (error);
-	}
+        char *name, *primary;
+
+        name = g_volume_get_name (G_VOLUME (source_object));
+        primary = g_strdup_printf (_("Unable to eject %s"), name);
+
+        handle_mount_unmount_failure (primary, error);
+
+        g_free (name);
+        g_free (primary);
+        g_clear_error (&error);
+    }
 }
 
 static void
@@ -2803,25 +2818,23 @@ mount_eject_cb (GObject *source_object,
 {
 	NemoWindow *window;
 	GError *error;
-	char *primary;
-	char *name;
 
 	window = user_data;
 	g_object_unref (window);
 
 	error = NULL;
 	if (!g_mount_eject_with_operation_finish (G_MOUNT (source_object), res, &error)) {
-		if (error->code != G_IO_ERROR_FAILED_HANDLED) {
-			name = g_mount_get_name (G_MOUNT (source_object));
-			primary = g_strdup_printf (_("Unable to eject %s"), name);
-			g_free (name);
-			eel_show_error_dialog (primary,
-					       error->message,
-					       NULL);
-			g_free (primary);
-		}
-		g_error_free (error);
-	}
+        char *name, *primary;
+
+        name = g_mount_get_name (G_MOUNT (source_object));
+        primary = g_strdup_printf (_("Unable to eject %s"), name);
+
+        handle_mount_unmount_failure (primary, error);
+
+        g_free (name);
+        g_free (primary);
+        g_clear_error (&error);
+    }
 }
 
 static void
@@ -2945,22 +2958,20 @@ drive_poll_for_media_cb (GObject *source_object,
 			 gpointer user_data)
 {
 	GError *error;
-	char *primary;
-	char *name;
 
 	error = NULL;
 	if (!g_drive_poll_for_media_finish (G_DRIVE (source_object), res, &error)) {
-		if (error->code != G_IO_ERROR_FAILED_HANDLED) {
-			name = g_drive_get_name (G_DRIVE (source_object));
-			primary = g_strdup_printf (_("Unable to poll %s for media changes"), name);
-			g_free (name);
-			eel_show_error_dialog (primary,
-					       error->message,
-					       NULL);
-			g_free (primary);
-		}
-		g_error_free (error);
-	}
+        char *name, *primary;
+
+        name = g_drive_get_name (G_DRIVE (source_object));
+        primary = g_strdup_printf (_("Unable to poll %s for media changes"), name);
+
+        handle_mount_unmount_failure (primary, error);
+
+        g_free (name);
+        g_free (primary);
+        g_clear_error (&error);
+    }
 }
 
 static void
@@ -2990,22 +3001,21 @@ drive_start_cb (GObject      *source_object,
 		gpointer      user_data)
 {
 	GError *error;
-	char *primary;
-	char *name;
 
 	error = NULL;
-	if (!g_drive_poll_for_media_finish (G_DRIVE (source_object), res, &error)) {
-		if (error->code != G_IO_ERROR_FAILED_HANDLED) {
-			name = g_drive_get_name (G_DRIVE (source_object));
-			primary = g_strdup_printf (_("Unable to start %s"), name);
-			g_free (name);
-			eel_show_error_dialog (primary,
-					       error->message,
-					       NULL);
-			g_free (primary);
-		}
-		g_error_free (error);
-	}
+
+	if (!g_drive_start_finish (G_DRIVE (source_object), res, &error)) {
+        char *name, *primary;
+
+        name = g_drive_get_name (G_DRIVE (source_object));
+        primary = g_strdup_printf (_("Unable to start %s"), name);
+
+        handle_mount_unmount_failure (primary, error);
+
+        g_free (name);
+        g_free (primary);
+        g_clear_error (&error);
+    }
 }
 
 static void
@@ -3042,25 +3052,24 @@ drive_stop_cb (GObject *source_object,
 {
 	NemoWindow *window;
 	GError *error;
-	char *primary;
-	char *name;
 
 	window = user_data;
 	g_object_unref (window);
 
 	error = NULL;
-	if (!g_drive_poll_for_media_finish (G_DRIVE (source_object), res, &error)) {
-		if (error->code != G_IO_ERROR_FAILED_HANDLED) {
-			name = g_drive_get_name (G_DRIVE (source_object));
-			primary = g_strdup_printf (_("Unable to stop %s"), name);
-			g_free (name);
-			eel_show_error_dialog (primary,
-					       error->message,
-					       NULL);
-			g_free (primary);
-		}
-		g_error_free (error);
-	}
+
+    if (!g_drive_stop_finish (G_DRIVE (source_object), res, &error)) {
+        char *name, *primary;
+
+        name = g_drive_get_name (G_DRIVE (source_object));
+        primary = g_strdup_printf (_("Unable to stop %s"), name);
+
+        handle_mount_unmount_failure (primary, error);
+
+        g_free (name);
+        g_free (primary);
+        g_clear_error (&error);
+    }
 }
 
 static void
