@@ -140,7 +140,7 @@ static GnomeDesktopThumbnailFactory *
 get_thumbnail_factory (void)
 {
 	if (thumbnail_factory == NULL) {
-		thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL);
+		thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
 	}
 
 	return thumbnail_factory;
