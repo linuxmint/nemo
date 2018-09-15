@@ -58,5 +58,11 @@ NemoDesktopWindow     *nemo_desktop_window_new                 (gint monitor);
 gboolean               nemo_desktop_window_loaded              (NemoDesktopWindow *window);
 gint                   nemo_desktop_window_get_monitor         (NemoDesktopWindow *window);
 void                   nemo_desktop_window_update_geometry     (NemoDesktopWindow *window);
-
+gboolean               nemo_desktop_window_get_grid_adjusts    (NemoDesktopWindow *window,
+                                                                gint              *h_adjust,
+                                                                gint              *v_adjust);
+gboolean               nemo_desktop_window_set_grid_adjusts    (NemoDesktopWindow *window,
+                                                                gint               h_adjust,
+                                                                gint               v_adjust);
+GtkActionGroup *       nemo_desktop_window_get_action_group (NemoDesktopWindow *window);
 #endif /* NEMO_DESKTOP_WINDOW_H */

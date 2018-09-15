@@ -3688,6 +3688,76 @@ nemo_file_set_metadata_list (NemoFile *file,
 	g_free (val);
 }
 
+void
+nemo_file_set_desktop_grid_adjusts (NemoFile   *file,
+                                    const char *key,
+                                    int         int_a,
+                                    int         int_b)
+{
+    char **val;
+
+    g_return_if_fail (NEMO_IS_FILE (file));
+    g_return_if_fail (key != NULL);
+    g_return_if_fail (key[0] != '\0');
+
+    val = g_new (char *, 3);
+
+    val[0] = g_strdup_printf ("%d", int_a);
+    val[1] = g_strdup_printf ("%d", int_b);
+    val[2] = NULL;
+
+    NEMO_FILE_CLASS (G_OBJECT_GET_CLASS (file))->set_metadata_as_list (file, key, val);
+
+    g_strfreev ((gchar **) val);
+}
+
+void
+nemo_file_get_desktop_grid_adjusts (NemoFile   *file,
+                                    const char *key,
+                                    int        *int_a,
+                                    int        *int_b)
+{
+    char c;
+    gint result;
+
+    g_return_if_fail (key != NULL);
+    g_return_if_fail (key[0] != '\0');
+
+    if (file == NULL ||
+        file->details->metadata == NULL) {
+        return;
+    }
+
+    g_return_if_fail (NEMO_IS_FILE (file));
+
+    if (NEMO_FILE_GET_CLASS (file)->get_metadata_as_list) {
+        gchar **meta_strv = NEMO_FILE_GET_CLASS (file)->get_metadata_as_list (file, key);
+
+        if (!meta_strv) {
+            if (int_a)
+                *int_a = 100;
+            if (int_b)
+                *int_b = 100;
+
+            return;
+        }
+
+        if (int_a) {
+            if (sscanf (meta_strv[0], " %d %c", &result, &c) == 1) {
+                *int_a = result;
+            }
+        }
+
+        if (int_b) {
+            if (sscanf (meta_strv[1], " %d %c", &result, &c) == 1) {
+                *int_b = result;
+            }
+        }
+
+        g_strfreev (meta_strv);
+    }
+}
+
 gboolean
 nemo_file_get_boolean_metadata (NemoFile *file,
 				    const char   *key,

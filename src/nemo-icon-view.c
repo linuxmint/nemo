@@ -823,6 +823,40 @@ nemo_icon_view_get_directory_horizontal_layout (NemoIconView *icon_view,
                                            FALSE);
 }
 
+void
+nemo_icon_view_set_directory_grid_adjusts (NemoIconView *icon_view,
+                                           NemoFile     *file,
+                                           gint          horizontal,
+                                           gint          vertical)
+{
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_desktop_grid_adjusts (file,
+                                        NEMO_METADATA_KEY_DESKTOP_GRID_ADJUST,
+                                        horizontal, vertical);
+}
+
+void
+nemo_icon_view_get_directory_grid_adjusts (NemoIconView *icon_view,
+                                           NemoFile     *file,
+                                           gint         *horizontal,
+                                           gint         *vertical)
+{
+    gint h, v;
+
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_get_desktop_grid_adjusts (file,
+                                        NEMO_METADATA_KEY_DESKTOP_GRID_ADJUST,
+                                        &h, &v);
+
+    if (horizontal)
+        *horizontal = h;
+
+    if (vertical)
+        *vertical = v;
+}
+
 gboolean
 nemo_icon_view_set_sort_reversed (NemoIconView *icon_view,
                                   gboolean      new_value,
@@ -936,6 +970,7 @@ nemo_icon_view_begin_loading (NemoView *view)
 	GtkWidget *icon_container;
 	NemoFile *file;
 	int level;
+    int h_adjust, v_adjust;
 	char *sort_name, *uri;
 
 	g_return_if_fail (NEMO_IS_ICON_VIEW (view));
@@ -990,6 +1025,13 @@ nemo_icon_view_begin_loading (NemoView *view)
 
 	nemo_icon_container_set_keep_aligned (get_icon_container (icon_view),
                     nemo_icon_view_get_directory_keep_aligned (icon_view, file));
+
+    nemo_icon_view_get_directory_grid_adjusts (NEMO_ICON_VIEW (view),
+                                               file,
+                                               &h_adjust,
+                                               &v_adjust);
+
+    nemo_icon_container_set_grid_adjusts (get_icon_container (icon_view), h_adjust, v_adjust);
 
 	set_labels_beside_icons (icon_view);
 	set_columns_same_width (icon_view);

@@ -58,6 +58,16 @@ G_DEFINE_TYPE (NemoBlankDesktopWindow, nemo_blank_desktop_window,
                GTK_TYPE_WINDOW);
 
 static void
+customize_clicked_callback (GtkMenuItem            *item,
+                            NemoBlankDesktopWindow *window)
+{
+    g_return_if_fail (NEMO_IS_BLANK_DESKTOP_WINDOW (window));
+
+    nemo_desktop_manager_show_desktop_overlay (nemo_desktop_manager_get (),
+                                               window->details->monitor);
+}
+
+static void
 action_activated_callback (GtkMenuItem *item, NemoAction *action)
 {
     GFile *desktop_location = nemo_get_desktop_location ();
@@ -131,6 +141,12 @@ build_menu (NemoBlankDesktopWindow *window)
             gtk_menu_shell_append (GTK_MENU_SHELL (window->details->popup_menu), item);
         }
     }
+
+    item = gtk_menu_item_new_with_label (_("Customize"));
+
+    gtk_widget_set_visible (item, TRUE);
+    g_signal_connect (item, "activate", G_CALLBACK (customize_clicked_callback), window);
+    gtk_menu_shell_append (GTK_MENU_SHELL (window->details->popup_menu), item);
 }
 
 static void

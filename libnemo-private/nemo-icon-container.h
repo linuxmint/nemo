@@ -281,6 +281,9 @@ void              nemo_icon_container_set_layout_mode               (NemoIconCon
 void              nemo_icon_container_set_horizontal_layout (NemoIconContainer *container,
                                                              gboolean           horizontal);
 gboolean          nemo_icon_container_get_horizontal_layout (NemoIconContainer *container);
+void              nemo_icon_container_set_grid_adjusts (NemoIconContainer *container,
+                                                        gint               h_adjust,
+                                                        gint               v_adjust);
 
 void              nemo_icon_container_set_label_position            (NemoIconContainer  *container,
 									 NemoIconLabelPosition pos);

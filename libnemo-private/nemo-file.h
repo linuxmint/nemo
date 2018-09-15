@@ -360,7 +360,14 @@ void                    nemo_file_set_metadata                      (NemoFile   
 void                    nemo_file_set_metadata_list                 (NemoFile                   *file,
 									 const char                     *key,
 									 GList                          *list);
-
+void                    nemo_file_set_desktop_grid_adjusts (NemoFile   *file,
+                                                            const char *key,
+                                                            int         int_a,
+                                                            int         int_b);
+void                    nemo_file_get_desktop_grid_adjusts (NemoFile   *file,
+                                                            const char *key,
+                                                            int        *int_a,
+                                                            int        *int_b);
 /* Covers for common data types. */
 gboolean                nemo_file_get_boolean_metadata              (NemoFile                   *file,
 									 const char                     *key,

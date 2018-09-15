@@ -1445,11 +1445,8 @@ update_layout_constants (NemoIconContainer *container)
 
     scale = (double) icon_size / NEMO_DESKTOP_ICON_SIZE_STANDARD;
 
-    h_adjust = g_settings_get_double (nemo_desktop_preferences,
-                                      NEMO_PREFERENCES_DESKTOP_HORIZONTAL_GRID_ADJUST);
-
-    v_adjust = g_settings_get_double (nemo_desktop_preferences,
-                                      NEMO_PREFERENCES_DESKTOP_VERTICAL_GRID_ADJUST);
+    h_adjust = container->details->h_adjust / 100.0;
+    v_adjust = container->details->v_adjust / 100.0;
 
     constants = container->details->view_constants;
 

@@ -10,10 +10,12 @@
 #include "nemo-desktop-window.h"
 #include "nemo-application.h"
 #include "nemo-cinnamon-dbus.h"
+#include "nemo-desktop-overlay.h"
 
 #include <gdk/gdkx.h>
 #include <stdio.h>
 
+#include "libnemo-private/nemo-action-manager.h"
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-desktop-utils.h>
 
@@ -36,6 +38,7 @@ typedef enum {
 typedef struct {
     NemoCinnamon *proxy;
     NemoActionManager *action_manager;
+    NemoDesktopOverlay *overlay;
 
     GdkScreen *fallback_screen;
 
@@ -336,6 +339,18 @@ create_new_desktop_window (NemoDesktopManager *manager,
 }
 
 static gboolean
+update_overlay_in_idle (NemoDesktopManager *manager)
+{
+    FETCH_PRIV (manager);
+
+    if (manager->priv->overlay) {
+        nemo_desktop_overlay_update_in_place (priv->overlay);
+    }
+
+    return G_SOURCE_REMOVE;
+}
+
+static gboolean
 layout_changed (NemoDesktopManager *manager)
 {
     FETCH_PRIV (manager);
@@ -391,6 +406,11 @@ layout_changed (NemoDesktopManager *manager)
 
     g_free (pref);
     g_strfreev (pref_split);
+
+    /* This is hacky - it takes time for the actual view to load, even though the window is created
+     * immediately.  We need to force it to wait here, or else we'd need to monitor when the view is
+     * created and run then. */
+    g_timeout_add (300, (GSourceFunc) update_overlay_in_idle, manager);
 
     return G_SOURCE_REMOVE;
 }
@@ -497,6 +517,20 @@ on_monitors_changed (NemoDesktopManager *manager)
             nemo_blank_desktop_window_update_geometry (NEMO_BLANK_DESKTOP_WINDOW (info->window));
         }
     }
+}
+
+static void
+on_overlay_adjustments_changed (NemoDesktopOverlay      *overlay,
+                                NemoWindow              *window,
+                                gint                     h_percent,
+                                gint                     v_percent,
+                                NemoDesktopManager      *manager)
+{
+    g_return_if_fail (NEMO_IS_DESKTOP_WINDOW (window));
+
+    nemo_desktop_window_set_grid_adjusts (NEMO_DESKTOP_WINDOW (window),
+                                          h_percent,
+                                          v_percent);
 }
 
 static void
@@ -619,6 +653,8 @@ nemo_desktop_manager_dispose (GObject *object)
     DEBUG ("Disposing NemoDesktopManager");
 
     close_all_windows (manager);
+
+    g_clear_object (&priv->overlay);
 
     g_signal_handlers_disconnect_by_func (nemo_desktop_preferences, queue_update_layout, manager);
     g_signal_handlers_disconnect_by_func (nemo_preferences, queue_update_layout, manager);
@@ -872,4 +908,69 @@ nemo_desktop_manager_get_margins (NemoDesktopManager *manager,
     *right = (geometry.x + geometry.width) - (work_rect.x + work_rect.width);
     *top = work_rect.y - geometry.y;
     *bottom = (geometry.y + geometry.height) - (work_rect.y + work_rect.height);
+}
+
+GtkWindow *
+nemo_desktop_manager_get_window_for_monitor (NemoDesktopManager *manager,
+                                             gint                monitor)
+{
+    GtkWindow *window;
+    GList *iter;
+
+    FETCH_PRIV (manager);
+
+    window = NULL;
+
+    for (iter = priv->desktops; iter != NULL; iter = iter->next) {
+        DesktopInfo *info = iter->data;
+
+        if (info->monitor_num == monitor) {
+            window = GTK_WINDOW (info->window);
+            break;
+        }
+    }
+
+    return window;
+}
+
+void
+nemo_desktop_manager_get_overlay_info (NemoDesktopManager *manager,
+                                       gint                monitor,
+                                       GtkActionGroup    **action_group,
+                                       gint               *h_adjust,
+                                       gint               *v_adjust)
+{
+    GtkWindow *window;
+
+    window = nemo_desktop_manager_get_window_for_monitor (manager, monitor);
+
+    if (NEMO_IS_DESKTOP_WINDOW (window) &&
+        nemo_desktop_window_get_grid_adjusts (NEMO_DESKTOP_WINDOW (window),
+                                              h_adjust,
+                                              v_adjust)) {
+
+        *action_group = nemo_desktop_window_get_action_group (NEMO_DESKTOP_WINDOW (window));
+    } else {
+        *action_group = NULL;
+    }
+}
+
+void
+nemo_desktop_manager_show_desktop_overlay (NemoDesktopManager *manager,
+                                           gint                monitor)
+{
+    FETCH_PRIV (manager);
+
+    if (priv->overlay == NULL) {
+        priv->overlay = nemo_desktop_overlay_new ();
+
+        g_object_add_weak_pointer (G_OBJECT (priv->overlay), (gpointer) &priv->overlay);
+
+        g_signal_connect (priv->overlay,
+                          "adjusts-changed",
+                          G_CALLBACK (on_overlay_adjustments_changed),
+                          manager);
+    }
+
+    nemo_desktop_overlay_show (priv->overlay, monitor);
 }

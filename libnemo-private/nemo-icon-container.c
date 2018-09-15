@@ -4946,6 +4946,9 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->dnd_grid = NULL;
     details->current_selection_count = -1;
     details->renaming_allocation_count = 0;
+
+    details->h_adjust = 100;
+    details->v_adjust = 100;
 }
 
 typedef struct {
@@ -6557,6 +6560,17 @@ nemo_icon_container_get_horizontal_layout (NemoIconContainer *container)
     g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
 
     return container->details->horizontal;
+}
+
+void
+nemo_icon_container_set_grid_adjusts (NemoIconContainer *container,
+                                      gint               h_adjust,
+                                      gint               v_adjust)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    container->details->h_adjust = h_adjust;
+    container->details->v_adjust = v_adjust;
 }
 
 gboolean

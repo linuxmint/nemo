@@ -72,9 +72,11 @@
 #define NEMO_METADATA_KEY_CUSTOM_ICON                	"custom-icon"
 #define NEMO_METADATA_KEY_CUSTOM_ICON_NAME                	"custom-icon-name"
 #define NEMO_METADATA_KEY_EMBLEMS				"emblems"
+
 #define NEMO_METADATA_KEY_MONITOR               "monitor"
 #define NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL  "desktop-horizontal"
 #define NEMO_METADATA_KEY_SHOW_THUMBNAILS "show-thumbnails"
+#define NEMO_METADATA_KEY_DESKTOP_GRID_ADJUST      "desktop-grid-adjust"
 
 guint nemo_metadata_get_id (const char *metadata);
 

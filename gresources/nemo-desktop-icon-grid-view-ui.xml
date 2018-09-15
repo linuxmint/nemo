@@ -3,23 +3,12 @@
     <placeholder name="Before Zoom Items">
         <placeholder name="View Items">
             <menu action="Desktop Submenu">
-                <menu action="Desktop Zoom">
-                    <menuitem name="Desktop Small" action="Desktop Small"/>
-                    <menuitem name="Desktop Normal" action="Desktop Normal"/>
-                    <menuitem name="Desktop Large" action="Desktop Large"/>
-                </menu>
-                <separator name="Zoom submenu separator"/>
-                <menuitem name="Desktop Autoarrange" action="Desktop Autoarrange"/>
-                <menuitem name="Desktop Align to Grid" action="Desktop Align to Grid"/>
-                <separator name="Desktop layout separator"/>
                 <menuitem name="Desktop Sort by Name" action="Desktop Sort by Name"/>
                 <menuitem name="Desktop Sort by Size" action="Desktop Sort by Size"/>
                 <menuitem name="Desktop Sort by Type" action="Desktop Sort by Type"/>
                 <menuitem name="Desktop Sort by Date" action="Desktop Sort by Date"/>
-                <separator name="Desktop layout separator 2"/>
-                <menuitem name="Horizonal" action="Horizontal Layout"/>
-                <menuitem name="Vertical" action="Vertical Layout"/>
             </menu>
+            <menuitem name="Desktop Overlay" action="Show Desktop Overlay"/>
         </placeholder>
         <placeholder name="New Window Items">
         </placeholder>

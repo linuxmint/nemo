@@ -52,5 +52,9 @@ typedef struct {
 /* GObject support */
 GType   nemo_desktop_icon_grid_view_get_type (void);
 void nemo_desktop_icon_grid_view_register (void);
+GtkActionGroup *nemo_desktop_icon_grid_view_get_action_group (NemoDesktopIconGridView *view);
+void nemo_desktop_icon_grid_view_set_grid_adjusts (NemoDesktopIconGridView *view,
+                                                   gint                     h_adjust,
+                                                   gint                     v_adjust);
 
 #endif /* NEMO_DESKTOP_ICON_GRID_VIEW_H */

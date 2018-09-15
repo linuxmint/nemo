@@ -1,7 +1,9 @@
 
 nemo_extension_sources = [
+  gresources,
   'nemo-column-provider.c',
   'nemo-column.c',
+  'nemo-desktop-preferences.c',
   'nemo-extension-i18n.h',
   'nemo-extension-private.h',
   'nemo-file-info.c',
@@ -19,6 +21,7 @@ nemo_extension_sources = [
 nemo_extension_headers = [
   'nemo-column-provider.h',
   'nemo-column.h',
+  'nemo-desktop-preferences.h',
   'nemo-extension-types.h',
   'nemo-file-info.h',
   'nemo-info-provider.h',

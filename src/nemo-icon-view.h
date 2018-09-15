@@ -87,4 +87,13 @@ void   nemo_icon_view_set_directory_horizontal_layout (NemoIconView *icon_view,
                                                        gboolean      horizontal);
 gboolean nemo_icon_view_get_directory_horizontal_layout (NemoIconView *icon_view,
                                                          NemoFile     *file);
+
+void nemo_icon_view_set_directory_grid_adjusts (NemoIconView *icon_view,
+                                                NemoFile     *file,
+                                                gint          horizontal,
+                                                gint          vertical);
+void nemo_icon_view_get_directory_grid_adjusts (NemoIconView *icon_view,
+                                                NemoFile     *file,
+                                                gint         *horizontal,
+                                                gint         *vertical);
 #endif /* NEMO_ICON_VIEW_H */

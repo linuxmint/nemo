@@ -27,6 +27,8 @@
 #include "nemo-window-private.h"
 #include "nemo-actions.h"
 #include "nemo-desktop-manager.h"
+#include "nemo-icon-view.h"
+#include "nemo-desktop-icon-grid-view.h"
 
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
@@ -359,4 +361,63 @@ nemo_desktop_window_update_geometry (NemoDesktopWindow *window)
 
     gtk_window_move (GTK_WINDOW (window), rect.x, rect.y);
     gtk_widget_set_size_request (GTK_WIDGET (window), rect.width, rect.height);
+}
+
+gboolean
+nemo_desktop_window_get_grid_adjusts (NemoDesktopWindow *window,
+                                      gint              *h_adjust,
+                                      gint              *v_adjust)
+{
+    NemoView *view;
+    NemoWindowSlot *slot;
+    NemoFile *file;
+
+    slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
+    view = nemo_window_slot_get_current_view (slot);
+
+    g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
+
+    file = nemo_view_get_directory_as_file (view);
+
+    nemo_icon_view_get_directory_grid_adjusts (NEMO_ICON_VIEW (view),
+                                               file,
+                                               h_adjust,
+                                               v_adjust);
+
+    return TRUE;
+}
+
+gboolean
+nemo_desktop_window_set_grid_adjusts (NemoDesktopWindow *window,
+                                      gint               h_adjust,
+                                      gint               v_adjust)
+{
+    NemoView *view;
+    NemoWindowSlot *slot;
+    NemoFile *file;
+
+    slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
+    view = nemo_window_slot_get_current_view (slot);
+
+    g_return_val_if_fail (NEMO_IS_DESKTOP_ICON_GRID_VIEW (view), FALSE);
+
+    nemo_desktop_icon_grid_view_set_grid_adjusts (NEMO_DESKTOP_ICON_GRID_VIEW (view),
+                                                  h_adjust,
+                                                  v_adjust);
+
+    return TRUE;
+}
+
+GtkActionGroup *
+nemo_desktop_window_get_action_group (NemoDesktopWindow *window)
+{
+    NemoView *view;
+    NemoWindowSlot *slot;
+
+    slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
+    view = nemo_window_slot_get_current_view (slot);
+
+    g_return_val_if_fail (NEMO_IS_DESKTOP_ICON_GRID_VIEW (view), NULL);
+
+    return nemo_desktop_icon_grid_view_get_action_group (NEMO_DESKTOP_ICON_GRID_VIEW (view));
 }

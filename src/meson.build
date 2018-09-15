@@ -15,7 +15,6 @@ nemoBuiltSources = gnome.gdbus_codegen(
 )
 
 nemoCommon_sources = [
-  gresources,
   dbusBuiltSources,
   nemoBuiltSources,
   'nemo-action-config-widget.c',
@@ -30,6 +29,7 @@ nemoCommon_sources = [
   'nemo-desktop-icon-grid-view.c',
   'nemo-desktop-item-properties.c',
   'nemo-desktop-manager.c',
+  'nemo-desktop-overlay.c',
   'nemo-desktop-window.c',
   'nemo-error-reporting.c',
   'nemo-extension-config-widget.c',
@@ -93,6 +93,7 @@ nemoDesktop_sources = [
 ]
 nemoDesktop_headers = [
   'nemo-desktop-application.h',
+  'nemo-desktop-overlay.h',
   'nemo-desktop-icon-view.h',
 ]
 

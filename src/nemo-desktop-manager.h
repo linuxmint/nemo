@@ -7,7 +7,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-#include "libnemo-private/nemo-action-manager.h"
+#include "nemo-window.h"
 
 G_BEGIN_DECLS
 
@@ -35,6 +35,17 @@ void     nemo_desktop_manager_get_margins             (NemoDesktopManager *manag
                                                        gint               *right,
                                                        gint               *top,
                                                        gint               *bottom);
+
+GtkWindow *nemo_desktop_manager_get_window_for_monitor  (NemoDesktopManager *manager,
+                                                         gint                monitor);
+void nemo_desktop_manager_get_overlay_info              (NemoDesktopManager *manager,
+                                                         gint                monitor,
+                                                         GtkActionGroup    **action_group,
+                                                         gint               *h_adjust,
+                                                         gint               *v_adjust);
+void     nemo_desktop_manager_show_desktop_overlay    (NemoDesktopManager *manager,
+                                                       gint                initial_monitor);
+
 
 G_END_DECLS
 
