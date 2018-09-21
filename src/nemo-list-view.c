@@ -2681,13 +2681,20 @@ static void
 nemo_list_view_clear (NemoView *view)
 {
 	NemoListView *list_view;
+    GtkTreeSelection *tree_selection;
 
 	list_view = NEMO_LIST_VIEW (view);
+
+    tree_selection = gtk_tree_view_get_selection (list_view->details->tree_view);
+
+    g_signal_handlers_block_by_func (tree_selection, list_selection_changed_callback, view);
 
 	if (list_view->details->model != NULL) {
 		stop_cell_editing (list_view);
 		nemo_list_model_clear (list_view->details->model);
 	}
+
+    g_signal_handlers_unblock_by_func (tree_selection, list_selection_changed_callback, view);
 }
 
 static void
@@ -3140,7 +3147,8 @@ nemo_list_view_set_selection (NemoView *view, GList *selection)
 	}
 
 	g_signal_handlers_unblock_by_func (tree_selection, list_selection_changed_callback, view);
-	nemo_view_notify_selection_changed (view);
+
+	list_selection_changed_callback (tree_selection, view);
 }
 
 static void
@@ -3177,7 +3185,8 @@ nemo_list_view_invert_selection (NemoView *view)
 	g_list_free (selection);
 
 	g_signal_handlers_unblock_by_func (tree_selection, list_selection_changed_callback, view);
-	nemo_view_notify_selection_changed (view);
+
+    list_selection_changed_callback (tree_selection, view);
 }
 
 static void
