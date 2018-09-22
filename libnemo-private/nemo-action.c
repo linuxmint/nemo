@@ -589,7 +589,7 @@ nemo_action_new (const gchar *name,
         guint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
             if (g_path_is_absolute (deps[i])) {
-                if (!g_file_test (path, G_FILE_TEST_EXISTS)) {
+                if (!g_file_test (deps[i], G_FILE_TEST_EXISTS)) {
                     finish = FALSE;
                     DEBUG ("Missing action dependency: %s", deps[i]);
                 }
