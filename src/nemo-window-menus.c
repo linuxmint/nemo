@@ -560,6 +560,10 @@ action_split_view_callback (GtkAction *action,
 	NemoWindow *window;
 	gboolean is_active;
 
+    if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        return;
+    }
+
 	window = NEMO_WINDOW (user_data);
 
 	is_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
