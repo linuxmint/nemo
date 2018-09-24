@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function die() {
+die() {
   echo $*
   exit 1
 }
