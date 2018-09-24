@@ -10,4 +10,3 @@ for arg in sys.argv:
         continue
     else:
         print(arg)
-
