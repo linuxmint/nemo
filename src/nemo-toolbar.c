@@ -54,6 +54,7 @@ struct _NemoToolbarPriv {
     GtkWidget *icon_view_button;
     GtkWidget *list_view_button;
     GtkWidget *compact_view_button;
+    GtkWidget *show_thumbnails_button;
 
     GtkToolItem *navigation_box;
     GtkToolItem *refresh_box;
@@ -183,6 +184,13 @@ toolbar_update_appearance (NemoToolbar *self)
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
+    
+    widgetitem = self->priv->show_thumbnails_button;
+    icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR) &&
+                   (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS) ==
+                    NEMO_SPEED_TRADEOFF_PER_FOLDER);
+    if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+    else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
     if (gtk_widget_get_visible(self->priv->previous_button) == FALSE &&
         gtk_widget_get_visible(self->priv->next_button) == FALSE &&
@@ -211,7 +219,8 @@ toolbar_update_appearance (NemoToolbar *self)
     if (gtk_widget_get_visible(self->priv->search_button) == FALSE &&
         gtk_widget_get_visible(self->priv->new_folder_button) == FALSE && 
         gtk_widget_get_visible(self->priv->open_terminal_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->toggle_location_button) == FALSE)
+        gtk_widget_get_visible(self->priv->toggle_location_button) == FALSE &&
+        gtk_widget_get_visible(self->priv->show_thumbnails_button) == FALSE)
     {
         gtk_widget_hide(GTK_WIDGET (self->priv->tools_box));
     } else {
@@ -391,6 +400,9 @@ nemo_toolbar_constructed (GObject *obj)
 
     self->priv->search_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SEARCH);
     gtk_container_add (GTK_CONTAINER (box), self->priv->search_button);
+    
+    self->priv->show_thumbnails_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SHOW_THUMBNAILS);
+    gtk_container_add (GTK_CONTAINER (box), self->priv->show_thumbnails_button);
 
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
     gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
@@ -464,6 +476,12 @@ nemo_toolbar_constructed (GObject *obj)
                   G_CALLBACK (toolbar_update_appearance), self);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR,
+                  G_CALLBACK (toolbar_update_appearance), self);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR,
+                  G_CALLBACK (toolbar_update_appearance), self);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
                   G_CALLBACK (toolbar_update_appearance), self);
 
 	toolbar_update_appearance (self);

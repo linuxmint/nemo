@@ -148,4 +148,6 @@
 
 #define NEMO_ACTION_PLUGIN_MANAGER "NemoPluginManager"
 
+#define NEMO_ACTION_SHOW_THUMBNAILS "Show Thumbnails"
+
 #endif /* NEMO_ACTIONS_H */

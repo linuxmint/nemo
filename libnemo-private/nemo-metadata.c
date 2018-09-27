@@ -58,6 +58,7 @@ static char *used_metadata_names[] = {
   (char *)NEMO_METADATA_KEY_EMBLEMS,
   (char *)NEMO_METADATA_KEY_MONITOR,
   (char *)NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL,
+  (char *)NEMO_METADATA_KEY_SHOW_THUMBNAILS,
   NULL
 };
 

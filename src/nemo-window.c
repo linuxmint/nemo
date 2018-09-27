@@ -1338,6 +1338,58 @@ nemo_window_sync_bookmark_action (NemoWindow *window)
     g_object_unref (location);
 }
 
+void
+sync_thumbnail_action_callback (NemoFile *file,
+                       gpointer callback_data)
+{
+    NemoWindow *window;
+    NemoWindowSlot *slot;
+
+    slot = callback_data;
+    window = nemo_window_slot_get_window (slot);
+
+    if (slot == nemo_window_get_active_slot (window)) {
+        NemoWindowPane *pane;
+        gboolean show_thumbnails;
+
+        pane = nemo_window_get_active_pane(window);
+        show_thumbnails = nemo_file_get_boolean_metadata(
+                file,
+                NEMO_METADATA_KEY_SHOW_THUMBNAILS,
+                FALSE);
+
+        toolbar_set_show_thumbnails_button (show_thumbnails, pane);
+        menu_set_show_thumbnails_action (show_thumbnails, window);
+    }
+}
+
+static void
+cancel_sync_show_thumbnail_callback (NemoWindowSlot *slot)
+{
+	nemo_file_cancel_call_when_ready (slot->viewed_file,
+					      sync_thumbnail_action_callback,
+					      slot);
+}
+
+void
+nemo_window_sync_thumbnail_action (NemoWindow *window)
+{
+    NemoWindowSlot *slot;
+    NemoFileAttributes attributes;
+
+    g_return_if_fail (NEMO_IS_WINDOW (window));
+
+    attributes = nemo_mime_actions_get_required_file_attributes ();
+
+    slot = nemo_window_get_active_slot (window);
+
+    cancel_sync_show_thumbnail_callback (slot);
+    nemo_file_call_when_ready (slot->viewed_file,
+                               attributes,
+                               sync_thumbnail_action_callback,
+                               slot);
+}
+
 static void
 zoom_level_changed_callback (NemoView *view,
                              NemoWindow *window)

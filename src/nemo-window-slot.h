@@ -188,4 +188,6 @@ void nemo_window_slot_clear_back_list    (NemoWindowSlot *slot);
 
 void nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot);
 
+void nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
+                                           gboolean show_thumbnails);
 #endif /* NEMO_WINDOW_SLOT_H */

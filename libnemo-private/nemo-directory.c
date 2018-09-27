@@ -1733,6 +1733,17 @@ nemo_directory_is_desktop_directory (NemoDirectory   *directory)
 	return nemo_is_desktop_directory (directory->details->location);
 }
 
+void
+nemo_directory_set_show_thumbnails (NemoDirectory         *directory,
+                                    gboolean show_thumbnails)
+{
+  NemoFile *file;
+  
+  file = nemo_file_get(directory->details->location);
+  nemo_file_set_boolean_metadata (file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, FALSE, show_thumbnails);
+  emit_change_signals_for_all_files(directory);
+}
+
 #if !defined (NEMO_OMIT_SELF_CHECK)
 
 #include <eel/eel-debug.h>

@@ -119,6 +119,7 @@ static struct {
 	{"icon_scale", "metadata::" NEMO_METADATA_KEY_ICON_SCALE},
 	{"custom_icon", "metadata::" NEMO_METADATA_KEY_CUSTOM_ICON},
 	{"keyword", "metadata::" NEMO_METADATA_KEY_EMBLEMS},
+  {"show_thumbnails", "metadata::" NEMO_METADATA_KEY_SHOW_THUMBNAILS},
 };
 
 static const char *

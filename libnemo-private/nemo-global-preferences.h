@@ -92,6 +92,7 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_LIST_VIEW_ICON_TOOLBAR   "show-list-view-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR   "show-compact-view-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_ROOT_WARNING                "show-root-warning"
+#define NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR     "show-show-thumbnails-toolbar"
 
 /* Which views should be displayed for new windows */
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"
@@ -186,7 +187,8 @@ typedef enum
 {
 	NEMO_SPEED_TRADEOFF_ALWAYS,
 	NEMO_SPEED_TRADEOFF_LOCAL_ONLY,
-	NEMO_SPEED_TRADEOFF_NEVER
+    NEMO_SPEED_TRADEOFF_NEVER,
+    NEMO_SPEED_TRADEOFF_PER_FOLDER
 } NemoSpeedTradeoffValue;
 
 #define NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS "show-directory-item-counts"

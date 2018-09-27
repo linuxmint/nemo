@@ -239,6 +239,7 @@ real_active (NemoWindowSlot *slot)
     nemo_window_sync_bookmark_action (window);
 	nemo_window_pane_sync_location_widgets (slot->pane);
 	nemo_window_pane_sync_search_widgets (slot->pane);
+	nemo_window_sync_thumbnail_action(window);
 
 	if (slot->viewed_file != NULL) {
 		nemo_window_sync_view_type (window);
@@ -549,6 +550,16 @@ nemo_window_slot_update_icon (NemoWindowSlot *slot)
 
         nemo_icon_info_unref (info);
 	}
+}
+
+void
+nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
+                                      gboolean show_thumbnails)
+{
+  NemoDirectory *directory;
+  
+  directory = nemo_directory_get (slot->location);
+  nemo_directory_set_show_thumbnails(directory, show_thumbnails);
 }
 
 void
