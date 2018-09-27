@@ -237,5 +237,7 @@ gboolean           nemo_directory_is_desktop_directory     (NemoDirectory       
 
 gboolean           nemo_directory_is_editable              (NemoDirectory         *directory);
 
+void               nemo_directory_set_show_thumbnails      (NemoDirectory         *directory,
+                                gboolean show_thumbnails);
 
 #endif /* NEMO_DIRECTORY_H */

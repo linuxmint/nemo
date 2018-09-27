@@ -4167,8 +4167,19 @@ gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
 	GFilesystemPreviewType use_preview;
+    gboolean show_dir_thumbnails;
+    NemoFile *dir;
+
+    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
+        return FALSE;
+    }
 
 	use_preview = nemo_file_get_filesystem_use_preview (file);
+    dir = nemo_file_is_directory(file) ? file : nemo_file_get_parent(file);
+    
+    show_dir_thumbnails = nemo_file_get_boolean_metadata (dir,
+                                                          NEMO_METADATA_KEY_SHOW_THUMBNAILS,
+                                                          FALSE);
 
 	/* If the thumbnail has already been created, don't care about the size
 	 * of the original file.
@@ -4187,8 +4198,8 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 		} else {
 			return TRUE;
 		}
-	} else if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
-		return FALSE;
+	} else if (show_image_thumbs == NEMO_SPEED_TRADEOFF_PER_FOLDER) {
+		return show_dir_thumbnails;
 	} else {
 		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
 			/* file system says to never thumbnail anything */

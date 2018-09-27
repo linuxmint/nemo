@@ -3,6 +3,7 @@
     <value nick="always" value="0"/>
     <value nick="local-only" value="1"/>
     <value nick="never" value="2"/>
+    <value nick="per-folder" value="3"/>
   </enum>
 
   <enum id="org.nemo.ClickPolicy">
@@ -158,6 +159,11 @@
     <key type="b" name="show-compact-view-icon-toolbar">
       <default>true</default>
       <summary>Show Compact View button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
+    <key type="b" name="show-show-thumbnails-toolbar">
+      <default>true</default>
+      <summary>Show Thumbnails button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
     <key type="b" name="show-root-warning">

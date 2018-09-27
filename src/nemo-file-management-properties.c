@@ -79,6 +79,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ICON_VIEW_ICON_TOOLBAR_WIDGET "show_icon_view_icon_toolbar_togglebutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_ICON_TOOLBAR_WIDGET "show_list_view_icon_toolbar_togglebutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET "show_compact_view_icon_toolbar_togglebutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SHOW_THUMBNAILS_ICON_TOOLBAR_WIDGET "show_show_thumbnails_icon_toolbar_togglebutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_FULL_PATH_IN_TITLE_BARS_WIDGET "show_full_path_in_title_bars_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_CLOSE_DEVICE_VIEW_ON_EJECT_WIDGET "close_device_view_on_eject_checkbutton"
@@ -148,7 +149,15 @@ static const char * const date_format_values[] = {
 	NULL
 };
 
-static const char * const preview_values[] = {
+static const char * const preview_image_values[] = {
+    "always",
+    "local-only",
+    "per-folder",
+    "never",
+    NULL
+};
+
+static const char * const preview_folder_values[] = {
 	"always",
 	"local-only",
 	"never",
@@ -829,6 +838,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SHOW_THUMBNAILS_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR);
 
 	/* setup preferences */
 	bind_builder_bool (builder, nemo_icon_view_preferences,
@@ -885,11 +897,11 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET,
 			   NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
-			   (const char **) preview_values);
+			   (const char **) preview_image_values);
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET,
 			   NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS,
-			   (const char **) preview_values);
+			   (const char **) preview_folder_values);
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET,
 			   NEMO_PREFERENCES_SIZE_PREFIXES,

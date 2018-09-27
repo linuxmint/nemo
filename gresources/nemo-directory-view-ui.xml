@@ -101,6 +101,7 @@
 		<placeholder name="View Preferences Placeholder">
 			<menuitem name="Reset to Defaults" action="Reset to Defaults"/>
 			<menuitem name="Show Hidden Files" action="Show Hidden Files"/>
+			<menuitem name="Show Thumbnails" action="Show Thumbnails"/>
 		</placeholder>
 	</menu>
 </menubar>
