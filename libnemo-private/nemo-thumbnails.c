@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
 
-   nemo-thumbnails.h: Thumbnail code for icon factory.
+   nemo-thumbnail-cache.h: Thumbnail code for icon factory.
  
    Copyright (C) 2000, 2001 Eazel, Inc.
    Copyright (C) 2002, 2003 Red Hat, Inc.
@@ -40,16 +40,15 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <pthread.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
 
-#include "nemo-file-private.h"
-
 #define DEBUG_FLAG NEMO_DEBUG_THUMBNAILS
 #include <libnemo-private/nemo-debug.h>
+
+#include "nemo-file-private.h"
 
 /* Should never be a reasonable actual mtime */
 #define INVALID_MTIME 0
@@ -62,14 +61,12 @@
 #define NEMO_THUMBNAIL_FRAME_RIGHT 3
 #define NEMO_THUMBNAIL_FRAME_BOTTOM 3
 
-static gpointer thumbnail_thread_start (gpointer data);
-
 /* structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
 
 typedef struct {
-	char *image_uri;
-	char *mime_type;
-	time_t original_file_mtime;
+    char *image_uri;
+    char *mime_type;
+    time_t original_file_mtime;
     gint throttle_count;
 } NemoThumbnailInfo;
 
@@ -84,7 +81,8 @@ static guint thumbnail_thread_starter_id = 0;
 /* Our mutex used when accessing data shared between the main thread and the
    thumbnail thread, i.e. the thumbnail_thread_is_running flag and the
    thumbnails_to_make list. */
-static pthread_mutex_t thumbnails_mutex = PTHREAD_MUTEX_INITIALIZER;
+static GMutex thumbnails_mutex;
+static GCancellable *thumbnails_cancellable;
 
 /* A flag to indicate whether a thumbnail thread is running, so we don't
    start more than one. Lock thumbnails_mutex when accessing this. */
@@ -106,126 +104,88 @@ static GnomeDesktopThumbnailFactory *thumbnail_factory = NULL;
 static gboolean
 get_file_mtime (const char *file_uri, time_t* mtime)
 {
-	GFile *file;
-	GFileInfo *info;
-	gboolean ret;
+    GFile *file;
+    GFileInfo *info;
+    gboolean ret;
 
-	ret = FALSE;
-	*mtime = INVALID_MTIME;
+    ret = FALSE;
+    *mtime = INVALID_MTIME;
 
-	file = g_file_new_for_uri (file_uri);
-	info = g_file_query_info (file, G_FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
-	if (info) {
-		if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_TIME_MODIFIED)) {
-			*mtime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
-			ret = TRUE;
-		}
+    file = g_file_new_for_uri (file_uri);
+    info = g_file_query_info (file, G_FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+    if (info) {
+        if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_TIME_MODIFIED)) {
+            *mtime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+            ret = TRUE;
+        }
 
-		g_object_unref (info);
-	}
-	g_object_unref (file);
+        g_object_unref (info);
+    }
+    g_object_unref (file);
 
-	return ret;
+    return ret;
 }
 
 static void
 free_thumbnail_info (NemoThumbnailInfo *info)
 {
-	g_free (info->image_uri);
-	g_free (info->mime_type);
-	g_free (info);
+    g_free (info->image_uri);
+    g_free (info->mime_type);
+    g_free (info);
 }
 
 static GnomeDesktopThumbnailFactory *
 get_thumbnail_factory (void)
 {
-	if (thumbnail_factory == NULL) {
-		thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
-	}
+    if (thumbnail_factory == NULL) {
+        thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
+    }
 
-	return thumbnail_factory;
-}
-
-
-/* This function is added as a very low priority idle function to start the
-   thread to create any needed thumbnails. It is added with a very low priority
-   so that it doesn't delay showing the directory in the icon/list views.
-   We want to show the files in the directory as quickly as possible. */
-static gboolean
-thumbnail_thread_starter_cb (gpointer data)
-{
-	pthread_attr_t thread_attributes;
-	pthread_t thumbnail_thread;
-
-	/* Don't do this in thread, since g_object_ref is not threadsafe */
-	if (thumbnail_factory == NULL) {
-		thumbnail_factory = get_thumbnail_factory ();
-	}
-
-	/* We create the thread in the detached state, as we don't need/want
-	   to join with it at any point. */
-	pthread_attr_init (&thread_attributes);
-	pthread_attr_setdetachstate (&thread_attributes,
-				     PTHREAD_CREATE_DETACHED);
-
-	DEBUG ("(Main Thread) Creating thumbnails thread");
-
-	/* We set a flag to indicate the thread is running, so we don't create
-	   a new one. We don't need to lock a mutex here, as the thumbnail
-	   thread isn't running yet. And we know we won't create the thread
-	   twice, as we also check thumbnail_thread_starter_id before
-	   scheduling this idle function. */
-	thumbnail_thread_is_running = TRUE;
-	pthread_create (&thumbnail_thread, &thread_attributes,
-			thumbnail_thread_start, NULL);
-
-	thumbnail_thread_starter_id = 0;
-
-	return FALSE;
+    return thumbnail_factory;
 }
 
 static GdkPixbuf *
 nemo_get_thumbnail_frame (void)
 {
-	static GdkPixbuf *thumbnail_frame = NULL;
+    static GdkPixbuf *thumbnail_frame = NULL;
 
-	if (thumbnail_frame == NULL) {
-		GInputStream *stream = g_resources_open_stream ("/org/nemo/icons/thumbnail_frame.png", 0, NULL);
-		if (stream != NULL) {
-			thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
-			g_object_unref (stream);
-		}
-	}
-	
-	return thumbnail_frame;
+    if (thumbnail_frame == NULL) {
+        GInputStream *stream = g_resources_open_stream ("/org/nemo/icons/thumbnail_frame.png", 0, NULL);
+        if (stream != NULL) {
+            thumbnail_frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+            g_object_unref (stream);
+        }
+    }
+    
+    return thumbnail_frame;
 }
 
 void
 nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
 {
-	GdkPixbuf *pixbuf_with_frame, *frame;
-	int left_offset, top_offset, right_offset, bottom_offset;
-		
-	/* The pixbuf isn't already framed (i.e., it was not made by
-	 * an old Nemo), so we must embed it in a frame.
-	 */
+    GdkPixbuf *pixbuf_with_frame, *frame;
+    int left_offset, top_offset, right_offset, bottom_offset;
+        
+    /* The pixbuf isn't already framed (i.e., it was not made by
+     * an old Nemo), so we must embed it in a frame.
+     */
 
-	frame = nemo_get_thumbnail_frame ();
-	if (frame == NULL) {
-		return;
-	}
-	
-	left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
-	top_offset = NEMO_THUMBNAIL_FRAME_TOP;
-	right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
-	bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
-	
-	pixbuf_with_frame = eel_embed_image_in_frame
-		(*pixbuf, frame,
-		 left_offset, top_offset, right_offset, bottom_offset);
-	g_object_unref (*pixbuf);	
+    frame = nemo_get_thumbnail_frame ();
+    if (frame == NULL) {
+        return;
+    }
+    
+    left_offset = NEMO_THUMBNAIL_FRAME_LEFT;
+    top_offset = NEMO_THUMBNAIL_FRAME_TOP;
+    right_offset = NEMO_THUMBNAIL_FRAME_RIGHT;
+    bottom_offset = NEMO_THUMBNAIL_FRAME_BOTTOM;
+    
+    pixbuf_with_frame = eel_embed_image_in_frame
+        (*pixbuf, frame,
+         left_offset, top_offset, right_offset, bottom_offset);
+    g_object_unref (*pixbuf);   
 
-	*pixbuf = pixbuf_with_frame;
+    *pixbuf = pixbuf_with_frame;
 }
 
 void
@@ -278,74 +238,167 @@ nemo_thumbnail_pad_top_and_bottom (GdkPixbuf **pixbuf,
     *pixbuf = pixbuf_with_padding;
 }
 
-void
-nemo_thumbnail_remove_from_queue (const char *file_uri)
+static GHashTable *
+get_types_table (void)
 {
-	GList *node;
-	
-	DEBUG ("(Remove from queue) Locking mutex");
+    static GHashTable *image_mime_types = NULL;
+    GSList *format_list, *l;
+    char **types;
+    int i;
 
-	pthread_mutex_lock (&thumbnails_mutex);
+    if (image_mime_types == NULL) {
+        image_mime_types =
+            g_hash_table_new_full (g_str_hash, g_str_equal,
+                           g_free, NULL);
 
-	/*********************************
-	 * MUTEX LOCKED
-	 *********************************/
+        format_list = gdk_pixbuf_get_formats ();
+        for (l = format_list; l; l = l->next) {
+            types = gdk_pixbuf_format_get_mime_types (l->data);
 
-	if (thumbnails_to_make_hash) {
-		node = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
-		
-		if (node && node->data != currently_thumbnailing) {
-			g_hash_table_remove (thumbnails_to_make_hash, file_uri);
-			free_thumbnail_info (node->data);
-			g_queue_delete_link ((GQueue *)&thumbnails_to_make, node);
-		}
-	}
-	
-	/*********************************
-	 * MUTEX UNLOCKED
-	 *********************************/
-	
-	DEBUG ("(Remove from queue) Unlocking mutex");
+            for (i = 0; types[i] != NULL; i++) {
+                g_hash_table_insert (image_mime_types,
+                             types [i],
+                             GUINT_TO_POINTER (1));
+            }
 
-	pthread_mutex_unlock (&thumbnails_mutex);
+            g_free (types);
+        }
+
+        g_slist_free (format_list);
+    }
+
+    return image_mime_types;
 }
 
-void
-nemo_thumbnail_prioritize (const char *file_uri)
+static gboolean
+pixbuf_can_load_type (const char *mime_type)
 {
-	GList *node;
+    GHashTable *image_mime_types;
 
-	DEBUG ("(Prioritize) Locking mutex");
+    image_mime_types = get_types_table ();
+    if (g_hash_table_lookup (image_mime_types, mime_type)) {
+        return TRUE;
+    }
 
-	pthread_mutex_lock (&thumbnails_mutex);
-
-	/*********************************
-	 * MUTEX LOCKED
-	 *********************************/
-
-	if (thumbnails_to_make_hash) {
-		node = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
-		
-		if (node && node->data != currently_thumbnailing) {
-			g_queue_unlink ((GQueue *)&thumbnails_to_make, node);
-			g_queue_push_head_link ((GQueue *)&thumbnails_to_make, node);
-		}
-	}
-	
-	/*********************************
-	 * MUTEX UNLOCKED
-	 *********************************/
-	
-	DEBUG ("(Prioritize) Unlocking mutex");
-
-	pthread_mutex_unlock (&thumbnails_mutex);
+    return FALSE;
 }
 
+gboolean
+nemo_can_thumbnail_internally (NemoFile *file)
+{
+    char *mime_type;
+    gboolean res;
+
+    mime_type = nemo_file_get_mime_type (file);
+    res = pixbuf_can_load_type (mime_type);
+    g_free (mime_type);
+    return res;
+}
+
+gboolean
+nemo_thumbnail_is_mimetype_limited_by_size (const char *mime_type)
+{
+    return pixbuf_can_load_type (mime_type);
+}
+
+gboolean
+nemo_can_thumbnail (NemoFile *file)
+{
+    GnomeDesktopThumbnailFactory *factory;
+    gboolean res;
+    char *uri;
+    time_t mtime;
+    char *mime_type;
+
+    uri = nemo_file_get_uri (file);
+    mime_type = nemo_file_get_mime_type (file);
+    mtime = nemo_file_get_mtime (file);
+    
+    factory = get_thumbnail_factory ();
+    res = gnome_desktop_thumbnail_factory_can_thumbnail (factory,
+                                 uri,
+                                 mime_type,
+                                 mtime);
+    g_free (mime_type);
+    g_free (uri);
+
+    return res;
+}
 
 /***************************************************************************
  * Thumbnail Thread Functions.
  ***************************************************************************/
 
+void
+nemo_thumbnail_remove_from_queue (const char *file_uri)
+{
+    GList *node;
+
+    if (DEBUGGING) {
+        g_message ("(Remove from queue) Locking mutex");
+    }
+
+    g_mutex_lock (&thumbnails_mutex);
+
+    /*********************************
+     * MUTEX LOCKED
+     *********************************/
+
+    if (thumbnails_to_make_hash) {
+        node = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
+        
+        if (node && node->data != currently_thumbnailing) {
+            g_hash_table_remove (thumbnails_to_make_hash, file_uri);
+            free_thumbnail_info (node->data);
+            g_queue_delete_link ((GQueue *)&thumbnails_to_make, node);
+        }
+    }
+
+    /*********************************
+     * MUTEX UNLOCKED
+     *********************************/
+
+    if (DEBUGGING) {
+        g_message ("(Remove from queue) Unlocking mutex");
+    }
+
+    g_mutex_unlock (&thumbnails_mutex);
+}
+
+void
+nemo_thumbnail_prioritize (const char *file_uri)
+{
+    GList *node;
+
+    if (DEBUGGING) {
+        g_message ("(Prioritize) Locking mutex");
+    }
+
+    g_mutex_lock (&thumbnails_mutex);
+
+    /*********************************
+     * MUTEX LOCKED
+     *********************************/
+
+    if (thumbnails_to_make_hash) {
+        node = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
+
+        if (node && node->data != currently_thumbnailing) {
+            g_queue_unlink ((GQueue *)&thumbnails_to_make, node);
+            g_queue_push_head_link ((GQueue *)&thumbnails_to_make, node);
+        }
+    }
+    
+    /*********************************
+     * MUTEX UNLOCKED
+     *********************************/
+    
+    if (DEBUGGING) {
+        g_message ("(Prioritize) Unlocking mutex");
+    }
+
+    g_mutex_unlock (&thumbnails_mutex);
+}
 
 /* This is a one-shot idle callback called from the main loop to call
    notify_file_changed() for a thumbnail. It frees the uri afterwards.
@@ -354,295 +407,304 @@ nemo_thumbnail_prioritize (const char *file_uri)
 static gboolean
 thumbnail_thread_notify_file_changed (gpointer image_uri)
 {
-	NemoFile *file;
+    NemoFile *file;
 
-	file = nemo_file_get_by_uri ((char *) image_uri);
+    file = nemo_file_get_by_uri ((char *) image_uri);
 
-	DEBUG ("(Thumbnail Thread) Notifying file changed file:%p uri: %s\n", file, (char*) image_uri);
+    if (DEBUGGING) {
+        g_message ("(Thumbnail Thread) Notifying file changed file:%p uri: %s", file, (char*) image_uri);
+    }
 
-	if (file != NULL) {
-		nemo_file_set_is_thumbnailing (file, FALSE);
-		nemo_file_invalidate_attributes (file,
-						     NEMO_FILE_ATTRIBUTE_THUMBNAIL |
-						     NEMO_FILE_ATTRIBUTE_INFO);
-		nemo_file_unref (file);
-	}
-	g_free (image_uri);
+    if (file != NULL) {
+        nemo_file_set_is_thumbnailing (file, FALSE);
+        nemo_file_invalidate_attributes (file,
+                             NEMO_FILE_ATTRIBUTE_THUMBNAIL |
+                             NEMO_FILE_ATTRIBUTE_INFO);
+        nemo_file_unref (file);
+    }
+    g_free (image_uri);
 
-	return FALSE;
+    return FALSE;
 }
 
-static GHashTable *
-get_types_table (void)
+static void
+on_thumbnail_thread_finished (GObject      *source,
+                              GAsyncResult *res,
+                              gpointer      user_data)
 {
-	static GHashTable *image_mime_types = NULL;
-	GSList *format_list, *l;
-	char **types;
-	int i;
+    GError *error;
 
-	if (image_mime_types == NULL) {
-		image_mime_types =
-			g_hash_table_new_full (g_str_hash, g_str_equal,
-					       g_free, NULL);
+    error = NULL;
+    g_task_propagate_boolean (G_TASK (res), &error);
 
-		format_list = gdk_pixbuf_get_formats ();
-		for (l = format_list; l; l = l->next) {
-			types = gdk_pixbuf_format_get_mime_types (l->data);
+    if (error != NULL) {
+        g_warning ("Error thumbnailing: %s", error->message);
+        g_error_free (error);
+    }
 
-			for (i = 0; types[i] != NULL; i++) {
-				g_hash_table_insert (image_mime_types,
-						     types [i],
-						     GUINT_TO_POINTER (1));
-			}
+    if (DEBUGGING) {
+        g_message ("(Main Thread) Thumbnail thread finished");
+    }
 
-			g_free (types);
-		}
-
-		g_slist_free (format_list);
-	}
-
-	return image_mime_types;
+    /* Thread is no longer running, no need to lock mutex */
+    thumbnail_thread_is_running = FALSE;
 }
 
+/* thumbnail_thread is invoked as a separate thread to to make thumbnails. */
+static void
+thumbnail_thread (GTask        *task,
+                        gpointer      source_object,
+                        gpointer      task_data,
+                        GCancellable *cancellable)
+{
+    NemoThumbnailInfo *info = NULL;
+    GdkPixbuf *pixbuf;
+    time_t current_orig_mtime = 0;
+    time_t current_time;
+    GList *node;
+
+    /* We loop until there are no more thumbails to make, at which point
+       we exit the thread. */
+    for (;;) {
+        if (DEBUGGING) {
+            g_message ("(Thumbnail Thread) Locking mutex");
+        }
+
+        g_mutex_lock (&thumbnails_mutex);
+
+        /*********************************
+         * MUTEX LOCKED
+         *********************************/
+
+        /* Pop the last thumbnail we just made off the head of the
+           list and free it. I did this here so we only have to lock
+           the mutex once per thumbnail, rather than once before
+           creating it and once after.
+           Don't pop the thumbnail off the queue if the original file
+           mtime of the request changed. Then we need to redo the thumbnail.
+        */
+        if (currently_thumbnailing &&
+            currently_thumbnailing->original_file_mtime == current_orig_mtime) {
+            g_assert (info == currently_thumbnailing);
+
+            node = g_hash_table_lookup (thumbnails_to_make_hash, info->image_uri);
+
+            g_assert (node != NULL);
+
+            g_hash_table_remove (thumbnails_to_make_hash, info->image_uri);
+            free_thumbnail_info (info);
+            g_queue_delete_link ((GQueue *)&thumbnails_to_make, node);
+        }
+
+        currently_thumbnailing = NULL;
+
+        /* If there are no more thumbnails to make, reset the
+           thumbnail_thread_is_running flag, unlock the mutex, and
+           exit the thread. */
+        if (g_queue_is_empty ((GQueue *)&thumbnails_to_make)) {
+            if (DEBUGGING) {
+                g_message ("(Thumbnail Thread) Exiting");
+            }
+
+            g_mutex_unlock (&thumbnails_mutex);
+            g_task_return_boolean (task, TRUE);
+            return;
+        }
+
+        /* Get the next one to make. We leave it on the list until it
+           is created so the main thread doesn't add it again while we
+           are creating it. */
+        info = g_queue_peek_head ((GQueue *)&thumbnails_to_make);
+        currently_thumbnailing = info;
+        current_orig_mtime = info->original_file_mtime;
+
+        /*********************************
+         * MUTEX UNLOCKED
+         *********************************/
+
+        if (DEBUGGING) {
+            g_message ("(Thumbnail Thread) Unlocking mutex");
+        }
+
+        g_mutex_unlock (&thumbnails_mutex);
+
+        time (&current_time);
+
+        /* Don't try to create a thumbnail if the file was modified recently.
+           This prevents constant re-thumbnailing of changing files. */ 
+        if (current_time < current_orig_mtime + (THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count) &&
+            current_time >= current_orig_mtime) {
+            if (DEBUGGING) {
+                g_message ("(Thumbnail Thread) Skipping for %d seconds: %s",
+                           THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count,
+                           info->image_uri);
+            }
+
+            /* Reschedule thumbnailing via a change notification */
+            g_timeout_add_seconds (THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count, thumbnail_thread_notify_file_changed,
+                       g_strdup (info->image_uri));
+            continue;
+        }
+
+        /* Create the thumbnail. */
+        if (DEBUGGING) {
+            g_message ("(Thumbnail Thread) Creating thumbnail: %s",
+                       info->image_uri);
+        }
+
+        pixbuf = gnome_desktop_thumbnail_factory_generate_thumbnail (thumbnail_factory,
+                                         info->image_uri,
+                                         info->mime_type);
+
+        if (pixbuf) {
+            gnome_desktop_thumbnail_factory_save_thumbnail (thumbnail_factory,
+                                    pixbuf,
+                                    info->image_uri,
+                                    current_orig_mtime);
+            g_object_unref (pixbuf);
+        } else {
+            gnome_desktop_thumbnail_factory_create_failed_thumbnail (thumbnail_factory, 
+                                         info->image_uri,
+                                         current_orig_mtime);
+        }
+
+        /* We need to call nemo_file_changed(), but I don't think that is
+           thread safe. So add an idle handler and do it from the main loop. */
+        g_idle_add_full (G_PRIORITY_HIGH_IDLE,
+                 thumbnail_thread_notify_file_changed,
+                 g_strdup (info->image_uri), NULL);
+    }
+
+    g_task_return_boolean (task, TRUE);
+}
+
+/* This function is added as a very low priority idle function to start the
+   thread to create any needed thumbnails. It is added with a very low priority
+   so that it doesn't delay showing the directory in the icon/list views.
+   We want to show the files in the directory as quickly as possible. */
 static gboolean
-pixbuf_can_load_type (const char *mime_type)
+thumbnail_thread_starter_cb (gpointer data)
 {
-	GHashTable *image_mime_types;
+    GTask *thumbnail_task;
 
-	image_mime_types = get_types_table ();
-	if (g_hash_table_lookup (image_mime_types, mime_type)) {
-		return TRUE;
-	}
+    /* Don't do this in thread, since g_object_ref is not threadsafe */
+    if (thumbnail_factory == NULL) {
+        thumbnail_factory = get_thumbnail_factory ();
+    }
 
-	return FALSE;
-}
+    thumbnails_cancellable = g_cancellable_new ();
 
-gboolean
-nemo_can_thumbnail_internally (NemoFile *file)
-{
-	char *mime_type;
-	gboolean res;
+    if (DEBUGGING) {
+        g_message ("(Main Thread) Creating thumbnails thread");
+    }
 
-	mime_type = nemo_file_get_mime_type (file);
-	res = pixbuf_can_load_type (mime_type);
-	g_free (mime_type);
-	return res;
-}
+    thumbnail_task = g_task_new (thumbnail_factory,
+                                 thumbnails_cancellable,
+                                 on_thumbnail_thread_finished,
+                                 NULL);
 
-gboolean
-nemo_thumbnail_is_mimetype_limited_by_size (const char *mime_type)
-{
-	return pixbuf_can_load_type (mime_type);
-}
+    /* We set a flag to indicate the thread is running, so we don't create
+       a new one. We don't need to lock a mutex here, as the thumbnail
+       thread isn't running yet. And we know we won't create the thread
+       twice, as we also check thumbnail_thread_starter_id before
+       scheduling this idle function. */
+    thumbnail_thread_is_running = TRUE;
 
-gboolean
-nemo_can_thumbnail (NemoFile *file)
-{
-	GnomeDesktopThumbnailFactory *factory;
-	gboolean res;
-	char *uri;
-	time_t mtime;
-	char *mime_type;
-		
-	uri = nemo_file_get_uri (file);
-	mime_type = nemo_file_get_mime_type (file);
-	mtime = nemo_file_get_mtime (file);
-	
-	factory = get_thumbnail_factory ();
-	res = gnome_desktop_thumbnail_factory_can_thumbnail (factory,
-							     uri,
-							     mime_type,
-							     mtime);
-	g_free (mime_type);
-	g_free (uri);
+    g_task_run_in_thread (thumbnail_task, thumbnail_thread);
 
-	return res;
+    thumbnail_thread_starter_id = 0;
+    return FALSE;
 }
 
 void
 nemo_create_thumbnail (NemoFile *file, gint throttle_count)
 {
-	time_t file_mtime = 0;
-	NemoThumbnailInfo *info;
-	NemoThumbnailInfo *existing_info;
-	GList *existing, *node;
+    time_t file_mtime = 0;
+    NemoThumbnailInfo *info;
+    NemoThumbnailInfo *existing_info;
+    GList *existing, *node;
 
-	nemo_file_set_is_thumbnailing (file, TRUE);
+    nemo_file_set_is_thumbnailing (file, TRUE);
 
-	info = g_new0 (NemoThumbnailInfo, 1);
-	info->image_uri = nemo_file_get_uri (file);
-	info->mime_type = nemo_file_get_mime_type (file);
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->image_uri = nemo_file_get_uri (file);
+    info->mime_type = nemo_file_get_mime_type (file);
     info->throttle_count = MIN (10, throttle_count);
-	
-	/* Hopefully the NemoFile will already have the image file mtime,
-	   so we can just use that. Otherwise we have to get it ourselves. */
-	if (file->details->got_file_info &&
-	    file->details->file_info_is_up_to_date &&
-	    file->details->mtime != 0) {
-		file_mtime = file->details->mtime;
-	} else {
-		get_file_mtime (info->image_uri, &file_mtime);
-	}
-	
-	info->original_file_mtime = file_mtime;
+    
+    /* Hopefully the NemoFile will already have the image file mtime,
+       so we can just use that. Otherwise we have to get it ourselves. */
+    if (file->details->got_file_info &&
+        file->details->file_info_is_up_to_date &&
+        file->details->mtime != 0) {
+        file_mtime = file->details->mtime;
+    } else {
+        get_file_mtime (info->image_uri, &file_mtime);
+    }
+    
+    info->original_file_mtime = file_mtime;
 
+    if (DEBUGGING) {
+        g_message ("(Main Thread) Locking mutex");
+    }
 
-	DEBUG ("(Main Thread) Locking mutex");
+    g_mutex_lock (&thumbnails_mutex);
 
-	pthread_mutex_lock (&thumbnails_mutex);
-	
-	/*********************************
-	 * MUTEX LOCKED
-	 *********************************/
+    /*********************************
+     * MUTEX LOCKED
+     *********************************/
 
-	if (thumbnails_to_make_hash == NULL) {
-		thumbnails_to_make_hash = g_hash_table_new (g_str_hash,
-							    g_str_equal);
-	}
+    if (thumbnails_to_make_hash == NULL) {
+        thumbnails_to_make_hash = g_hash_table_new (g_str_hash,
+                                g_str_equal);
+    }
 
-	/* Check if it is already in the list of thumbnails to make. */
-	existing = g_hash_table_lookup (thumbnails_to_make_hash, info->image_uri);
-	if (existing == NULL) {
-		/* Add the thumbnail to the list. */
-		DEBUG ("(Main Thread) Adding thumbnail: %s",
-			   info->image_uri);
-		g_queue_push_tail ((GQueue *)&thumbnails_to_make, info);
-		node = g_queue_peek_tail_link ((GQueue *)&thumbnails_to_make);
-		g_hash_table_insert (thumbnails_to_make_hash,
-				     info->image_uri,
-				     node);
-		/* If the thumbnail thread isn't running, and we haven't
-		   scheduled an idle function to start it up, do that now.
-		   We don't want to start it until all the other work is done,
-		   so the GUI will be updated as quickly as possible.*/
-		if (thumbnail_thread_is_running == FALSE &&
-		    thumbnail_thread_starter_id == 0) {
-			thumbnail_thread_starter_id = g_idle_add_full (G_PRIORITY_LOW, thumbnail_thread_starter_cb, NULL, NULL);
-		}
-	} else {
-		DEBUG ("(Main Thread) Updating non-current mtime: %s",
-			   info->image_uri);
-		/* The file in the queue might need a new original mtime */
-		existing_info = existing->data;
-		existing_info->original_file_mtime = info->original_file_mtime;
-		free_thumbnail_info (info);
-	}   
+    /* Check if it is already in the list of thumbnails to make. */
+    existing = g_hash_table_lookup (thumbnails_to_make_hash, info->image_uri);
 
-	/*********************************
-	 * MUTEX UNLOCKED
-	 *********************************/
+    if (existing == NULL) {
+        /* Add the thumbnail to the list. */
 
-	DEBUG ("(Main Thread) Unlocking mutex");
+        if (DEBUGGING) {
+            g_message ("(Main Thread) Adding thumbnail: %s",
+                       info->image_uri);
+        }
 
-	pthread_mutex_unlock (&thumbnails_mutex);
-}
+        g_queue_push_tail ((GQueue *)&thumbnails_to_make, info);
+        node = g_queue_peek_tail_link ((GQueue *)&thumbnails_to_make);
+        g_hash_table_insert (thumbnails_to_make_hash,
+                     info->image_uri,
+                     node);
 
-/* thumbnail_thread is invoked as a separate thread to to make thumbnails. */
-static gpointer
-thumbnail_thread_start (gpointer data)
-{
-	NemoThumbnailInfo *info = NULL;
-	GdkPixbuf *pixbuf;
-	time_t current_orig_mtime = 0;
-	time_t current_time;
-	GList *node;
+        /* If the thumbnail thread isn't running, and we haven't
+           scheduled an idle function to start it up, do that now.
+           We don't want to start it until all the other work is done,
+           so the GUI will be updated as quickly as possible.*/
 
-	/* We loop until there are no more thumbails to make, at which point
-	   we exit the thread. */
-	for (;;) {
+        if (thumbnail_thread_is_running == FALSE &&
+            thumbnail_thread_starter_id == 0) {
+            thumbnail_thread_starter_id = g_idle_add_full (G_PRIORITY_LOW, thumbnail_thread_starter_cb, NULL, NULL);
+        }
+    } else {
+        if (DEBUGGING) {
+            g_message ("(Main Thread) Updating non-current mtime: %s",
+                       info->image_uri);
+        }
 
-		DEBUG ("(Thumbnail Thread) Locking mutex");
+        /* The file in the queue might need a new original mtime */
+        existing_info = existing->data;
+        existing_info->original_file_mtime = info->original_file_mtime;
+        free_thumbnail_info (info);
+    }   
 
-		pthread_mutex_lock (&thumbnails_mutex);
+    /*********************************
+     * MUTEX UNLOCKED
+     *********************************/
 
-		/*********************************
-		 * MUTEX LOCKED
-		 *********************************/
+    if (DEBUGGING) {
+        g_message ("(Main Thread) Unlocking mutex");
+    }
 
-		/* Pop the last thumbnail we just made off the head of the
-		   list and free it. I did this here so we only have to lock
-		   the mutex once per thumbnail, rather than once before
-		   creating it and once after.
-		   Don't pop the thumbnail off the queue if the original file
-		   mtime of the request changed. Then we need to redo the thumbnail.
-		*/
-		if (currently_thumbnailing &&
-		    currently_thumbnailing->original_file_mtime == current_orig_mtime) {
-			g_assert (info == currently_thumbnailing);
-			node = g_hash_table_lookup (thumbnails_to_make_hash, info->image_uri);
-			g_assert (node != NULL);
-			g_hash_table_remove (thumbnails_to_make_hash, info->image_uri);
-			free_thumbnail_info (info);
-			g_queue_delete_link ((GQueue *)&thumbnails_to_make, node);
-		}
-		currently_thumbnailing = NULL;
-
-		/* If there are no more thumbnails to make, reset the
-		   thumbnail_thread_is_running flag, unlock the mutex, and
-		   exit the thread. */
-		if (g_queue_is_empty ((GQueue *)&thumbnails_to_make)) {
-
-			DEBUG ("(Thumbnail Thread) Exiting");
-			thumbnail_thread_is_running = FALSE;
-			pthread_mutex_unlock (&thumbnails_mutex);
-			pthread_exit (NULL);
-		}
-
-		/* Get the next one to make. We leave it on the list until it
-		   is created so the main thread doesn't add it again while we
-		   are creating it. */
-		info = g_queue_peek_head ((GQueue *)&thumbnails_to_make);
-		currently_thumbnailing = info;
-		current_orig_mtime = info->original_file_mtime;
-		/*********************************
-		 * MUTEX UNLOCKED
-		 *********************************/
-
-		DEBUG ("(Thumbnail Thread) Unlocking mutex");
-
-		pthread_mutex_unlock (&thumbnails_mutex);
-
-		time (&current_time);
-
-		/* Don't try to create a thumbnail if the file was modified recently.
-		   This prevents constant re-thumbnailing of changing files. */ 
-		if (current_time < current_orig_mtime + (THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count) &&
-		    current_time >= current_orig_mtime) {
-			DEBUG ("(Thumbnail Thread) Skipping for %d seconds: %s",
-                   THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count,
-                   info->image_uri);
-			/* Reschedule thumbnailing via a change notification */
-			g_timeout_add_seconds (THUMBNAIL_CREATION_DELAY_SECS * info->throttle_count, thumbnail_thread_notify_file_changed,
-				       g_strdup (info->image_uri));
- 			continue;
-		}
-
-		/* Create the thumbnail. */
-		DEBUG ("(Thumbnail Thread) Creating thumbnail: %s",
-			   info->image_uri);
-
-		pixbuf = gnome_desktop_thumbnail_factory_generate_thumbnail (thumbnail_factory,
-									     info->image_uri,
-									     info->mime_type);
-
-		if (pixbuf) {
-			gnome_desktop_thumbnail_factory_save_thumbnail (thumbnail_factory,
-									pixbuf,
-									info->image_uri,
-									current_orig_mtime);
-			g_object_unref (pixbuf);
-		} else {
-			gnome_desktop_thumbnail_factory_create_failed_thumbnail (thumbnail_factory, 
-										 info->image_uri,
-										 current_orig_mtime);
-		}
-
-		/* We need to call nemo_file_changed(), but I don't think that is
-		   thread safe. So add an idle handler and do it from the main loop. */
-		g_idle_add_full (G_PRIORITY_HIGH_IDLE,
-				 thumbnail_thread_notify_file_changed,
-				 g_strdup (info->image_uri), NULL);
-	}
+    g_mutex_unlock (&thumbnails_mutex);
 }
 
 gboolean
