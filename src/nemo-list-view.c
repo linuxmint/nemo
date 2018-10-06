@@ -120,6 +120,9 @@ struct NemoListViewDetails {
 
     GList *current_selection;
     gint current_selection_count;
+
+    gint autosize_counter;
+    guint autosize_queue_id;
 };
 
 struct SelectionForeachData {
@@ -190,6 +193,69 @@ static const char * default_recent_visible_columns[] = {
 static const char * default_recent_columns_order[] = {
     "name", "size", "type", "date_accessed", NULL
 };
+
+/* We set the tree view to fixed sizing mode, for performance
+ * reasons, otherwise 50% of our clocks are from performing
+ * size allocations on the view content for a given period of
+ * load time.  A consequence of fixed size mode is losing the
+ * auto-adjusting width of columns as content is filled in.
+ *
+ * We can use autosize to trigger this calculation at need.  We
+ * do so when prefs/zoom level change, and when a view finishes
+ * loading.  For folders with a large number of files, we use
+ * this function to periodically run autosize on the view during
+ * the loading phase.  This keeps you from being stuck with an
+ * ill-sized column until the folder fully completes loading.
+ */
+#define AUTOSIZE_INTERVAL 500
+
+static inline void
+autosize_counter_tick (NemoListView *list_view)
+{
+    if (list_view->details->autosize_counter < AUTOSIZE_INTERVAL) {
+        list_view->details->autosize_counter++;
+        return;
+    }
+
+    /* Reset to 0 here, to indicate we're still loading (since we
+     * can receive file-change events even while loading, but we don't
+     * want the associated autosize queueing along with it.) */
+    list_view->details->autosize_counter = 1;
+
+    gtk_tree_view_columns_autosize (list_view->details->tree_view);
+}
+
+static gboolean
+queue_autosize_idle (gpointer user_data)
+{
+    g_return_val_if_fail (NEMO_IS_LIST_VIEW (user_data), FALSE);
+
+    NemoListView *list_view = NEMO_LIST_VIEW (user_data);
+
+    gtk_tree_view_columns_autosize (list_view->details->tree_view);
+
+    list_view->details->autosize_queue_id = 0;
+    return FALSE;
+}
+
+static void
+queue_autosize (NemoListView *list_view)
+{
+    /* Don't queue autosizes if we're currently loading the folder.
+     * autosize_counter_tick handles things during that time. */
+    if (list_view->details->autosize_counter > 0) {
+        return;
+    }
+
+#if (GLIB_CHECK_VERSION(2,56,0))
+    g_clear_handle_id (&list_view->details->autosize_queue_id, g_source_remove);
+#else
+    eel_clear_source_id (&list_view->details->autosize_queue_id);
+#endif
+
+    list_view->details->autosize_queue_id = g_idle_add ((GSourceFunc) queue_autosize_idle,
+                                                        list_view);
+}
 
 static gchar **
 string_array_from_string_glist (GList *list)
@@ -2183,6 +2249,7 @@ create_and_set_up_tree_view (NemoListView *view)
 	gchar **default_column_order, **default_visible_columns;
 
 	view->details->tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
+    gtk_tree_view_set_fixed_height_mode (view->details->tree_view, TRUE);
 
     gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (view->details->tree_view), TRUE);
 
@@ -2301,6 +2368,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
 
 			view->details->file_name_column = gtk_tree_view_column_new ();
+            gtk_tree_view_column_set_sizing (view->details->file_name_column, GTK_TREE_VIEW_COLUMN_FIXED);
             gtk_tree_view_append_column (view->details->tree_view,
                                          view->details->file_name_column);
 
@@ -2358,6 +2426,7 @@ create_and_set_up_tree_view (NemoListView *view)
 			view->details->cells = g_list_append (view->details->cells,
 							      cell);
             column = gtk_tree_view_column_new ();
+            gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
 
             g_object_set_data_full (G_OBJECT (column),
                                     "column-id", g_strdup (name),
@@ -2426,6 +2495,8 @@ nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 
 	model = NEMO_LIST_VIEW (view)->details->model;
 	nemo_list_model_add_file (model, file, directory);
+
+    autosize_counter_tick (NEMO_LIST_VIEW (view));
 }
 
 static char **
@@ -2651,6 +2722,9 @@ nemo_list_view_begin_loading (NemoView *view)
 
 	list_view = NEMO_LIST_VIEW (view);
 
+    /* Initialize to non-zero as an indicator that we're loading. */
+    list_view->details->autosize_counter = 1;
+
 	set_sort_order_from_metadata_and_preferences (list_view);
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
@@ -2753,6 +2827,8 @@ nemo_list_view_file_changed (NemoView *view, NemoFile *file, NemoDirectory *dire
 		nemo_file_unref (listview->details->renaming_file);
 		listview->details->renaming_file = NULL;
 	}
+
+    queue_autosize (listview);
 }
 
 typedef struct {
@@ -3838,6 +3914,12 @@ nemo_list_view_end_loading (NemoView *view,
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);
 
 	list_view_notify_clipboard_info (monitor, info, NEMO_LIST_VIEW (view));
+
+    /* Set to 0 at the end so indicate we're no longer loading (this is for
+     * the benefit of the file-change autosize queue.) */
+    NEMO_LIST_VIEW (view)->details->autosize_counter = 0;
+
+    gtk_tree_view_columns_autosize (NEMO_LIST_VIEW (view)->details->tree_view);
 }
 
 static const char *
