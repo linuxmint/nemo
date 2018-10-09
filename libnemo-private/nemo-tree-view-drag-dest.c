@@ -87,10 +87,11 @@ G_DEFINE_TYPE (NemoTreeViewDragDest, nemo_tree_view_drag_dest,
 
 static const GtkTargetEntry drag_types [] = {
 	{ (char *)NEMO_ICON_DND_GNOME_ICON_LIST_TYPE, 0, NEMO_ICON_DND_GNOME_ICON_LIST },
+	/* prefer XDS Protocol Type over "_NETSCAPE_URL" to make DnD work in Firefox. */
+	{ (char *)NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE },
 	/* prefer "_NETSCAPE_URL" over "text/uri-list" to satisfy web browsers. */
 	{ (char *)NEMO_ICON_DND_NETSCAPE_URL_TYPE, 0, NEMO_ICON_DND_NETSCAPE_URL },
 	{ (char *)NEMO_ICON_DND_URI_LIST_TYPE, 0, NEMO_ICON_DND_URI_LIST },
-	{ (char *)NEMO_ICON_DND_XDNDDIRECTSAVE_TYPE, 0, NEMO_ICON_DND_XDNDDIRECTSAVE }, /* XDS Protocol Type */
 	{ (char *)NEMO_ICON_DND_RAW_TYPE, 0, NEMO_ICON_DND_RAW }
 };
 
