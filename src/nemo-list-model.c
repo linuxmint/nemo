@@ -1027,9 +1027,13 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 
     if (nemo_file_is_directory (file)) {
         guint count;
+        gboolean got_count, unreadable;
+
         file_entry->files = g_sequence_new ((GDestroyNotify)file_entry_free);
 
-        if (!nemo_file_get_directory_item_count (file, &count, NULL) || count > 0) {
+        got_count = nemo_file_get_directory_item_count (file, &count, &unreadable);
+
+        if ((!got_count && !unreadable) || count > 0) {
             add_dummy_row (model, file_entry);
             gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
                                                   path, &iter);
@@ -1049,21 +1053,22 @@ update_dummy_row (NemoListModel *model,
     GSequence *files;
     gboolean changed;
     guint count;
+    gboolean got_count, unreadable;
 
     changed = FALSE;
 
-    if (nemo_file_get_directory_item_count (file, &count, NULL)) {
-        if (count == 0) {
-            files = file_entry->files;
-            if (g_sequence_get_length (files) == 1) {
-                GSequenceIter *dummy_ptr = g_sequence_get_iter_at_pos (files, 0);
-                FileEntry *dummy_entry = g_sequence_get (dummy_ptr);
+    got_count = nemo_file_get_directory_item_count (file, &count, &unreadable);
 
-                if (dummy_entry->file == NULL) {
-                    model->details->stamp++;
-                    g_sequence_remove (dummy_ptr);
-                    changed = TRUE;
-                }
+    if ((got_count && count == 0) || (!got_count && unreadable)) {
+        files = file_entry->files;
+        if (g_sequence_get_length (files) == 1) {
+            GSequenceIter *dummy_ptr = g_sequence_get_iter_at_pos (files, 0);
+            FileEntry *dummy_entry = g_sequence_get (dummy_ptr);
+
+            if (dummy_entry->file == NULL) {
+                model->details->stamp++;
+                g_sequence_remove (dummy_ptr);
+                changed = TRUE;
             }
         }
     }
