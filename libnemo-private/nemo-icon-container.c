@@ -2839,6 +2839,14 @@ size_allocate (GtkWidget *widget,
 		need_layout_redone = FALSE;
 	}
 
+    if (is_renaming (container)) {
+        container->details->renaming_allocation_count++;
+
+        if (container->details->renaming_allocation_count == 1) {
+            need_layout_redone = FALSE;
+        }
+    }
+
 	GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->size_allocate (widget, allocation);
 
 	container->details->has_been_allocated = TRUE;
@@ -4937,6 +4945,7 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->skip_rename_on_release = FALSE;
     details->dnd_grid = NULL;
     details->current_selection_count = -1;
+    details->renaming_allocation_count = 0;
 }
 
 typedef struct {
@@ -6918,6 +6927,8 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 
 	nemo_icon_container_update_icon (container, icon);
 
+    details->renaming_allocation_count = 0;
+
 	/* We are in renaming mode */
 	details->renaming = TRUE;
 	nemo_icon_canvas_item_set_renaming (icon->item, TRUE);
@@ -6956,6 +6967,8 @@ nemo_icon_container_end_renaming_mode (NemoIconContainer *container, gboolean co
 	/* We are not in renaming mode */
 	container->details->renaming = FALSE;
 	nemo_icon_canvas_item_set_renaming (icon->item, FALSE);
+
+    container->details->renaming_allocation_count = 0;
 
 	nemo_icon_container_unfreeze_updates (container);
 
