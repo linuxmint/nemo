@@ -95,6 +95,10 @@ initialize_dnd_grid (NemoIconContainer *container)
 {
     GList *selection, *p;
 
+    if (!NEMO_ICON_CONTAINER_GET_CLASS (container)->is_grid_container) {
+        return;
+    }
+
     if (container->details->dnd_grid != NULL) {
         nemo_centered_placement_grid_free (container->details->dnd_grid);
     }
