@@ -394,7 +394,6 @@ nemo_desktop_window_set_grid_adjusts (NemoDesktopWindow *window,
 {
     NemoView *view;
     NemoWindowSlot *slot;
-    NemoFile *file;
 
     slot = nemo_window_get_active_slot (NEMO_WINDOW (window));
     view = nemo_window_slot_get_current_view (slot);
