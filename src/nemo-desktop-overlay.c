@@ -99,30 +99,38 @@ sync_controls (NemoDesktopOverlay *overlay,
 
     /* Actual handling is done in NemoDesktopIconGridView */
 
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Large");
 
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "large_icons_toggle")),
-                                   action);
+    action = gtk_action_group_get_action (priv->action_group, "Desktop Smaller");
+    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "smaller_icons_toggle")),
+                                        action);
+
+    action = gtk_action_group_get_action (priv->action_group, "Desktop Small");
+    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "small_icons_toggle")),
+                                        action);
+
     action = gtk_action_group_get_action (priv->action_group, "Desktop Normal");
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "medium_icons_toggle")),
-                                   action);
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Small");
+                                        action);
 
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "small_icons_toggle")),
-                                   action);
+    action = gtk_action_group_get_action (priv->action_group, "Desktop Large");
+    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "large_icons_toggle")),
+                                        action);
+
+    action = gtk_action_group_get_action (priv->action_group, "Desktop Larger");
+    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "larger_icons_toggle")),
+                                        action);
     
     action = gtk_action_group_get_action (priv->action_group, "Horizontal Layout");
-
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "horizontal_layout_button")),
-                                   action);
+                                        action);
+
     action = gtk_action_group_get_action (priv->action_group, "Vertical Layout");
-
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "vertical_layout_button")),
-                                   action);
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Autoarrange");
+                                        action);
 
+    action = gtk_action_group_get_action (priv->action_group, "Desktop Autoarrange");
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "auto_arrange_button")),
-                                   action);
+                                        action);
 
     if (fake_group) {
         g_clear_object (&priv->action_group);

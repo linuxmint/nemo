@@ -1018,6 +1018,10 @@ real_update_menus (NemoView *view)
     /* Update zoom radio */
 
     switch (nemo_view_get_zoom_level (NEMO_VIEW (desktop_view))) {
+        case NEMO_ZOOM_LEVEL_SMALLER:
+            action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                                  "Desktop Smaller");
+            break;
         case NEMO_ZOOM_LEVEL_SMALL:
             action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                                   "Desktop Small");
@@ -1026,11 +1030,13 @@ real_update_menus (NemoView *view)
             action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
                                                   "Desktop Large");
             break;
+        case NEMO_ZOOM_LEVEL_LARGER:
+            action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
+                                                  "Desktop Larger");
+            break;
         case NEMO_ZOOM_LEVEL_STANDARD:
         case NEMO_ZOOM_LEVEL_NULL:
-        case NEMO_ZOOM_LEVEL_SMALLER:
         case NEMO_ZOOM_LEVEL_SMALLEST:
-        case NEMO_ZOOM_LEVEL_LARGER:
         case NEMO_ZOOM_LEVEL_LARGEST:
         default:
             action = gtk_action_group_get_action (desktop_view->details->desktop_action_group,
@@ -1078,18 +1084,26 @@ static const GtkToggleActionEntry desktop_grid_toggle_entries[] = {
 };
 
 static const GtkRadioActionEntry desktop_size_radio_entries[] = {
+  { "Desktop Smaller", NULL,
+    "Smaller", NULL,
+    "Smaller",
+    NEMO_ZOOM_LEVEL_SMALLER },
   { "Desktop Small", NULL,
-    N_("Smaller"), NULL,
-    N_("Display smaller icons"),
+    "Small", NULL,
+    "Small",
     NEMO_ZOOM_LEVEL_SMALL },
   { "Desktop Normal", NULL,
-    N_("Normal"), NULL,
-    N_("Display normal-sized icons"),
+    "Normal", NULL,
+    "Normal",
     NEMO_ZOOM_LEVEL_STANDARD },
   { "Desktop Large", NULL,
-    N_("Larger"), NULL,
-    N_("Display larger icons"),
-    NEMO_ZOOM_LEVEL_LARGE }
+    "Large", NULL,
+    "Large",
+    NEMO_ZOOM_LEVEL_LARGE },
+  { "Desktop Larger", NULL,
+    "Larger", NULL,
+    "Larger",
+    NEMO_ZOOM_LEVEL_LARGER },
 };
 
 static const GtkRadioActionEntry desktop_direction_radio_entries[] = {

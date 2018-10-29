@@ -19,21 +19,28 @@
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixel_size">32</property>
+    <property name="pixel_size">24</property>
+    <property name="icon_name">folder</property>
+    <property name="icon_size">6</property>
+  </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixel_size">96</property>
     <property name="icon_name">folder</property>
     <property name="icon_size">6</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixel_size">48</property>
+    <property name="pixel_size">32</property>
     <property name="icon_name">folder</property>
     <property name="icon_size">6</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixel_size">64</property>
+    <property name="pixel_size">48</property>
     <property name="icon_name">folder</property>
     <property name="icon_size">6</property>
   </object>
@@ -63,6 +70,13 @@
     <property name="pixel_size">32</property>
     <property name="icon_name">nemo-auto-arrange-symbolic</property>
     <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="image9">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixel_size">64</property>
+    <property name="icon_name">folder</property>
+    <property name="icon_size">6</property>
   </object>
   <object class="GtkImage" id="reset_image">
     <property name="visible">True</property>
@@ -132,7 +146,7 @@
                             <property name="valign">center</property>
                             <property name="border_width">5</property>
                             <property name="orientation">vertical</property>
-                            <property name="spacing">20</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
@@ -145,65 +159,288 @@
                                     <property name="can_focus">False</property>
                                     <property name="top_padding">5</property>
                                     <child>
-                                      <object class="GtkButtonBox">
+                                      <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="homogeneous">True</property>
-                                        <property name="layout_style">expand</property>
+                                        <property name="orientation">vertical</property>
                                         <child>
-                                          <object class="GtkToggleButton" id="small_icons_toggle">
-                                            <property name="label" translatable="yes">Small</property>
-                                            <property name="use_action_appearance">False</property>
+                                          <object class="GtkButtonBox">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="image">image1</property>
-                                            <property name="image_position">top</property>
-                                            <property name="always_show_image">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="homogeneous">True</property>
+                                            <property name="layout_style">expand</property>
+                                            <child>
+                                              <object class="GtkToggleButton" id="smaller_icons_toggle">
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="image_position">top</property>
+                                                <property name="always_show_image">True</property>
+                                                <child>
+                                                  <object class="GtkBox" id="smaller_icon_label_box">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="orientation">vertical</property>
+                                                    <child>
+                                                      <object class="GtkImage">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="pixel_size">24</property>
+                                                        <property name="icon_name">folder</property>
+                                                        <property name="icon_size">5</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">True</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Smaller</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="pack_type">end</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkToggleButton" id="small_icons_toggle">
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="image_position">top</property>
+                                                <property name="always_show_image">True</property>
+                                                <child>
+                                                  <object class="GtkBox" id="small_icon_label_box">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="orientation">vertical</property>
+                                                    <child>
+                                                      <object class="GtkImage">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="pixel_size">32</property>
+                                                        <property name="icon_name">folder</property>
+                                                        <property name="icon_size">5</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">True</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Small</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="pack_type">end</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkToggleButton" id="medium_icons_toggle">
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="image_position">top</property>
+                                                <property name="always_show_image">True</property>
+                                                <child>
+                                                  <object class="GtkBox" id="medium_icon_label_box">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="orientation">vertical</property>
+                                                    <child>
+                                                      <object class="GtkImage">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="pixel_size">48</property>
+                                                        <property name="icon_name">folder</property>
+                                                        <property name="icon_size">5</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">True</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Medium</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="pack_type">end</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">2</property>
+                                              </packing>
+                                            </child>
+                                            <style>
+                                              <class name="linked"/>
+                                            </style>
                                           </object>
                                           <packing>
-                                            <property name="expand">True</property>
+                                            <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">0</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkToggleButton" id="medium_icons_toggle">
-                                            <property name="label" translatable="yes">Medium</property>
-                                            <property name="use_action_appearance">False</property>
+                                          <object class="GtkButtonBox">
                                             <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="image">image2</property>
-                                            <property name="image_position">top</property>
-                                            <property name="always_show_image">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="border_width">6</property>
+                                            <property name="homogeneous">True</property>
+                                            <property name="layout_style">expand</property>
+                                            <child>
+                                              <object class="GtkToggleButton" id="large_icons_toggle">
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="image_position">top</property>
+                                                <property name="always_show_image">True</property>
+                                                <child>
+                                                  <object class="GtkBox" id="large_icon_label_box">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="orientation">vertical</property>
+                                                    <child>
+                                                      <object class="GtkImage">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="pixel_size">64</property>
+                                                        <property name="icon_name">folder</property>
+                                                        <property name="icon_size">5</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">True</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Large</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="pack_type">end</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkToggleButton" id="larger_icons_toggle">
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="image_position">top</property>
+                                                <property name="always_show_image">True</property>
+                                                <child>
+                                                  <object class="GtkBox" id="larger_icon_label_box">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="orientation">vertical</property>
+                                                    <child>
+                                                      <object class="GtkImage">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="pixel_size">96</property>
+                                                        <property name="icon_name">folder</property>
+                                                        <property name="icon_size">5</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">True</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Larger</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="pack_type">end</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">2</property>
+                                              </packing>
+                                            </child>
+                                            <style>
+                                              <class name="linked"/>
+                                            </style>
                                           </object>
                                           <packing>
-                                            <property name="expand">True</property>
+                                            <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
-                                        <child>
-                                          <object class="GtkToggleButton" id="large_icons_toggle">
-                                            <property name="label" translatable="yes">Large</property>
-                                            <property name="use_action_appearance">False</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="image">image3</property>
-                                            <property name="image_position">top</property>
-                                            <property name="always_show_image">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">True</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
-                                        <style>
-                                          <class name="linked"/>
-                                        </style>
                                       </object>
                                     </child>
                                   </object>
@@ -251,14 +488,46 @@
                                                 <property name="layout_style">spread</property>
                                                 <child>
                                                   <object class="GtkToggleButton" id="auto_arrange_button">
-                                                    <property name="label" translatable="yes">Auto-arrange</property>
                                                     <property name="use_action_appearance">False</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
-                                                    <property name="image">image8</property>
                                                     <property name="image_position">top</property>
                                                     <property name="always_show_image">True</property>
+                                                    <child>
+                                                      <object class="GtkBox" id="auto_arrange_label_box">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <child>
+                                                          <object class="GtkImage">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="pixel_size">32</property>
+                                                            <property name="icon_name">nemo-auto-arrange-symbolic</property>
+                                                            <property name="icon_size">5</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="expand">True</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="label" translatable="yes">Auto-arrange</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="pack_type">end</property>
+                                                            <property name="position">1</property>
+                                                          </packing>
+                                                        </child>
+                                                      </object>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">True</property>
@@ -281,14 +550,46 @@
                                                 <property name="layout_style">expand</property>
                                                 <child>
                                                   <object class="GtkToggleButton" id="horizontal_layout_button">
-                                                    <property name="label" translatable="yes">Horizontal</property>
                                                     <property name="use_action_appearance">False</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
-                                                    <property name="image">image6</property>
                                                     <property name="image_position">top</property>
                                                     <property name="always_show_image">True</property>
+                                                    <child>
+                                                      <object class="GtkBox" id="hor_layout_label_box">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <child>
+                                                          <object class="GtkImage">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="pixel_size">32</property>
+                                                            <property name="icon_name">nemo-horizontal-layout-symbolic</property>
+                                                            <property name="icon_size">5</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="expand">True</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="label" translatable="yes">Horizontal</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="pack_type">end</property>
+                                                            <property name="position">1</property>
+                                                          </packing>
+                                                        </child>
+                                                      </object>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">True</property>
@@ -298,14 +599,46 @@
                                                 </child>
                                                 <child>
                                                   <object class="GtkToggleButton" id="vertical_layout_button">
-                                                    <property name="label" translatable="yes">Vertical</property>
                                                     <property name="use_action_appearance">False</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
-                                                    <property name="image">image7</property>
                                                     <property name="image_position">top</property>
                                                     <property name="always_show_image">True</property>
+                                                    <child>
+                                                      <object class="GtkBox" id="vert_layout_label_box">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <child>
+                                                          <object class="GtkImage">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="pixel_size">32</property>
+                                                            <property name="icon_name">nemo-vertical-layout-symbolic</property>
+                                                            <property name="icon_size">5</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="expand">True</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="label" translatable="yes">Vertical</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="pack_type">end</property>
+                                                            <property name="position">1</property>
+                                                          </packing>
+                                                        </child>
+                                                      </object>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">True</property>
@@ -568,9 +901,6 @@
   </object>
   <object class="GtkSizeGroup">
     <widgets>
-      <widget name="small_icons_toggle"/>
-      <widget name="medium_icons_toggle"/>
-      <widget name="large_icons_toggle"/>
       <widget name="auto_arrange_button"/>
       <widget name="horizontal_layout_button"/>
       <widget name="vertical_layout_button"/>
@@ -580,6 +910,17 @@
     <widgets>
       <widget name="vertical_adjust_icon"/>
       <widget name="grid_reset_button"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup">
+    <property name="mode">both</property>
+    <widgets>
+      <widget name="smaller_icons_toggle"/>
+      <widget name="small_icons_toggle"/>
+      <widget name="medium_icons_toggle"/>
+      <widget name="auto_arrange_button"/>
+      <widget name="horizontal_layout_button"/>
+      <widget name="vertical_layout_button"/>
     </widgets>
   </object>
 </interface>
