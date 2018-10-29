@@ -36,6 +36,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <cairo.h>
+#include <libxapp/xapp-icon-chooser-dialog.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
@@ -181,6 +182,8 @@ static const GtkTargetEntry target_table[] = {
 #define DIRECTORY_CONTENTS_UPDATE_INTERVAL	200 /* milliseconds */
 #define FILES_UPDATE_INTERVAL			200 /* milliseconds */
 
+#define NEMO_RESPONSE_REVERT 10
+
 /*
  * A timeout before changes through the user/group combo box will be applied.
  * When quickly changing owner/groups (i.e. by keyboard or scroll wheel),
@@ -210,7 +213,7 @@ static void parent_widget_destroyed_callback      (GtkWidget          *widget,
 						   gpointer            callback_data);
 static void select_image_button_callback          (GtkWidget          *widget,
 						   NemoPropertiesWindow *properties_window);
-static void set_icon                              (const char         *icon_path,
+static void set_icon                              (const char         *icon_string,
 						   NemoPropertiesWindow *properties_window);
 static void remove_pending                        (StartupData        *data,
 						   gboolean            cancel_call_when_ready,
@@ -467,6 +470,9 @@ reset_icon (NemoPropertiesWindow *properties_window)
 		nemo_file_set_metadata (file,
 					    NEMO_METADATA_KEY_CUSTOM_ICON,
 					    NULL, NULL);
+        nemo_file_set_metadata (file,
+                        NEMO_METADATA_KEY_CUSTOM_ICON_NAME,
+                        NULL, NULL);
 	}
 }
 
@@ -5280,24 +5286,36 @@ make_relative_uri_from_full (const char *uri,
 
 /* icon selection callback to set the image of the file object to the selected file */
 static void
-set_icon (const char* icon_uri, NemoPropertiesWindow *properties_window)
+set_icon (const char* icon_string, NemoPropertiesWindow *properties_window)
 {
-	NemoFile *file;
-	char *file_uri;
-	char *icon_path;
-	char *real_icon_uri;
+    NemoFile *file;
+    char *file_uri;
+    GList *l;
 
-	g_assert (icon_uri != NULL);
+	g_assert (icon_string != NULL);
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (properties_window));
 
-	icon_path = g_filename_from_uri (icon_uri, NULL, NULL);
-	/* we don't allow remote URIs */
-	if (icon_path != NULL) {
-		GList *l;
+    if (g_path_is_absolute (icon_string)) {
+        GFile *icon_file;
+        char *icon_path;
+        char *icon_uri;
+        char *real_icon_uri;
+
+        icon_file = g_file_new_for_path (icon_string);
+
+        if (!g_file_is_native (icon_file)) {
+            g_object_unref (icon_file);
+            return;
+        }
+
+        icon_path = g_strdup (icon_string);
+        icon_uri = g_file_get_uri (icon_file);
+
+        g_object_unref (icon_file);
+
 
 		for (l = properties_window->details->original_files; l != NULL; l = l->next) {
 			file = NEMO_FILE (l->data);
-
 			file_uri = nemo_file_get_uri (file);
 
 			if (nemo_file_is_mime_type (file, "application/x-desktop")) {
@@ -5312,6 +5330,7 @@ set_icon (const char* icon_uri, NemoPropertiesWindow *properties_window)
 					real_icon_uri = g_strdup (icon_uri);
 				}
 
+                nemo_file_set_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON_NAME, NULL, NULL);
 				nemo_file_set_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL, real_icon_uri);
 				nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_SCALE, NULL, NULL);
 
@@ -5322,157 +5341,110 @@ set_icon (const char* icon_uri, NemoPropertiesWindow *properties_window)
 		}
 
 		g_free (icon_path);
-	}
-}
-
-static void
-update_preview_callback (GtkFileChooser *icon_chooser,
-			 NemoPropertiesWindow *window)
-{
-	GtkWidget *preview_widget;
-	GdkPixbuf *pixbuf, *scaled_pixbuf;
-	char *filename;
-	double scale;
-
-	pixbuf = NULL;
-
-	filename = gtk_file_chooser_get_filename (icon_chooser);
-	if (filename != NULL) {
-		pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
-	}
-
-	if (pixbuf != NULL) {
-		preview_widget = gtk_file_chooser_get_preview_widget (icon_chooser);
-		gtk_file_chooser_set_preview_widget_active (icon_chooser, TRUE);
-
-		if (gdk_pixbuf_get_width (pixbuf) > PREVIEW_IMAGE_WIDTH) {
-			scale = (double)gdk_pixbuf_get_height (pixbuf) /
-				gdk_pixbuf_get_width (pixbuf);
-
-			scaled_pixbuf = gdk_pixbuf_scale_simple (pixbuf,
-                                                     PREVIEW_IMAGE_WIDTH,
-                                                     scale * PREVIEW_IMAGE_WIDTH,
-                                                     GDK_INTERP_BILINEAR);
-			g_object_unref (pixbuf);
-			pixbuf = scaled_pixbuf;
-		}
-
-		gtk_image_set_from_pixbuf (GTK_IMAGE (preview_widget), pixbuf);
+        g_free (icon_uri);
 	} else {
-		gtk_file_chooser_set_preview_widget_active (icon_chooser, FALSE);
-	}
+        for (l = properties_window->details->original_files; l != NULL; l = l->next) {
+            file = NEMO_FILE (l->data);
 
-	g_free (filename);
+            file_uri = nemo_file_get_uri (file);
 
-	if (pixbuf != NULL) {
-		g_object_unref (pixbuf);
-	}
-}
+            if (nemo_file_is_mime_type (file, "application/x-desktop")) {
+                if (nemo_link_local_set_icon (file_uri, icon_string)) {
+                    nemo_file_invalidate_attributes (file,
+                                         NEMO_FILE_ATTRIBUTE_INFO |
+                                         NEMO_FILE_ATTRIBUTE_LINK_INFO);
+                }
+            } else {
+                nemo_file_set_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL, NULL);
+                nemo_file_set_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON_NAME, NULL, icon_string);
+                nemo_file_set_metadata (file, NEMO_METADATA_KEY_ICON_SCALE, NULL, NULL);
+            }
 
-static void
-custom_icon_file_chooser_response_cb (GtkDialog *dialog,
-				      gint response,
-				      NemoPropertiesWindow *window)
-{
-	char *uri;
-
-	switch (response) {
-	case GTK_RESPONSE_NO:
-		reset_icon (window);
-		break;
-
-	case GTK_RESPONSE_OK:
-		uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
-		set_icon (uri, window);
-		g_free (uri);
-		break;
-
-	default:
-		break;
-	}
-
-	gtk_widget_hide (GTK_WIDGET (dialog));
+            g_free (file_uri);
+        }
+    }
 }
 
 static void
 select_image_button_callback (GtkWidget *widget,
 			      NemoPropertiesWindow *window)
 {
-	GtkWidget *dialog, *preview;
-	GtkFileFilter *filter;
-	GList *l;
-	NemoFile *file;
-	char *uri;
-	char *image_path;
-	gboolean revert_is_sensitive;
+	GtkWidget *dialog;
+    char *return_string;
+    gint response;
 
 	g_assert (NEMO_IS_PROPERTIES_WINDOW (window));
 
 	dialog = window->details->icon_chooser;
 
 	if (dialog == NULL) {
-		dialog = gtk_file_chooser_dialog_new (_("Select Custom Icon"), GTK_WINDOW (window),
-						      GTK_FILE_CHOOSER_ACTION_OPEN,
-						      _("Revert"), GTK_RESPONSE_NO,
-						      _("Cancel"), GTK_RESPONSE_CANCEL,
-						      _("Open"), GTK_RESPONSE_OK,
-						      NULL);
-		gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog), "/usr/share/pixmaps", NULL);
-        gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (dialog), "/usr/share/icons", NULL);
-		gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+        GtkWidget *revert_button;
+        GList *l;
+        gboolean revert_is_sensitive;
 
-		filter = gtk_file_filter_new ();
-		gtk_file_filter_add_pixbuf_formats (filter);
-		gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-		preview = gtk_image_new ();
-		gtk_widget_set_size_request (preview, PREVIEW_IMAGE_WIDTH, -1);
-		gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER (dialog), preview);
-		gtk_file_chooser_set_use_preview_label (GTK_FILE_CHOOSER (dialog), FALSE);
-		gtk_file_chooser_set_preview_widget_active (GTK_FILE_CHOOSER (dialog), FALSE);
+        dialog = GTK_WIDGET (xapp_icon_chooser_dialog_new ());
 
-		g_signal_connect (dialog, "update-preview",
-				  G_CALLBACK (update_preview_callback), window);
+        g_object_set (G_OBJECT (dialog),
+                      "allow-paths", TRUE,
+                      NULL);
+
+        revert_button = gtk_button_new_with_label (_("Revert"));
+
+        gtk_widget_show (revert_button);
+
+        revert_is_sensitive = FALSE;
+
+        for (l = window->details->original_files; l != NULL; l = l->next) {
+            NemoFile *file;
+            gchar *image_path, *icon_name;
+
+            file = NEMO_FILE (l->data);
+
+            image_path = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL);
+            icon_name = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON_NAME, NULL);
+
+            revert_is_sensitive = (image_path != NULL || icon_name != NULL);
+
+            g_free (image_path);
+            g_free (icon_name);
+
+            if (revert_is_sensitive) {
+                break;
+            }
+        }
+
+        gtk_widget_set_sensitive (GTK_WIDGET (revert_button), revert_is_sensitive);
+
+        xapp_icon_chooser_dialog_add_button (XAPP_ICON_CHOOSER_DIALOG (dialog),
+                                             revert_button,
+                                             GTK_PACK_START,
+                                             NEMO_RESPONSE_REVERT);
 
 		window->details->icon_chooser = dialog;
+
+        gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
 
 		g_object_add_weak_pointer (G_OBJECT (dialog),
 					   (gpointer *) &window->details->icon_chooser);
 	}
 
-	/* it's likely that the user wants to pick an icon that is inside a local directory */
-	if (g_list_length (window->details->original_files) == 1) {
-		file = NEMO_FILE (window->details->original_files->data);
+	response = xapp_icon_chooser_dialog_run (XAPP_ICON_CHOOSER_DIALOG (dialog));
 
-		if (nemo_file_is_directory (file)) {
-			uri = nemo_file_get_uri (file);
+    switch (response) {
+        case NEMO_RESPONSE_REVERT:
+            reset_icon (window);
+            break;
+        case GTK_RESPONSE_OK:
+            return_string = xapp_icon_chooser_dialog_get_icon_string (XAPP_ICON_CHOOSER_DIALOG (dialog));
+            set_icon (return_string, window);
+            g_free (return_string);
+            break;
+        default:
+            break;
+    }
 
-			image_path = g_filename_from_uri (uri, NULL, NULL);
-			if (image_path != NULL) {
-				gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), image_path);
-				g_free (image_path);
-			}
-
-			g_free (uri);
-		}
-	}
-
-	revert_is_sensitive = FALSE;
-	for (l = window->details->original_files; l != NULL; l = l->next) {
-		file = NEMO_FILE (l->data);
-		image_path = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL);
-		revert_is_sensitive = (image_path != NULL);
-		g_free (image_path);
-
-		if (revert_is_sensitive) {
-			break;
-		}
-	}
-	gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_NO, revert_is_sensitive);
-
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (custom_icon_file_chooser_response_cb), window);
-	gtk_widget_show (dialog);
+    gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
 static void
