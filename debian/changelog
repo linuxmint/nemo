@@ -1,8 +1,101 @@
-nemo (3.9.0) UNRELEASED; urgency=medium
+nemo (4.0.0) tessa; urgency=medium
 
+  [ Michael Webster ]
   * Version bump for dev.
+  * libnemo-extension: Refactor a bit, replace a lot of boilerplate with macros, simplify doc generation.  Documentation needs more work at some point.
+  * nemo-file.c: Do a better job of figuring out the mimetype for empty files.
+  * Add creation time (btime) support.
+  * preferences window: Add toggle for creation date in tooltips.
+  * nemo-file-info.h: Don't use G_DECLARE_INTERFACE - it doesn't allow us to properly use NemoFile for its vtable - it works but throws a ton of build warnings and isn't safe.
+  * misc: Clean up build warnings
+  * icon view: remove some deprecated paths (gtk doesn't return anything useful anymore.)
+  * nemo-icon-canvas-item.c: Insert some space between the icon and label bounds in compact view.
+  * nemo-statusbar.c: Remove custom scroll handler.  The gtk one works correctly now.
+  * menus: Respect the gtk-menu-images preference for the primary 'open/ open-with' menu item.
+  * meson.build: Add option to disable omit-frame-pointers from build (useful for perf profiling.)
+  * icon container: Generate tooltips for icon items on-demand, instead of when the view loads.
+  * meson.build: show profiling flag status in config summary.
+  * nemo-icon-info: Optimize icon lookups by GIcon.
+  * search: Respect the current state of the 'show hidden files' setting when calculating results.
+  * nemo-query-editor.c: don't intercept keys when hidden.
+  * nemo-view.c: Decrease minimum update interval.
+  * nemo-view: Optimize *_get_selection(), don't create deep copies when not necessary.
+  * nemo-file: Remove pixbuf cached in NemoFile.
+  * nemo-list-model.c: Improve accounting for dummy expander row, so it more reliably removes the expander for empty folders.
+  * nemo-file.c: Cache some heavily used values from date construction, particularly caching of the GTimeZone object for use in GDateTime construction.
+  * icon view: Remove "tighter layout" option.
+  * nemo-icon-info: don't implement as a gobject.
+  * nemo-mime-actions.c: Don't offer the 'Make executable and run' option by default.
+  * nemo-mime-application-chooser.c: Remove hacks for file-picker button.
+  * nemo-icon-canvas-item: Remove some unused code for embedded text
+  * Icon containers: Improve spacing, increase icon sizes.
+  * nemo-icon-view-container.c: Connect the tooltip signal per container instance, rather than once overall.
+  * nemo-icon-info.h: Tweak text width a bit for the zoom levels.
+  * nemo-icon-container.c: Turn on hover prelight by default.  This helps label text overlapping adjacent items (during hover) to have a clean background for better legibility.
+  * emblems: Use cached parent pointers when checking for can't-write emblem condition, instead of looking it up for each file.
+  * nemo-file.c: Load file-roller mimetype cache upon first demand, instead of at startup.  This has a noticeable impact on startup time.
+  * nemo-list-model.c: Reduce number of icon info lookups when creating icon surfaces for the model.
+  * preferences: Use the new XApp sidebar switcher, and use an ordinary GtkWindow instead of a GtkDialog to clean up the look.  This includes removing the close button as well (we already don't use one in the plugins window.)
+  * preferences: Add the plugin manager as a preferences page.  Refactor to remove unnecessary code and allow the prefs window to open on a particular page.
+  * preferences: Use togglebuttons instead of checkbuttons for toolbar button switches, and show the action's icon in the button.
+  * nemo-icon-container: Remove some unused code.
+  * eel-graphic-effects.c: Lessen the effect eel_create_spotlight_pixbuf.
 
- -- Michael Webster <miketwebster@gmail.com>  Fri, 20 Jul 2018 20:54:03 -0400
+  [ JosephMcc ]
+  * prefs: Restyle the visible buttons page a bit
+  * prefs: Move the custom icons to xapps
+
+  [ Michael Webster ]
+  * meson_update_icon_cache.py: Print the icon cache folder when running.
+  * nemo-widget-menu-item.c: Fix allocation warnings.
+  * nemo-extension-config-widget.c: Improve look of extension list.
+  * nemo-places-sidebar.c: Fix a few issues with mounting/ejecting - some incorrect _finish functions and some assumptions of error always being set.
+  * nemo-thumbnails.c: Generate large thumnails to accomodate the larger icon sizes we have now.
+  * nemo-list-view.c: use the subclass selection changed callback instead of NemoView's directly - this makes sure the cached selection list is up-to-date before triggering view/menu updates.
+
+  [ Germán Franco ]
+  * Add some keywords to the desktop entry (#1939)
+
+  [ Michael Webster ]
+  * nemo-window-menus.c: Block split pane view in desktop windows.
+  * nemo-action.c: g_file_test here should be checking the *dependency* path, not the path to the action file.
+
+  [ Clement Lefebvre ]
+  * Preferences: Remove separators
+
+  [ Michael Webster ]
+  * nemo-thumbnails.c: Use GTask.
+  * nemo-list-view.c: Start using GtkTreeView's fixed height mode.
+  * meson.build: Remove gthread dependency (no longer used).
+  * nemo-list-model.c: Check for unreadable folders and remove the expander when one is discovered during the async count job.
+  * nemo-icon-container.c: Don't recalculate the layout while renaming a file.
+  * nemo-application.c: Add minimally necessary theme elements to the current theme if they appear to be missing.
+
+  [ Leigh Scott ]
+  * Fix meson warnings (#1920)
+
+  [ Tom Schuster ]
+  * Prefer XDS Protocol Type over _NETSCAPE_URL to make DnD work in Firefox.
+
+  [ Lars Mueller ]
+  * Add option for thumbnails per folder
+
+  [ Soapux ]
+  * Fix some issues with pkgconfig file
+
+  [ Michael Webster ]
+  * desktop: Add overlay window for configuring individual monitor views as well as global desktop preferences.
+  * nemo-icon-dnd.c: Fix warning when initiating a drag from a normal windowed icon view.
+  * Remove desktop settings action (replaced by 'Customize' fixed entry).
+  * nemo-desktop-window.c: Fix build warning (unused variable).
+  * nemo-desktop: Add smaller and larger icon sizes.  The smaller is useful for low res monitors and the larger one will be useful for those using physically large 4k monitors (that do not qualify as hidpi).
+  * nemo-properties-window.c: Use XAppIconChooserDialog to select custom icons.
+  * Update libxapp dependency for icon chooser.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT and additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 01 Nov 2018 13:29:54 +0000
 
 nemo (3.8.5) tara; urgency=medium
 
