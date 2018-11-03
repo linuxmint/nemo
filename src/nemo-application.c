@@ -178,8 +178,8 @@ add_fallback_mandatory_css_provider (const gchar *theme_name)
 
     init_fallback_css = NULL;
 
-    if (!g_strstr_len (css, -1, "nemo-window")) {
-        g_warning ("Missing support for critical theme elements.  Adding some...");
+    if (!g_strstr_len (css, -1, "nemo")) {
+        g_warning ("The theme appears to have no nemo support.  Adding some...");
 
         init_fallback_css = load_file_contents_from_resource ("/org/nemo/nemo-style-fallback-mandatory.css",
                                                               &error);
