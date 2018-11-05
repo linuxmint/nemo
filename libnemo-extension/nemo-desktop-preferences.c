@@ -68,27 +68,27 @@ nemo_desktop_preferences_init (NemoDesktopPreferences *preferences)
 
     bind_builder_bool (priv->builder,
                        priv->desktop_settings,
-                       "computer_toggle",
+                       "computer_switch",
                        "computer-icon-visible");
 
     bind_builder_bool (priv->builder,
                        priv->desktop_settings,
-                       "home_toggle",
+                       "home_switch",
                        "home-icon-visible");
 
     bind_builder_bool (priv->builder,
                        priv->desktop_settings,
-                       "trash_toggle",
+                       "trash_switch",
                        "trash-icon-visible");
 
     bind_builder_bool (priv->builder,
                        priv->desktop_settings,
-                       "drives_toggle",
+                       "drives_switch",
                        "volumes-visible");
 
     bind_builder_bool (priv->builder,
                        priv->desktop_settings,
-                       "network_toggle",
+                       "network_switch",
                        "network-icon-visible");
 
     bind_builder_bool (priv->builder,

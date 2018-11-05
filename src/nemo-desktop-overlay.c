@@ -14,12 +14,13 @@ typedef struct
 {
     GtkWindow *window;
     NemoDesktopManager *manager;
+    gboolean is_cinnamon;
 
     GtkStack *stack;
     GtkStack *view_substack;
-    GtkStackSwitcher *page_switcher;
-    GtkWidget *header_bar;
-
+    GtkWidget *icon_size_combo;
+    GtkWidget *direction_combo;
+    GtkWidget *sort_combo;
 
     GtkBuilder *builder;
     GtkWindow *nemo_window;
@@ -51,6 +52,15 @@ static guint signals[LAST_SIGNAL] = {0, };
 G_DEFINE_TYPE_WITH_PRIVATE (NemoDesktopOverlay, nemo_desktop_overlay, G_TYPE_OBJECT)
 
 static void
+show_view_page (NemoDesktopOverlay *overlay)
+{
+    NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
+
+    gtk_stack_set_visible_child_name (priv->stack, "view");
+    gtk_window_set_title (priv->window, _("Current Monitor Layout"));
+}
+
+static void
 sync_controls (NemoDesktopOverlay *overlay,
                gboolean same_monitor)
 {
@@ -58,8 +68,9 @@ sync_controls (NemoDesktopOverlay *overlay,
     GtkRange *range;
     GtkActionGroup *action_group;
     GtkAction *action;
-    gint h_adjust, v_adjust;
+    gint h_adjust, v_adjust, active_id;
     gboolean fake_group;
+    const gchar *combo_id;
 
     if (!nemo_desktop_manager_get_monitor_is_active (priv->manager, priv->monitor)) {
         gtk_stack_set_visible_child_name (priv->view_substack, "substack_disabled");
@@ -89,47 +100,89 @@ sync_controls (NemoDesktopOverlay *overlay,
         /* Catch enabling of a particular monitor.  If we were a blank window and now
          * we're a real desktop window, it makes sense to present the view settings to the user */
         if (same_monitor && (action_group != priv->action_group)) {
-            gtk_stack_set_visible_child_name (priv->stack, "view");
+            show_view_page (overlay);
         }
 
         priv->action_group = action_group;
+
+        /* Sync combo boxes - we just need to access a single radio action for each group to get the active one.  From that
+         * we can set the active-id of the combobox */
+
+        /* Icon size */
+        action = gtk_action_group_get_action (priv->action_group, "Desktop Normal");
+        active_id = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+        switch (active_id) {
+            case NEMO_ZOOM_LEVEL_SMALLER:
+                combo_id = "Desktop Smaller";
+                break;
+            case NEMO_ZOOM_LEVEL_SMALL:
+                combo_id = "Desktop Small";
+                break;
+            case NEMO_ZOOM_LEVEL_LARGE:
+                combo_id = "Desktop Large";
+                break;
+            case NEMO_ZOOM_LEVEL_LARGER:
+                combo_id = "Desktop Larger";
+                break;
+            case NEMO_ZOOM_LEVEL_STANDARD:
+            default:
+                combo_id = "Desktop Normal";
+                break;
+        }
+
+        gtk_combo_box_set_active_id (GTK_COMBO_BOX (priv->icon_size_combo), combo_id);
+
+        /* Layout direction */
+        action = gtk_action_group_get_action (priv->action_group, "Vertical Layout");
+        active_id = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+        switch (active_id) {
+            case DESKTOP_ARRANGE_HORIZONTAL:
+                combo_id = "Horizontal Layout";
+                break;
+            case DESKTOP_ARRANGE_VERTICAL:
+            default:
+                combo_id = "Vertical Layout";
+                break;
+        }
+
+        gtk_combo_box_set_active_id (GTK_COMBO_BOX (priv->direction_combo), combo_id);
+
+        /* Sort type */
+        action = gtk_action_group_get_action (priv->action_group, "Vertical Layout");
+        active_id = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+        switch (active_id) {
+            case NEMO_FILE_SORT_BY_SIZE:
+                combo_id = "Desktop Sort by Size";
+                break;
+            case NEMO_FILE_SORT_BY_DETAILED_TYPE:
+                combo_id = "Desktop Sort by Type";
+                break;
+            case NEMO_FILE_SORT_BY_MTIME:
+                combo_id = "Desktop Sort by Date";
+                break;
+            case NEMO_FILE_SORT_BY_DISPLAY_NAME:
+            default:
+                combo_id = "Desktop Sort by Name";
+                break;
+        }
+
+        gtk_combo_box_set_active_id (GTK_COMBO_BOX (priv->sort_combo), combo_id);
 
         fake_group = FALSE;
     }
 
     /* Actual handling is done in NemoDesktopIconGridView */
 
-
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Smaller");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "smaller_icons_toggle")),
-                                        action);
-
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Small");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "small_icons_toggle")),
-                                        action);
-
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Normal");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "medium_icons_toggle")),
-                                        action);
-
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Large");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "large_icons_toggle")),
-                                        action);
-
-    action = gtk_action_group_get_action (priv->action_group, "Desktop Larger");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "larger_icons_toggle")),
-                                        action);
-    
-    action = gtk_action_group_get_action (priv->action_group, "Horizontal Layout");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "horizontal_layout_button")),
-                                        action);
-
-    action = gtk_action_group_get_action (priv->action_group, "Vertical Layout");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "vertical_layout_button")),
-                                        action);
-
+    /* Sync toggle switches */
     action = gtk_action_group_get_action (priv->action_group, "Desktop Autoarrange");
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "auto_arrange_button")),
+    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "auto_arrange_switch")),
+                                        action);
+
+    action = gtk_action_group_get_action (priv->action_group, "Desktop Reverse Sort");
+    gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "reverse_sort_switch")),
                                         action);
 
     if (fake_group) {
@@ -208,13 +261,64 @@ on_vertical_adjust_changed (GtkRange *range,
 }
 
 static void
-on_disabled_view_prefs_button_clicked (GtkWidget *button,
+on_combo_changed (GtkComboBox *widget,
+                            gpointer     user_data)
+{
+    NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
+    NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
+    const gchar *action_id;
+
+    action_id = gtk_combo_box_get_active_id (widget);
+    if (action_id) {
+        GtkAction *action;
+
+        action = gtk_action_group_get_action (priv->action_group, action_id);
+
+        gtk_action_activate (action);
+    }
+}
+
+static void
+on_global_prefs_link_button_clicked (GtkWidget *button,
+                                       gpointer   user_data)
+{
+    NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
+
+    show_view_page (overlay);
+}
+
+
+static void
+on_view_prefs_button_clicked (GtkWidget *button,
                                        gpointer   user_data)
 {
     NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
     NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
 
+    if (priv->is_cinnamon) {
+        GError *error;
+
+        error = NULL;
+
+        if (!g_spawn_command_line_async ("cinnamon-settings desktop", &error)) {
+            g_warning ("Could not spawn 'cinnamon-settings desktop': %s", error->message);
+
+            g_error_free (error);
+        } else {
+            return;
+        }
+    }
+
     gtk_stack_set_visible_child_name (priv->stack, "global");
+    gtk_window_set_title (priv->window, _("Desktop Settings"));
+}
+
+static gboolean
+on_link_button_activate_link (GtkLinkButton *button,
+                              gpointer       user_data)
+{
+    /* Stop the link activation */
+    return GDK_EVENT_STOP;
 }
 
 static void
@@ -246,24 +350,6 @@ on_close_window (GtkWidget *overlay_window,
     return GDK_EVENT_PROPAGATE;
 }
 
-static void
-on_stack_changed (GtkWidget  *stack,
-                  GParamSpec *pspec,
-                  gpointer    user_data)
-{
-    NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
-    NemoDesktopOverlayPrivate *priv = overlay->priv;
-    const gchar *visible_child_name;
-
-    visible_child_name = gtk_stack_get_visible_child_name (priv->stack);
-
-    if (g_strcmp0 (visible_child_name, "view") == 0) {
-        gtk_header_bar_set_subtitle (GTK_HEADER_BAR (priv->header_bar), _("Current Monitor Preferences"));
-    } else {
-        gtk_header_bar_set_subtitle (GTK_HEADER_BAR (priv->header_bar), _("Global Desktop Settings"));
-    }
-}
-
 gboolean
 on_window_configure_event (GtkWidget *widget,
                            GdkEvent  *event,
@@ -292,28 +378,55 @@ nemo_desktop_overlay_init (NemoDesktopOverlay *overlay)
 {
     NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
     GtkWindow *window;
-    GtkWidget *prefs_widget;
+    GtkWidget *widget;
     GtkWidget *prefs_box;
 
     overlay->priv = priv;
     priv->manager = nemo_desktop_manager_get ();
+    priv->is_cinnamon = nemo_desktop_manager_get_is_cinnamon (priv->manager);
 
     priv->builder = gtk_builder_new ();
     gtk_builder_set_translation_domain (priv->builder, GETTEXT_PACKAGE);
     gtk_builder_add_from_resource (priv->builder, "/org/nemo/nemo-desktop-overlay.glade", NULL);
-
 
     window = GTK_WINDOW (gtk_builder_get_object (priv->builder, "overlay_window"));
     priv->window = window;
 
     gtk_widget_add_events (GTK_WIDGET (window), GDK_STRUCTURE_MASK);
 
-    prefs_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    prefs_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
     gtk_container_set_border_width (GTK_CONTAINER (prefs_box), 6);
-    gtk_widget_show (prefs_box);
 
-    prefs_widget = GTK_WIDGET (nemo_desktop_preferences_new ());
-    gtk_box_pack_start (GTK_BOX (prefs_box), prefs_widget, TRUE, TRUE, 0);
+    g_object_set (GTK_BOX (prefs_box),
+                  "margin-start", 80,
+                  "margin-end", 80,
+                  "margin-top", 15,
+                  "margin-bottom", 15,
+                  NULL);
+
+    if (!priv->is_cinnamon) {
+        widget = GTK_WIDGET (nemo_desktop_preferences_new ());
+        gtk_box_pack_start (GTK_BOX (prefs_box), widget, TRUE, TRUE, 0);
+
+        widget = gtk_link_button_new_with_label ("http://null",
+                                               _("Current Monitor Preferences"));
+
+        g_signal_connect (widget,
+                          "clicked",
+                          G_CALLBACK (on_global_prefs_link_button_clicked),
+                          overlay);
+
+        g_signal_connect (widget,
+                          "activate-link",
+                          G_CALLBACK (on_link_button_activate_link),
+                          overlay);
+
+        gtk_widget_set_hexpand (widget, TRUE);
+        gtk_box_pack_end (GTK_BOX (prefs_box), widget, TRUE, FALSE, 0);
+
+        gtk_widget_show_all (prefs_box);
+        gtk_widget_queue_allocate (prefs_box);
+    }
 
     priv->stack = GTK_STACK (gtk_builder_get_object (priv->builder, "stack"));
     gtk_stack_add_titled (priv->stack,
@@ -326,21 +439,29 @@ nemo_desktop_overlay_init (NemoDesktopOverlay *overlay)
                              "icon-name", "preferences-system-symbolic",
                              NULL);
 
-    g_signal_connect (priv->stack,
-                      "notify::visible-child-name",
-                      G_CALLBACK (on_stack_changed),
-                      overlay);
-
     priv->view_substack = GTK_STACK (gtk_builder_get_object (priv->builder, "view_substack"));
 
-    priv->page_switcher = GTK_STACK_SWITCHER (gtk_builder_get_object (priv->builder, "page_switcher"));
-    priv->header_bar = GTK_WIDGET (gtk_builder_get_object (priv->builder, "header_bar"));
+    widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "view_prefs_link_button"));
+    gtk_button_set_label (GTK_BUTTON (widget), _("Desktop Settings"));
+
+    widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "disabled_view_link_button"));
+    gtk_button_set_label (GTK_BUTTON (widget), _("Desktop Settings"));
+
+    priv->icon_size_combo = GTK_WIDGET (gtk_builder_get_object (priv->builder, "icon_size_combo"));
+    priv->direction_combo = GTK_WIDGET (gtk_builder_get_object (priv->builder, "direction_combo"));
+    priv->sort_combo = GTK_WIDGET (gtk_builder_get_object (priv->builder, "sort_combo"));
 
     gtk_builder_add_callback_symbols (priv->builder,
       "on_vertical_adjust_changed", G_CALLBACK (on_vertical_adjust_changed),
       "on_horizontal_adjust_changed", G_CALLBACK (on_horizontal_adjust_changed),
-      "on_disabled_view_prefs_button_clicked", G_CALLBACK (on_disabled_view_prefs_button_clicked),
+      "on_disabled_view_link_button_clicked", G_CALLBACK (on_view_prefs_button_clicked),
+      "on_disabled_view_link_button_activate_link", G_CALLBACK (on_link_button_activate_link),
+      "on_view_prefs_link_button_clicked", G_CALLBACK (on_view_prefs_button_clicked),
+      "on_view_prefs_link_button_activate_link", G_CALLBACK (on_link_button_activate_link),
       "on_grid_reset_button_clicked", G_CALLBACK (on_grid_reset_button_clicked),
+      "on_icon_size_combo_changed", G_CALLBACK (on_combo_changed),
+      "on_direction_combo_changed", G_CALLBACK (on_combo_changed),
+      "on_sort_combo_changed", G_CALLBACK (on_combo_changed),
       "on_close_window", G_CALLBACK (on_close_window),
       NULL);
 
@@ -375,8 +496,8 @@ show_overlay (NemoDesktopOverlay *overlay,
                              &parent_height);
 
         gtk_window_move (priv->window,
-                         (root_x + parent_width - default_width),
-                         (root_y + parent_height - default_height));
+                         (root_x + (parent_width / 2) - (default_width / 2)),
+                         (root_y + (parent_height / 2) - (default_height / 2)));
     }
 
     sync_controls (overlay, old_monitor == monitor);

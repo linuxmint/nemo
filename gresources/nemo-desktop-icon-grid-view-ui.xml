@@ -2,12 +2,6 @@
 <popup name="background">
     <placeholder name="Before Zoom Items">
         <placeholder name="View Items">
-            <menu action="Desktop Submenu">
-                <menuitem name="Desktop Sort by Name" action="Desktop Sort by Name"/>
-                <menuitem name="Desktop Sort by Size" action="Desktop Sort by Size"/>
-                <menuitem name="Desktop Sort by Type" action="Desktop Sort by Type"/>
-                <menuitem name="Desktop Sort by Date" action="Desktop Sort by Date"/>
-            </menu>
             <menuitem name="Desktop Overlay" action="Show Desktop Overlay"/>
         </placeholder>
         <placeholder name="New Window Items">

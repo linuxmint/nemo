@@ -823,7 +823,6 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
             emit_signal = update_position;
         }
 
-        NEMO_ICON_VIEW_GRID_CONTAINER (container)->manual_sort_dirty = TRUE;
         nemo_icon_view_set_sort_reversed (get_icon_view (container), FALSE, TRUE);
 
         icon->saved_ltr_x = nemo_icon_container_is_layout_rtl (container) ? nemo_icon_container_get_mirror_x_position (container, icon, icon->x) : icon->x;
@@ -1575,7 +1574,6 @@ nemo_icon_view_grid_container_icon_added (NemoIconViewGridContainer *container,
                                           NemoIconData              *icon_data,
                                           gpointer                   data)
 {
-    container->manual_sort_dirty = TRUE;
 }
 
 static void
@@ -1583,7 +1581,6 @@ nemo_icon_view_grid_container_icon_removed (NemoIconViewGridContainer *container
                                             NemoIconData              *icon_data,
                                             gpointer                   data)
 {
-    container->manual_sort_dirty = TRUE;
 }
 
 NemoIconContainer *

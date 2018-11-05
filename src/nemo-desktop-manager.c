@@ -974,3 +974,11 @@ nemo_desktop_manager_show_desktop_overlay (NemoDesktopManager *manager,
 
     nemo_desktop_overlay_show (priv->overlay, monitor);
 }
+
+gboolean
+nemo_desktop_manager_get_is_cinnamon         (NemoDesktopManager *manager)
+{
+    FETCH_PRIV (manager);
+
+    return !priv->other_desktop;
+}
