@@ -5,6 +5,8 @@
 #include <glib/gi18n.h>
 
 #include <math.h>
+#include <libxapp/xapp-gtk-window.h>
+
 #include "nemo-desktop-overlay.h"
 #include "nemo-desktop-manager.h"
 
@@ -55,9 +57,47 @@ static void
 show_view_page (NemoDesktopOverlay *overlay)
 {
     NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
+    GdkScreen *screen;
+    GdkRectangle rect;
+    gchar *plug_name;
+
+    screen = gdk_screen_get_default ();
+
+    plug_name = gdk_screen_get_monitor_plug_name (screen,
+                                                  priv->monitor);
+
+    gdk_screen_get_monitor_geometry (screen,
+                                     priv->monitor,
+                                     &rect);
+
+    if (plug_name) {
+        gchar *title;
+
+        title = g_strdup_printf (_("Current Monitor Layout (%s - %dx%d)"),
+                                 plug_name,
+                                 rect.width,
+                                 rect.height);
+
+        gtk_window_set_title (priv->window,
+                              title);
+
+        g_free (title);
+    } else {
+        gchar *title;
+
+        title = g_strdup_printf (_("Current Monitor Layout (%dx%d)"),
+                                 rect.width,
+                                 rect.height);
+
+        gtk_window_set_title (priv->window,
+                              title);
+
+        g_free (title);
+    }
+
+    g_free (plug_name);
 
     gtk_stack_set_visible_child_name (priv->stack, "view");
-    gtk_window_set_title (priv->window, _("Current Monitor Layout"));
 }
 
 static void
@@ -188,6 +228,8 @@ sync_controls (NemoDesktopOverlay *overlay,
     if (fake_group) {
         g_clear_object (&priv->action_group);
     }
+
+    show_view_page (overlay);
 }
 
 static void
@@ -391,6 +433,10 @@ nemo_desktop_overlay_init (NemoDesktopOverlay *overlay)
 
     window = GTK_WINDOW (gtk_builder_get_object (priv->builder, "overlay_window"));
     priv->window = window;
+
+    /* Can't set this in glade, glade uses the icon-name property.  This could be remedied
+     * by watching property changes in XAppGtkWindow, but it's not that big a deal */
+    xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (window), "preferences-desktop");
 
     gtk_widget_add_events (GTK_WIDGET (window), GDK_STRUCTURE_MASK);
 
