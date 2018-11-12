@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-01 13:22+0000\n"
+"POT-Creation-Date: 2018-11-12 15:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -241,101 +241,102 @@ msgid ""
 "Manage the desktop with the file manager"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:954 src/nemo-desktop-icon-view.c:682
+#: src/nemo-desktop-icon-grid-view.c:917 src/nemo-desktop-icon-view.c:682
 #: src/nemo-view.c:8254 src/nemo-view.c:9884
 msgid "E_mpty Trash"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1080
-msgid "_Auto-arrange"
+#: src/nemo-desktop-icon-grid-view.c:1027
+#: gresources/nemo-desktop-overlay.glade:305
+msgid "Auto-arrange"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1081
-msgid "Keep icons automatically arranged"
+#: src/nemo-desktop-icon-grid-view.c:1032
+#: gresources/nemo-desktop-overlay.glade:551
+msgid "Reverse sort"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1111
+#: src/nemo-desktop-icon-grid-view.c:1040
+msgid "Smaller"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1044
+msgid "Small"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1048
+msgid "Normal"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1052
+msgid "Large"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1056
+msgid "Larger"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1063
 msgid "_Vertical"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1112
-msgid "Arrange icons vertically in stacks"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1115
+#: src/nemo-desktop-icon-grid-view.c:1067
 msgid "_Horizontal"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1116
-msgid "Arrange icons horizontally in rows"
+#: src/nemo-desktop-icon-grid-view.c:1074 src/nemo-list-view.c:2393
+#: libnemo-private/nemo-column-utilities.c:43
+#: gresources/nemo-desktop-overlay.glade:116
+msgid "Name"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1121
+#: src/nemo-desktop-icon-grid-view.c:1078
+#: libnemo-private/nemo-column-utilities.c:50
+#: gresources/nemo-desktop-overlay.glade:121
+msgid "Size"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1082
+#: libnemo-private/nemo-column-utilities.c:58
+#: gresources/nemo-desktop-overlay.glade:126
+msgid "Type"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1086
+#: gresources/nemo-desktop-overlay.glade:131
+msgid "Date"
+msgstr ""
+
+#: src/nemo-desktop-icon-grid-view.c:1092
 msgid "_Sort"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1122
+#: src/nemo-desktop-icon-grid-view.c:1093
 msgid "_Icon Size"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1126 src/nemo-desktop-icon-view.c:723
+#: src/nemo-desktop-icon-grid-view.c:1097 src/nemo-desktop-icon-view.c:723
 msgid "Empty Trash"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1128 src/nemo-desktop-icon-view.c:724
+#: src/nemo-desktop-icon-grid-view.c:1099 src/nemo-desktop-icon-view.c:724
 #: src/nemo-trash-bar.c:227 src/nemo-view.c:8255
 msgid "Delete all items in the Trash"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1132
+#: src/nemo-desktop-icon-grid-view.c:1103
 msgid "_Customize"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1133
+#: src/nemo-desktop-icon-grid-view.c:1104
 msgid "Adjust the desktop layout for this monitor"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1138 src/nemo-icon-view.c:1418
-msgid "By _Name"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1139 src/nemo-icon-view.c:138
-#: src/nemo-icon-view.c:1419
-msgid "Keep icons sorted by name in rows"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1142 src/nemo-icon-view.c:1422
-msgid "By _Size"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1143 src/nemo-icon-view.c:145
-#: src/nemo-icon-view.c:1423
-msgid "Keep icons sorted by size in rows"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1146 src/nemo-icon-view.c:1430
-msgid "By _Detailed Type"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1147 src/nemo-icon-view.c:159
-#: src/nemo-icon-view.c:1431
-msgid "Keep icons sorted by detailed type in rows"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1150 src/nemo-icon-view.c:1434
-msgid "By Modification _Date"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1151 src/nemo-icon-view.c:166
-#: src/nemo-icon-view.c:1435
-msgid "Keep icons sorted by modification date in rows"
-msgstr ""
-
-#: src/nemo-desktop-icon-grid-view.c:1235 src/nemo-desktop-icon-view.c:787
+#: src/nemo-desktop-icon-grid-view.c:1195 src/nemo-desktop-icon-view.c:787
 msgid "The desktop view encountered an error."
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1236 src/nemo-desktop-icon-view.c:788
+#: src/nemo-desktop-icon-grid-view.c:1196 src/nemo-desktop-icon-view.c:788
 msgid "The desktop view encountered an error while starting up."
 msgstr ""
 
@@ -378,15 +379,26 @@ msgstr ""
 msgid "Command"
 msgstr ""
 
-#: src/nemo-desktop-overlay.c:261 gresources/nemo-desktop-overlay.glade:100
+#: src/nemo-desktop-overlay.c:76
+#, c-format
+msgid "Current Monitor Layout (%s - %dx%d)"
+msgstr ""
+
+#: src/nemo-desktop-overlay.c:88
+#, c-format
+msgid "Current Monitor Layout (%dx%d)"
+msgstr ""
+
+#: src/nemo-desktop-overlay.c:355 src/nemo-desktop-overlay.c:491
+#: src/nemo-desktop-overlay.c:494
+msgid "Desktop Settings"
+msgstr ""
+
+#: src/nemo-desktop-overlay.c:458
 msgid "Current Monitor Preferences"
 msgstr ""
 
-#: src/nemo-desktop-overlay.c:263
-msgid "Global Desktop Settings"
-msgstr ""
-
-#: src/nemo-desktop-overlay.c:322
+#: src/nemo-desktop-overlay.c:481
 msgid "Show global desktop settings"
 msgstr ""
 
@@ -525,8 +537,16 @@ msgstr ""
 msgid "by _Name"
 msgstr ""
 
+#: src/nemo-icon-view.c:138 src/nemo-icon-view.c:1419
+msgid "Keep icons sorted by name in rows"
+msgstr ""
+
 #: src/nemo-icon-view.c:144
 msgid "by _Size"
+msgstr ""
+
+#: src/nemo-icon-view.c:145 src/nemo-icon-view.c:1423
+msgid "Keep icons sorted by size in rows"
 msgstr ""
 
 #: src/nemo-icon-view.c:151
@@ -541,8 +561,16 @@ msgstr ""
 msgid "by _Detailed Type"
 msgstr ""
 
+#: src/nemo-icon-view.c:159 src/nemo-icon-view.c:1431
+msgid "Keep icons sorted by detailed type in rows"
+msgstr ""
+
 #: src/nemo-icon-view.c:165
 msgid "by Modification _Date"
+msgstr ""
+
+#: src/nemo-icon-view.c:166 src/nemo-icon-view.c:1435
+msgid "Keep icons sorted by modification date in rows"
 msgstr ""
 
 #: src/nemo-icon-view.c:172
@@ -593,8 +621,24 @@ msgstr ""
 msgid "Leave icons wherever they are dropped"
 msgstr ""
 
+#: src/nemo-icon-view.c:1418
+msgid "By _Name"
+msgstr ""
+
+#: src/nemo-icon-view.c:1422
+msgid "By _Size"
+msgstr ""
+
 #: src/nemo-icon-view.c:1426
 msgid "By _Type"
+msgstr ""
+
+#: src/nemo-icon-view.c:1430
+msgid "By _Detailed Type"
+msgstr ""
+
+#: src/nemo-icon-view.c:1434
+msgid "By Modification _Date"
 msgstr ""
 
 #: src/nemo-icon-view.c:1438
@@ -602,7 +646,7 @@ msgid "By T_rash Time"
 msgstr ""
 
 #: src/nemo-icon-view.c:2830 src/nemo-icon-view-container.c:2118
-#: src/nemo-icon-view-grid-container.c:1603 src/nemo-window-menus.c:1450
+#: src/nemo-icon-view-grid-container.c:1600 src/nemo-window-menus.c:1450
 #: src/nemo-window-menus.c:1600
 #: gresources/nemo-file-management-properties.glade:83
 msgid "Icon View"
@@ -814,10 +858,6 @@ msgstr ""
 
 #: src/nemo-list-view.c:2045
 msgid "Temporarily disable auto-sort"
-msgstr ""
-
-#: src/nemo-list-view.c:2393 libnemo-private/nemo-column-utilities.c:43
-msgid "Name"
 msgstr ""
 
 #: src/nemo-list-view.c:2478 src/nemo-list-view.c:4092
@@ -1100,7 +1140,7 @@ msgstr ""
 #: libnemo-private/nemo-bookmark.c:130 libnemo-private/nemo-desktop-link.c:118
 #: libnemo-private/nemo-file-utilities.c:67
 #: libnemo-private/nemo-file-utilities.c:110 generate_additional_file:42
-#: gresources/nemo-desktop-preferences.glade:247
+#: gresources/nemo-desktop-preferences.glade:224
 #: gresources/nemo-file-management-properties.glade:2880
 msgid "Home"
 msgstr ""
@@ -1130,7 +1170,7 @@ msgstr ""
 
 #: src/nemo-places-sidebar.c:854 src/nemo-trash-bar.c:211
 #: libnemo-private/nemo-desktop-link.c:135 generate_additional_file:56
-#: gresources/nemo-desktop-preferences.glade:317
+#: gresources/nemo-desktop-preferences.glade:302
 msgid "Trash"
 msgstr ""
 
@@ -1168,7 +1208,7 @@ msgstr ""
 
 #: src/nemo-places-sidebar.c:1126 src/nemo-places-sidebar.c:1181
 #: src/nemo-tree-sidebar.c:1490 libnemo-private/nemo-desktop-link.c:147
-#: gresources/nemo-desktop-preferences.glade:457
+#: gresources/nemo-desktop-preferences.glade:458
 msgid "Network"
 msgstr ""
 
@@ -1751,7 +1791,7 @@ msgid "P_roperties"
 msgstr ""
 
 #: src/nemo-tree-sidebar.c:1477 libnemo-private/nemo-desktop-link.c:126
-#: generate_additional_file:49 gresources/nemo-desktop-preferences.glade:177
+#: generate_additional_file:49 gresources/nemo-desktop-preferences.glade:146
 #: gresources/nemo-file-management-properties.glade:2843
 msgid "Computer"
 msgstr ""
@@ -3191,16 +3231,8 @@ msgstr ""
 msgid "The name and icon of the file."
 msgstr ""
 
-#: libnemo-private/nemo-column-utilities.c:50
-msgid "Size"
-msgstr ""
-
 #: libnemo-private/nemo-column-utilities.c:51
 msgid "The size of the file."
-msgstr ""
-
-#: libnemo-private/nemo-column-utilities.c:58
-msgid "Type"
 msgstr ""
 
 #: libnemo-private/nemo-column-utilities.c:59
@@ -5077,112 +5109,117 @@ msgstr ""
 msgid "<b>_Location</b>"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:99
-msgid "Nemo Desktop"
-msgstr ""
-
-#: gresources/nemo-desktop-overlay.glade:203
+#: gresources/nemo-desktop-overlay.glade:61
+msgctxt "Desktop icon size"
 msgid "Smaller"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:252
+#: gresources/nemo-desktop-overlay.glade:66
+msgctxt "Desktop icon size"
 msgid "Small"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:301
-msgid "Medium"
-msgstr ""
-
-#: gresources/nemo-desktop-overlay.glade:367
+#: gresources/nemo-desktop-overlay.glade:76
+msgctxt "Desktop icon size"
 msgid "Large"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:416
+#: gresources/nemo-desktop-overlay.glade:81
+msgctxt "Desktop icon size"
 msgid "Larger"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:452
-msgid "<b>Icon Size</b>"
-msgstr ""
-
-#: gresources/nemo-desktop-overlay.glade:520
-msgid "Auto-arrange"
-msgstr ""
-
-#: gresources/nemo-desktop-overlay.glade:582
-msgid "Horizontal"
-msgstr ""
-
-#: gresources/nemo-desktop-overlay.glade:631
+#: gresources/nemo-desktop-overlay.glade:95
 msgid "Vertical"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:668
+#: gresources/nemo-desktop-overlay.glade:99
+msgid "Horizontal"
+msgstr ""
+
+#: gresources/nemo-desktop-overlay.glade:138
+msgid "Current Monitor Layout"
+msgstr ""
+
+#: gresources/nemo-desktop-overlay.glade:195
+msgid "<b>Icon Size:</b>"
+msgstr ""
+
+#: gresources/nemo-desktop-overlay.glade:260
 msgid "<b>Layout</b>"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:717
-msgid "Adjust vertical grid spacing"
+#: gresources/nemo-desktop-overlay.glade:381
+msgid "Direction"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:783
+#: gresources/nemo-desktop-overlay.glade:466
+msgid "Sort items by"
+msgstr ""
+
+#: gresources/nemo-desktop-overlay.glade:625
+msgid "Reset grid spacing"
+msgstr ""
+
+#: gresources/nemo-desktop-overlay.glade:692
+#: gresources/nemo-desktop-overlay.glade:883
+msgid "button"
+msgstr ""
+
+#: gresources/nemo-desktop-overlay.glade:759
 msgid "Adjust horizontal grid spacing"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:817
-msgid "Reset grid to defaults"
+#: gresources/nemo-desktop-overlay.glade:814
+msgid "Adjust vertical grid spacing"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:838
+#: gresources/nemo-desktop-overlay.glade:858
 msgid "page0"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:852
+#: gresources/nemo-desktop-overlay.glade:872
 msgid ""
 "<b><big>Desktop icons are not currently enabled for this monitor.</big></b>"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:863
-msgid "Desktop Preferences"
-msgstr ""
-
-#: gresources/nemo-desktop-overlay.glade:882
+#: gresources/nemo-desktop-overlay.glade:901
 msgid "page1"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:64
+#: gresources/nemo-desktop-preferences.glade:35
 msgid "<b>Desktop Layout</b>"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:80
+#: gresources/nemo-desktop-preferences.glade:51
 msgid "No desktop icons"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:81
+#: gresources/nemo-desktop-preferences.glade:52
 msgid "Show desktop icons on primary monitor only"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:82
+#: gresources/nemo-desktop-preferences.glade:53
 msgid "Show desktop icons on non-primary monitor(s) only"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:83
+#: gresources/nemo-desktop-preferences.glade:54
 msgid "Show desktop icons on all monitors"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:128
+#: gresources/nemo-desktop-preferences.glade:99
 msgid "<b>Desktop Icons</b>"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:387
+#: gresources/nemo-desktop-preferences.glade:380
 msgid "Mounted Drives"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:543
+#: gresources/nemo-desktop-preferences.glade:541
 msgid "<b>Options</b>"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:594
+#: gresources/nemo-desktop-preferences.glade:588
 msgid "Show icons from missing monitors"
 msgstr ""
 
