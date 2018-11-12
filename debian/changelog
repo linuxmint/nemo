@@ -1,3 +1,15 @@
+nemo (4.0.1) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-application.c: Check for "nemo" in the current theme, instead of "nemo-window". Remove unintentional additions to nemo-style- application.css which were made in 21a960712bf4d7688.
+  * nemo-desktop: Simplify view layout preferences, other changes.
+  * desktop overlay: Use normal window hints instead of hidden.  Allow resizing, assign an icon (and use XAppGtkWindow so the icon isn't blurry). Make sure all the action names are not marked as translate. Show the monitor plug name and dimensions when displaying view settings.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 12 Nov 2018 15:10:50 +0000
+
 nemo (4.0.0) tessa; urgency=medium
 
   [ Michael Webster ]
