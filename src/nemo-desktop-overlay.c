@@ -565,7 +565,12 @@ nemo_desktop_overlay_dispose (GObject *object)
     NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (object);
 
     g_clear_object (&overlay->priv->builder);
-    g_clear_pointer (&overlay->priv->window, gtk_widget_destroy);
+
+    if (overlay->priv->window) {
+        gtk_widget_destroy (GTK_WIDGET (overlay->priv->window));
+
+        overlay->priv->window = NULL;
+    }
 
     G_OBJECT_CLASS (nemo_desktop_overlay_parent_class)->dispose (object);
 }
