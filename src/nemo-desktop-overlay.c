@@ -454,8 +454,9 @@ nemo_desktop_overlay_init (NemoDesktopOverlay *overlay)
         widget = GTK_WIDGET (nemo_desktop_preferences_new ());
         gtk_box_pack_start (GTK_BOX (prefs_box), widget, TRUE, TRUE, 0);
 
-        widget = gtk_link_button_new_with_label ("http://null",
+        widget = gtk_link_button_new_with_label ("",
                                                _("Current Monitor Preferences"));
+        gtk_widget_set_tooltip_text (widget, "");
 
         g_signal_connect (widget,
                           "clicked",
