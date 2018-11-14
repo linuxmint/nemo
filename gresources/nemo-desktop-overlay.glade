@@ -693,7 +693,6 @@
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
-                                                    <property name="uri">http://glade.gnome.org</property>
                                                     <signal name="activate-link" handler="on_view_prefs_link_button_activate_link" swapped="no"/>
                                                     <signal name="clicked" handler="on_view_prefs_link_button_clicked" swapped="no"/>
                                                   </object>
@@ -885,7 +884,6 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="relief">none</property>
-                        <property name="uri">http://null</property>
                         <signal name="activate-link" handler="on_disabled_view_link_button_activate_link" swapped="no"/>
                         <signal name="clicked" handler="on_disabled_view_link_button_clicked" swapped="no"/>
                       </object>

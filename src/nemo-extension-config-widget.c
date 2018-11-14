@@ -281,7 +281,7 @@ refresh_widget (NemoExtensionConfigWidget *widget)
             gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 6);
 
             if (proxy->config_exec != NULL) {
-                button = gtk_link_button_new_with_label ("uri://dummy", _("Configure"));
+                button = gtk_link_button_new_with_label ("", _("Configure"));
                 g_signal_connect (button, "activate-link", G_CALLBACK (on_config_clicked), proxy);
 
                 gtk_box_pack_end (GTK_BOX (box), button, FALSE, FALSE, 2);
