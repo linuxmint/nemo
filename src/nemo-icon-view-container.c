@@ -70,6 +70,7 @@ static void find_empty_location (NemoIconContainer *container,
 G_DEFINE_TYPE (NemoIconViewContainer, nemo_icon_view_container, NEMO_TYPE_ICON_CONTAINER);
 
 static GQuark attribute_none_q;
+static GQuark *caption_attributes = NULL;
 
 static NemoIconView *
 get_icon_view (NemoIconContainer *container)
@@ -239,16 +240,10 @@ update_auto_strv_as_quarks (GSettings   *settings,
 static GQuark *
 nemo_icon_view_container_get_icon_text_attributes_from_preferences (void)
 {
-	static GQuark *attributes = NULL;
-
-	if (attributes == NULL) {
+	if (caption_attributes == NULL) {
 		update_auto_strv_as_quarks (nemo_icon_view_preferences,
 					    NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
-					    &attributes);
-		g_signal_connect (nemo_icon_view_preferences,
-				  "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
-				  G_CALLBACK (update_auto_strv_as_quarks),
-				  &attributes);
+					    &caption_attributes);
 	}
 
 	/* We don't need to sanity check the attributes list even though it came
@@ -277,7 +272,7 @@ nemo_icon_view_container_get_icon_text_attributes_from_preferences (void)
 	 * So, no more error checking on attributes is needed here and we can return
 	 * a the auto stored value.
 	 */
-	return attributes;
+	return caption_attributes;
 }
 
 static int
@@ -2044,9 +2039,29 @@ nemo_icon_view_container_get_max_layout_lines (NemoIconContainer  *container)
 }
 
 static void
+finalize (GObject *object)
+{
+    g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
+                                          text_ellipsis_limit_changed_callback,
+                                          NULL);
+
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                                          desktop_text_ellipsis_limit_changed_callback,
+                                          NULL);
+
+    g_signal_handlers_disconnect_by_func (nemo_icon_view_preferences,
+                                          update_auto_strv_as_quarks,
+                                          &caption_attributes);
+
+    G_OBJECT_CLASS (nemo_icon_view_container_parent_class)->finalize (object);
+}
+
+static void
 nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 {
 	NemoIconContainerClass *ic_class;
+
+    G_OBJECT_CLASS (klass)->finalize = finalize;
 
 	ic_class = &klass->parent_class;
 
@@ -2096,6 +2111,11 @@ nemo_icon_view_container_init (NemoIconViewContainer *icon_container)
                       G_CALLBACK (desktop_text_ellipsis_limit_changed_callback),
                       NULL);
         desktop_text_ellipsis_limit_changed_callback (NULL);
+
+        g_signal_connect (nemo_icon_view_preferences,
+                          "changed::" NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
+                          G_CALLBACK (update_auto_strv_as_quarks),
+                          &caption_attributes);
 
         setup_prefs = TRUE;
     }

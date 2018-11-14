@@ -778,6 +778,15 @@ connect_quick_renames (GtkBuilder *builder)
 		g_signal_connect_swapped (w, "toggled", G_CALLBACK (setup_quick_renames), builder);
 }
 
+static void
+on_dialog_destroy (GtkWidget *widget,
+                   gpointer   user_data)
+{
+    GtkBuilder *builder = GTK_BUILDER (user_data);
+
+    g_object_unref (builder);
+}
+
 static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
                                               GtkWindow   *window,
@@ -1023,6 +1032,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 	g_signal_connect (dialog, "delete-event",
 			  G_CALLBACK (gtk_widget_destroy), NULL);
 
+    g_signal_connect (dialog, "destroy",
+                      G_CALLBACK (on_dialog_destroy), builder);
+
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), "folder");
 
 	if (window) {
@@ -1061,6 +1073,4 @@ nemo_file_management_properties_dialog_show (GtkWindow   *window,
 				       NULL);
 
 	nemo_file_management_properties_dialog_setup (builder, window, initial_page);
-
-	g_object_unref (builder);
 }
