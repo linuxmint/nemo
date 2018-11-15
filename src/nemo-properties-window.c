@@ -5232,6 +5232,8 @@ real_destroy (GtkWidget *object)
 		window->details->update_files_timeout_id = 0;
 	}
 
+    window->details->icon_chooser = NULL;
+
 	GTK_WIDGET_CLASS (nemo_properties_window_parent_class)->destroy (object);
 }
 
@@ -5370,6 +5372,7 @@ select_image_button_callback (GtkWidget *widget,
 			      NemoPropertiesWindow *window)
 {
 	GtkWidget *dialog;
+    gchar *image_uri, *icon_name;
     char *return_string;
     gint response;
 
@@ -5377,11 +5380,12 @@ select_image_button_callback (GtkWidget *widget,
 
 	dialog = window->details->icon_chooser;
 
+    image_uri = icon_name = NULL;
+
 	if (dialog == NULL) {
         GtkWidget *revert_button;
         GList *l;
         gboolean revert_is_sensitive;
-
 
         dialog = GTK_WIDGET (xapp_icon_chooser_dialog_new ());
 
@@ -5397,21 +5401,20 @@ select_image_button_callback (GtkWidget *widget,
 
         for (l = window->details->original_files; l != NULL; l = l->next) {
             NemoFile *file;
-            gchar *image_path, *icon_name;
 
             file = NEMO_FILE (l->data);
 
-            image_path = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL);
+            image_uri = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON, NULL);
             icon_name = nemo_file_get_metadata (file, NEMO_METADATA_KEY_CUSTOM_ICON_NAME, NULL);
 
-            revert_is_sensitive = (image_path != NULL || icon_name != NULL);
-
-            g_free (image_path);
-            g_free (icon_name);
+            revert_is_sensitive = (image_uri != NULL || icon_name != NULL);
 
             if (revert_is_sensitive) {
                 break;
             }
+
+            g_free (image_uri);
+            g_free (icon_name);
         }
 
         gtk_widget_set_sensitive (GTK_WIDGET (revert_button), revert_is_sensitive);
@@ -5427,9 +5430,30 @@ select_image_button_callback (GtkWidget *widget,
 
 		g_object_add_weak_pointer (G_OBJECT (dialog),
 					   (gpointer *) &window->details->icon_chooser);
+
 	}
 
-	response = xapp_icon_chooser_dialog_run (XAPP_ICON_CHOOSER_DIALOG (dialog));
+    if (image_uri == NULL && icon_name == NULL) {
+        response = xapp_icon_chooser_dialog_run (XAPP_ICON_CHOOSER_DIALOG (dialog));
+    } else {
+        if (image_uri) {
+            GFile *icon_location;
+            gchar *path;
+
+            icon_location = g_file_new_for_uri (image_uri);
+            path = g_file_get_path (icon_location);
+
+            g_object_unref (icon_location);
+
+            response = xapp_icon_chooser_dialog_run_with_icon (XAPP_ICON_CHOOSER_DIALOG (dialog),
+                                                               path);
+
+            g_free (path);
+        } else {
+            response = xapp_icon_chooser_dialog_run_with_icon (XAPP_ICON_CHOOSER_DIALOG (dialog),
+                                                               icon_name);
+        }
+    }
 
     switch (response) {
         case NEMO_RESPONSE_REVERT:
@@ -5443,6 +5467,9 @@ select_image_button_callback (GtkWidget *widget,
         default:
             break;
     }
+
+    g_free (image_uri);
+    g_free (icon_name);
 
     gtk_widget_destroy (GTK_WIDGET (dialog));
 }
