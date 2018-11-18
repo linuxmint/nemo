@@ -1936,6 +1936,8 @@ clear_thumbnails_for_view (NemoView *view)
     }
 
     nemo_file_list_free (file_list);
+
+    nemo_icon_info_clear_caches ();
 }
 
 void
