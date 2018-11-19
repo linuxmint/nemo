@@ -1,3 +1,18 @@
+nemo (4.0.2) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file-management-properties.c: Don't drop builder object ref until the window is closed, as callbacks to setting changes refer to it still.
+
+  [ itzexor ]
+  * desktop/extension config: remove incorrect tooltips
+
+  [ Michael Webster ]
+  * nemo-desktop-overlay.c: Don't use g_clear_pointer to destroy a widget, this causes build warnings in newer glib.
+  * nemo-properties-window.c: If the icon picker is spawned on a file that has an existing custom icon name or path, display it initially in the picker.
+  * nemo-window-manage-views.c: When clearing thumbnails for a view refresh, drop the NemoIconInfo cache as well.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 19 Nov 2018 09:51:30 +0000
+
 nemo (4.0.1) tessa; urgency=medium
 
   [ Michael Webster ]
