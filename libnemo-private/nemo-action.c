@@ -1032,8 +1032,16 @@ expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GS
         str = g_string_insert (str, shift, insertion);
 
         token_type = TOKEN_NONE;
+
+        /* The string may have expanded, and since we modify-in-place using GString, make sure
+         * our continuation begins just beyond what we inserted, not the original match position.
+         * Otherwise we may get confused by uri escape codes that happen to match *our* replacement
+         * tokens (%U, %F, etc...).
+         *
+         * See: https://github.com/linuxmint/nemo/issues/1956
+         */
+        ptr = find_token_type (str->str + shift + strlen(insertion), &token_type);
         g_free  (insertion);
-        ptr = find_token_type (str->str, &token_type);
     }
 
     return str;
