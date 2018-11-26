@@ -794,7 +794,12 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
         for (l = view->details->action_items; l != NULL; l = l->next) {
             p = l->data;
             if (nemo_action_get_visibility (p->action, tmp, parent, FALSE)) {
-                gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), nemo_action_get_label (p->action, tmp, parent));
+                gchar *action_label;
+
+                action_label = nemo_action_get_label (p->action, tmp, parent);
+                gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), action_label);
+                g_free (action_label);
+
                 gtk_widget_set_visible (p->item, TRUE);
                 actions_visible = TRUE;
             } else {
