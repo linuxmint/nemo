@@ -110,6 +110,7 @@ struct FMTreeViewDetails {
 	guint selection_changed_timer;
 
     NemoActionManager *action_manager;
+    guint action_manager_changed_id;
     GList *action_items;
     guint hidden_files_changed_id;
 };
@@ -1170,13 +1171,6 @@ popup_menu_deactivated (GtkMenuShell *menu_shell, gpointer data)
 }
 
 static void
-action_payload_free (gpointer data)
-{
-    ActionPayload *p = (ActionPayload *) data;
-    gtk_widget_destroy (GTK_WIDGET (p->item));
-}
-
-static void
 action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 {
     gchar *uri = NULL;
@@ -1199,7 +1193,7 @@ static void
 add_action_popup_items (FMTreeView *view)
 {
     if (view->details->action_items != NULL)
-        g_list_free_full (view->details->action_items, action_payload_free);
+        g_list_free_full (view->details->action_items, g_free);
 
     view->details->action_items = NULL;
 
@@ -1226,6 +1220,42 @@ add_action_popup_items (FMTreeView *view)
     }
 }
 
+/* Callback used when the file list's popup menu is detached */
+static void
+popup_menu_detach_cb (GtkWidget *attach_widget,
+                      GtkMenu   *menu)
+{
+    FMTreeView *view;
+
+    view = FM_TREE_VIEW (attach_widget);
+    g_assert (FM_IS_TREE_VIEW (view));
+
+    view->details->popup = NULL;
+    view->details->popup_open = NULL;
+    view->details->popup_open_in_new_window = NULL;
+    view->details->popup_open_in_new_tab = NULL;
+    view->details->popup_create_folder = NULL;
+    view->details->popup_cut = NULL;
+    view->details->popup_copy = NULL;
+    view->details->popup_paste = NULL;
+    view->details->popup_rename = NULL;
+    view->details->popup_trash = NULL;
+    view->details->popup_delete = NULL;
+    view->details->popup_properties = NULL;
+    view->details->popup_unmount_separator = NULL;
+    view->details->popup_unmount = NULL;
+    view->details->popup_eject = NULL;
+    view->details->popup_action_separator = NULL;
+}
+
+static void
+actions_changed_callback (FMTreeView *view)
+{
+    if (view->details->popup) {
+        gtk_menu_detach (GTK_MENU (view->details->popup));
+    }
+}
+
 static void
 create_popup_menu (FMTreeView *view)
 {
@@ -1238,11 +1268,14 @@ create_popup_menu (FMTreeView *view)
 	
 	popup = gtk_menu_new ();
 
+    gtk_menu_attach_to_widget (GTK_MENU (popup),
+                               GTK_WIDGET (view),
+                               popup_menu_detach_cb);
+
 	g_signal_connect (popup, "deactivate",
 			  G_CALLBACK (popup_menu_deactivated),
 			  view);
-	
-	
+
 	/* add the "open" menu item */
 	menu_image = gtk_image_new_from_icon_name ("folder-open-symbolic", GTK_ICON_SIZE_MENU);
 	gtk_widget_show (menu_image);
@@ -1526,6 +1559,11 @@ create_tree (FMTreeView *view)
 
     view->details->action_manager = nemo_action_manager_new ();
 
+    view->details->action_manager_changed_id = g_signal_connect_swapped (view->details->action_manager,
+                                                                         "changed",
+                                                                         G_CALLBACK (actions_changed_callback),
+                                                                         view);
+
     view->details->action_items = NULL;
 
 	/* Create column */
@@ -1723,6 +1761,12 @@ fm_tree_view_dispose (GObject *object)
         g_signal_handler_disconnect (view->details->window,
                                      view->details->hidden_files_changed_id);
         view->details->hidden_files_changed_id = 0;
+    }
+
+    if (view->details->action_manager_changed_id != 0) {
+        g_signal_handler_disconnect (view->details->action_manager,
+                                     view->details->action_manager_changed_id);
+        view->details->action_manager_changed_id = 0;
     }
 
     g_clear_object (&view->details->action_manager);

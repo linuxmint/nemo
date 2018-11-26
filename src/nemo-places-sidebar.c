@@ -87,6 +87,7 @@ typedef struct {
 	GVolumeMonitor *volume_monitor;
 
     NemoActionManager *action_manager;
+    guint action_manager_changed_id;
     GList *action_items;
 
 	gboolean devices_header_added;
@@ -2311,8 +2312,12 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
     for (l = sidebar->action_items; l != NULL; l = l->next) {
         p = l->data;
         if (nemo_action_get_visibility (p->action, tmp, parent)) {
-            gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), nemo_action_get_label (p->action, tmp, parent));
+            gchar *action_label = nemo_action_get_label (p->action, tmp, parent);
+
+            gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), action_label);
             gtk_widget_set_visible (p->item, TRUE);
+
+            g_free (action_label);
             actions_visible = TRUE;
         } else {
             gtk_widget_set_visible (p->item, FALSE);
@@ -3181,13 +3186,6 @@ properties_cb (GtkMenuItem           *item,
 	gtk_tree_path_free (path);
 }
 
-static void
-action_payload_free (gpointer data)
-{
-    ActionPayload *p = (ActionPayload *) data;
-    gtk_widget_destroy (GTK_WIDGET (p->item));
-}
-
 static gboolean
 nemo_places_sidebar_focus (GtkWidget *widget,
 			       GtkDirectionType direction)
@@ -3318,7 +3316,7 @@ static void
 add_action_popup_items (NemoPlacesSidebar *sidebar)
 {
     if (sidebar->action_items != NULL)
-        g_list_free_full (sidebar->action_items, action_payload_free);
+        g_list_free_full (sidebar->action_items, g_free);
 
     sidebar->action_items = NULL;
 
@@ -3514,6 +3512,14 @@ bookmarks_popup_menu_cb (GtkWidget *widget,
 {
 	bookmarks_popup_menu (sidebar, NULL);
 	return TRUE;
+}
+
+static void
+actions_changed_callback (NemoPlacesSidebar *sidebar)
+{
+    if (sidebar->popup_menu) {
+        gtk_menu_detach (GTK_MENU (sidebar->popup_menu));
+    }
 }
 
 static gboolean
@@ -3898,6 +3904,10 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	GtkStyleContext   *style_context;
 
     sidebar->action_manager = nemo_action_manager_new ();
+    sidebar->action_manager_changed_id = g_signal_connect_swapped (sidebar->action_manager,
+                                                                   "changed",
+                                                                   G_CALLBACK (actions_changed_callback),
+                                                                   sidebar);
 
     sidebar->action_items = NULL;
 
@@ -4174,14 +4184,20 @@ nemo_places_sidebar_dispose (GObject *object)
 		sidebar->bookmarks_changed_id = 0;
 	}
 
+    if (sidebar->action_manager_changed_id != 0) {
+        g_signal_handler_disconnect (sidebar->action_manager,
+                                     sidebar->action_manager_changed_id);
+        sidebar->action_manager_changed_id = 0;
+    }
+
+    g_clear_object (&sidebar->action_manager);
+
     if (sidebar->update_places_on_idle_id != 0) {
         g_source_remove (sidebar->update_places_on_idle_id);
         sidebar->update_places_on_idle_id = 0;
     }
 
 	g_clear_object (&sidebar->store);
-
-    g_clear_object (&sidebar->action_manager);
 
 	if (sidebar->go_to_after_mount_slot) {
 		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
