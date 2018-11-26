@@ -1415,7 +1415,10 @@ get_is_dir (NemoFile *file)
 }
 
 gboolean
-nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *parent)
+nemo_action_get_visibility (NemoAction *action,
+                            GList *selection,
+                            NemoFile *parent,
+                            gboolean for_places)
 {
 
     gboolean selection_type_show = FALSE;
@@ -1442,12 +1445,39 @@ nemo_action_get_visibility (NemoAction *action, GList *selection, NemoFile *pare
             } else if (g_strcmp0 (condition, "removable") == 0) {
                 gboolean is_removable = FALSE;
                 if (g_list_length (selection) > 0) {
-                    GMount *mount = nemo_file_get_mount (selection->data);
+                    NemoFile *file;
+                    GMount *mount = NULL;
+
+                    file = NEMO_FILE (selection->data);
+
+                    mount = nemo_file_get_mount (file);
+
+                    /* find_enclosing_mount can block, so only bother when activated
+                     * from the places sidebar (which is strictly done on-demand),
+                     * so we don't drag down any view loads. */
+                    if (!mount && for_places) {
+                        GFile *f;
+
+                        f = nemo_file_get_location (file);
+
+                        if (g_file_is_native (f)) {
+                            mount = g_file_find_enclosing_mount (f, NULL, NULL);
+                            nemo_file_set_mount (file, mount);
+                        }
+
+                        g_object_unref (f);
+                    }
+
                     if (mount) {
-                        GDrive *drive = g_mount_get_drive (mount);
+                        GDrive *drive;
+
+                        drive = g_mount_get_drive (mount);
+
                         if (drive) {
-                            if (g_drive_is_removable (drive))
+                            if (g_drive_is_removable (drive)) {
                                 is_removable = TRUE;
+                            }
+
                             g_object_unref (drive);
                         }
                     }

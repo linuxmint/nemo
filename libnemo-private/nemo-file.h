@@ -203,6 +203,8 @@ gboolean                nemo_file_is_launchable                     (NemoFile   
 gboolean                nemo_file_is_symbolic_link                  (NemoFile                   *file);
 gboolean                nemo_file_is_mountpoint                     (NemoFile                   *file);
 GMount *                nemo_file_get_mount                         (NemoFile                   *file);
+void                    nemo_file_set_mount                         (NemoFile                   *file,
+                                                                     GMount                     *mount);
 char *                  nemo_file_get_volume_free_space             (NemoFile                   *file);
 char *                  nemo_file_get_volume_name                   (NemoFile                   *file);
 char *                  nemo_file_get_symbolic_link_target_path     (NemoFile                   *file);

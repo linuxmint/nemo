@@ -271,8 +271,6 @@ gboolean      nemo_file_set_display_name               (NemoFile           *file
 							    const char             *display_name,
 							    const char             *edit_name,
 							    gboolean                custom);
-void          nemo_file_set_mount                      (NemoFile           *file,
-							    GMount                 *mount);
 
 /* Mark specified attributes for this file out of date without canceling current
  * I/O or kicking off new I/O.

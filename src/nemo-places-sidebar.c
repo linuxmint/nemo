@@ -120,6 +120,9 @@ typedef struct {
     GtkWidget *popup_menu_action_separator_item;
     GtkWidget *popup_menu_remove_rename_separator_item;
 
+    NemoFile *popup_file;
+    guint popup_file_idle_handler;
+
 	/* volume mounting - delayed open process */
 	gboolean mounting;
 	NemoWindowSlot *go_to_after_mount_slot;
@@ -2304,6 +2307,15 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 
     GList *l;
     NemoFile *file = nemo_file_get_by_uri (uri);
+
+    g_clear_pointer (&sidebar->popup_file, nemo_file_unref);
+
+    if (sidebar->popup_file_idle_handler != 0) {
+        g_source_remove (sidebar->popup_file_idle_handler);
+    }
+
+    sidebar->popup_file = nemo_file_ref (file);
+
     NemoFile *parent = nemo_file_get_parent (file);
     GList *tmp = NULL;
     tmp = g_list_append (tmp, file);
@@ -2311,7 +2323,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 
     for (l = sidebar->action_items; l != NULL; l = l->next) {
         p = l->data;
-        if (nemo_action_get_visibility (p->action, tmp, parent)) {
+        if (nemo_action_get_visibility (p->action, tmp, parent, TRUE)) {
             gchar *action_label = nemo_action_get_label (p->action, tmp, parent);
 
             gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), action_label);
@@ -2326,7 +2338,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 
     gtk_widget_set_visible (sidebar->popup_menu_action_separator_item, actions_visible);
 
-    nemo_file_list_free (tmp);
+    g_list_free (tmp);
 
 	g_free (uri);
 }
@@ -3282,6 +3294,41 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
   return FALSE;
 }
 
+static gboolean
+free_popup_file_in_idle_cb (gpointer data)
+{
+    NemoPlacesSidebar *sidebar;
+
+    sidebar = NEMO_PLACES_SIDEBAR (data);
+
+    if (sidebar->popup_file != NULL) {
+        nemo_file_unref (sidebar->popup_file);
+        sidebar->popup_file = NULL;
+    }
+
+    sidebar->popup_file_idle_handler = 0;
+
+    return FALSE;
+}
+
+static void
+popup_menu_deactivated (GtkMenuShell *menu_shell, gpointer data)
+{
+    NemoPlacesSidebar *sidebar;
+
+    sidebar = NEMO_PLACES_SIDEBAR (data);
+
+    /* The popup menu is deactivated. (I.E. hidden)
+       We want to free popup_file, but can't right away as it might immediately get
+       used if we're deactivation due to activating a menu item. So, we free it in
+       idle */
+
+    if (sidebar->popup_file != NULL &&
+        sidebar->popup_file_idle_handler == 0) {
+        sidebar->popup_file_idle_handler = g_idle_add (free_popup_file_in_idle_cb, sidebar);
+    }
+}
+
 static void
 action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 {
@@ -3358,6 +3405,11 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 					      NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 
 	sidebar->popup_menu = gtk_menu_new ();
+
+    g_signal_connect (sidebar->popup_menu, "deactivate",
+                      G_CALLBACK (popup_menu_deactivated),
+                      sidebar);
+
 	gtk_menu_attach_to_widget (GTK_MENU (sidebar->popup_menu),
 			           GTK_WIDGET (sidebar),
 			           bookmarks_popup_menu_detach_cb);
@@ -4191,6 +4243,11 @@ nemo_places_sidebar_dispose (GObject *object)
     }
 
     g_clear_object (&sidebar->action_manager);
+
+    if (sidebar->popup_file != NULL) {
+        nemo_file_unref (sidebar->popup_file);
+        sidebar->popup_file = NULL;
+    }
 
     if (sidebar->update_places_on_idle_id != 0) {
         g_source_remove (sidebar->update_places_on_idle_id);

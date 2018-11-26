@@ -6329,7 +6329,7 @@ determine_visibility (gpointer data, gpointer callback_data)
 
     NemoFile *parent = nemo_view_get_directory_as_file (view);
 
-    if (nemo_action_get_visibility (action, selection, parent)) {
+    if (nemo_action_get_visibility (action, selection, parent, FALSE)) {
         gchar *label, *tt;
 
         label = nemo_action_get_label (action, selection, parent);
