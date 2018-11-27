@@ -1,3 +1,13 @@
+nemo (4.0.3) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-action.c: Don't include previously inserted characters/text in subsequent token matching - skip ahead based on the inserted text length, so we avoid potentially parsing escape codes that are part of a file's uri.
+  * places and tree sidebars: Listen for action manager reloads, rebuild popup menus when needed.
+  * places sidebar: Enable actions to work properly even when the item being right-clicked/context-menu'd is not the currently loaded view.
+  * nemo-tree-sidebar.c: Fix memory leak.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 27 Nov 2018 17:20:40 +0000
+
 nemo (4.0.2) tessa; urgency=medium
 
   [ Michael Webster ]
