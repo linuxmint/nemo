@@ -87,7 +87,8 @@ static void mouse_back_button_changed		     (gpointer                  callback_
 static void mouse_forward_button_changed	     (gpointer                  callback_data);
 static void use_extra_mouse_buttons_changed          (gpointer              callback_data);
 static void side_pane_id_changed                    (NemoWindow            *window);
-static void handle_alt_menu_key                     (NemoWindow *window, gboolean on_release);
+static void toggle_menubar                          (NemoWindow            *window,
+                                                     gint                   action);
 
 /* Sanity check: highest mouse button value I could find was 14. 5 is our
  * lower threshold (well-documented to be the one of the button events for the
@@ -114,6 +115,12 @@ enum {
 	SLOT_ADDED,
 	SLOT_REMOVED,
 	LAST_SIGNAL
+};
+
+enum {
+    MENU_HIDE,
+    MENU_SHOW,
+    MENU_TOGGLE
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -518,12 +525,51 @@ static gboolean
 on_button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
     NemoWindow *window = NEMO_WINDOW (user_data);
+
     if (event->button == 3) {
-            /* simulate activating the menu */
-            handle_alt_menu_key (window, FALSE);
-            handle_alt_menu_key (window, TRUE);
+        toggle_menubar (window, MENU_TOGGLE);
     }
-    return TRUE;
+
+    return GDK_EVENT_STOP;
+}
+
+static void
+clear_menu_hide_delay (NemoWindow *window)
+{
+    if (window->details->menu_hide_delay_id > 0) {
+        g_source_remove (window->details->menu_hide_delay_id);
+    }
+
+    window->details->menu_hide_delay_id = 0;
+}
+
+static gboolean
+hide_menu_on_delay (NemoWindow *window)
+{
+    toggle_menubar (window, MENU_HIDE);
+
+    window->details->menu_hide_delay_id = 0;
+    return FALSE;
+}
+
+static gboolean
+on_menu_focus_out (GtkWidget *widget,
+                   GdkEvent  *event,
+                   gpointer   user_data)
+{
+    NemoWindow *window = NEMO_WINDOW (user_data);
+
+    /* The menu, when visible on demand, gets the keyboard grab.
+     * If the user clicks on some element in the window,, we want the menu
+     * to disappear, but if it's done immediately, everything shifts up the
+     * height of the menu, and the user will more than likely end up clicking
+     * in the wrong spot.  Delay the hide momentarily, to allow the user to
+     * complete their click action. */
+    clear_menu_hide_delay (window);
+
+    window->details->menu_hide_delay_id = g_timeout_add (200, (GSourceFunc) hide_menu_on_delay, window);
+
+    return GDK_EVENT_PROPAGATE;
 }
 
 static void
@@ -559,14 +605,20 @@ nemo_window_constructed (GObject *self)
 	/* Statusbar is packed in the subclasses */
 
 	nemo_window_initialize_menus (window);
-
-    window->details->temporary_menu_bar = FALSE;
-
 	nemo_window_initialize_actions (window);
 
 	menu = gtk_ui_manager_get_widget (window->details->ui_manager, "/MenuBar");
 	window->details->menubar = menu;
+
+    gtk_widget_set_can_focus (menu, TRUE);
 	gtk_widget_set_hexpand (menu, TRUE);
+
+    g_signal_connect_object (menu,
+                             "focus-out-event",
+                             G_CALLBACK (on_menu_focus_out),
+                             window,
+                             0);
+
 	if (g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_MENU_BAR)){
 		gtk_widget_show (menu);
 	} else {
@@ -770,6 +822,8 @@ nemo_window_finalize (GObject *object)
 		g_source_remove (window->details->sidebar_width_handler_id);
 		window->details->sidebar_width_handler_id = 0;
 	}
+
+    clear_menu_hide_delay (window);
 
 	nemo_window_finalize_menus (window);
 
@@ -1021,30 +1075,61 @@ nemo_window_realize (GtkWidget *widget)
 }
 
 static void
-handle_alt_menu_key (NemoWindow *window,
-                     gboolean on_release)
+toggle_menubar (NemoWindow *window, gint action)
 {
-    GtkWidget *menu = window->details->menubar;
+    GtkWidget *menu;
+    gboolean default_visible;
 
-    gboolean default_visible = g_settings_get_boolean (nemo_window_state,
-                                                      NEMO_WINDOW_STATE_START_WITH_MENU_BAR);
+    default_visible = g_settings_get_boolean (nemo_window_state,
+                                              NEMO_WINDOW_STATE_START_WITH_MENU_BAR);
 
-    if (default_visible || window->details->disable_chrome)
+    menu = window->details->menubar;
+
+    if (default_visible || window->details->disable_chrome) {
         return;
-
-    gboolean visible = gtk_widget_get_visible (menu);
-
-    if (!visible) {
-        gtk_widget_show (menu);
-        window->details->temporary_menu_bar = FALSE;
-    } else if (visible && on_release) {
-        if (!window->details->temporary_menu_bar)
-            window->details->temporary_menu_bar = TRUE;
-        else {
-            gtk_widget_hide (menu);
-            window->details->temporary_menu_bar = FALSE;
-        }
     }
+
+    if (action == MENU_TOGGLE) {
+        action = gtk_widget_get_visible (menu) ? MENU_HIDE : MENU_SHOW;
+    }
+
+    if (action == MENU_HIDE) {
+        gtk_widget_hide (menu);
+    } else {
+        gtk_widget_show (menu);
+
+        /* When the menu is normally hidden, have an activation of it trigger a key grab.
+         * For keyboard users, this is a natural progression, that they will type a mnemonic
+         * next to open a menu.  Any loss of focus or click elsewhere will re-hide the menu
+         * and cancel focus.
+         */
+        gtk_widget_grab_focus (menu);
+        gtk_window_set_mnemonics_visible (GTK_WINDOW (window), TRUE);
+    }
+
+    return;
+}
+
+static gboolean
+is_alt_key_event (GdkEventKey *event)
+{
+    GdkModifierType nominal_state;
+    gboolean state_ok;
+
+    nominal_state = event->state & gtk_accelerator_get_default_mod_mask();
+
+    /* A key press of alt will show just the alt keyval (GDK_KEY_Alt_L/R).  A key release
+     * of a single modifier is always modified by itself.  So a valid press state is 0 and
+     * a valid release state is GDK_MOD1_MASK (alt modifier).
+     */
+    state_ok = (event->type == GDK_KEY_PRESS && nominal_state == 0) ||
+               (event->type == GDK_KEY_RELEASE && nominal_state == GDK_MOD1_MASK);
+
+    if (state_ok && (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R)) {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static gboolean
@@ -1107,8 +1192,25 @@ nemo_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
-    if (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R) {
-        handle_alt_menu_key (window, FALSE);
+    /* An alt key press by itself will always hide the menu if it's visible.  We set a flag
+     * to skip the subsequent release, otherwise we'll show the menu again.
+     *
+     * When alt is pressed and the menu is NOT visible, we flag that on release we'll show the
+     * menu.  If any other keys are pressed between alt being pressed and released, we clear that
+     * flag, because it was more than likely part of some other shortcut, and otherwise, depending
+     * on the order the keys are released, if the alt key is last to be released, we don't want to
+     * show the menu, as that was not the original intent.
+     */
+
+    if (is_alt_key_event (event)) {
+        if (gtk_widget_get_visible (window->details->menubar)) {
+            toggle_menubar (window, MENU_HIDE);
+            window->details->menu_skip_release = TRUE;
+        } else {
+            window->details->menu_show_queued = TRUE;
+        }
+    } else {
+        window->details->menu_show_queued = FALSE;
     }
 
 	return GTK_WIDGET_CLASS (nemo_window_parent_class)->key_press_event (widget, event);
@@ -1120,9 +1222,19 @@ nemo_window_key_release_event (GtkWidget *widget,
 {
     NemoWindow *window = NEMO_WINDOW (widget);
 
-    if (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R) {
-        handle_alt_menu_key (window, TRUE);
+    /* Conditions to show the menu via the alt key is that it must have been pressed and
+     * released without any other key events in between, and we must not have hidden the
+     * menu on the alt key press event.  Show we check both flags here, for opposing states.
+     */
+
+    if (is_alt_key_event (event)) {
+        if (!window->details->menu_skip_release && window->details->menu_show_queued) {
+            toggle_menubar (window, MENU_SHOW);
+        }
     }
+
+    window->details->menu_skip_release = FALSE;
+    window->details->menu_show_queued = FALSE;
 
     return GTK_WIDGET_CLASS (nemo_window_parent_class)->key_release_event (widget, event);
 }
@@ -1195,8 +1307,6 @@ nemo_window_sync_menu_bar (NemoWindow *window)
     } else {
         gtk_widget_hide (menu);
     }
-
-    window->details->temporary_menu_bar = FALSE;
 }
 
 void
@@ -1826,6 +1936,9 @@ nemo_window_init (NemoWindow *window)
 
     window->details->show_sidebar = g_settings_get_boolean (nemo_window_state,
                                                             NEMO_WINDOW_STATE_START_WITH_SIDEBAR);
+
+    window->details->menu_skip_release = FALSE;
+    window->details->menu_show_queued = FALSE;
 
     window->details->ignore_meta_view_id = NULL;
     window->details->ignore_meta_zoom_level = -1;

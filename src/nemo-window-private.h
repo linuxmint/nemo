@@ -90,9 +90,8 @@ struct NemoWindowDetails
         guint extensions_toolbar_merge_id;
         GtkActionGroup *extensions_toolbar_action_group;
 
-        /* focus widget before the location bar has been shown temporarily */
-        GtkWidget *last_focus_widget;
-        	
+        guint menu_hide_delay_id;
+
         /* split view */
         GtkWidget *split_view_hpane;
 
@@ -102,7 +101,8 @@ struct NemoWindowDetails
 
         guint menu_state_changed_id;
 
-        gboolean temporary_menu_bar;
+        gboolean menu_skip_release;
+        gboolean menu_show_queued;
 
         gchar *ignore_meta_view_id;
         gint ignore_meta_zoom_level;
