@@ -969,6 +969,7 @@ clicked_within_double_click_interval (NemoListView *view)
     /* Only allow double click */
     if (click_count == 1) {
         click_count = 0;
+        last_click_time = 0;
         return TRUE;
     } else {
         return FALSE;
@@ -1114,7 +1115,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		return FALSE;
 	}
 
-    if (event->type == GDK_2BUTTON_PRESS) {
+    if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
         return TRUE;
     }
 
