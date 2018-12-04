@@ -269,6 +269,9 @@ refresh_widget (NemoExtensionConfigWidget *widget)
             gtk_size_group_add_widget (name_group, w);
 
             w = gtk_label_new (NULL);
+            gtk_label_set_lines (GTK_LABEL (w), 2);
+            gtk_label_set_line_wrap (GTK_LABEL (w), TRUE);
+            gtk_label_set_xalign (GTK_LABEL (w), 0.0);
 
             if (proxy->display_name == NULL)
                 markup = g_strdup (_("no information available"));
