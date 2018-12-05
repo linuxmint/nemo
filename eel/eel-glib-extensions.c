@@ -243,26 +243,6 @@ eel_g_object_list_copy (GList *list)
 	return g_list_copy (list);
 }
 
-/**
- * eel_clear_source_id
- * @id: a pointer to the source ID
- *
- * Removes a source id (returned from g_idle_add and friends) and
- * zeros out the id variable.
- */
-void
-eel_clear_source_id (guint *id)
-{
-    guint source_id;
-
-    source_id = *id;
-
-    if (source_id > 0) {
-        *id = 0;
-        g_source_remove (source_id);
-    }
-}
-
 #if !defined (EEL_OMIT_SELF_CHECK)
 
 static gboolean

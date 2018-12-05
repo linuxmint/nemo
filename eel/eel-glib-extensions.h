@@ -62,5 +62,4 @@ void        eel_g_hash_table_safe_for_each              (GHashTable            *
 gboolean    eel_g_strv_equal                            (char                 **a,
 							 char                 **b);
 
-void        eel_clear_source_id                         (guint *id);
 #endif /* EEL_GLIB_EXTENSIONS_H */
