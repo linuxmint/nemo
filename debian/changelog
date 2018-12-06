@@ -1,3 +1,14 @@
+nemo (4.0.4) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window.c: Fix hidden menu alt-key activation.
+  * nemo-places-sidebar.c: Keep the selected bookmark scrolled into view when a selection is made on a bookmark.
+  * nemo-list-view.c:  Ignore triple-clicks and reset the double-click last_click_time when the current double-click succeeds.
+  * nemo-extension-config-widget.c: Allow description to be multi-line instead of reverting to a horizontal scroll bar.
+  * nemo-list-view.c: Don't use fixed-height mode, it does not work well with zoom changes.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 06 Dec 2018 13:18:32 +0000
+
 nemo (4.0.3) tessa; urgency=medium
 
   [ Michael Webster ]
