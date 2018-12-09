@@ -989,8 +989,11 @@ nemo_icon_view_begin_loading (NemoView *view)
 
 	/* Set up the zoom level from the metadata. */
 	if (nemo_view_supports_zooming (NEMO_VIEW (icon_view))) {
-        if (nemo_global_preferences_get_ignore_view_metadata () &&
-            nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view))) > -1) {
+        if (nemo_global_preferences_get_ignore_view_metadata ()) {
+            if (nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (view)) == -1) {
+                nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (view), get_default_zoom_level (icon_view));
+            }
+
             level = nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (icon_view)));
         } else {
             sync_directory_monitor_number (icon_view, file);
