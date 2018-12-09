@@ -92,7 +92,6 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_LIST_VIEW_ICON_TOOLBAR   "show-list-view-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR   "show-compact-view-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_ROOT_WARNING                "show-root-warning"
-#define NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR     "show-show-thumbnails-toolbar"
 
 /* Which views should be displayed for new windows */
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"
