@@ -1,3 +1,11 @@
+nemo (4.0.5) tessa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-icon-view.c: Correctly initialize to the default view zoom level when ignore-metadata mode is active.
+  * per-folder thumbnails: Remove toolbar thumbnail button preference, instead base visibility on the show-image-thumbnails preference.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Dec 2018 11:26:20 +0000
+
 nemo (4.0.4) tessa; urgency=medium
 
   [ Michael Webster ]
