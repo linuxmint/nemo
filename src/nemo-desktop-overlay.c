@@ -34,6 +34,8 @@ typedef struct
 
     gint h_percent;
     gint v_percent;
+
+    gboolean syncing;
 } NemoDesktopOverlayPrivate;
 
 struct _NemoDesktopOverlay
@@ -111,6 +113,8 @@ sync_controls (NemoDesktopOverlay *overlay,
     gint h_adjust, v_adjust, active_id;
     gboolean fake_group;
     const gchar *combo_id;
+
+    priv->syncing = TRUE;
 
     if (!nemo_desktop_manager_get_monitor_is_active (priv->manager, priv->monitor)) {
         gtk_stack_set_visible_child_name (priv->view_substack, "substack_disabled");
@@ -229,6 +233,8 @@ sync_controls (NemoDesktopOverlay *overlay,
         g_clear_object (&priv->action_group);
     }
 
+    priv->syncing = FALSE;
+
     show_view_page (overlay);
 }
 
@@ -276,6 +282,10 @@ static void
 queue_changed_signal (NemoDesktopOverlay *overlay)
 {
     NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
+
+    if (priv->syncing) {
+        return;
+    }
 
     if (priv->adjust_changed_id > 0) {
         return;
@@ -426,6 +436,7 @@ nemo_desktop_overlay_init (NemoDesktopOverlay *overlay)
     overlay->priv = priv;
     priv->manager = nemo_desktop_manager_get ();
     priv->is_cinnamon = nemo_desktop_manager_get_is_cinnamon (priv->manager);
+    priv->syncing = FALSE;
 
     priv->builder = gtk_builder_new ();
     gtk_builder_set_translation_domain (priv->builder, GETTEXT_PACKAGE);
