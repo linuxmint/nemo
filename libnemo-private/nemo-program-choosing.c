@@ -294,6 +294,7 @@ nemo_launch_desktop_file (GdkScreen   *screen,
 {
 	GError *error;
 	char *message, *desktop_file_path;
+    const gchar *cl;
 	const GList *p;
 	GList *files;
 	int total, count;
@@ -373,7 +374,34 @@ nemo_launch_desktop_file (GdkScreen   *screen,
 	gdk_app_launch_context_set_timestamp (context, GDK_CURRENT_TIME);
 	gdk_app_launch_context_set_screen (context,
 					   gtk_window_get_screen (parent_window));
-	if (count == total) {
+
+    cl = g_app_info_get_commandline (G_APP_INFO (app_info));
+
+    if (count == 0 && total == 0 && g_strcmp0 (cl, "pkexec")) {
+        /* Temporary workaround for "Refusing to render service to dead parents." message
+         * when using pkexec.  This will only affect simple cases, such as a desktop file
+         * that has no arguments */
+        GAppInfo *wrapped_info;
+        gchar *wrapped;
+
+        wrapped = g_strdup_printf ("sh -c '%s'", cl);
+
+        wrapped_info = g_app_info_create_from_commandline (wrapped,
+                                                           g_app_info_get_name (G_APP_INFO (app_info)),
+                                                           G_APP_INFO_CREATE_NONE,
+                                                           &error);
+
+        g_free (wrapped);
+
+        if (!error) {
+            g_app_info_launch (wrapped_info,
+                               NULL,
+                               G_APP_LAUNCH_CONTEXT (context),
+                               &error);
+        }
+
+        g_object_unref (wrapped_info);
+    } else if (count == total) {
 		/* All files are local, so we can use g_app_info_launch () with
 		 * the file list we constructed before.
 		 */
