@@ -1,3 +1,16 @@
+nemo (4.0.6) tessa; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Packaging: Depend on cinnamon-l10n
+
+  [ Michael Webster ]
+  * nemo-program-choosing.c: add a wrapper for simple .desktop files that invoke pkexec.
+  * nemo-desktop-overlay.c: Don't respond to slider value-changed signals when syncing *from* the view.
+  * nemo-list-view.c: Always display at the default list view zoom level during a search.
+  * nemo-icon-view.c: Don't rely on the default icon zoom level for the grid desktop, hardcode to normal instead.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 15 Dec 2018 14:00:23 +0000
+
 nemo (4.0.5) tessa; urgency=medium
 
   [ Michael Webster ]
