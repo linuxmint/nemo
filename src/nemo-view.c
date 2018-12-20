@@ -5625,13 +5625,22 @@ add_extension_action_for_files (NemoView *view,
         if (icon != NULL) {
             GIcon *gicon;
 
-            if (g_str_has_suffix (icon, "-symbolic")) {
+            if (g_path_is_absolute (icon)) {
+                GFile *file;
+
+                file = g_file_new_for_path (icon);
+                gicon = g_file_icon_new (file);
+
+                g_object_unref (file);
+            } else if (icon) {
                 gicon = g_themed_icon_new (icon);
             } else {
                 gicon = NULL;
             }
 
             gtk_action_set_gicon (action, gicon);
+
+            g_clear_object (&gicon);
         }
     } else if (separator) {
         action = nemo_separator_action_new (name);
