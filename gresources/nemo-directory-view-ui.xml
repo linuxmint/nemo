@@ -28,6 +28,7 @@
 			<placeholder name="OtherApplicationPlaceholder">
 				<menuitem name="OtherApplication" action="OtherApplication2"/>
 			</placeholder>
+            <menuitem name="OpenContainingFolder" action="OpenContainingFolder"/>
 			<menu action="Scripts">
 				 <placeholder name="Scripts Placeholder"/>
 			</menu>
