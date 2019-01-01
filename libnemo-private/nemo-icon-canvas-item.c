@@ -1971,7 +1971,11 @@ nemo_icon_canvas_item_get_max_text_width (NemoIconCanvasItem *item)
         }
     } else {
         /* normal icon view */
-        return nemo_get_icon_text_width_for_zoom_level (nemo_icon_container_get_zoom_level (container));
+        if (container->details->is_desktop) {
+            return nemo_get_desktop_text_width_for_zoom_level (nemo_icon_container_get_zoom_level (container));
+        } else {
+            return nemo_get_icon_text_width_for_zoom_level (nemo_icon_container_get_zoom_level (container));
+        }
     }
 }
 

@@ -54,6 +54,12 @@ typedef enum {
 #define NEMO_DESKTOP_ICON_SIZE_LARGE 64
 #define NEMO_DESKTOP_ICON_SIZE_LARGER 96
 
+#define NEMO_DESKTOP_TEXT_WIDTH_SMALLER 64
+#define NEMO_DESKTOP_TEXT_WIDTH_SMALL 84
+#define NEMO_DESKTOP_TEXT_WIDTH_STANDARD 110
+#define NEMO_DESKTOP_TEXT_WIDTH_LARGE 150
+#define NEMO_DESKTOP_TEXT_WIDTH_LARGER 200
+
 #define NEMO_ICON_TEXT_WIDTH_SMALLEST  0
 #define NEMO_ICON_TEXT_WIDTH_SMALLER   64
 #define NEMO_ICON_TEXT_WIDTH_SMALL     84
@@ -110,6 +116,7 @@ guint nemo_get_icon_text_width_for_zoom_level    (NemoZoomLevel  zoom_level);
 guint nemo_get_list_icon_size_for_zoom_level     (NemoZoomLevel  zoom_level);
 
 guint nemo_get_desktop_icon_size_for_zoom_level  (NemoZoomLevel  zoom_level);
+guint nemo_get_desktop_text_width_for_zoom_level (NemoZoomLevel  zoom_level);
 
 gint  nemo_get_icon_size_for_stock_size          (GtkIconSize        size);
 guint nemo_icon_get_emblem_size_for_icon_size    (guint              size);
