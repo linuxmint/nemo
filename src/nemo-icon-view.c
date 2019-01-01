@@ -993,7 +993,7 @@ nemo_icon_view_begin_loading (NemoView *view)
 
 	/* Set up the zoom level from the metadata. */
 	if (nemo_view_supports_zooming (NEMO_VIEW (icon_view))) {
-        if (nemo_global_preferences_get_ignore_view_metadata ()) {
+        if (nemo_global_preferences_get_ignore_view_metadata () && !NEMO_ICON_VIEW_GET_CLASS (view)->use_grid_container) {
             if (nemo_window_get_ignore_meta_zoom_level (nemo_view_get_nemo_window (view)) == -1) {
                 nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (view), get_default_zoom_level (icon_view));
             }
@@ -1118,7 +1118,7 @@ nemo_icon_view_set_zoom_level (NemoIconView *view,
 		return;
 	}
 
-    if (nemo_global_preferences_get_ignore_view_metadata ()) {
+    if (nemo_global_preferences_get_ignore_view_metadata () && !NEMO_ICON_VIEW_GET_CLASS (view)->use_grid_container) {
         nemo_window_set_ignore_meta_zoom_level (nemo_view_get_nemo_window (NEMO_VIEW (view)), new_level);
     } else {
         sync_directory_monitor_number (view, nemo_view_get_directory_as_file (NEMO_VIEW (view)));
