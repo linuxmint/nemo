@@ -58,7 +58,7 @@ on_check_toggled(GtkWidget *button, ScriptProxy *proxy)
     gboolean enabled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
 
     gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
-    		                                 NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS);
+                                             NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS);
 
     GPtrArray *new_list = g_ptr_array_new ();
 
@@ -84,8 +84,8 @@ on_check_toggled(GtkWidget *button, ScriptProxy *proxy)
 
     g_signal_handler_block (nemo_plugin_preferences, proxy->widget->bl_handler);
     g_settings_set_strv (nemo_plugin_preferences,
-    		             NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
-						 (const gchar * const *) new_list_ptr);
+                         NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
+                         (const gchar * const *) new_list_ptr);
     g_signal_handler_unblock (nemo_plugin_preferences, proxy->widget->bl_handler);
 
     g_strfreev (blacklist);
@@ -159,7 +159,7 @@ refresh_widget (NemoScriptConfigWidget *widget)
     } else {
         GList *l;
         gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
-        		                                 NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS);
+                                                 NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS);
 
         for (l = widget->scripts; l != NULL; l=l->next) {
             ScriptProxy *proxy = l->data;
@@ -212,8 +212,8 @@ static void
 on_enable_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
 {
     g_settings_set_strv (nemo_plugin_preferences,
-    		             NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
-						 NULL);
+                         NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
+                         NULL);
 }
 
 static void
@@ -230,8 +230,8 @@ on_disable_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
 
     gchar **new_list_ptr = (char **) g_ptr_array_free (new_list, FALSE);
     g_settings_set_strv (nemo_plugin_preferences,
-    		             NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
-    		             (const gchar * const *) new_list_ptr);
+                         NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
+                         (const gchar * const *) new_list_ptr);
 
     g_strfreev (new_list_ptr);
 }
@@ -246,7 +246,8 @@ on_open_folder_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
     nemo_application_open_location (nemo_application_get_singleton (),
                                     location,
                                     NULL,
-                                    "nemo");
+                                    "nemo",
+                                    FALSE);
 
     g_free (path);
     g_object_unref (location);
@@ -336,7 +337,7 @@ nemo_script_config_widget_init (NemoScriptConfigWidget *self)
     self->scripts = NULL;
 
     self->bl_handler = g_signal_connect (nemo_plugin_preferences,
-    		                             "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
+                                         "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS,
                                          G_CALLBACK (on_settings_changed), self);
 
     GtkWidget *label = nemo_config_base_widget_get_label (NEMO_CONFIG_BASE_WIDGET (self));

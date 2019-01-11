@@ -85,7 +85,7 @@
 G_DEFINE_TYPE (NemoApplication, nemo_application, GTK_TYPE_APPLICATION);
 
 struct _NemoApplicationPriv {
-	NemoProgressUIHandler *progress_handler;
+    NemoProgressUIHandler *progress_handler;
 
     gboolean cache_problem;
     gboolean ignore_cache_problem;
@@ -421,12 +421,14 @@ void
 nemo_application_open_location (NemoApplication *application,
                                 GFile           *location,
                                 GFile           *selection,
-                                const char      *startup_id)
+                                const char      *startup_id,
+                                const gboolean  open_in_tabs)
 {
     NEMO_APPLICATION_CLASS (G_OBJECT_GET_CLASS (application))->open_location (application,
                                                                               location,
                                                                               selection,
-                                                                              startup_id);
+                                                                              startup_id,
+                                                                              open_in_tabs);
 }
 
 NemoWindow *
@@ -461,8 +463,8 @@ nemo_application_close_all_windows (NemoApplication *application)
 
 static GObject *
 nemo_application_constructor (GType type,
-				  guint n_construct_params,
-				  GObjectConstructParam *construct_params)
+                  guint n_construct_params,
+                  GObjectConstructParam *construct_params)
 {
         GObject *retval;
 
@@ -478,9 +480,9 @@ nemo_application_constructor (GType type,
 static void
 nemo_application_init (NemoApplication *application)
 {
-	GSimpleAction *action;
+    GSimpleAction *action;
 
-	application->priv = G_TYPE_INSTANCE_GET_PRIVATE (application,
+    application->priv = G_TYPE_INSTANCE_GET_PRIVATE (application,
                                                      NEMO_TYPE_APPLICATION,
                                                      NemoApplicationPriv);
 
@@ -491,16 +493,16 @@ nemo_application_init (NemoApplication *application)
 
     g_action_map_add_action (G_ACTION_MAP (application), G_ACTION (action));
 
-	g_signal_connect_swapped (action, "activate",
-				  G_CALLBACK (nemo_application_quit), application);
+    g_signal_connect_swapped (action, "activate",
+                  G_CALLBACK (nemo_application_quit), application);
 
-	g_object_unref (action);
+    g_object_unref (action);
 }
 
 void
 nemo_application_quit (NemoApplication *self)
 {
-	GApplication *app = G_APPLICATION (self);
+    GApplication *app = G_APPLICATION (self);
 
     /* Run desktop or -main specific destruction - namely tearing down the
      * desktop manager before our g_list_foreach below takes out its windows.
@@ -508,10 +510,10 @@ nemo_application_quit (NemoApplication *self)
 
     NEMO_APPLICATION_CLASS (G_OBJECT_GET_CLASS (self))->continue_quit (self);
 
-	GList *windows;
+    GList *windows;
 
-	windows = gtk_application_get_windows (GTK_APPLICATION (app));
-	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+    windows = gtk_application_get_windows (GTK_APPLICATION (app));
+    g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
 
     nemo_global_preferences_finalize ();
 
@@ -522,37 +524,37 @@ nemo_application_quit (NemoApplication *self)
 static void
 nemo_application_startup (GApplication *app)
 {
-	NemoApplication *self = NEMO_APPLICATION (app);
-	/* chain up to the GTK+ implementation early, so gtk_init()
-	 * is called for us.
-	 */
-	G_APPLICATION_CLASS (nemo_application_parent_class)->startup (app);
+    NemoApplication *self = NEMO_APPLICATION (app);
+    /* chain up to the GTK+ implementation early, so gtk_init()
+     * is called for us.
+     */
+    G_APPLICATION_CLASS (nemo_application_parent_class)->startup (app);
 
-	/* create an undo manager */
-	self->undo_manager = nemo_undo_manager_new ();
+    /* create an undo manager */
+    self->undo_manager = nemo_undo_manager_new ();
 
-	/* initialize preferences and create the global GSettings objects */
-	nemo_global_preferences_init ();
+    /* initialize preferences and create the global GSettings objects */
+    nemo_global_preferences_init ();
 
     /* Run desktop- or main- specific things */
     NEMO_APPLICATION_CLASS (G_OBJECT_GET_CLASS (self))->continue_startup (self);
 
-	/* register property pages */
-	nemo_image_properties_page_register ();
+    /* register property pages */
+    nemo_image_properties_page_register ();
 
-	/* initialize theming */
-	init_icons_and_styles ();
-	init_gtk_accels ();
+    /* initialize theming */
+    init_icons_and_styles ();
+    init_gtk_accels ();
 
-	/* initialize nemo modules */
-	nemo_module_setup ();
+    /* initialize nemo modules */
+    nemo_module_setup ();
 
-	/* attach menu-provider module callback */
-	init_menu_provider_callback ();
+    /* attach menu-provider module callback */
+    init_menu_provider_callback ();
 
-	/* Initialize the UI handler singleton for file operations */
-	notify_init (GETTEXT_PACKAGE);
-	self->priv->progress_handler = nemo_progress_ui_handler_new ();
+    /* Initialize the UI handler singleton for file operations */
+    notify_init (GETTEXT_PACKAGE);
+    self->priv->progress_handler = nemo_progress_ui_handler_new ();
 
     self->priv->cache_problem = FALSE;
     self->priv->ignore_cache_problem = FALSE;
@@ -572,30 +574,28 @@ nemo_application_startup (GApplication *app)
 static void
 nemo_application_quit_mainloop (GApplication *app)
 {
-	DEBUG ("Quitting mainloop");
+    DEBUG ("Quitting mainloop");
 
     nemo_icon_info_clear_caches ();
     save_accel_map (NULL);
 
     nemo_application_notify_unmount_done (NEMO_APPLICATION (app), NULL);
 
-	G_APPLICATION_CLASS (nemo_application_parent_class)->quit_mainloop (app);
+    G_APPLICATION_CLASS (nemo_application_parent_class)->quit_mainloop (app);
 }
 
 static void
 nemo_application_window_removed (GtkApplication *app,
-				     GtkWindow *window)
+                     GtkWindow *window)
 {
-	NemoPreviewer *previewer;
+    /* chain to parent */
+    GTK_APPLICATION_CLASS (nemo_application_parent_class)->window_removed (app, window);
 
-	/* chain to parent */
-	GTK_APPLICATION_CLASS (nemo_application_parent_class)->window_removed (app, window);
-
-	/* if this was the last window, close the previewer */
-	if (g_list_length (gtk_application_get_windows (app)) == 0) {
-		previewer = nemo_previewer_get_singleton ();
-		nemo_previewer_call_close (previewer);
-	}
+    /* if this was the last window, close the previewer */
+    if (g_list_length (gtk_application_get_windows (app)) == 0) {
+        NemoPreviewer *previewer = nemo_previewer_get_singleton ();
+        nemo_previewer_call_close (previewer);
+    }
 }
 
 static void

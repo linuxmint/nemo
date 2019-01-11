@@ -91,8 +91,8 @@ on_check_toggled(GtkWidget *button, ActionProxy *proxy)
 
     g_signal_handler_block (nemo_plugin_preferences, proxy->widget->bl_handler);
     g_settings_set_strv (nemo_plugin_preferences,
-    		             NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
-						 (const gchar * const *) new_list_ptr);
+                         NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+                         (const gchar * const *) new_list_ptr);
     g_signal_handler_unblock (nemo_plugin_preferences, proxy->widget->bl_handler);
 
     g_strfreev (blacklist);
@@ -248,7 +248,7 @@ refresh_widget (NemoActionConfigWidget *widget)
     } else {
         GList *l;
         gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
-        		                                 NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS);
+                                                 NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS);
 
         for (l = widget->actions; l != NULL; l=l->next) {
             ActionProxy *proxy = l->data;
@@ -314,8 +314,8 @@ static void
 on_enable_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
 {
     g_settings_set_strv (nemo_plugin_preferences,
-    		             NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
-						 NULL);
+                         NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+                         NULL);
 }
 
 static void
@@ -332,8 +332,8 @@ on_disable_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
 
     gchar **new_list_ptr = (char **) g_ptr_array_free (new_list, FALSE);
     g_settings_set_strv (nemo_plugin_preferences,
-    		             NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
-						 (const gchar * const *) new_list_ptr);
+                         NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
+                         (const gchar * const *) new_list_ptr);
 
     g_strfreev (new_list_ptr);
 }
@@ -348,7 +348,8 @@ on_open_folder_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
     nemo_application_open_location (nemo_application_get_singleton (),
                                     location,
                                     NULL,
-                                    "nemo");
+                                    "nemo", 
+                                    FALSE);
 
     g_free (path);
     g_object_unref (location);

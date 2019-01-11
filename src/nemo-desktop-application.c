@@ -94,8 +94,8 @@ nemo_desktop_application_finalize (GObject *object)
 static void
 init_desktop (NemoDesktopApplication *self)
 {
-	/* Initialize the desktop link monitor singleton */
-	nemo_desktop_link_monitor_get ();
+    /* Initialize the desktop link monitor singleton */
+    nemo_desktop_link_monitor_get ();
     nemo_desktop_metadata_init ();
 
     self->priv->desktop_manager = nemo_desktop_manager_get ();
@@ -338,8 +338,8 @@ nemo_desktop_application_continue_startup (NemoApplication *app)
 
     NEMO_DESKTOP_APPLICATION (app)->priv->fdb_manager = nemo_freedesktop_dbus_new ();
 
-	/* register views */
-	nemo_desktop_icon_view_register ();
+    /* register views */
+    nemo_desktop_icon_view_register ();
     nemo_desktop_icon_grid_view_register ();
     nemo_icon_view_register ();
 }
@@ -373,7 +373,8 @@ static void
 nemo_desktop_application_open_location (NemoApplication     *application,
                                         GFile               *location,
                                         GFile               *selection,
-                                        const char          *startup_id)
+                                        const char          *startup_id,
+                                        const gboolean      open_in_tabs)
 {
     GAppInfo *appinfo;
     GError *error = NULL;

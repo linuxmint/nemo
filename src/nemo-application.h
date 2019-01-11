@@ -43,15 +43,15 @@ typedef struct _NemoApplicationPriv NemoApplicationPriv;
 typedef struct NemoApplicationClass NemoApplicationClass;
 
 typedef struct {
-	GtkApplication parent;
+    GtkApplication parent;
 
-	NemoUndoManager *undo_manager;
+    NemoUndoManager *undo_manager;
 
-	NemoApplicationPriv *priv;
+    NemoApplicationPriv *priv;
 } NemoApplication;
 
 struct NemoApplicationClass {
-	GtkApplicationClass parent_class;
+    GtkApplicationClass parent_class;
 
     void         (* continue_startup) (NemoApplication *application);
     void         (* continue_quit) (NemoApplication *application);
@@ -59,7 +59,8 @@ struct NemoApplicationClass {
     void         (* open_location) (NemoApplication *application,
                                     GFile *location,
                                     GFile *selection,
-                                    const char *startup_id);
+                                    const char *startup_id,
+                                    const gboolean open_in_tabs);
 
     NemoWindow * (* create_window) (NemoApplication *application,
                                     GdkScreen       *screen);
@@ -85,7 +86,8 @@ NemoWindow *     nemo_application_create_window (NemoApplication *application,
 void nemo_application_open_location (NemoApplication *application,
                                      GFile *location,
                                      GFile *selection,
-                                     const char *startup_id);
+                                     const char *startup_id,
+                                     const gboolean open_in_tabs);
 void nemo_application_close_all_windows (NemoApplication *self);
 
 void nemo_application_notify_unmount_show (NemoApplication *application,

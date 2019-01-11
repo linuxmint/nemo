@@ -62,14 +62,14 @@ typedef enum {
 } NemoWindowShowState;
 
 typedef enum {
-	NEMO_WINDOW_OPEN_SLOT_NONE = 0,
-	NEMO_WINDOW_OPEN_SLOT_APPEND = 1
+        NEMO_WINDOW_OPEN_SLOT_NONE = 0,
+        NEMO_WINDOW_OPEN_SLOT_APPEND = 1
 }  NemoWindowOpenSlotFlags;
 
 enum {
-    SORT_NULL = -1,
-    SORT_ASCENDING = 0,
-    SORT_DESCENDING = 1
+        SORT_NULL = -1,
+        SORT_ASCENDING = 0,
+        SORT_DESCENDING = 1
 };
 
 #define NEMO_WINDOW_SIDEBAR_PLACES "places"
@@ -80,10 +80,10 @@ typedef struct NemoWindowDetails NemoWindowDetails;
 typedef struct {
         GtkApplicationWindowClass parent_spot;
 
-	/* Function pointers for overriding, without corresponding signals */
+    /* Function pointers for overriding, without corresponding signals */
 
         void   (* sync_title) (NemoWindow *window,
-			       NemoWindowSlot *slot);
+                   NemoWindowSlot *slot);
         NemoIconInfo * (* get_icon) (NemoWindow *window,
                                          NemoWindowSlot *slot);
 
@@ -92,7 +92,7 @@ typedef struct {
 
         /* Signals used only for keybindings */
         void   (* go_up)  (NemoWindow *window);
-	void   (* reload) (NemoWindow *window);
+    void   (* reload) (NemoWindow *window);
 } NemoWindowClass;
 
 struct NemoWindow {
@@ -107,11 +107,13 @@ NemoWindow *     nemo_window_new                  (GtkApplication    *applicatio
 void             nemo_window_close                (NemoWindow    *window);
 
 void             nemo_window_connect_content_view (NemoWindow    *window,
-						       NemoView      *view);
+                               NemoView      *view);
 void             nemo_window_disconnect_content_view (NemoWindow    *window,
-							  NemoView      *view);
+                              NemoView      *view);
 
 void             nemo_window_go_to                (NemoWindow    *window,
+                                                       GFile             *location);
+void             nemo_window_go_to_tab            (NemoWindow    *window,
                                                        GFile             *location);
 void             nemo_window_go_to_full           (NemoWindow    *window,
                                                        GFile             *location,
