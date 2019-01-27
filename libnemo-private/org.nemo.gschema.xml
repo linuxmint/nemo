@@ -4,6 +4,7 @@
     <value nick="local-only" value="1"/>
     <value nick="never" value="2"/>
     <value nick="per-folder" value="3"/>
+    <value nick="per-folder-with-inheritance" value="4"/>
   </enum>
 
   <enum id="org.nemo.ClickPolicy">
@@ -265,6 +266,11 @@
       <default>'icon-view'</default>
       <summary>Default folder viewer</summary>
       <description>When a folder is visited this viewer is used unless you have selected another view for that particular folder. Possible values are "list-view", "icon-view" and "compact-view".</description>
+    </key>
+    <key name="inherit-folder-viewer" type="b">
+      <default>false</default>
+      <summary>Inherit the view type (icon, compact, list) from parent to children</summary>
+      <description>When a folder is visited the viewer is inherited from that folder's parent unless you have selected another view for that particular folder.</description>
     </key>
     <key name="date-format" enum="org.nemo.DateFormat">
       <default>'locale'</default>

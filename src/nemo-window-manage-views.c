@@ -879,9 +879,28 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		mimetype = nemo_file_get_mime_type (file);
 
 		/* Look in metadata for view */
-		view_id = nemo_global_preferences_get_ignore_view_metadata () ? g_strdup (nemo_window_get_ignore_meta_view_id (window)) :
-                                                                        nemo_file_get_metadata (file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
-		if (view_id != NULL &&
+        if (nemo_global_preferences_get_inherit_folder_viewer_preference ()) {
+            if (nemo_global_preferences_get_ignore_view_metadata ()) {
+            view_id = g_strdup (nemo_window_get_ignore_meta_view_id (window));
+            } else {
+                parent_file = file;
+                nemo_file_ref(parent_file); // Do this once for the initial file
+                while (parent_file) {
+                    view_id = nemo_file_get_metadata (parent_file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
+                    nemo_file_unref(parent_file);
+                    if (view_id != NULL) {
+                        parent_file = NULL;
+                    } else {
+                        parent_file = nemo_file_get_parent (parent_file);
+                    }
+                }
+            }
+        } else {
+            view_id = nemo_global_preferences_get_ignore_view_metadata () ? g_strdup (nemo_window_get_ignore_meta_view_id (window)) :
+                                                                            nemo_file_get_metadata (file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
+        }
+
+        if (view_id != NULL &&
 		    !nemo_view_factory_view_supports_uri (view_id,
 							      location,
 							      nemo_file_get_file_type (file),

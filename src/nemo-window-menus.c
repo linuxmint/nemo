@@ -1667,7 +1667,7 @@ show_thumbnails_enum_get_mapper (GValue   *value,
     str = g_variant_get_string (variant, NULL);
 
     g_value_set_boolean (value,
-                         g_strcmp0 (str, "per-folder") == 0);
+                         g_str_has_prefix (str, "per-folder"));
 
     return TRUE;
 }

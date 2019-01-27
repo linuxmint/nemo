@@ -44,6 +44,7 @@
 
 /* string enum preferences */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET "default_view_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_INHERIT_VIEW_WIDGET "inherit_view_checkbox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET "icon_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_VIEW_ZOOM_WIDGET "compact_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
@@ -152,6 +153,7 @@ static const char * const preview_image_values[] = {
     "always",
     "local-only",
     "per-folder",
+    "per-folder-with-inheritance",
     "never",
     NULL
 };
@@ -883,7 +885,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET,
 			   NEMO_PREFERENCES_DEFAULT_FOLDER_VIEWER,
 			   (const char **) default_view_values);
-	bind_builder_enum (builder, nemo_icon_view_preferences,
+	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_INHERIT_VIEW_WIDGET,
+			   NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER);
+  bind_builder_enum (builder, nemo_icon_view_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET,
 			   NEMO_PREFERENCES_ICON_VIEW_DEFAULT_ZOOM_LEVEL,
 			   (const char **) zoom_values);

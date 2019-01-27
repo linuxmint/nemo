@@ -101,6 +101,7 @@ toolbar_update_appearance (NemoToolbar *self)
 	GtkWidget *widgetitem;
 	gboolean icon_toolbar;
 	gboolean show_location_entry;
+  gint speed_tradeoff;
 
     nemo_toolbar_update_root_state (self);
 
@@ -186,8 +187,9 @@ toolbar_update_appearance (NemoToolbar *self)
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
     
     widgetitem = self->priv->show_thumbnails_button;
-    icon_toolbar = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS) ==
-                    NEMO_SPEED_TRADEOFF_PER_FOLDER;
+    speed_tradeoff = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS);
+    icon_toolbar = speed_tradeoff == NEMO_SPEED_TRADEOFF_PER_FOLDER ||
+                   speed_tradeoff == NEMO_SPEED_TRADEOFF_PER_FOLDER_WITH_INHERITANCE;
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 

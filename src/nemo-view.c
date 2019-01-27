@@ -519,6 +519,7 @@ nemo_view_reset_to_defaults (NemoView *view)
 
     file = view->details->slot->viewed_file;
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, NULL, NULL);
+    nemo_file_set_metadata(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, NULL);
     emit_change_signals_for_all_files_in_all_directories ();
 }
 
