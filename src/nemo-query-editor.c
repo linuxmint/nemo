@@ -80,6 +80,20 @@ static void on_saved_searches_setting_changed (GSettings *settings,
                                                gchar     *key,
                                                gpointer   user_data);
 
+static gchar *
+get_sanitized_query_string (NemoQueryEditor *editor)
+{
+    const gchar *entry_text;
+    gchar *ret;
+
+    entry_text = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+
+    ret = g_strdup (entry_text);
+    ret = g_strstrip (ret);
+
+    return ret;
+}
+
 static void
 nemo_query_editor_dispose (GObject *object)
 {
@@ -334,9 +348,9 @@ remove_key_from_faves (NemoQueryEditor *editor,
 static void
 update_fav_icon (NemoQueryEditor *editor)
 {
-    const gchar *current_key;
+    g_autofree gchar *current_key = NULL;
 
-    current_key = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+    current_key = get_sanitized_query_string (editor);
 
     if (is_search_criteria_in_faves (editor, current_key)) {
         gtk_entry_set_icon_from_icon_name (GTK_ENTRY (editor->priv->entry),
@@ -353,6 +367,8 @@ update_fav_icon (NemoQueryEditor *editor)
 static void
 entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
 {
+    g_autofree gchar *text = NULL;
+
 	if (editor->priv->change_frozen) {
 		return;
 	}
@@ -364,14 +380,13 @@ entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
 
     update_fav_icon (editor);
 
-    if (strlen (gtk_entry_get_text (GTK_ENTRY (editor->priv->entry))) < 3) {
-        return;
-    }
+    text = get_sanitized_query_string (editor);
 
-	editor->priv->typing_timeout_id =
-		g_timeout_add (TYPING_TIMEOUT,
-			       typing_timeout_cb,
-			       editor);
+    if (strlen (text) > 2) {
+        editor->priv->typing_timeout_id = g_timeout_add (TYPING_TIMEOUT,
+                                                         typing_timeout_cb,
+                                                         editor);
+    }
 }
 
 static void
@@ -631,7 +646,7 @@ fave_icon_clicked_cb (GtkWidget             *widget,
                       gpointer               user_data)
 {
     NemoQueryEditor *editor;
-    const gchar *current_key;
+    g_autofree gchar *current_key = NULL;
 
     if (position == GTK_ENTRY_ICON_PRIMARY) {
         return;
@@ -639,7 +654,7 @@ fave_icon_clicked_cb (GtkWidget             *widget,
 
     editor = NEMO_QUERY_EDITOR (user_data);
 
-    current_key = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+    current_key = get_sanitized_query_string (editor);
 
     if ((event->button.state & gtk_accelerator_get_default_mod_mask ()) == 0 && event->button.button == 1) {
         gchar *entry;
@@ -790,25 +805,18 @@ add_location_to_query (NemoQueryEditor *editor,
 NemoQuery *
 nemo_query_editor_get_query (NemoQueryEditor *editor)
 {
-	const char *query_text;
-    gchar *cmp;
-	NemoQuery *query;
+    NemoQuery *query;
+    g_autofree gchar *query_text = NULL;
 
 	if (editor == NULL || editor->priv == NULL || editor->priv->entry == NULL) {
 		return NULL;
 	}
 
-	query_text = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+	query_text = get_sanitized_query_string (editor);
 
-    cmp = g_strdup (query_text);
-    g_strstrip (cmp);
-
-    if (g_strcmp0 (cmp, "") == 0) {
-        g_free (cmp);
+    if (g_strcmp0 (query_text, "") == 0) {
         return NULL;
     }
-
-    g_free (cmp);
 
 	query = nemo_query_new ();
 	nemo_query_set_text (query, query_text);
