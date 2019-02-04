@@ -2994,6 +2994,8 @@ nemo_view_finalize (GObject *object)
 		gdk_event_free ((GdkEvent *) view->details->location_popup_event);
 	}
 
+    g_clear_pointer (&view->details->load_timer, g_timer_destroy);
+
 	g_hash_table_destroy (view->details->non_ready_files);
 
 	G_OBJECT_CLASS (nemo_view_parent_class)->finalize (object);

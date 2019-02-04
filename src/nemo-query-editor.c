@@ -247,12 +247,15 @@ is_search_criteria_in_faves (NemoQueryEditor *editor,
             if (g_strcmp0 (editor->priv->current_uri, favorite_uri) == 0) {
                 if (g_strcmp0 (key, favorite_key) == 0) {
                     ret = TRUE;
-                    break;
                 }
             }
 
-            g_free (favorite_uri);
-            g_free (favorite_key);
+            g_clear_pointer (&favorite_uri, g_free);
+            g_clear_pointer (&favorite_key, g_free);
+        }
+
+        if (ret) {
+            break;
         }
     }
 

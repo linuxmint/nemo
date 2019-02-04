@@ -195,6 +195,8 @@ nemo_context_menu_menu_item_dispose (GObject *object)
         item->settings_monitor_id = 0;
     }
 
+    g_clear_pointer (&item->label, g_free);
+
     G_OBJECT_CLASS (nemo_context_menu_menu_item_parent_class)->dispose (object);
 }
 
@@ -278,7 +280,7 @@ nemo_context_menu_menu_item_set_label (GtkMenuItem      *menu_item,
 {
     NemoContextMenuMenuItem *item = NEMO_CONTEXT_MENU_MENU_ITEM (menu_item);
 
-    if (item->label != label)
+    if (g_strcmp0 (item->label, label) != 0)
     {
         g_free (item->label);
         item->label = g_strdup (label);

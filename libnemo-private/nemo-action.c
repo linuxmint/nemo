@@ -640,6 +640,7 @@ nemo_action_finalize (GObject *object)
     g_free (action->parent_dir);
     g_free (action->orig_label);
     g_free (action->orig_tt);
+    g_free (action->separator);
 
     if (action->dbus) {
         g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
@@ -1337,6 +1338,7 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
     }
 
     GSettingsSchemaSource *schema_source;
+    GSettingsSchema *schema;
     gboolean ret = FALSE;
     const GVariantType *target_type;
 
@@ -1347,9 +1349,10 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
     }
 
     schema_source = g_settings_schema_source_get_default();
+    schema = g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE);
 
-    if (g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE)) {
-        GSettings *s = g_settings_new (split[GSETTINGS_SCHEMA_INDEX]);
+    if (schema) {
+        GSettings *s = g_settings_new_full (schema, NULL, NULL);
         gchar **keys = g_settings_list_keys (s);
         guint i;
         for (i = 0; i < g_strv_length (keys); i++) {
@@ -1384,6 +1387,7 @@ check_gsettings_condition (NemoAction *action, const gchar *condition)
         g_strfreev (keys);
         g_object_unref (s);
         g_strfreev (split);
+        g_settings_schema_unref (schema);
         return ret;
     } else {
         g_strfreev (split);

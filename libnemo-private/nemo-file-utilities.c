@@ -82,8 +82,14 @@ nemo_compute_title_for_location (GFile *location)
 	}
 
     if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_FULL_PATH_TITLES)) {
+        gchar *uri, *path;
         file = nemo_file_get (location);
-        char *path = g_filename_from_uri (nemo_file_get_uri (file), NULL, NULL);
+
+        uri = nemo_file_get_uri (file);
+        path = g_filename_from_uri (uri, NULL, NULL);
+
+        g_free (uri);
+
         if (path != NULL) {
             title = g_strdup_printf("%s - %s", builder, path);
         } else {
