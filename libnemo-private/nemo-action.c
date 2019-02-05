@@ -1618,6 +1618,48 @@ get_gsettings_satisfied (NemoAction *action)
 }
 
 static gboolean
+check_exec_condition (NemoAction *action, const gchar *condition, GList *selection)
+{
+    gchar **split = g_strsplit (condition, " ", 2);
+    char *path;
+    char *command;
+    NemoFile *file;
+    int return_code;
+
+    if (g_strv_length (split) != 2) {
+        g_strfreev (split);
+        return FALSE;
+    }
+
+    if (g_strcmp0 (split[0], "exec") != 0) {
+        g_strfreev (split);
+        return FALSE;
+    }
+
+    if (selection && g_list_length (selection) > 0) {
+        file = NEMO_FILE (selection->data);
+        path = nemo_file_get_path (file);
+        command = g_strdup_printf ("%s '%s'", split[1], path);
+        g_free (path);
+    }
+    else {
+      command = g_strdup (split[1]);
+    }
+    g_strfreev (split);
+
+    return_code = system (command);
+    printf ("%s returned %d\n", command, return_code);
+    g_free (command);
+
+    if (return_code == 0) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+}
+
+static gboolean
 get_is_dir (NemoFile *file)
 {
     gboolean ret = FALSE;
@@ -1712,6 +1754,8 @@ nemo_action_get_visibility (NemoAction *action,
                     }
                 }
                 condition_type_show = is_removable;
+            } else if (g_str_has_prefix (condition, "exec")) {
+                condition_type_show = check_exec_condition (action, condition, selection);
             }
 
             if (!condition_type_show)
