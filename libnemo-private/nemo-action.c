@@ -1687,20 +1687,122 @@ nemo_action_get_visibility (NemoAction *action,
                             NemoFile *parent,
                             gboolean for_places)
 {
-
-    gboolean selection_type_show = FALSE;
-    gboolean extension_type_show = TRUE;
-    gboolean condition_type_show = TRUE;
-
+    // Check DBUS
     if (!get_dbus_satisfied (action))
-        goto out;
+        return FALSE;
 
-    if (!get_gsettings_satisfied (action)) {
-        goto out;
+    if (!get_gsettings_satisfied (action))
+        return FALSE;
+
+    // Check selection
+    gboolean selection_type_show = FALSE;
+    SelectionType selection_type = nemo_action_get_selection_type (action);
+
+    guint selected_count = g_list_length (selection);
+
+    switch (selection_type) {
+        case SELECTION_SINGLE:
+            selection_type_show = selected_count == 1;
+            break;
+        case SELECTION_MULTIPLE:
+            selection_type_show = selected_count > 1;
+            break;
+        case SELECTION_NOT_NONE:
+            selection_type_show = selected_count > 0;
+            break;
+        case SELECTION_NONE:
+            selection_type_show = selected_count == 0;
+            break;
+        case SELECTION_ANY:
+            selection_type_show = TRUE;
+            break;
+        default:
+            selection_type_show = selected_count == selection_type;
+            break;
     }
 
-    gchar **conditions = nemo_action_get_conditions (action);
+    if (!selection_type_show)
+        return FALSE;
 
+    // Check extensions and mimetypes
+    gboolean extension_type_show = TRUE;
+    gchar **extensions = nemo_action_get_extension_list (action);
+    gchar **mimetypes = nemo_action_get_mimetypes_list (action);
+
+    guint ext_count = extensions != NULL ? g_strv_length (extensions) : 0;
+    guint mime_count = mimetypes != NULL ? g_strv_length (mimetypes) : 0;
+
+    if (ext_count == 1 && g_strcmp0 (extensions[0], "any") == 0) {
+        extension_type_show = TRUE;
+    }
+    else {
+      gboolean found_match = TRUE;
+      GList *iter;
+      for (iter = selection; iter != NULL && found_match; iter = iter->next) {
+          found_match = FALSE;
+          gboolean is_dir;
+          gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
+          gchar *filename = g_ascii_strdown (raw_fn, -1);
+          g_free (raw_fn);
+          guint i;
+
+          is_dir = get_is_dir (iter->data);
+
+          if (ext_count > 0) {
+              for (i = 0; i < ext_count; i++) {
+                  if (g_strcmp0 (extensions[i], "dir") == 0) {
+                      if (is_dir) {
+                          found_match = TRUE;
+                          break;
+                      }
+                  } else if (g_strcmp0 (extensions[i], "none") == 0) {
+                      if (g_strrstr (filename, ".") == NULL) {
+                          found_match = TRUE;
+                          break;
+                      }
+                  } else if (g_strcmp0 (extensions[i], "nodirs") == 0) {
+                      if (!is_dir) {
+                          found_match = TRUE;
+                          break;
+                      }
+                  } else {
+                      gchar *str = g_ascii_strdown (extensions[i], -1);
+                      if (g_str_has_suffix (filename, str)) {
+                          found_match = TRUE;
+                      }
+
+                      g_free (str);
+
+                      if (found_match) {
+                          break;
+                      }
+                  }
+              }
+          }
+
+          g_free (filename);
+
+          if (mime_count > 0) {
+              for (i = 0; i < mime_count; i++) {
+                  if (nemo_file_is_mime_type (NEMO_FILE (iter->data), mimetypes[i])) {
+                      found_match = TRUE;
+                      break;
+                  }
+              }
+          }
+
+          if (nemo_file_is_mime_type (NEMO_FILE (iter->data), "application/x-nemo-link")) {
+              found_match = FALSE;
+          }
+      }
+      extension_type_show = found_match;
+    }
+    if (!extension_type_show)
+        return FALSE;
+
+    // Check conditions
+    gboolean condition_type_show = TRUE;
+    gchar **conditions = nemo_action_get_conditions (action);
     guint condition_count = conditions != NULL ? g_strv_length (conditions) : 0;
 
     if (condition_count > 0) {
@@ -1764,106 +1866,7 @@ nemo_action_get_visibility (NemoAction *action,
     }
 
     if (!condition_type_show)
-        goto out;
+        return FALSE;
 
-    SelectionType selection_type = nemo_action_get_selection_type (action);
-    GList *iter;
-
-    guint selected_count = g_list_length (selection);
-
-    switch (selection_type) {
-        case SELECTION_SINGLE:
-            selection_type_show = selected_count == 1;
-            break;
-        case SELECTION_MULTIPLE:
-            selection_type_show = selected_count > 1;
-            break;
-        case SELECTION_NOT_NONE:
-            selection_type_show = selected_count > 0;
-            break;
-        case SELECTION_NONE:
-            selection_type_show = selected_count == 0;
-            break;
-        case SELECTION_ANY:
-            selection_type_show = TRUE;
-            break;
-        default:
-            selection_type_show = selected_count == selection_type;
-            break;
-    }
-
-    gchar **extensions = nemo_action_get_extension_list (action);
-    gchar **mimetypes = nemo_action_get_mimetypes_list (action);
-
-    guint ext_count = extensions != NULL ? g_strv_length (extensions) : 0;
-    guint mime_count = mimetypes != NULL ? g_strv_length (mimetypes) : 0;
-
-    if (ext_count == 1 && g_strcmp0 (extensions[0], "any") == 0)
-        goto out;
-
-    gboolean found_match = TRUE;
-
-    for (iter = selection; iter != NULL && found_match; iter = iter->next) {
-        found_match = FALSE;
-        gboolean is_dir;
-        gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
-        gchar *filename = g_ascii_strdown (raw_fn, -1);
-        g_free (raw_fn);
-        guint i;
-
-        is_dir = get_is_dir (iter->data);
-
-        if (ext_count > 0) {
-            for (i = 0; i < ext_count; i++) {
-                if (g_strcmp0 (extensions[i], "dir") == 0) {
-                    if (is_dir) {
-                        found_match = TRUE;
-                        break;
-                    }
-                } else if (g_strcmp0 (extensions[i], "none") == 0) {
-                    if (g_strrstr (filename, ".") == NULL) {
-                        found_match = TRUE;
-                        break;
-                    }
-                } else if (g_strcmp0 (extensions[i], "nodirs") == 0) {
-                    if (!is_dir) {
-                        found_match = TRUE;
-                        break;
-                    }
-                } else {
-                    gchar *str = g_ascii_strdown (extensions[i], -1);
-                    if (g_str_has_suffix (filename, str)) {
-                        found_match = TRUE;
-                    }
-
-                    g_free (str);
-
-                    if (found_match) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        g_free (filename);
-
-        if (mime_count > 0) {
-            for (i = 0; i < mime_count; i++) {
-                if (nemo_file_is_mime_type (NEMO_FILE (iter->data), mimetypes[i])) {
-                    found_match = TRUE;
-                    break;
-                }
-            }
-        }
-
-        if (nemo_file_is_mime_type (NEMO_FILE (iter->data), "application/x-nemo-link")) {
-            found_match = FALSE;
-        }
-    }
-
-    extension_type_show = found_match;
-
-out:
-
-    return selection_type_show && extension_type_show && condition_type_show;
+    return TRUE;
 }
