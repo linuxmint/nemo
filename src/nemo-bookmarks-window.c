@@ -148,32 +148,9 @@ nemo_bookmarks_window_response_callback (GtkDialog *dialog,
 					     int response_id,
 					     gpointer callback_data)
 {
-	if (response_id == GTK_RESPONSE_HELP) {
-		GError *error = NULL;
-
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:gnome-help/nemo-bookmarks-edit",
-			      gtk_get_current_event_time (), &error);
-
-		if (error) {
-			GtkWidget *err_dialog;
-			err_dialog = gtk_message_dialog_new (GTK_WINDOW (dialog),
-							     GTK_DIALOG_DESTROY_WITH_PARENT,
-							     GTK_MESSAGE_ERROR,
-							     GTK_BUTTONS_OK,
-							     _("There was an error displaying help: \n%s"),
-							     error->message);
-
-			g_signal_connect (G_OBJECT (err_dialog),
-					  "response", G_CALLBACK (gtk_widget_destroy),
-					  NULL);
-			gtk_window_set_resizable (GTK_WINDOW (err_dialog), FALSE);
-			gtk_widget_show (err_dialog);
-			g_error_free (error);
-		}
-	} else if (response_id == GTK_RESPONSE_CLOSE) {
+    if (response_id == GTK_RESPONSE_CLOSE) {
 		gtk_widget_hide (GTK_WIDGET (dialog));
-        }
+    }
 }
 
 static GtkListStore *
@@ -439,6 +416,8 @@ edit_bookmarks_dialog_set_signals (GObject *undo_manager_source)
 static NemoBookmark *
 get_selected_bookmark (void)
 {
+    gint selected_row;
+
 	g_return_val_if_fail(NEMO_IS_BOOKMARK_LIST(bookmarks), NULL);
 
 	if (!get_selection_exists())
@@ -451,7 +430,13 @@ get_selected_bookmark (void)
         return NULL;
     }
 
-	return nemo_bookmark_list_item_at(bookmarks, get_selected_row ());
+    selected_row = get_selected_row ();
+
+    if (selected_row > g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT)) {
+        selected_row--;
+    }
+
+	return nemo_bookmark_list_item_at(bookmarks, selected_row);
 }
 
 static guint
@@ -682,7 +667,7 @@ on_row_changed (GtkListStore *store,
 		gpointer user_data)
 {
 	NemoBookmark *bookmark = NULL, *bookmark_in_list;
-	gint *indices, row;
+	gint *indices, row, breakpoint;
 	gboolean insert_bookmark = TRUE;
 
 	store = bookmark_list_store;
@@ -692,6 +677,12 @@ on_row_changed (GtkListStore *store,
 	gtk_tree_model_get (GTK_TREE_MODEL (store), iter,
 			    BOOKMARK_LIST_COLUMN_BOOKMARK, &bookmark,
 			    -1);
+
+    breakpoint = g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT);
+
+    if (row > breakpoint) {
+        row--;
+    }
 
     if (!bookmark) {
         /* Separator */
@@ -786,6 +777,10 @@ on_row_deleted (GtkListStore *store,
 
 	indices = gtk_tree_path_get_indices (path);
 	row = indices[0];
+
+    if (row > g_settings_get_int (nemo_window_state, NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT)) {
+        row--;
+    }
 
 	g_signal_handler_block (bookmarks, bookmark_list_changed_signal_id);
 	nemo_bookmark_list_delete_item_at (bookmarks, row);
@@ -1112,6 +1107,12 @@ repopulate (void)
 
 		path = gtk_tree_row_reference_get_path (reference);
 		gtk_tree_selection_select_path (bookmark_selection, path);
+
+        gtk_tree_view_scroll_to_cell (bookmark_list_widget,
+                                      path,
+                                      NULL,
+                                      TRUE, 0.5, 0);
+
 		gtk_tree_row_reference_free (reference);
 		gtk_tree_path_free (path);
 
