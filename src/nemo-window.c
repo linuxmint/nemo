@@ -1463,10 +1463,7 @@ sync_thumbnail_action_callback (NemoFile *file,
         gboolean show_thumbnails;
 
         pane = nemo_window_get_active_pane(window);
-        show_thumbnails = nemo_file_get_boolean_metadata(
-                file,
-                NEMO_METADATA_KEY_SHOW_THUMBNAILS,
-                FALSE);
+        show_thumbnails = nemo_file_should_show_thumbnail (file);
 
         toolbar_set_show_thumbnails_button (show_thumbnails, pane);
         menu_set_show_thumbnails_action (show_thumbnails, window);

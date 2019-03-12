@@ -1694,21 +1694,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	return action_group;
 }
 
-static gboolean
-show_thumbnails_enum_get_mapper (GValue   *value,
-                                 GVariant *variant,
-                                 gpointer  user_data)
-{
-    const gchar *str;
-
-    str = g_variant_get_string (variant, NULL);
-
-    g_value_set_boolean (value,
-                         g_strcmp0 (str, "per-folder") == 0);
-
-    return TRUE;
-}
-
 static void
 window_menus_set_bindings (NemoWindow *window)
 {
@@ -1743,18 +1728,6 @@ window_menus_set_bindings (NemoWindow *window)
              action,
              "active",
              G_SETTINGS_BIND_DEFAULT);
-
-    action = gtk_action_group_get_action (action_group,
-                                          NEMO_ACTION_SHOW_THUMBNAILS);
-
-    g_settings_bind_with_mapping (nemo_preferences,
-                                  NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
-                                  action,
-                                  "visible",
-                                  G_SETTINGS_BIND_GET,
-                                  (GSettingsBindGetMapping) show_thumbnails_enum_get_mapper,
-                                  NULL,
-                                  NULL, NULL);
 
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_SIDEBAR);

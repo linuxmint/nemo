@@ -65,6 +65,12 @@ nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 	return g_strdup (viewer_iid);
 }
 
+gboolean
+nemo_global_preferences_get_inherit_folder_viewer_preference (void)
+{
+		return g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER);
+}
+
 char *
 nemo_global_preferences_get_desktop_iid (void)
 {
