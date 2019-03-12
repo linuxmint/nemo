@@ -505,21 +505,24 @@ static void
 nemo_view_reset_to_defaults (NemoView *view)
 {
     NemoFile *file;
+    NemoWindow *window;
     g_return_if_fail (NEMO_IS_VIEW (view));
 
     NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 
     gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
 
+    window = view->details->window;
     if (show_hidden) {
-        nemo_window_set_hidden_files_mode (view->details->window, NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
+        nemo_window_set_hidden_files_mode (window, NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
     } else {
-        nemo_window_set_hidden_files_mode (view->details->window, NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
+        nemo_window_set_hidden_files_mode (window, NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
     }
 
     file = view->details->slot->viewed_file;
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, NULL, NULL);
-    emit_change_signals_for_all_files_in_all_directories ();
+    nemo_file_set_metadata(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, NULL);
+    gtk_action_activate (gtk_action_group_get_action (nemo_window_get_main_action_group (window), NEMO_ACTION_RELOAD));
 }
 
 static gboolean

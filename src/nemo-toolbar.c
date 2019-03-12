@@ -186,8 +186,7 @@ toolbar_update_appearance (NemoToolbar *self)
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
     
     widgetitem = self->priv->show_thumbnails_button;
-    icon_toolbar = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS) ==
-                    NEMO_SPEED_TRADEOFF_PER_FOLDER;
+    icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
@@ -475,6 +474,9 @@ nemo_toolbar_constructed (GObject *obj)
                   G_CALLBACK (toolbar_update_appearance), self);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR,
+                  G_CALLBACK (toolbar_update_appearance), self);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR,
                   G_CALLBACK (toolbar_update_appearance), self);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
