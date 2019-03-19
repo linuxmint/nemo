@@ -1955,6 +1955,15 @@ nemo_window_init (NemoWindow *window)
 
 	/* Set initial window title */
 	gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
+
+    g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+				  G_CALLBACK(nemo_window_sync_thumbnail_action),
+				  window);
+    g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS,
+				  G_CALLBACK(nemo_window_sync_thumbnail_action),
+				  window);
 }
 
 static NemoIconInfo *

@@ -1741,7 +1741,7 @@ nemo_directory_set_show_thumbnails (NemoDirectory         *directory,
   
   file = nemo_file_get(directory->details->location);
   nemo_file_set_boolean_metadata (file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, FALSE, show_thumbnails);
-  emit_change_signals_for_all_files(directory);
+  nemo_directory_force_reload (directory);
 }
 
 #if !defined (NEMO_OMIT_SELF_CHECK)
