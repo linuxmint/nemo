@@ -802,7 +802,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	char *mimetype;
 	NemoWindow *window;
 	NemoWindowSlot *slot;
-	NemoFile *viewed_file, *parent_file;
+	NemoFile *parent_file, *tmp;
 	GFile *location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
@@ -887,11 +887,12 @@ got_file_info_for_view_selection_callback (NemoFile *file,
             nemo_file_ref(parent_file); // Do this once for the initial file
             while (parent_file) {
                 view_id = nemo_file_get_metadata (parent_file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
+                tmp = nemo_file_get_parent (parent_file);
                 nemo_file_unref(parent_file);
                 if (view_id != NULL) {
                     parent_file = NULL;
                 } else {
-                    parent_file = nemo_file_get_parent (parent_file);
+                    parent_file = tmp;
                 }
             }
         }
@@ -995,6 +996,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 				nemo_window_pane_close_slot (slot->pane, slot);
 			} else {
 				/* We disconnected this, so we need to re-connect it */
+				NemoFile *viewed_file;
 				viewed_file = nemo_file_get (slot->location);
 				nemo_window_slot_set_viewed_file (slot, viewed_file);
 				nemo_file_monitor_add (viewed_file, &slot->viewed_file, 0);
