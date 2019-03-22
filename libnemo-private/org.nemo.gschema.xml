@@ -171,6 +171,11 @@
       <summary>Show warning when opening as root</summary>
       <description>If set to true, then Nemo show warning message when run Nemo as root user.</description>
     </key>
+    <key name="confirm-move-to-trash" type="b">
+      <default>false</default>
+      <summary>Whether to ask for confirmation when moving files to Trash</summary>
+      <description>If set to true, then Nemo will ask for confirmation when  you attempt to move files to the Trash.</description>
+    </key>
     <key name="confirm-trash" type="b">
       <default>true</default>
       <summary>Whether to ask for confirmation when deleting files, or emptying Trash</summary>
