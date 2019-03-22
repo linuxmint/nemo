@@ -31,6 +31,7 @@
 G_BEGIN_DECLS
 
 /* Trash options */
+#define NEMO_PREFERENCES_CONFIRM_MOVE_TO_TRASH	"confirm-move-to-trash"
 #define NEMO_PREFERENCES_CONFIRM_TRASH			"confirm-trash"
 #define NEMO_PREFERENCES_ENABLE_DELETE			"enable-delete"
 #define NEMO_PREFERENCES_SWAP_TRASH_DELETE      "swap-trash-delete"

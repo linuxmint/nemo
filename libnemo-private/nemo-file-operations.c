@@ -1289,7 +1289,13 @@ do_run_simple_dialog (gpointer _data)
 		}
 
 		gtk_dialog_add_button (GTK_DIALOG (dialog), button_title, response_id);
-		gtk_dialog_set_default_response (GTK_DIALOG (dialog), response_id);
+	}
+	if (response_id > 1) {
+		if (button_title == _("Empty _Trash")) {
+			gtk_dialog_set_default_response (GTK_DIALOG (dialog), 0);
+		} else {
+			gtk_dialog_set_default_response (GTK_DIALOG (dialog), response_id - 1);
+		}
 	}
 
 	if (data->details_text) {
@@ -1486,6 +1492,55 @@ job_aborted (CommonJob *job)
 }
 
 /* Since this happens on a thread we can't use the global prefs object */
+static gboolean
+should_confirm_move_to_trash (void)
+{
+	gboolean confirm_move_to_trash;
+
+	confirm_move_to_trash = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CONFIRM_MOVE_TO_TRASH);
+
+	return confirm_move_to_trash;
+}
+
+static gboolean
+confirm_move_to_trash (CommonJob *job,
+			   GList *files)
+{
+	char *prompt;
+	int file_count;
+	int response;
+
+	/* Just Say Yes if the preference says not to confirm. */
+	if (!should_confirm_move_to_trash ()) {
+		return TRUE;
+	}
+
+	file_count = g_list_length (files);
+	g_assert (file_count > 0);
+
+	if (file_count == 1) {
+		prompt = f (_("Are you sure you want to move \"%B\" "
+					    "to the trash?"), files->data);
+	} else {
+		prompt = f (ngettext("Are you sure you want to move "
+				     "the %'d selected item to the trash?",
+				     "Are you sure you want to move "
+				     "the %'d selected items to the trash?",
+				     file_count),
+			    file_count);
+	}
+
+	response = run_warning (job,
+				prompt,
+				f (_("You can restore an item from the trash, if you later change your mind.")),
+				NULL,
+				FALSE,
+				GTK_STOCK_CANCEL, _("Move to _Trash"),
+				NULL);
+
+	return (response == 1);
+}
+
 static gboolean
 should_confirm_trash (void)
 {
@@ -2134,10 +2189,16 @@ delete_job (GIOSchedulerJob *io_job,
 		}
 	}
 
-	if (to_trash_files != NULL) {
+	if (to_trash_files != NULL && !job_aborted (common)) {
 		to_trash_files = g_list_reverse (to_trash_files);
-
-		trash_files (common, to_trash_files, &files_skipped);
+		confirmed = confirm_move_to_trash (common, to_trash_files);
+		if (confirmed) {
+			trash_files (common, to_trash_files, &files_skipped);
+		} else {
+			job->user_cancel = TRUE;
+			/* destroy the undo action data too */
+			g_clear_object (&common->undo_info);
+		}
 	}
 
 	g_list_free (to_trash_files);
@@ -2432,7 +2493,7 @@ prompt_empty_trash (GtkWindow *parent_window)
 	                        _("Do _not Empty Trash"), GTK_RESPONSE_REJECT,
 	                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	                        _("Empty _Trash"), GTK_RESPONSE_ACCEPT, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
+	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_REJECT);
 	gtk_window_set_title (GTK_WINDOW (dialog), ""); /* as per HIG */
 	gtk_window_set_skip_taskbar_hint (GTK_WINDOW (dialog), TRUE);
 	if (screen) {
