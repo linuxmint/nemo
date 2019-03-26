@@ -6391,6 +6391,10 @@ add_action_to_action_menus (NemoView *directory_view,
 
     gtk_action_set_visible (GTK_ACTION (action), FALSE);
 
+    g_signal_handlers_disconnect_by_func (action,
+                                          run_action_callback,
+                                          directory_view);
+
     g_signal_connect (action, "activate",
                    G_CALLBACK (run_action_callback),
                    directory_view);
