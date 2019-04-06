@@ -12,7 +12,7 @@
 .nemo-window .nemo-window-pane widget.entry {
     border: 1px solid;
     border-radius: 3px;
-    color: @theme_text_color;
+    color: @theme_fg_color;
     border-color: @theme_selected_bg_color;
     background-color: @theme_bg_color;
 }
@@ -20,7 +20,7 @@
 .nemo-window .nemo-window-pane widget.entry:selected {
     border: 1px solid;
     border-radius: 3px;
-    color: @theme_selected_text_color;
+    color: @theme_selected_fg_color;
     border-color: @theme_selected_bg_color;
     background-color: @theme_selected_bg_color;
 }
