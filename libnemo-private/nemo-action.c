@@ -71,6 +71,13 @@ enum
   PROP_CONDITIONS
 };
 
+enum {
+    CONDITION_CHANGED,
+    LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
+
 typedef struct {
     NemoAction *action;
     gchar *name;
@@ -78,12 +85,34 @@ typedef struct {
     gboolean exists;
 } DBusCondition;
 
+typedef struct {
+    NemoAction *action;
+    GSettings *settings;
+    gchar *condition_string;
+    gchar *key;
+    guint handler_id;
+} GSettingsCondition;
+
 static void
 dbus_condition_free (gpointer data)
 {
     DBusCondition *cond = (DBusCondition *) data;
     g_free (cond->name);
     g_bus_unwatch_name (cond->watch_id);
+
+    g_free (cond);
+}
+
+static void
+gsettings_condition_free (gpointer data)
+{
+    GSettingsCondition *cond = (GSettingsCondition *) data;
+
+    g_signal_handler_disconnect (cond->settings, cond->handler_id);
+
+    g_object_unref (cond->settings);
+    g_free (cond->key);
+    g_free (cond->condition_string);
 
     g_free (cond);
 }
@@ -105,6 +134,8 @@ nemo_action_init (NemoAction *action)
     action->conditions = NULL;
     action->dbus = NULL;
     action->dbus_satisfied = TRUE;
+    action->gsettings = NULL;
+    action->gsettings_satisfied = TRUE;
     action->escape_underscores = FALSE;
     action->escape_space = FALSE;
     action->show_in_blank_desktop = FALSE;
@@ -243,24 +274,62 @@ nemo_action_class_init (NemoActionClass *klass)
                                                            FALSE,
                                                            G_PARAM_READWRITE)
                                  );
+
+    signals[CONDITION_CHANGED] = g_signal_new ("condition-changed",
+                                               G_TYPE_FROM_CLASS (object_class),
+                                               G_SIGNAL_RUN_LAST,
+                                               0, NULL, NULL,
+                                               g_cclosure_marshal_VOID__VOID,
+                                               G_TYPE_NONE, 0);
 }
 
-static void
+static gboolean
 recalc_dbus_conditions (NemoAction *action)
 {
     GList *l;
     DBusCondition *c;
-    gboolean cumul_found = TRUE;
+    gboolean pass, old_satisfied;
+
+    DEBUG ("Recalculating dbus conditions for %s", action->key_file_path);
+
+    pass = TRUE;
 
     for (l = action->dbus; l != NULL; l = l->next) {
         c = (DBusCondition *) l->data;
+
+        DEBUG ("Checking dbus name for an owner: '%s' - evaluated to %s",
+               c->name,
+               c->exists ? "TRUE" : "FALSE");
+
         if (!c->exists) {
-            cumul_found = FALSE;
+            pass = FALSE;
             break;
         }
     }
 
-    action->dbus_satisfied = cumul_found;
+    old_satisfied = action->dbus_satisfied;
+    action->dbus_satisfied = pass;
+
+    DEBUG ("DBus satisfied: %s",
+           pass ? "TRUE" : "FALSE");
+
+    if (pass != old_satisfied) {
+        g_signal_emit (action, signals[CONDITION_CHANGED], 0);
+    }
+
+    action->dbus_recalc_timeout_id = 0;
+    return FALSE;
+}
+
+static void
+queue_recalc_dbus_conditions (NemoAction *action)
+{
+    if (action->dbus_recalc_timeout_id != 0) {
+        g_source_remove (action->dbus_recalc_timeout_id);
+        action->dbus_recalc_timeout_id = 0;
+    }
+    action->dbus_recalc_timeout_id = g_idle_add ((GSourceFunc) recalc_dbus_conditions,
+                                                 action);
 }
 
 static void
@@ -272,7 +341,7 @@ on_dbus_appeared (GDBusConnection *connection,
     DBusCondition *cond = user_data;
 
     cond->exists = TRUE;
-    recalc_dbus_conditions (cond->action);
+    queue_recalc_dbus_conditions (cond->action);
 }
 
 static void
@@ -283,7 +352,7 @@ on_dbus_disappeared (GDBusConnection *connection,
     DBusCondition *cond = user_data;
 
     cond->exists = FALSE;
-    recalc_dbus_conditions (cond->action);
+    queue_recalc_dbus_conditions (cond->action);
 }
 
 static void
@@ -303,17 +372,223 @@ setup_dbus_condition (NemoAction *action, const gchar *condition)
 
     DBusCondition *cond = g_new0 (DBusCondition, 1);
 
-    cond->name = g_strdup (split[0]);
+    cond->name = g_strdup (split[1]);
     cond->exists = FALSE;
     cond->action = action;
     action->dbus = g_list_append (action->dbus, cond);
     cond->watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
-                                       split[1],
+                                       cond->name,
                                        0,
                                        on_dbus_appeared,
                                        on_dbus_disappeared,
                                        cond,
                                        NULL);
+
+    g_strfreev (split);
+}
+
+#define EQUALS "eq"
+#define NOT_EQUALS "ne"
+#define LESS_THAN "lt"
+#define GREATER_THAN "gt"
+
+enum
+{
+    GSETTINGS_SCHEMA_INDEX = 1,
+    GSETTINGS_KEY_INDEX = 2,
+    GSETTINGS_TYPE_INDEX = 3,
+    GSETTINGS_OP_INDEX = 4,
+    GSETTINGS_VAL_INDEX = 5,
+};
+
+static gboolean
+operator_is_valid (const gchar *op_string)
+{
+    return (g_strcmp0 (op_string, EQUALS) == 0 ||
+            g_strcmp0 (op_string, NOT_EQUALS) == 0 ||
+            g_strcmp0 (op_string, LESS_THAN) == 0 ||
+            g_strcmp0 (op_string, GREATER_THAN) == 0);
+}
+
+static gboolean
+try_vector (const gchar *op, gint vector)
+{
+    if (g_strcmp0 (op, EQUALS) == 0) {
+        return (vector == 0);
+    } else if (g_strcmp0 (op, NOT_EQUALS) == 0) {
+        return (vector != 0);
+    } else if (g_strcmp0 (op, LESS_THAN) == 0) {
+        return (vector < 0);
+    } else if (g_strcmp0 (op, GREATER_THAN) == 0) {
+        return (vector > 0);
+    }
+    return FALSE;
+}
+
+static void
+recalc_gsettings_conditions (NemoAction *action)
+{
+    GList *l;
+    gboolean pass, old_satisfied;
+
+    DEBUG ("Recalculating gsettings conditions for %s", action->key_file_path);
+
+    pass = TRUE;
+
+    for (l = action->gsettings; l != NULL; l = l->next) {
+        GSettingsCondition *cond;
+        const GVariantType *target_type, *setting_type;
+        gchar **split;
+        gint len;
+        gboolean iter_pass = FALSE;
+
+        cond = (GSettingsCondition *) l->data;
+
+        split = g_strsplit (cond->condition_string, " ", 6);
+        len = g_strv_length (split);
+
+        if (len == 3) {
+            GVariant *setting_var;
+
+            target_type = G_VARIANT_TYPE_BOOLEAN;
+
+            setting_var = g_settings_get_value (cond->settings, cond->key);
+            setting_type = g_variant_get_type (setting_var);
+
+            if (g_variant_type_equal (setting_type, target_type)) {
+                iter_pass = g_variant_get_boolean (setting_var);
+            }
+
+            g_variant_unref (setting_var);
+        } else {
+            GVariant *setting_var;
+
+            target_type = G_VARIANT_TYPE (split[GSETTINGS_TYPE_INDEX]);
+
+            setting_var = g_settings_get_value (cond->settings, cond->key);
+            setting_type = g_variant_get_type (setting_var);
+
+            if (g_variant_type_equal (setting_type, target_type)) {
+                GVariant *target_var;
+
+                target_var = g_variant_parse (target_type,
+                                              split[GSETTINGS_VAL_INDEX],
+                                              NULL, NULL, NULL);
+
+                if (target_var != NULL) {
+                    gint vector = g_variant_compare (setting_var, target_var);
+
+                    iter_pass = try_vector (split[GSETTINGS_OP_INDEX], vector);
+
+                    g_variant_unref (target_var);
+                } else {
+                    g_warning ("Nemo Action: gsettings value could not be parsed into a valid GVariant");
+                }
+            }
+
+            g_variant_unref (setting_var);
+        }
+
+        g_strfreev (split);
+
+        DEBUG ("Checking gsettings condition: '%s' - evaluated to %s",
+               cond->condition_string,
+               iter_pass ? "TRUE" : "FALSE");
+
+        /* This should just break here, except the catch with GSettings changed signal handler,
+         * where the value must be retrieved once with a handler connected before the changed signal
+         * will begin being emitted.  So, we should go thru all conditions so during setup none
+         * of the signals are skipped. */
+        if (!iter_pass) {
+            pass = FALSE;
+        }
+    }
+
+    DEBUG ("GSettings satisfied: %s",
+           pass ? "TRUE" : "FALSE");
+
+    old_satisfied = action->gsettings_satisfied;
+    action->gsettings_satisfied = pass;
+
+    if (pass != old_satisfied) {
+        g_signal_emit (action, signals[CONDITION_CHANGED], 0);
+    }
+}
+
+static void
+setup_gsettings_condition (NemoAction *action,
+                           const gchar *condition)
+{
+    GSettingsSchemaSource *schema_source;
+    GSettingsSchema *schema;
+    gchar **split;
+    gint len;
+
+    split = g_strsplit (condition, " ", 6);
+    len = g_strv_length (split);
+
+    if (len != 6 &&
+        len != 3) {
+        g_strfreev (split);
+        return;
+    }
+
+    if (g_strcmp0 (split[0], "gsettings") != 0) {
+        g_strfreev (split);
+        return;
+    }
+
+    if (len == 6 &&
+        (!g_variant_type_string_is_valid (split[GSETTINGS_TYPE_INDEX]) ||
+         !operator_is_valid (split[GSETTINGS_OP_INDEX]))) {
+        g_warning ("Nemo Action: Either gsettings variant type (%s) or operator (%s) is invalid.",
+                   split[GSETTINGS_TYPE_INDEX], split[GSETTINGS_OP_INDEX]);
+        g_strfreev (split);
+        return;
+    }
+
+    schema_source = g_settings_schema_source_get_default();
+    schema = g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE);
+
+    if (schema) {
+        GSettings *settings;
+        gchar **keys;
+        gint i;
+
+        settings = g_settings_new (split[GSETTINGS_SCHEMA_INDEX]);
+        keys = g_settings_list_keys (settings);
+
+        for (i = 0; i < g_strv_length (keys); i++) {
+            if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
+                GSettingsCondition *cond;
+                gchar *signal_string;
+
+                cond = g_new0 (GSettingsCondition, 1);
+
+                cond->action = action;
+                cond->condition_string = g_strdup (condition);
+                cond->settings = g_object_ref (settings);
+                cond->key = g_strdup (keys[i]);
+
+                signal_string = g_strdup_printf ("changed::%s", cond->key);
+
+                cond->handler_id = g_signal_connect_swapped (settings,
+                                                             signal_string,
+                                                             G_CALLBACK (recalc_gsettings_conditions),
+                                                             action);
+
+                action->gsettings = g_list_prepend (action->gsettings, cond);
+
+                g_free (signal_string);
+
+                break;
+            }
+        }
+
+        g_object_unref (settings);
+        g_strfreev (keys);
+        g_settings_schema_unref (schema);
+    }
 
     g_strfreev (split);
 }
@@ -468,12 +743,26 @@ nemo_action_constructed (GObject *object)
             if (g_str_has_prefix (condition, "dbus")) {
                 setup_dbus_condition (action, condition);
             }
-
+            else
+            if (g_str_has_prefix (condition, "gsettings")) {
+                setup_gsettings_condition (action, condition);
+            }
+            else
             if (g_strcmp0 (condition, "desktop") == 0) {
                 is_desktop = TRUE;
             }
+            else
+            if (g_strcmp0 (condition, "removable") == 0) {
+                /* this is handled in nemo_action_get_visibility() */
+            }
+            else {
+                g_warning ("Ignoring invalid condition: %s."
+                           " See sample action at /usr/share/nemo/actions/sample.nemo_action", condition);
+            }
         }
     }
+
+    recalc_gsettings_conditions (action);
 
     gchar *exec = NULL;
     gboolean use_parent_dir = FALSE;
@@ -607,9 +896,9 @@ nemo_action_new (const gchar *name,
     }
 
     if (orig_label == NULL || exec_raw == NULL || (ext == NULL && mimes == NULL) || selection_string == NULL) {
-        g_printerr ("An action definition requires, at minimum, "
-                    "a Label field, an Exec field, a Selection field, and an either an Extensions or Mimetypes field.\n"
-                    "Check the %s file for missing fields.\n", path);
+        g_warning ("An action definition requires, at minimum, "
+                   "a Label field, an Exec field, a Selection field, and an either an Extensions or Mimetypes field.\n"
+                   "Check the %s file for missing fields.", path);
         finish = FALSE;
     }
 
@@ -645,6 +934,16 @@ nemo_action_finalize (GObject *object)
     if (action->dbus) {
         g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
         action->dbus = NULL;
+    }
+
+    if (action->gsettings) {
+        g_list_free_full (action->gsettings, (GDestroyNotify) gsettings_condition_free);
+        action->gsettings = NULL;
+    }
+
+    if (action->dbus_recalc_timeout_id != 0) {
+        g_source_remove (action->dbus_recalc_timeout_id);
+        action->dbus_recalc_timeout_id = 0;
     }
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -1266,134 +1565,16 @@ nemo_action_set_mimetypes (NemoAction *action, gchar **mimetypes)
     g_strfreev (tmp);
 }
 
-gboolean
-nemo_action_get_dbus_satisfied (NemoAction *action)
+static gboolean
+get_dbus_satisfied (NemoAction *action)
 {
     return action->dbus_satisfied;
 }
 
-#define EQUALS "eq"
-#define NOT_EQUALS "ne"
-#define LESS_THAN "lt"
-#define GREATER_THAN "gt"
-
-enum
-{
-    GSETTINGS_SCHEMA_INDEX = 1,
-    GSETTINGS_KEY_INDEX = 2,
-    GSETTINGS_TYPE_INDEX = 3,
-    GSETTINGS_OP_INDEX = 4,
-    GSETTINGS_VAL_INDEX = 5,
-};
-
 static gboolean
-operator_is_valid (const gchar *op_string)
+get_gsettings_satisfied (NemoAction *action)
 {
-    return (g_strcmp0 (op_string, EQUALS) == 0 ||
-            g_strcmp0 (op_string, NOT_EQUALS) == 0 ||
-            g_strcmp0 (op_string, LESS_THAN) == 0 ||
-            g_strcmp0 (op_string, GREATER_THAN) == 0);
-}
-
-static gboolean
-try_vector (const gchar *op, gint vector)
-{
-    if (g_strcmp0 (op, EQUALS) == 0) {
-        return (vector == 0);
-    } else if (g_strcmp0 (op, NOT_EQUALS) == 0) {
-        return (vector != 0);
-    } else if (g_strcmp0 (op, LESS_THAN) == 0) {
-        return (vector < 0);
-    } else if (g_strcmp0 (op, GREATER_THAN) == 0) {
-        return (vector > 0);
-    }
-    return FALSE;
-}
-
-static gboolean
-check_gsettings_condition (NemoAction *action, const gchar *condition)
-{
-
-    gchar **split = g_strsplit (condition, " ", 6);
-    gint len = g_strv_length (split);
-
-    if (len != 6 && 
-        len != 3) {
-        g_strfreev (split);
-        return FALSE;
-    }
-
-    if (g_strcmp0 (split[0], "gsettings") != 0) {
-        g_strfreev (split);
-        return FALSE;
-    }
-
-    if (len == 6 &&
-        (!g_variant_type_string_is_valid (split[GSETTINGS_TYPE_INDEX]) || 
-         !operator_is_valid (split[GSETTINGS_OP_INDEX]))) {
-        g_printerr ("Nemo Action: Either gsettings variant type (%s) or operator (%s) is invalid.\n",
-                    split[GSETTINGS_TYPE_INDEX], split[GSETTINGS_OP_INDEX]);
-        g_strfreev (split);
-        return FALSE;
-    }
-
-    GSettingsSchemaSource *schema_source;
-    GSettingsSchema *schema;
-    gboolean ret = FALSE;
-    const GVariantType *target_type;
-
-    if (len == 3) {
-        target_type = G_VARIANT_TYPE_BOOLEAN;
-    } else {
-        target_type = G_VARIANT_TYPE (split[GSETTINGS_TYPE_INDEX]);
-    }
-
-    schema_source = g_settings_schema_source_get_default();
-    schema = g_settings_schema_source_lookup (schema_source, split[GSETTINGS_SCHEMA_INDEX], TRUE);
-
-    if (schema) {
-        GSettings *s = g_settings_new_full (schema, NULL, NULL);
-        gchar **keys = g_settings_list_keys (s);
-        guint i;
-        for (i = 0; i < g_strv_length (keys); i++) {
-            if (len == 3) {
-                if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
-                    GVariant *setting_var = g_settings_get_value (s, split[GSETTINGS_KEY_INDEX]);
-                    const GVariantType *setting_type = g_variant_get_type (setting_var);
-                    if (g_variant_type_equal (setting_type, target_type))
-                        ret = g_variant_get_boolean (setting_var);
-                    g_variant_unref (setting_var);
-                }
-            } else {
-                if (g_strcmp0 (keys[i], split[GSETTINGS_KEY_INDEX]) == 0) {
-                    GVariant *setting_var = g_settings_get_value (s, split[GSETTINGS_KEY_INDEX]);
-                    const GVariantType *setting_type = g_variant_get_type (setting_var);
-                    if (g_variant_type_equal (setting_type, target_type)) {
-                        GVariant *target_var = g_variant_parse (target_type,
-                                                                split[GSETTINGS_VAL_INDEX],
-                                                                NULL, NULL, NULL);
-                        if (target_var != NULL) {
-                            gint vector = g_variant_compare (setting_var, target_var);
-                            ret = try_vector (split[GSETTINGS_OP_INDEX], vector);
-                            g_variant_unref (target_var);
-                        } else {
-                            g_printerr ("Nemo Action: gsettings value could not be parsed into a valid GVariant\n");
-                        }
-                    }
-                    g_variant_unref (setting_var);
-                }
-            }
-        }
-        g_strfreev (keys);
-        g_object_unref (s);
-        g_strfreev (split);
-        g_settings_schema_unref (schema);
-        return ret;
-    } else {
-        g_strfreev (split);
-        return FALSE;
-    }
-    return FALSE;
+    return action->gsettings_satisfied;
 }
 
 static gboolean
@@ -1429,8 +1610,12 @@ nemo_action_get_visibility (NemoAction *action,
     gboolean extension_type_show = TRUE;
     gboolean condition_type_show = TRUE;
 
-    if (!nemo_action_get_dbus_satisfied (action))
+    if (!get_dbus_satisfied (action))
         goto out;
+
+    if (!get_gsettings_satisfied (action)) {
+        goto out;
+    }
 
     gchar **conditions = nemo_action_get_conditions (action);
 
@@ -1487,9 +1672,8 @@ nemo_action_get_visibility (NemoAction *action,
                     }
                 }
                 condition_type_show = is_removable;
-            } else if (g_str_has_prefix (condition, "gsettings")) {
-                condition_type_show = check_gsettings_condition (action, condition);
             }
+
             if (!condition_type_show)
                 break;
         }

@@ -21,6 +21,8 @@
 #include "nemo-directory.h"
 #include "nemo-action.h"
 #include <libnemo-private/nemo-global-preferences.h>
+#define DEBUG_FLAG NEMO_DEBUG_ACTIONS
+#include <libnemo-private/nemo-debug.h>
 #include "nemo-file-utilities.h"
 
 
@@ -208,6 +210,15 @@ escape_action_name (const char *action_name,
 }
 
 static void
+on_action_condition_changed (NemoActionManager *action_manager)
+{
+    DEBUG ("Action manager (%p) received action condition changed.  Sending our own changed.",
+           action_manager);
+
+    g_signal_emit (action_manager, signals[CHANGED], 0);
+}
+
+static void
 add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
 {
     gchar *uri;
@@ -228,6 +239,11 @@ add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
     if (action == NULL) {
         return;
     }
+
+    g_signal_connect_swapped (action,
+                              "condition-changed",
+                              G_CALLBACK (on_action_condition_changed),
+                              action_manager);
 
     action_manager->actions = g_list_append (action_manager->actions, action);
 }

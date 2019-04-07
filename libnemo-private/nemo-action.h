@@ -116,7 +116,11 @@ struct _NemoAction {
     gboolean use_parent_dir;
     gboolean log_output;
     GList *dbus;
+    guint dbus_recalc_timeout_id;
+    GList *gsettings;
+    guint gsettings_recalc_timeout_id;
     gboolean dbus_satisfied;
+    gboolean gsettings_satisfied;
     gboolean escape_underscores;
     gboolean escape_space;
     gboolean show_in_blank_desktop;

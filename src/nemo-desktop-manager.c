@@ -672,7 +672,7 @@ nemo_desktop_manager_finalize (GObject *object)
 {
     FETCH_PRIV (object);
 
-    g_object_unref (priv->action_manager);
+    g_clear_object (&priv->action_manager);
     g_object_unref (priv->proxy);
 
     DEBUG ("Finalizing NemoDesktopManager");
@@ -704,7 +704,7 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
     priv->desktops = NULL;
     priv->desktop_on_primary_only = FALSE;
 
-    priv->action_manager = nemo_action_manager_new ();
+    priv->action_manager = NULL;
 
     priv->update_layout_idle_id = 0;
 
@@ -857,8 +857,13 @@ NemoActionManager *
 nemo_desktop_manager_get_action_manager (void)
 {
     g_return_val_if_fail (_manager != NULL, NULL);
+    FETCH_PRIV (_manager);
 
-    return _manager->priv->action_manager;
+    if (priv->action_manager == NULL) {
+        priv->action_manager = nemo_action_manager_new ();
+    }
+
+    return priv->action_manager;
 }
 
 void
