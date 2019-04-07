@@ -140,7 +140,6 @@ nemo_action_init (NemoAction *action)
     action->escape_space = FALSE;
     action->show_in_blank_desktop = FALSE;
     action->run_in_terminal = FALSE;
-    action->log_output = g_getenv ("NEMO_ACTION_VERBOSE") != NULL;
 }
 
 static void
@@ -1365,8 +1364,6 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
     }
 
     DEBUG ("Action Spawning: %s", exec->str);
-    if (action->log_output)
-        g_printerr ("Action Spawning: %s\n", exec->str);
 
     if (action->run_in_terminal) {
         gint argcp;
@@ -1514,8 +1511,6 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
     str = expand_action_string (action, selection, parent, str);
 
     DEBUG ("Action Label: %s", str->str);
-    if (action->log_output)
-        g_printerr ("Action Label: %s\n", str->str);
 
     gchar *ret = str->str;
     g_string_free (str, FALSE);
@@ -1537,8 +1532,6 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
     str = expand_action_string (action, selection, parent, str);
 
     DEBUG ("Action Tooltip: %s", str->str);
-    if (action->log_output)
-        g_printerr ("Action Tooltip: %s\n", str->str);
 
     gchar *ret = str->str;
     g_string_free (str, FALSE);

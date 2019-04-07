@@ -492,6 +492,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	gboolean no_default_window = FALSE;
     gboolean no_desktop_ignored = FALSE;
 	gboolean fix_cache = FALSE;
+    gboolean debug = FALSE;
 	gchar **remaining = NULL;
     GApplicationFlags init_flags;
 	NemoMainApplication *self = NEMO_MAIN_APPLICATION (application);
@@ -514,6 +515,8 @@ nemo_main_application_local_command_line (GApplication *application,
           N_("Ignored argument - left for compatibility only."), NULL },
 		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
 		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
+        { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
+          "Enable debugging code.  Example usage: 'NEMO_DEBUG=Actions,Window nemo --debug'.  Use NEMO_DEBUG=all for more topics.", NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
 		  N_("Quit Nemo."), NULL },
 		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
@@ -546,6 +549,10 @@ nemo_main_application_local_command_line (GApplication *application,
 		g_print ("nemo " VERSION "\n");
 		goto out;
 	}
+
+    if (debug) {
+        g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+    }
 
 	if (!do_cmdline_sanity_checks (self, perform_self_check,
 				       version, kill_shell, remaining)) {

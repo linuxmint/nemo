@@ -114,7 +114,6 @@ struct _NemoAction {
     gchar *orig_label;
     gchar *orig_tt;
     gboolean use_parent_dir;
-    gboolean log_output;
     GList *dbus;
     guint dbus_recalc_timeout_id;
     GList *gsettings;
