@@ -785,6 +785,10 @@ nemo_action_constructed (GObject *object)
                 setup_gsettings_condition (action, condition);
             }
             else
+            if (g_str_has_prefix (condition, "exec")) {
+                /* handled in nemo_action_get_visibility */
+            }
+            else
             if (g_strcmp0 (condition, "desktop") == 0) {
                 is_desktop = TRUE;
             }
@@ -1618,13 +1622,16 @@ get_gsettings_satisfied (NemoAction *action)
 }
 
 static gboolean
-check_exec_condition (NemoAction *action, const gchar *condition, GList *selection)
+check_exec_condition (NemoAction  *action,
+                      const gchar *condition,
+                      GList       *selection,
+                      NemoFile    *parent)
 {
-    int return_code;
-    GPtrArray *array;
-    gchar *exec, *pathed_exec;
+    GString *exec;
+    GError *error;
+    gint return_code;
+    gchar *exec_str;
     gchar **split;
-    gchar **argv;
     gboolean use_parent_dir;
 
     split = g_strsplit (condition, " ", 2);
@@ -1639,53 +1646,40 @@ check_exec_condition (NemoAction *action, const gchar *condition, GList *selecti
         return FALSE;
     }
 
-    array = g_ptr_array_new ();
-
-    strip_custom_modifier (split[1], &use_parent_dir, &exec);
-
-    if (use_parent_dir) {
-        pathed_exec = g_build_path (G_DIR_SEPARATOR_S,
-                                    action->parent_dir,
-                                    exec,
-                                    NULL);
-    } else {
-        pathed_exec = g_strdup (exec);
-    }
-
-    g_free (exec);
-
-    g_ptr_array_add (array, pathed_exec);
-
-    if (selection && g_list_length (selection) > 0) {
-        GList *iter;
-
-        for (iter = selection; iter != NULL; iter = iter->next) {
-            NemoFile *file = NEMO_FILE (iter->data);
-
-            g_ptr_array_add (array, nemo_file_get_path (file));
-        }
-
-    }
+    strip_custom_modifier (split[1], &use_parent_dir, &exec_str);
 
     g_strfreev (split);
 
-    g_ptr_array_add (array, NULL);
-    argv = (gchar **) g_ptr_array_free (array, FALSE);
+    exec = g_string_new (exec_str);
 
-    g_spawn_sync (NULL,
-                  argv,
-                  NULL,
-                  G_SPAWN_SEARCH_PATH,
-                  NULL, NULL, NULL, NULL,
-                  &return_code,
-                  NULL);
+    g_free (exec_str);
 
-    DEBUG ("Action checking exec condition '%s' returned: %d", argv[0], return_code);
-    if (action->log_output) {
-        g_printerr ("Action checking exec condition '%s' returned: %d\n", argv[0], return_code);
+    error = NULL;
+
+    action->escape_underscores = FALSE;
+
+    exec = expand_action_string (action, selection, parent, exec);
+
+    if (use_parent_dir) {
+        exec = g_string_prepend (exec, G_DIR_SEPARATOR_S);
+        exec = g_string_prepend (exec, action->parent_dir);
     }
 
-    g_strfreev (argv);
+    DEBUG ("Checking exec condition: %s", exec->str);
+
+    if (!g_spawn_command_line_sync (exec->str,
+                                    NULL,
+                                    NULL,
+                                    &return_code,
+                                    &error)) {
+            DEBUG ("Error spawning exec condition: %s\n",
+                   error->message);
+            g_error_free (error);
+        }
+
+    DEBUG ("Action checking exec condition '%s' returned: %d", exec->str, return_code);
+
+    g_string_free (exec, TRUE);
 
     return (return_code == 0);
 }
@@ -1888,7 +1882,10 @@ nemo_action_get_visibility (NemoAction *action,
                 }
                 condition_type_show = is_removable;
             } else if (g_str_has_prefix (condition, "exec")) {
-                condition_type_show = check_exec_condition (action, condition, selection);
+                condition_type_show = check_exec_condition (action,
+                                                            condition,
+                                                            selection,
+                                                            parent);
             }
 
             if (!condition_type_show)
