@@ -1086,41 +1086,39 @@ find_token_type (const gchar *str, TokenType *token_type)
     gchar *ptr = NULL;
     *token_type = TOKEN_NONE;
 
-    ptr = g_strstr_len (str, -1, TOKEN_EXEC_FILE_LIST);
+    ptr = g_strstr_len (str, -1, "%");
+
     if (ptr != NULL) {
-        *token_type = TOKEN_PATH_LIST;
-        return ptr;
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_FILE_LIST)) {
+            *token_type = TOKEN_PATH_LIST;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_URI_LIST)) {
+            *token_type = TOKEN_URI_LIST;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_PARENT)) {
+            *token_type = TOKEN_PARENT_PATH;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_FILE_NAME)) {
+            *token_type = TOKEN_FILE_DISPLAY_NAME;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_PARENT_NAME)) {
+            *token_type = TOKEN_PARENT_DISPLAY_NAME;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_LABEL_FILE_NAME)) {
+            *token_type = TOKEN_FILE_DISPLAY_NAME;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_DEVICE)) {
+            *token_type = TOKEN_DEVICE;
+            return ptr;
+        }
     }
-    ptr = g_strstr_len (str, -1, TOKEN_EXEC_URI_LIST);
-    if (ptr != NULL) {
-        *token_type = TOKEN_URI_LIST;
-        return ptr;
-    }
-    ptr = g_strstr_len (str, -1, TOKEN_EXEC_PARENT);
-    if (ptr != NULL) {
-        *token_type = TOKEN_PARENT_PATH;
-        return ptr;
-    }
-    ptr = g_strstr_len (str, -1, TOKEN_EXEC_FILE_NAME);
-    if (ptr != NULL) {
-        *token_type = TOKEN_FILE_DISPLAY_NAME;
-        return ptr;
-    }
-    ptr = g_strstr_len (str, -1, TOKEN_EXEC_PARENT_NAME);
-    if (ptr != NULL) {
-        *token_type = TOKEN_PARENT_DISPLAY_NAME;
-        return ptr;
-    }
-    ptr = g_strstr_len (str, -1, TOKEN_LABEL_FILE_NAME);
-    if (ptr != NULL) {
-        *token_type = TOKEN_FILE_DISPLAY_NAME;
-        return ptr;
-    }
-    ptr = g_strstr_len (str, -1, TOKEN_EXEC_DEVICE);
-    if (ptr != NULL) {
-        *token_type = TOKEN_DEVICE;
-        return ptr;
-    }
+
     return NULL;
 }
 
