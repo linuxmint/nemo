@@ -38,15 +38,26 @@ static void     nemo_action_get_property  (GObject                    *object,
                                            guint                       param_id,
                                            GValue                     *value,
                                            GParamSpec                 *pspec);
-
 static void     nemo_action_set_property  (GObject                    *object,
                                            guint                       param_id,
                                            const GValue               *value,
                                            GParamSpec                 *pspec);
-
 static void     nemo_action_constructed (GObject *object);
-
 static void     nemo_action_finalize (GObject *gobject);
+
+static SelectionType nemo_action_get_selection_type   (NemoAction *action);
+static void          nemo_action_set_extensions       (NemoAction *action, gchar **extensions);
+static gchar       **nemo_action_get_extension_list   (NemoAction *action);
+static void          nemo_action_set_mimetypes        (NemoAction *action, gchar **mimetypes);
+static gchar       **nemo_action_get_mimetypes_list   (NemoAction *action);
+static void          nemo_action_set_key_file_path    (NemoAction *action, const gchar *path);
+static void          nemo_action_set_exec             (NemoAction *action, const gchar *exec);
+static void          nemo_action_set_parent_dir       (NemoAction *action, const gchar *parent_dir);
+static void          nemo_action_set_separator        (NemoAction *action, const gchar *separator);
+static void          nemo_action_set_conditions       (NemoAction *action, gchar **conditions);
+static gchar       **nemo_action_get_conditions       (NemoAction *action);
+static void          nemo_action_set_orig_label       (NemoAction *action, const gchar *orig_label);
+static void          nemo_action_set_orig_tt          (NemoAction *action, const gchar *orig_tt);
 
 static gchar   *find_token_type (const gchar *str, TokenType *token_type);
 
@@ -1391,25 +1402,45 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
     g_string_free (exec, TRUE);
 }
 
-SelectionType
+static SelectionType
 nemo_action_get_selection_type (NemoAction *action)
 {
     return action->selection_type;
 }
 
-gchar **
+static void
+nemo_action_set_extensions (NemoAction *action, gchar **extensions)
+{
+    gchar **tmp;
+
+    tmp = action->extensions;
+    action->extensions = g_strdupv (extensions);
+    g_strfreev (tmp);
+}
+
+static gchar **
 nemo_action_get_extension_list (NemoAction *action)
 {
     return action->extensions;
 }
 
-gchar **
+static void
+nemo_action_set_mimetypes (NemoAction *action, gchar **mimetypes)
+{
+    gchar **tmp;
+
+    tmp = action->mimetypes;
+    action->mimetypes = g_strdupv (mimetypes);
+    g_strfreev (tmp);
+}
+
+static gchar **
 nemo_action_get_mimetypes_list (NemoAction *action)
 {
     return action->mimetypes;
 }
 
-void
+static void
 nemo_action_set_key_file_path (NemoAction *action, const gchar *path)
 {
     gchar *tmp;
@@ -1418,7 +1449,7 @@ nemo_action_set_key_file_path (NemoAction *action, const gchar *path)
     g_free (tmp);
 }
 
-void
+static void
 nemo_action_set_exec (NemoAction *action, const gchar *exec)
 {
     gchar *tmp;
@@ -1428,7 +1459,7 @@ nemo_action_set_exec (NemoAction *action, const gchar *exec)
     g_free (tmp);
 }
 
-void
+static void
 nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir)
 {
     gchar *tmp;
@@ -1438,7 +1469,7 @@ nemo_action_set_parent_dir (NemoAction *action, const gchar *parent_dir)
     g_free (tmp);
 }
 
-void
+static void
 nemo_action_set_separator (NemoAction *action, const gchar *separator)
 {
     gchar *tmp;
@@ -1448,7 +1479,7 @@ nemo_action_set_separator (NemoAction *action, const gchar *separator)
     g_free (tmp);
 }
 
-void
+static void
 nemo_action_set_conditions (NemoAction *action, gchar **conditions)
 {
     gchar **tmp;
@@ -1458,7 +1489,13 @@ nemo_action_set_conditions (NemoAction *action, gchar **conditions)
     g_strfreev (tmp);
 }
 
-void
+static gchar **
+nemo_action_get_conditions (NemoAction *action)
+{
+    return action->conditions;
+}
+
+static void
 nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label)
 {
     gchar *tmp;
@@ -1468,13 +1505,7 @@ nemo_action_set_orig_label (NemoAction *action, const gchar *orig_label)
     g_free (tmp);
 }
 
-const gchar *
-nemo_action_get_orig_label (NemoAction *action)
-{
-    return action->orig_label;
-}
-
-void
+static void
 nemo_action_set_orig_tt (NemoAction *action, const gchar *orig_tt)
 {
     gchar *tmp;
@@ -1485,16 +1516,17 @@ nemo_action_set_orig_tt (NemoAction *action, const gchar *orig_tt)
 }
 
 const gchar *
+nemo_action_get_orig_label (NemoAction *action)
+{
+    return action->orig_label;
+}
+
+const gchar *
 nemo_action_get_orig_tt (NemoAction *action)
 {
     return action->orig_tt;
 }
 
-gchar **
-nemo_action_get_conditions (NemoAction *action)
-{
-    return action->conditions;
-}
 
 gchar *
 nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
@@ -1536,26 +1568,6 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
     gchar *ret = str->str;
     g_string_free (str, FALSE);
     return ret;
-}
-
-void
-nemo_action_set_extensions (NemoAction *action, gchar **extensions)
-{
-    gchar **tmp;
-
-    tmp = action->extensions;
-    action->extensions = g_strdupv (extensions);
-    g_strfreev (tmp);
-}
-
-void
-nemo_action_set_mimetypes (NemoAction *action, gchar **mimetypes)
-{
-    gchar **tmp;
-
-    tmp = action->mimetypes;
-    action->mimetypes = g_strdupv (mimetypes);
-    g_strfreev (tmp);
 }
 
 static gboolean
