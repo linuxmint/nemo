@@ -3,13 +3,11 @@
 #############################################
 #### DEBUGGING:
 ####
-#### Run Nemo with the environment
-#### variable NEMO_ACTION_VERBOSE
-#### set to get useful log output
-#### for debugging your actions
+#### Run Nemo in debug mode using with
+###  NEMO_DEBUG set to include 'Actions'
 ####
 #### i.e.    $ nemo --quit
-####         $ NEMO_ACTION_VERBOSE=1 nemo
+####         $ NEMO_DEBUG=Actions nemo --debug
 #############################################
 
 # Whether this action is active.  For troubleshooting.
@@ -88,6 +86,8 @@ Extensions=any;
 #     "gsettings <schema> <boolean key>"  is true
 #     "gsettings <schema> <key> <key-type> <[eq|ne|gt|lt]> <value>"
 #     "dbus <name>" exists
+#     "exec <program>" run program and check its exit code (0 is pass, non-0 is fail).
+#                      Enclose in < > if the program resides in the action's folder.
 
 #Conditions=desktop;
 
