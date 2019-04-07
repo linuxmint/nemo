@@ -145,12 +145,16 @@ nemo_action_init (NemoAction *action)
     action->conditions = NULL;
     action->dbus = NULL;
     action->dbus_satisfied = TRUE;
+    action->dbus_recalc_timeout_id = 0;
     action->gsettings = NULL;
     action->gsettings_satisfied = TRUE;
+    action->gsettings_recalc_timeout_id = 0;
     action->escape_underscores = FALSE;
     action->escape_space = FALSE;
     action->show_in_blank_desktop = FALSE;
     action->run_in_terminal = FALSE;
+
+    action->constructing = TRUE;
 }
 
 static void
@@ -334,6 +338,10 @@ recalc_dbus_conditions (NemoAction *action)
 static void
 queue_recalc_dbus_conditions (NemoAction *action)
 {
+    if (action->constructing) {
+        return;
+    }
+
     if (action->dbus_recalc_timeout_id != 0) {
         g_source_remove (action->dbus_recalc_timeout_id);
         action->dbus_recalc_timeout_id = 0;
@@ -435,7 +443,7 @@ try_vector (const gchar *op, gint vector)
     return FALSE;
 }
 
-static void
+static gboolean
 recalc_gsettings_conditions (NemoAction *action)
 {
     GList *l;
@@ -523,6 +531,25 @@ recalc_gsettings_conditions (NemoAction *action)
     if (pass != old_satisfied) {
         g_signal_emit (action, signals[CONDITION_CHANGED], 0);
     }
+
+    action->gsettings_recalc_timeout_id = 0;
+    return FALSE;
+}
+
+static void
+queue_recalc_gsettings_conditions (NemoAction *action)
+{
+    if (action->constructing) {
+        return;
+    }
+
+    if (action->gsettings_recalc_timeout_id != 0) {
+        g_source_remove (action->gsettings_recalc_timeout_id);
+        action->gsettings_recalc_timeout_id = 0;
+    }
+
+    action->gsettings_recalc_timeout_id = g_idle_add ((GSourceFunc) recalc_gsettings_conditions,
+                                                      action);
 }
 
 static void
@@ -584,7 +611,7 @@ setup_gsettings_condition (NemoAction *action,
 
                 cond->handler_id = g_signal_connect_swapped (settings,
                                                              signal_string,
-                                                             G_CALLBACK (recalc_gsettings_conditions),
+                                                             G_CALLBACK (queue_recalc_gsettings_conditions),
                                                              action);
 
                 action->gsettings = g_list_prepend (action->gsettings, cond);
@@ -772,8 +799,6 @@ nemo_action_constructed (GObject *object)
         }
     }
 
-    recalc_gsettings_conditions (action);
-
     gchar *exec = NULL;
     gboolean use_parent_dir = FALSE;
 
@@ -813,6 +838,13 @@ nemo_action_constructed (GObject *object)
                    "escape-space", escape_space,
                    "run-in-terminal", run_in_terminal,
                     NULL);
+
+    action->constructing = FALSE;
+
+    DEBUG ("Initial action gsettings and dbus update (%s)", action->key_file_path);
+    queue_recalc_dbus_conditions (action);
+    queue_recalc_gsettings_conditions (action);
+    DEBUG ("Initial action gsettings and dbus complete (%s)", action->key_file_path);
 
     g_free (orig_label);
     g_free (orig_tt);
@@ -954,6 +986,11 @@ nemo_action_finalize (GObject *object)
     if (action->dbus_recalc_timeout_id != 0) {
         g_source_remove (action->dbus_recalc_timeout_id);
         action->dbus_recalc_timeout_id = 0;
+    }
+
+    if (action->gsettings_recalc_timeout_id != 0) {
+        g_source_remove (action->gsettings_recalc_timeout_id);
+        action->gsettings_recalc_timeout_id = 0;
     }
 
     G_OBJECT_CLASS (parent_class)->finalize (object);

@@ -124,6 +124,8 @@ struct _NemoAction {
     gboolean escape_space;
     gboolean show_in_blank_desktop;
     gboolean run_in_terminal;
+
+    gboolean constructing;
 };
 
 struct _NemoActionClass {
