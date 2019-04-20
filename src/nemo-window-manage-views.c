@@ -1984,6 +1984,8 @@ nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
                 gtk_widget_show (bad_bar);
                 nemo_window_slot_add_extra_location_widget (slot, bad_bar);
                 slot->cache_bar = bad_bar;
+
+                g_object_add_weak_pointer (G_OBJECT (bad_bar), (gpointer) &slot->cache_bar);
             }
         }
     } else {
