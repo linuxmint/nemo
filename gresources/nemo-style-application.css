@@ -52,6 +52,7 @@ NemoDesktopWindow GtkPaned {
     border-color: #000000;
     border-radius: 3px;
     color: #000000;
+    caret-color: #000000;
     text-shadow: none;
     background-image: -gtk-gradient(linear,
                                     left top, left bottom,
