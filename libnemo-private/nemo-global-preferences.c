@@ -32,6 +32,7 @@
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
+#include <eel/eel-debug.h>
 #include <glib/gi18n.h>
 #include <gio/gdesktopappinfo.h>
 
@@ -252,6 +253,8 @@ nemo_global_preferences_init (void)
                       G_CALLBACK (ignore_view_metadata_cb), NULL);
 
     setup_cached_time_data ();
+
+    eel_debug_call_at_shutdown (nemo_global_preferences_finalize);
 }
 
 void
