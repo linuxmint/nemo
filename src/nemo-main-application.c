@@ -195,10 +195,11 @@ nemo_main_application_create_window (NemoApplication *application,
 		gtk_window_unmaximize (GTK_WINDOW (window));
 	}
 
-	geometry_string = g_settings_get_string
-		(nemo_window_state, NEMO_WINDOW_STATE_GEOMETRY);
-	if (geometry_string != NULL &&
-	    geometry_string[0] != 0) {
+    geometry_string = g_settings_get_string (nemo_window_state, NEMO_WINDOW_STATE_GEOMETRY);
+
+    if (NEMO_MAIN_APPLICATION (application)->priv->geometry == NULL && 
+        geometry_string != NULL &&
+        geometry_string[0] != 0) {
 		/* Ignore saved window position if a window with the same
 		 * location is already showing. That way the two windows
 		 * wont appear at the exact same location on the screen.
@@ -210,6 +211,7 @@ nemo_main_application_create_window (NemoApplication *application,
 			 NEMO_WINDOW_MIN_HEIGHT,
 			 TRUE);
 	}
+
 	g_free (geometry_string);
 
     nemo_undo_manager_attach (application->undo_manager, G_OBJECT (window));
@@ -508,7 +510,8 @@ nemo_main_application_local_command_line (GApplication *application,
 		{ "version", '\0', 0, G_OPTION_ARG_NONE, &version,
 		  N_("Show the version of the program."), NULL },
 		{ "geometry", 'g', 0, G_OPTION_ARG_STRING, &self->priv->geometry,
-		  N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
+		  N_("Create the initial window with the given geometry. "
+             "Examples: nemo --geometry=+100+100, nemo --geometry=600x400, nemo --geometry=600x400+100+100."), N_("GEOMETRY") },
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
         { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop_ignored,
