@@ -7291,7 +7291,14 @@ action_open_in_terminal_callback(GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
-        gchar *path = nemo_file_get_path (NEMO_FILE (selection->data));
+        gchar *path;
+        if (nemo_file_is_directory (NEMO_FILE (selection->data))) {
+            path = nemo_file_get_path (NEMO_FILE (selection->data));
+        } else {
+            NemoFile *location = nemo_file_get_parent (NEMO_FILE (selection->data));
+            path = nemo_file_get_path (location);
+            nemo_file_unref (location);
+        }
         open_in_terminal (path);
         g_free (path);
 		nemo_file_list_free (selection);
