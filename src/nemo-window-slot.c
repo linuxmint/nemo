@@ -1,24 +1,24 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*-
 
    nemo-window-slot.c: Nemo window slot
- 
+
    Copyright (C) 2008 Free Software Foundation, Inc.
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
    published by the Free Software Foundation; either version 2 of the
    License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public
    License along with this program; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
    Boston, MA 02110-1335, USA.
-  
+
    Author: Christian Neumair <cneumair@gnome.org>
 */
 
@@ -412,7 +412,7 @@ nemo_window_slot_class_init (NemoWindowSlotClass *klass)
 			      NULL, NULL,
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
-	
+
 	signals[CHANGED_PANE] =
 		g_signal_new ("changed-pane",
 			G_TYPE_FROM_CLASS (klass),
@@ -460,7 +460,7 @@ void
 nemo_window_slot_make_hosting_pane_active (NemoWindowSlot *slot)
 {
 	g_assert (NEMO_IS_WINDOW_PANE (slot->pane));
-	
+
 	nemo_window_set_active_slot (nemo_window_slot_get_window (slot),
 					 slot);
 }
@@ -473,11 +473,11 @@ nemo_window_slot_get_window (NemoWindowSlot *slot)
 }
 
 /* nemo_window_slot_update_title:
- * 
+ *
  * Re-calculate the slot title.
  * Called when the location or view has changed.
  * @slot: The NemoWindowSlot in question.
- * 
+ *
  */
 void
 nemo_window_slot_update_title (NemoWindowSlot *slot)
@@ -512,7 +512,7 @@ nemo_window_slot_update_title (NemoWindowSlot *slot)
 }
 
 /* nemo_window_slot_update_icon:
- * 
+ *
  * Re-calculate the slot icon
  * Called when the location or view or icon set has changed.
  * @slot: The NemoWindowSlot in question.
@@ -536,16 +536,16 @@ nemo_window_slot_update_icon (NemoWindowSlot *slot)
 			 * if we're setting to the same icon. This happens a lot e.g. when
 			 * the trash directory changes due to the file count changing.
 			 */
-			if (g_strcmp0 (icon_name, gtk_window_get_icon_name (GTK_WINDOW (window))) != 0) {			
+			if (g_strcmp0 (icon_name, gtk_window_get_icon_name (GTK_WINDOW (window))) != 0) {
 				gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
 			}
 		} else {
 			pixbuf = nemo_icon_info_get_pixbuf_nodefault (info);
-			
+
 			if (pixbuf) {
 				gtk_window_set_icon (GTK_WINDOW (window), pixbuf);
 				g_object_unref (pixbuf);
-			} 
+			}
 		}
 
         nemo_icon_info_unref (info);
@@ -557,7 +557,7 @@ nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
                                       gboolean show_thumbnails)
 {
   NemoDirectory *directory;
-  
+
   directory = nemo_directory_get (slot->location);
   nemo_directory_set_show_thumbnails(directory, show_thumbnails);
 }
@@ -616,7 +616,7 @@ static void
 real_slot_set_short_status (NemoWindowSlot *slot,
 			    const gchar *status)
 {
-	
+
 	gboolean show_statusbar;
 	gboolean disable_chrome;
 
@@ -785,7 +785,7 @@ nemo_window_slot_get_current_view (NemoWindowSlot *slot)
 void
 nemo_window_slot_go_home (NemoWindowSlot *slot,
 			      NemoWindowOpenFlags flags)
-{			      
+{
 	GFile *home;
 
 	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
@@ -840,7 +840,7 @@ nemo_window_slot_should_close_with_mount (NemoWindowSlot *slot,
 	gboolean close_with_mount;
 
 	mount_location = g_mount_get_root (mount);
-	close_with_mount = 
+	close_with_mount =
 		g_file_has_prefix (NEMO_WINDOW_SLOT (slot)->location, mount_location) ||
 		g_file_equal (NEMO_WINDOW_SLOT (slot)->location, mount_location);
 
