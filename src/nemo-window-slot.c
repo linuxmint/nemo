@@ -800,6 +800,7 @@ nemo_window_slot_go_up (NemoWindowSlot *slot,
 			    NemoWindowOpenFlags flags)
 {
 	GFile *parent;
+	char * uri;
 
 	if (slot->location == NULL) {
 		return;
@@ -807,7 +808,30 @@ nemo_window_slot_go_up (NemoWindowSlot *slot,
 
 	parent = g_file_get_parent (slot->location);
 	if (parent == NULL) {
-		return;
+		if (g_file_has_uri_scheme (slot->location, "smb")) {
+			uri = g_file_get_uri (slot->location);
+			if (g_strcmp0 ("smb:///", uri) == 0) {
+				parent = g_file_new_for_uri ("network:///");
+			}
+			else {
+				// Remove last /
+				char * temp;
+				if (g_str_has_suffix (uri, "/")) {
+					temp = g_strrstr (uri, "/");
+					*temp = '\0';
+				}
+				// Remove last part of string after last remaining /
+				temp = g_strrstr (uri, "/");
+				if (temp != NULL) {
+					*temp = '\0'; // Mark it as the end of the string
+				}
+				parent = g_file_new_for_uri (uri);
+			}
+			g_free (uri);
+		}
+		else {
+			return;
+		}
 	}
 
 	nemo_window_slot_open_location (slot, parent, flags);
