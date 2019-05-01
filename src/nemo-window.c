@@ -292,13 +292,11 @@ static void
 nemo_window_prompt_for_location (NemoWindow *window,
                      const char     *initial)
 {
-    NemoWindowPane *pane;
-
     g_return_if_fail (NEMO_IS_WINDOW (window));
 
     if (initial) {
         nemo_window_show_location_entry(window);
-        pane = window->details->active_pane;
+        NemoWindowPane *pane = window->details->active_pane;
         nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
                             initial);
     }
@@ -1460,10 +1458,7 @@ sync_thumbnail_action_callback (NemoFile *file,
         gboolean show_thumbnails;
 
         pane = nemo_window_get_active_pane(window);
-        show_thumbnails = nemo_file_get_boolean_metadata(
-                file,
-                NEMO_METADATA_KEY_SHOW_THUMBNAILS,
-                FALSE);
+        show_thumbnails = nemo_file_should_show_thumbnail (file);
 
         toolbar_set_show_thumbnails_button (show_thumbnails, pane);
         menu_set_show_thumbnails_action (show_thumbnails, window);
@@ -1953,6 +1948,15 @@ nemo_window_init (NemoWindow *window)
 
     /* Set initial window title */
     gtk_window_set_title (GTK_WINDOW (window), _("Nemo"));
+
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+                  G_CALLBACK(nemo_window_sync_thumbnail_action),
+                  window);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS,
+                  G_CALLBACK(nemo_window_sync_thumbnail_action),
+                  window);
 }
 
 static NemoIconInfo *

@@ -28,6 +28,11 @@
     <property name="can_focus">False</property>
     <property name="icon_name">view-compact-symbolic</property>
   </object>
+  <object class="GtkImage" id="image14">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">xapp-prefs-preview-symbolic</property>
+  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -309,16 +314,13 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Always</col>
+        <col id="0" translatable="yes">Yes</col>
       </row>
       <row>
         <col id="0" translatable="yes">Local Files Only</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Per Folder</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Never</col>
+        <col id="0" translatable="yes">No</col>
       </row>
     </data>
   </object>
@@ -449,6 +451,22 @@
                                           </packing>
                                         </child>
                                         <child>
+                                          <object class="GtkCheckButton" id="inherit_view_checkbox">
+                                            <property name="label" translatable="yes">_Inherit view type from parent</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkBox" id="hbox11">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -490,7 +508,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">1</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -506,7 +524,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">2</property>
+                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1240,6 +1258,22 @@
                                         <property name="orientation">vertical</property>
                                         <property name="spacing">6</property>
                                         <child>
+                                          <object class="GtkCheckButton" id="trash_confirm_move_checkbutton">
+                                            <property name="label" translatable="yes">Ask before moving files to the Trash</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkCheckButton" id="trash_confirm_checkbutton">
                                             <property name="label" translatable="yes">Ask before _emptying the Trash or deleting files</property>
                                             <property name="visible">True</property>
@@ -1252,7 +1286,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">0</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -1268,7 +1302,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">1</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -1283,7 +1317,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">2</property>
+                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2240,6 +2274,22 @@
                                           </packing>
                                         </child>
                                         <child>
+                                          <object class="GtkCheckButton" id="inherit_show_thumbnails_checkbutton">
+                                            <property name="label" translatable="yes">_Inherit thumbnail visibility from parent</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkBox" id="hbox21">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -2281,7 +2331,7 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">1</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -3146,7 +3196,41 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="spacing">6</property>
+                                        <child>
+                                          <object class="GtkToggleButton" id="show_show_thumbnails_icon_toolbar_togglebutton">
+                                            <property name="name">show_show_thumbnails_icon_toolbar_togglebutton</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="image">image14</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Show Thumbnails</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">6</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>

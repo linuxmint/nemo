@@ -505,21 +505,24 @@ static void
 nemo_view_reset_to_defaults (NemoView *view)
 {
     NemoFile *file;
+    NemoWindow *window;
     g_return_if_fail (NEMO_IS_VIEW (view));
 
     NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->reset_to_defaults (view);
 
     gboolean show_hidden = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_HIDDEN_FILES);
 
+    window = view->details->window;
     if (show_hidden) {
-        nemo_window_set_hidden_files_mode (view->details->window, NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
+        nemo_window_set_hidden_files_mode (window, NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE);
     } else {
-        nemo_window_set_hidden_files_mode (view->details->window, NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
+        nemo_window_set_hidden_files_mode (window, NEMO_WINDOW_SHOW_HIDDEN_FILES_DISABLE);
     }
 
     file = view->details->slot->viewed_file;
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, NULL, NULL);
-    emit_change_signals_for_all_files_in_all_directories ();
+    nemo_file_set_metadata(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, NULL);
+    gtk_action_activate (gtk_action_group_get_action (nemo_window_get_main_action_group (window), NEMO_ACTION_RELOAD));
 }
 
 static gboolean
@@ -2993,6 +2996,8 @@ nemo_view_finalize (GObject *object)
 	if (view->details->location_popup_event != NULL) {
 		gdk_event_free ((GdkEvent *) view->details->location_popup_event);
 	}
+
+    g_clear_pointer (&view->details->load_timer, g_timer_destroy);
 
 	g_hash_table_destroy (view->details->non_ready_files);
 
@@ -6389,6 +6394,10 @@ add_action_to_action_menus (NemoView *directory_view,
 
     gtk_action_set_visible (GTK_ACTION (action), FALSE);
 
+    g_signal_handlers_disconnect_by_func (action,
+                                          run_action_callback,
+                                          directory_view);
+
     g_signal_connect (action, "activate",
                    G_CALLBACK (run_action_callback),
                    directory_view);
@@ -8231,7 +8240,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Open each selected item in a navigation window"),
 				 G_CALLBACK (action_open_alternate_callback) },
   /* name, stock id */         { "OpenInNewTab", NULL,
-  /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>o",
+  /* label, accelerator */       N_("Open in New _Tab"), "<control><shift>t",
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "utilities-terminal-symbolic",
@@ -8248,7 +8257,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
                  G_CALLBACK (action_follow_symlink_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_CONTAINING_FOLDER, "go-jump-symbolic",
-  /* label, accelerator */       N_("Open containing folder"), "",
+  /* label, accelerator */       N_("Open containing folder"), "<control><alt>O",
   /* tooltip */                  N_("Navigate to the folder that the selected item is stored in"),
                  G_CALLBACK (action_open_containing_folder_callback) },
   /* name, stock id */         { "OtherApplication1", NULL,

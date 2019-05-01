@@ -120,7 +120,7 @@ build_menu (NemoBlankDesktopWindow *window)
     for (l = action_list; l != NULL; l = l->next) {
         action = l->data;
 
-        if (action->show_in_blank_desktop && action->dbus_satisfied) {
+        if (action->show_in_blank_desktop && action->dbus_satisfied && action->gsettings_satisfied) {
             gchar *label = nemo_action_get_label (action, NULL, NULL);
             item = gtk_image_menu_item_new_with_mnemonic (label);
             g_free (label);
@@ -213,6 +213,12 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 	if (accessible) {
 		atk_object_set_name (accessible, _("Desktop"));
 	}
+
+    /* We don't want this extra action manager unless there's actually
+     * a blank desktop in use.  If so, however, we need to initialize it early here,
+     * as it populates itself with actions asynchronously, and would not be ready
+     * in build_menu().*/
+    nemo_desktop_manager_get_action_manager ();
 
     nemo_blank_desktop_window_update_geometry (window);
 

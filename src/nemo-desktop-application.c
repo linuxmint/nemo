@@ -252,10 +252,13 @@ nemo_desktop_application_local_command_line (GApplication *application,
 
     gboolean version = FALSE;
     gboolean kill_shell = FALSE;
+    gboolean debug = FALSE;
 
     const GOptionEntry options[] = {
         { "version", '\0', 0, G_OPTION_ARG_NONE, &version,
           N_("Show the version of the program."), NULL },
+        { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
+          "Enable debugging code.  Example usage: 'NEMO_DEBUG=Desktop,Actions nemo-desktop --debug'.  Use NEMO_DEBUG=all for more topics.", NULL },
         { "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
           N_("Quit Nemo Desktop."), NULL },
         { NULL }
@@ -286,6 +289,10 @@ nemo_desktop_application_local_command_line (GApplication *application,
     if (version) {
         g_print ("nemo-desktop " VERSION "\n");
         goto out;
+    }
+
+    if (debug) {
+        g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
     }
 
     if (geteuid () == 0) {

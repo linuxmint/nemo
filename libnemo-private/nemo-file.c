@@ -4237,53 +4237,82 @@ gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
 	GFilesystemPreviewType use_preview;
-    gboolean show_dir_thumbnails;
     NemoFile *dir;
+    char* metadata_str = NULL;
 
-    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
+    if (!NEMO_IS_FILE (file)) {
         return FALSE;
     }
 
 	use_preview = nemo_file_get_filesystem_use_preview (file);
-    dir = nemo_file_is_directory(file) ? file : nemo_file_get_parent(file);
+    if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
+        /* file system says to never thumbnail anything */
+		return FALSE;
+	}
     
-    show_dir_thumbnails = nemo_file_get_boolean_metadata (dir,
-                                                          NEMO_METADATA_KEY_SHOW_THUMBNAILS,
-                                                          FALSE);
-
-	/* If the thumbnail has already been created, don't care about the size
-	 * of the original file.
-	 */
+    /* Only care about the file size, if the thumbnail has not been created yet */
 	if (file->details->thumbnail_path == NULL &&
 	    nemo_file_get_size (file) > cached_thumbnail_limit) {
 		return FALSE;
 	}
 
-    if (file->details->thumbnail_access_problem)
+    if (file->details->thumbnail_access_problem) {
         return FALSE;
+    }
 
+    if (!nemo_global_preferences_get_ignore_view_metadata ()) {
+        dir = nemo_file_is_directory(file) ? file : nemo_file_get_parent(file);
+        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS)) {
+            while (dir != NULL) {
+                metadata_str = nemo_file_get_metadata(dir,
+                                                    NEMO_METADATA_KEY_SHOW_THUMBNAILS,
+                                                    NULL);
+                if (metadata_str == NULL) { // do this here to avoid string comparisons with a NULL string
+                    dir = nemo_file_get_parent(dir);
+                }
+                else if (g_ascii_strcasecmp (metadata_str, "true") == 0) {
+                    g_free(metadata_str);
+                    return TRUE;
+                }
+                else if (g_ascii_strcasecmp (metadata_str, "false") == 0) {
+                    g_free(metadata_str);
+                    return FALSE;
+                }
+                else {
+                    g_free(metadata_str);
+                    dir = nemo_file_get_parent(dir);
+                }
+            }
+        } else {
+            metadata_str = nemo_file_get_metadata(dir,
+                                                NEMO_METADATA_KEY_SHOW_THUMBNAILS,
+                                                NULL);
+            if (metadata_str != NULL ) {
+                if (g_ascii_strcasecmp (metadata_str, "true") == 0) {
+                    g_free(metadata_str);
+                    return TRUE;
+                }
+                else if (g_ascii_strcasecmp (metadata_str, "false") == 0) {
+                    g_free(metadata_str);
+                    return FALSE;
+                }
+            }
+        }
+    }
+
+    /* Use global preference */
     if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
-		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
-			return FALSE;
-		} else {
-			return TRUE;
-		}
-	} else if (show_image_thumbs == NEMO_SPEED_TRADEOFF_PER_FOLDER) {
-		return show_dir_thumbnails;
-	} else {
-		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
-			/* file system says to never thumbnail anything */
-			return FALSE;
-		} else if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL) {
-			/* file system says we should treat file as if it's local */
-			return TRUE;
-		} else {
-			/* only local files */
-			return nemo_file_is_local (file);
-		}
-	}
-
-	return FALSE;
+        return TRUE;
+    }
+    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
+        return FALSE;
+    }
+    if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL) {
+        /* file system says we should treat file as if it's local */
+        return TRUE;
+    }
+    /* local files is the only left to check */
+    return nemo_file_is_local (file);
 }
 
 void
@@ -8590,6 +8619,10 @@ nemo_file_class_init (NemoFileClass *class)
 	show_thumbnails_changed_callback (NULL);
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
+				  G_CALLBACK (show_thumbnails_changed_callback),
+				  NULL);
+    g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS,
 				  G_CALLBACK (show_thumbnails_changed_callback),
 				  NULL);
 

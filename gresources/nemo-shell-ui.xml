@@ -114,6 +114,7 @@
 	</placeholder>
 	<menu action="Help">
 		<menuitem action="NemoHelp"/>
+        <menuitem action="NemoShortcuts"/>
 <!--		<menuitem action="NemoHelpSearch"/>
 		<menuitem action="NemoHelpSort"/>
 		<menuitem action="NemoHelpLost"/>

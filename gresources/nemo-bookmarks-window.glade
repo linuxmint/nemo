@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.0 on Thu Oct 31 10:45:38 2013 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkDialog" id="bookmarks_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Edit Bookmarks</property>
     <property name="window_position">center</property>
     <property name="type_hint">normal</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -20,19 +23,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="bookmark_help_button">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkButton" id="bookmark_sort_button">
@@ -122,11 +113,11 @@
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">&lt;b&gt;_Bookmarks&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                         <property name="use_underline">True</property>
                         <property name="mnemonic_widget">bookmark_tree_view</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -211,10 +202,10 @@
                           <object class="GtkLabel" id="bookmark_name_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
                             <property name="label" translatable="yes">&lt;b&gt;_Name&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
                             <property name="use_underline">True</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -276,12 +267,12 @@
                           <object class="GtkLabel" id="bookmark_location_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
                             <property name="xpad">2</property>
                             <property name="ypad">2</property>
                             <property name="label" translatable="yes">&lt;b&gt;_Location&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
                             <property name="use_underline">True</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -352,7 +343,6 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-11">bookmark_help_button</action-widget>
       <action-widget response="-10">bookmark_jump_button</action-widget>
       <action-widget response="-2">bookmark_delete_button</action-widget>
       <action-widget response="-7">bookmark_close_button</action-widget>

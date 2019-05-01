@@ -44,6 +44,7 @@
 
 /* string enum preferences */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET "default_view_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_INHERIT_VIEW_WIDGET "inherit_view_checkbox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ICON_VIEW_ZOOM_WIDGET "icon_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_VIEW_ZOOM_WIDGET "compact_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
@@ -60,6 +61,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LABELS_BESIDE_ICONS_WIDGET "labels_beside_icons_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ALL_COLUMNS_SAME_WIDTH "all_columns_same_width_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET "always_use_browser_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_MOVE_WIDGET "trash_confirm_move_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET "trash_confirm_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_DELETE_WIDGET "trash_delete_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SWAP_TRASH_DELETE "swap_trash_binding_checkbutton"
@@ -79,6 +81,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ICON_VIEW_ICON_TOOLBAR_WIDGET "show_icon_view_icon_toolbar_togglebutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_ICON_TOOLBAR_WIDGET "show_list_view_icon_toolbar_togglebutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET "show_compact_view_icon_toolbar_togglebutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SHOW_THUMBNAILS_ICON_TOOLBAR_WIDGET "show_show_thumbnails_icon_toolbar_togglebutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_FULL_PATH_IN_TITLE_BARS_WIDGET "show_full_path_in_title_bars_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_CLOSE_DEVICE_VIEW_ON_EJECT_WIDGET "close_device_view_on_eject_checkbutton"
@@ -90,6 +93,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET "ignore_view_metadata_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_BOOKMARKS_IN_TO_MENUS_WIDGET "bookmarks_in_to_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_IN_TO_MENUS_WIDGET "places_in_to_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_INHERIT_SHOW_THUMBNAILS_WIDGET "inherit_show_thumbnails_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_BULK_RENAME_WIDGET "bulk_rename_entry"
 
@@ -151,7 +155,6 @@ static const char * const date_format_values[] = {
 static const char * const preview_image_values[] = {
     "always",
     "local-only",
-    "per-folder",
     "never",
     NULL
 };
@@ -846,6 +849,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_COMPACT_VIEW_ICON_TOOLBAR_WIDGET,
 			   NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
+    bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_SHOW_THUMBNAILS_ICON_TOOLBAR_WIDGET,
+			   NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR);
 
 	/* setup preferences */
 	bind_builder_bool (builder, nemo_icon_view_preferences,
@@ -864,6 +870,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 				    NEMO_FILE_MANAGEMENT_PROPERTIES_ALWAYS_USE_BROWSER_WIDGET,
 				    NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
 	bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_MOVE_WIDGET,
+			   NEMO_PREFERENCES_CONFIRM_MOVE_TO_TRASH);
+	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TRASH_CONFIRM_WIDGET,
 			   NEMO_PREFERENCES_CONFIRM_TRASH);
 	bind_builder_bool (builder, nemo_preferences,
@@ -878,6 +887,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 	bind_builder_bool (builder, nemo_tree_sidebar_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET,
 			   NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES);
+  bind_builder_bool (builder, nemo_preferences,
+			   NEMO_FILE_MANAGEMENT_PROPERTIES_INHERIT_VIEW_WIDGET,
+			   NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER);
 
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET,
@@ -903,6 +915,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET,
 			   NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
 			   (const char **) preview_image_values);
+    bind_builder_bool (builder, nemo_preferences,
+               NEMO_FILE_MANAGEMENT_PROPERTIES_INHERIT_SHOW_THUMBNAILS_WIDGET,
+               NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS);
 	bind_builder_enum (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET,
 			   NEMO_PREFERENCES_SHOW_DIRECTORY_ITEM_COUNTS,

@@ -143,7 +143,7 @@ action_home_callback (GtkAction *action,
         NemoWindowSlot *slot;
 
         window = NEMO_WINDOW (user_data);
-
+g_printerr ("what\n");
         slot = nemo_window_get_active_slot (window);
 
         nemo_window_slot_go_home (slot, nemo_event_get_window_open_flags ());
@@ -409,6 +409,39 @@ action_nemo_manual_callback (GtkAction *action,
 		gtk_widget_show (dialog);
 		g_error_free (error);
 	}
+}
+
+static void
+action_show_shortcuts_window (GtkAction *action,
+                              gpointer user_data)
+{
+    NemoWindow *window;
+    static GtkWidget *shortcuts_window;
+
+    window = NEMO_WINDOW (user_data);
+
+    if (shortcuts_window == NULL)
+    {
+        GtkBuilder *builder;
+
+        builder = gtk_builder_new_from_resource ("/org/nemo/nemo-shortcuts.ui");
+        shortcuts_window = GTK_WIDGET (gtk_builder_get_object (builder, "keyboard_shortcuts"));
+
+        gtk_window_set_position (GTK_WINDOW (shortcuts_window), GTK_WIN_POS_CENTER);
+
+        g_signal_connect (shortcuts_window, "destroy",
+                          G_CALLBACK (gtk_widget_destroyed), &shortcuts_window);
+
+        g_object_unref (builder);
+    }
+
+    if (GTK_WINDOW (window) != gtk_window_get_transient_for (GTK_WINDOW (shortcuts_window)))
+    {
+        gtk_window_set_transient_for (GTK_WINDOW (shortcuts_window), GTK_WINDOW (window));
+    }
+
+    gtk_widget_show_all (shortcuts_window);
+    gtk_window_present (GTK_WINDOW (shortcuts_window));
 }
 
 static void
@@ -1277,6 +1310,10 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       N_("_All Topics"), "F1",
   /* tooltip */                  N_("Display Nemo help"),
                                  G_CALLBACK (action_nemo_manual_callback) },
+                               { "NemoShortcuts", "preferences-desktop-keyboard-shortcuts-symbolic",
+                                 N_("_Keyboard Shortcuts"), "<control>F1",
+                                 N_("Display keyboard shortcuts"),
+                                 G_CALLBACK (action_show_shortcuts_window) },
   /** name, stock id          { "NemoHelpSearch", NULL,
      label, accelerator        N_("Search for files"), NULL,
      tooltip                   N_("Locate files based on file name and type. Save your searches for later use."),
@@ -1657,21 +1694,6 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	return action_group;
 }
 
-static gboolean
-show_thumbnails_enum_get_mapper (GValue   *value,
-                                 GVariant *variant,
-                                 gpointer  user_data)
-{
-    const gchar *str;
-
-    str = g_variant_get_string (variant, NULL);
-
-    g_value_set_boolean (value,
-                         g_strcmp0 (str, "per-folder") == 0);
-
-    return TRUE;
-}
-
 static void
 window_menus_set_bindings (NemoWindow *window)
 {
@@ -1706,18 +1728,6 @@ window_menus_set_bindings (NemoWindow *window)
              action,
              "active",
              G_SETTINGS_BIND_DEFAULT);
-
-    action = gtk_action_group_get_action (action_group,
-                                          NEMO_ACTION_SHOW_THUMBNAILS);
-
-    g_settings_bind_with_mapping (nemo_preferences,
-                                  NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
-                                  action,
-                                  "visible",
-                                  G_SETTINGS_BIND_GET,
-                                  (GSettingsBindGetMapping) show_thumbnails_enum_get_mapper,
-                                  NULL,
-                                  NULL, NULL);
 
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_SIDEBAR);

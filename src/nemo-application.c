@@ -515,8 +515,6 @@ nemo_application_quit (NemoApplication *self)
     windows = gtk_application_get_windows (GTK_APPLICATION (app));
     g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
 
-    nemo_global_preferences_finalize ();
-
     /* we have been asked to force quit */
     g_application_quit (G_APPLICATION (self));
 }

@@ -195,9 +195,10 @@ nemo_main_application_create_window (NemoApplication *application,
         gtk_window_unmaximize (GTK_WINDOW (window));
     }
 
-    geometry_string = g_settings_get_string
-        (nemo_window_state, NEMO_WINDOW_STATE_GEOMETRY);
-    if (geometry_string != NULL &&
+    geometry_string = g_settings_get_string (nemo_window_state, NEMO_WINDOW_STATE_GEOMETRY);
+
+    if (NEMO_MAIN_APPLICATION (application)->priv->geometry == NULL && 
+        geometry_string != NULL &&
         geometry_string[0] != 0) {
         /* Ignore saved window position if a window with the same
          * location is already showing. That way the two windows
@@ -208,8 +209,9 @@ nemo_main_application_create_window (NemoApplication *application,
              geometry_string,
              NEMO_WINDOW_MIN_WIDTH,
              NEMO_WINDOW_MIN_HEIGHT,
-             TRUE);
+         TRUE);
     }
+
     g_free (geometry_string);
 
     nemo_undo_manager_attach (application->undo_manager, G_OBJECT (window));
@@ -568,6 +570,7 @@ nemo_main_application_local_command_line (GApplication *application,
     gboolean no_default_window = FALSE;
     gboolean no_desktop_ignored = FALSE;
     gboolean fix_cache = FALSE;
+    gboolean debug = FALSE;
     gchar **remaining = NULL;
     GApplicationFlags init_flags;
     NemoMainApplication *self = NEMO_MAIN_APPLICATION (application);
@@ -583,7 +586,8 @@ nemo_main_application_local_command_line (GApplication *application,
         { "version", '\0', 0, G_OPTION_ARG_NONE, &version,
           N_("Show the version of the program."), NULL },
         { "geometry", 'g', 0, G_OPTION_ARG_STRING, &self->priv->geometry,
-          N_("Create the initial window with the given geometry."), N_("GEOMETRY") },
+          N_("Create the initial window with the given geometry. "
+             "Examples: nemo --geometry=+100+100, nemo --geometry=600x400, nemo --geometry=600x400+100+100."), N_("GEOMETRY") },
         { "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
           N_("Only create windows for explicitly specified URIs."), NULL },
         { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop_ignored,
@@ -592,6 +596,8 @@ nemo_main_application_local_command_line (GApplication *application,
           N_("Open URIs in tabs."), NULL },
         { "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
           N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
+        { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
+          "Enable debugging code.  Example usage: 'NEMO_DEBUG=Actions,Window nemo --debug'.  Use NEMO_DEBUG=all for more topics.", NULL },
         { "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
           N_("Quit Nemo."), NULL },
         { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
@@ -623,6 +629,10 @@ nemo_main_application_local_command_line (GApplication *application,
     if (version) {
         g_print ("nemo " VERSION "\n");
         goto out;
+    }
+
+    if (debug) {
+        g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
     }
 
     if (!do_cmdline_sanity_checks (self, perform_self_check,

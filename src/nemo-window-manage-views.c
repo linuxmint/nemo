@@ -802,7 +802,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	char *mimetype;
 	NemoWindow *window;
 	NemoWindowSlot *slot;
-	NemoFile *viewed_file, *parent_file;
+	NemoFile *parent_file, *tmp;
 	GFile *location;
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
@@ -879,9 +879,29 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		mimetype = nemo_file_get_mime_type (file);
 
 		/* Look in metadata for view */
-		view_id = nemo_global_preferences_get_ignore_view_metadata () ? g_strdup (nemo_window_get_ignore_meta_view_id (window)) :
+		if (nemo_global_preferences_get_inherit_folder_viewer_preference ()) {
+        if (nemo_global_preferences_get_ignore_view_metadata ()) {
+        view_id = g_strdup (nemo_window_get_ignore_meta_view_id (window));
+        } else {
+            parent_file = file;
+            nemo_file_ref(parent_file); // Do this once for the initial file
+            while (parent_file) {
+                view_id = nemo_file_get_metadata (parent_file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
+                tmp = nemo_file_get_parent (parent_file);
+                nemo_file_unref(parent_file);
+                if (view_id != NULL) {
+                    parent_file = NULL;
+                } else {
+                    parent_file = tmp;
+                }
+            }
+        }
+    } else {
+        view_id = nemo_global_preferences_get_ignore_view_metadata () ? g_strdup (nemo_window_get_ignore_meta_view_id (window)) :
                                                                         nemo_file_get_metadata (file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL);
-		if (view_id != NULL &&
+    }
+
+    if (view_id != NULL &&
 		    !nemo_view_factory_view_supports_uri (view_id,
 							      location,
 							      nemo_file_get_file_type (file),
@@ -976,6 +996,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 				nemo_window_pane_close_slot (slot->pane, slot);
 			} else {
 				/* We disconnected this, so we need to re-connect it */
+				NemoFile *viewed_file;
 				viewed_file = nemo_file_get (slot->location);
 				nemo_window_slot_set_viewed_file (slot, viewed_file);
 				nemo_file_monitor_add (viewed_file, &slot->viewed_file, 0);
@@ -1968,10 +1989,13 @@ nemo_window_slot_queue_reload (NemoWindowSlot *slot,
 void
 nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
 {
+    int show_image_thumbs;
     if (NEMO_IS_DESKTOP_WINDOW (nemo_window_slot_get_window (slot)))
         return;
 
-    if (nemo_application_get_cache_bad (nemo_application_get_singleton ()) &&
+    show_image_thumbs = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS);
+    if (show_image_thumbs != NEMO_SPEED_TRADEOFF_NEVER &&
+        nemo_application_get_cache_bad (nemo_application_get_singleton ()) &&
         !nemo_application_get_cache_problem_ignored (nemo_application_get_singleton ())) {
         if (slot->cache_bar != NULL) {
             gtk_widget_show (slot->cache_bar);
@@ -1981,6 +2005,8 @@ nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot)
                 gtk_widget_show (bad_bar);
                 nemo_window_slot_add_extra_location_widget (slot, bad_bar);
                 slot->cache_bar = bad_bar;
+
+                g_object_add_weak_pointer (G_OBJECT (bad_bar), (gpointer) &slot->cache_bar);
             }
         }
     } else {

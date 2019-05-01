@@ -137,7 +137,7 @@ char *
 nemo_query_to_readable_string (NemoQuery *query)
 {
     GFile *file;
-    gchar *location_title;
+    gchar *location_title, *readable;
 
 	if (!query || !query->details->text || query->details->text[0] == '\0') {
 		return g_strdup (_("Search"));
@@ -148,9 +148,11 @@ nemo_query_to_readable_string (NemoQuery *query)
 
     g_object_unref (file);
 
-    return g_strdup_printf (_("Search for \"%s\" in \"%s\""), query->details->text, location_title);
+    readable = g_strdup_printf (_("Search for \"%s\" in \"%s\""), query->details->text, location_title);
 
     g_free (location_title);
+
+    return readable;
 }
 
 static char *
