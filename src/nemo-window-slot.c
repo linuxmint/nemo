@@ -39,6 +39,9 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
 
+#define DEBUG_FLAG NEMO_DEBUG_WINDOW
+#include <libnemo-private/nemo-debug.h>
+
 #include <eel/eel-string.h>
 
 G_DEFINE_TYPE (NemoWindowSlot, nemo_window_slot, GTK_TYPE_BOX);
@@ -810,22 +813,34 @@ nemo_window_slot_go_up (NemoWindowSlot *slot,
 	if (parent == NULL) {
 		if (g_file_has_uri_scheme (slot->location, "smb")) {
 			uri = g_file_get_uri (slot->location);
+
+            DEBUG ("Starting samba URI for navigation: %s", uri);
+
 			if (g_strcmp0 ("smb:///", uri) == 0) {
 				parent = g_file_new_for_uri ("network:///");
 			}
 			else {
+                GString *gstr;
+                char * temp;
+
+                gstr = g_string_new (uri);
+
 				// Remove last /
-				char * temp;
-				if (g_str_has_suffix (uri, "/")) {
-					temp = g_strrstr (uri, "/");
-					*temp = '\0';
-				}
+                if (g_str_has_suffix (gstr->str, "/")) {
+                    gstr = g_string_set_size (gstr, gstr->len - 1);
+                }
+
 				// Remove last part of string after last remaining /
-				temp = g_strrstr (uri, "/");
+				temp = g_strrstr (gstr->str, "/") + 1;
 				if (temp != NULL) {
-					*temp = '\0'; // Mark it as the end of the string
+                    gstr = g_string_set_size (gstr, temp - gstr->str);
 				}
+
+                uri = g_string_free (gstr, FALSE);
+
 				parent = g_file_new_for_uri (uri);
+
+                DEBUG ("Ending samba URI for navigation: %s", uri);
 			}
 			g_free (uri);
 		}
