@@ -836,6 +836,11 @@ nemo_window_slot_go_up (NemoWindowSlot *slot,
                     gstr = g_string_set_size (gstr, temp - gstr->str);
 				}
 
+                // if we're going to end up with smb://, redirect it to network instead.
+                if (g_strcmp0 ("smb://", gstr->str) == 0) {
+                    gstr = g_string_assign (gstr, "network:///");
+                }
+
                 uri = g_string_free (gstr, FALSE);
 
 				parent = g_file_new_for_uri (uri);
