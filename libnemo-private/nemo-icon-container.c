@@ -6984,8 +6984,6 @@ nemo_icon_container_end_renaming_mode (NemoIconContainer *container, gboolean co
 
     container->details->renaming_allocation_count = 0;
 
-	nemo_icon_container_unfreeze_updates (container);
-
 	if (commit) {
 		set_pending_icon_to_reveal (container, icon);
 	}
@@ -7007,6 +7005,8 @@ nemo_icon_container_end_renaming_mode (NemoIconContainer *container, gboolean co
 
 	gtk_widget_hide (container->details->rename_widget);
 	g_free (container->details->original_text);
+
+    nemo_icon_container_unfreeze_updates (container);
 }
 
 void
