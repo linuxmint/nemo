@@ -4805,6 +4805,27 @@ nemo_file_get_trash_original_file_parent_as_string (NemoFile *file)
 	return NULL;
 }
 
+static const gchar *
+nemo_date_type_to_string (NemoDateType type)
+{
+    switch (type) {
+        case NEMO_DATE_TYPE_MODIFIED:
+            return "NEMO_DATE_TYPE_MODIFIED";
+        case NEMO_DATE_TYPE_CHANGED:
+            return "NEMO_DATE_TYPE_CHANGED";
+        case NEMO_DATE_TYPE_ACCESSED:
+            return "NEMO_DATE_TYPE_ACCESSED";
+        case NEMO_DATE_TYPE_PERMISSIONS_CHANGED:
+            return "NEMO_DATE_TYPE_PERMISSIONS_CHANGED";
+        case NEMO_DATE_TYPE_TRASHED:
+            return "NEMO_DATE_TYPE_TRASHED";
+        case NEMO_DATE_TYPE_CREATED:
+            return "NEMO_DATE_TYPE_CREATED";
+    }
+
+    return "(unknown)";
+}
+
 /**
  * nemo_file_get_date_as_string:
  *
@@ -4837,6 +4858,14 @@ nemo_file_get_date_as_string (NemoFile       *file,
     current_timezone = prefs_current_timezone;
 
     file_date_time_utc = g_date_time_new_from_unix_utc (file_time_raw);
+
+    if (!file_date_time_utc) {
+        DEBUG ("File '%s' has invalid time for %s",
+               nemo_file_peek_name (file),
+               nemo_date_type_to_string (date_type));
+        return NULL;
+    }
+
     file_date_time = g_date_time_to_timezone (file_date_time_utc, current_timezone);
     g_date_time_unref (file_date_time_utc);
 
