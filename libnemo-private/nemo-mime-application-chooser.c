@@ -440,7 +440,7 @@ nemo_mime_application_chooser_apply_labels (NemoMimeApplicationChooser *chooser)
 		}
 
 		/* first %s is filename, second %s is mime-type description */
-		emname = g_strdup_printf ("<i>%s</i>", basename);
+		emname = g_markup_printf_escaped("<i>%s</i>", basename);
 		label = g_strdup_printf (_("Select an application in the list to open %s and other files of type \"%s\""),
 					 emname, description);
 
