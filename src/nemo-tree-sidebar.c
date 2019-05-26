@@ -97,6 +97,7 @@ struct FMTreeViewDetails {
 	GtkWidget *popup_copy;
 	GtkWidget *popup_paste;
 	GtkWidget *popup_rename;
+    GtkWidget *popup_pin;
 	GtkWidget *popup_trash;
 	GtkWidget *popup_delete;
 	GtkWidget *popup_properties;
@@ -113,6 +114,7 @@ struct FMTreeViewDetails {
     guint action_manager_changed_id;
     GList *action_items;
     guint hidden_files_changed_id;
+    guint sort_directories_first : 1;
 };
 
 typedef struct {
@@ -538,9 +540,10 @@ compare_rows (GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer call
 	} else if (file_b == NULL) {
 		result = +1;
 	} else {
-		result = nemo_file_compare_for_sort (file_a, file_b,
-							 NEMO_FILE_SORT_BY_DISPLAY_NAME,
-							 FALSE, FALSE);
+        result = nemo_file_compare_for_sort (file_a, file_b,
+                                             NEMO_FILE_SORT_BY_DISPLAY_NAME,
+                                             FM_TREE_VIEW (callback_data)->details->sort_directories_first,
+                                             FALSE);
 	}
 
 	nemo_file_unref (file_a);
@@ -781,6 +784,12 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 		} else {
 			gtk_widget_hide (view->details->popup_unmount_separator);
 		}
+
+        if (nemo_file_get_pinning (view->details->popup_file)) {
+            gtk_menu_item_set_label (GTK_MENU_ITEM (view->details->popup_pin), _("Unp_in"));
+        } else {
+            gtk_menu_item_set_label (GTK_MENU_ITEM (view->details->popup_pin), _("P_in"));
+        }
 
         gboolean actions_visible = FALSE;
 
@@ -1056,6 +1065,14 @@ fm_tree_view_get_containing_window (FMTreeView *view)
 }
 
 static void
+fm_tree_view_pin_unpin_cb (GtkWidget  *menu_item,
+                           FMTreeView *view)
+{
+    nemo_file_set_pinning (view->details->popup_file,
+                           !nemo_file_get_pinning (view->details->popup_file));
+}
+
+static void
 fm_tree_view_trash_cb (GtkWidget *menu_item,
 		       FMTreeView *view)
 {
@@ -1244,6 +1261,7 @@ popup_menu_detach_cb (GtkWidget *attach_widget,
     view->details->popup_copy = NULL;
     view->details->popup_paste = NULL;
     view->details->popup_rename = NULL;
+    view->details->popup_pin = NULL;
     view->details->popup_trash = NULL;
     view->details->popup_delete = NULL;
     view->details->popup_properties = NULL;
@@ -1373,7 +1391,21 @@ create_popup_menu (FMTreeView *view)
 	view->details->popup_paste = menu_item;
 	
 	eel_gtk_menu_append_separator (GTK_MENU (popup));
-	
+
+    menu_image = gtk_image_new_from_icon_name ("view-pin-symbolic", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (menu_image);
+    menu_item = gtk_image_menu_item_new_with_mnemonic (_("P_in"));
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menu_item),
+                                   menu_image);
+    g_signal_connect (menu_item, "activate",
+                      G_CALLBACK (fm_tree_view_pin_unpin_cb),
+                      view);
+    gtk_widget_show (menu_item);
+    gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
+    view->details->popup_pin = menu_item;
+
+    eel_gtk_menu_append_separator (GTK_MENU (popup));
+
 	/* add the "move to trash" menu item */
 	menu_image = gtk_image_new_from_icon_name (NEMO_ICON_SYMBOLIC_TRASH_FULL,
 						   GTK_ICON_SIZE_MENU);
@@ -1588,9 +1620,10 @@ create_tree (FMTreeView *view)
 	cell = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (column, cell, TRUE);
 	gtk_tree_view_column_set_attributes (column, cell,
-					     "text", FM_TREE_MODEL_DISPLAY_NAME_COLUMN,
-					     "style", FM_TREE_MODEL_FONT_STYLE_COLUMN,
-					     NULL);
+                                         "text", FM_TREE_MODEL_DISPLAY_NAME_COLUMN,
+                                         "style", FM_TREE_MODEL_FONT_STYLE_COLUMN,
+                                         "weight", FM_TREE_MODEL_TEXT_WEIGHT_COLUMN,
+                                         NULL);
 
 	gtk_tree_view_append_column (view->details->tree_widget, column);
 
@@ -1668,6 +1701,27 @@ loading_uri_callback (NemoWindow *window,
 }
 
 static void
+sort_directories_first_changed_callback (gpointer callback_data)
+{
+    FMTreeView *view;
+    gboolean preference_value;
+
+    view = FM_TREE_VIEW (callback_data);
+
+    preference_value = g_settings_get_boolean (nemo_preferences,
+                                               NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+
+    if (preference_value != view->details->sort_directories_first) {
+        view->details->sort_directories_first = preference_value;
+    }
+
+    gtk_tree_model_sort_reset_default_sort_func (GTK_TREE_MODEL_SORT (view->details->sort_model));
+
+    gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (view->details->sort_model),
+                         compare_rows, view, NULL);
+}
+
+static void
 fm_tree_view_init (FMTreeView *view)
 {
 	view->details = g_new0 (FMTreeViewDetails, 1);
@@ -1691,6 +1745,13 @@ fm_tree_view_init (FMTreeView *view)
 	g_signal_connect_swapped (nemo_tree_sidebar_preferences,
 				  "changed::" NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES,
 				  G_CALLBACK (filtering_changed_callback), view);
+
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST,
+                  G_CALLBACK (sort_directories_first_changed_callback), view);
+
+    view->details->sort_directories_first = g_settings_get_boolean (nemo_preferences,
+                                                                    NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 
 	view->details->popup_file = NULL;
 
@@ -1779,6 +1840,10 @@ fm_tree_view_dispose (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
 					      G_CALLBACK(filtering_changed_callback),
 					      view);
+
+    g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
+                          G_CALLBACK(sort_directories_first_changed_callback),
+                          view);
 
 	view->details->window = NULL;
 

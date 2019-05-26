@@ -70,6 +70,13 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">True</property>
+                <property name="title" translatable="yes" context="shortcut window">Pin/Unpin selection</property>
+                <property name="accelerator">&lt;Primary&gt;&lt;shift&gt;D</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">True</property>
                 <property name="title" translatable="yes" context="shortcut window">Show help</property>
                 <property name="accelerator">F1</property>
               </object>

@@ -93,6 +93,7 @@ struct TreeNode {
 	guint done_loading : 1;
 	guint force_has_dummy : 1;
 	guint inserted : 1;
+    guint pinned : 1;
 };
 
 struct FMTreeModelDetails {
@@ -367,6 +368,22 @@ tree_node_update_display_name (TreeNode *node)
 	g_free (node->display_name);
 	node->display_name = NULL;
 	return TRUE;
+}
+
+static gboolean
+tree_node_update_pinning (TreeNode *node)
+{
+    gboolean file_value;
+
+    file_value = nemo_file_get_pinning (node->file);
+
+    if (file_value != node->pinned) {
+        node->pinned = file_value;
+
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static GIcon *
@@ -810,6 +827,7 @@ update_node_without_reporting (FMTreeModel *model, TreeNode *node)
 	changed |= tree_node_update_display_name (node);
 	changed |= tree_node_update_closed_icon (node);
     changed |= tree_node_update_open_icon (node);
+    changed |= tree_node_update_pinning (node);
 
 	return changed;
 }
@@ -1103,6 +1121,8 @@ fm_tree_model_get_column_type (GtkTreeModel *model, int index)
 		return G_TYPE_ICON;
 	case FM_TREE_MODEL_FONT_STYLE_COLUMN:
 		return PANGO_TYPE_STYLE;
+    case FM_TREE_MODEL_TEXT_WEIGHT_COLUMN:
+        return G_TYPE_INT;
 	default:
 		g_assert_not_reached ();
 	}
@@ -1250,6 +1270,16 @@ fm_tree_model_get_value (GtkTreeModel *model, GtkTreeIter *iter, int column, GVa
 			g_value_set_enum (value, PANGO_STYLE_NORMAL);
 		}
 		break;
+    case FM_TREE_MODEL_TEXT_WEIGHT_COLUMN:
+        g_value_init (value, G_TYPE_INT);
+
+        if (node != NULL) {
+            g_value_set_int (value, node->pinned ? PINNED_TEXT_WEIGHT : UNPINNED_TEXT_WEIGHT);
+        } else {
+            g_value_set_int (value, UNPINNED_TEXT_WEIGHT);
+        }
+
+        break;
 	default:
 		g_assert_not_reached ();
 	}

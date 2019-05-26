@@ -51,6 +51,7 @@ privateIcons = [
   'hicolor/emblems/16x16/emblem-note.png',
   'hicolor/emblems/24x24/emblem-note.png',
   'hicolor/emblems/48x48/emblem-note.png',
+  'hicolor/emblems/scalable/emblem-pinned.svg'
 ]
 noInstallIcons = [
   'hicolor/apps/16x16/nemo.svg',

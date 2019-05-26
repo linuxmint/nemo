@@ -187,6 +187,7 @@ nemo_file_init (NemoFile *file)
     file->details->desktop_monitor = -1;
     file->details->cached_position_x = -1;
     file->details->cached_position_y = -1;
+    file->details->pinning = FILE_PINNING_UNKNOWN;
 
 	nemo_file_clear_info (file);
 	nemo_file_invalidate_extension_info_internal (file);
@@ -2264,6 +2265,8 @@ update_info_internal (NemoFile *file,
 
     file->details->thumbnail_access_problem = FALSE;
 
+    file->details->pinning = FILE_PINNING_UNKNOWN;
+
 	/* FIXME bugzilla.gnome.org 42044: Need to let links that
 	 * point to the old name know that the file has been renamed.
 	 */
@@ -3219,6 +3222,18 @@ nemo_file_compare_for_sort_internal (NemoFile *file_1,
 					 gboolean reversed)
 {
 	gboolean is_directory_1, is_directory_2;
+    gboolean pinned_1, pinned_2;
+
+    pinned_1 = nemo_file_get_pinning (file_1);
+    pinned_2 = nemo_file_get_pinning (file_2);
+
+    if (pinned_1 && !pinned_2) {
+        return -1;
+    }
+
+    if (pinned_2 && !pinned_1) {
+        return +1;
+    }
 
 	if (directories_first) {
 		is_directory_1 = nemo_file_is_directory (file_1);
@@ -4561,6 +4576,27 @@ nemo_file_get_control_icon_name (NemoFile *file)
     }
 
     return icon_name;
+}
+
+gboolean
+nemo_file_get_pinning (NemoFile *file)
+{
+    g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
+
+    if (file->details->pinning == FILE_PINNING_UNKNOWN) {
+        file->details->pinning =  nemo_file_get_boolean_metadata (file, NEMO_METADATA_KEY_PINNED, FALSE);
+    }
+
+    return file->details->pinning;
+}
+
+void
+nemo_file_set_pinning (NemoFile *file,
+                       gboolean  pin)
+{
+    g_return_if_fail (NEMO_IS_FILE (file));
+
+    nemo_file_set_boolean_metadata (file, NEMO_METADATA_KEY_PINNED, TRUE, pin);
 }
 
 static gint

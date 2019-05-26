@@ -1562,6 +1562,43 @@ action_create_link_callback (GtkAction *action,
 }
 
 static void
+action_pin_unpin_file_callback (GtkAction *action,
+                                gpointer   callback_data)
+{
+    NemoView *view;
+    GList *selection;
+    gboolean to_pin;
+
+    g_assert (NEMO_IS_VIEW (callback_data));
+
+    view = NEMO_VIEW (callback_data);
+
+    selection = nemo_view_get_selection (view);
+
+    if (g_list_length (selection) < 1) {
+        g_warning ("No selection to pin - why?");
+        return;
+    }
+
+    /* Apply pinning according to the current state of the first
+     * selected file. ???*/
+    to_pin = !nemo_file_get_pinning (NEMO_FILE (selection->data));
+
+    if (selection_not_empty_in_menu_callback (view, selection)) {
+        NemoFile *file;
+        GList *iter;
+
+        for (iter = selection; iter != NULL; iter = iter->next) {
+            file = NEMO_FILE (iter->data);
+
+            nemo_file_set_pinning (file, to_pin);
+        }
+    }
+
+    nemo_file_list_free (selection);
+}
+
+static void
 action_select_all_callback (GtkAction *action,
 			    gpointer callback_data)
 {
@@ -8516,7 +8553,15 @@ static const GtkActionEntry directory_view_entries[] = {
                                {NEMO_ACTION_BROWSE_COPY_TO, "document-open-symbolic",
                 N_("Browse…"), NULL,
                 N_("Browse for a folder to copy the selection to"),
-                G_CALLBACK (action_browse_for_copy_to_folder_callback) }
+                G_CALLBACK (action_browse_for_copy_to_folder_callback) },
+                               {NEMO_ACTION_PIN_FILE, "view-pin-symbolic",
+                N_("P_in"), "<control><shift>D",
+                N_("Pin the selected file so it always appears at the top of this location's file list"),
+                G_CALLBACK (action_pin_unpin_file_callback) },
+                               {NEMO_ACTION_UNPIN_FILE, "view-pin-symbolic",
+                N_("Unp_in"), "<control><shift>D",
+                N_("Unpin the selected file from the top of this location's file list"),
+                G_CALLBACK (action_pin_unpin_file_callback) }
 };
 
 static void
@@ -9585,6 +9630,8 @@ has_writable_extra_pane (NemoView *view)
 
 const gchar *complex_item_paths[] = {
                                      "/selection/File Clipboard Actions/Duplicate",
+                                     "/selection/File Actions/Pin File",
+                                     "/selection/File Actions/Unpin File",
                                      "/selection/File Actions/Create Link",
                                      "/selection/File Actions/CopyToMenu",
                                      "/selection/File Actions/MoveToMenu",
@@ -9637,11 +9684,13 @@ real_update_menus (NemoView *view)
 	gboolean save_search_sensitive;
 	gboolean show_save_search_as;
 	gboolean show_desktop_target;
+    gboolean is_desktop_view;
 	GtkAction *action;
 	GAppInfo *app;
 	GIcon *app_icon;
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
+    gboolean first_selected_is_pinned;
 
 	selection = nemo_file_list_ref (nemo_view_peek_selection (view));
 	selection_count = nemo_view_get_selection_count (view);
@@ -9661,6 +9710,8 @@ real_update_menus (NemoView *view)
 
 	can_duplicate_files = can_create_files && can_copy_files;
 	can_link_files = can_create_files && can_copy_files;
+
+    is_desktop_view = get_is_desktop_view (view);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_RENAME);
@@ -9777,7 +9828,7 @@ real_update_menus (NemoView *view)
 	show_open_alternate = file_list_all_are_folders (selection) &&
 		selection_count > 0 &&
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER) &&
-		!get_is_desktop_view (view);
+		!is_desktop_view;
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_OPEN_ALTERNATE);
@@ -9883,7 +9934,7 @@ real_update_menus (NemoView *view)
 				selection_count),
 		      NULL);
 
-	show_properties = (!get_is_desktop_view (view) || selection_count > 0);
+	show_properties = (!is_desktop_view || selection_count > 0);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PROPERTIES);
@@ -10038,6 +10089,19 @@ real_update_menus (NemoView *view)
     gtk_action_set_visible (action,
                             selection_count == 1 &&
                             (selection_contains_recent || showing_search));
+
+    first_selected_is_pinned = selection_count > 0 &&
+                               nemo_file_get_pinning (NEMO_FILE (selection->data));
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_PIN_FILE);
+
+    gtk_action_set_visible (action, !is_desktop_view && !first_selected_is_pinned);
+
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_UNPIN_FILE);
+
+    gtk_action_set_visible (action, !is_desktop_view && first_selected_is_pinned);
 
     update_complex_popup_items (view);
 

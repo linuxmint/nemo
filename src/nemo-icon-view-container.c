@@ -116,6 +116,10 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	emblem_icons = nemo_file_get_emblem_icons (file,
 		                                       nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)));
 
+    if (nemo_file_get_pinning (file)) {
+        emblem_icons = g_list_prepend (emblem_icons, g_themed_icon_new ("emblem-pinned"));
+    }
+
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
 	icon_info = nemo_file_get_icon (file, size, 0, scale, flags);
 
