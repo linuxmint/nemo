@@ -112,6 +112,10 @@ typedef enum {
 #define NEMO_FILE_EMBLEM_NAME_TRASH "trash"
 #define NEMO_FILE_EMBLEM_NAME_NOTE "note"
 
+/* Used in list view and tree-sidebar to mark pinned files */
+#define UNPINNED_TEXT_WEIGHT 400
+#define PINNED_TEXT_WEIGHT 1000
+
 typedef void (*NemoFileCallback)          (NemoFile  *file,
 				               gpointer       callback_data);
 typedef void (*NemoFileListCallback)      (GList         *file_list,
@@ -514,6 +518,9 @@ void     nemo_file_get_position                   (NemoFile *file, GdkPoint *poi
 void     nemo_file_set_position                   (NemoFile *file, gint x, gint y);
 gboolean nemo_file_get_is_desktop_orphan          (NemoFile *file);
 void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_desktop_orphan);
+
+gboolean nemo_file_get_pinning                    (NemoFile *file);
+void     nemo_file_set_pinning                    (NemoFile *file, gboolean  pin);
 
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);

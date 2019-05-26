@@ -161,8 +161,10 @@ nemo_list_model_get_column_type (GtkTreeModel *tree_model, int index)
 	case NEMO_LIST_MODEL_LARGER_ICON_COLUMN:
 	case NEMO_LIST_MODEL_LARGEST_ICON_COLUMN:
 		return CAIRO_GOBJECT_TYPE_SURFACE;
-	case NEMO_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN:
+    case NEMO_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN:
 		return G_TYPE_BOOLEAN;
+    case NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN:
+        return G_TYPE_INT;
 	default:
 		if (index < (int)(NEMO_LIST_MODEL_NUM_COLUMNS + NEMO_LIST_MODEL (tree_model)->details->columns->len)) {
 			return G_TYPE_STRING;
@@ -402,6 +404,16 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 
                 g_value_set_boolean (value, file != NULL && nemo_file_can_rename (file));
                 break;
+    case NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN:
+        g_value_init (value, G_TYPE_INT);
+
+        if (file != NULL) {
+            g_value_set_int (value, nemo_file_get_pinning (file) ? PINNED_TEXT_WEIGHT : UNPINNED_TEXT_WEIGHT);
+        } else {
+            g_value_set_int (value, UNPINNED_TEXT_WEIGHT);
+        }
+
+        break;
  	default:
  		if (column >= NEMO_LIST_MODEL_NUM_COLUMNS || column < (int)(NEMO_LIST_MODEL_NUM_COLUMNS + model->details->columns->len)) {
 			NemoColumn *nemo_column;

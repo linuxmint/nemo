@@ -65,9 +65,10 @@
 #define NEMO_METADATA_KEY_SIDEBAR_BACKGROUND_IMAGE   	"nemo-sidebar-background-image"
 #define NEMO_METADATA_KEY_SIDEBAR_BUTTONS			"nemo-sidebar-buttons"
 
+#define NEMO_METADATA_KEY_ANNOTATION                    "annotation"
+
 #define NEMO_METADATA_KEY_ICON_POSITION              	"nemo-icon-position"
 #define NEMO_METADATA_KEY_ICON_POSITION_TIMESTAMP		"nemo-icon-position-timestamp"
-#define NEMO_METADATA_KEY_ANNOTATION                 	"annotation"
 #define NEMO_METADATA_KEY_ICON_SCALE                 	"icon-scale"
 #define NEMO_METADATA_KEY_CUSTOM_ICON                	"custom-icon"
 #define NEMO_METADATA_KEY_CUSTOM_ICON_NAME                	"custom-icon-name"
@@ -77,6 +78,8 @@
 #define NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL  "desktop-horizontal"
 #define NEMO_METADATA_KEY_SHOW_THUMBNAILS "show-thumbnails"
 #define NEMO_METADATA_KEY_DESKTOP_GRID_ADJUST      "desktop-grid-adjust"
+
+#define NEMO_METADATA_KEY_PINNED                   "pinned-to-top"
 
 guint nemo_metadata_get_id (const char *metadata);
 

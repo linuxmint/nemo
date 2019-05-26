@@ -2124,9 +2124,11 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 	char *text;
 	GtkTreePath *path;
 	PangoUnderline underline;
+    gint weight;
 
 	gtk_tree_model_get (model, iter,
 			    view->details->file_name_column_num, &text,
+                NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN, &weight,
 			    -1);
 
 	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
@@ -2147,6 +2149,7 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 	g_object_set (G_OBJECT (renderer),
 		      "text", text,
 		      "underline", underline,
+              "weight", weight,
 		      NULL);
 
     g_free (text);
@@ -2342,6 +2345,7 @@ create_and_set_up_tree_view (NemoListView *view)
                           "ellipsize", PANGO_ELLIPSIZE_END,
                           "width-chars", 40,
                           NULL);
+
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
 			g_signal_connect (cell, "editing-started", G_CALLBACK (cell_renderer_editing_started_cb), view);
@@ -2368,6 +2372,7 @@ create_and_set_up_tree_view (NemoListView *view)
             gtk_tree_view_column_pack_start (column, cell, TRUE);
             gtk_tree_view_column_set_attributes (column, cell,
                                                  "text", column_num,
+                                                 "weight", NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN,
                                                  NULL);
 
             gtk_tree_view_append_column (view->details->tree_view, column);

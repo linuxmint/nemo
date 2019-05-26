@@ -44,6 +44,12 @@ typedef enum {
 	UNKNOWN
 } Knowledge;
 
+typedef enum {
+    FILE_PINNING_UNKNOWN = -1,
+    FILE_PINNED = 0,
+    FILE_NOT_PINNED,
+} NemoFilePinning;
+
 struct NemoFileDetails
 {
 	NemoDirectory *directory;
@@ -216,6 +222,8 @@ struct NemoFileDetails
 	eel_boolean_bit filesystem_readonly           : 1;
 	eel_boolean_bit filesystem_use_preview        : 2; /* GFilesystemPreviewType */
 	eel_boolean_bit filesystem_info_is_up_to_date : 1;
+
+    NemoFilePinning pinning;
 
 	time_t trash_time; /* 0 is unknown */
 

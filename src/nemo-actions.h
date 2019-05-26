@@ -150,4 +150,7 @@
 #define NEMO_ACTION_SHOW_THUMBNAILS "Show Thumbnails"
 #define NEMO_ACTION_SHOW_FULL_CONTEXT_MENU "ShowFullContextMenu"
 
+#define NEMO_ACTION_PIN_FILE        "Pin File"
+#define NEMO_ACTION_UNPIN_FILE      "Unpin File"
+
 #endif /* NEMO_ACTIONS_H */
