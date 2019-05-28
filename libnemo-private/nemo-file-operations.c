@@ -1518,14 +1518,17 @@ confirm_move_to_trash (CommonJob *job,
 	file_count = g_list_length (files);
 	g_assert (file_count > 0);
 
-	if (file_count == 1) {
-		prompt = f (_("Are you sure you want to move \"%B\" "
-					    "to the trash?"), files->data);
-	} else {
-		prompt = f (_("Are you sure you want to move "
-				       "the %'d selected items to the trash?"),
-				       file_count);
-	}
+    if (file_count == 1) {
+        prompt = f (_("Are you sure you want to move \"%B\" "
+                      "to the trash?"), files->data);
+    } else {
+        prompt = f (ngettext("Are you sure you want to move "
+                             "the %'d selected items to the trash?",
+                             "Are you sure you want to move "
+                             "the %'d selected items to the trash?",
+                             file_count),
+                    file_count);
+    }
 
 	response = run_warning (job,
 				prompt,
