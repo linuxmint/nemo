@@ -472,12 +472,13 @@ nemo_icon_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 	g_assert (directory == nemo_view_get_model (view));
 
 	icon_view = NEMO_ICON_VIEW (view);
-	icon_container = get_icon_container (icon_view);
 
     if (icon_view->details->is_desktop &&
         !should_show_file_on_screen (view, file)) {
         return;
     }
+
+    icon_container = get_icon_container (icon_view);
 
     if (nemo_file_has_thumbnail_access_problem (file)) {
         nemo_application_set_cache_flag (nemo_application_get_singleton ());
