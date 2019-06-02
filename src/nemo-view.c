@@ -1889,6 +1889,7 @@ delayed_rename_file_hack_callback (RenameData *data)
 		nemo_view_reveal_selection (view);
 	}
 
+    view->details->delayed_rename_file_id = 0;
 	return FALSE;
 }
 
