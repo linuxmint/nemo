@@ -2104,7 +2104,7 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	} else {
 		char *size_str;
 		int prefix;
-		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+		prefix = nemo_global_preferences_get_size_prefix_preference ();
 		size_str = g_format_size_full (total_size, prefix);
         if (total_hidden > 0) {
         	text = g_strdup_printf (ngettext("%1$s item (and %2$s hidden), with size %3$s", "%1$s items (and %2$s hidden), totalling %3$s", total_count),
@@ -2877,7 +2877,7 @@ create_pie_widget (NemoPropertiesWindow *window)
 	GFileInfo *info;
 	int prefix;
 
-	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+	prefix = nemo_global_preferences_get_size_prefix_preference ();
 	capacity = g_format_size_full (window->details->volume_capacity, prefix);
 	free 	 = g_format_size_full (window->details->volume_free, prefix);
 	used 	 = g_format_size_full (window->details->volume_capacity - window->details->volume_free, prefix);

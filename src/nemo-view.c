@@ -3137,7 +3137,7 @@ nemo_view_display_selection_info (NemoView *view)
 			char *size_string;
 			int prefix;
 
-			prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+			prefix = nemo_global_preferences_get_size_prefix_preference ();
 			size_string = g_format_size_full (non_folder_size, prefix);
 			/* This is marked for translation in case a localiser
 			 * needs to use something other than parentheses. The

@@ -38,7 +38,12 @@
 
 
 static gboolean ignore_view_metadata = FALSE;
+static gboolean inherit_folder_view_preference = FALSE;
+static gboolean inherit_show_thumbnails_preference = FALSE;
+static int      size_prefixes_preference = 0;
+
 static gchar **file_roller_mimetypes = NULL;
+
 
 GFileMonitor *tz_mon;
 
@@ -68,7 +73,25 @@ nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 gboolean
 nemo_global_preferences_get_inherit_folder_viewer_preference (void)
 {
-		return g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER);
+    return inherit_folder_view_preference;
+}
+
+gboolean
+nemo_global_preferences_get_ignore_view_metadata (void)
+{
+    return ignore_view_metadata;
+}
+
+gboolean
+nemo_global_preferences_get_inherit_show_thumbnails_preference (void)
+{
+    return inherit_show_thumbnails_preference;
+}
+
+int
+nemo_global_preferences_get_size_prefix_preference (void)
+{
+    return inherit_show_thumbnails_preference;
 }
 
 char *
@@ -86,12 +109,6 @@ nemo_global_preferences_get_desktop_iid (void)
     }
 
     return g_strdup (viewer_iid);
-}
-
-gboolean
-nemo_global_preferences_get_ignore_view_metadata (void)
-{
-    return ignore_view_metadata;
 }
 
 gint
@@ -130,12 +147,49 @@ nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key)
 }
 
 static void
-ignore_view_metadata_cb (GSettings *settings,
-                         gchar *key,
-                         gpointer user_data)
+boolean_changed_cb (GSettings *settings,
+                    gchar     *key,
+                    gboolean  *user_data)
 {
-    ignore_view_metadata = g_settings_get_boolean (settings, key);
+    *user_data = g_settings_get_boolean (settings, key);
 }
+
+static void
+enum_changed_cb (GSettings *settings,
+                 gchar     *key,
+                 int       *user_data)
+{
+    *user_data = g_settings_get_enum (settings, key);
+}
+
+static void
+setup_cached_pref_keys (void)
+{
+    g_signal_connect (nemo_preferences,
+                      "changed::" NEMO_PREFERENCES_IGNORE_VIEW_METADATA,
+                      G_CALLBACK (boolean_changed_cb), &ignore_view_metadata);
+
+    boolean_changed_cb (nemo_preferences, NEMO_PREFERENCES_IGNORE_VIEW_METADATA, &ignore_view_metadata);
+
+    g_signal_connect (nemo_preferences,
+                      "changed::" NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER,
+                      G_CALLBACK (boolean_changed_cb), &inherit_folder_view_preference);
+
+    boolean_changed_cb (nemo_preferences, NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER, &inherit_folder_view_preference);
+
+    g_signal_connect (nemo_preferences,
+                      "changed::" NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS,
+                      G_CALLBACK (boolean_changed_cb), &inherit_show_thumbnails_preference);
+
+    boolean_changed_cb (nemo_preferences, NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS, &inherit_show_thumbnails_preference);
+
+    g_signal_connect (nemo_preferences,
+                      "changed::" NEMO_PREFERENCES_SIZE_PREFIXES,
+                      G_CALLBACK (enum_changed_cb), &size_prefixes_preference);
+
+    enum_changed_cb (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES, &size_prefixes_preference);
+}
+
 
 gchar **
 nemo_global_preferences_get_fileroller_mimetypes (void)
@@ -252,12 +306,7 @@ nemo_global_preferences_init (void)
     cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
 	cinnamon_interface_preferences = g_settings_new ("org.cinnamon.desktop.interface");
 
-    ignore_view_metadata = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_IGNORE_VIEW_METADATA);
-
-    g_signal_connect (nemo_preferences,
-                      "changed::" NEMO_PREFERENCES_IGNORE_VIEW_METADATA,
-                      G_CALLBACK (ignore_view_metadata_cb), NULL);
-
+    setup_cached_pref_keys ();
     setup_cached_time_data ();
 
     eel_debug_call_at_shutdown (nemo_global_preferences_finalize);

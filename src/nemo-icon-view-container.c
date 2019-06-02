@@ -786,7 +786,6 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                                  &bounds.x1, &bounds.y1);
 
         icon_bounds = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
-        text_bounds = nemo_icon_canvas_item_get_text_rectangle (icon->item, TRUE);
 
         icon_width = grid_width;
         /* Calculate size above/below baseline */

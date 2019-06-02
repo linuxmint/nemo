@@ -4262,7 +4262,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
 
     if (!nemo_global_preferences_get_ignore_view_metadata ()) {
         dir = nemo_file_is_directory(file) ? file : nemo_file_get_parent(file);
-        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS)) {
+        if (nemo_global_preferences_get_inherit_show_thumbnails_preference ()) {
             while (dir != NULL) {
                 metadata_str = nemo_file_get_metadata(dir,
                                                     NEMO_METADATA_KEY_SHOW_THUMBNAILS,
@@ -6217,7 +6217,6 @@ nemo_file_get_size_as_string (NemoFile *file)
 {
 	guint item_count;
 	gboolean count_unreadable;
-	int prefix;
 
 	if (file == NULL) {
 		return NULL;
@@ -6236,8 +6235,7 @@ nemo_file_get_size_as_string (NemoFile *file)
 		return NULL;
 	}
 
-	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
-	return g_format_size_full (file->details->size, prefix);
+	return g_format_size_full (file->details->size, nemo_global_preferences_get_size_prefix_preference ());
 }
 
 /**
@@ -6278,7 +6276,7 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 
 	/* If base-2 or base-2-full, then prefix will be 2 (i.e. base-2), if base-10 or base-10-long
 	   then prefix will be 0 (i.e. base-0). Prefix will be added to LONG_FORMAT */
-	prefix = (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES) / 2) * 2;
+	prefix = nemo_global_preferences_get_size_prefix_preference () * 2;
 	return g_format_size_full (file->details->size, G_FORMAT_SIZE_LONG_FORMAT + prefix);
 }
 
@@ -6343,7 +6341,7 @@ nemo_file_get_deep_count_as_string_internal (NemoFile *file,
 	 * directly if desired.
 	 */
 	if (report_size) {
-		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+		prefix = nemo_global_preferences_get_size_prefix_preference ();
 		return g_format_size_full (total_size, prefix);
 	}
 
@@ -7188,7 +7186,7 @@ nemo_file_get_volume_free_space (NemoFile *file)
 
 	res = NULL;
 	if (file->details->free_space != (guint64)-1) {
-		prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+		prefix = nemo_global_preferences_get_size_prefix_preference ();
 		res = g_format_size_full (file->details->free_space, prefix);
 	}
 
@@ -7792,7 +7790,7 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     } else {
         gchar *size_string;
         gint prefix;
-        prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+        prefix = nemo_global_preferences_get_size_prefix_preference ();
         size_string = g_format_size_full (nemo_file_get_size (file), prefix);
         nice = g_strdup_printf (_("Size: %s"), size_string);
         string = add_line (string, nice, TRUE);

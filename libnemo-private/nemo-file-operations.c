@@ -866,7 +866,7 @@ custom_size_to_string (char *format, va_list va)
 	size = va_arg (va, goffset);
 
 	int prefix;
-	prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+	prefix = nemo_global_preferences_get_size_prefix_preference ();
 
 	return g_format_size_full (size, prefix);
 }

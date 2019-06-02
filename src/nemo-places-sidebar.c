@@ -604,7 +604,7 @@ get_disk_full (GFile *file, gchar **tooltip_info)
 
             df_percent = (gint) rintf(fraction);
 
-            prefix = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_SIZE_PREFIXES);
+            prefix = nemo_global_preferences_get_size_prefix_preference ();
             size_string = g_format_size_full (k_free, prefix);
 
             out_string = g_strdup_printf (_("Free space: %s"), size_string);
