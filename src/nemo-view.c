@@ -61,7 +61,6 @@
 #include <eel/eel-vfs-extensions.h>
 
 #include <libnemo-extension/nemo-menu-provider.h>
-#include <libnemo-extension/nemo-simple-button.h>
 #include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-clipboard-monitor.h>
@@ -130,7 +129,7 @@
 #define NEMO_VIEW_POPUP_PATH_SCRIPTS_PLACEHOLDER    	  "/selection/Open Placeholder/Scripts/Scripts Placeholder"
 #define NEMO_VIEW_POPUP_PATH_ACTIONS_PLACEHOLDER           "/selection/Open Placeholder/ActionsPlaceholder"
 #define NEMO_VIEW_POPUP_PATH_EXTENSION_ACTIONS		  "/selection/Extension Actions"
-#define NEMO_VIEW_POPUP_PATH_OPEN				  "/selection/Open Placeholder/OpenToggle"
+#define NEMO_VIEW_POPUP_PATH_OPEN				  "/selection/Open Placeholder/Open"
 
 #define NEMO_VIEW_POPUP_PATH_BACKGROUND			  "/background"
 #define NEMO_VIEW_POPUP_PATH_BACKGROUND_SCRIPTS_PLACEHOLDER	  "/background/Before Zoom Items/New Object Items/Scripts/Scripts Placeholder"
@@ -8573,17 +8572,6 @@ pre_activate (NemoView *view,
 	}
 }
 
-static GtkAction *
-get_expander_action (NemoView *view)
-{
-    GtkAction *action = nemo_widget_action_new_for_menu_toggle ("OpenToggle", N_("_Open"),
-                                                                N_("Open the selected item in this window"));
-
-    g_signal_connect (action, "activate", G_CALLBACK (action_open_callback), view);
-
-    return action;
-}
-
 static void
 real_merge_menus (NemoView *view)
 {
@@ -8601,9 +8589,6 @@ real_merge_menus (NemoView *view)
 	gtk_action_group_add_actions (action_group,
 				      directory_view_entries, G_N_ELEMENTS (directory_view_entries),
 				      view);
-
-    /* Add the special Open action with built-in menu toggle*/
-    gtk_action_group_add_action (action_group, get_expander_action (view));
 
 	tooltip = g_strdup_printf (_("Run scripts"));
 	/* Create a script action here specially because its tooltip is dynamic */
@@ -9736,23 +9721,12 @@ real_update_menus (NemoView *view)
 		g_object_unref (app);
 	}
 
-	if (app_icon == NULL) {
-		app_icon = g_themed_icon_new ("folder-open-symbolic");
-	}
+    if (app_icon == NULL) {
+        app_icon = g_themed_icon_new ("folder-open-symbolic");
+    }
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                           NEMO_ACTION_OPEN);
-    gtk_action_set_sensitive (action, selection_count != 0);
-
-    g_object_set (action, "label",
-              label_with_underscore ? label_with_underscore : _("_Open"),
-              NULL);
-
-    gtk_action_set_gicon (action, app_icon);
-    gtk_action_set_visible (action, can_open);
-
-    action = gtk_action_group_get_action (view->details->dir_action_group,
-                          NEMO_ACTION_OPEN_TOGGLE);
     gtk_action_set_sensitive (action, selection_count != 0);
 
     g_object_set (action, "label",
@@ -9768,11 +9742,6 @@ real_update_menus (NemoView *view)
     menu_item_show_image (nemo_window_get_ui_manager (view->details->window),
                           NEMO_VIEW_MENU_PATH_OPEN_PLACEHOLDER,
                           NEMO_ACTION_OPEN,
-                          FALSE);
-
-    menu_item_show_image (nemo_window_get_ui_manager (view->details->window),
-                          NEMO_VIEW_POPUP_PATH_OPEN_PLACEHOLDER,
-                          NEMO_ACTION_OPEN_TOGGLE,
                           FALSE);
 
 	show_open_alternate = file_list_all_are_folders (selection) &&

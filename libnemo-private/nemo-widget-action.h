@@ -44,7 +44,6 @@ struct _NemoWidgetAction {
     GtkWidget *widget_b;
     gboolean a_used;
     gboolean b_used;
-    gboolean is_menu_toggle;
 };
 
 struct _NemoWidgetActionClass {
@@ -60,10 +59,6 @@ GType         nemo_widget_action_get_type             (void);
 GtkAction    *nemo_widget_action_new                  (const gchar *name,
                                                        GtkWidget *widget_a,
                                                        GtkWidget *widget_b);
-GtkAction    *nemo_widget_action_new_for_menu_toggle (const gchar *name,
-                                                      const gchar *label,
-                                                      const gchar *tooltip);
-
 void          nemo_widget_action_activate             (NemoWidgetAction *action);
 GtkWidget *   nemo_widget_action_get_widget_a (NemoWidgetAction *action);
 void          nemo_widget_action_set_widget_a (NemoWidgetAction *action, GtkWidget *widget);

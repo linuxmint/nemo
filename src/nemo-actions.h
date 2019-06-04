@@ -60,7 +60,6 @@
 #define NEMO_ACTION_NEW_TAB "New Tab"
 
 #define NEMO_ACTION_OPEN "Open"
-#define NEMO_ACTION_OPEN_TOGGLE "OpenToggle"
 #define NEMO_ACTION_OPEN_ALTERNATE "OpenAlternate"
 #define NEMO_ACTION_OPEN_IN_NEW_TAB "OpenInNewTab"
 #define NEMO_ACTION_LOCATION_OPEN_ALTERNATE "LocationOpenAlternate"
@@ -149,5 +148,6 @@
 #define NEMO_ACTION_PLUGIN_MANAGER "NemoPluginManager"
 
 #define NEMO_ACTION_SHOW_THUMBNAILS "Show Thumbnails"
+#define NEMO_ACTION_SHOW_FULL_CONTEXT_MENU "ShowFullContextMenu"
 
 #endif /* NEMO_ACTIONS_H */

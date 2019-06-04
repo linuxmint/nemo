@@ -17,7 +17,6 @@ nemo_private_sources = [
   'nemo-clipboard.c',
   'nemo-column-chooser.c',
   'nemo-column-utilities.c',
-  'nemo-context-menu-menu-item.c',
   'nemo-dbus-manager.c',
   'nemo-debug.c',
   'nemo-default-file-icon.c',

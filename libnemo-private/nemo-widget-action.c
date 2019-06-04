@@ -19,7 +19,6 @@
 
 #include "nemo-widget-action.h"
 #include "nemo-widget-menu-item.h"
-#include "nemo-context-menu-menu-item.h"
 
 G_DEFINE_TYPE (NemoWidgetAction, nemo_widget_action,
 	       GTK_TYPE_ACTION);
@@ -59,7 +58,6 @@ nemo_widget_action_init (NemoWidgetAction *action)
     action->widget_b = NULL;
     action->a_used = FALSE;
     action->b_used = FALSE;
-    action->is_menu_toggle = FALSE;
 }
 
 static void
@@ -114,22 +112,6 @@ nemo_widget_action_new (const gchar *name,
                          "widget-a", widget_a,
                          "widget-b", widget_b,
                          NULL);
-}
-
-GtkAction *
-nemo_widget_action_new_for_menu_toggle (const gchar *name,
-                                        const gchar *label,
-                                        const gchar *tooltip)
-{
-    GtkAction *ret = g_object_new (NEMO_TYPE_WIDGET_ACTION,
-                                   "name", name,
-                                   "label", label,
-                                   "tooltip", tooltip,
-                                   NULL);
-
-    NEMO_WIDGET_ACTION (ret)->is_menu_toggle = TRUE;
-
-    return ret;
 }
 
 static void
@@ -212,35 +194,29 @@ create_menu_item (GtkAction *action)
 {
   NemoWidgetAction *widget_action;
   GType menu_item_type;
-  GtkWidget *w;
-  GtkWidget *ret = NULL;
-  gint slot = -1;
+  GtkWidget *w, *ret;
+  gint slot;
 
   widget_action = NEMO_WIDGET_ACTION (action);
   menu_item_type = GTK_ACTION_GET_CLASS (action)->menu_item_type;
 
-  if (widget_action->is_menu_toggle) {
-    ret = g_object_new (NEMO_TYPE_CONTEXT_MENU_MENU_ITEM, NULL);
-  } else {
-    if (!widget_action->a_used) {
-      w = widget_action->widget_a;
-      widget_action->a_used = TRUE;
-      slot = ACTION_SLOT_A;
-    } else if (!widget_action->b_used) {
-      w = widget_action->widget_b;
-      widget_action->b_used = TRUE;
-      slot = ACTION_SLOT_B;
-    }
+  if (!widget_action->a_used) {
+    w = widget_action->widget_a;
+    widget_action->a_used = TRUE;
+    slot = ACTION_SLOT_A;
+  } else if (!widget_action->b_used) {
+    w = widget_action->widget_b;
+    widget_action->b_used = TRUE;
+    slot = ACTION_SLOT_B;
+  } else
+    return NULL;
 
-    if (slot != -1)
-      ret = g_object_new (menu_item_type,
-                          "child-widget", w,
-                          "action-slot", slot,
-                          NULL);
-  }
+  ret = g_object_new (menu_item_type,
+                      "child-widget", w,
+                      "action-slot", slot,
+                      NULL);
 
-  if (ret)
-    gtk_activatable_set_related_action (GTK_ACTIVATABLE (ret), action);
+  gtk_activatable_set_related_action (GTK_ACTIVATABLE (ret), action);
 
   return ret;
 }

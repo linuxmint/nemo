@@ -149,7 +149,7 @@
 </popup>
 <popup name="selection">
 	<placeholder name="Open Placeholder">
-		<menuitem name="OpenToggle" action="OpenToggle"/>
+		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
 		<menuitem name="OpenAlternate" action="OpenAlternate"/>
 		<separator name="applications separator"/>
