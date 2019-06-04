@@ -15,7 +15,7 @@
    height="96"
    id="svg2"
    sodipodi:docname="emblem-pinned.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.4 5da689c313, 2019-01-14">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -29,9 +29,9 @@
      inkscape:window-height="997"
      id="namedview50"
      showgrid="false"
-     inkscape:zoom="2.4583333"
-     inkscape:cx="-147.34467"
-     inkscape:cy="65.692115"
+     inkscape:zoom="3.4766084"
+     inkscape:cx="-73.029779"
+     inkscape:cy="89.298242"
      inkscape:window-x="0"
      inkscape:window-y="30"
      inkscape:window-maximized="1"
@@ -335,6 +335,38 @@
          result="composite2"
          id="feComposite6241" />
     </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter4052">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood4042" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite4044" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="1.5"
+         result="blur"
+         id="feGaussianBlur4046" />
+      <feOffset
+         dx="1"
+         dy="1"
+         result="offset"
+         id="feOffset4048" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite4050" />
+    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -344,7 +376,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -420,7 +452,7 @@
      id="path4851"
      inkscape:connector-curvature="0" />
   <g
-     id="g6248">
+     id="g4057">
     <rect
        width="96"
        height="96"
@@ -431,9 +463,10 @@
     <path
        inkscape:connector-curvature="0"
        id="rect5715"
-       d="M 46.637098,49.28061 22.140646,76.486674 a 2,2 0 0 0 0.148026,2.824554 2,2 0 0 0 2.82455,-0.148026 L 49.609681,51.957134 Z"
-       style="fill:#646464;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
+       d="M 42.569301,48.26366 18.072849,75.469724 a 2,2 0 0 0 0.148026,2.824554 2,2 0 0 0 2.82455,-0.148026 L 45.541884,50.940184 Z"
+       style="fill:#646464;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal;filter:url(#filter4052)" />
     <circle
+       transform="matrix(1.3598146,0,0,1.3728787,-32.641585,-7.3062366)"
        r="22"
        cy="35.593216"
        cx="60.508472"
