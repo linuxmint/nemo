@@ -7199,10 +7199,11 @@ open_as_root (const gchar *path)
 static void
 open_in_terminal (const gchar *path)
 {
-    gchar *argv[2];
+    gchar *argv[3];
     argv[0] = g_settings_get_string (gnome_terminal_preferences,
 				     GNOME_DESKTOP_TERMINAL_EXEC);
-    argv[1] = NULL;
+    argv[1] = g_settings_get_string (gnome_terminal_preferences, GNOME_DESKTOP_TERMINAL_EXEC_ARG);
+    argv[2] = NULL;
     g_spawn_async(path, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
 }
 
