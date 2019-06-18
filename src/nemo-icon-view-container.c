@@ -116,10 +116,6 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	emblem_icons = nemo_file_get_emblem_icons (file,
 		                                       nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)));
 
-    if (nemo_file_get_pinning (file)) {
-        emblem_icons = g_list_prepend (emblem_icons, g_themed_icon_new ("emblem-pinned"));
-    }
-
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
 	icon_info = nemo_file_get_icon (file, size, 0, scale, flags);
 
@@ -333,6 +329,7 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 					    NemoIconData      *data,
 					    char                 **editable_text,
 					    char                 **additional_text,
+                        gboolean              *pinned,
 					    gboolean               include_invisible)
 {
 	GQuark *attributes;
@@ -355,9 +352,15 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 	if (nemo_icon_container_get_zoom_level (container) == NEMO_ZOOM_LEVEL_SMALLEST &&
             !include_invisible) {
 		*editable_text = NULL;
+        if (pinned) {
+            *pinned = FALSE;
+        }
 	} else {
 		/* Strip the suffix for nemo object xml files. */
 		*editable_text = nemo_file_get_display_name (file);
+        if (pinned) {
+            *pinned = nemo_file_get_pinning (file);
+        }
 	}
 
 	if (!use_additional) {
@@ -1483,6 +1486,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
     GdkPixbuf *pixbuf;
     char *editable_text, *additional_text;
     gboolean has_open_window;
+    gboolean pinned;
 
     if (icon == NULL) {
         return;
@@ -1528,6 +1532,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                            icon->data,
                            &editable_text,
                            &additional_text,
+                           &pinned,
                            FALSE);
 
 
@@ -1546,6 +1551,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                  "editable_text", editable_text,
                  "additional_text", additional_text,
                  "highlighted_for_drop", icon == details->drop_target,
+                 "pinned", pinned,
                  NULL);
 
     nemo_icon_canvas_item_set_image (icon->item, pixbuf);

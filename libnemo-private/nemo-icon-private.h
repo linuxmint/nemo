@@ -387,6 +387,7 @@ void          nemo_icon_container_get_icon_text (NemoIconContainer *container,
                                                  NemoIconData      *data,
                                                  char                 **editable_text,
                                                  char                 **additional_text,
+                                                 gboolean              *pinned,
                                                  gboolean               include_invisible);
 
 /* nemo-centered-placement-grid api

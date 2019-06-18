@@ -258,6 +258,7 @@ nemo_icon_view_grid_container_get_icon_text (NemoIconContainer *container,
 					    NemoIconData      *data,
 					    char                 **editable_text,
 					    char                 **additional_text,
+                        gboolean              *pinned,
 					    gboolean               include_invisible)
 {
 	GQuark *attributes;
@@ -888,6 +889,7 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
                            icon->data,
                            &editable_text,
                            &additional_text,
+                           NULL,
                            FALSE);
 
     /* If name of icon being renamed was changed from elsewhere, end renaming mode.

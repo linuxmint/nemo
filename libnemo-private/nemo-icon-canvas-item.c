@@ -116,6 +116,8 @@ struct NemoIconCanvasItemDetails {
 
 	guint is_visible : 1;
 
+    guint is_pinned : 1;
+
 	/* Cached PangoLayouts. Only used if the icon is visible */
 	PangoLayout *editable_text_layout;
 	PangoLayout *additional_text_layout;
@@ -142,7 +144,8 @@ enum {
     	PROP_HIGHLIGHTED_FOR_SELECTION,
     	PROP_HIGHLIGHTED_AS_KEYBOARD_FOCUS,
     	PROP_HIGHLIGHTED_FOR_DROP,
-	PROP_HIGHLIGHTED_FOR_CLIPBOARD
+	PROP_HIGHLIGHTED_FOR_CLIPBOARD,
+    PROP_PINNED
 };
 
 typedef enum {
@@ -357,6 +360,15 @@ nemo_icon_canvas_item_set_property (GObject        *object,
 		}
 		details->is_highlighted_for_clipboard = g_value_get_boolean (value);
 		break;
+
+    case PROP_PINNED:
+        if (!details->is_pinned == !g_value_get_boolean (value)) {
+            return;
+        }
+        details->is_pinned = g_value_get_boolean (value);
+        nemo_icon_canvas_item_invalidate_label (item);
+
+        break;
 
 	default:
 		g_warning ("nemo_icons_view_item_item_set_arg on unknown argument");
@@ -1450,6 +1462,10 @@ create_label_layout (NemoIconCanvasItem *item,
                                          container->details->font_size_table [container->details->zoom_level]);
     }
 
+    if (item->details->is_pinned) {
+        pango_font_description_set_weight (desc, PANGO_WEIGHT_BOLD);
+    }
+
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
@@ -2053,6 +2069,14 @@ nemo_icon_canvas_item_class_init (NemoIconCanvasItemClass *class)
 				      "highlighted for clipboard",
 				      "whether we are highlighted for a clipboard paste (after we have been cut)",
  				      FALSE, G_PARAM_READWRITE));
+
+    g_object_class_install_property (
+        object_class,
+        PROP_PINNED,
+        g_param_spec_boolean ("pinned",
+                              "pinned",
+                              "backing file is pinned",
+                      FALSE, G_PARAM_READWRITE));
 
 	item_class->update = nemo_icon_canvas_item_update;
 	item_class->draw = nemo_icon_canvas_item_draw;

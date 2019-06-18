@@ -147,6 +147,7 @@ typedef struct {
 						   NemoIconData *data,
 						   char **editable_text,
 						   char **additional_text,
+                           gboolean *pinned,
 						   gboolean include_invisible);
     void         (* update_icon)              (NemoIconContainer *container,
                                                NemoIcon          *icon);
