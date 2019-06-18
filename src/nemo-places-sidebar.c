@@ -3395,6 +3395,42 @@ add_action_popup_items (NemoPlacesSidebar *sidebar)
     }
 }
 
+#if GTK_CHECK_VERSION (3, 24, 8)
+static void
+moved_to_rect_cb (GdkWindow          *window,
+                  const GdkRectangle *flipped_rect,
+                  const GdkRectangle *final_rect,
+                  gboolean            flipped_x,
+                  gboolean            flipped_y,
+                  GtkMenu            *menu)
+{
+    g_signal_emit_by_name (menu,
+                           "popped-up",
+                           0,
+                           flipped_rect,
+                           final_rect,
+                           flipped_x,
+                           flipped_y);
+
+    // Don't let the emission run in gtkmenu.c
+    g_signal_stop_emission_by_name (window, "moved-to-rect");
+}
+
+static void
+popup_menu_realized (GtkWidget    *menu,
+                     gpointer      user_data)
+{
+    GdkWindow *toplevel;
+
+    toplevel = gtk_widget_get_window (gtk_widget_get_toplevel (menu));
+
+    g_signal_handlers_disconnect_by_func (toplevel, moved_to_rect_cb, menu);
+
+    g_signal_connect (toplevel, "moved-to-rect", G_CALLBACK (moved_to_rect_cb),
+                      menu);
+}
+#endif
+
 /* Constructs the popup menu for the file list if needed */
 static void
 bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
@@ -3414,6 +3450,13 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
     g_signal_connect (sidebar->popup_menu, "deactivate",
                       G_CALLBACK (popup_menu_deactivated),
                       sidebar);
+
+#if GTK_CHECK_VERSION (3, 24, 8)
+    g_signal_connect (sidebar->popup_menu, "realize",
+                      G_CALLBACK (popup_menu_realized),
+                      sidebar);
+    gtk_widget_realize (sidebar->popup_menu);
+#endif
 
 	gtk_menu_attach_to_widget (GTK_MENU (sidebar->popup_menu),
 			           GTK_WIDGET (sidebar),
