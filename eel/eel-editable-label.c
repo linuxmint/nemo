@@ -1888,11 +1888,11 @@ eel_editable_label_motion (GtkWidget      *widget,
   EelEditableLabel *label;
   gint index;
   gint x, y;
-  
-  label = EEL_EDITABLE_LABEL (widget);
-  
+
   if ((event->state & GDK_BUTTON1_MASK) == 0)
     return FALSE;
+
+  label = EEL_EDITABLE_LABEL (widget);
 
   gdk_window_get_device_position (label->text_area,
                                   event->device,

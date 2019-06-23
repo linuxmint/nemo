@@ -1083,11 +1083,11 @@ toggle_menubar (NemoWindow *window, gint action)
     default_visible = g_settings_get_boolean (nemo_window_state,
                                               NEMO_WINDOW_STATE_START_WITH_MENU_BAR);
 
-    menu = window->details->menubar;
-
     if (default_visible || window->details->disable_chrome) {
         return;
     }
+
+    menu = window->details->menubar;
 
     if (action == MENU_TOGGLE) {
         action = gtk_widget_get_visible (menu) ? MENU_HIDE : MENU_SHOW;

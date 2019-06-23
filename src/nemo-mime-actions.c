@@ -1114,12 +1114,12 @@ open_with_dialog_response_cb (GtkDialog *dialog,
     GAppInfo *info;
     GList files;
 
-    parent_window = user_data;
-
     if (response_id != GTK_RESPONSE_OK) {
         gtk_widget_destroy (GTK_WIDGET (dialog));
         return;
     }
+
+    parent_window = user_data;
 
     GtkWidget *content = gtk_dialog_get_content_area (dialog);
     GList *children = gtk_container_get_children (GTK_CONTAINER (content));

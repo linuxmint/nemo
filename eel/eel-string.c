@@ -169,13 +169,12 @@ eel_str_middle_truncate (const char *string,
 	guint num_left_chars;
 	guint num_right_chars;
 
-	const char delimter[] = "...";
-	const guint delimter_length = strlen (delimter);
-	const guint min_truncate_length = delimter_length + 2;
-
 	if (string == NULL) {
 		return NULL;
 	}
+	const char delimter[] = "...";
+	const guint delimter_length = strlen (delimter);
+	const guint min_truncate_length = delimter_length + 2;
 
 	/* It doesnt make sense to truncate strings to less than
 	 * the size of the delimiter plus 2 characters (one on each

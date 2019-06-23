@@ -456,14 +456,13 @@ selection_changed_timer_callback(FMTreeView *view)
 	NemoFileAttributes attributes;
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
-	
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view->details->tree_widget));
 
 	/* no activation if popup menu is open */
 	if (view->details->popup_file != NULL) {
 		return FALSE;
 	}
 
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view->details->tree_widget));
 	cancel_activation (view);
 
 	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {

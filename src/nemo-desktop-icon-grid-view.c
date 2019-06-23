@@ -253,12 +253,12 @@ nemo_desktop_icon_grid_view_add_file (NemoView *view, NemoFile *file, NemoDirect
 
     g_assert (directory == nemo_view_get_model (view));
 
-    icon_view = NEMO_ICON_VIEW (view);
-    icon_container = get_icon_container (icon_view);
-
     if (!should_show_file_on_current_monitor (view, file)) {
         return;
     }
+
+    icon_view = NEMO_ICON_VIEW (view);
+    icon_container = get_icon_container (icon_view);
 
     if (nemo_icon_container_add (icon_container, NEMO_ICON_CONTAINER_ICON_DATA (file))) {
         nemo_file_ref (file);
