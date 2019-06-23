@@ -1,3 +1,108 @@
+nemo (4.2.0) tina; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-view.c: Don't ignore non-symbolic extension menu icons.
+  * nemo-icon-view.c: Don't apply the 'ignore metadata' mode to the desktop, this prevents the icon size from loading or saving properly when that setting is active.
+  * nemo-icon-info: Use different text widths for the desktop than for windowed mode.
+
+  [ Leigh Scott ]
+  * Update URL (#2045)
+
+  [ Michael Webster ]
+  * nemo-query-editor.c: Ignore leading and trailing whitespace in search query text.
+  * misc: Fix some memory leaks revealed by valgrind.
+  * Add keyboard shortcuts page
+  * nemo-bookmarks-window.c: Fix support for Computer/Bookmarks section separator.
+  * nemo-bookmarks-window: Remove help button, fix some breakpoint accounting during dnd.
+  * nemo-view.c: Never have more than one connection to an action's 'activate' signal.
+  * actions: Monitor gsettings condition changes and trigger menu updates when these or any dbus conditions change.
+  * application: Add debug flag to command line options, remove environment variable-based verbose mode for actions.
+  * nemo-action: Cleanup
+  * nemo-blank-desktop-window.c: Fix initial popup menu failure due to a not-fully-initialized action manager.
+  * nemo-action.c: Allow discovery of tokens in any order in an action line.
+  * nemo-action.c: Queue gsettings condition updates (same as dbus updates). This should have been done in 92c58403f12436c65a1c.
+
+  [ JosephMcc ]
+  * Update nemo-style-fallback-mandatory.css
+
+  [ devlearner ]
+  * Add Move to Trash confirmation option
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: Remove unused translatable string.
+
+  [ Max Sistemich ]
+  * nemo-window-manage-views.c: ignore cache when thumbnails are disabled
+
+  [ Michael Webster ]
+  * nemo-window-manage-views.c: add a weak pointer to the window slot's bad cache bar when spawned.
+  * preferences: Finalize our settings instances using the eel_call_at_shutdown function.  This occurs at a point closer to exit, and allows handlers to disconnect cleanly.
+
+  [ Lars Mueller ]
+  * Reimplement thumbnailing-per-folder and add inheritance for view type
+  * A couple of bugfixes
+
+  [ Michael Webster ]
+  * nemo-main-application.c: Make sure any command-line geometry option takes precedence over the saved window geometry.
+
+  [ Clement Lefebvre ]
+  * nemo-window-slot: Remove trailing spaces
+  * Navigation: Fix go to parent action for Samba
+
+  [ Michael Webster ]
+  * nemo-window-slot.c: Use GString for manipulating samba uris, it makes what's being done to the uri a bit more explicit.
+  * nemo-window-slot.c: (samba) When navigating up from a host, load network:/// instead of smb:///.
+  * nemo-icon-container.c: Wait to un-freeze canvas updates until the renaming operation has completed.
+  * nemo-file.c: Check for NULL when converting the raw file timestamp to a GDateTime.
+
+  [ JosephMcc ]
+  * desktop-prefs: Change to match the new cinnamon settings style
+
+  [ Michael Webster ]
+  * nemo-desktop-overlay.glade: Update to match new settings format. (mostly)
+
+  [ steve ]
+  * Nemo desktop entry - ensure caret-color matches text color
+
+  [ okaestne ]
+  * nemo-mime-application-chooser.c: escape file names in Open With tab
+
+  [ Tcc100 ]
+  * nemo-view.c: Open Terminal in parent if a file is selected
+
+  [ Clement Lefebvre ]
+  * Start implementing exec support
+  * Optimize nemo_action_get_visibility()
+
+  [ Michael Webster ]
+  * nemo-action.c: Support multiple selection and action path for exec condition checks.
+  * nemo-action.c: Support tokens in exec condition calls.
+  * sample action:  Update to include exec conditions, new correct method to enable debugging.
+  * Revert "nemo-file-operations.c: Remove unused translatable string."
+  * Remove some unused code, optimize some frequently-used settings.
+  * nemo-view.c: Clear a source id at the end of the rename delay callback.
+  * Remove the context menu toggle (the +/- button) for displaying additional menu items.
+  * Add a mechanism for pinning a file to the top of a view.
+  * Improve pin icon.
+  * pinned emblem: try to improve (again)
+  * icon view: Use bold text instead of an emblem for pinned files.
+  * nemo-places-sidebar.c: Workaround incorrectly-sized popup menus when right- clicking on a currently-unselected item.
+
+  [ Simon Brown ]
+  * move code after early return statements where possible (#2149)
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+  * l10n: Generate additional files
+
+  [ Clement Masci ]
+  * Option to open uri in tabs at startup
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 23 Jun 2019 17:20:47 +0200
+
 nemo (4.0.6) tessa; urgency=medium
 
   [ Clement Lefebvre ]
