@@ -380,7 +380,8 @@ static void
 nemo_desktop_application_open_location (NemoApplication     *application,
                                         GFile               *location,
                                         GFile               *selection,
-                                        const char          *startup_id)
+                                        const char          *startup_id,
+                                        const gboolean      open_in_tabs)
 {
     GAppInfo *appinfo;
     GError *error = NULL;

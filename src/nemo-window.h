@@ -113,6 +113,8 @@ void             nemo_window_disconnect_content_view (NemoWindow    *window,
 
 void             nemo_window_go_to                (NemoWindow    *window,
                                                        GFile             *location);
+void             nemo_window_go_to_tab            (NemoWindow    *window,
+                                                       GFile             *location);
 void             nemo_window_go_to_full           (NemoWindow    *window,
                                                        GFile             *location,
                                                        NemoWindowGoToCallback callback,

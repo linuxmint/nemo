@@ -72,10 +72,10 @@ skeleton_handle_show_items_cb (NemoFreedesktopFileManager1 *object,
 		parent = g_file_get_parent (file);
 
 		if (parent != NULL) {
-			nemo_application_open_location (application, parent, file, startup_id);
+			nemo_application_open_location (application, parent, file, startup_id, FALSE);
 			g_object_unref (parent);
 		} else {
-			nemo_application_open_location (application, file, NULL, startup_id);
+			nemo_application_open_location (application, file, NULL, startup_id, FALSE);
 		}
 
 		g_object_unref (file);
@@ -102,7 +102,7 @@ skeleton_handle_show_folders_cb (NemoFreedesktopFileManager1 *object,
 
 		file = g_file_new_for_uri (uris[i]);
 
-		nemo_application_open_location (application, file, NULL, startup_id);
+		nemo_application_open_location (application, file, NULL, startup_id, FALSE);
 
 		g_object_unref (file);
 	}

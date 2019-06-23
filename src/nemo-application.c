@@ -421,12 +421,14 @@ void
 nemo_application_open_location (NemoApplication *application,
                                 GFile           *location,
                                 GFile           *selection,
-                                const char      *startup_id)
+                                const char      *startup_id,
+                                const gboolean  open_in_tabs)
 {
     NEMO_APPLICATION_CLASS (G_OBJECT_GET_CLASS (application))->open_location (application,
                                                                               location,
                                                                               selection,
-                                                                              startup_id);
+                                                                              startup_id,
+                                                                              open_in_tabs);
 }
 
 NemoWindow *

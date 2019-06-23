@@ -175,6 +175,15 @@ nemo_window_go_to (NemoWindow *window, GFile *location)
 }
 
 void
+nemo_window_go_to_tab (NemoWindow *window, GFile *location)
+{
+	g_return_if_fail (NEMO_IS_WINDOW (window));
+
+	nemo_window_slot_open_location (nemo_window_get_active_slot (window),
+					    location, NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
+}
+
+void
 nemo_window_go_to_full (NemoWindow *window,
 			    GFile          *location,
 			    NemoWindowGoToCallback callback,

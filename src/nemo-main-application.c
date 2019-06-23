@@ -348,11 +348,56 @@ open_window (NemoMainApplication *application,
 }
 
 static void
+open_tabs (NemoMainApplication *application,
+         GFile **locations,
+         guint n_files,
+         GdkScreen *screen,
+         const char *geometry)
+{
+    NemoWindow *window;
+    gchar *uri;
+    gboolean have_geometry;
+
+    window = nemo_main_application_create_window (NEMO_APPLICATION (application),
+                             screen);
+
+    /* open all locations */
+    uri = g_file_get_uri (locations[0]);
+    g_debug ("Opening new tab at uri %s\n", uri);
+    nemo_window_go_to (window, locations[0]);
+    g_free (uri);
+    for (int i = 1; i < n_files; i++) {
+        /* open tabs in reverse order because each
+         * tab is opened before the previous one */
+        guint tab = n_files-i;
+        uri = g_file_get_uri (locations[tab]);
+        g_debug ("Opening new tab at uri %s\n", uri);
+        nemo_window_go_to_tab (window, locations[tab]);
+        g_free (uri);
+    }
+
+    have_geometry = geometry != NULL && strcmp(geometry, "") != 0;
+
+    if (have_geometry && !gtk_widget_get_visible (GTK_WIDGET (window))) {
+        /* never maximize windows opened from shell if a
+         * custom geometry has been requested.
+         */
+        gtk_window_unmaximize (GTK_WINDOW (window));
+        eel_gtk_window_set_initial_geometry_from_string (GTK_WINDOW (window),
+                                 geometry,
+                                 APPLICATION_WINDOW_MIN_WIDTH,
+                                 APPLICATION_WINDOW_MIN_HEIGHT,
+                                 FALSE);
+    }
+}
+
+static void
 open_windows (NemoMainApplication *application,
 	      GFile **files,
 	      gint n_files,
 	      GdkScreen *screen,
-	      const char *geometry)
+	      const char *geometry,
+	      gboolean open_in_tabs)
 {
 	gint i;
 
@@ -360,9 +405,14 @@ open_windows (NemoMainApplication *application,
 		/* Open a window pointing at the default location. */
 		open_window (application, NULL, screen, geometry);
 	} else {
-		/* Open windows at each requested location. */
-		for (i = 0; i < n_files; i++) {
-			open_window (application, files[i], screen, geometry);
+		if (open_in_tabs) {
+			/* Open one window with one tab at each requested location */
+			open_tabs (application, files, n_files, screen, geometry);
+		} else {
+			/* Open windows at each requested location. */
+			for (i = 0; i < n_files; i++) {
+				open_window (application, files[i], screen, geometry);
+			}
 		}
 	}
 }
@@ -371,7 +421,8 @@ static void
 nemo_main_application_open_location (NemoApplication     *application,
                                      GFile               *location,
                                      GFile               *selection,
-                                     const char          *startup_id)
+                                     const char          *startup_id,
+                                     const gboolean      open_in_tabs)
 {
 	NemoWindow *window;
 	GList *sel_list = NULL;
@@ -383,8 +434,13 @@ nemo_main_application_open_location (NemoApplication     *application,
 		sel_list = g_list_prepend (sel_list, nemo_file_get (selection));
 	}
 
-	nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), location,
+	if(open_in_tabs){
+		nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), location,
+						 NEMO_WINDOW_OPEN_FLAG_NEW_TAB, sel_list, NULL, NULL);
+	} else {
+		nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), location,
 						 0, sel_list, NULL, NULL);
+	}
 
 	if (sel_list != NULL) {
 		nemo_file_list_free (sel_list);
@@ -395,13 +451,29 @@ static void
 nemo_main_application_open (GApplication *app,
                             GFile       **files,
                             gint          n_files,
-                            const gchar  *geometry)
+                            const gchar  *options)
 {
 	NemoMainApplication *self = NEMO_MAIN_APPLICATION (app);
 
+	gboolean open_in_tabs = FALSE;
+	const gchar *geometry = NULL;
+	const char splitter = '=';
+
+	g_debug ("Open called on the GApplication instance; %d files", n_files);
+
+	/* Check if local command line passed --geometry or --tabs */
+	if (strlen (options) > 0) {
+		gchar** splitedOptions = g_strsplit (options, &splitter, 2);
+		if (strcmp (splitedOptions[0], "NULL") != 0) {
+			geometry = splitedOptions[0];
+		}
+		sscanf (splitedOptions[1], "%d", &open_in_tabs);
+		g_strfreev (splitedOptions);
+	}
+
 	DEBUG ("Open called on the GApplication instance; %d files", n_files);
 
-	open_windows (self, files, n_files, gdk_screen_get_default (), geometry);
+	open_windows (self, files, n_files, gdk_screen_get_default (), geometry, open_in_tabs);
 }
 
 static void
@@ -435,6 +507,7 @@ do_cmdline_sanity_checks (NemoMainApplication *self,
 			  gboolean perform_self_check,
 			  gboolean version,
 			  gboolean kill_shell,
+			  gboolean open_in_tabs,
 			  gchar **remaining)
 {
 	gboolean retval = FALSE;
@@ -452,6 +525,7 @@ do_cmdline_sanity_checks (NemoMainApplication *self,
 	}
 
 	if (self->priv->geometry != NULL &&
+	    !open_in_tabs &&
 	    remaining != NULL && remaining[0] != NULL && remaining[1] != NULL) {
 		g_printerr ("%s\n",
 			    _("--geometry cannot be used with more than one URI."));
@@ -490,6 +564,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	gboolean perform_self_check = FALSE;
 	gboolean version = FALSE;
 	gboolean browser = FALSE;
+	gboolean open_in_tabs = FALSE;
 	gboolean kill_shell = FALSE;
 	gboolean no_default_window = FALSE;
     gboolean no_desktop_ignored = FALSE;
@@ -516,6 +591,8 @@ nemo_main_application_local_command_line (GApplication *application,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
         { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop_ignored,
           N_("Ignored argument - left for compatibility only."), NULL },
+		{ "tabs", 't', 0, G_OPTION_ARG_NONE, &open_in_tabs,
+		  N_("Open URIs in tabs."), NULL },
 		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
 		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
@@ -558,7 +635,7 @@ nemo_main_application_local_command_line (GApplication *application,
     }
 
 	if (!do_cmdline_sanity_checks (self, perform_self_check,
-				       version, kill_shell, remaining)) {
+				       version, kill_shell, open_in_tabs, remaining)) {
 		*exit_status = EXIT_FAILURE;
 		goto out;
 	}
@@ -653,11 +730,14 @@ post_registration:
 	}
 	/* Invoke "Open" to create new windows */
 	if (len > 0) {
-		if (self->priv->geometry != NULL) {
-			g_application_open (application, files, len, self->priv->geometry);
+		gchar* concatOptions = g_malloc0(64);
+		if (self->priv->geometry == NULL) {
+			g_snprintf (concatOptions, 64, "NULL=%d", open_in_tabs);
 		} else {
-			g_application_open (application, files, len, "");
+			g_snprintf (concatOptions, 64, "%s=%d", self->priv->geometry, open_in_tabs);
 		}
+		g_application_open (application, files, len, concatOptions);
+		g_free (concatOptions);
 	}
 
 	for (idx = 0; idx < len; idx++) {

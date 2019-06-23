@@ -246,7 +246,8 @@ on_open_folder_clicked (GtkWidget *button, NemoScriptConfigWidget *widget)
     nemo_application_open_location (nemo_application_get_singleton (),
                                     location,
                                     NULL,
-                                    "nemo");
+                                    "nemo",
+                                    FALSE);
 
     g_free (path);
     g_object_unref (location);
