@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-23 16:00+0200\n"
+"POT-Creation-Date: 2019-06-23 17:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "No actions found"
 msgstr ""
 
-#: src/nemo-action-config-widget.c:446
+#: src/nemo-action-config-widget.c:447
 msgid "Actions"
 msgstr ""
 
@@ -219,7 +219,7 @@ msgid ""
 "Add connect to server mount"
 msgstr ""
 
-#: src/nemo-desktop-application.c:259 src/nemo-main-application.c:511
+#: src/nemo-desktop-application.c:259 src/nemo-main-application.c:586
 msgid "Show the version of the program."
 msgstr ""
 
@@ -889,66 +889,70 @@ msgid_plural "This will open %d separate windows."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-main-application.c:444
+#: src/nemo-main-application.c:517
 msgid "--check cannot be used with other options."
 msgstr ""
 
-#: src/nemo-main-application.c:450
+#: src/nemo-main-application.c:523
 msgid "--quit cannot be used with URIs."
 msgstr ""
 
-#: src/nemo-main-application.c:457
+#: src/nemo-main-application.c:531
 msgid "--geometry cannot be used with more than one URI."
 msgstr ""
 
-#: src/nemo-main-application.c:505
+#: src/nemo-main-application.c:580
 msgid "Perform a quick set of self-check tests."
 msgstr ""
 
-#: src/nemo-main-application.c:513
+#: src/nemo-main-application.c:588
 msgid ""
 "Create the initial window with the given geometry. Examples: nemo --geometry="
 "+100+100, nemo --geometry=600x400, nemo --geometry=600x400+100+100."
 msgstr ""
 
-#: src/nemo-main-application.c:514
+#: src/nemo-main-application.c:589
 msgid "GEOMETRY"
 msgstr ""
 
-#: src/nemo-main-application.c:516
+#: src/nemo-main-application.c:591
 msgid "Only create windows for explicitly specified URIs."
 msgstr ""
 
-#: src/nemo-main-application.c:518
+#: src/nemo-main-application.c:593
 msgid "Ignored argument - left for compatibility only."
 msgstr ""
 
-#: src/nemo-main-application.c:520
+#: src/nemo-main-application.c:595
+msgid "Open URIs in tabs."
+msgstr ""
+
+#: src/nemo-main-application.c:597
 msgid ""
 "Repair the user thumbnail cache - this can be useful if you're having "
 "trouble with file thumbnails.  Must be run as root"
 msgstr ""
 
-#: src/nemo-main-application.c:524
+#: src/nemo-main-application.c:601
 msgid "Quit Nemo."
 msgstr ""
 
-#: src/nemo-main-application.c:525
+#: src/nemo-main-application.c:602
 msgid "[URI...]"
 msgstr ""
 
-#: src/nemo-main-application.c:536
+#: src/nemo-main-application.c:613
 msgid ""
 "\n"
 "\n"
 "Browse the file system with the file manager"
 msgstr ""
 
-#: src/nemo-main-application.c:688
+#: src/nemo-main-application.c:768
 msgid "Nemo's main menu is now hidden"
 msgstr ""
 
-#: src/nemo-main-application.c:691
+#: src/nemo-main-application.c:771
 msgid ""
 "You have chosen to hide the main menu.  You can get it back temporarily by:\n"
 "\n"
@@ -960,7 +964,7 @@ msgid ""
 "menu."
 msgstr ""
 
-#: src/nemo-main-application.c:702
+#: src/nemo-main-application.c:782
 msgid "Don't show this message again."
 msgstr ""
 
@@ -1134,7 +1138,7 @@ msgstr ""
 #: src/nemo-places-sidebar.c:762 src/nemo-tree-sidebar.c:1551
 #: libnemo-private/nemo-bookmark.c:130 libnemo-private/nemo-desktop-link.c:118
 #: libnemo-private/nemo-file-utilities.c:67
-#: libnemo-private/nemo-file-utilities.c:116 generate_additional_file:42
+#: libnemo-private/nemo-file-utilities.c:116 generate_additional_file:41
 #: gresources/nemo-desktop-preferences.glade:209
 #: gresources/nemo-file-management-properties.glade:2925
 msgid "Home"
@@ -1164,7 +1168,7 @@ msgid "File System"
 msgstr ""
 
 #: src/nemo-places-sidebar.c:863 src/nemo-trash-bar.c:211
-#: libnemo-private/nemo-desktop-link.c:135 generate_additional_file:56
+#: libnemo-private/nemo-desktop-link.c:135 generate_additional_file:55
 #: gresources/nemo-desktop-preferences.glade:287
 msgid "Trash"
 msgstr ""
@@ -1697,7 +1701,7 @@ msgstr ""
 msgid "No scripts found"
 msgstr ""
 
-#: src/nemo-script-config-widget.c:344
+#: src/nemo-script-config-widget.c:345
 msgid "Scripts"
 msgstr ""
 
@@ -1796,7 +1800,7 @@ msgid "P_roperties"
 msgstr ""
 
 #: src/nemo-tree-sidebar.c:1546 libnemo-private/nemo-desktop-link.c:126
-#: generate_additional_file:49 gresources/nemo-desktop-preferences.glade:131
+#: generate_additional_file:48 gresources/nemo-desktop-preferences.glade:131
 #: gresources/nemo-file-management-properties.glade:2888
 msgid "Computer"
 msgstr ""
@@ -2633,12 +2637,12 @@ msgstr ""
 msgid "Go to the location specified by this bookmark"
 msgstr ""
 
-#: src/nemo-window.c:1361
+#: src/nemo-window.c:1370
 #, c-format
 msgid "%s - File Browser"
 msgstr ""
 
-#: src/nemo-window.c:1957 src/nemo-window-menus.c:339
+#: src/nemo-window.c:1966 src/nemo-window-menus.c:339
 msgid "Nemo"
 msgstr ""
 
@@ -5135,11 +5139,11 @@ msgstr ""
 msgid "Create a new workspace and activate it"
 msgstr ""
 
-#: generate_additional_file:34
+#: generate_additional_file:33
 msgid "Files"
 msgstr ""
 
-#: generate_additional_file:34
+#: generate_additional_file:33
 msgid "Access and organize files"
 msgstr ""
 
