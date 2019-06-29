@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-23 17:17+0200\n"
+"POT-Creation-Date: 2019-06-29 17:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1139,7 +1139,7 @@ msgstr ""
 #: libnemo-private/nemo-bookmark.c:130 libnemo-private/nemo-desktop-link.c:118
 #: libnemo-private/nemo-file-utilities.c:67
 #: libnemo-private/nemo-file-utilities.c:116 generate_additional_file:41
-#: gresources/nemo-desktop-preferences.glade:209
+#: gresources/nemo-desktop-preferences.glade:211
 #: gresources/nemo-file-management-properties.glade:2925
 msgid "Home"
 msgstr ""
@@ -1169,7 +1169,7 @@ msgstr ""
 
 #: src/nemo-places-sidebar.c:863 src/nemo-trash-bar.c:211
 #: libnemo-private/nemo-desktop-link.c:135 generate_additional_file:55
-#: gresources/nemo-desktop-preferences.glade:287
+#: gresources/nemo-desktop-preferences.glade:289
 msgid "Trash"
 msgstr ""
 
@@ -1207,7 +1207,7 @@ msgstr ""
 
 #: src/nemo-places-sidebar.c:1135 src/nemo-places-sidebar.c:1190
 #: src/nemo-tree-sidebar.c:1559 libnemo-private/nemo-desktop-link.c:147
-#: gresources/nemo-desktop-preferences.glade:443
+#: gresources/nemo-desktop-preferences.glade:445
 msgid "Network"
 msgstr ""
 
@@ -1800,7 +1800,7 @@ msgid "P_roperties"
 msgstr ""
 
 #: src/nemo-tree-sidebar.c:1546 libnemo-private/nemo-desktop-link.c:126
-#: generate_additional_file:48 gresources/nemo-desktop-preferences.glade:131
+#: generate_additional_file:48 gresources/nemo-desktop-preferences.glade:133
 #: gresources/nemo-file-management-properties.glade:2888
 msgid "Computer"
 msgstr ""
@@ -5242,38 +5242,38 @@ msgid "page1"
 msgstr ""
 
 #: gresources/nemo-desktop-preferences.glade:36
-msgid "<b>Desktop Layout</b>"
-msgstr ""
-
-#: gresources/nemo-desktop-preferences.glade:52
-msgid "No desktop icons"
-msgstr ""
-
-#: gresources/nemo-desktop-preferences.glade:53
-msgid "Show desktop icons on primary monitor only"
+msgid "Desktop Layout"
 msgstr ""
 
 #: gresources/nemo-desktop-preferences.glade:54
-msgid "Show desktop icons on non-primary monitor(s) only"
+msgid "No desktop icons"
 msgstr ""
 
 #: gresources/nemo-desktop-preferences.glade:55
+msgid "Show desktop icons on primary monitor only"
+msgstr ""
+
+#: gresources/nemo-desktop-preferences.glade:56
+msgid "Show desktop icons on non-primary monitor(s) only"
+msgstr ""
+
+#: gresources/nemo-desktop-preferences.glade:57
 msgid "Show desktop icons on all monitors"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:75
+#: gresources/nemo-desktop-preferences.glade:77
 msgid "Desktop Icons"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:365
+#: gresources/nemo-desktop-preferences.glade:367
 msgid "Mounted Drives"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:501
+#: gresources/nemo-desktop-preferences.glade:503
 msgid "Options"
 msgstr ""
 
-#: gresources/nemo-desktop-preferences.glade:557
+#: gresources/nemo-desktop-preferences.glade:559
 msgid "Show icons from missing monitors"
 msgstr ""
 
