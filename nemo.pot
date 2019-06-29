@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-29 17:15+0200\n"
+"POT-Creation-Date: 2019-06-29 18:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -240,12 +240,12 @@ msgid "E_mpty Trash"
 msgstr ""
 
 #: src/nemo-desktop-icon-grid-view.c:1027
-#: gresources/nemo-desktop-overlay.glade:291
+#: gresources/nemo-desktop-overlay.glade:293
 msgid "Auto-arrange"
 msgstr ""
 
 #: src/nemo-desktop-icon-grid-view.c:1032
-#: gresources/nemo-desktop-overlay.glade:537
+#: gresources/nemo-desktop-overlay.glade:539
 msgid "Reverse sort"
 msgstr ""
 
@@ -5196,48 +5196,48 @@ msgid "Current Monitor Layout"
 msgstr ""
 
 #: gresources/nemo-desktop-overlay.glade:197
-msgid "<b>Icon Size</b>"
+msgid "Icon Size"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:238
+#: gresources/nemo-desktop-overlay.glade:240
 msgid "Layout"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:367
+#: gresources/nemo-desktop-overlay.glade:369
 msgid "Direction"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:452
+#: gresources/nemo-desktop-overlay.glade:454
 msgid "Sort items by"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:611
+#: gresources/nemo-desktop-overlay.glade:613
 msgid "Reset grid spacing"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:678
-#: gresources/nemo-desktop-overlay.glade:868
+#: gresources/nemo-desktop-overlay.glade:680
+#: gresources/nemo-desktop-overlay.glade:870
 msgid "button"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:744
+#: gresources/nemo-desktop-overlay.glade:746
 msgid "Adjust horizontal grid spacing"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:799
+#: gresources/nemo-desktop-overlay.glade:801
 msgid "Adjust vertical grid spacing"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:843
+#: gresources/nemo-desktop-overlay.glade:845
 msgid "page0"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:857
+#: gresources/nemo-desktop-overlay.glade:859
 msgid ""
 "<b><big>Desktop icons are not currently enabled for this monitor.</big></b>"
 msgstr ""
 
-#: gresources/nemo-desktop-overlay.glade:885
+#: gresources/nemo-desktop-overlay.glade:887
 msgid "page1"
 msgstr ""
 
