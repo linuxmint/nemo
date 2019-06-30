@@ -91,7 +91,7 @@ nemo_global_preferences_get_inherit_show_thumbnails_preference (void)
 int
 nemo_global_preferences_get_size_prefix_preference (void)
 {
-    return inherit_show_thumbnails_preference;
+    return size_prefixes_preference;
 }
 
 char *
