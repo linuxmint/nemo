@@ -1522,8 +1522,8 @@ confirm_move_to_trash (CommonJob *job,
         prompt = f (_("Are you sure you want to move \"%B\" "
                       "to the trash?"), files->data);
     } else {
-        prompt = f (ngettext("Are you sure you want to move "
-                             "the %'d selected items to the trash?",
+        /* translators: the singular form here can be skipped. */
+        prompt = f (ngettext("unused %'d",
                              "Are you sure you want to move "
                              "the %'d selected items to the trash?",
                              file_count),
