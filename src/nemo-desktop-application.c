@@ -328,6 +328,9 @@ nemo_desktop_application_local_command_line (GApplication *application,
 
     g_application_open (application, files, len, "");
 
+    g_object_unref (files[0]);
+    g_free (files);
+
  out:
     g_option_context_free (context);
 

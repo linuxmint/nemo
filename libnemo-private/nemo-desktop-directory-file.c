@@ -217,6 +217,7 @@ static void
 desktop_callback_check_done (DesktopCallback *desktop_callback)
 {
     NemoFile *file;
+    gchar *name;
 
 	/* Check if we are ready. */
 	if (desktop_callback->initializing ||
@@ -227,8 +228,11 @@ desktop_callback_check_done (DesktopCallback *desktop_callback)
 	/* Ensure our metadata is updated before calling back */
 
     file = NEMO_FILE (desktop_callback->desktop_file);
-    nemo_desktop_update_metadata_from_keyfile (file, get_indexed_key (file));
+    name = get_indexed_key (file);
 
+    nemo_desktop_update_metadata_from_keyfile (file, name);
+
+    g_free (name);
 	/* Remove from the hash table before sending it. */
 	g_hash_table_remove (desktop_callback->desktop_file->details->callbacks,
 			     desktop_callback);

@@ -1414,12 +1414,11 @@ get_vertical_adjustment (NemoIconContainer *container,
 
     pango_font_description_free (desc);
 
-    pango_layout_set_width (layout, floor (GET_VIEW_CONSTANT (container, max_text_width_standard)) * PANGO_SCALE);
-    pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
-
     pango_layout_get_pixel_size (layout,
                                  NULL,
                                  &height);
+
+    g_object_unref (layout);
 
     height *= ellipsis_limit;
 
