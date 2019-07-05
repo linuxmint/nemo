@@ -9616,8 +9616,6 @@ has_writable_extra_pane (NemoView *view)
 
 const gchar *complex_item_paths[] = {
                                      "/selection/File Clipboard Actions/Duplicate",
-                                     "/selection/File Actions/Pin File",
-                                     "/selection/File Actions/Unpin File",
                                      "/selection/File Actions/Create Link",
                                      "/selection/File Actions/CopyToMenu",
                                      "/selection/File Actions/MoveToMenu",
