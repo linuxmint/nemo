@@ -1225,8 +1225,16 @@ nemo_list_model_remove (NemoListModel *model, GtkTreeIter *iter)
 		/* We need to do this before removing the last file to avoid
 		 * collapsing the row.
 		 */
-		add_dummy_row (model, parent_file_entry);
-	}
+
+        guint count;
+        gboolean got_count, unreadable;
+
+        got_count = nemo_file_get_directory_item_count (parent_file_entry->file, &count, &unreadable);
+
+        if ((!got_count && !unreadable) || count > 0) {
+            add_dummy_row (model, parent_file_entry);
+        }
+    }
 
 	if (file_entry->subdirectory != NULL) {
 		g_signal_emit (model,
