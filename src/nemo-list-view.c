@@ -422,7 +422,9 @@ nemo_list_view_did_not_drag (NemoListView *view,
 
         if (view->details->rename_on_release) {
             NemoFile *file = nemo_list_model_file_for_path (view->details->model, path);
-            nemo_list_view_start_renaming_file (NEMO_VIEW (view), file, FALSE);
+            nemo_list_view_start_renaming_file (NEMO_VIEW (view),
+                                                file,
+                                                nemo_file_is_directory (file));
             nemo_file_unref (file);
             view->details->rename_on_release = FALSE;
         }
