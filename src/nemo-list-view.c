@@ -3865,6 +3865,8 @@ nemo_list_view_end_loading (NemoView *view,
 	NemoClipboardMonitor *monitor;
 	NemoClipboardInfo *info;
 
+    nemo_list_view_update_selection (view);
+
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);
 
