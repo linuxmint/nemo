@@ -6402,16 +6402,13 @@ static void
 update_actions_visibility (NemoView *view, GList *selection)
 {
     GList *actions = gtk_action_group_list_actions (view->details->actions_action_group);
-    ActionVisibilityData *data;
+    ActionVisibilityData data;
 
-    data = g_slice_new0 (ActionVisibilityData);
+    data.view = view;
+    data.selection = selection;
 
-    data->view = view;
-    data->selection = selection;
+    g_list_foreach (actions, determine_visibility, &data);
 
-    g_list_foreach (actions, determine_visibility, data);
-
-    g_slice_free (ActionVisibilityData, data);
     g_list_free (actions);
 }
 
