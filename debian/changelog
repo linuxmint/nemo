@@ -1,3 +1,26 @@
+nemo (4.2.1) tina; urgency=medium
+
+  [ Clement Lefebvre ]
+  * l10n: Fix msgid
+  * l10n: Fix msgids
+
+  [ gm10 ]
+  * Fix nemo_global_preferences_get_size_prefix_preference getting set to the wrong value (#2165)
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: Add comment for unused singular translation, make the string obviously unused.
+  * nemo-view.c: Always show the pin/unpin actions.
+  * various: Fix a couple leaks
+  * nemo-list-model.c: When the last child of a node is removed, Handle re-adding a dummy row (or not) in the file removed handler, instead of always adding one, then removing it on parent's subsequent changed call.
+  * nemo-list-view.c: When triggering a rename using the 'slow double click' trigger, check whether the file is a folder to determine whether to select all or only non-extension text.
+  * nemo-view.c: Use the stack for running the action visiblity cycle.
+  * nemo-*-view.c: Update the selection info when a view has finished loading.
+
+  [ Clement Lefebvre ]
+  * Toolbar: Don't show thumbnail button by default
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 10 Jul 2019 12:10:27 +0200
+
 nemo (4.2.0) tina; urgency=medium
 
   [ Michael Webster ]
