@@ -281,7 +281,8 @@ nemo_desktop_link_can_rename (NemoDesktopLink     *link)
 	return !(link->details->type == NEMO_DESKTOP_LINK_HOME ||
 		link->details->type == NEMO_DESKTOP_LINK_TRASH ||
 		link->details->type == NEMO_DESKTOP_LINK_NETWORK ||
-		link->details->type == NEMO_DESKTOP_LINK_COMPUTER);
+		link->details->type == NEMO_DESKTOP_LINK_COMPUTER ||
+        link->details->type == NEMO_DESKTOP_LINK_MOUNT);
 }
 
 gboolean
