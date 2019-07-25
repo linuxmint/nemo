@@ -1,3 +1,13 @@
+nemo (4.2.2) tina; urgency=medium
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * nemo-desktop-link.c: Don't allow an attempt to rename mounts.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 25 Jul 2019 10:28:21 +0200
+
 nemo (4.2.1) tina; urgency=medium
 
   [ Clement Lefebvre ]
