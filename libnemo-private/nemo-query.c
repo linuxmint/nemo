@@ -74,16 +74,19 @@ nemo_query_new (void)
 	return g_object_new (NEMO_TYPE_QUERY,  NULL);
 }
 
-
 char *
 nemo_query_get_text (NemoQuery *query)
 {
+    g_return_val_if_fail (NEMO_IS_QUERY (query), NULL);
+
 	return g_strdup (query->details->text);
 }
 
 void
 nemo_query_set_text (NemoQuery *query, const char *text)
 {
+    g_return_if_fail (NEMO_IS_QUERY (query));
+
 	g_free (query->details->text);
 	query->details->text = g_strstrip (g_strdup (text));
 }
@@ -91,12 +94,16 @@ nemo_query_set_text (NemoQuery *query, const char *text)
 char *
 nemo_query_get_location (NemoQuery *query)
 {
+    g_return_val_if_fail (NEMO_IS_QUERY (query), NULL);
+
 	return g_strdup (query->details->location_uri);
 }
 
 void
 nemo_query_set_location (NemoQuery *query, const char *uri)
 {
+    g_return_if_fail (NEMO_IS_QUERY (query));
+
 	g_free (query->details->location_uri);
 	query->details->location_uri = g_strdup (uri);
 }
@@ -104,12 +111,16 @@ nemo_query_set_location (NemoQuery *query, const char *uri)
 GList *
 nemo_query_get_mime_types (NemoQuery *query)
 {
+    g_return_val_if_fail (NEMO_IS_QUERY (query), NULL);
+
 	return eel_g_str_list_copy (query->details->mime_types);
 }
 
 void
 nemo_query_set_mime_types (NemoQuery *query, GList *mime_types)
 {
+    g_return_if_fail (NEMO_IS_QUERY (query));
+
 	g_list_free_full (query->details->mime_types, g_free);
 	query->details->mime_types = eel_g_str_list_copy (mime_types);
 }
@@ -117,6 +128,8 @@ nemo_query_set_mime_types (NemoQuery *query, GList *mime_types)
 void
 nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 {
+    g_return_if_fail (NEMO_IS_QUERY (query));
+
 	query->details->mime_types = g_list_append (query->details->mime_types,
 						    g_strdup (mime_type));
 }
@@ -124,18 +137,24 @@ nemo_query_add_mime_type (NemoQuery *query, const char *mime_type)
 void
 nemo_query_set_show_hidden (NemoQuery *query, gboolean hidden)
 {
+    g_return_if_fail (NEMO_IS_QUERY (query));
+
     query->details->show_hidden = hidden;
 }
 
 gboolean
 nemo_query_get_show_hidden (NemoQuery *query)
 {
+    g_return_val_if_fail (NEMO_IS_QUERY (query), FALSE);
+
     return query->details->show_hidden;
 }
 
 char *
 nemo_query_to_readable_string (NemoQuery *query)
 {
+    g_return_val_if_fail (NEMO_IS_QUERY (query), NULL);
+
     GFile *file;
     gchar *location_title, *readable;
 
