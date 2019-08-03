@@ -170,12 +170,18 @@ nemo_query_editor_get_location (NemoQueryEditor *editor)
 static void
 entry_activate_cb (GtkWidget *entry, NemoQueryEditor *editor)
 {
+    g_autofree gchar *text = NULL;
+
 	if (editor->priv->typing_timeout_id > 0) {
 		g_source_remove (editor->priv->typing_timeout_id);
 		editor->priv->typing_timeout_id = 0;
 	}
 
-	nemo_query_editor_changed_force (editor, TRUE);
+    text = get_sanitized_query_string (editor);
+
+    if (strlen (text) > 2) {
+        nemo_query_editor_changed_force (editor, TRUE);
+    }
 }
 
 static gboolean
