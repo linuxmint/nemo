@@ -456,7 +456,7 @@ nemo_main_application_open (GApplication *app,
 	NemoMainApplication *self = NEMO_MAIN_APPLICATION (app);
 
 	gboolean open_in_tabs = FALSE;
-	const gchar *geometry = NULL;
+	gchar *geometry = NULL;
 	const char splitter = '=';
 
 	g_debug ("Open called on the GApplication instance; %d files", n_files);
@@ -465,15 +465,20 @@ nemo_main_application_open (GApplication *app,
 	if (strlen (options) > 0) {
 		gchar** splitedOptions = g_strsplit (options, &splitter, 2);
 		if (strcmp (splitedOptions[0], "NULL") != 0) {
-			geometry = splitedOptions[0];
+			geometry = g_strdup (splitedOptions[0]);
 		}
 		sscanf (splitedOptions[1], "%d", &open_in_tabs);
 		g_strfreev (splitedOptions);
 	}
 
-	DEBUG ("Open called on the GApplication instance; %d files", n_files);
+	DEBUG ("Open called on the GApplication instance; %d files, open in tabs: %s, geometry: '%s'",
+           n_files,
+           open_in_tabs ? "yes" : "no",
+           geometry ? geometry : "none");
 
 	open_windows (self, files, n_files, gdk_screen_get_default (), geometry, open_in_tabs);
+
+    g_clear_pointer (&geometry, g_free);
 }
 
 static void
