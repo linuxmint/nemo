@@ -463,12 +463,12 @@ nemo_main_application_open (GApplication *app,
 
 	/* Check if local command line passed --geometry or --tabs */
 	if (strlen (options) > 0) {
-		gchar** splitedOptions = g_strsplit (options, &splitter, 2);
-		if (strcmp (splitedOptions[0], "NULL") != 0) {
-			geometry = g_strdup (splitedOptions[0]);
+		gchar** split_options = g_strsplit (options, &splitter, 2);
+		if (strcmp (split_options[0], "NULL") != 0) {
+			geometry = g_strdup (split_options[0]);
 		}
-		sscanf (splitedOptions[1], "%d", &open_in_tabs);
-		g_strfreev (splitedOptions);
+		sscanf (split_options[1], "%d", &open_in_tabs);
+		g_strfreev (split_options);
 	}
 
 	DEBUG ("Open called on the GApplication instance; %d files, open in tabs: %s, geometry: '%s'",
