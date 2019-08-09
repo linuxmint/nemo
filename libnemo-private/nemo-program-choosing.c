@@ -89,6 +89,25 @@ nemo_launch_application (GAppInfo *application,
 	g_list_free_full (uris, g_free);
 }
 
+static void
+dummy_child_watch (GPid     pid,
+                   gint     status,
+                   gpointer user_data)
+{
+  /* Nothing, this is just to ensure we don't double fork
+   * and break pkexec:
+   * https://bugzilla.gnome.org/show_bug.cgi?id=675789
+   */
+}
+
+static void
+gather_pid_callback (GDesktopAppInfo *appinfo,
+                     GPid            pid,
+                     gpointer        data)
+{
+    g_child_watch_add(pid, dummy_child_watch, NULL);
+}
+
 void
 nemo_launch_application_by_uri (GAppInfo *application, 
 				    GList *uris,
@@ -149,24 +168,15 @@ nemo_launch_application_by_uri (GAppInfo *application,
 	
 	error = NULL;
 
-	if (count == total) {
-		/* All files are local, so we can use g_app_info_launch () with
-		 * the file list we constructed before.
-		 */
-		result = g_app_info_launch (application,
-					    locations,
-					    G_APP_LAUNCH_CONTEXT (launch_context),
-					    &error);
-	} else {
-		/* Some files are non local, better use g_app_info_launch_uris ().
-		 */
-		result = g_app_info_launch_uris (application,
-						 uris,
-						 G_APP_LAUNCH_CONTEXT (launch_context),
-						 &error);
-	}
+    result = g_desktop_app_info_launch_uris_as_manager (G_DESKTOP_APP_INFO (application),
+                                                        uris,
+                                                        G_APP_LAUNCH_CONTEXT (launch_context),
+                                                        G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+                                                        NULL, NULL,
+                                                        gather_pid_callback, application,
+                                                        &error);
 
-	g_object_unref (launch_context);
+    g_object_unref (launch_context);
 
 	if (result) {
 		for (l = uris; l != NULL; l = l->next) {
@@ -294,7 +304,6 @@ nemo_launch_desktop_file (GdkScreen   *screen,
 {
 	GError *error;
 	char *message, *desktop_file_path;
-    const gchar *cl;
 	const GList *p;
 	GList *files;
 	int total, count;
@@ -375,48 +384,14 @@ nemo_launch_desktop_file (GdkScreen   *screen,
 	gdk_app_launch_context_set_screen (context,
 					   gtk_window_get_screen (parent_window));
 
-    cl = g_app_info_get_commandline (G_APP_INFO (app_info));
+    g_desktop_app_info_launch_uris_as_manager (app_info,
+                                               (GList *) parameter_uris,
+                                               G_APP_LAUNCH_CONTEXT (context),
+                                               G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+                                               NULL, NULL,
+                                               gather_pid_callback, app_info,
+                                               &error);
 
-    if (count == 0 && total == 0 && g_strcmp0 (cl, "pkexec")) {
-        /* Temporary workaround for "Refusing to render service to dead parents." message
-         * when using pkexec.  This will only affect simple cases, such as a desktop file
-         * that has no arguments */
-        GAppInfo *wrapped_info;
-        gchar *wrapped;
-
-        wrapped = g_strdup_printf ("sh -c '%s'", cl);
-
-        wrapped_info = g_app_info_create_from_commandline (wrapped,
-                                                           g_app_info_get_name (G_APP_INFO (app_info)),
-                                                           G_APP_INFO_CREATE_NONE,
-                                                           &error);
-
-        g_free (wrapped);
-
-        if (!error) {
-            g_app_info_launch (wrapped_info,
-                               NULL,
-                               G_APP_LAUNCH_CONTEXT (context),
-                               &error);
-        }
-
-        g_object_unref (wrapped_info);
-    } else if (count == total) {
-		/* All files are local, so we can use g_app_info_launch () with
-		 * the file list we constructed before.
-		 */
-		g_app_info_launch (G_APP_INFO (app_info),
-				   files,
-				   G_APP_LAUNCH_CONTEXT (context),
-				   &error);
-	} else {
-		/* Some files are non local, better use g_app_info_launch_uris ().
-		 */
-		g_app_info_launch_uris (G_APP_INFO (app_info),
-					(GList *) parameter_uris,
-					G_APP_LAUNCH_CONTEXT (context),
-					&error);
-	}
 	if (error != NULL) {
 		message = g_strconcat (_("Details: "), error->message, NULL);
 		eel_show_error_dialog
