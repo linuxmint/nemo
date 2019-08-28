@@ -1,3 +1,14 @@
+nemo (4.2.3) tina; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-query-editor.c: Don't allow activation when there is no valid search string.
+  * nemo-window-slot.c: Don't try to set anything on query if it's NULL.
+  * nemo-main-application.c: when parsing options, don't try to use part of an array that has already been freed, make a copy instead.
+  * nemo-main-application.c: Fix variable name for consistency and spelling.
+  * nemo-program-choosing.c: Update how desktop files are launched - launch_uris_as_manager does a better job, and this also replaces a previous patch for a pkexec issue in desktop files, and is a more complete fix.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 28 Aug 2019 09:08:04 +0200
+
 nemo (4.2.2) tina; urgency=medium
 
   [ Clement Lefebvre ]
