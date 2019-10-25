@@ -131,8 +131,6 @@ typedef enum
 
 #define NEMO_PREFERENCES_SIDEBAR_BOOKMARK_BREAKPOINT "sidebar-bookmark-breakpoint"
 
-#define NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS	"context-menus-show-all-actions"
-
 enum
 {
 	NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,
@@ -286,6 +284,7 @@ GSettings *nemo_desktop_preferences;
 GSettings *nemo_tree_sidebar_preferences;
 GSettings *nemo_window_state;
 GSettings *nemo_plugin_preferences;
+GSettings *nemo_menu_config_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;

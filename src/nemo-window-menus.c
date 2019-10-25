@@ -1471,11 +1471,6 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */                  N_("Toggle the display of thumbnails in the current directory"),
   /* callback */                 G_CALLBACK (action_show_thumbnails_callback),
   /* default */                  FALSE },
-  /* name, stock id */     { NEMO_ACTION_SHOW_FULL_CONTEXT_MENU, NULL,
-  /* label, accelerator */   N_("Use _full context menu"), NULL,
-  /* tooltip */              N_("Display additional actions in the context menu"),
-                             NULL,
-  /* is_active */            TRUE },
 };
 
 static const GtkRadioActionEntry sidebar_radio_entries[] = {
@@ -1742,15 +1737,6 @@ window_menus_set_bindings (NemoWindow *window)
                             action,
                             "active",
                             G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-
-    action = gtk_action_group_get_action (action_group,
-                                          NEMO_ACTION_SHOW_FULL_CONTEXT_MENU);
-
-    g_settings_bind (nemo_preferences,
-                     NEMO_PREFERENCES_CONTEXT_MENUS_SHOW_ALL_ACTIONS,
-                     action,
-                     "active",
-                     G_SETTINGS_BIND_DEFAULT);
 }
 
 void

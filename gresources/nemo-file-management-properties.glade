@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
-<interface>
-  <requires lib="gtk+" version="3.10"/>
+<!-- Generated with glade 3.22.1 
+
+Copyright (C) 
+
+This file is part of .
+
+ is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with .  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<interface domain="nemo">
+  <requires lib="gtk+" version="3.20"/>
   <requires lib="xapp" version="0.0"/>
+  <!-- interface-license-type gplv3 -->
+  <object class="GtkSizeGroup">
+    <property name="ignore_hidden">True</property>
+  </object>
+  <object class="GtkSizeGroup">
+    <property name="ignore_hidden">True</property>
+  </object>
+  <object class="GtkSizeGroup"/>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -3259,7 +3286,7 @@
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">5</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
@@ -3272,6 +3299,776 @@
                     <property name="title" translatable="yes">Toolbar</property>
                     <property name="icon_name">xapp-prefs-toolbar-symbolic</property>
                     <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow8">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <child>
+                      <object class="GtkViewport" id="viewport8">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkBox" id="vbox10">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="border_width">6</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Visible Entries</property>
+                                <property name="xalign">0</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">5</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Selection</property>
+                                            <attributes>
+                                              <attribute name="weight" value="bold"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="padding">5</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkListBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__open_check">
+                                                    <property name="label" translatable="yes">_Open</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__open_in_new_tab_check">
+                                                    <property name="label" translatable="yes">Open in New _Tab</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__open_in_new_window_check">
+                                                    <property name="label" translatable="yes">Open in New _Window</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__scripts_check">
+                                                    <property name="label" translatable="yes">_Scripts</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__cut_check">
+                                                    <property name="label" translatable="yes">Cu_t</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__copy_check">
+                                                    <property name="label" translatable="yes">_Copy</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__paste_check">
+                                                    <property name="label" translatable="yes">_Paste</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__duplicate_check">
+                                                    <property name="label" translatable="yes">D_uplicate</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__pin_check">
+                                                    <property name="label" translatable="yes">P_in</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__make_link_check">
+                                                    <property name="label" translatable="yes">Ma_ke Link</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__rename_check">
+                                                    <property name="label" translatable="yes">_Rename…</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__copy_to_check">
+                                                    <property name="label" translatable="yes">Cop_y to</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__move_to_check">
+                                                    <property name="label" translatable="yes">M_ove to</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__open_in_terminal_check">
+                                                    <property name="label" translatable="yes">Open in Terminal</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__open_as_root_check">
+                                                    <property name="label" translatable="yes">Open as Root</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__move_to_trash_check">
+                                                    <property name="label" translatable="yes">Mo_ve to Trash</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__properties_check">
+                                                    <property name="label" translatable="yes">_Properties</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <style>
+                                              <class name="frame"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">5</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Background</property>
+                                            <attributes>
+                                              <attribute name="weight" value="bold"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="padding">5</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkListBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__create_new_folder_check">
+                                                    <property name="label" translatable="yes">Create New _Folder</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__scripts_check">
+                                                    <property name="label" translatable="yes">_Scripts</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__open_in_terminal_check">
+                                                    <property name="label" translatable="yes">Open in Terminal</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__open_as_root_check">
+                                                    <property name="label" translatable="yes">Open as Root</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__show_hidden_files_check">
+                                                    <property name="label" translatable="yes">Show _Hidden Files</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__paste_check">
+                                                    <property name="label" translatable="yes">_Paste</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="background_menu__properties_check">
+                                                    <property name="label" translatable="yes">_Properties</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <style>
+                                              <class name="frame"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Icon View</property>
+                                            <attributes>
+                                              <attribute name="weight" value="bold"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="padding">5</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkListBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="iconview_menu__arrange_items_check">
+                                                    <property name="label" translatable="yes">Arran_ge Items</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="iconview_menu__organize_by_name_check">
+                                                    <property name="label" translatable="yes">_Organize by Name</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <style>
+                                              <class name="frame"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Desktop</property>
+                                            <attributes>
+                                              <attribute name="weight" value="bold"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="padding">5</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkListBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="desktop_menu__customize_check">
+                                                    <property name="label" translatable="yes">_Customize</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <style>
+                                              <class name="frame"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">6</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Visible action and extension entries can be configured in the &lt;b&gt;Plugins&lt;/b&gt; tab</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="pack_type">end</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="name">page0</property>
+                    <property name="title" translatable="yes">Context Menus</property>
+                    <property name="icon_name">open-menu-symbolic</property>
+                    <property name="position">6</property>
                   </packing>
                 </child>
                 <child>
@@ -3299,14 +4096,14 @@
                     <property name="name">plugins</property>
                     <property name="title" translatable="yes">Plugins</property>
                     <property name="icon_name">xapp-prefs-plugins-symbolic</property>
-                    <property name="position">6</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
               </object>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>

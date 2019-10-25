@@ -41,6 +41,7 @@
 #include <libnemo-private/nemo-module.h>
 
 #include "nemo-plugin-manager.h"
+#include "nemo-actions.h"
 
 /* string enum preferences */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET "default_view_combobox"
@@ -727,6 +728,23 @@ bind_builder_radio (GtkBuilder *builder,
 }
 
 static void
+setup_configurable_menu_items (GtkBuilder *builder)
+{
+    gint i;
+
+    for (i = 0; i < CONFIGURABLE_MENU_ITEM_COUNT; i++) {
+        if (CONFIGURABLE_MENU_ITEM_INFO[i].config_widget_name == NULL) {
+            continue;
+        }
+
+        bind_builder_bool (builder,
+                           nemo_menu_config_preferences,
+                           CONFIGURABLE_MENU_ITEM_INFO[i].config_widget_name,
+                           CONFIGURABLE_MENU_ITEM_INFO[i].settings_key);
+    }
+}
+
+static void
 setup_tooltip_items (GtkBuilder *builder)
 {
     gboolean enabled = FALSE;
@@ -1040,6 +1058,8 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
     nemo_file_management_properties_dialog_setup_plugin_page (builder);
+
+    setup_configurable_menu_items (builder);
 
     dialog = GTK_WIDGET (gtk_builder_get_object (builder, "file_management_dialog"));
 
