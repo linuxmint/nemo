@@ -3506,7 +3506,7 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 	gtk_widget_show (item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
 
-	item = gtk_menu_item_new_with_label (_("Rename..."));
+	item = gtk_menu_item_new_with_label (_("_Rename…"));
 	sidebar->popup_menu_rename_item = item;
 	g_signal_connect (item, "activate",
 		    G_CALLBACK (rename_shortcut_cb), sidebar);

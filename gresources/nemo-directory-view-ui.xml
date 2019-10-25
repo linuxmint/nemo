@@ -183,7 +183,7 @@
         <menuitem name="Unpin File" action="Unpin File"/>
 		<menuitem name="Create Link" action="Create Link"/>
 		<menuitem name="Rename" action="Rename"/>
-		<menu action="CopyToMenu">
+		<menu name="CopyToMenu" action="CopyToMenu">
 			<menuitem name="Copy to next pane" action="Copy to next pane"/>
 			<menuitem name="Copy to Home" action="Copy to Home"/>
 			<menuitem name="Copy to Desktop" action="Copy to Desktop"/>
@@ -193,7 +193,7 @@
             <separator/>
             <menuitem name="Browse for copy to" action="BrowseCopyTo"/>
 		</menu>
-		<menu action="MoveToMenu">
+		<menu name="MoveToMenu" action="MoveToMenu">
 			<menuitem name="Move to next pane" action="Move to next pane"/>
 			<menuitem name="Copy to Home" action="Move to Home"/>
 			<menuitem name="Copy to Desktop" action="Move to Desktop"/>

@@ -330,11 +330,6 @@
       <summary>Whether to list places in the Move To/Copy To menus</summary>
       <description>If set to true, places will be listed in the MoveTo/CopyTo menus</description>
     </key>
-    <key name="context-menus-show-all-actions" type="b">
-      <default>false</default>
-      <summary>Whether to show all available actions in context menus</summary>
-      <description>If set to true, all actions are visible. Otherwise nemo shows a simplified version of what is present in the menubar.</description>
-    </key>
     <key name="tooltips-on-desktop" type="b">
       <default>false</default>
       <summary>Show tooltips for desktop items</summary>
@@ -677,6 +672,124 @@
       <default>[]</default>
       <summary>List of scripts -not- to load.</summary>
       <description>List of script files you do -not- want loaded.  This maintains the behavior of an installed script being enabled by default.</description>
+    </key>
+  </schema>
+
+  <schema id="org.nemo.preferences.menu-config" path="/org/nemo/preferences/menu-config/" gettext-domain="nemo">
+    <!-- Selection -->
+    <key name="selection-menu-open" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Open item.</summary>
+    </key>
+    <key name="selection-menu-open-in-new-tab" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Open in New Tab item.</summary>
+    </key>
+    <key name="selection-menu-open-in-new-window" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Open in New Window item.</summary>
+    </key>
+    <key name="selection-menu-scripts" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Scripts submenu.</summary>
+    </key>
+    <key name="selection-menu-cut" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Cut item.</summary>
+    </key>
+    <key name="selection-menu-copy" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Copy item.</summary>
+    </key>
+    <key name="selection-menu-paste" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Paste item.</summary>
+    </key>
+    <key name="selection-menu-duplicate" type="b">
+      <default>false</default>
+      <summary>Show the selection context menu's Duplicate item.</summary>
+    </key>
+    <key name="selection-menu-pin" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Pin/Unpin item.</summary>
+    </key>
+    <key name="selection-menu-make-link" type="b">
+      <default>false</default>
+      <summary>Show the selection context menu's Create Link item.</summary>
+    </key>
+    <key name="selection-menu-rename" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Rename item.</summary>
+    </key>
+    <key name="selection-menu-copy-to" type="b">
+      <default>false</default>
+      <summary>Show the selection context menu's Copy To submenu.</summary>
+    </key>
+    <key name="selection-menu-move-to" type="b">
+      <default>false</default>
+      <summary>Show the selection context menu's Move To submenu.</summary>
+    </key>
+    <key name="selection-menu-open-in-terminal" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Open in Terminal item.</summary>
+    </key>
+    <key name="selection-menu-open-as-root" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Open As Root item.</summary>
+    </key>
+    <key name="selection-menu-move-to-trash" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Move to Trash item.</summary>
+    </key>
+    <key name="selection-menu-properties" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Properties item.</summary>
+    </key>
+
+    <!-- Background -->
+    <key name="background-menu-create-new-folder" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Create New Folder item.</summary>
+    </key>
+    <key name="background-menu-scripts" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Scripts submenu.</summary>
+    </key>
+    <key name="background-menu-open-in-terminal" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Open in Terminal item.</summary>
+    </key>
+    <key name="background-menu-open-as-root" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Open as Root item.</summary>
+    </key>
+    <key name="background-menu-show-hidden-files" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Show Hidden Files item.</summary>
+    </key>
+    <key name="background-menu-paste" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Paste item.</summary>
+    </key>
+    <key name="background-menu-properties" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Properties item.</summary>
+    </key>
+
+    <!-- Icon View -->
+    <key name="iconview-menu-arrange-items" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Arrange Items submenu (icon view only).</summary>
+    </key>
+    <key name="iconview-menu-organize-by-name" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Organize by Name item (icon view only).</summary>
+    </key>
+
+    <!-- Desktop (new) -->
+    <key name="desktop-menu-customize" type="b">
+      <default>true</default>
+      <summary>Show the background context menu's Customize item (new-style desktop only).</summary>
     </key>
   </schema>
 </schemalist>

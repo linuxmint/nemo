@@ -26,6 +26,8 @@
 #ifndef NEMO_ACTIONS_H
 #define NEMO_ACTIONS_H
 
+#include <glib.h>
+
 #define NEMO_ACTION_STOP "Stop"
 #define NEMO_ACTION_RELOAD "Reload"
 #define NEMO_ACTION_BACK "Back"
@@ -88,6 +90,8 @@
 #define NEMO_ACTION_MOVE_TO_DESKTOP "Move to Desktop"
 #define NEMO_ACTION_BROWSE_MOVE_TO "BrowseMoveTo"
 #define NEMO_ACTION_BROWSE_COPY_TO "BrowseCopyTo"
+#define NEMO_ACTION_COPY_TO_MENU "CopyToMenu"
+#define NEMO_ACTION_MOVE_TO_MENU "MoveToMenu"
 #define NEMO_ACTION_LOCATION_PASTE_FILES_INTO "LocationPasteFilesInto"
 #define NEMO_ACTION_RENAME "Rename"
 #define NEMO_ACTION_DUPLICATE "Duplicate"
@@ -152,5 +156,108 @@
 
 #define NEMO_ACTION_PIN_FILE        "Pin File"
 #define NEMO_ACTION_UNPIN_FILE      "Unpin File"
+#define NEMO_ACTION_DESKTOP_OVERLAY "Desktop Overlay"
+
+typedef struct
+{
+    const gchar  *action_name; // The action's name
+    const gchar  *config_widget_name; // The builder id of the corresponding toggle in preferences
+                                      // Can be null if the action's should be tied to another
+                                      // action's visibility.
+    const gchar  *ui_path; // The xml path of the item from the ui file
+    const gchar  *settings_key;; // The gsettings key corresponding to the menu item's visibility.
+} ConfigurableMenuItemInfo;
+
+static const ConfigurableMenuItemInfo CONFIGURABLE_MENU_ITEM_INFO [] = {
+    // Selection
+    { NEMO_ACTION_OPEN, "selection_menu__open_check",
+     "/selection/Open Placeholder/Open", "selection-menu-open" },
+
+    { NEMO_ACTION_OPEN_IN_NEW_TAB, "selection_menu__open_in_new_tab_check",
+     "/selection/Open Placeholder/OpenInNewTab", "selection-menu-open-in-new-tab" },
+
+    { NEMO_ACTION_OPEN_ALTERNATE, "selection_menu__open_in_new_window_check",
+     "/selection/Open Placeholder/OpenAlternate", "selection-menu-open-in-new-window" },
+
+    { NEMO_ACTION_SCRIPTS, "selection_menu__scripts_check",
+     "/selection/Open Placeholder/Scripts", "selection-menu-scripts" },
+
+    { NEMO_ACTION_CUT, "selection_menu__cut_check",
+     "/selection/File Clipboard Actions/Cut", "selection-menu-cut" },
+
+    { NEMO_ACTION_COPY, "selection_menu__copy_check",
+     "/selection/File Clipboard Actions/Copy", "selection-menu-copy" },
+
+    { NEMO_ACTION_PASTE_FILES_INTO, "selection_menu__paste_check",
+     "/selection/File Clipboard Actions/Paste Files Into", "selection-menu-paste" },
+
+    { NEMO_ACTION_DUPLICATE, "selection_menu__duplicate_check",
+     "/selection/File Clipboard Actions/Duplicate", "selection-menu-duplicate" },
+
+    { NEMO_ACTION_PIN_FILE, "selection_menu__pin_check",
+     "/selection/File Actions/Pin File", "selection-menu-pin" },
+    { NEMO_ACTION_UNPIN_FILE, NULL,
+     "/selection/File Actions/Unpin File", "selection-menu-pin" },
+
+    { NEMO_ACTION_CREATE_LINK, "selection_menu__make_link_check",
+     "/selection/File Actions/Create Link", "selection-menu-make-link" },
+
+    { NEMO_ACTION_RENAME, "selection_menu__rename_check",
+     "/selection/File Actions/Rename", "selection-menu-rename" },
+
+    { NEMO_ACTION_COPY_TO_MENU, "selection_menu__copy_to_check",
+     "/selection/File Actions/CopyToMenu", "selection-menu-copy-to" },
+
+    { NEMO_ACTION_MOVE_TO_MENU, "selection_menu__move_to_check",
+     "/selection/File Actions/MoveToMenu", "selection-menu-move-to" },
+
+    { NEMO_ACTION_OPEN_IN_TERMINAL, "selection_menu__open_in_terminal_check",
+     "/selection/OpenInTerminal", "selection-menu-open-in-terminal" },
+
+    { NEMO_ACTION_OPEN_AS_ROOT, "selection_menu__open_as_root_check",
+     "/selection/OpenAsRoot", "selection-menu-open-as-root" },
+
+    { NEMO_ACTION_TRASH, "selection_menu__move_to_trash_check",
+     "/selection/Dangerous File Actions/Trash", "selection-menu-move-to-trash" },
+
+    { NEMO_ACTION_PROPERTIES, "selection_menu__properties_check",
+     "/selection/Properties", "selection-menu-properties" },
+
+     // Background
+
+    { NEMO_ACTION_NEW_FOLDER, "background_menu__create_new_folder_check",
+     "/background/Before Zoom Items/New Object Items/New Folder", "background-menu-create-new-folder" },
+
+    { NEMO_ACTION_SCRIPTS, "background_menu__scripts_check",
+     "/background/Before Zoom Items/New Object Items/Scripts", "background-menu-scripts" },
+
+    { NEMO_ACTION_OPEN_IN_TERMINAL, "background_menu__open_in_terminal_check",
+     "/background/Before Zoom Items/OpenInTerminal", "background-menu-open-in-terminal" },
+
+    { NEMO_ACTION_OPEN_AS_ROOT, "background_menu__open_as_root_check",
+     "/background/Before Zoom Items/OpenAsRoot", "background-menu-open-as-root" },
+
+    { NEMO_ACTION_SHOW_HIDDEN_FILES, "background_menu__show_hidden_files_check",
+     "/background/Before Zoom Items/Show Hidden Files", "background-menu-show-hidden-files" },
+
+    { NEMO_ACTION_PASTE, "background_menu__paste_check",
+     "/background/Before Zoom Items/File Clipboard Actions/Paste", "background-menu-paste" },
+
+    { NEMO_ACTION_PROPERTIES, "background_menu__properties_check",
+     "/background/Folder Items Placeholder/Properties", "background-menu-properties" },
+
+     // Icon View (merged with background)
+    { NEMO_ACTION_ARRANGE_ITEMS, "iconview_menu__arrange_items_check",
+     "/background/Before Zoom Items/View Items/Arrange Items", "iconview-menu-arrange-items" },
+
+    { NEMO_ACTION_CLEAN_UP, "iconview_menu__organize_by_name_check",
+     "/background/Before Zoom Items/View Items/Clean Up", "iconview-menu-organize-by-name" },
+
+     // Desktop (new)
+    { NEMO_ACTION_DESKTOP_OVERLAY, "desktop_menu__customize_check",
+     "/background/Before Zoom Items/View Items/Desktop Overlay", "desktop-menu-customize" },
+};
+
+#define CONFIGURABLE_MENU_ITEM_COUNT (G_N_ELEMENTS (CONFIGURABLE_MENU_ITEM_INFO))
 
 #endif /* NEMO_ACTIONS_H */
