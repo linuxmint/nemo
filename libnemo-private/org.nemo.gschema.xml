@@ -330,6 +330,10 @@
       <summary>Whether to list places in the Move To/Copy To menus</summary>
       <description>If set to true, places will be listed in the MoveTo/CopyTo menus</description>
     </key>
+    <key name="context-menus-show-all-actions" type="b">
+      <default>false</default>
+      <summary>deprecated - no longer used</summary>
+    </key>
     <key name="tooltips-on-desktop" type="b">
       <default>false</default>
       <summary>Show tooltips for desktop items</summary>
