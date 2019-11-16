@@ -3563,7 +3563,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                                 <property name="selectable">False</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="selection_menu__rename_check">
-                                                    <property name="label" translatable="yes">_Rename…</property>
+                                                    <property name="label" translatable="yes">_Rename...</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -4049,7 +4049,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Visible action and extension entries can be configured in the &lt;b&gt;Plugins&lt;/b&gt; tab</property>
+                                <property name="label" translatable="yes">Visible action and extension entries can be configured in the Plugins tab</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
