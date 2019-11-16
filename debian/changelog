@@ -1,3 +1,27 @@
+nemo (4.4.0) tricia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-query-editor.c: Don't allow activation when there is no valid search string.
+  * nemo-window-slot.c: Don't try to set anything on query if it's NULL.
+  * nemo-main-application.c: when parsing options, don't try to use part of an array that has already been freed, make a copy instead.
+  * nemo-main-application.c: Fix variable name for consistency and spelling.
+  * nemo-program-choosing.c: Update how desktop files are launched - launch_uris_as_manager does a better job, and this also replaces a previous patch for a pkexec issue in desktop files, and is a more complete fix.
+  * preferences: Reveal the default sort direction setting.
+
+  [ AO-LocLab ]
+  * Correction to the French translations (#2228)
+
+  [ Michael Webster ]
+  * context menu: Make individual menu item visibility configurable in preferences, and eliminate the simple/complex menu option.
+  * gsettings: re-add old context menu entry to prevent crashes with old nemo-fileroller verions.
+
+  [ Clement Lefebvre ]
+  * l10n: Fix some msgids
+  * l10n: Update POT
+  * l10n: Generate files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 16 Nov 2019 15:34:24 +0100
+
 nemo (4.2.2) tina; urgency=medium
 
   [ Clement Lefebvre ]
