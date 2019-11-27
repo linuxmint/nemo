@@ -153,10 +153,28 @@ nemo_desktop_set_metadata_string (NemoFile *file,
 
 	keyfile = get_keyfile ();
 
-	g_key_file_set_string (keyfile,
-			       name,
-			       key,
-			       string);
+    if (!string) {
+        GError *error = NULL;
+        g_key_file_remove_key (keyfile,
+                               name,
+                               key,
+                               &error);
+
+        if (error != NULL) {
+            if (error->code != G_KEY_FILE_ERROR_KEY_NOT_FOUND &&
+                error->code != G_KEY_FILE_ERROR_GROUP_NOT_FOUND) {
+                g_warning ("Problem setting metadata for %s: %s", name, error->message);
+            }
+
+            g_error_free (error);
+        }
+
+    } else {
+        g_key_file_set_string (keyfile,
+                       name,
+                       key,
+                       string);
+    }
 
 	save_in_idle (keyfile);
 
