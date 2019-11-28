@@ -832,6 +832,10 @@ nemo_window_finalize (GObject *object)
 		window->details->sidebar_width_handler_id = 0;
 	}
 
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          nemo_window_sync_thumbnail_action,
+                                          window);
+
     clear_menu_hide_delay (window);
 
 	nemo_window_finalize_menus (window);
