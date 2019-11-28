@@ -1,3 +1,11 @@
+nemo (4.4.1) tricia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-desktop-metadata.c: Remove a key when the metadata string is null instead of attempting to set the key to null (which doesn't work for GKeyfiles).
+  * nemo-window.c: Disconnect thumbnail settings handlers when the window is destroyed.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 28 Nov 2019 20:00:39 +0000
+
 nemo (4.4.0) tricia; urgency=medium
 
   [ Michael Webster ]
