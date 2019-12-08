@@ -3532,7 +3532,7 @@ get_target_file_with_custom_name (GFile *src,
 
 			/* if file is being restored from trash make sure it uses its original name */
 			if (g_file_has_uri_scheme (src, "trash")) {
-				copyname = g_strdup (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
+				copyname = g_path_get_basename (g_file_info_get_attribute_byte_string (info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH));
 			}
 
 			if (copyname == NULL) {
