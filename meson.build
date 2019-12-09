@@ -51,6 +51,7 @@ if not get_option('deprecated_warnings')
       '-Wno-deprecated-declarations',
       '-Wno-deprecated',
       '-Wno-declaration-after-statement',
+      '-DGLIB_DISABLE_DEPRECATION_WARNINGS',
     ],
     language: 'c',
   )
