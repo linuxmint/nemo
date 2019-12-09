@@ -93,10 +93,6 @@
 #define DEBUG_REF_PRINTF printf
 #endif
 
-/* Files that start with these characters sort after files that don't. */
-#define SORT_LAST_CHAR1 '.'
-#define SORT_LAST_CHAR2 '#'
-
 /* Name of Nemo trash directories */
 #define TRASH_DIRECTORY_NAME ".Trash"
 
@@ -3019,20 +3015,12 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 {
 	const char *name_1, *name_2;
 	const char *key_1, *key_2;
-	gboolean sort_last_1, sort_last_2;
 	int compare=0;
 
 	name_1 = nemo_file_peek_display_name (file_1);
 	name_2 = nemo_file_peek_display_name (file_2);
 
-	sort_last_1 = name_1 && (name_1[0] == SORT_LAST_CHAR1 || name_1[0] == SORT_LAST_CHAR2);
-	sort_last_2 = name_2 && (name_2[0] == SORT_LAST_CHAR1 || name_2[0] == SORT_LAST_CHAR2);
-
-	if (sort_last_1 && !sort_last_2) {
-		compare = +1;
-	} else if (!sort_last_1 && sort_last_2) {
-		compare = -1;
-	} else if (name_1 == NULL || name_2 == NULL) {
+	if (name_1 == NULL || name_2 == NULL) {
         if (name_1 && !name_2)
             compare = +1;
         else if (!name_1 && name_2)
@@ -4264,7 +4252,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
         /* file system says to never thumbnail anything */
 		return FALSE;
 	}
-    
+
     /* Only care about the file size, if the thumbnail has not been created yet */
 	if (file->details->thumbnail_path == NULL &&
 	    nemo_file_get_size (file) > cached_thumbnail_limit) {
