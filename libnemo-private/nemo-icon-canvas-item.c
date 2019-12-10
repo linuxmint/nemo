@@ -52,6 +52,14 @@
 #define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
 
+#ifndef PANGO_CHECK_VERSION
+#define PANGO_CHECK_VERSION(major, minor, micro)                          \
+ 	(PANGO_VERSION_MAJOR > (major) ||                                    \
+ 	(PANGO_VERSION_MAJOR == (major) && PANGO_VERSION_MINOR > (minor)) || \
+ 	(PANGO_VERSION_MAJOR == (major) && PANGO_VERSION_MINOR == (minor) && \
+ 	PANGO_VERSION_MICRO >= (micro)))
+#endif
+
 /* special text height handling
  * each item has three text height variables:
  *  + text_height: actual height of the displayed (i.e. on-screen) PangoLayout.
@@ -1408,12 +1416,18 @@ create_label_layout (NemoIconCanvasItem *item,
 	GString *str;
 	char *zeroified_text;
 	const char *p;
+#if PANGO_CHECK_VERSION (1, 44, 0)
+ 	PangoAttrList *attr_list;
+#endif
 
 	canvas_item = EEL_CANVAS_ITEM (item);
 
 	container = NEMO_ICON_CONTAINER (canvas_item->canvas);
 	context = gtk_widget_get_pango_context (GTK_WIDGET (canvas_item->canvas));
 	layout = pango_layout_new (context);
+#if PANGO_CHECK_VERSION (1, 44, 0)
+ 	attr_list = pango_attr_list_new ();
+#endif
 
 	zeroified_text = NULL;
 
@@ -1449,6 +1463,11 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_spacing (layout, LABEL_LINE_SPACING);
 	pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
 
+#if PANGO_CHECK_VERSION (1, 44, 0)
+ 	pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
+ 	pango_layout_set_attributes (layout, attr_list);
+#endif
+
 	/* Create a font description */
 	if (container->details->font && g_strcmp0 (container->details->font, "") != 0) {
 		desc = pango_font_description_from_string (container->details->font);
@@ -1469,6 +1488,9 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
+#if PANGO_CHECK_VERSION (1, 44, 0)
+ 	pango_attr_list_unref (attr_list);
+#endif
 
 	return layout;
 }
