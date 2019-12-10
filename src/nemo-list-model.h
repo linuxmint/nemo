@@ -136,4 +136,5 @@ void              nemo_list_model_set_highlight_for_files (NemoListModel *model,
 
 void              nemo_list_model_set_temporarily_disable_sort (NemoListModel *model, gboolean disable);
 gboolean          nemo_list_model_get_temporarily_disable_sort (NemoListModel *model);
+void              nemo_list_model_set_expanding                (NemoListModel *model, NemoDirectory *directory);
 #endif /* NEMO_LIST_MODEL_H */

@@ -1276,6 +1276,7 @@ row_expanded_callback (GtkTreeView *treeview, GtkTreeIter *iter, GtkTreePath *pa
 		g_free (uri);
 
 		nemo_view_add_subdirectory (NEMO_VIEW (view), directory);
+        nemo_list_model_set_expanding (view->details->model, directory);
 
 		if (nemo_directory_are_all_files_seen (directory)) {
 			nemo_list_model_subdirectory_done_loading (view->details->model,

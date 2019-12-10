@@ -99,6 +99,7 @@ struct FileEntry {
 	GSequence *files;
 	GSequenceIter *ptr;
 	guint loaded : 1;
+    guint expanding : 1;
 };
 
 G_DEFINE_TYPE_WITH_CODE (NemoListModel, nemo_list_model, G_TYPE_OBJECT,
@@ -1078,12 +1079,17 @@ update_dummy_row (NemoListModel *model,
             FileEntry *dummy_entry = g_sequence_get (dummy_ptr);
 
             if (dummy_entry->file == NULL) {
-                model->details->stamp++;
-                g_sequence_remove (dummy_ptr);
-                changed = TRUE;
+                if (!file_entry->expanding) {
+
+                    model->details->stamp++;
+                    g_sequence_remove (dummy_ptr);
+                    changed = TRUE;
+                }
             }
         }
     }
+
+    file_entry->expanding = FALSE;
 
     return changed;
 }
@@ -1801,4 +1807,26 @@ gboolean
 nemo_list_model_get_temporarily_disable_sort (NemoListModel *model)
 {
     return model->details->temp_unsorted;
+}
+
+void
+nemo_list_model_set_expanding (NemoListModel *model, NemoDirectory *directory)
+{
+    FileEntry *entry;
+    GSequenceIter *ptr;
+
+    ptr = NULL;
+
+    if (directory) {
+        ptr = g_hash_table_lookup (model->details->directory_reverse_map,
+                                   directory);
+    }
+
+    if (!ptr) {
+        g_warning ("nemo_list_model_set_expanding: No pointer found, something's wrong?");
+        return;
+    }
+
+    entry = g_sequence_get (ptr);
+    entry->expanding = TRUE;
 }
