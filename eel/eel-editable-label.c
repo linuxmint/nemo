@@ -36,6 +36,15 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#ifndef PANGO_CHECK_VERSION
+#define PANGO_CHECK_VERSION(major, minor, micro)                          \
+     (PANGO_VERSION_MAJOR > (major) ||                                    \
+     (PANGO_VERSION_MAJOR == (major) && PANGO_VERSION_MINOR > (minor)) || \
+     (PANGO_VERSION_MAJOR == (major) && PANGO_VERSION_MINOR == (minor) && \
+      PANGO_VERSION_MICRO >= (micro)))
+#endif
+
+
 enum {
   MOVE_CURSOR,
   POPULATE_POPUP,
@@ -964,7 +973,11 @@ eel_editable_label_ensure_layout (EelEditableLabel *label,
       gint preedit_length = 0;
       PangoAttrList *preedit_attrs = NULL;
       PangoAlignment align = PANGO_ALIGN_LEFT; /* Quiet gcc */
+#if PANGO_CHECK_VERSION (1, 44, 0)
+      PangoAttrList *attr_list = pango_attr_list_new ();
+#else
       PangoAttrList *tmp_attrs = pango_attr_list_new ();
+#endif
 
       if (include_preedit)
 	{
@@ -981,9 +994,14 @@ eel_editable_label_ensure_layout (EelEditableLabel *label,
 	  g_string_insert (tmp_string, label->selection_anchor, preedit_string);
       
 	  label->layout = gtk_widget_create_pango_layout (widget, tmp_string->str);
-      
+
+#if PANGO_CHECK_VERSION (1, 44, 0) 
+	  pango_attr_list_splice (attr_list, preedit_attrs,
+				  label->selection_anchor, preedit_length);
+#else    
 	  pango_attr_list_splice (tmp_attrs, preedit_attrs,
 				  label->selection_anchor, preedit_length);
+#endif
 	  
 	  g_string_free (tmp_string, TRUE);
 	}
@@ -995,14 +1013,22 @@ eel_editable_label_ensure_layout (EelEditableLabel *label,
 
       if (label->font_desc != NULL)
 	pango_layout_set_font_description (label->layout, label->font_desc);
-      
+#if PANGO_CHECK_VERSION (1, 44, 0)
+      pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
+      pango_layout_set_attributes (label->layout, attr_list);
+#else   
       pango_layout_set_attributes (label->layout, tmp_attrs);
+#endif 
       
       if (preedit_string)
 	g_free (preedit_string);
       if (preedit_attrs)
 	pango_attr_list_unref (preedit_attrs);
+#if PANGO_CHECK_VERSION (1, 44, 0)
+      pango_attr_list_unref (attr_list);
+#else
       pango_attr_list_unref (tmp_attrs);
+#endif
 
       switch (label->jtype)
 	{
