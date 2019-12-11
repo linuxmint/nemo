@@ -11,14 +11,14 @@
 
 // define to enable the empty view that is used for performance measurement
 #mesondefine ENABLE_EMPTY_VIEW
-// Define to enable Tracker support
-#mesondefine ENABLE_TRACKER
 // Define to enable xmp support
 #mesondefine HAVE_EXEMPI
 // Define to enable EXIF support
 #mesondefine HAVE_EXIF
 // Define if libselinux is available
 #mesondefine HAVE_SELINUX
+// Define to enable pango-1.44 fixes
+#mesondefine HAVE_PANGO_144
 
 
 

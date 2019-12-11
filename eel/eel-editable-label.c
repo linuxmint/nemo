@@ -36,13 +36,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#ifndef PANGO_CHECK_VERSION
-#define PANGO_CHECK_VERSION(major, minor, micro)                          \
- 	(PANGO_VERSION_MAJOR > (major) ||                                    \
- 	(PANGO_VERSION_MAJOR == (major) && PANGO_VERSION_MINOR > (minor)) || \
- 	(PANGO_VERSION_MAJOR == (major) && PANGO_VERSION_MINOR == (minor) && \
- 	PANGO_VERSION_MICRO >= (micro)))
-#endif
 
 
 enum {
@@ -1005,7 +998,7 @@ eel_editable_label_ensure_layout (EelEditableLabel *label,
       if (label->font_desc != NULL)
 	pango_layout_set_font_description (label->layout, label->font_desc);
       
-#if PANGO_CHECK_VERSION (1, 44, 0)
+#ifdef HAVE_PANGO_144
       pango_attr_list_insert (tmp_attrs, pango_attr_insert_hyphens_new (FALSE));
 #endif    
       pango_layout_set_attributes (label->layout, tmp_attrs);
