@@ -817,7 +817,7 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 
         gtk_widget_set_visible (view->details->popup_action_separator, actions_visible);
 
-        nemo_file_list_free (tmp);
+        g_list_free (tmp); // Don't free the file, just the list, the file is owned by the model.
 
 		gtk_menu_popup (GTK_MENU (view->details->popup),
 				NULL, NULL, NULL, NULL,
