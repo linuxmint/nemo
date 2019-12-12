@@ -1,3 +1,30 @@
+nemo (4.4.2) tricia; urgency=medium
+
+  [ leigh123linux ]
+  * meson.build: Disable GLib deprecation warnings
+
+  [ Leigh Scott ]
+  * file-operations: fix copying from the trash
+
+  [ Michael Webster ]
+  * list view: Don't remove the dummy (Loading) entry except during post-loading updates.
+  * nemo-tree-sidebar.c: Don't free the NemoFile after setting up the context menu for showing, it is owned by the tree model.
+
+  [ leigh123linux ]
+  * Remove tracker
+
+  [ Leigh Scott ]
+  * nemo-icon-canvas-item.c: Don't hyphenate long filenames
+  * eel-editable-label.c: Don't hyphenate long filenames
+
+  [ Michael Webster ]
+  * nemo-program-choosing.c: Remove unused variable that was causing a warning during the build.
+
+  [ Leigh Scott ]
+  * Use meson for pango-1.44 check
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 12 Dec 2019 11:43:40 +0000
+
 nemo (4.4.1) tricia; urgency=medium
 
   [ Michael Webster ]
