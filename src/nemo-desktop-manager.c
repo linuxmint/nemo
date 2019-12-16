@@ -54,7 +54,6 @@ typedef struct {
     guint update_layout_idle_id;
     guint failsafe_timeout_id;
 
-    gulong scale_factor_changed_id;
     gulong name_owner_changed_id;
     gulong proxy_signals_id;
     gulong fallback_size_changed_id;
@@ -291,18 +290,6 @@ queue_update_layout (NemoDesktopManager *manager)
 }
 
 static void
-on_window_scale_changed (GtkWidget          *window,
-                         GParamSpec         *pspec,
-                         NemoDesktopManager *manager)
-{
-    FETCH_PRIV (manager);
-
-    priv->scale_factor_changed_id = 0;
-
-    queue_update_layout (manager);
-}
-
-static void
 create_new_desktop_window (NemoDesktopManager *manager,
                                          gint  monitor,
                                      gboolean  primary,
@@ -324,13 +311,6 @@ create_new_desktop_window (NemoDesktopManager *manager,
     }
 
     info->window = window;
-
-    if (priv->scale_factor_changed_id == 0) {
-        priv->scale_factor_changed_id = g_signal_connect (window,
-                                                          "notify::scale-factor",
-                                                          G_CALLBACK (on_window_scale_changed),
-                                                          manager);
-    }
 
     gtk_application_add_window (GTK_APPLICATION (nemo_application_get_singleton ()),
                                 GTK_WINDOW (window));
@@ -700,7 +680,6 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
 
     priv = manager->priv;
 
-    priv->scale_factor_changed_id = 0;
     priv->desktops = NULL;
     priv->desktop_on_primary_only = FALSE;
 
