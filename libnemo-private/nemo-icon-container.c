@@ -7884,6 +7884,8 @@ nemo_icon_container_begin_loading (NemoIconContainer *container)
 {
 	gboolean dummy;
 
+    clear_drag_state (container);
+
 	if (nemo_icon_container_get_store_layout_timestamps (container)) {
 		container->details->layout_timestamp = UNDEFINED_TIME;
 		g_signal_emit (container,
