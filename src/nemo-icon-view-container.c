@@ -755,7 +755,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     text_size = nemo_get_icon_text_width_for_zoom_level (container->details->zoom_level);
 
     use_size = MAX (icon_size, text_size) + 15;
-
+    icon_size /= ppu;
     if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
         /* Would it be worth caching these bounds for the next loop? */
         for (p = icons; p != NULL; p = p->next) {
@@ -805,7 +805,8 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                 y += gap;
             } else {
                 /* Advance to the baseline. */
-                y += gap + max_height_above;
+                // y += gap + max_height_above;
+                y += gap + icon_size;
             }
 
             lay_down_one_line (container, line_start, p, y, max_height_above, positions, FALSE, gap);
@@ -814,7 +815,8 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                 y += max_height_above + max_height_below + gap;
             } else {
                 /* Advance to next line. */
-                y += max_height_below + gap;
+                // y += max_height_below + gap;
+                y += icon_size + gap;
             }
 
             line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? gap : 0;
