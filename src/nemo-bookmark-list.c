@@ -31,8 +31,8 @@
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-names.h>
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libcinnamon-desktop/gnome-desktop-utils.h>
+// #define GNOME_DESKTOP_USE_UNSTABLE_API
+// #include <libgnome-desktop/gnome-desktop-utils.h>
 
 #include <gio/gio.h>
 #include <string.h>
@@ -61,24 +61,24 @@ static void        nemo_bookmark_list_save_file     (NemoBookmarkList *bookmarks
 
 G_DEFINE_TYPE(NemoBookmarkList, nemo_bookmark_list, G_TYPE_OBJECT);
 
-static void
-ensure_proper_file_permissions (GFile *file)
-{
-    if (geteuid () == 0) {
-        struct passwd *pwent;
-        pwent = gnome_desktop_get_session_user_pwent ();
+// static void
+// ensure_proper_file_permissions (GFile *file)
+// {
+//     if (geteuid () == 0) {
+//         struct passwd *pwent;
+//         pwent = gnome_desktop_get_session_user_pwent ();
 
-        gchar *path = g_file_get_path (file);
+//         gchar *path = g_file_get_path (file);
 
-        if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
-            G_GNUC_UNUSED int res;
+//         if (g_strcmp0 (pwent->pw_dir, g_get_home_dir ()) == 0) {
+//             G_GNUC_UNUSED int res;
 
-            res = chown (path, pwent->pw_uid, pwent->pw_gid);
-        }
+//             res = chown (path, pwent->pw_uid, pwent->pw_gid);
+//         }
 
-        g_free (path);
-    }
-}
+//         g_free (path);
+//     }
+// }
 
 static NemoBookmark *
 new_bookmark_from_uri (const char *uri, const char *label, NemoBookmarkMetadata *md)
@@ -869,7 +869,7 @@ save_bookmark_metadata_file (NemoBookmarkList *list)
     if (g_key_file_save_to_file (kfile,
                                  filename,
                                  &error)) {
-        ensure_proper_file_permissions (file);
+        // ensure_proper_file_permissions (file);
     } else {
         g_warning ("Could not save bookmark metadata file: %s\n", error->message);
         g_error_free (error);
@@ -962,7 +962,7 @@ save_files_thread (GTask        *task,
                                  NULL,
                                  NULL,
                                  &error)) {
-        ensure_proper_file_permissions (file);
+        // ensure_proper_file_permissions (file);
         g_task_return_boolean (task, TRUE);
     } else {
         g_task_return_error (task, error);

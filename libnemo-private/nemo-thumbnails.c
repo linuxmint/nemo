@@ -43,7 +43,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
-#include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_THUMBNAILS
 #include <libnemo-private/nemo-debug.h>
@@ -710,5 +710,5 @@ nemo_create_thumbnail (NemoFile *file, gint throttle_count)
 gboolean
 nemo_thumbnail_factory_check_status (void)
 {
-    return gnome_desktop_thumbnail_cache_check_permissions (get_thumbnail_factory (), TRUE);
+    // return gnome_desktop_thumbnail_cache_check_permissions (get_thumbnail_factory (), TRUE);
 }

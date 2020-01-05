@@ -39,7 +39,7 @@
 #include <libxapp/xapp-icon-chooser-dialog.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
 
 #include <eel/eel-accessibility.h>
 #include <eel/eel-glib-extensions.h>

@@ -78,7 +78,7 @@
 #include <libnotify/notify.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
 
 #define NEMO_ACCEL_MAP_SAVE_DELAY 30
 
@@ -560,13 +560,13 @@ nemo_application_startup (GApplication *app)
     /* silently do a full check of the cache and fix if running as root.
      * If running as a normal user, do a quick check, and we'll notify the
      * user later if there's a problem via an infobar */
-    if (geteuid () == 0) {
-        if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, FALSE))
-            gnome_desktop_thumbnail_cache_fix_permissions ();
-    } else {
-        if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, TRUE))
-            self->priv->cache_problem = TRUE;
-    }
+    // if (geteuid () == 0) {
+    //     if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, FALSE))
+    //         gnome_desktop_thumbnail_cache_fix_permissions ();
+    // } else {
+    //     if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, TRUE))
+    //         self->priv->cache_problem = TRUE;
+    // }
 }
 
 static void
@@ -642,7 +642,7 @@ nemo_application_get_singleton (void)
 void
 nemo_application_check_thumbnail_cache (NemoApplication *application)
 {
-    application->priv->cache_problem = !nemo_thumbnail_factory_check_status ();
+    application->priv->cache_problem = FALSE; //!nemo_thumbnail_factory_check_status ();
 }
 
 gboolean
