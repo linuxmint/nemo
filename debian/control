@@ -5,7 +5,6 @@ Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  cinnamon-l10n,
  debhelper (>= 10),
- dh-python,
  gobject-introspection,
  gtk-doc-tools (>= 1.4),
  intltool (>= 0.40.1),
@@ -27,7 +26,6 @@ Build-Depends:
  libxrender-dev,
  libxt-dev,
  meson,
- python,
  python3,
  python3-gi,
  shared-mime-info (>= 0.50),
@@ -113,7 +111,7 @@ Description: file manager and graphical shell for Cinnamon
 
 Package: nemo-data
 Architecture: all
-Depends: python, ${misc:Depends}, ${python:Depends}
+Depends: python3, ${misc:Depends}, ${python3:Depends}
 Suggests: nemo
 Description: data files for nemo
  Nemo is the official file manager and graphical shell for the
