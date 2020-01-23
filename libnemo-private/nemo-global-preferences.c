@@ -36,6 +36,27 @@
 #include <glib/gi18n.h>
 #include <gio/gdesktopappinfo.h>
 
+GSettings *nemo_preferences;
+GSettings *nemo_icon_view_preferences;
+GSettings *nemo_list_view_preferences;
+GSettings *nemo_compact_view_preferences;
+GSettings *nemo_desktop_preferences;
+GSettings *nemo_tree_sidebar_preferences;
+GSettings *nemo_window_state;
+GSettings *nemo_plugin_preferences;
+GSettings *nemo_menu_config_preferences;
+GSettings *gnome_lockdown_preferences;
+GSettings *gnome_background_preferences;
+GSettings *gnome_media_handling_preferences;
+GSettings *gnome_terminal_preferences;
+GSettings *cinnamon_privacy_preferences;
+GSettings *cinnamon_interface_preferences;
+
+GTimeZone      *prefs_current_timezone;
+gboolean        prefs_current_24h_time_format;
+NemoDateFormat  prefs_current_date_format;
+
+GTimer    *nemo_startup_timer;
 
 static gboolean ignore_view_metadata = FALSE;
 static gboolean inherit_folder_view_preference = FALSE;
