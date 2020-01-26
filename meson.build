@@ -113,6 +113,8 @@ conf.set('HAVE_SELINUX', libselinux_enabled)
 new_pango = dependency('pango', version: '>=1.44.0', required: false)
 if new_pango.found()
   conf.set('HAVE_PANGO_144', true)
+else
+  message('................using pango @0@ instead'.format(new_pango.version()))
 endif
 
 enableEmptyView = get_option('empty_view')
