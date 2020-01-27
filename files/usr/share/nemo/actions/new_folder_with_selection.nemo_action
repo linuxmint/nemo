@@ -1,0 +1,19 @@
+[Nemo Action]
+
+Active=true
+
+Name[en]=Create New Folder with Selection
+
+Comment[en]=Creates a new folder with the selected items
+
+Exec=<new_folder_with_selection.sh %P %F>
+
+Icon-Name=folder-new
+
+Selection=notnone
+
+Extensions=any;
+
+Dependencies=zenity;
+
+EscapeSpaces=true
