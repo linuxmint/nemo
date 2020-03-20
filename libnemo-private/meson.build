@@ -91,6 +91,11 @@ if libexif_enabled
   nemo_private_deps += libexif
 endif
 
+if tracker_enabled
+  nemo_private_sources += 'nemo-search-engine-tracker.c'
+  nemo_private_deps += tracker_sparql
+endif
+
 if libselinux_enabled
   nemo_private_deps += libselinux
 endif
