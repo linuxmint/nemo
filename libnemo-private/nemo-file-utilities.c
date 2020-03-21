@@ -88,14 +88,13 @@ nemo_compute_title_for_location (GFile *location)
         uri = nemo_file_get_uri (file);
         path = g_filename_from_uri (uri, NULL, NULL);
 
-        g_free (uri);
-
         if (path != NULL) {
             title = g_strdup_printf("%s - %s", builder, path);
         } else {
-            title = g_strdup(builder);
+            title = g_strdup_printf("%s - %s", builder, uri);
         }
         nemo_file_unref (file);
+        g_free (uri);
         g_free (path);
         g_free (builder);
     } else {
