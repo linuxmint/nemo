@@ -1545,6 +1545,12 @@ nemo_icon_view_grid_container_get_max_layout_lines (NemoIconContainer  *containe
     return limit;
 }
 
+static gint
+nemo_icon_view_grid_container_get_additional_text_line_count (NemoIconContainer *container)
+{
+    return quarkv_length (NEMO_ICON_VIEW_GRID_CONTAINER (container)->attributes);
+}
+
 static void
 captions_changed_callback (NemoIconContainer *container)
 {
@@ -1672,6 +1678,7 @@ nemo_icon_view_grid_container_class_init (NemoIconViewGridContainerClass *klass)
 	ic_class->prioritize_thumbnailing = nemo_icon_view_grid_container_prioritize_thumbnailing;
     ic_class->get_max_layout_lines_for_pango = nemo_icon_view_grid_container_get_max_layout_lines_for_pango;
     ic_class->get_max_layout_lines = nemo_icon_view_grid_container_get_max_layout_lines;
+    ic_class->get_additional_text_line_count = nemo_icon_view_grid_container_get_additional_text_line_count;
 
 	ic_class->compare_icons = nemo_icon_view_grid_container_compare_icons;
 	ic_class->freeze_updates = nemo_icon_view_grid_container_freeze_updates;

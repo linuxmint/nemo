@@ -5827,6 +5827,8 @@ nemo_icon_container_invalidate_labels (NemoIconContainer *container)
     GList *p;
     NemoIcon *icon;
 
+    container->details->fixed_text_height = -1;
+
     for (p = container->details->icons; p != NULL; p = p->next) {
         icon = p->data;
 
@@ -8094,5 +8096,12 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
 {
     NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon);
 }
+
+gint
+nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container)
+{
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->get_additional_text_line_count (container);
+}
+
 
 #endif /* ! NEMO_OMIT_SELF_CHECK */

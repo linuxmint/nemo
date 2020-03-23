@@ -163,6 +163,7 @@ typedef struct {
 						   NemoIconData *data);
     gint         (* get_max_layout_lines_for_pango) (NemoIconContainer *container);
     gint         (* get_max_layout_lines)           (NemoIconContainer *container);
+    gint         (* get_additional_text_line_count) (NemoIconContainer *container);
 
 	/* Queries on icons for subclass/client.
 	 * These must be implemented => These are signals !
@@ -371,4 +372,5 @@ void              nemo_icon_container_widget_to_file_operation_position (NemoIco
 void         nemo_icon_container_setup_tooltip_preference_callback (NemoIconContainer *container);
 void         nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
                                                       NemoIconCanvasItem *item);
+gint         nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container);
 #endif /* NEMO_ICON_CONTAINER_H */

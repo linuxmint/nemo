@@ -2022,6 +2022,23 @@ nemo_icon_canvas_item_set_entire_text (NemoIconCanvasItem       *item,
 	}
 }
 
+gint
+nemo_icon_canvas_item_get_fixed_text_height_for_layout (NemoIconCanvasItem *item)
+{
+    NemoIconContainer *container;
+    PangoLayout *layout;
+    gint line_height, total_height, lines;
+
+    container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
+    lines = nemo_icon_container_get_max_layout_lines (container);
+    lines += nemo_icon_container_get_additional_text_line_count (container);
+    layout = create_label_layout (item, "-");
+    pango_layout_get_pixel_size (layout, NULL, &line_height);
+
+    total_height = (line_height * lines) + (LABEL_LINE_SPACING * (lines - 1));
+    return total_height;
+}
+
 /* Class initialization function for the icon canvas item. */
 static void
 nemo_icon_canvas_item_class_init (NemoIconCanvasItemClass *class)

@@ -117,7 +117,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 		                                       nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)));
 
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
-	icon_info = nemo_file_get_icon (file, size, 0, scale, flags);
+	icon_info = nemo_file_get_icon (file, size, size, scale, flags);
 
 	/* apply emblems */
 	if (emblem_icons != NULL) {
@@ -755,7 +755,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     text_size = nemo_get_icon_text_width_for_zoom_level (container->details->zoom_level);
 
     use_size = MAX (icon_size, text_size) + 15;
-
+    icon_size /= ppu;
     if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
         /* Would it be worth caching these bounds for the next loop? */
         for (p = icons; p != NULL; p = p->next) {
@@ -787,6 +787,10 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     for (p = icons; p != NULL; p = p->next) {
         icon = p->data;
 
+        if (container->details->fixed_text_height == -1) {
+            container->details->fixed_text_height = nemo_icon_canvas_item_get_fixed_text_height_for_layout (icon->item) / ppu;
+        }
+
         /* Assume it's only one level hierarchy to avoid costly affine calculations */
         nemo_icon_canvas_item_get_bounds_for_layout (icon->item,
                                  &bounds.x0, &bounds.y0,
@@ -805,16 +809,18 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                 y += gap;
             } else {
                 /* Advance to the baseline. */
-                y += gap + max_height_above;
+                // y += gap + max_height_above;
+                y += gap + icon_size;
             }
 
-            lay_down_one_line (container, line_start, p, y, max_height_above, positions, FALSE, gap);
+            lay_down_one_line (container, line_start, p, y, icon_size, positions, FALSE, gap);
 
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
                 y += max_height_above + max_height_below + gap;
             } else {
                 /* Advance to next line. */
-                y += max_height_below + gap;
+                // y += max_height_below + gap;
+                y += container->details->fixed_text_height + gap;
             }
 
             line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? gap : 0;
@@ -855,10 +861,10 @@ lay_down_icons_horizontal (NemoIconContainer *container,
                 y += gap;
             } else {
                 /* Advance to the baseline. */
-                y += gap + max_height_above;
+                y += gap + icon_size;
             }
 
-        lay_down_one_line (container, line_start, NULL, y, max_height_above, positions, TRUE, gap);
+        lay_down_one_line (container, line_start, NULL, y, icon_size, positions, TRUE, gap);
     }
 
     g_array_free (positions, TRUE);
@@ -2041,10 +2047,21 @@ nemo_icon_view_container_get_max_layout_lines (NemoIconContainer  *container)
     }
 
     if (limit <= 0) {
-        return G_MAXINT;
+        return 3;
     }
 
     return limit;
+}
+
+static gint
+nemo_icon_view_container_get_additional_text_line_count (NemoIconContainer *container)
+{
+    GQuark *attributes;
+    gint len;
+
+    attributes = nemo_icon_view_container_get_icon_text_attribute_names (container, &len);
+
+    return len;
 }
 
 static void
@@ -2096,6 +2113,7 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
     ic_class->finish_adding_new_icons = nemo_icon_view_container_finish_adding_new_icons;
     ic_class->icon_get_bounding_box = nemo_icon_view_container_icon_get_bounding_box;
     ic_class->set_zoom_level = nemo_icon_view_container_set_zoom_level;
+    ic_class->get_additional_text_line_count = nemo_icon_view_container_get_additional_text_line_count;
 }
 
 static void
