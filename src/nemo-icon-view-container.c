@@ -106,8 +106,11 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
-            NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
 			NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
+
+    if (container->details->ok_to_load_thumbs != 0) {
+        flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
+    }
 
 	if (for_drag_accept) {
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
@@ -198,17 +201,14 @@ nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
 						      NemoIconData      *data)
 {
 	NemoFile *file;
-	char *uri;
 
 	file = (NemoFile *) data;
 
 	g_assert (NEMO_IS_FILE (file));
 
-	if (nemo_file_is_thumbnailing (file)) {
-		uri = nemo_file_get_uri (file);
-		nemo_thumbnail_prioritize (uri);
-		g_free (uri);
-	}
+    if (nemo_can_thumbnail (file)) {
+        nemo_create_thumbnail (file, 0, TRUE);
+    }
 }
 
 static void
@@ -2056,7 +2056,7 @@ nemo_icon_view_container_get_max_layout_lines (NemoIconContainer  *container)
 static gint
 nemo_icon_view_container_get_additional_text_line_count (NemoIconContainer *container)
 {
-    GQuark *attributes;
+    G_GNUC_UNUSED GQuark *attributes;
     gint len;
 
     attributes = nemo_icon_view_container_get_icon_text_attribute_names (container, &len);

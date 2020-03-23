@@ -70,6 +70,8 @@ typedef struct {
 	eel_boolean_bit is_visible : 1;
 
 	eel_boolean_bit has_lazy_position : 1;
+
+    eel_boolean_bit ok_to_show_thumb : 1;
 } NemoIcon;
 
 #endif /* NEMO_ICON_CONTAINER_PRIVATE_H */

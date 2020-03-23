@@ -985,6 +985,8 @@ nemo_icon_view_begin_loading (NemoView *view)
 	uri = nemo_file_get_uri (file);
 	icon_container = GTK_WIDGET (get_icon_container (icon_view));
 
+    nemo_icon_container_set_ok_to_load_thumbs (NEMO_ICON_CONTAINER (icon_container), FALSE);
+
 	nemo_icon_container_begin_loading (NEMO_ICON_CONTAINER (icon_container));
 
 	nemo_icon_container_set_allow_moves (NEMO_ICON_CONTAINER (icon_container),
@@ -1090,7 +1092,7 @@ nemo_icon_view_end_loading (NemoView *view,
 
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);
-
+    nemo_icon_container_set_ok_to_load_thumbs (NEMO_ICON_CONTAINER (icon_container), TRUE);
 	icon_view_notify_clipboard_info (monitor, info, icon_view);
 }
 

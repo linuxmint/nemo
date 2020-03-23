@@ -240,6 +240,7 @@ NemoRequestStatus   nemo_file_get_deep_counts                   (NemoFile       
 									 gboolean                        force);
 gboolean                nemo_file_should_show_thumbnail             (NemoFile                   *file);
 void                    nemo_file_delete_thumbnail                  (NemoFile                   *file);
+gboolean                nemo_file_has_loaded_thumbnail              (NemoFile                   *file);
 gboolean                nemo_file_should_show_directory_item_count  (NemoFile                   *file);
 gboolean                nemo_file_should_show_type                  (NemoFile                   *file);
 GList *                 nemo_file_get_keywords                      (NemoFile                   *file);
@@ -521,7 +522,7 @@ void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_d
 
 gboolean nemo_file_get_pinning                    (NemoFile *file);
 void     nemo_file_set_pinning                    (NemoFile *file, gboolean  pin);
-
+gboolean nemo_file_check_delayed_icon             (NemoFile *file);
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

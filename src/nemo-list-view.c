@@ -57,6 +57,7 @@
 #include <libnemo-private/nemo-icon-dnd.h>
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-module.h>
+#include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-private/nemo-tree-view-drag-dest.h>
 #include <libnemo-private/nemo-clipboard.h>
 
@@ -90,6 +91,12 @@ struct NemoListViewDetails {
 	guint drag_button;
 	int drag_x;
 	int drag_y;
+
+    gint ok_to_load_thumbs;
+    guint update_visible_icons_id;
+
+    GQueue *lazy_icon_load_queue;
+    guint lazy_icon_load_id;
 
     gboolean rename_on_release;
 	gboolean drag_started;
@@ -172,6 +179,9 @@ static char **get_column_order                                   (NemoListView *
 static char **get_default_column_order                           (NemoListView *list_view);
 
 static void   set_columns_settings_from_metadata_and_preferences (NemoListView *list_view);
+static void   queue_update_visible_icons (NemoListView *view);
+static NemoZoomLevel nemo_list_view_get_zoom_level (NemoView *view);
+static void   prioritize_visible_files (NemoListView *view);
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
@@ -1258,6 +1268,8 @@ static void
 subdirectory_done_loading_callback (NemoDirectory *directory, NemoListView *view)
 {
 	nemo_list_model_subdirectory_done_loading (view->details->model, directory);
+
+    queue_update_visible_icons (view);
 }
 
 static void
@@ -1474,6 +1486,96 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 	}
 
 	return handled;
+}
+
+static void
+reveal_or_request_icon (NemoListView      *list_view,
+                        NemoFile          *file,
+                        GtkTreeIter       *iter)
+{
+    gboolean ok_to_show;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (list_view->details->model),
+                        iter,
+                        NEMO_LIST_MODEL_ICON_SHOWN, &ok_to_show,
+                        -1);
+
+    if (!ok_to_show) {
+        if (!nemo_file_check_delayed_icon (file)) {
+            nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_THUMBNAIL);
+        }
+    }
+
+    // nemo_icon_container_update_icon (container, icon);
+}
+
+static gboolean
+lazy_icon_loading_callback (gpointer user_data)
+{
+    NemoListView *list_view = NEMO_LIST_VIEW (user_data);
+
+    while (!g_queue_is_empty (list_view->details->lazy_icon_load_queue)) {
+        NemoFile *file = NULL;
+
+        file = NEMO_FILE (g_queue_pop_head (list_view->details->lazy_icon_load_queue));
+
+        if (nemo_file_should_show_thumbnail (file) && nemo_can_thumbnail (file)) {
+            GtkTreeIter iter;
+
+            if (nemo_list_model_get_tree_iter_from_file(list_view->details->model, file, NULL, &iter)) {
+                if (list_view->details->ok_to_load_thumbs) {
+                    reveal_or_request_icon (list_view, file, &iter);
+                }
+            }
+
+            nemo_file_unref (file);
+            return G_SOURCE_CONTINUE;
+        } else {
+            nemo_file_unref (file);
+            continue;
+        }
+    }
+
+    list_view->details->lazy_icon_load_id = 0;
+    return G_SOURCE_REMOVE;
+}
+
+static void
+stop_lazy_icon_loading (NemoListView *list_view)
+{
+    if (list_view->details->lazy_icon_load_id > 0) {
+        g_source_remove (list_view->details->lazy_icon_load_id);
+
+        list_view->details->lazy_icon_load_id = 0;
+    }
+}
+
+static void
+start_lazy_icon_loading (NemoListView *list_view)
+{
+    stop_lazy_icon_loading (list_view);
+
+    list_view->details->lazy_icon_load_id = g_timeout_add_full  (1, G_PRIORITY_DEFAULT_IDLE,
+                                                                 (GSourceFunc) lazy_icon_loading_callback,
+                                                                 list_view, NULL);
+}
+
+static void
+set_ok_to_load_thumbs (NemoListView  *list_view,
+                       gboolean       ok)
+{
+    if (ok == list_view->details->ok_to_load_thumbs) {
+        return;
+    }
+
+    list_view->details->ok_to_load_thumbs = ok;
+
+    nemo_list_model_set_ok_to_load_thumbs (list_view->details->model, ok);
+
+    if (ok) {
+        queue_update_visible_icons (list_view);
+        start_lazy_icon_loading (list_view);
+    }
 }
 
 static void
@@ -2171,11 +2273,141 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 	return FALSE;
 }
 
+static void
+prioritize_visible_files (NemoListView *view)
+{
+    NemoFile *last_file;
+    GList *queue_list, *l;
+    GdkRectangle vrect;
+    GtkTreeIter iter;
+    GtkTreePath *path;
+    gint icon_size, cy, bottom_y, stepdown;
+    gint bin_y;
+
+    gtk_tree_view_get_visible_rect (view->details->tree_view,
+                                    &vrect);
+    icon_size = nemo_get_list_icon_size_for_zoom_level (nemo_list_view_get_zoom_level (NEMO_VIEW (view)));
+
+    gtk_tree_view_convert_tree_to_bin_window_coords(view->details->tree_view,
+                                                    1, vrect.y,
+                                                    NULL, &bin_y);
+
+    /* Start at the bottom of the view and scan our way up.  We do it in reverse here
+     * because we're placing files on top of the thumbnailer stack, and so the last file
+     * added will be the first thumbnailed. */
+
+    /* Start the first pixel and work up in smallish steps relative to the current icon size. */
+    stepdown = icon_size * .75;
+    bottom_y = bin_y + vrect.height;
+    cy = bottom_y - 1;
+
+    queue_list = NULL;
+    last_file = NULL;
+
+    while (cy > (bin_y)) {
+        if (gtk_tree_view_get_path_at_pos (view->details->tree_view,
+                                           1, cy,
+                                           &path, NULL, NULL, NULL)) {
+            NemoFile *file;
+            gboolean ok_to_show;
+
+            gtk_tree_model_get_iter (GTK_TREE_MODEL (view->details->model),
+                                     &iter, path);
+
+            gtk_tree_path_free (path);
+            gtk_tree_model_get (GTK_TREE_MODEL (view->details->model),
+                                &iter,
+                                NEMO_LIST_MODEL_ICON_SHOWN, &ok_to_show,
+                                NEMO_LIST_MODEL_FILE_COLUMN, &file, -1);
+
+            /* We'll catch some files twice, so filter them out */
+            if (file != NULL && file != last_file) {
+                last_file = file;
+
+                if (nemo_can_thumbnail (file)) {
+                    nemo_create_thumbnail (file, 0, TRUE);
+                }
+
+                if (!ok_to_show) {
+                    queue_list = g_list_prepend (queue_list, file);
+                } else {
+                    if (g_queue_remove (view->details->lazy_icon_load_queue, file)) {
+                        nemo_file_unref (file);
+                    }
+                }
+            }
+        }
+
+        /* End at the top edge of the view + 1 pixel */
+        cy -= (MAX (1, MIN (cy - bottom_y + 1, stepdown)));
+    }
+
+    /* We want already-thumbnailed (or pending) files to reveal top-to-bottom,
+     * so reverse the order here. */
+    queue_list = g_list_reverse (queue_list);
+
+    for (l = queue_list; l != NULL; l = l->next) {
+        NemoFile *file = NEMO_FILE (l->data);
+
+        if (!nemo_file_check_delayed_icon (file)) {
+            nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_THUMBNAIL);
+        }
+
+        if (g_queue_remove (view->details->lazy_icon_load_queue, file)) {
+            nemo_file_unref (file);
+        }
+    }
+
+    g_list_free (queue_list);
+}
+
+static gboolean
+update_visible_icons_cb (NemoListView *view)
+{
+    stop_lazy_icon_loading (view);
+    prioritize_visible_files (view);
+    start_lazy_icon_loading (view);
+
+    view->details->update_visible_icons_id = 0;
+    return G_SOURCE_REMOVE;
+}
+
+static void
+queue_update_visible_icons(NemoListView *view)
+{
+    if (view->details->update_visible_icons_id > 0) {
+        g_source_remove (view->details->update_visible_icons_id);
+    }
+
+    view->details->update_visible_icons_id = g_timeout_add (100, (GSourceFunc) update_visible_icons_cb, view);
+}
+
+static void
+handle_vadjustment_changed (GtkAdjustment *adjustment,
+                            NemoListView  *view)
+{
+    queue_update_visible_icons (view);
+}
+
 static gint
 get_icon_scale_callback (NemoListModel *model,
                          NemoListView  *view)
 {
    return gtk_widget_get_scale_factor (GTK_WIDGET (view->details->tree_view));
+}
+
+static void
+on_treeview_realized (GtkWidget *widget,
+                      gpointer   user_data)
+{
+    NemoListView *view = NEMO_LIST_VIEW (user_data);
+    GtkAdjustment *adjust;
+
+    adjust = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (view->details->tree_view));
+    g_signal_connect (adjust,
+                      "value-changed",
+                      G_CALLBACK (handle_vadjustment_changed),
+                      view);
 }
 
 static void
@@ -2262,6 +2494,8 @@ create_and_set_up_tree_view (NemoListView *view)
 
     	g_signal_connect_object (view->details->tree_view, "focus_in_event",
 				 G_CALLBACK(focus_in_event_callback), view, 0);
+
+    g_signal_connect (view->details->tree_view, "realize", G_CALLBACK (on_treeview_realized), view);
 
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
 	gtk_tree_view_set_model (view->details->tree_view, GTK_TREE_MODEL (view->details->model));
@@ -2432,6 +2666,8 @@ nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
         nemo_application_set_cache_flag (nemo_application_get_singleton ());
         nemo_window_slot_check_bad_cache_bar (nemo_view_get_nemo_window_slot (view));
     }
+
+    g_queue_push_tail (NEMO_LIST_VIEW (view)->details->lazy_icon_load_queue, g_object_ref (file));
 
 	model = NEMO_LIST_VIEW (view)->details->model;
 	nemo_list_model_add_file (model, file, directory);
@@ -2676,6 +2912,12 @@ nemo_list_view_begin_loading (NemoView *view)
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 
+    if (list_view->details->lazy_icon_load_queue == NULL) {
+        list_view->details->lazy_icon_load_queue = g_queue_new ();
+    }
+
+    set_ok_to_load_thumbs (list_view, FALSE);
+
     AtkObject *atk = gtk_widget_get_accessible (GTK_WIDGET (NEMO_LIST_VIEW (view)->details->tree_view));
 
     g_signal_connect_object (atk, "column-reordered",
@@ -2705,6 +2947,14 @@ nemo_list_view_clear (NemoView *view)
     GtkTreeSelection *tree_selection;
 
 	list_view = NEMO_LIST_VIEW (view);
+
+    list_view->details->ok_to_load_thumbs = FALSE;
+    stop_lazy_icon_loading (list_view);
+
+    if (list_view->details->lazy_icon_load_queue != NULL) {
+        g_queue_free_full (list_view->details->lazy_icon_load_queue, (GDestroyNotify) nemo_file_unref);
+        list_view->details->lazy_icon_load_queue = NULL;
+    }
 
     tree_selection = gtk_tree_view_get_selection (list_view->details->tree_view);
 
@@ -3689,6 +3939,8 @@ nemo_list_view_dispose (GObject *object)
 
 	list_view = NEMO_LIST_VIEW (object);
 
+    stop_lazy_icon_loading (list_view);
+
 	if (list_view->details->model) {
 		stop_cell_editing (list_view);
 		g_object_unref (list_view->details->model);
@@ -3867,6 +4119,8 @@ nemo_list_view_end_loading (NemoView *view,
 	NemoClipboardInfo *info;
 
     nemo_list_view_update_selection (view);
+
+    set_ok_to_load_thumbs (NEMO_LIST_VIEW (view), TRUE);
 
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);

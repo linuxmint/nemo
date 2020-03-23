@@ -55,6 +55,7 @@ enum {
 	NEMO_LIST_MODEL_LARGEST_ICON_COLUMN,
 	NEMO_LIST_MODEL_FILE_NAME_IS_EDITABLE_COLUMN,
     NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN,
+    NEMO_LIST_MODEL_ICON_SHOWN,
 	NEMO_LIST_MODEL_NUM_COLUMNS
 };
 
@@ -137,4 +138,7 @@ void              nemo_list_model_set_highlight_for_files (NemoListModel *model,
 void              nemo_list_model_set_temporarily_disable_sort (NemoListModel *model, gboolean disable);
 gboolean          nemo_list_model_get_temporarily_disable_sort (NemoListModel *model);
 void              nemo_list_model_set_expanding                (NemoListModel *model, NemoDirectory *directory);
+void              nemo_list_model_set_ok_to_load_thumbs (NemoListModel *model,
+                                                         gboolean       ok);
+
 #endif /* NEMO_LIST_MODEL_H */

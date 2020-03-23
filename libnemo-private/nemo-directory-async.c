@@ -1645,7 +1645,7 @@ lacks_btime (NemoFile *file)
 static gboolean
 lacks_filesystem_info (NemoFile *file)
 {
-	return !file->details->filesystem_info_is_up_to_date;
+	return nemo_file_is_directory (file) && !file->details->filesystem_info_is_up_to_date;
 }
 
 static gboolean
@@ -1692,7 +1692,8 @@ lacks_extension_info (NemoFile *file)
 static gboolean
 lacks_thumbnail (NemoFile *file)
 {
-	return nemo_file_should_show_thumbnail (file) &&
+	return file->details->thumbnail_requested_once &&
+        nemo_file_should_show_thumbnail (file) &&
 		file->details->thumbnail_path != NULL &&
 		!file->details->thumbnail_is_up_to_date;
 }
