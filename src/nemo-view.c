@@ -4866,11 +4866,11 @@ add_x_content_apps (NemoView *view, NemoFile *file, GList **applications)
 }
 
 static void
-reset_open_with_menu (NemoView *view, GList *selection)
+reset_open_with_menu (NemoView *view, GList *selection, gboolean filter_default)
 {
 	GList *applications, *node;
 	NemoFile *file;
-	gboolean submenu_visible, filter_default;
+	gboolean submenu_visible;
 	int num_applications;
 	int index;
 	gboolean other_applications_visible;
@@ -4892,7 +4892,6 @@ reset_open_with_menu (NemoView *view, GList *selection)
 				      &view->details->open_with_action_group);
 
 	other_applications_visible = (selection != NULL);
-	filter_default = (selection != NULL);
 
 	for (node = selection; node != NULL; node = node->next) {
 
@@ -4903,7 +4902,7 @@ reset_open_with_menu (NemoView *view, GList *selection)
 	}
 
 	default_app = NULL;
-	if (filter_default) {
+	if (filter_default && selection != NULL) {
 		default_app = nemo_mime_get_default_application_for_files (selection);
 	}
 
@@ -9844,7 +9843,7 @@ real_update_menus (NemoView *view)
 	g_free (label_with_underscore);
 
 	/* Broken into its own function just for convenience */
-	reset_open_with_menu (view, selection);
+	reset_open_with_menu (view, selection, show_app);
 	reset_extension_actions_menu (view, selection);
     reset_move_copy_to_menu (view);
 
