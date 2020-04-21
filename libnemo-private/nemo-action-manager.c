@@ -266,8 +266,6 @@ _cbSortFileList(gconstpointer a, gconstpointer b)
   NemoFile* pFileB;
   const char* s0;
   const char* s1;
-  char c0;
-  char c1;
 
   pFileA = (NemoFile*)a;
   pFileB = (NemoFile*)b;
@@ -281,8 +279,8 @@ _cbSortFileList(gconstpointer a, gconstpointer b)
   //    > 0:  a > b
   //
   do {
-    c0 = *s0++;
-    c1 = *s1++;
+    char c0 = *s0++;
+    char c1 = *s1++;
     if (c0 < c1) {
       r = -1;
       break;
@@ -291,7 +289,7 @@ _cbSortFileList(gconstpointer a, gconstpointer b)
       r = 1;
       break;
     }
-    if (c0 == 0) {  // Special case: Both strings are identical and we have hit the \0 char? => Return equal 
+    if (c0 == 0) {  // Special case: Both strings are identical and we have hit the \0 char? => Return equal
       r = 0;
       break;
     }
