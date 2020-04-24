@@ -19,6 +19,7 @@
 
 #include "nemo-action.h"
 #include <eel/eel-string.h>
+#include <eel/eel-vfs-extensions.h>
 #include <glib/gi18n.h>
 #include <gdk/gdk.h>
 #include "nemo-file-utilities.h"
@@ -1158,6 +1159,10 @@ find_token_type (const gchar *str, TokenType *token_type)
             *token_type = TOKEN_DEVICE;
             return ptr;
         }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_FILE_NO_EXT)) {
+            *token_type = TOKEN_FILE_DISPLAY_NAME_NO_EXT;
+            return ptr;
+        }
     }
 
     return NULL;
@@ -1349,6 +1354,15 @@ default_parent_display_name:
                     str = insert_quote (action, str);
                     first = FALSE;
                 }
+            } else {
+                goto default_parent_path;
+            }
+            break;
+        case TOKEN_FILE_DISPLAY_NAME_NO_EXT:
+            if (g_list_length (selection) > 0) {
+                gchar *file_display_name = nemo_file_get_display_name (NEMO_FILE (selection->data));
+                str = score_append (action, str, eel_filename_strip_extension (file_display_name));
+                g_free (file_display_name);
             } else {
                 goto default_parent_path;
             }
