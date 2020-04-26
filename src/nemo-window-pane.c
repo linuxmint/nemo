@@ -932,7 +932,7 @@ nemo_window_pane_constructed (GObject *obj)
 			  G_CALLBACK (notebook_page_removed_cb),
 			  pane);
 
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (pane->notebook), FALSE);
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (pane->notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (pane->notebook), FALSE);
 	gtk_notebook_set_group_name (GTK_NOTEBOOK (pane->notebook), "nemo-slots");
 	gtk_widget_show (pane->notebook);
@@ -1234,7 +1234,7 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 					   pane);
 
 	gtk_notebook_set_show_tabs (notebook,
-				    gtk_notebook_get_n_pages (notebook) > 1);
+				    gtk_notebook_get_n_pages (notebook) > 0);
 	pane->slots = g_list_remove (pane->slots, slot);
 }
 
