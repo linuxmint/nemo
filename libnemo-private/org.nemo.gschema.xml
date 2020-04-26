@@ -295,6 +295,11 @@
       <summary>Whether to default to showing dual-pane view when a new window is opened</summary>
       <description>If set to true, new Nemo windows will default to showing two panes</description>
     </key>
+    <key name="show-tab-area" type="b">
+      <default>false</default>
+      <summary>Whether to default to showing the tab area even if there is only one tab</summary>
+      <description>If set to true, the tab area will always be visible in every pane</description>
+    </key>
     <key name="ignore-view-metadata" type="b">
       <default>false</default>
       <summary>Whether to ignore folder metadata for view zoom levels and layouts</summary>

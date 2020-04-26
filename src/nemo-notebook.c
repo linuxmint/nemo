@@ -38,6 +38,8 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
+#include <libnemo-private/nemo-global-preferences.h>
+
 #define AFTER_ALL_TABS -1
 #define NOT_IN_APP_WINDOWS -2
 
@@ -235,7 +237,8 @@ nemo_notebook_init (NemoNotebook *notebook)
 {
 	gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), TRUE);
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook),
+			  g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TAB_AREA ));
 
 	/* Make it so that pressing ctrl+tab/ctrl+shift+tab switches the currently
 	 * focused tab.
@@ -402,7 +405,8 @@ nemo_notebook_insert_page (GtkNotebook *gnotebook,
 										     position);
 
 	gtk_notebook_set_show_tabs (gnotebook,
-				    gtk_notebook_get_n_pages (gnotebook) > 0);
+				    gtk_notebook_get_n_pages (gnotebook) > 1 ||
+					g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TAB_AREA ));
 	gtk_notebook_set_tab_reorderable (gnotebook, tab_widget, TRUE);
 	gtk_notebook_set_tab_detachable (gnotebook, tab_widget, TRUE);
 
@@ -459,7 +463,8 @@ nemo_notebook_remove (GtkContainer *container,
 	GTK_CONTAINER_CLASS (nemo_notebook_parent_class)->remove (container, tab_widget);
 
 	gtk_notebook_set_show_tabs (gnotebook,
-				    gtk_notebook_get_n_pages (gnotebook) > 0);
+				    gtk_notebook_get_n_pages (gnotebook) > 1 || 
+					g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TAB_AREA ));
 
 }
 
