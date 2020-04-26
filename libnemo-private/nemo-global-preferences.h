@@ -64,6 +64,10 @@ typedef enum
 
 /* Sidebar panels  */
 #define NEMO_PREFERENCES_TREE_SHOW_ONLY_DIRECTORIES         "show-only-directories"
+#define NEMO_PREFERENCES_PLACES_SHOW_RECENT                 "places-show-recent"
+#define NEMO_PREFERENCES_PLACES_SHOW_TRASH                  "places-show-trash"
+#define NEMO_PREFERENCES_PLACES_SHOW_BOOKMARKS              "places-show-bookmarks"
+#define NEMO_PREFERENCES_PLACES_SHOW_NETWORK                "places-show-network"
 
 /* Single/Double click preference  */
 #define NEMO_PREFERENCES_CLICK_POLICY			"click-policy"

@@ -74,7 +74,7 @@
   <schema id="org.nemo.preferences" path="/org/nemo/preferences/" gettext-domain="nemo">
     <key name="tabs-open-position" enum="org.nemo.TabPosition">
       <aliases>
-	<alias value='after_current_tab' target='after-current-tab'/>
+        <alias value='after_current_tab' target='after-current-tab'/>
       </aliases>
       <default>'after-current-tab'</default>
       <summary>Where to position newly open tabs in browser windows.</summary>
@@ -249,7 +249,7 @@
     </key>
     <key name="default-sort-order" enum="org.nemo.SortOrder">
       <aliases>
-	<alias value='modification_date' target='mtime'/>
+        <alias value='modification_date' target='mtime'/>
       </aliases>
       <default>'name'</default>
       <summary>Default sort order</summary>
@@ -398,6 +398,26 @@
     <key name="enable-mime-actions-make-executable" type="b">
       <default>false</default>
       <summary>Display the 'Make executable and run' button in the mime-action dialog (open an unknown filetype)</summary>
+    </key>
+    <key name="places-show-recent" type="b">
+      <default>true</default>
+      <summary>Show recent entry in the places sidebar</summary>
+      <description>If set to true, then Nemo shows the Recent sidebar places entry.</description>
+    </key>
+    <key name="places-show-trash" type="b">
+      <default>true</default>
+      <summary>Show trash entry in the places sidebar</summary>
+      <description>If set to true, then Nemo shows the Trash sidebar places entry.</description>
+    </key>
+    <key name="places-show-bookmarks" type="b">
+      <default>true</default>
+      <summary>Show recent entry in the bookmarks sidebar</summary>
+      <description>If set to true, then Nemo shows the Bookmarks sidebar places entry.</description>
+    </key>
+    <key name="places-show-network" type="b">
+      <default>true</default>
+      <summary>Show network entry in the places sidebar</summary>
+      <description>If set to true, then Nemo shows the Network sidebar places entry.</description>
     </key>
   </schema>
 

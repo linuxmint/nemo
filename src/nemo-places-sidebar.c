@@ -823,7 +823,8 @@ update_places (NemoPlacesSidebar *sidebar)
         g_free (tooltip);
     }
 
-    if (recent_is_supported ()) {
+    if (recent_is_supported () &&
+        g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_PLACES_SHOW_RECENT)) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
         icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT;
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -856,40 +857,44 @@ update_places (NemoPlacesSidebar *sidebar)
     if (!recent_is_supported())
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
-    mount_uri = (char *)"trash:///"; /* No need to strdup */
-    icon = nemo_trash_monitor_get_symbolic_icon_name ();
-    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                           SECTION_COMPUTER,
-                           _("Trash"), icon, mount_uri,
-                           NULL, NULL, NULL, 0,
-                           _("Open the trash"), 0, FALSE,
-                           cat_iter);
-    g_free (icon);
-
-    cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
-                                    _("Bookmarks"));
-
-    while (bookmark_index < bookmark_count) {
-        bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
-
-        root = nemo_bookmark_get_location (bookmark);
-
-        bookmark_name = nemo_bookmark_get_name (bookmark);
-        icon = nemo_bookmark_get_icon_name (bookmark);
-        mount_uri = nemo_bookmark_get_uri (bookmark);
-        tooltip = g_file_get_parse_name (root);
-
-        cat_iter = add_place (sidebar, PLACES_BOOKMARK,
-                              SECTION_BOOKMARKS,
-                              bookmark_name, icon, mount_uri,
-                              NULL, NULL, NULL, bookmark_index,
-                              tooltip, 0, FALSE,
-                              cat_iter);
-        g_object_unref (root);
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_PLACES_SHOW_TRASH)) {
+        mount_uri = (char *)"trash:///"; /* No need to strdup */
+        icon = nemo_trash_monitor_get_symbolic_icon_name ();
+        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                            SECTION_COMPUTER,
+                            _("Trash"), icon, mount_uri,
+                            NULL, NULL, NULL, 0,
+                            _("Open the trash"), 0, FALSE,
+                            cat_iter);
         g_free (icon);
-        g_free (mount_uri);
-        g_free (tooltip);
-        ++bookmark_index;
+    }
+
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_PLACES_SHOW_BOOKMARKS)) {
+        cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
+                                        _("Bookmarks"));
+
+        while (bookmark_index < bookmark_count) {
+            bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
+
+            root = nemo_bookmark_get_location (bookmark);
+
+            bookmark_name = nemo_bookmark_get_name (bookmark);
+            icon = nemo_bookmark_get_icon_name (bookmark);
+            mount_uri = nemo_bookmark_get_uri (bookmark);
+            tooltip = g_file_get_parse_name (root);
+
+            cat_iter = add_place (sidebar, PLACES_BOOKMARK,
+                                SECTION_BOOKMARKS,
+                                bookmark_name, icon, mount_uri,
+                                NULL, NULL, NULL, bookmark_index,
+                                tooltip, 0, FALSE,
+                                cat_iter);
+            g_object_unref (root);
+            g_free (icon);
+            g_free (mount_uri);
+            g_free (tooltip);
+            ++bookmark_index;
+        }
     }
 
     /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
@@ -1131,66 +1136,68 @@ update_places (NemoPlacesSidebar *sidebar)
     g_list_free (volumes);
 
 	/* network */
-	cat_iter = add_heading (sidebar, SECTION_NETWORK,
-		     _("Network"));
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_PLACES_SHOW_NETWORK)) {
+        cat_iter = add_heading (sidebar, SECTION_NETWORK,
+                _("Network"));
 
-	network_volumes = g_list_reverse (network_volumes);
-	for (l = network_volumes; l != NULL; l = l->next) {
-		volume = l->data;
-		mount = g_volume_get_mount (volume);
+        network_volumes = g_list_reverse (network_volumes);
+        for (l = network_volumes; l != NULL; l = l->next) {
+            volume = l->data;
+            mount = g_volume_get_mount (volume);
 
-		if (mount != NULL) {
-			network_mounts = g_list_prepend (network_mounts, mount);
-			continue;
-		} else {
-			icon = nemo_get_volume_icon_name (volume);
-			name = g_volume_get_name (volume);
-			tooltip = g_strdup_printf (_("Mount and open %s"), name);
+            if (mount != NULL) {
+                network_mounts = g_list_prepend (network_mounts, mount);
+                continue;
+            } else {
+                icon = nemo_get_volume_icon_name (volume);
+                name = g_volume_get_name (volume);
+                tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
-			cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                				   SECTION_NETWORK,
-                				   name, icon, NULL,
-                				   NULL, volume, NULL, 0, tooltip, 0, FALSE,
-                                   cat_iter);
-			g_free (icon);
-			g_free (name);
-			g_free (tooltip);
-		}
-	}
+                cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                                    SECTION_NETWORK,
+                                    name, icon, NULL,
+                                    NULL, volume, NULL, 0, tooltip, 0, FALSE,
+                                    cat_iter);
+                g_free (icon);
+                g_free (name);
+                g_free (tooltip);
+            }
+        }
 
-	g_list_free_full (network_volumes, g_object_unref);
+        g_list_free_full (network_volumes, g_object_unref);
 
-	network_mounts = g_list_reverse (network_mounts);
-	for (l = network_mounts; l != NULL; l = l->next) {
-		mount = l->data;
-		root = g_mount_get_default_location (mount);
-		icon = nemo_get_mount_icon_name (mount);
-		mount_uri = g_file_get_uri (root);
-		name = g_mount_get_name (mount);
-		tooltip = g_file_get_parse_name (root);
-		cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                			   SECTION_NETWORK,
-                			   name, icon, mount_uri,
-                			   NULL, NULL, mount, 0, tooltip, 0, FALSE,
-                               cat_iter);
-		g_object_unref (root);
-		g_free (icon);
-		g_free (name);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
+        network_mounts = g_list_reverse (network_mounts);
+        for (l = network_mounts; l != NULL; l = l->next) {
+            mount = l->data;
+            root = g_mount_get_default_location (mount);
+            icon = nemo_get_mount_icon_name (mount);
+            mount_uri = g_file_get_uri (root);
+            name = g_mount_get_name (mount);
+            tooltip = g_file_get_parse_name (root);
+            cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                                SECTION_NETWORK,
+                                name, icon, mount_uri,
+                                NULL, NULL, mount, 0, tooltip, 0, FALSE,
+                                cat_iter);
+            g_object_unref (root);
+            g_free (icon);
+            g_free (name);
+            g_free (mount_uri);
+            g_free (tooltip);
+        }
 
-	g_list_free_full (network_mounts, g_object_unref);
+        g_list_free_full (network_mounts, g_object_unref);
 
-	/* network:// */
- 	mount_uri = (char *)"network:///"; /* No need to strdup */
-	icon = NEMO_ICON_SYMBOLIC_NETWORK;
-	cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                		   SECTION_NETWORK,
-                		   _("Network"), icon,
-                		   mount_uri, NULL, NULL, NULL, 0,
-                		   _("Browse the contents of the network"), 0, FALSE,
-                           cat_iter);
+        /* network:// */
+        mount_uri = (char *)"network:///"; /* No need to strdup */
+        icon = NEMO_ICON_SYMBOLIC_NETWORK;
+        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                            SECTION_NETWORK,
+                            _("Network"), icon,
+                            mount_uri, NULL, NULL, NULL, 0,
+                            _("Browse the contents of the network"), 0, FALSE,
+                            cat_iter);
+    }
 
 	/* restore selection */
     restore_expand_state (sidebar);

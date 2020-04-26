@@ -111,6 +111,11 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_SKIP_FILE_OP_QUEUE_WIDGET "skip_file_op_queue_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET "click_double_parent_folder_checkbutton"
 
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_RECENT "places_show_recent"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_TRASH "places_show_trash"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_BOOKMARKS "places_show_bookmarks"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_NETWORK "places_show_network"
+
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
 
@@ -1047,6 +1052,22 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET,
                        NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_RECENT,
+                       NEMO_PREFERENCES_PLACES_SHOW_RECENT);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_TRASH,
+                       NEMO_PREFERENCES_PLACES_SHOW_TRASH);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_BOOKMARKS,
+                       NEMO_PREFERENCES_PLACES_SHOW_BOOKMARKS);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_SHOW_NETWORK,
+                       NEMO_PREFERENCES_PLACES_SHOW_NETWORK);
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);
