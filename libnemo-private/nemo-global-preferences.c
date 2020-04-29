@@ -112,7 +112,18 @@ nemo_global_preferences_get_inherit_show_thumbnails_preference (void)
 int
 nemo_global_preferences_get_size_prefix_preference (void)
 {
-    return size_prefixes_preference;
+    switch (size_prefixes_preference) {
+        case 0: // base-10
+            return G_FORMAT_SIZE_DEFAULT;
+        case 1: // base-10 full
+            return G_FORMAT_SIZE_DEFAULT |                           G_FORMAT_SIZE_LONG_FORMAT;
+        case 2: // base-2
+            return G_FORMAT_SIZE_DEFAULT | G_FORMAT_SIZE_IEC_UNITS;
+        case 3: // base-2 full
+            return G_FORMAT_SIZE_DEFAULT | G_FORMAT_SIZE_IEC_UNITS | G_FORMAT_SIZE_LONG_FORMAT;
+    }
+
+    return 0;
 }
 
 char *

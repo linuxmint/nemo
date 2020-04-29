@@ -6310,10 +6310,8 @@ nemo_file_get_size_as_string_with_real_size (NemoFile *file)
 		return NULL;
 	}
 
-	/* If base-2 or base-2-full, then prefix will be 2 (i.e. base-2), if base-10 or base-10-long
-	   then prefix will be 0 (i.e. base-0). Prefix will be added to LONG_FORMAT */
-	prefix = nemo_global_preferences_get_size_prefix_preference () * 2;
-	return g_format_size_full (file->details->size, G_FORMAT_SIZE_LONG_FORMAT + prefix);
+	prefix = nemo_global_preferences_get_size_prefix_preference ();
+	return g_format_size_full (file->details->size, prefix);
 }
 
 
