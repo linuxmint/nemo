@@ -592,7 +592,7 @@
       <description>Whether the navigation window should be maximized by default.</description>
     </key>
     <key name="sidebar-width" type="i">
-      <default>148</default>
+      <default>170</default>
       <summary>Width of the side pane</summary>
       <description>The default width of the side pane in new windows.</description>
     </key>
