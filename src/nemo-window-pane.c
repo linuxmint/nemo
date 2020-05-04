@@ -550,9 +550,6 @@ notebook_button_press_cb (GtkWidget *widget,
 	NemoNotebook *notebook;
 	int tab_clicked;
 
-	if (event->type != GDK_BUTTON_PRESS)
-		return FALSE;
-
 	/* Not a button event we actually care about, so just bail */
 	if (event->button != 1 && event->button != 2 && event->button != 3)
 		return FALSE;
@@ -561,6 +558,19 @@ notebook_button_press_cb (GtkWidget *widget,
 	notebook = NEMO_NOTEBOOK (pane->notebook);
 	tab_clicked = nemo_notebook_find_tab_num_at_pos (
 		notebook, event->x_root, event->y_root);
+
+	// Duplicate double-clicked tab, set focus on new tab
+	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
+				tab_clicked);
+		nemo_window_pane_set_active (pane, TRUE);
+		nemo_window_pane_grab_focus (pane);
+
+		nemo_window_new_tab (pane->window);
+    }
+
+	if (event->type != GDK_BUTTON_PRESS)
+		return FALSE;
 
 	/* Do not change the current page on middle-click events. Close the
 	 * clicked tab instead.
