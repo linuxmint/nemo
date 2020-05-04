@@ -1244,9 +1244,6 @@ nemo_window_pane_remove_slot_unsafe (NemoWindowPane *pane,
 					   G_CALLBACK (notebook_switch_page_cb),
 					   pane);
 
-	gtk_notebook_set_show_tabs (notebook,
-				    gtk_notebook_get_n_pages (notebook) > 1 || 
-					g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TAB_AREA ));
 	pane->slots = g_list_remove (pane->slots, slot);
 }
 
