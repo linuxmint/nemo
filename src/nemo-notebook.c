@@ -408,7 +408,15 @@ nemo_notebook_insert_page (GtkNotebook *gnotebook,
 				    gtk_notebook_get_n_pages (gnotebook) > 1 ||
 					g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TAB_AREA ));
 	gtk_notebook_set_tab_reorderable (gnotebook, tab_widget, TRUE);
-	gtk_notebook_set_tab_detachable (gnotebook, tab_widget, TRUE);
+
+    // set detachable state depending on number of slots (a single slot
+	// should stay where it is)
+	gint num_pages = gtk_notebook_get_n_pages (gnotebook);
+	for (gint i = 0; i < num_pages; i++)
+	{
+		GtkWidget *tab_widget_temp = gtk_notebook_get_nth_page (gnotebook, i);
+		gtk_notebook_set_tab_detachable (gnotebook, tab_widget_temp, num_pages > 1);
+	}
 
 	return position;
 }
@@ -466,6 +474,14 @@ nemo_notebook_remove (GtkContainer *container,
 				    gtk_notebook_get_n_pages (gnotebook) > 1 || 
 					g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TAB_AREA ));
 
+    // set detachable state depending on number of slots (a single slot
+	// should stay where it is)
+	gint num_pages = gtk_notebook_get_n_pages (gnotebook);
+	if (num_pages == 1)
+	{
+		GtkWidget *tab_widget_temp = gtk_notebook_get_nth_page (gnotebook, 0);
+		gtk_notebook_set_tab_detachable (gnotebook, tab_widget_temp, num_pages > 1);
+	}
 }
 
 void
