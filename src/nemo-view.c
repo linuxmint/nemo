@@ -8551,11 +8551,11 @@ static const GtkActionEntry directory_view_entries[] = {
                 N_("Browse..."), NULL,
                 N_("Browse for a folder to copy the selection to"),
                 G_CALLBACK (action_browse_for_copy_to_folder_callback) },
-                               {NEMO_ACTION_PIN_FILE, "view-pin-symbolic",
+                               {NEMO_ACTION_PIN_FILE, "xapp-pin-symbolic",
                 N_("P_in"), "<control><shift>D",
                 N_("Pin the selected file so it always appears at the top of this location's file list"),
                 G_CALLBACK (action_pin_unpin_file_callback) },
-                               {NEMO_ACTION_UNPIN_FILE, "view-pin-symbolic",
+                               {NEMO_ACTION_UNPIN_FILE, "xapp-unpin-symbolic",
                 N_("Unp_in"), "<control><shift>D",
                 N_("Unpin the selected file from the top of this location's file list"),
                 G_CALLBACK (action_pin_unpin_file_callback) }
