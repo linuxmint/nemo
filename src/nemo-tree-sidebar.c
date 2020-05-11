@@ -98,6 +98,7 @@ struct FMTreeViewDetails {
 	GtkWidget *popup_paste;
 	GtkWidget *popup_rename;
     GtkWidget *popup_pin;
+    GtkWidget *popup_unpin;
 	GtkWidget *popup_trash;
 	GtkWidget *popup_delete;
 	GtkWidget *popup_properties;
@@ -785,9 +786,11 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 		}
 
         if (nemo_file_get_pinning (view->details->popup_file)) {
-            gtk_menu_item_set_label (GTK_MENU_ITEM (view->details->popup_pin), _("Unp_in"));
+            gtk_widget_hide (view->details->popup_pin);
+            gtk_widget_show (view->details->popup_unpin);
         } else {
-            gtk_menu_item_set_label (GTK_MENU_ITEM (view->details->popup_pin), _("P_in"));
+            gtk_widget_show (view->details->popup_pin);
+            gtk_widget_hide (view->details->popup_unpin);
         }
 
         gboolean actions_visible = FALSE;
@@ -1391,7 +1394,7 @@ create_popup_menu (FMTreeView *view)
 	
 	eel_gtk_menu_append_separator (GTK_MENU (popup));
 
-    menu_image = gtk_image_new_from_icon_name ("view-pin-symbolic", GTK_ICON_SIZE_MENU);
+    menu_image = gtk_image_new_from_icon_name ("xapp-pin-symbolic", GTK_ICON_SIZE_MENU);
     gtk_widget_show (menu_image);
     menu_item = gtk_image_menu_item_new_with_mnemonic (_("P_in"));
     gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menu_item),
@@ -1402,6 +1405,19 @@ create_popup_menu (FMTreeView *view)
     gtk_widget_show (menu_item);
     gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
     view->details->popup_pin = menu_item;
+
+    menu_image = gtk_image_new_from_icon_name ("xapp-unpin-symbolic", GTK_ICON_SIZE_MENU);
+    gtk_widget_show (menu_image);
+    menu_item = gtk_image_menu_item_new_with_mnemonic (_("Unp_in"));
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menu_item),
+                                   menu_image);
+    g_signal_connect (menu_item, "activate",
+                      G_CALLBACK (fm_tree_view_pin_unpin_cb),
+                      view);
+    gtk_widget_show (menu_item);
+    gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
+    view->details->popup_unpin = menu_item;
+
 
     eel_gtk_menu_append_separator (GTK_MENU (popup));
 
