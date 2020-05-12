@@ -25,6 +25,10 @@
 #include "nemo-search-engine.h"
 #include "nemo-search-engine-simple.h"
 
+#ifdef ENABLE_TRACKER
+#include "nemo-search-engine-tracker.h"
+#endif
+
 enum {
 	HITS_ADDED,
 	HITS_SUBTRACTED,
@@ -91,6 +95,13 @@ NemoSearchEngine *
 nemo_search_engine_new (void)
 {
 	NemoSearchEngine *engine;
+	
+#ifdef ENABLE_TRACKER	
+	engine = nemo_search_engine_tracker_new ();
+	if (engine) {
+		return engine;
+	}
+#endif
 	
 	engine = nemo_search_engine_simple_new ();
 	return engine;
