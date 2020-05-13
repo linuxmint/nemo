@@ -123,8 +123,8 @@ main (int argc, char *argv[])
 
 	nemo_global_preferences_init ();
 
-    const gchar *uri, *basename;
-    gchar *mime_type;
+    const gchar *uri;
+    gchar *mime_type, *basename;
 
     uri = argv[1];
 

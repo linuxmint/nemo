@@ -1,10 +1,13 @@
 
+nemo_i18n_header = [
+  'nemo-extension-i18n.h'
+]
+
 nemo_extension_sources = [
   gresources,
   'nemo-column-provider.c',
   'nemo-column.c',
   'nemo-desktop-preferences.c',
-  'nemo-extension-i18n.h',
   'nemo-extension-private.h',
   'nemo-file-info.c',
   'nemo-info-provider.c',
@@ -40,7 +43,7 @@ nemo_extension_incdir = include_directories('.')
 nemo_extension_deps = [ glib, gtk ]
 
 nemo_extension_lib = shared_library('nemo-extension',
-  nemo_extension_sources,
+  nemo_extension_sources + nemo_i18n_header,
   dependencies: nemo_extension_deps,
   include_directories: [ rootInclude, ],
   install: true,

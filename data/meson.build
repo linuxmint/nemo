@@ -62,11 +62,13 @@ mimeFile_translated = custom_target('nemo.xml',
   ],
   install: true,
   install_dir: join_paths(get_option('datadir'), 'mime', 'packages'),
-  build_always: true,
+  build_by_default: true,
 )
 
 ################################################################################
 dataConf = configuration_data()
+dataConf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
+
 rootPolicyFile = configure_file(
   input : 'org.nemo.root.policy.in',
   output: 'org.nemo.root.policy',
