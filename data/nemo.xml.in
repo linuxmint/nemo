@@ -8,7 +8,7 @@
 
 
    <mime-type type="application/nemo-action">
-     <_comment>A Nemo action definition file</_comment>
+     <_comment>Nemo action definition</_comment>
      <generic-icon name="text-x-generic"/>
      <sub-class-of type="text/plain"/>
      <glob pattern="*.nemo_action"/>
