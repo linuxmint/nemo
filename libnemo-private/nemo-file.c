@@ -4330,7 +4330,9 @@ nemo_file_delete_thumbnail (NemoFile *file)
 
     gint success;
 
-    invalidate_thumbnail (file);
+    nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_THUMBNAIL);
+    g_clear_object (&file->details->thumbnail);
+
     success = g_unlink (file->details->thumbnail_path);
 
     if (success != 0) {
