@@ -1,3 +1,69 @@
+nemo (4.6.0) ulyana; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window.c: Monitor and react to scale-factor changes.
+  * nemo-icon-container.c: clear any existing drag info when the icon view's location changes.
+
+  [ Leigh Scott ]
+  * nemo-file-operations.c: Copy file and keep timestamps of original file including remotes
+
+  [ Michael Webster ]
+  * control: Remove python2 dependencies
+
+  [ leigh123linux ]
+  * nemo-global-preferences: use 'extern' properly
+
+  [ Michael Webster ]
+  * meson.build: Don't be confusing when pango 1.44.0 isn't found.
+
+  [ worldofpeace ]
+  * build: use define_variable for typelib directory
+
+  [ Michael Webster ]
+  * Fix mistake in --help output.
+
+  [ Daniel Clarke ]
+  * Fallback to uri when path is null in title
+
+  [ Luke Scott ]
+  * Sort nemo actions menu alphabetically
+
+  [ J. Luke Scott [thinkpad] ]
+  * linter fix for previous
+
+  [ sidorsett ]
+  * Update nemo-view.c
+
+  [ JosephMcc ]
+  * nemo-notebook: Add a minimum width for the tab labels
+
+  [ Kamil Chojnowski ]
+  * Add %e action token
+
+  [ Michael Webster ]
+  * nemo-global-preferences.c: Fix base-2-full size format display.
+
+  [ Timothy Arceri ]
+  * Remove .hidden file code now that gio does if for us
+
+  [ NikoKrause ]
+  * nemo action: use different icons for pin/unpin
+
+  [ Michael Webster ]
+  * nemo-tree-sidebar.c: Allow using separate icons for pin and unpin, and use the new xapp icons from the previous commit.
+
+  [ JosephMcc ]
+  * settings: Set the default width of the sidebar to 170
+
+  [ Ján Jančár ]
+  * Add tracker support (#2334)
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+  * l10n: Generate files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 13 May 2020 14:00:42 +0100
+
 nemo (4.4.2) tricia; urgency=medium
 
   [ leigh123linux ]
