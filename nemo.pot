@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-13 13:58+0100\n"
+"POT-Creation-Date: 2020-05-14 20:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#. (itstool) path: mime-type/_comment
+#: data/nemo.xml.in:5
+msgid "Saved search"
+msgstr ""
+
+#. (itstool) path: mime-type/_comment
+#: data/nemo.xml.in:11
+msgid "Nemo action definition"
+msgstr ""
 
 #: src/nemo-action-config-widget.c:237
 msgid "No actions found"
@@ -561,7 +571,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: src/nemo-file-management-properties.c:483 libnemo-private/nemo-file.c:4944
+#: src/nemo-file-management-properties.c:483 libnemo-private/nemo-file.c:4946
 #, no-c-format
 msgid "Yesterday"
 msgstr ""
@@ -874,7 +884,7 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: src/nemo-image-properties-page.c:767 libnemo-private/nemo-file.c:6750
+#: src/nemo-image-properties-page.c:767 libnemo-private/nemo-file.c:6752
 msgid "Image"
 msgstr ""
 
@@ -1503,7 +1513,7 @@ msgstr ""
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: src/nemo-properties-window.c:1125 libnemo-private/nemo-file.c:6708
+#: src/nemo-properties-window.c:1125 libnemo-private/nemo-file.c:6710
 msgid "unknown"
 msgstr ""
 
@@ -1579,7 +1589,7 @@ msgstr ""
 msgid "Type:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3088 libnemo-private/nemo-file.c:7860
+#: src/nemo-properties-window.c:3088 libnemo-private/nemo-file.c:7862
 msgid "Link target:"
 msgstr ""
 
@@ -2052,7 +2062,7 @@ msgstr[1] ""
 msgid "%s (%s)"
 msgstr ""
 
-#: src/nemo-view.c:3206 libnemo-private/nemo-file.c:6226
+#: src/nemo-view.c:3206 libnemo-private/nemo-file.c:6228
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
@@ -2883,7 +2893,7 @@ msgstr ""
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6850
+#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:6852
 #: libnemo-private/nemo-file-operations.c:393
 #, c-format
 msgid "Link to %s"
@@ -3868,51 +3878,51 @@ msgid "Unable to rename desktop file"
 msgstr ""
 
 #. Translators: Time in 24h format
-#: libnemo-private/nemo-file.c:4934
+#: libnemo-private/nemo-file.c:4936
 msgid "%H:%M"
 msgstr ""
 
 #. Translators: Time in 12h format
-#: libnemo-private/nemo-file.c:4937
+#: libnemo-private/nemo-file.c:4939
 msgid "%l:%M %p"
 msgstr ""
 
 #. Translators: this is the word Yesterday followed by
 #. * a time in 24h format. i.e. "Yesterday 23:04"
-#: libnemo-private/nemo-file.c:4950
+#: libnemo-private/nemo-file.c:4952
 #, no-c-format
 msgid "Yesterday %H:%M"
 msgstr ""
 
 #. Translators: this is the word Yesterday followed by
 #. * a time in 12h format. i.e. "Yesterday 9:04 PM"
-#: libnemo-private/nemo-file.c:4955
+#: libnemo-private/nemo-file.c:4957
 #, no-c-format
 msgid "Yesterday %l:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:4963
+#: libnemo-private/nemo-file.c:4965
 #, no-c-format
 msgid "%A"
 msgstr ""
 
 #. Translators: this is the name of the week day followed by
 #. * a time in 24h format. i.e. "Monday 23:04"
-#: libnemo-private/nemo-file.c:4969
+#: libnemo-private/nemo-file.c:4971
 #, no-c-format
 msgid "%A %H:%M"
 msgstr ""
 
 #. Translators: this is the week day name followed by
 #. * a time in 12h format. i.e. "Monday 9:04 PM"
-#: libnemo-private/nemo-file.c:4974
+#: libnemo-private/nemo-file.c:4976
 #, no-c-format
 msgid "%A %l:%M %p"
 msgstr ""
 
 #. Translators: this is the day of the month followed
 #. * by the abbreviated month name i.e. "3 February"
-#: libnemo-private/nemo-file.c:4982
+#: libnemo-private/nemo-file.c:4984
 #, no-c-format
 msgid "%-e %B"
 msgstr ""
@@ -3920,7 +3930,7 @@ msgstr ""
 #. Translators: this is the day of the month followed
 #. * by the abbreviated month name followed by a time in
 #. * 24h format i.e. "3 February 23:04"
-#: libnemo-private/nemo-file.c:4989
+#: libnemo-private/nemo-file.c:4991
 #, no-c-format
 msgid "%-e %B %H:%M"
 msgstr ""
@@ -3928,14 +3938,14 @@ msgstr ""
 #. Translators: this is the day of the month followed
 #. * by the abbreviated month name followed by a time in
 #. * 12h format i.e. "3 February 9:04"
-#: libnemo-private/nemo-file.c:4995
+#: libnemo-private/nemo-file.c:4997
 #, no-c-format
 msgid "%-e %B %l:%M %p"
 msgstr ""
 
 #. Translators: this is the day of the month followed by the abbreviated
 #. * month name followed by the year i.e. "3 Feb 2015"
-#: libnemo-private/nemo-file.c:5003
+#: libnemo-private/nemo-file.c:5005
 #, no-c-format
 msgid "%-e %b %Y"
 msgstr ""
@@ -3943,7 +3953,7 @@ msgstr ""
 #. Translators: this is the day number followed
 #. * by the abbreviated month name followed by the year followed
 #. * by a time in 24h format i.e. "3 Feb 2015 23:04"
-#: libnemo-private/nemo-file.c:5010
+#: libnemo-private/nemo-file.c:5012
 #, no-c-format
 msgid "%-e %b %Y %H:%M"
 msgstr ""
@@ -3951,46 +3961,46 @@ msgstr ""
 #. Translators: this is the day number followed
 #. * by the abbreviated month name followed by the year followed
 #. * by a time in 12h format i.e. "3 Feb 2015 9:04 PM"
-#: libnemo-private/nemo-file.c:5016
+#: libnemo-private/nemo-file.c:5018
 #, no-c-format
 msgid "%-e %b %Y %l:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5026
+#: libnemo-private/nemo-file.c:5028
 #, no-c-format
 msgid "%c"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5474
+#: libnemo-private/nemo-file.c:5476
 msgid "Not allowed to set permissions"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5769
+#: libnemo-private/nemo-file.c:5771
 msgid "Not allowed to set owner"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5787
+#: libnemo-private/nemo-file.c:5789
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6051
+#: libnemo-private/nemo-file.c:6053
 msgid "Not allowed to set group"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6069
+#: libnemo-private/nemo-file.c:6071
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6227
+#: libnemo-private/nemo-file.c:6229
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:6228
+#: libnemo-private/nemo-file.c:6230
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -3998,129 +4008,129 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. This means no contents at all were readable
-#: libnemo-private/nemo-file.c:6671 libnemo-private/nemo-file.c:6687
+#: libnemo-private/nemo-file.c:6673 libnemo-private/nemo-file.c:6689
 msgid "? items"
 msgstr ""
 
 #. This means no contents at all were readable
-#: libnemo-private/nemo-file.c:6677
+#: libnemo-private/nemo-file.c:6679
 msgid "? bytes"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6694 libnemo-private/nemo-file.c:6783
+#: libnemo-private/nemo-file.c:6696 libnemo-private/nemo-file.c:6785
 msgid "Unknown"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6747 libnemo-private/nemo-file.c:6755
-#: libnemo-private/nemo-file.c:6807
+#: libnemo-private/nemo-file.c:6749 libnemo-private/nemo-file.c:6757
+#: libnemo-private/nemo-file.c:6809
 msgid "Program"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6748
+#: libnemo-private/nemo-file.c:6750
 msgid "Audio"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6749
+#: libnemo-private/nemo-file.c:6751
 msgid "Font"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6751
+#: libnemo-private/nemo-file.c:6753
 msgid "Archive"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6752
+#: libnemo-private/nemo-file.c:6754
 msgid "Markup"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6753 libnemo-private/nemo-file.c:6754
+#: libnemo-private/nemo-file.c:6755 libnemo-private/nemo-file.c:6756
 #: eel/eel-editable-label.c:319
 msgid "Text"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6756
+#: libnemo-private/nemo-file.c:6758
 msgid "Video"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6757
+#: libnemo-private/nemo-file.c:6759
 msgid "Contacts"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6758
+#: libnemo-private/nemo-file.c:6760
 msgid "Calendar"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6759
+#: libnemo-private/nemo-file.c:6761
 msgid "Document"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6760
+#: libnemo-private/nemo-file.c:6762
 msgid "Presentation"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6761
+#: libnemo-private/nemo-file.c:6763
 msgid "Spreadsheet"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6809
+#: libnemo-private/nemo-file.c:6811
 #: gresources/nemo-file-management-properties.glade:150
 msgid "Binary"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6813
+#: libnemo-private/nemo-file.c:6815
 msgid "Folder"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6844
+#: libnemo-private/nemo-file.c:6846
 msgid "link"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6866 libnemo-private/nemo-file.c:6880
+#: libnemo-private/nemo-file.c:6868 libnemo-private/nemo-file.c:6882
 msgid "link (broken)"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7791
+#: libnemo-private/nemo-file.c:7793
 #, c-format
 msgid "Name: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7798
+#: libnemo-private/nemo-file.c:7800
 #, c-format
 msgid "Type: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7808
+#: libnemo-private/nemo-file.c:7810
 #, c-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:7810
+#: libnemo-private/nemo-file.c:7812
 #, c-format
 msgid "Contains: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7820
+#: libnemo-private/nemo-file.c:7822
 #, c-format
 msgid "Size: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7828
+#: libnemo-private/nemo-file.c:7830
 #, c-format
 msgid "Accessed: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7836
+#: libnemo-private/nemo-file.c:7838
 #, c-format
 msgid "Modified: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7844
+#: libnemo-private/nemo-file.c:7846
 #, c-format
 msgid "Created: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7853
+#: libnemo-private/nemo-file.c:7855
 #, c-format
 msgid "Location: %s"
 msgstr ""
