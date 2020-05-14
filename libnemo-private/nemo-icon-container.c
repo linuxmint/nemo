@@ -4011,15 +4011,19 @@ nemo_icon_container_search_init (GtkWidget   *entry,
 static void
 nemo_icon_container_ensure_interactive_directory (NemoIconContainer *container)
 {
-	GtkWidget *frame, *vbox;
+	GtkWidget *frame, *vbox, *toplevel;
 
 	if (container->details->search_window != NULL) {
 		return;
 	}
 
 	container->details->search_window = gtk_window_new (GTK_WINDOW_POPUP);
+    toplevel = gtk_widget_get_toplevel (GTK_WIDGET (container));
 
-	gtk_window_set_modal (GTK_WINDOW (container->details->search_window), TRUE);
+    gtk_window_set_transient_for (GTK_WINDOW (container->details->search_window),
+                                  GTK_WINDOW (toplevel));
+
+    gtk_window_set_destroy_with_parent (GTK_WINDOW (container->details->search_window), TRUE);
 	gtk_window_set_type_hint (GTK_WINDOW (container->details->search_window),
 				  GDK_WINDOW_TYPE_HINT_COMBO);
 
