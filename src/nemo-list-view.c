@@ -185,6 +185,8 @@ static void   prioritize_visible_files (NemoListView *view);
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
+static gint click_policy = NEMO_CLICK_POLICY_SINGLE;
+
 static const char * default_trash_visible_columns[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
 };
@@ -389,13 +391,6 @@ button_event_modifies_selection (GdkEventButton *event)
 	return (event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) != 0;
 }
 
-static int
-get_click_policy (void)
-{
-	return g_settings_get_enum (nemo_preferences,
-				    NEMO_PREFERENCES_CLICK_POLICY);
-}
-
 static void
 nemo_list_view_did_not_drag (NemoListView *view,
 				 GdkEventButton *event)
@@ -421,7 +416,7 @@ nemo_list_view_did_not_drag (NemoListView *view,
 			}
 		}
 
-		if ((get_click_policy () == NEMO_CLICK_POLICY_SINGLE)
+		if ((click_policy == NEMO_CLICK_POLICY_SINGLE)
 		    && !button_event_modifies_selection(event)) {
 			if (event->button == 1) {
 				activate_selected_items (view);
@@ -605,7 +600,7 @@ motion_notify_callback (GtkWidget *widget,
         return GDK_EVENT_PROPAGATE;
     }
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		GtkTreePath *old_hover_path;
 
 		old_hover_path = view->details->hover_path;
@@ -748,7 +743,7 @@ leave_notify_callback (GtkWidget *widget,
 
 	view = NEMO_LIST_VIEW (callback_data);
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE &&
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE &&
 	    view->details->hover_path != NULL) {
 		gtk_tree_path_free (view->details->hover_path);
 		view->details->hover_path = NULL;
@@ -766,7 +761,7 @@ enter_notify_callback (GtkWidget *widget,
 
 	view = NEMO_LIST_VIEW (callback_data);
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		if (view->details->hover_path != NULL) {
 			gtk_tree_path_free (view->details->hover_path);
 		}
@@ -977,7 +972,7 @@ static gboolean
 handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton *event, gboolean on_expander)
 {
     /* Ignore double click if we are in single click mode */
-    if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+    if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
         return FALSE;
     }
 
@@ -2236,7 +2231,7 @@ filename_cell_data_func (GtkTreeViewColumn *column,
                 NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN, &weight,
 			    -1);
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		path = gtk_tree_model_get_path (model, iter);
 
 		if (view->details->hover_path == NULL ||
@@ -3832,8 +3827,11 @@ nemo_list_view_click_policy_changed (NemoView *directory_view)
 
 	view = NEMO_LIST_VIEW (directory_view);
 
+    click_policy = g_settings_get_enum (nemo_preferences,
+                                        NEMO_PREFERENCES_CLICK_POLICY);
+
 	/* ensure that we unset the hand cursor and refresh underlined rows */
-	if (get_click_policy () == NEMO_CLICK_POLICY_DOUBLE) {
+	if (click_policy == NEMO_CLICK_POLICY_DOUBLE) {
 		if (view->details->hover_path != NULL) {
 			if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->details->model),
 						     &iter, view->details->hover_path)) {
@@ -3857,7 +3855,7 @@ nemo_list_view_click_policy_changed (NemoView *directory_view)
 		}
 
 		g_clear_object (&hand_cursor);
-	} else if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	} else if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		if (hand_cursor == NULL) {
 			hand_cursor = gdk_cursor_new(GDK_HAND2);
 		}
