@@ -501,7 +501,7 @@ nemo_file_clear_info (NemoFile *file)
 	file->details->ctime = 0;
     file->details->btime = 0;
 	file->details->trash_time = 0;
-    file->details->thumbnail_requested_once = FALSE;
+    file->details->load_thumb = FALSE;
 	g_free (file->details->symlink_name);
 	file->details->symlink_name = NULL;
 	eel_ref_str_unref (file->details->mime_type);
@@ -790,16 +790,16 @@ finalize (GObject *object)
 {
 	NemoDirectory *directory;
 	NemoFile *file;
-	char *uri;
+    char *uri;
 
 	file = NEMO_FILE (object);
 
 	g_assert (file->details->operations_in_progress == NULL);
 
 	if (file->details->is_thumbnailing) {
-		uri = nemo_file_get_uri (file);
-		nemo_thumbnail_remove_from_queue (uri);
-		g_free (uri);
+        uri = nemo_file_get_uri (file);
+        nemo_thumbnail_remove_from_queue (uri);
+        g_free (uri);
 	}
 
 	nemo_async_destroying_file (file);
@@ -865,6 +865,8 @@ finalize (GObject *object)
 	if (file->details->metadata) {
 		metadata_hash_free (file->details->metadata);
 	}
+
+    g_free (file->details->cached_uri);
 
 	G_OBJECT_CLASS (nemo_file_parent_class)->finalize (object);
 }
@@ -1638,6 +1640,18 @@ nemo_file_get_uri (NemoFile *file)
 	g_object_unref (loc);
 
 	return uri;
+}
+
+const char *
+nemo_file_peek_uri (NemoFile *file)
+{
+    g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    if (file->details->cached_uri == NULL) {
+        file->details->cached_uri = nemo_file_get_uri (file);
+    }
+
+    return file->details->cached_uri;
 }
 
 /* Return the actual path associated with the passed-in file. */
@@ -4645,7 +4659,7 @@ nemo_file_get_icon (NemoFile *file,
 
 	if ((flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS) &&
 	    nemo_file_should_show_thumbnail (file)) {
-        file->details->thumbnail_requested_once = TRUE;
+        DEBUG ("thumb path");
         if (flags & NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE) {
             modified_size = size * scale;
         } else {
@@ -4655,6 +4669,7 @@ nemo_file_get_icon (NemoFile *file,
         }
 
 		if (file->details->thumbnail) {
+        DEBUG ("AHAVE IT");
 			int w, h, s;
 			double thumb_scale;
 
@@ -4733,13 +4748,15 @@ nemo_file_get_icon (NemoFile *file,
 			   file->details->can_read &&
 			   !file->details->is_thumbnailing &&
 			   !file->details->thumbnailing_failed) {
+            DEBUG ("THUMBNAILING IT");
+
 			if (nemo_can_thumbnail (file)) {
-				nemo_create_thumbnail (file, get_throttle_count (file), FALSE);
+				nemo_create_thumbnail (file, get_throttle_count (file), TRUE);
 			}
 		}
 	}
 
-	if (file->details->is_thumbnailing &&
+	if (file->details->thumbnail_path == NULL && nemo_can_thumbnail (file) &&
 	    flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS)
 		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
 	else
@@ -8026,16 +8043,11 @@ nemo_file_invalidate_extension_info_internal (NemoFile *file)
 		nemo_module_get_extensions_for_type (NEMO_TYPE_INFO_PROVIDER);
 }
 
-gboolean
-nemo_file_check_delayed_icon (NemoFile *file)
+void
+nemo_file_set_load_thumb (NemoFile *file,
+                          gboolean  load_thumb)
 {
-    if (file->details->thumbnail_is_up_to_date) {
-        return TRUE;
-    }
-
-    nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTES_FOR_ICON);
-
-    return FALSE;
+    file->details->load_thumb = load_thumb;
 }
 
 void

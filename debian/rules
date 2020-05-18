@@ -9,6 +9,7 @@ CONFIGURE_EXTRA_FLAGS = \
 	--libexecdir=/usr/lib/$(DEB_HOST_MULTIARCH)/nemo \
 	-D deprecated_warnings=false \
 	-D gtk_doc=true \
+	-D profiling=true \
 	-D selinux=false
 
 export LDFLAGS+=-Wl,-z,defs -Wl,-O1 -Wl,--as-needed

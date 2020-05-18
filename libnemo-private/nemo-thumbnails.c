@@ -423,6 +423,7 @@ thumbnail_thread_notify_file_changed (gpointer image_uri)
         nemo_file_unref (file);
     }
     g_free (image_uri);
+    g_printerr ("length: %d  REMOVE\n" , g_hash_table_size (thumbnails_to_make_hash));
 
     return FALSE;
 }
@@ -659,7 +660,7 @@ nemo_create_thumbnail (NemoFile      *file,
         thumbnails_to_make_hash = g_hash_table_new (g_str_hash,
                                 g_str_equal);
     }
-
+    g_printerr ("length: %d  ADD\n" , g_hash_table_size (thumbnails_to_make_hash));
     /* Check if it is already in the list of thumbnails to make. */
     existing = g_hash_table_lookup (thumbnails_to_make_hash, info->image_uri);
 
@@ -724,4 +725,16 @@ gboolean
 nemo_thumbnail_factory_check_status (void)
 {
     return gnome_desktop_thumbnail_cache_check_permissions (get_thumbnail_factory (), TRUE);
+}
+
+gboolean
+nemo_thumbnail_factory_has_thumbnail (NemoFile *file)
+{
+    g_autofree gchar *existing;
+
+    existing = gnome_desktop_thumbnail_factory_lookup (get_thumbnail_factory(),
+                                                       nemo_file_peek_uri (file),
+                                                       nemo_file_get_mtime (file));
+
+    return !!existing;
 }

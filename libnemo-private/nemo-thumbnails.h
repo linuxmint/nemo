@@ -45,5 +45,5 @@ void       nemo_thumbnail_remove_from_queue     (const char   *file_uri);
 void       nemo_thumbnail_prioritize            (const char   *file_uri);
 
 gboolean   nemo_thumbnail_factory_check_status          (void);
-
+gboolean   nemo_thumbnail_factory_has_thumbnail (NemoFile *file);
 #endif /* NEMO_THUMBNAILS_H */

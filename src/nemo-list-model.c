@@ -81,8 +81,6 @@ struct NemoListModelDetails {
 
 	GList *highlight_files;
     gboolean temp_unsorted;
-
-    gboolean ok_to_load_thumbs;
 };
 
 typedef struct {
@@ -320,7 +318,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 			flags = NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
 				NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
 
-            if (model->details->ok_to_load_thumbs) {
+            if (file_entry->ok_to_show_thumb) {
                 flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
             }
 
@@ -1844,11 +1842,4 @@ nemo_list_model_set_expanding (NemoListModel *model, NemoDirectory *directory)
 
     entry = g_sequence_get (ptr);
     entry->expanding = TRUE;
-}
-
-void
-nemo_list_model_set_ok_to_load_thumbs (NemoListModel *model,
-                                       gboolean       ok)
-{
-    model->details->ok_to_load_thumbs = ok;
 }

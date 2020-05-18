@@ -1692,7 +1692,7 @@ lacks_extension_info (NemoFile *file)
 static gboolean
 lacks_thumbnail (NemoFile *file)
 {
-	return file->details->thumbnail_requested_once &&
+	return file->details->load_thumb &&
         nemo_file_should_show_thumbnail (file) &&
 		file->details->thumbnail_path != NULL &&
 		!file->details->thumbnail_is_up_to_date;
@@ -3630,7 +3630,6 @@ thumbnail_done (NemoDirectory *directory,
 {
 	const char *thumb_mtime_str;
 	time_t thumb_mtime = 0;
-	
 	file->details->thumbnail_is_up_to_date = TRUE;
 	file->details->thumbnail_tried_original  = tried_original;
 	if (file->details->thumbnail) {

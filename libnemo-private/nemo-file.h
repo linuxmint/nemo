@@ -189,6 +189,7 @@ const char *            nemo_file_peek_name                         (NemoFile   
 GFile *                 nemo_file_get_location                      (NemoFile                   *file);
 char *			 nemo_file_get_description			 (NemoFile			 *file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);
+const char *            nemo_file_peek_uri                          (NemoFile                   *file);
 char *                  nemo_file_get_path                          (NemoFile                   *file);
 char *                  nemo_file_get_uri_scheme                    (NemoFile                   *file);
 NemoFile *          nemo_file_get_parent                        (NemoFile                   *file);
@@ -522,7 +523,7 @@ void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_d
 
 gboolean nemo_file_get_pinning                    (NemoFile *file);
 void     nemo_file_set_pinning                    (NemoFile *file, gboolean  pin);
-gboolean nemo_file_check_delayed_icon             (NemoFile *file);
+void nemo_file_set_load_thumb                     (NemoFile *file, gboolean load_thumb);
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

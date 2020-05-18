@@ -72,6 +72,9 @@
  */
 #define MAX_CLICK_TIME 1500
 
+#define INITIAL_UPDATE_VISIBLE_DELAY 300
+#define NORMAL_UPDATE_VISIBLE_DELAY 50
+
 /* Button assignments. */
 #define DRAG_BUTTON 1
 #define RUBBERBAND_BUTTON 1
@@ -122,7 +125,7 @@ static void          handle_hadjustment_changed                     (GtkAdjustme
 static void          handle_vadjustment_changed                     (GtkAdjustment         *adjustment,
 								     NemoIconContainer *container);
 static GList *       nemo_icon_container_get_selected_icons (NemoIconContainer *container);
-static void          queue_update_visible_icons                 (NemoIconContainer *container);
+static void          queue_update_visible_icons                 (NemoIconContainer *container, gint delay);
 static void          reveal_icon                                    (NemoIconContainer *container,
 								     NemoIcon *icon);
 
@@ -282,73 +285,6 @@ icon_get_size (NemoIconContainer *container,
 		*size = MAX (nemo_get_icon_size_for_zoom_level (container->details->zoom_level)
 			       * icon->scale, NEMO_ICON_SIZE_SMALLEST);
 	}
-}
-
-static void
-reveal_or_request_icon (NemoIconContainer *container,
-                        NemoIcon          *icon,
-                        NemoFile          *file)
-{
-    if (!icon->ok_to_show_thumb) {
-        icon->ok_to_show_thumb = TRUE;
-
-        if (!nemo_file_check_delayed_icon (file)) {
-            nemo_file_invalidate_attributes (NEMO_FILE (icon->data), NEMO_FILE_ATTRIBUTE_THUMBNAIL);
-        }
-    }
-
-    nemo_icon_container_update_icon (container, icon);
-}
-
-static gboolean
-lazy_icon_loading_callback (gpointer user_data)
-{
-    NemoIconContainer *container = NEMO_ICON_CONTAINER (user_data);
-
-    while (!g_queue_is_empty (container->details->lazy_icon_load_queue)) {
-        NemoFile *file = NULL;
-
-        file = NEMO_FILE (g_queue_pop_head (container->details->lazy_icon_load_queue));
-
-        if (nemo_file_should_show_thumbnail (file) && nemo_can_thumbnail (file)) {
-            NemoIcon *icon = NULL;
-
-            icon = g_hash_table_lookup (container->details->icon_set, file);
-
-            if (icon != NULL && container->details->ok_to_load_thumbs) {
-                reveal_or_request_icon (container, icon, file);
-            }
-
-            nemo_file_unref (file);
-            return G_SOURCE_CONTINUE;
-        } else {
-            nemo_file_unref (file);
-            continue;
-        }
-    }
-
-    container->details->lazy_icon_load_id = 0;
-    return G_SOURCE_REMOVE;
-}
-
-static void
-stop_lazy_icon_loading (NemoIconContainer *container)
-{
-    if (container->details->lazy_icon_load_id > 0) {
-        g_source_remove (container->details->lazy_icon_load_id);
-
-        container->details->lazy_icon_load_id = 0;
-    }
-}
-
-static void
-start_lazy_icon_loading (NemoIconContainer *container)
-{
-    stop_lazy_icon_loading (container);
-
-    container->details->lazy_icon_load_id = g_timeout_add_full  (1, G_PRIORITY_LOW,
-                                                                 (GSourceFunc) lazy_icon_loading_callback,
-                                                                 container, NULL);
 }
 
 /* The icon_set_size function is used by the stretching user
@@ -4513,7 +4449,8 @@ real_move_icon (NemoIconContainer *container,
 
 static void
 real_update_icon (NemoIconContainer *container,
-                  NemoIcon *icon)
+                  NemoIcon *icon,
+                  gboolean visible)
 {
     g_assert_not_reached ();
 }
@@ -5028,8 +4965,6 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->renaming_allocation_count = 0;
 
     details->update_visible_icons_id = 0;
-    details->lazy_icon_load_id = 0;
-    details->lazy_icon_load_queue = g_queue_new ();
     details->ok_to_load_thumbs = FALSE;
 
     details->h_adjust = 100;
@@ -5284,12 +5219,6 @@ nemo_icon_container_clear (NemoIconContainer *container)
 	details->drop_target = NULL;
 
     details->ok_to_load_thumbs = FALSE;
-
-    if (details->lazy_icon_load_queue != NULL) {
-        stop_lazy_icon_loading (container);
-        g_queue_free_full (details->lazy_icon_load_queue, (GDestroyNotify) nemo_file_unref);
-        details->lazy_icon_load_queue = NULL;
-    }
 
 	for (p = details->icons; p != NULL; p = p->next) {
 		icon_free (p->data);
@@ -5612,14 +5541,15 @@ nemo_icon_container_get_icon_images (NemoIconContainer *container,
                                      NemoIconData      *data,
                                      int                size,
                                      gboolean           for_drag_accept,
-                                     gboolean          *has_open_window)
+                                     gboolean          *has_open_window,
+                                     gboolean           visible)
 {
 	NemoIconContainerClass *klass;
 
 	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_images != NULL);
 
-	return klass->get_icon_images (container, data, size, for_drag_accept, has_open_window);
+	return klass->get_icon_images (container, data, size, for_drag_accept, has_open_window, visible);
 }
 
 static void
@@ -5685,11 +5615,6 @@ update_visible_icons_cb (NemoIconContainer *container)
 	eel_canvas_c2w (EEL_CANVAS (container),
 			max_x, max_y, &max_x, &max_y);
 
-	/* Do the iteration in reverse to get the render-order from top to
-	 * bottom for the prioritized thumbnails.
-	 */
-    stop_lazy_icon_loading (container);
-
 	for (node = g_list_last (container->details->icons); node != NULL; node = node->prev) {
 		icon = node->data;
 
@@ -5706,37 +5631,47 @@ update_visible_icons_cb (NemoIconContainer *container)
 					     &x1,
 					     &y1);
 
+            gint overshoot;
+
 			if (nemo_icon_container_is_layout_vertical (container)) {
-				visible = x1 >= min_x && x0 <= max_x;
+                overshoot = (max_x - min_x) / 2;
+
+				visible = x1 >= min_x - overshoot && x0 <= max_x + overshoot;
 			} else {
-				visible = y1 >= min_y && y0 <= max_y;
+                overshoot = (max_y - min_y) / 2;
+
+				visible = y1 >= min_y - overshoot && y0 <= max_y + overshoot;
 			}
 
 			if (visible) {
 				nemo_icon_canvas_item_set_is_visible (icon->item, TRUE);
 
-                nemo_icon_container_prioritize_thumbnailing (container, icon);
+                if (!icon->ok_to_show_thumb) {
+                    NemoFile *file = NEMO_FILE (icon->data);
 
-                if (container->details->ok_to_load_thumbs) {
-                    reveal_or_request_icon (container, icon, NEMO_FILE (icon->data));
+                    icon->ok_to_show_thumb = TRUE;
+                    nemo_file_set_load_thumb (file, TRUE);
 
-                    if (g_queue_remove (container->details->lazy_icon_load_queue, NEMO_FILE (icon->data))) {
-                        nemo_file_unref (NEMO_FILE (icon->data));
+                    if (nemo_file_is_thumbnailing (file)) {
+                        nemo_thumbnail_prioritize (nemo_file_peek_uri (file));
+                    } else {
+                        nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTES_FOR_ICON);
                     }
                 }
+
+                nemo_icon_container_update_icon (container, icon);
 			} else {
 				nemo_icon_canvas_item_set_is_visible (icon->item, FALSE);
 			}
 		}
 	}
 
-    start_lazy_icon_loading (container);
-
     return G_SOURCE_REMOVE;
 }
 
 static void
-queue_update_visible_icons(NemoIconContainer *container)
+queue_update_visible_icons(NemoIconContainer *container,
+                           gint               delay)
 {
     NemoIconContainerDetails *details = container->details;
 
@@ -5744,7 +5679,7 @@ queue_update_visible_icons(NemoIconContainer *container)
         g_source_remove (details->update_visible_icons_id);
     }
 
-    details->update_visible_icons_id = g_timeout_add (100, (GSourceFunc) update_visible_icons_cb, container);
+    details->update_visible_icons_id = g_timeout_add (delay, (GSourceFunc) update_visible_icons_cb, container);
 }
 
 static void
@@ -5752,7 +5687,7 @@ handle_vadjustment_changed (GtkAdjustment *adjustment,
 			    NemoIconContainer *container)
 {
 	if (!nemo_icon_container_is_layout_vertical (container)) {
-		queue_update_visible_icons (container);
+		queue_update_visible_icons (container, NORMAL_UPDATE_VISIBLE_DELAY);
 	}
 }
 
@@ -5761,7 +5696,7 @@ handle_hadjustment_changed (GtkAdjustment *adjustment,
 			    NemoIconContainer *container)
 {
 	if (nemo_icon_container_is_layout_vertical (container)) {
-		queue_update_visible_icons (container);
+		queue_update_visible_icons (container, NORMAL_UPDATE_VISIBLE_DELAY);
 	}
 }
 
@@ -5853,10 +5788,6 @@ nemo_icon_container_add (NemoIconContainer *container,
 	/* Put it on both lists. */
 	details->icons = g_list_prepend (details->icons, icon);
 	details->new_icons = g_list_prepend (details->new_icons, icon);
-
-    if (icon->data) {
-        g_queue_push_tail (details->lazy_icon_load_queue, g_object_ref (icon->data));
-    }
 
 	g_hash_table_insert (details->icon_set, data, icon);
 
@@ -7976,10 +7907,6 @@ nemo_icon_container_begin_loading (NemoIconContainer *container)
 {
 	gboolean dummy;
 
-    if (container->details->lazy_icon_load_queue == NULL) {
-        container->details->lazy_icon_load_queue = g_queue_new ();
-    }
-
     clear_drag_state (container);
 
 	if (nemo_icon_container_get_store_layout_timestamps (container)) {
@@ -8182,9 +8109,9 @@ nemo_icon_container_icon_get_bounding_box (NemoIconContainer *container,
 
 void
 nemo_icon_container_update_icon (NemoIconContainer *container,
-                     NemoIcon *icon)
+                                 NemoIcon          *icon)
 {
-    NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon);
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon, icon->ok_to_show_thumb);
 }
 
 gint
@@ -8203,8 +8130,7 @@ nemo_icon_container_set_ok_to_load_thumbs (NemoIconContainer *container,
 
     if (ok != old_ok) {
         if (ok) {
-            queue_update_visible_icons (container);
-            start_lazy_icon_loading (container);
+            queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
         }
     }
 }

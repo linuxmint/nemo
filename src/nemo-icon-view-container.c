@@ -85,7 +85,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
                                           NemoIconData      *data,
                                           int                size,
                                           gboolean           for_drag_accept,
-					                      gboolean          *has_window_open)
+					                      gboolean          *has_window_open,
+                                          gboolean           visible)
 {
 	NemoIconView *icon_view;
 	NemoFile *file;
@@ -108,7 +109,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
 			NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
 
-    if (container->details->ok_to_load_thumbs != 0) {
+    if (visible) {
         flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
     }
 
@@ -206,7 +207,7 @@ nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
 
 	g_assert (NEMO_IS_FILE (file));
 
-    if (nemo_can_thumbnail (file)) {
+    if (nemo_can_thumbnail (file) && !nemo_file_has_loaded_thumbnail (file)) {
         nemo_create_thumbnail (file, 0, TRUE);
     }
 }
@@ -1483,7 +1484,8 @@ icon_get_size (NemoIconContainer *container,
 
 static void
 nemo_icon_view_container_update_icon (NemoIconContainer *container,
-                                      NemoIcon          *icon)
+                                      NemoIcon          *icon,
+                                      gboolean           visible)
 {
     NemoIconContainerDetails *details;
     guint icon_size;
@@ -1521,7 +1523,8 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                                                      icon->data,
                                                      icon_size,
                                                      icon == details->drop_target,
-                                                     &has_open_window);
+                                                     &has_open_window,
+                                                     visible);
 
     if (container->details->forced_icon_size > 0) {
         gint scale_factor;
