@@ -612,6 +612,7 @@ thumbnail_thread_starter_cb (gpointer data)
     thumbnail_thread_is_running = TRUE;
 
     g_task_run_in_thread (thumbnail_task, thumbnail_thread);
+    g_object_unref (thumbnail_task);
 
     thumbnail_thread_starter_id = 0;
     return FALSE;
@@ -691,7 +692,9 @@ nemo_create_thumbnail (NemoFile      *file,
 
         if (thumbnail_thread_is_running == FALSE &&
             thumbnail_thread_starter_id == 0) {
-            thumbnail_thread_starter_id = g_idle_add_full (G_PRIORITY_LOW, thumbnail_thread_starter_cb, NULL, NULL);
+            thumbnail_thread_starter_id = g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+                                                           thumbnail_thread_starter_cb,
+                                                           NULL, NULL);
         }
     } else {
         if (DEBUGGING) {
