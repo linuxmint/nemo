@@ -1024,6 +1024,7 @@ redo_layout_internal (NemoIconContainer *container)
 	}
 
 	nemo_icon_container_update_scroll_region (container);
+    queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
 
 	process_pending_icon_to_reveal (container);
 	process_pending_icon_to_rename (container);
@@ -5653,7 +5654,7 @@ update_visible_icons_cb (NemoIconContainer *container)
                     nemo_file_set_load_thumb (file, TRUE);
 
                     if (nemo_file_is_thumbnailing (file)) {
-                        nemo_thumbnail_prioritize (nemo_file_peek_uri (file));
+                        nemo_icon_container_prioritize_thumbnailing (container, icon);
                     } else {
                         nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTES_FOR_ICON);
                     }
@@ -8124,14 +8125,10 @@ void
 nemo_icon_container_set_ok_to_load_thumbs (NemoIconContainer *container,
                                            gboolean           ok)
 {
-    gboolean old_ok = container->details->ok_to_load_thumbs;
-
     container->details->ok_to_load_thumbs = ok;
 
-    if (ok != old_ok) {
-        if (ok) {
-            queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
-        }
+    if (ok) {
+        queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
     }
 }
 

@@ -144,6 +144,9 @@ struct SelectionForeachData {
 /* Wait for the rename to end when activating a file being renamed */
 #define WAIT_FOR_RENAME_ON_ACTIVATE 200
 
+#define INITIAL_UPDATE_VISIBLE_DELAY 300
+#define NORMAL_UPDATE_VISIBLE_DELAY 50
+
 static GdkCursor *              hand_cursor = NULL;
 
 static GtkTargetList *          source_target_list = NULL;
@@ -176,7 +179,7 @@ static char **get_column_order                                   (NemoListView *
 static char **get_default_column_order                           (NemoListView *list_view);
 
 static void   set_columns_settings_from_metadata_and_preferences (NemoListView *list_view);
-static void   queue_update_visible_icons (NemoListView *view);
+static void   queue_update_visible_icons (NemoListView *view, gint delay);
 static NemoZoomLevel nemo_list_view_get_zoom_level (NemoView *view);
 static void   prioritize_visible_files (NemoListView *view);
 
@@ -1261,7 +1264,7 @@ subdirectory_done_loading_callback (NemoDirectory *directory, NemoListView *view
 {
 	nemo_list_model_subdirectory_done_loading (view->details->model, directory);
 
-    queue_update_visible_icons (view);
+    queue_update_visible_icons (view, INITIAL_UPDATE_VISIBLE_DELAY);
 }
 
 static void
@@ -1484,15 +1487,10 @@ static void
 set_ok_to_load_thumbs (NemoListView  *list_view,
                        gboolean       ok)
 {
-    if (ok == list_view->details->ok_to_load_thumbs) {
-        return;
-    }
-
     list_view->details->ok_to_load_thumbs = ok;
 
     if (ok) {
-        g_printerr ("SET OK\n");
-        queue_update_visible_icons (list_view);
+        queue_update_visible_icons (list_view, INITIAL_UPDATE_VISIBLE_DELAY);
     }
 }
 
@@ -2267,20 +2265,21 @@ update_visible_icons_cb (NemoListView *view)
 }
 
 static void
-queue_update_visible_icons(NemoListView *view)
+queue_update_visible_icons(NemoListView *view,
+                           gint          delay)
 {
     if (view->details->update_visible_icons_id > 0) {
         g_source_remove (view->details->update_visible_icons_id);
     }
 
-    view->details->update_visible_icons_id = g_timeout_add (50, (GSourceFunc) update_visible_icons_cb, view);
+    view->details->update_visible_icons_id = g_timeout_add (delay, (GSourceFunc) update_visible_icons_cb, view);
 }
 
 static void
 handle_vadjustment_changed (GtkAdjustment *adjustment,
                             NemoListView  *view)
 {
-    queue_update_visible_icons (view);
+    queue_update_visible_icons (view, NORMAL_UPDATE_VISIBLE_DELAY);
 }
 
 static gint
@@ -2563,6 +2562,7 @@ nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 
 	model = NEMO_LIST_VIEW (view)->details->model;
 	nemo_list_model_add_file (model, file, directory);
+    queue_update_visible_icons (NEMO_LIST_VIEW (view), INITIAL_UPDATE_VISIBLE_DELAY);
 }
 
 static char **
