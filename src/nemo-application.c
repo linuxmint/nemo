@@ -576,6 +576,7 @@ nemo_application_quit_mainloop (GApplication *app)
 
     nemo_icon_info_clear_caches ();
     save_accel_map (NULL);
+    g_object_unref (NEMO_APPLICATION (app)->undo_manager);
 
     nemo_application_notify_unmount_done (NEMO_APPLICATION (app), NULL);
 

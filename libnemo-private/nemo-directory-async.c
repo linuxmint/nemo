@@ -3654,6 +3654,7 @@ thumbnail_done (NemoDirectory *directory,
             file->details->thumbnail_throttle_count = 1;
 		} else {
 			g_free (file->details->thumbnail_path);
+            g_object_unref (pixbuf);
 			file->details->thumbnail_path = NULL;
 		}
 

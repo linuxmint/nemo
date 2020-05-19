@@ -5072,7 +5072,7 @@ setup_bookmark_action(      char *action_name,
                             action_name,
                             GTK_UI_MANAGER_MENUITEM,
                             FALSE);
-
+    g_object_unref (action);
     g_free (action_name);
 }
 

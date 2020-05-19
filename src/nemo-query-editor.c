@@ -102,6 +102,7 @@ nemo_query_editor_dispose (GObject *object)
 	editor = NEMO_QUERY_EDITOR (object);
 
     g_clear_pointer (&editor->priv->base_uri, g_free);
+    g_clear_pointer (&editor->priv->last_set_query_text, g_free);
 
 	if (editor->priv->typing_timeout_id > 0) {
 		g_source_remove (editor->priv->typing_timeout_id);
@@ -299,6 +300,7 @@ add_key_to_faves (NemoQueryEditor *editor,
                                        on_saved_searches_setting_changed,
                                        editor);
 
+    g_clear_pointer (&editor->priv->faves, g_strfreev);
     editor->priv->faves = (gchar **) g_ptr_array_free (array, FALSE);
 }
 
@@ -351,6 +353,7 @@ remove_key_from_faves (NemoQueryEditor *editor,
     g_free (key);
     g_free (uri);
 
+    g_clear_pointer (&editor->priv->faves, g_strfreev);
     editor->priv->faves = (gchar **) g_ptr_array_free (array, FALSE);
 }
 
@@ -455,6 +458,7 @@ on_menu_item_activated (GtkMenuItem *item,
 
         g_free (favorite_location);
         g_free (favorite_key);
+        g_object_unref (query);
     }
 }
 
@@ -699,6 +703,7 @@ on_saved_searches_setting_changed (GSettings *settings,
 
     editor = NEMO_QUERY_EDITOR (user_data);
 
+    g_clear_pointer (&editor->priv->faves, g_strfreev);
     editor->priv->faves = g_settings_get_strv (settings, key);
 }
 

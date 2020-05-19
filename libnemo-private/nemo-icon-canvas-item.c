@@ -2036,6 +2036,8 @@ nemo_icon_canvas_item_get_fixed_text_height_for_layout (NemoIconCanvasItem *item
     pango_layout_get_pixel_size (layout, NULL, &line_height);
 
     total_height = (line_height * lines) + (LABEL_LINE_SPACING * (lines - 1));
+    g_object_unref (layout);
+
     return total_height;
 }
 

@@ -2787,6 +2787,7 @@ finalize (GObject *object)
     g_slice_free (NemoViewLayoutConstants, details->view_constants);
 
 	g_free (details);
+    g_list_free (details->current_selection);
 
 	G_OBJECT_CLASS (nemo_icon_container_parent_class)->finalize (object);
 }
