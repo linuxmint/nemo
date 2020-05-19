@@ -2197,7 +2197,7 @@ prioritize_visible_files (NemoListView *view)
     GdkRectangle vrect;
     GtkTreeIter iter;
     GtkTreePath *path;
-    gint icon_size, cy, bottom_y, stepdown;
+    gint icon_size, cy, start_y, end_y, stepdown;
     gint bin_y;
 
     gtk_tree_view_get_visible_rect (view->details->tree_view,
@@ -2208,20 +2208,17 @@ prioritize_visible_files (NemoListView *view)
                                                     1, vrect.y,
                                                     NULL, &bin_y);
 
-    /* Start at the bottom of the view and scan our way up.  We do it in reverse here
-     * because we're placing files on top of the thumbnailer stack, and so the last file
-     * added will be the first thumbnailed. */
-
-    /* Start the first pixel and work up in smallish steps relative to the current icon size. */
     stepdown = icon_size * .75;
-    bottom_y = bin_y + vrect.height;
-    // cy = bottom_y - 1;
-    cy = bottom_y + vrect.height / 2;
 
-    // queue_list = NULL;
+    start_y = bin_y - (vrect.height / 2);
+    end_y = bin_y + vrect.height + (vrect.height / 2);
+
     last_file = NULL;
+    cy = end_y;
 
-    while (cy > (bin_y - vrect.height / 2)) {
+    // Images that start out un-thumbnailed end up resolving in reverse
+    // order, so work bottom-up here.
+    while (cy > start_y) {
         if (gtk_tree_view_get_path_at_pos (view->details->tree_view,
                                            1, cy,
                                            &path, NULL, NULL, NULL)) {
