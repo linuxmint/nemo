@@ -400,6 +400,7 @@ nemo_path_bar_finalize (GObject *object)
     g_clear_object (&path_bar->priv->xdg_public_path);
     g_clear_object (&path_bar->priv->xdg_templates_path);
     g_clear_object (&path_bar->priv->xdg_videos_path);
+    g_clear_object (&path_bar->priv->desktop_path);
 
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                           desktop_location_changed_callback,

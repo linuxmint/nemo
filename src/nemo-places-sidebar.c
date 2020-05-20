@@ -4304,6 +4304,9 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	g_clear_object (&sidebar->store);
 
+    g_clear_pointer (&sidebar->top_bookend_uri, g_free);
+    g_clear_pointer (&sidebar->bottom_bookend_uri, g_free);
+
 	if (sidebar->go_to_after_mount_slot) {
 		g_object_remove_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
 					      (gpointer *) &sidebar->go_to_after_mount_slot);

@@ -611,6 +611,7 @@ thumbnail_thread_starter_cb (gpointer data)
     thumbnail_thread_is_running = TRUE;
 
     g_task_run_in_thread (thumbnail_task, thumbnail_thread);
+    g_object_unref (thumbnail_task);
 
     thumbnail_thread_starter_id = 0;
     return FALSE;
