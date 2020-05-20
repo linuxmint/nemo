@@ -300,6 +300,12 @@ struct NemoIconContainerDetails {
 	eel_boolean_bit store_layout_timestamps : 1;
 	eel_boolean_bit store_layout_timestamps_when_finishing_new_icons : 1;
 
+    gint ok_to_load_thumbs;
+    guint update_visible_icons_id;
+
+    GQueue *lazy_icon_load_queue;
+    guint lazy_icon_load_id;
+
     GList *current_selection;
     gint current_selection_count;
     gint fixed_text_height;
@@ -383,7 +389,8 @@ NemoIconInfo *nemo_icon_container_get_icon_images (NemoIconContainer *container,
                                                    NemoIconData      *data,
                                                    int                    size,
                                                    gboolean               for_drag_accept,
-                                                   gboolean              *has_open_window);
+                                                   gboolean              *has_open_window,
+                                                   gboolean               visible);
 void          nemo_icon_container_get_icon_text (NemoIconContainer *container,
                                                  NemoIconData      *data,
                                                  char                 **editable_text,

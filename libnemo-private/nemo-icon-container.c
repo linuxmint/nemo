@@ -30,12 +30,14 @@
 #include "nemo-icon-container.h"
 
 #include "nemo-file.h"
+#include "nemo-directory.h"
 #include "nemo-desktop-icon-file.h"
 #include "nemo-global-preferences.h"
 #include "nemo-icon-private.h"
 #include "nemo-lib-self-check-functions.h"
 #include "nemo-selection-canvas-item.h"
 #include "nemo-desktop-utils.h"
+#include "nemo-thumbnails.h"
 #include <atk/atkaction.h>
 #include <eel/eel-accessibility.h>
 #include <eel/eel-vfs-extensions.h>
@@ -69,6 +71,9 @@
  * and still be considered a click.
  */
 #define MAX_CLICK_TIME 1500
+
+#define INITIAL_UPDATE_VISIBLE_DELAY 300
+#define NORMAL_UPDATE_VISIBLE_DELAY 50
 
 /* Button assignments. */
 #define DRAG_BUTTON 1
@@ -120,7 +125,7 @@ static void          handle_hadjustment_changed                     (GtkAdjustme
 static void          handle_vadjustment_changed                     (GtkAdjustment         *adjustment,
 								     NemoIconContainer *container);
 static GList *       nemo_icon_container_get_selected_icons (NemoIconContainer *container);
-static void          nemo_icon_container_update_visible_icons   (NemoIconContainer *container);
+static void          queue_update_visible_icons                 (NemoIconContainer *container, gint delay);
 static void          reveal_icon                                    (NemoIconContainer *container,
 								     NemoIcon *icon);
 
@@ -1019,10 +1024,10 @@ redo_layout_internal (NemoIconContainer *container)
 	}
 
 	nemo_icon_container_update_scroll_region (container);
+    queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
 
 	process_pending_icon_to_reveal (container);
 	process_pending_icon_to_rename (container);
-	nemo_icon_container_update_visible_icons (container);
 }
 
 static gboolean
@@ -2728,6 +2733,11 @@ destroy (GtkWidget *object)
 		g_source_remove (container->details->size_allocation_count_id);
 		container->details->size_allocation_count_id = 0;
 	}
+
+    if (container->details->update_visible_icons_id > 0) {
+        g_source_remove (container->details->update_visible_icons_id);
+        container->details->update_visible_icons_id = 0;
+    }
 
 	/* destroy interactive search dialog */
 	if (container->details->search_window) {
@@ -4441,7 +4451,8 @@ real_move_icon (NemoIconContainer *container,
 
 static void
 real_update_icon (NemoIconContainer *container,
-                  NemoIcon *icon)
+                  NemoIcon *icon,
+                  gboolean visible)
 {
     g_assert_not_reached ();
 }
@@ -4955,6 +4966,9 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->current_selection_count = -1;
     details->renaming_allocation_count = 0;
 
+    details->update_visible_icons_id = 0;
+    details->ok_to_load_thumbs = FALSE;
+
     details->h_adjust = 100;
     details->v_adjust = 100;
 }
@@ -5205,6 +5219,8 @@ nemo_icon_container_clear (NemoIconContainer *container)
 	set_pending_icon_to_reveal (container, NULL);
 	details->stretch_icon = NULL;
 	details->drop_target = NULL;
+
+    details->ok_to_load_thumbs = FALSE;
 
 	for (p = details->icons; p != NULL; p = p->next) {
 		icon_free (p->data);
@@ -5527,14 +5543,15 @@ nemo_icon_container_get_icon_images (NemoIconContainer *container,
                                      NemoIconData      *data,
                                      int                size,
                                      gboolean           for_drag_accept,
-                                     gboolean          *has_open_window)
+                                     gboolean          *has_open_window,
+                                     gboolean           visible)
 {
 	NemoIconContainerClass *klass;
 
 	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_images != NULL);
 
-	return klass->get_icon_images (container, data, size, for_drag_accept, has_open_window);
+	return klass->get_icon_images (container, data, size, for_drag_accept, has_open_window, visible);
 }
 
 static void
@@ -5571,8 +5588,8 @@ nemo_icon_container_prioritize_thumbnailing (NemoIconContainer *container,
 	klass->prioritize_thumbnailing (container, icon->data);
 }
 
-static void
-nemo_icon_container_update_visible_icons (NemoIconContainer *container)
+static gboolean
+update_visible_icons_cb (NemoIconContainer *container)
 {
 	GtkAdjustment *vadj, *hadj;
 	double min_y, max_y;
@@ -5582,6 +5599,8 @@ nemo_icon_container_update_visible_icons (NemoIconContainer *container)
 	NemoIcon *icon;
 	gboolean visible;
 	GtkAllocation allocation;
+
+    container->details->update_visible_icons_id = 0;
 
 	hadj = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (container));
 	vadj = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (container));
@@ -5598,9 +5617,6 @@ nemo_icon_container_update_visible_icons (NemoIconContainer *container)
 	eel_canvas_c2w (EEL_CANVAS (container),
 			max_x, max_y, &max_x, &max_y);
 
-	/* Do the iteration in reverse to get the render-order from top to
-	 * bottom for the prioritized thumbnails.
-	 */
 	for (node = g_list_last (container->details->icons); node != NULL; node = node->prev) {
 		icon = node->data;
 
@@ -5617,21 +5633,55 @@ nemo_icon_container_update_visible_icons (NemoIconContainer *container)
 					     &x1,
 					     &y1);
 
+            gint overshoot;
+
 			if (nemo_icon_container_is_layout_vertical (container)) {
-				visible = x1 >= min_x && x0 <= max_x;
+                overshoot = (max_x - min_x) / 2;
+
+				visible = x1 >= min_x - overshoot && x0 <= max_x + overshoot;
 			} else {
-				visible = y1 >= min_y && y0 <= max_y;
+                overshoot = (max_y - min_y) / 2;
+
+				visible = y1 >= min_y - overshoot && y0 <= max_y + overshoot;
 			}
 
 			if (visible) {
 				nemo_icon_canvas_item_set_is_visible (icon->item, TRUE);
-				nemo_icon_container_prioritize_thumbnailing (container,
-										 icon);
+
+                if (!icon->ok_to_show_thumb) {
+                    NemoFile *file = NEMO_FILE (icon->data);
+
+                    icon->ok_to_show_thumb = TRUE;
+                    nemo_file_set_load_thumb (file, TRUE);
+
+                    if (nemo_file_is_thumbnailing (file)) {
+                        nemo_icon_container_prioritize_thumbnailing (container, icon);
+                    } else {
+                        nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTES_FOR_ICON);
+                    }
+                }
+
+                nemo_icon_container_update_icon (container, icon);
 			} else {
 				nemo_icon_canvas_item_set_is_visible (icon->item, FALSE);
 			}
 		}
 	}
+
+    return G_SOURCE_REMOVE;
+}
+
+static void
+queue_update_visible_icons(NemoIconContainer *container,
+                           gint               delay)
+{
+    NemoIconContainerDetails *details = container->details;
+
+    if (details->update_visible_icons_id > 0) {
+        g_source_remove (details->update_visible_icons_id);
+    }
+
+    details->update_visible_icons_id = g_timeout_add (delay, (GSourceFunc) update_visible_icons_cb, container);
 }
 
 static void
@@ -5639,7 +5689,7 @@ handle_vadjustment_changed (GtkAdjustment *adjustment,
 			    NemoIconContainer *container)
 {
 	if (!nemo_icon_container_is_layout_vertical (container)) {
-		nemo_icon_container_update_visible_icons (container);
+		queue_update_visible_icons (container, NORMAL_UPDATE_VISIBLE_DELAY);
 	}
 }
 
@@ -5648,7 +5698,7 @@ handle_hadjustment_changed (GtkAdjustment *adjustment,
 			    NemoIconContainer *container)
 {
 	if (nemo_icon_container_is_layout_vertical (container)) {
-		nemo_icon_container_update_visible_icons (container);
+		queue_update_visible_icons (container, NORMAL_UPDATE_VISIBLE_DELAY);
 	}
 }
 
@@ -7825,40 +7875,6 @@ nemo_icon_container_accessible_get_type (void)
         return type;
 }
 
-#if ! defined (NEMO_OMIT_SELF_CHECK)
-
-static char *
-check_compute_stretch (int icon_x, int icon_y, int icon_size,
-		       int start_pointer_x, int start_pointer_y,
-		       int end_pointer_x, int end_pointer_y)
-{
-	StretchState start, current;
-
-	start.icon_x = icon_x;
-	start.icon_y = icon_y;
-	start.icon_size = icon_size;
-	start.pointer_x = start_pointer_x;
-	start.pointer_y = start_pointer_y;
-	current.pointer_x = end_pointer_x;
-	current.pointer_y = end_pointer_y;
-
-	compute_stretch (&start, &current);
-
-	return g_strdup_printf ("%d,%d:%d",
-				current.icon_x,
-				current.icon_y,
-				current.icon_size);
-}
-
-void
-nemo_self_check_icon_container (void)
-{
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 0, 0, 0, 0), "0,0:16");
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 17), "0,0:17");
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 16), "0,0:16");
-	EEL_CHECK_STRING_RESULT (check_compute_stretch (100, 100, 64, 105, 105, 40, 40), "35,35:129");
-}
-
 gboolean
 nemo_icon_container_is_layout_rtl (NemoIconContainer *container)
 {
@@ -8095,15 +8111,66 @@ nemo_icon_container_icon_get_bounding_box (NemoIconContainer *container,
 
 void
 nemo_icon_container_update_icon (NemoIconContainer *container,
-                     NemoIcon *icon)
+                                 NemoIcon          *icon)
 {
-    NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon);
+    gboolean ok = FALSE;
+
+    if (icon != NULL) {
+        ok = icon->ok_to_show_thumb;
+    }
+
+    NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon, ok);
 }
 
 gint
 nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container)
 {
     return NEMO_ICON_CONTAINER_GET_CLASS (container)->get_additional_text_line_count (container);
+}
+
+void
+nemo_icon_container_set_ok_to_load_thumbs (NemoIconContainer *container,
+                                           gboolean           ok)
+{
+    container->details->ok_to_load_thumbs = ok;
+
+    if (ok) {
+        queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
+    }
+}
+
+#if ! defined (NEMO_OMIT_SELF_CHECK)
+
+static char *
+check_compute_stretch (int icon_x, int icon_y, int icon_size,
+               int start_pointer_x, int start_pointer_y,
+               int end_pointer_x, int end_pointer_y)
+{
+    StretchState start, current;
+
+    start.icon_x = icon_x;
+    start.icon_y = icon_y;
+    start.icon_size = icon_size;
+    start.pointer_x = start_pointer_x;
+    start.pointer_y = start_pointer_y;
+    current.pointer_x = end_pointer_x;
+    current.pointer_y = end_pointer_y;
+
+    compute_stretch (&start, &current);
+
+    return g_strdup_printf ("%d,%d:%d",
+                current.icon_x,
+                current.icon_y,
+                current.icon_size);
+}
+
+void
+nemo_self_check_icon_container (void)
+{
+    EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 0, 0, 0, 0), "0,0:16");
+    EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 17), "0,0:17");
+    EEL_CHECK_STRING_RESULT (check_compute_stretch (0, 0, 16, 16, 16, 17, 16), "0,0:16");
+    EEL_CHECK_STRING_RESULT (check_compute_stretch (100, 100, 64, 105, 105, 40, 40), "35,35:129");
 }
 
 #endif /* ! NEMO_OMIT_SELF_CHECK */

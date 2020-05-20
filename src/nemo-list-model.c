@@ -100,6 +100,7 @@ struct FileEntry {
 	GSequenceIter *ptr;
 	guint loaded : 1;
     guint expanding : 1;
+    guint ok_to_show_thumb : 1;
 };
 
 G_DEFINE_TYPE_WITH_CODE (NemoListModel, nemo_list_model, G_TYPE_OBJECT,
@@ -314,9 +315,13 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 			icon_size = nemo_get_list_icon_size_for_zoom_level (zoom_level);
             icon_scale = nemo_list_model_get_icon_scale (model);
 
-			flags = NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
-				NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
+			flags = NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE |
 				NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM;
+
+            if (file_entry->ok_to_show_thumb) {
+                flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
+            }
+
 			if (model->details->drag_view != NULL) {
 				GtkTreePath *path_a, *path_b;
 
@@ -414,6 +419,12 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
             g_value_set_int (value, UNPINNED_TEXT_WEIGHT);
         }
 
+        break;
+    case NEMO_LIST_MODEL_ICON_SHOWN:
+        g_value_init (value, G_TYPE_BOOLEAN);
+
+        g_value_set_boolean (value, file_entry->ok_to_show_thumb);
+        file_entry->ok_to_show_thumb = TRUE;
         break;
  	default:
  		if (column >= NEMO_LIST_MODEL_NUM_COLUMNS || column < (int)(NEMO_LIST_MODEL_NUM_COLUMNS + model->details->columns->len)) {
@@ -1727,6 +1738,8 @@ nemo_list_model_subdirectory_done_loading (NemoListModel *model, NemoDirectory *
 	if (parent_ptr == NULL) {
 		return;
 	}
+
+
 
 	file_entry = g_sequence_get (parent_ptr);
 	files = file_entry->files;

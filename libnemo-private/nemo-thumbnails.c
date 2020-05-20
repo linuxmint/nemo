@@ -423,6 +423,7 @@ thumbnail_thread_notify_file_changed (gpointer image_uri)
         nemo_file_unref (file);
     }
     g_free (image_uri);
+    // g_printerr ("length: %d  REMOVE\n" , g_hash_table_size (thumbnails_to_make_hash));
 
     return FALSE;
 }
@@ -618,7 +619,9 @@ thumbnail_thread_starter_cb (gpointer data)
 }
 
 void
-nemo_create_thumbnail (NemoFile *file, gint throttle_count)
+nemo_create_thumbnail (NemoFile      *file,
+                       gint           throttle_count,
+                       gboolean       prioritize)
 {
     time_t file_mtime = 0;
     NemoThumbnailInfo *info;
@@ -658,7 +661,7 @@ nemo_create_thumbnail (NemoFile *file, gint throttle_count)
         thumbnails_to_make_hash = g_hash_table_new (g_str_hash,
                                 g_str_equal);
     }
-
+    // g_printerr ("length: %d  ADD\n" , g_hash_table_size (thumbnails_to_make_hash));
     /* Check if it is already in the list of thumbnails to make. */
     existing = g_hash_table_lookup (thumbnails_to_make_hash, info->image_uri);
 
@@ -670,8 +673,14 @@ nemo_create_thumbnail (NemoFile *file, gint throttle_count)
                        info->image_uri);
         }
 
-        g_queue_push_tail ((GQueue *)&thumbnails_to_make, info);
-        node = g_queue_peek_tail_link ((GQueue *)&thumbnails_to_make);
+        if (prioritize) {
+            g_queue_push_head ((GQueue *)&thumbnails_to_make, info);
+            node = g_queue_peek_head_link ((GQueue *)&thumbnails_to_make);
+        } else {
+            g_queue_push_tail ((GQueue *)&thumbnails_to_make, info);
+            node = g_queue_peek_tail_link ((GQueue *)&thumbnails_to_make);
+        }
+
         g_hash_table_insert (thumbnails_to_make_hash,
                      info->image_uri,
                      node);
@@ -697,7 +706,12 @@ nemo_create_thumbnail (NemoFile *file, gint throttle_count)
         existing_info = existing->data;
         existing_info->original_file_mtime = info->original_file_mtime;
         free_thumbnail_info (info);
-    }   
+
+        if (existing && existing->data != currently_thumbnailing) {
+            g_queue_unlink ((GQueue *)&thumbnails_to_make, existing);
+            g_queue_push_head_link ((GQueue *)&thumbnails_to_make, existing);
+        }
+    }
 
     /*********************************
      * MUTEX UNLOCKED

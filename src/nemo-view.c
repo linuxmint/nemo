@@ -96,13 +96,13 @@
 #include <libnemo-private/nemo-debug.h>
 
 /* Minimum starting update inverval */
-#define UPDATE_INTERVAL_MIN 50
+#define UPDATE_INTERVAL_MIN 200
 /* Maximum update interval */
-#define UPDATE_INTERVAL_MAX 2050
+#define UPDATE_INTERVAL_MAX 2000
 /* Amount of miliseconds the update interval is increased */
 #define UPDATE_INTERVAL_INC 250
 /* Interval at which the update interval is increased */
-#define UPDATE_INTERVAL_TIMEOUT_INTERVAL 250
+#define UPDATE_INTERVAL_TIMEOUT_INTERVAL 500
 /* Milliseconds that have to pass without a change to reset the update interval */
 #define UPDATE_INTERVAL_RESET 1000
 
@@ -111,7 +111,7 @@
 #define DUPLICATE_HORIZONTAL_ICON_OFFSET 70
 #define DUPLICATE_VERTICAL_ICON_OFFSET   30
 
-#define MAX_QUEUED_UPDATES 500
+#define MAX_QUEUED_UPDATES 250
 
 #define NEMO_VIEW_MENU_PATH_OPEN_PLACEHOLDER                  "/MenuBar/File/Open Placeholder"
 #define NEMO_VIEW_MENU_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER  "/MenuBar/File/Open Placeholder/Open With/Applications Placeholder"

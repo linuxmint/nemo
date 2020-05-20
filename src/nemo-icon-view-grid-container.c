@@ -64,7 +64,8 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 					      NemoIconData      *data,
 					      int                    size,
 					      gboolean               for_drag_accept,
-					      gboolean              *has_window_open)
+					      gboolean              *has_window_open,
+                          gboolean               visible)
 {
 	NemoIconView *icon_view;
 	NemoFile *file;
@@ -848,7 +849,8 @@ nemo_icon_view_grid_container_move_icon (NemoIconContainer *container,
 
 static void
 nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
-                                           NemoIcon          *icon)
+                                           NemoIcon          *icon,
+                                           gboolean           visible)
 {
     NemoIconContainerDetails *details;
     guint icon_size;
@@ -876,7 +878,7 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
     /* Get the icons. */
     icon_info = nemo_icon_container_get_icon_images (container, icon->data, icon_size,
                                                      icon == details->drop_target,
-                                                     &has_open_window);
+                                                     &has_open_window, TRUE);
 
     scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (container));
     pixbuf = nemo_icon_info_get_desktop_pixbuf_at_size (icon_info,

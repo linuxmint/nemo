@@ -85,7 +85,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
                                           NemoIconData      *data,
                                           int                size,
                                           gboolean           for_drag_accept,
-					                      gboolean          *has_window_open)
+					                      gboolean          *has_window_open,
+                                          gboolean           visible)
 {
 	NemoIconView *icon_view;
 	NemoFile *file;
@@ -106,8 +107,11 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 	*has_window_open = nemo_file_has_open_window (file);
 
 	flags = NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON_AS_EMBLEM |
-            NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS |
 			NEMO_FILE_ICON_FLAGS_FORCE_THUMBNAIL_SIZE;
+
+    if (visible) {
+        flags |= NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS;
+    }
 
 	if (for_drag_accept) {
 		flags |= NEMO_FILE_ICON_FLAGS_FOR_DRAG_ACCEPT;
@@ -117,7 +121,7 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 		                                       nemo_view_get_directory_as_file (NEMO_VIEW (icon_view)));
 
     scale = gtk_widget_get_scale_factor (GTK_WIDGET (icon_view));
-	icon_info = nemo_file_get_icon (file, size, 0, scale, flags);
+	icon_info = nemo_file_get_icon (file, size, size, scale, flags);
 
 	/* apply emblems */
 	if (emblem_icons != NULL) {
@@ -198,17 +202,14 @@ nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
 						      NemoIconData      *data)
 {
 	NemoFile *file;
-	char *uri;
 
 	file = (NemoFile *) data;
 
 	g_assert (NEMO_IS_FILE (file));
 
-	if (nemo_file_is_thumbnailing (file)) {
-		uri = nemo_file_get_uri (file);
-		nemo_thumbnail_prioritize (uri);
-		g_free (uri);
-	}
+    if (nemo_can_thumbnail (file) && !nemo_file_has_loaded_thumbnail (file)) {
+        nemo_create_thumbnail (file, 0, TRUE);
+    }
 }
 
 static void
@@ -1463,7 +1464,8 @@ icon_get_size (NemoIconContainer *container,
 
 static void
 nemo_icon_view_container_update_icon (NemoIconContainer *container,
-                                      NemoIcon          *icon)
+                                      NemoIcon          *icon,
+                                      gboolean           visible)
 {
     NemoIconContainerDetails *details;
     guint icon_size;
@@ -1501,7 +1503,8 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                                                      icon->data,
                                                      icon_size,
                                                      icon == details->drop_target,
-                                                     &has_open_window);
+                                                     &has_open_window,
+                                                     visible);
 
     if (container->details->forced_icon_size > 0) {
         gint scale_factor;

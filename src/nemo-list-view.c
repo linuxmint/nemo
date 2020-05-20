@@ -57,6 +57,7 @@
 #include <libnemo-private/nemo-icon-dnd.h>
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-module.h>
+#include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-private/nemo-tree-view-drag-dest.h>
 #include <libnemo-private/nemo-clipboard.h>
 
@@ -90,6 +91,9 @@ struct NemoListViewDetails {
 	guint drag_button;
 	int drag_x;
 	int drag_y;
+
+    gint ok_to_load_thumbs;
+    guint update_visible_icons_id;
 
     gboolean rename_on_release;
 	gboolean drag_started;
@@ -140,6 +144,9 @@ struct SelectionForeachData {
 /* Wait for the rename to end when activating a file being renamed */
 #define WAIT_FOR_RENAME_ON_ACTIVATE 200
 
+#define INITIAL_UPDATE_VISIBLE_DELAY 300
+#define NORMAL_UPDATE_VISIBLE_DELAY 50
+
 static GdkCursor *              hand_cursor = NULL;
 
 static GtkTargetList *          source_target_list = NULL;
@@ -172,8 +179,13 @@ static char **get_column_order                                   (NemoListView *
 static char **get_default_column_order                           (NemoListView *list_view);
 
 static void   set_columns_settings_from_metadata_and_preferences (NemoListView *list_view);
+static void   queue_update_visible_icons (NemoListView *view, gint delay);
+static NemoZoomLevel nemo_list_view_get_zoom_level (NemoView *view);
+static void   prioritize_visible_files (NemoListView *view);
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
+
+static gint click_policy = NEMO_CLICK_POLICY_SINGLE;
 
 static const char * default_trash_visible_columns[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
@@ -379,13 +391,6 @@ button_event_modifies_selection (GdkEventButton *event)
 	return (event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) != 0;
 }
 
-static int
-get_click_policy (void)
-{
-	return g_settings_get_enum (nemo_preferences,
-				    NEMO_PREFERENCES_CLICK_POLICY);
-}
-
 static void
 nemo_list_view_did_not_drag (NemoListView *view,
 				 GdkEventButton *event)
@@ -411,7 +416,7 @@ nemo_list_view_did_not_drag (NemoListView *view,
 			}
 		}
 
-		if ((get_click_policy () == NEMO_CLICK_POLICY_SINGLE)
+		if ((click_policy == NEMO_CLICK_POLICY_SINGLE)
 		    && !button_event_modifies_selection(event)) {
 			if (event->button == 1) {
 				activate_selected_items (view);
@@ -595,7 +600,7 @@ motion_notify_callback (GtkWidget *widget,
         return GDK_EVENT_PROPAGATE;
     }
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		GtkTreePath *old_hover_path;
 
 		old_hover_path = view->details->hover_path;
@@ -738,7 +743,7 @@ leave_notify_callback (GtkWidget *widget,
 
 	view = NEMO_LIST_VIEW (callback_data);
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE &&
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE &&
 	    view->details->hover_path != NULL) {
 		gtk_tree_path_free (view->details->hover_path);
 		view->details->hover_path = NULL;
@@ -756,7 +761,7 @@ enter_notify_callback (GtkWidget *widget,
 
 	view = NEMO_LIST_VIEW (callback_data);
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		if (view->details->hover_path != NULL) {
 			gtk_tree_path_free (view->details->hover_path);
 		}
@@ -967,7 +972,7 @@ static gboolean
 handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton *event, gboolean on_expander)
 {
     /* Ignore double click if we are in single click mode */
-    if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+    if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
         return FALSE;
     }
 
@@ -1258,6 +1263,8 @@ static void
 subdirectory_done_loading_callback (NemoDirectory *directory, NemoListView *view)
 {
 	nemo_list_model_subdirectory_done_loading (view->details->model, directory);
+
+    queue_update_visible_icons (view, INITIAL_UPDATE_VISIBLE_DELAY);
 }
 
 static void
@@ -1474,6 +1481,17 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 	}
 
 	return handled;
+}
+
+static void
+set_ok_to_load_thumbs (NemoListView  *list_view,
+                       gboolean       ok)
+{
+    list_view->details->ok_to_load_thumbs = ok;
+
+    if (ok) {
+        queue_update_visible_icons (list_view, INITIAL_UPDATE_VISIBLE_DELAY);
+    }
 }
 
 static void
@@ -2134,7 +2152,7 @@ filename_cell_data_func (GtkTreeViewColumn *column,
                 NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN, &weight,
 			    -1);
 
-	if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		path = gtk_tree_model_get_path (model, iter);
 
 		if (view->details->hover_path == NULL ||
@@ -2171,11 +2189,115 @@ focus_in_event_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_
 	return FALSE;
 }
 
+static void
+prioritize_visible_files (NemoListView *view)
+{
+    NemoFile *last_file;
+    // GList *queue_list, *l;
+    GdkRectangle vrect;
+    GtkTreeIter iter;
+    GtkTreePath *path;
+    gint icon_size, cy, start_y, end_y, stepdown;
+    gint bin_y;
+
+    gtk_tree_view_get_visible_rect (view->details->tree_view,
+                                    &vrect);
+    icon_size = nemo_get_list_icon_size_for_zoom_level (nemo_list_view_get_zoom_level (NEMO_VIEW (view)));
+
+    gtk_tree_view_convert_tree_to_bin_window_coords(view->details->tree_view,
+                                                    1, vrect.y,
+                                                    NULL, &bin_y);
+
+    stepdown = icon_size * .75;
+
+    start_y = bin_y - (vrect.height / 2);
+    end_y = bin_y + vrect.height + (vrect.height / 2);
+
+    last_file = NULL;
+    cy = end_y;
+
+    // Images that start out un-thumbnailed end up resolving in reverse
+    // order, so work bottom-up here.
+    while (cy > start_y) {
+        if (gtk_tree_view_get_path_at_pos (view->details->tree_view,
+                                           1, cy,
+                                           &path, NULL, NULL, NULL)) {
+            NemoFile *file;
+            gboolean shown;
+
+            gtk_tree_model_get_iter (GTK_TREE_MODEL (view->details->model),
+                                     &iter, path);
+
+            gtk_tree_path_free (path);
+            gtk_tree_model_get (GTK_TREE_MODEL (view->details->model),
+                                &iter,
+                                NEMO_LIST_MODEL_ICON_SHOWN, &shown,
+                                NEMO_LIST_MODEL_FILE_COLUMN, &file, -1);
+
+            /* We'll catch some files twice, so filter them out */
+            if (file != NULL && file != last_file) {
+                last_file = file;
+
+                nemo_file_set_load_thumb (file, TRUE);
+
+                if (nemo_file_is_thumbnailing (file)) {
+                    nemo_thumbnail_prioritize (nemo_file_peek_uri (file));
+                } else {
+                    nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTES_FOR_ICON);
+                }
+            }
+        }
+
+        cy -= stepdown;
+    }
+}
+
+static gboolean
+update_visible_icons_cb (NemoListView *view)
+{
+    prioritize_visible_files (view);
+
+    view->details->update_visible_icons_id = 0;
+    return G_SOURCE_REMOVE;
+}
+
+static void
+queue_update_visible_icons(NemoListView *view,
+                           gint          delay)
+{
+    if (view->details->update_visible_icons_id > 0) {
+        g_source_remove (view->details->update_visible_icons_id);
+    }
+
+    view->details->update_visible_icons_id = g_timeout_add (delay, (GSourceFunc) update_visible_icons_cb, view);
+}
+
+static void
+handle_vadjustment_changed (GtkAdjustment *adjustment,
+                            NemoListView  *view)
+{
+    queue_update_visible_icons (view, NORMAL_UPDATE_VISIBLE_DELAY);
+}
+
 static gint
 get_icon_scale_callback (NemoListModel *model,
                          NemoListView  *view)
 {
    return gtk_widget_get_scale_factor (GTK_WIDGET (view->details->tree_view));
+}
+
+static void
+on_treeview_realized (GtkWidget *widget,
+                      gpointer   user_data)
+{
+    NemoListView *view = NEMO_LIST_VIEW (user_data);
+    GtkAdjustment *adjust;
+
+    adjust = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (view->details->tree_view));
+    g_signal_connect (adjust,
+                      "value-changed",
+                      G_CALLBACK (handle_vadjustment_changed),
+                      view);
 }
 
 static void
@@ -2262,6 +2384,8 @@ create_and_set_up_tree_view (NemoListView *view)
 
     	g_signal_connect_object (view->details->tree_view, "focus_in_event",
 				 G_CALLBACK(focus_in_event_callback), view, 0);
+
+    g_signal_connect (view->details->tree_view, "realize", G_CALLBACK (on_treeview_realized), view);
 
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
 	gtk_tree_view_set_model (view->details->tree_view, GTK_TREE_MODEL (view->details->model));
@@ -2435,6 +2559,7 @@ nemo_list_view_add_file (NemoView *view, NemoFile *file, NemoDirectory *director
 
 	model = NEMO_LIST_VIEW (view)->details->model;
 	nemo_list_model_add_file (model, file, directory);
+    queue_update_visible_icons (NEMO_LIST_VIEW (view), INITIAL_UPDATE_VISIBLE_DELAY);
 }
 
 static char **
@@ -2676,6 +2801,8 @@ nemo_list_view_begin_loading (NemoView *view)
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 
+    set_ok_to_load_thumbs (list_view, FALSE);
+
     AtkObject *atk = gtk_widget_get_accessible (GTK_WIDGET (NEMO_LIST_VIEW (view)->details->tree_view));
 
     g_signal_connect_object (atk, "column-reordered",
@@ -2705,6 +2832,8 @@ nemo_list_view_clear (NemoView *view)
     GtkTreeSelection *tree_selection;
 
 	list_view = NEMO_LIST_VIEW (view);
+
+    list_view->details->ok_to_load_thumbs = FALSE;
 
     tree_selection = gtk_tree_view_get_selection (list_view->details->tree_view);
 
@@ -3582,8 +3711,11 @@ nemo_list_view_click_policy_changed (NemoView *directory_view)
 
 	view = NEMO_LIST_VIEW (directory_view);
 
+    click_policy = g_settings_get_enum (nemo_preferences,
+                                        NEMO_PREFERENCES_CLICK_POLICY);
+
 	/* ensure that we unset the hand cursor and refresh underlined rows */
-	if (get_click_policy () == NEMO_CLICK_POLICY_DOUBLE) {
+	if (click_policy == NEMO_CLICK_POLICY_DOUBLE) {
 		if (view->details->hover_path != NULL) {
 			if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->details->model),
 						     &iter, view->details->hover_path)) {
@@ -3607,7 +3739,7 @@ nemo_list_view_click_policy_changed (NemoView *directory_view)
 		}
 
 		g_clear_object (&hand_cursor);
-	} else if (get_click_policy () == NEMO_CLICK_POLICY_SINGLE) {
+	} else if (click_policy == NEMO_CLICK_POLICY_SINGLE) {
 		if (hand_cursor == NULL) {
 			hand_cursor = gdk_cursor_new(GDK_HAND2);
 		}
@@ -3867,6 +3999,8 @@ nemo_list_view_end_loading (NemoView *view,
 	NemoClipboardInfo *info;
 
     nemo_list_view_update_selection (view);
+
+    set_ok_to_load_thumbs (NEMO_LIST_VIEW (view), TRUE);
 
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);

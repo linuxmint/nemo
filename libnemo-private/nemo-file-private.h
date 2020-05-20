@@ -56,6 +56,8 @@ struct NemoFileDetails
 	
 	eel_ref_str name;
 
+    gchar *cached_uri;
+
 	/* File info: */
 	GFileType type;
 
@@ -221,7 +223,8 @@ struct NemoFileDetails
 
 	eel_boolean_bit filesystem_readonly           : 1;
 	eel_boolean_bit filesystem_use_preview        : 2; /* GFilesystemPreviewType */
-	eel_boolean_bit filesystem_info_is_up_to_date : 1;
+    eel_boolean_bit filesystem_info_is_up_to_date : 1;
+	eel_boolean_bit load_thumb                    : 1;
 
     NemoFilePinning pinning;
 

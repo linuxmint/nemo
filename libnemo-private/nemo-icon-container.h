@@ -142,7 +142,8 @@ typedef struct {
 						   NemoIconData *data,
 						   int icon_size,
 						   gboolean for_drag_accept,
-						   gboolean *has_window_open);
+						   gboolean *has_window_open,
+                           gboolean visible);
 	void         (* get_icon_text)            (NemoIconContainer *container,
 						   NemoIconData *data,
 						   char **editable_text,
@@ -150,7 +151,8 @@ typedef struct {
                            gboolean *pinned,
 						   gboolean include_invisible);
     void         (* update_icon)              (NemoIconContainer *container,
-                                               NemoIcon          *icon);
+                                               NemoIcon          *icon,
+                                               gboolean           visible);
 	char *       (* get_icon_description)     (NemoIconContainer *container,
 						   NemoIconData *data);
 	int          (* compare_icons)            (NemoIconContainer *container,
@@ -373,4 +375,6 @@ void         nemo_icon_container_setup_tooltip_preference_callback (NemoIconCont
 void         nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
                                                       NemoIconCanvasItem *item);
 gint         nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container);
+void         nemo_icon_container_set_ok_to_load_thumbs (NemoIconContainer *container,
+                                                        gboolean           ok);
 #endif /* NEMO_ICON_CONTAINER_H */
