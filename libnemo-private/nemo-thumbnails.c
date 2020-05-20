@@ -683,7 +683,9 @@ nemo_create_thumbnail (NemoFile *file, gint throttle_count)
 
         if (thumbnail_thread_is_running == FALSE &&
             thumbnail_thread_starter_id == 0) {
-            thumbnail_thread_starter_id = g_idle_add_full (G_PRIORITY_LOW, thumbnail_thread_starter_cb, NULL, NULL);
+            thumbnail_thread_starter_id = g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+                                                           thumbnail_thread_starter_cb,
+                                                           NULL, NULL);
         }
     } else {
         if (DEBUGGING) {
