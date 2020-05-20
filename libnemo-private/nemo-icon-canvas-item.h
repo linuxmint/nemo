@@ -104,7 +104,7 @@ void        nemo_icon_canvas_item_set_is_visible           (NemoIconCanvasItem  
 /* whether the entire label text must be visible at all times */
 void        nemo_icon_canvas_item_set_entire_text          (NemoIconCanvasItem       *icon_item,
 								gboolean                      entire_text);
-
+gint        nemo_icon_canvas_item_get_fixed_text_height_for_layout (NemoIconCanvasItem *item);
 G_END_DECLS
 
 #endif /* NEMO_ICON_CANVAS_ITEM_H */

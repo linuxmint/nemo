@@ -4903,6 +4903,8 @@ nemo_icon_container_init (NemoIconContainer *container)
 	details->font_size_table[NEMO_ZOOM_LEVEL_LARGER] = 0 * PANGO_SCALE;
 	details->font_size_table[NEMO_ZOOM_LEVEL_LARGEST] = 0 * PANGO_SCALE;
 
+    details->fixed_text_height = -1;
+
     details->view_constants = g_slice_new0 (NemoViewLayoutConstants);
 
 	container->details = details;
@@ -5827,6 +5829,8 @@ nemo_icon_container_invalidate_labels (NemoIconContainer *container)
 {
     GList *p;
     NemoIcon *icon;
+
+    container->details->fixed_text_height = -1;
 
     for (p = container->details->icons; p != NULL; p = p->next) {
         icon = p->data;
@@ -8094,6 +8098,12 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
                      NemoIcon *icon)
 {
     NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon);
+}
+
+gint
+nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container)
+{
+    return NEMO_ICON_CONTAINER_GET_CLASS (container)->get_additional_text_line_count (container);
 }
 
 #endif /* ! NEMO_OMIT_SELF_CHECK */

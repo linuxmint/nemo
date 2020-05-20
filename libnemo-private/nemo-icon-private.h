@@ -302,6 +302,7 @@ struct NemoIconContainerDetails {
 
     GList *current_selection;
     gint current_selection_count;
+    gint fixed_text_height;
 };
 
 typedef struct {
