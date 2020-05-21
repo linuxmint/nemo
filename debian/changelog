@@ -1,3 +1,26 @@
+nemo (4.6.1) ulyana; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file.c: Fix refresh removing existing thumbnails.
+  * Fix new build warnings.
+  * i18n: Localize the mimetype definitions.
+  * debian/control: Add itstool build dependency.
+  * nemo-icon-container.c: Set a transient parent on the interactive search popup.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * all: Fix some memory leaks
+  * icon view: Use a fixed vertical spacing in the normal icon view.
+  * nemo-thumbnails.c: Use the default idle priority for starting the thumbnail thread.
+  * thumbnails: generate/load thumbnails on visible items only, and drop background loading.
+
+  [ Clement Lefebvre ]
+  * CI: Target Mint 20 and LMDE 4
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 May 2020 11:19:42 +0100
+
 nemo (4.6.0) ulyana; urgency=medium
 
   [ Michael Webster ]
