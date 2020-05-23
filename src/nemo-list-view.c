@@ -92,7 +92,7 @@ struct NemoListViewDetails {
 	int drag_x;
 	int drag_y;
 
-    gint ok_to_load_thumbs;
+    gint ok_to_load_deferred_attrs;
     guint update_visible_icons_id;
 
     gboolean rename_on_release;
@@ -1484,10 +1484,10 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 }
 
 static void
-set_ok_to_load_thumbs (NemoListView  *list_view,
+set_ok_to_load_deferred_attrs (NemoListView  *list_view,
                        gboolean       ok)
 {
-    list_view->details->ok_to_load_thumbs = ok;
+    list_view->details->ok_to_load_deferred_attrs = ok;
 
     if (ok) {
         queue_update_visible_icons (list_view, INITIAL_UPDATE_VISIBLE_DELAY);
@@ -2238,12 +2238,12 @@ prioritize_visible_files (NemoListView *view)
             if (file != NULL && file != last_file) {
                 last_file = file;
 
-                nemo_file_set_load_thumb (file, TRUE);
+                nemo_file_set_load_deferred_attrs (file, TRUE);
 
                 if (nemo_file_is_thumbnailing (file)) {
                     nemo_thumbnail_prioritize (nemo_file_peek_uri (file));
                 } else {
-                    nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTES_FOR_ICON);
+                    nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
                 }
             }
         }
@@ -2801,7 +2801,7 @@ nemo_list_view_begin_loading (NemoView *view)
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 
-    set_ok_to_load_thumbs (list_view, FALSE);
+    set_ok_to_load_deferred_attrs (list_view, FALSE);
 
     AtkObject *atk = gtk_widget_get_accessible (GTK_WIDGET (NEMO_LIST_VIEW (view)->details->tree_view));
 
@@ -2833,7 +2833,7 @@ nemo_list_view_clear (NemoView *view)
 
 	list_view = NEMO_LIST_VIEW (view);
 
-    list_view->details->ok_to_load_thumbs = FALSE;
+    list_view->details->ok_to_load_deferred_attrs = FALSE;
 
     tree_selection = gtk_tree_view_get_selection (list_view->details->tree_view);
 
@@ -4000,7 +4000,7 @@ nemo_list_view_end_loading (NemoView *view,
 
     nemo_list_view_update_selection (view);
 
-    set_ok_to_load_thumbs (NEMO_LIST_VIEW (view), TRUE);
+    set_ok_to_load_deferred_attrs (NEMO_LIST_VIEW (view), TRUE);
 
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);

@@ -130,8 +130,8 @@ typedef char * (*NemoTruncateCallback)    (const char    *string,
 					       int	      width,
 					       void	     *context);
 
-
 #define NEMO_FILE_ATTRIBUTES_FOR_ICON (NEMO_FILE_ATTRIBUTE_INFO | NEMO_FILE_ATTRIBUTE_LINK_INFO | NEMO_FILE_ATTRIBUTE_THUMBNAIL)
+#define NEMO_FILE_DEFERRED_ATTRIBUTES (NEMO_FILE_ATTRIBUTE_THUMBNAIL | NEMO_FILE_ATTRIBUTE_EXTENSION_INFO)
 
 typedef void NemoFileListHandle;
 
@@ -523,7 +523,7 @@ void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_d
 
 gboolean nemo_file_get_pinning                    (NemoFile *file);
 void     nemo_file_set_pinning                    (NemoFile *file, gboolean  pin);
-void nemo_file_set_load_thumb                     (NemoFile *file, gboolean load_thumb);
+void     nemo_file_set_load_deferred_attrs        (NemoFile *file, gboolean load_deferred_attrs);
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

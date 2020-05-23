@@ -375,6 +375,6 @@ void         nemo_icon_container_setup_tooltip_preference_callback (NemoIconCont
 void         nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
                                                       NemoIconCanvasItem *item);
 gint         nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container);
-void         nemo_icon_container_set_ok_to_load_thumbs (NemoIconContainer *container,
-                                                        gboolean           ok);
+void         nemo_icon_container_set_ok_to_load_deferred_attrs (NemoIconContainer *container,
+                                                                gboolean           ok);
 #endif /* NEMO_ICON_CONTAINER_H */

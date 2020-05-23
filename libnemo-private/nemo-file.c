@@ -501,7 +501,7 @@ nemo_file_clear_info (NemoFile *file)
 	file->details->ctime = 0;
     file->details->btime = 0;
 	file->details->trash_time = 0;
-    file->details->load_thumb = FALSE;
+    file->details->load_deferred_attrs = FALSE;
 	g_free (file->details->symlink_name);
 	file->details->symlink_name = NULL;
 	eel_ref_str_unref (file->details->mime_type);
@@ -8041,10 +8041,10 @@ nemo_file_invalidate_extension_info_internal (NemoFile *file)
 }
 
 void
-nemo_file_set_load_thumb (NemoFile *file,
-                          gboolean  load_thumb)
+nemo_file_set_load_deferred_attrs (NemoFile *file,
+                          gboolean  load_deferred_attrs)
 {
-    file->details->load_thumb = load_thumb;
+    file->details->load_deferred_attrs = load_deferred_attrs;
 }
 
 void

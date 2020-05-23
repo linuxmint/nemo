@@ -300,7 +300,7 @@ struct NemoIconContainerDetails {
 	eel_boolean_bit store_layout_timestamps : 1;
 	eel_boolean_bit store_layout_timestamps_when_finishing_new_icons : 1;
 
-    gint ok_to_load_thumbs;
+    gint ok_to_load_deferred_attrs;
     guint update_visible_icons_id;
 
     GQueue *lazy_icon_load_queue;

@@ -1686,13 +1686,14 @@ lacks_link_info (NemoFile *file)
 static gboolean
 lacks_extension_info (NemoFile *file)
 {
-	return file->details->pending_info_providers != NULL;
+	return file->details->load_deferred_attrs &&
+        file->details->pending_info_providers != NULL;
 }
 
 static gboolean
 lacks_thumbnail (NemoFile *file)
 {
-	return file->details->load_thumb &&
+	return file->details->load_deferred_attrs &&
         nemo_file_should_show_thumbnail (file) &&
 		file->details->thumbnail_path != NULL &&
 		!file->details->thumbnail_is_up_to_date;
