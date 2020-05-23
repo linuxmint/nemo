@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  cinnamon-l10n,
- debhelper (>= 10),
+ debhelper (>= 11.1~),
  gobject-introspection,
  gtk-doc-tools (>= 1.4),
  intltool (>= 0.40.1),
