@@ -40,6 +40,7 @@
 
 #include <libnotify/notify.h>
 #include <libxapp/xapp-gtk-window.h>
+#include <libxapp/xapp-status-icon.h>
 
 struct _NemoProgressUIHandlerPriv {
 	NemoProgressInfoManager *manager;
@@ -53,38 +54,39 @@ struct _NemoProgressUIHandlerPriv {
     guint active_percent;
 	GList *infos;
 
-	GtkStatusIcon *status_icon;
+	XAppStatusIcon *status_icon;
     gboolean should_show_status_icon;
 };
 
 G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
 
-static gboolean
-status_icon_button_release_cb (GtkStatusIcon *icon,
-                                    GdkEvent *event,
-			           NemoProgressUIHandler *self)
-{	
+static void
+status_icon_activate_cb (XAppStatusIcon        *icon,
+                         guint                  button,
+                         guint                  _time,
+                         NemoProgressUIHandler *self)
+{
     self->priv->should_show_status_icon = FALSE;
-	gtk_status_icon_set_visible (icon, FALSE);
-	gtk_window_present (GTK_WINDOW (self->priv->progress_window));
-    return FALSE;
+    xapp_status_icon_set_visible (icon, FALSE);
+    gtk_window_present (GTK_WINDOW (self->priv->progress_window));
 }
 
 static void
 progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 {
-	GtkStatusIcon *status_icon;
+	XAppStatusIcon *status_icon;
 
 	if (self->priv->status_icon != NULL) {
 		return;
 	}
 
-	status_icon = gtk_status_icon_new_from_icon_name ("progress-0-symbolic");
-	g_signal_connect (status_icon, "button-release-event",
-			  (GCallback) status_icon_button_release_cb,
-			  self);
+    status_icon = xapp_status_icon_new ();
+    xapp_status_icon_set_icon_name (status_icon, "progress-0-symbolic");
+    g_signal_connect (status_icon, "activate",
+                      (GCallback) status_icon_activate_cb,
+                      self);
 
-	gtk_status_icon_set_visible (status_icon, FALSE);
+	xapp_status_icon_set_visible (status_icon, FALSE);
 
 	self->priv->status_icon = status_icon;
 }
@@ -117,13 +119,13 @@ progress_ui_handler_update_status_icon (NemoProgressUIHandler *self)
                                "%1$s file operations active.  %2$d%% complete.",
                                self->priv->active_infos),
                                launchpad_sucks, self->priv->active_percent);
-	gtk_status_icon_set_tooltip_text (self->priv->status_icon, tooltip);
+	xapp_status_icon_set_tooltip_text (self->priv->status_icon, tooltip);
     gchar *name = get_icon_name_from_percent (self->priv->active_percent);
-    gtk_status_icon_set_from_icon_name (self->priv->status_icon, name);
+    xapp_status_icon_set_icon_name (self->priv->status_icon, name);
     g_free (name);
 	g_free (tooltip);
 
-	gtk_status_icon_set_visible (self->priv->status_icon, self->priv->should_show_status_icon);
+	xapp_status_icon_set_visible (self->priv->status_icon, self->priv->should_show_status_icon);
 }
 
 static gboolean
@@ -274,7 +276,7 @@ progress_ui_handler_hide_status (NemoProgressUIHandler *self)
 {
 	if (self->priv->status_icon != NULL) {
         self->priv->should_show_status_icon = FALSE;
-		gtk_status_icon_set_visible (self->priv->status_icon, FALSE);
+		xapp_status_icon_set_visible (self->priv->status_icon, FALSE);
 	}
 }
 
