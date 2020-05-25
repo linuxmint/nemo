@@ -2835,6 +2835,11 @@ nemo_list_view_clear (NemoView *view)
 
     list_view->details->ok_to_load_deferred_attrs = FALSE;
 
+    if (list_view->details->update_visible_icons_id > 0) {
+        g_source_remove (list_view->details->update_visible_icons_id);
+        list_view->details->update_visible_icons_id = 0;
+    }
+
     tree_selection = gtk_tree_view_get_selection (list_view->details->tree_view);
 
     g_signal_handlers_block_by_func (tree_selection, list_selection_changed_callback, view);
@@ -3836,6 +3841,11 @@ nemo_list_view_dispose (GObject *object)
 		g_source_remove (list_view->details->renaming_file_activate_timeout);
 		list_view->details->renaming_file_activate_timeout = 0;
 	}
+
+    if (list_view->details->update_visible_icons_id > 0) {
+        g_source_remove (list_view->details->update_visible_icons_id);
+        list_view->details->update_visible_icons_id = 0;
+    }
 
 	if (list_view->details->clipboard_handler_id != 0) {
 		g_signal_handler_disconnect (nemo_clipboard_monitor_get (),

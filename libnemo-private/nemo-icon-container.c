@@ -2734,11 +2734,6 @@ destroy (GtkWidget *object)
 		container->details->size_allocation_count_id = 0;
 	}
 
-    if (container->details->update_visible_icons_id > 0) {
-        g_source_remove (container->details->update_visible_icons_id);
-        container->details->update_visible_icons_id = 0;
-    }
-
 	/* destroy interactive search dialog */
 	if (container->details->search_window) {
 		gtk_widget_destroy (container->details->search_window);
@@ -5206,6 +5201,11 @@ nemo_icon_container_clear (NemoIconContainer *container)
 	details = container->details;
 	details->layout_timestamp = UNDEFINED_TIME;
 	details->store_layout_timestamps_when_finishing_new_icons = FALSE;
+
+    if (container->details->update_visible_icons_id > 0) {
+        g_source_remove (container->details->update_visible_icons_id);
+        container->details->update_visible_icons_id = 0;
+    }
 
 	if (details->icons == NULL) {
 		return;
