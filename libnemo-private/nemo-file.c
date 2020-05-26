@@ -4753,7 +4753,7 @@ nemo_file_get_icon (NemoFile *file,
 		}
 	}
 
-	if (file->details->thumbnail_path == NULL && nemo_can_thumbnail (file) &&
+    if (file->details->is_thumbnailing &&
 	    flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS)
 		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
 	else
