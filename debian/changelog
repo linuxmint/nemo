@@ -1,3 +1,14 @@
+nemo (4.6.2) ulyana; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-bookmarks-window.c: Refactor to improve reliability.
+  * Defer extension-provided file attributes until the file is made visible in a view.
+  * nemo-progress-ui-handler.c: Use XAppStatusIcon.
+  * nemo-list-view.c: Cancel the visible files callback when the view is cleared or destroyed.
+  * nemo-file.c: Only show the 'icon loading' icon when an icon is actually loading.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 27 May 2020 12:34:09 +0100
+
 nemo (4.6.1) ulyana; urgency=medium
 
   [ Michael Webster ]
