@@ -2030,8 +2030,15 @@ nemo_icon_canvas_item_get_fixed_text_height_for_layout (NemoIconCanvasItem *item
     gint line_height, total_height, lines;
 
     container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
+
+    if (nemo_icon_container_get_zoom_level (container) == NEMO_ZOOM_LEVEL_SMALLEST) {
+        // No label/info, just a bit of padding.
+        return 0;
+    }
+
     lines = nemo_icon_container_get_max_layout_lines (container);
     lines += nemo_icon_container_get_additional_text_line_count (container);
+
     layout = create_label_layout (item, "-");
     pango_layout_get_pixel_size (layout, NULL, &line_height);
 

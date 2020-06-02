@@ -1000,6 +1000,8 @@ align_icons (NemoIconContainer *container)
 static void
 redo_layout_internal (NemoIconContainer *container)
 {
+    container->details->fixed_text_height = -1;
+
     if (NEMO_ICON_CONTAINER_GET_CLASS (container)->finish_adding_new_icons != NULL) {
         NEMO_ICON_CONTAINER_GET_CLASS (container)->finish_adding_new_icons (container);
     }
@@ -5201,6 +5203,8 @@ nemo_icon_container_clear (NemoIconContainer *container)
 	details = container->details;
 	details->layout_timestamp = UNDEFINED_TIME;
 	details->store_layout_timestamps_when_finishing_new_icons = FALSE;
+
+    details->fixed_text_height = -1;
 
     if (container->details->update_visible_icons_id > 0) {
         g_source_remove (container->details->update_visible_icons_id);

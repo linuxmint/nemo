@@ -706,7 +706,9 @@ lay_down_one_column (NemoIconContainer *container,
     }
 }
 
-#define LAYOUT_GAP 4
+#define ICON_TEXT_GAP 4
+#define COLUMN_GAP 4
+#define ROW_GAP 10
 
 static void
 lay_down_icons_horizontal (NemoIconContainer *container,
@@ -728,7 +730,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     int i;
     int num_columns;
     double ppu;
-    int gap;
+    int icon_text_gap, column_gap, row_gap;
     int device_canvas_width;
     GtkAllocation allocation;
     gint icon_size, text_size, use_size;
@@ -747,7 +749,9 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     max_icon_width = max_text_width = 0.0;
 
     ppu = EEL_CANVAS (container)->pixels_per_unit;
-    gap = floor (LAYOUT_GAP / ppu);
+    icon_text_gap = floor (ICON_TEXT_GAP / ppu);
+    column_gap = floor (COLUMN_GAP / ppu);
+    row_gap = floor (ROW_GAP / ppu);
 
     device_canvas_width = floor (canvas_width * ppu);
     icon_size = nemo_get_icon_size_for_zoom_level (container->details->zoom_level);
@@ -767,7 +771,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
             max_text_width = MAX (max_text_width, ceil (text_bounds.x1 - text_bounds.x0));
         }
 
-        grid_width = max_icon_width + max_text_width + gap;
+        grid_width = max_icon_width + max_text_width + column_gap;
     } else {
         num_columns = device_canvas_width / use_size;
         /* Minimum of one column */
@@ -776,9 +780,9 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         grid_width = (((device_canvas_width / num_columns) / ppu) - 1.0);
     }
 
-    line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? gap : 0;
+    line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? column_gap : 0;
     line_start = icons;
-    y = start_y + gap;
+    y = start_y + row_gap;
     i = 0;
 
     for (p = icons; p != NULL; p = p->next) {
@@ -799,22 +803,22 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         /* If this icon doesn't fit, it's time to lay out the line that's queued up. */
         if (line_start != p && line_width + icon_width >= canvas_width ) {
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-                y += gap;
+                y += row_gap;
             } else {
                 /* Advance to the baseline. */
-                y += gap + icon_size;
+                y += icon_text_gap + icon_size;
             }
 
-            lay_down_one_line (container, line_start, p, y, icon_size, positions, FALSE, gap);
+            lay_down_one_line (container, line_start, p, y, icon_size, positions, FALSE, column_gap);
 
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-                y += gap + icon_size;
+                y += row_gap + icon_size;
             } else {
                 /* Advance to next line. */
-                y += container->details->fixed_text_height + gap;
+                y += container->details->fixed_text_height + row_gap;
             }
 
-            line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? gap : 0;
+            line_width = container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE ? column_gap : 0;
             line_start = p;
             i = 0;
         }
@@ -825,7 +829,7 @@ lay_down_icons_horizontal (NemoIconContainer *container,
         position->height = icon_bounds.y1 - icon_bounds.y0;
 
         if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-            position->x_offset = max_icon_width + (2 * gap) - (icon_bounds.x1 - icon_bounds.x0);
+            position->x_offset = max_icon_width + (2 * row_gap) - (icon_bounds.x1 - icon_bounds.x0);
             position->y_offset = 0;
         } else {
             position->x_offset = (icon_width - (icon_bounds.x1 - icon_bounds.x0)) / 2;
@@ -839,13 +843,13 @@ lay_down_icons_horizontal (NemoIconContainer *container,
     /* Lay down that last line of icons. */
     if (line_start != NULL) {
             if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
-                y += gap;
+                y += row_gap;
             } else {
                 /* Advance to the baseline. */
-                y += gap + icon_size;
+                y += icon_text_gap + icon_size;
             }
 
-        lay_down_one_line (container, line_start, NULL, y, icon_size, positions, TRUE, gap);
+        lay_down_one_line (container, line_start, NULL, y, icon_size, positions, TRUE, column_gap);
     }
 
     g_array_free (positions, TRUE);
@@ -891,7 +895,7 @@ lay_down_icons_vertical (NemoIconContainer *container,
     }
 
     ppu = EEL_CANVAS (container)->pixels_per_unit;
-    gap = floor (LAYOUT_GAP / ppu);
+    gap = floor (ICON_TEXT_GAP / ppu);
 
     positions = g_array_new (FALSE, FALSE, sizeof (NemoCanvasRects));
     gtk_widget_get_allocation (GTK_WIDGET (container), &allocation);
@@ -2039,12 +2043,23 @@ nemo_icon_view_container_get_max_layout_lines (NemoIconContainer  *container)
 static gint
 nemo_icon_view_container_get_additional_text_line_count (NemoIconContainer *container)
 {
-    G_GNUC_UNUSED GQuark *attributes;
-    gint len;
+    GQuark *attributes;
+    gint len, i, real_count;
 
     attributes = nemo_icon_view_container_get_icon_text_attribute_names (container, &len);
 
-    return len;
+    i = 0;
+    real_count = 0;
+
+    for (i = 0; i < len; ++i) {
+        if (attributes[i] == attribute_none_q) {
+            continue;
+        }
+
+        real_count++;
+    }
+
+    return real_count;
 }
 
 static void
