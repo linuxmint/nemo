@@ -48,7 +48,6 @@
 #include <string.h>
 
 /* gap between bottom of icon and start of text box */
-#define LABEL_OFFSET 3
 #define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
 
@@ -584,7 +583,6 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
 {
 	EelIRect text_rectangle;
 	double pixels_per_unit;
-    double label_offset;
 	double text_width, text_height, text_height_for_layout, text_height_for_entire_text, real_text_height, text_dx;
 
 	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;
@@ -594,14 +592,12 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
 		text_height_for_layout = item->details->text_height_for_layout;
 		text_height_for_entire_text = item->details->text_height_for_entire_text;
 		text_dx = item->details->text_dx;
-        label_offset = LABEL_OFFSET;
 	} else {
 		text_width = item->details->text_width / pixels_per_unit;
 		text_height = item->details->text_height / pixels_per_unit;
 		text_height_for_layout = item->details->text_height_for_layout / pixels_per_unit;
 		text_height_for_entire_text = item->details->text_height_for_entire_text / pixels_per_unit;
 		text_dx = item->details->text_dx / pixels_per_unit;
-        label_offset = LABEL_OFFSET / pixels_per_unit;
 	}
 
 	if (NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas)->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
@@ -644,7 +640,7 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
         text_rectangle.y1 = text_rectangle.y0 + real_text_height;
 	} else {
         text_rectangle.x0 = (icon_rectangle.x0 + icon_rectangle.x1) / 2 - (int) text_width / 2;
-        text_rectangle.y0 = icon_rectangle.y1 + label_offset;
+        text_rectangle.y0 = icon_rectangle.y1;
         text_rectangle.x1 = text_rectangle.x0 + text_width;
 
 		if (usage == BOUNDS_USAGE_FOR_LAYOUT) {
@@ -652,12 +648,12 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
 		} else if (usage == BOUNDS_USAGE_FOR_ENTIRE_ITEM) {
 			real_text_height = text_height_for_entire_text;
 		} else if (usage == BOUNDS_USAGE_FOR_DISPLAY) {
-			real_text_height = text_height;
+			real_text_height = text_height + 6; /* Extra bottom highlight padding. */
 		} else {
 			g_assert_not_reached ();
 		}
 
-		text_rectangle.y1 = text_rectangle.y0 + real_text_height + label_offset;
+		text_rectangle.y1 = text_rectangle.y0 + real_text_height;
         }
 
 	return text_rectangle;
@@ -809,6 +805,7 @@ layout_get_size_for_layout (PangoLayout *layout,
 
 #define TEXT_BACK_PADDING_X 4
 #define TEXT_BACK_PADDING_Y 1
+#define TEXT_TOP_GAP 3
 
 static void
 prepare_pango_layout_width (NemoIconCanvasItem *item,
@@ -856,9 +853,7 @@ prepare_pango_layout_for_draw (NemoIconCanvasItem *item,
 
 	if (IS_COMPACT_VIEW (container)) {
 		pango_layout_set_height (layout, -1);
-	} else if (needs_highlight ||
-		   details->is_prelit ||
-		   details->is_highlighted_as_keyboard_focus ||
+	} else if (details->is_prelit ||
 		   details->entire_text) {
 		/* VOODOO-TODO, cf. compute_text_rectangle() */
 		pango_layout_set_height (layout, G_MININT);
@@ -1117,7 +1112,7 @@ draw_label_text (NemoIconCanvasItem *item,
 		gtk_style_context_set_state (context, state);
 
 		gtk_render_layout (context, cr,
-				   x, text_rect.y0 + TEXT_BACK_PADDING_Y,
+				   x, text_rect.y0 + TEXT_TOP_GAP,
 				   editable_layout);
 
 		gtk_style_context_restore (context);
@@ -1139,7 +1134,7 @@ draw_label_text (NemoIconCanvasItem *item,
 		gtk_style_context_add_class (context, "dim-label");
 
 		gtk_render_layout (context, cr,
-				   x, text_rect.y0 + details->editable_text_height + LABEL_LINE_SPACING + TEXT_BACK_PADDING_Y,
+				   x, text_rect.y0 + details->editable_text_height + LABEL_LINE_SPACING + TEXT_TOP_GAP,
 				   additional_layout);
 	}
 
