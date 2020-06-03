@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 Copyright (C) 
 
@@ -356,9 +356,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
     <property name="title" translatable="yes">File Management Preferences</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
-    <property name="default_height">530</property>
+    <property name="default_height">600</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
