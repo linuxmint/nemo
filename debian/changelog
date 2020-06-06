@@ -1,3 +1,21 @@
+nemo (4.6.3) ulyana; urgency=medium
+
+  [ Michael Webster ]
+  * icon view: Fix additional line calculation for labels, and tweak spacing between icons.
+  * nemo-icon-canvas-item.c: Only show full label text when an item is hovered over, but not if it is merely selected.
+  * nemo-file-management-properties.glade: Add the modal flag to the window and increase vertical size slightly.
+
+  [ Soapux ]
+  * meson: Remove a workaround for old meson versions
+
+  [ Fabio Fantoni ]
+  * use debhelper 11 for integrated meson support
+
+  [ Clement Lefebvre ]
+  * CI: Use explicit tags
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 06 Jun 2020 14:52:58 +0100
+
 nemo (4.6.2) ulyana; urgency=medium
 
   [ Michael Webster ]
