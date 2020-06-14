@@ -182,7 +182,7 @@ enum {
 	PLACES_SIDEBAR_COLUMN_VOLUME,
 	PLACES_SIDEBAR_COLUMN_MOUNT,
 	PLACES_SIDEBAR_COLUMN_NAME,
-	PLACES_SIDEBAR_COLUMN_ICON,
+	PLACES_SIDEBAR_COLUMN_GICON,
 	PLACES_SIDEBAR_COLUMN_INDEX,
 	PLACES_SIDEBAR_COLUMN_EJECT,
 	PLACES_SIDEBAR_COLUMN_NO_EJECT,
@@ -390,7 +390,7 @@ add_place (NemoPlacesSidebar *sidebar,
 	   PlaceType place_type,
 	   SectionType section_type,
 	   const char *name,
-	   const char *icon,
+	   const char *icon_name,
 	   const char *uri,
 	   GDrive *drive,
 	   GVolume *volume,
@@ -402,6 +402,7 @@ add_place (NemoPlacesSidebar *sidebar,
        GtkTreeIter cat_iter)
 {
 	GtkTreeIter           iter;
+    GIcon *gicon;
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
 
@@ -420,9 +421,11 @@ add_place (NemoPlacesSidebar *sidebar,
 		show_eject_button = (show_unmount || show_eject);
 	}
 
+    gicon = (icon_name != NULL) ? g_themed_icon_new (icon_name) : NULL;
+
 	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
 	gtk_tree_store_set (sidebar->store, &iter,
-			    PLACES_SIDEBAR_COLUMN_ICON, icon,
+			    PLACES_SIDEBAR_COLUMN_GICON, gicon,
 			    PLACES_SIDEBAR_COLUMN_NAME, name,
 			    PLACES_SIDEBAR_COLUMN_URI, uri,
 			    PLACES_SIDEBAR_COLUMN_DRIVE, drive,
@@ -439,6 +442,8 @@ add_place (NemoPlacesSidebar *sidebar,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
                 PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
 			    -1);
+
+    g_clear_object (&gicon);
 
     return cat_iter;
 }
@@ -4088,7 +4093,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
                   NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_attributes (col, cell,
-					     "icon-name", PLACES_SIDEBAR_COLUMN_ICON,
+					     "gicon", PLACES_SIDEBAR_COLUMN_GICON,
 					     NULL);
 	gtk_tree_view_column_set_cell_data_func (col, cell,
 						 icon_cell_renderer_func,
@@ -4525,13 +4530,13 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 {
 	NemoShortcutsModel *model;
 	GType model_types[PLACES_SIDEBAR_COLUMN_COUNT] = {
-		G_TYPE_INT,
+        G_TYPE_INT,
 		G_TYPE_STRING,
 		G_TYPE_DRIVE,
 		G_TYPE_VOLUME,
 		G_TYPE_MOUNT,
 		G_TYPE_STRING,
-		G_TYPE_STRING,
+		G_TYPE_ICON,
 		G_TYPE_INT,
 		G_TYPE_BOOLEAN,
 		G_TYPE_BOOLEAN,
