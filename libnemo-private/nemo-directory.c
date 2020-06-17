@@ -116,6 +116,8 @@ nemo_directory_init (NemoDirectory *directory)
 	directory->details->high_priority_queue = nemo_file_queue_new ();
 	directory->details->low_priority_queue = nemo_file_queue_new ();
 	directory->details->extension_queue = nemo_file_queue_new ();
+    directory->details->max_deferred_file_count = g_settings_get_int (nemo_preferences,
+                                                                      NEMO_PREFERENCES_DEFERRED_ATTR_PRELOAD_LIMIT);
 }
 
 NemoDirectory *
@@ -616,6 +618,10 @@ nemo_directory_add_file (NemoDirectory *directory, NemoFile *file)
 
 	directory->details->confirmed_file_count++;
 
+    if (directory->details->early_load_file_count++ < directory->details->max_deferred_file_count) {
+        file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD;
+    }
+
 	add_to_work_queue = FALSE;
 	if (nemo_directory_is_file_list_monitored (directory)) {
 		/* Ref if we are monitoring, since monitoring owns the file list. */
@@ -753,6 +759,8 @@ nemo_directory_emit_change_signals (NemoDirectory *directory,
 void
 nemo_directory_emit_done_loading (NemoDirectory *directory)
 {
+    directory->details->early_load_file_count = 0;
+
 	g_signal_emit (directory,
 			 signals[DONE_LOADING], 0);
 }

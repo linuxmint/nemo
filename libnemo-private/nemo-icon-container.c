@@ -5656,7 +5656,10 @@ update_visible_icons_cb (NemoIconContainer *container)
                     NemoFile *file = NEMO_FILE (icon->data);
 
                     icon->ok_to_show_thumb = TRUE;
-                    nemo_file_set_load_deferred_attrs (file, TRUE);
+
+                    if (nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_NO) {
+                        nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
+                    }
 
                     if (nemo_file_is_thumbnailing (file)) {
                         nemo_icon_container_prioritize_thumbnailing (container, icon);
@@ -8120,7 +8123,10 @@ nemo_icon_container_update_icon (NemoIconContainer *container,
     gboolean ok = FALSE;
 
     if (icon != NULL) {
-        ok = icon->ok_to_show_thumb;
+        NemoFile *file = NEMO_FILE (icon->data);
+
+        ok = icon->ok_to_show_thumb ||
+             (nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD);
     }
 
     NEMO_ICON_CONTAINER_GET_CLASS (container)->update_icon (container, icon, ok);
@@ -8134,7 +8140,7 @@ nemo_icon_container_get_additional_text_line_count (NemoIconContainer *container
 
 void
 nemo_icon_container_set_ok_to_load_deferred_attrs (NemoIconContainer *container,
-                                           gboolean           ok)
+                                                   gboolean           ok)
 {
     container->details->ok_to_load_deferred_attrs = ok;
 

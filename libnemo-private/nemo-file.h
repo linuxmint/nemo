@@ -105,6 +105,12 @@ typedef enum {
     NEMO_FILE_TOOLTIP_FLAGS_CREATED_DATE = (1<<4)
 } NemoFileTooltipFlags;
 
+typedef enum {
+    NEMO_FILE_LOAD_DEFERRED_ATTRS_NO,
+    NEMO_FILE_LOAD_DEFERRED_ATTRS_YES,
+    NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD
+} NemoFileLoadDeferredAttrs;
+
 /* Emblems sometimes displayed for NemoFiles. Do not localize. */ 
 #define NEMO_FILE_EMBLEM_NAME_SYMBOLIC_LINK "symbolic-link"
 #define NEMO_FILE_EMBLEM_NAME_CANT_READ "noread"
@@ -523,7 +529,9 @@ void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_d
 
 gboolean nemo_file_get_pinning                    (NemoFile *file);
 void     nemo_file_set_pinning                    (NemoFile *file, gboolean  pin);
-void     nemo_file_set_load_deferred_attrs        (NemoFile *file, gboolean load_deferred_attrs);
+void     nemo_file_set_load_deferred_attrs        (NemoFile *file,
+                                                   NemoFileLoadDeferredAttrs load_deferred_attrs);
+NemoFileLoadDeferredAttrs nemo_file_get_load_deferred_attrs (NemoFile *file);
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

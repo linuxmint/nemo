@@ -188,6 +188,7 @@ nemo_file_init (NemoFile *file)
     file->details->cached_position_x = -1;
     file->details->cached_position_y = -1;
     file->details->pinning = FILE_PINNING_UNKNOWN;
+    file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_NO;
 
 	nemo_file_clear_info (file);
 	nemo_file_invalidate_extension_info_internal (file);
@@ -501,7 +502,7 @@ nemo_file_clear_info (NemoFile *file)
 	file->details->ctime = 0;
     file->details->btime = 0;
 	file->details->trash_time = 0;
-    file->details->load_deferred_attrs = FALSE;
+    file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_NO;
 	g_free (file->details->symlink_name);
 	file->details->symlink_name = NULL;
 	eel_ref_str_unref (file->details->mime_type);
@@ -8041,10 +8042,16 @@ nemo_file_invalidate_extension_info_internal (NemoFile *file)
 }
 
 void
-nemo_file_set_load_deferred_attrs (NemoFile *file,
-                          gboolean  load_deferred_attrs)
+nemo_file_set_load_deferred_attrs (NemoFile                  *file,
+                                   NemoFileLoadDeferredAttrs  load_deferred)
 {
-    file->details->load_deferred_attrs = load_deferred_attrs;
+    file->details->load_deferred_attrs = load_deferred;
+}
+
+NemoFileLoadDeferredAttrs
+nemo_file_get_load_deferred_attrs (NemoFile *file)
+{
+    return file->details->load_deferred_attrs;
 }
 
 void

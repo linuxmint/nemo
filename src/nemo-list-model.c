@@ -1003,7 +1003,8 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 	file_entry->parent = NULL;
 	file_entry->subdirectory = NULL;
 	file_entry->files = NULL;
-
+    file_entry->ok_to_show_thumb =
+        nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD;
 	files = model->details->files;
 	parent_hash = model->details->top_reverse_map;
 

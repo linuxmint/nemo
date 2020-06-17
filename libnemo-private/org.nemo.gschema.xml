@@ -399,6 +399,11 @@
       <default>false</default>
       <summary>Display the 'Make executable and run' button in the mime-action dialog (open an unknown filetype)</summary>
     </key>
+    <key name="deferred-attribute-preload-limit" type="i">
+      <default>150</default>
+      <summary>Maximum number of files to preload deferred attributes for when opening a directory</summary>
+      <description>Certain file attributes (like thumbnail and extension info) are deferred until a folder finishes loading.  This number specifies how many files to skip this behavior on so that smaller folders won't have an obvious delay when loading these attributes.</description>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

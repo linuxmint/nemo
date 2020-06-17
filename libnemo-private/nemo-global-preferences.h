@@ -263,6 +263,7 @@ typedef enum
 
 #define NEMO_PREFERENCES_SAVED_SEARCHES                "saved-searches"
 #define NEMO_PREFERENCES_SHOW_MIME_MAKE_EXECUTABLE     "enable-mime-actions-make-executable"
+#define NEMO_PREFERENCES_DEFERRED_ATTR_PRELOAD_LIMIT   "deferred-attribute-preload-limit"
 
 void nemo_global_preferences_init                      (void);
 void nemo_global_preferences_finalize                  (void);

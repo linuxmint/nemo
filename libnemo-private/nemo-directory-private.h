@@ -140,6 +140,9 @@ struct NemoDirectoryDetails
 	LinkInfoReadState *link_info_read_state;
 
 	GList *file_operations_in_progress; /* list of FileOperation * */
+
+    gint max_deferred_file_count;
+    gint early_load_file_count;
 };
 
 NemoDirectory *nemo_directory_get_existing                    (GFile                     *location);

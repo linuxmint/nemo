@@ -2238,7 +2238,9 @@ prioritize_visible_files (NemoListView *view)
             if (file != NULL && file != last_file) {
                 last_file = file;
 
-                nemo_file_set_load_deferred_attrs (file, TRUE);
+                if (nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_NO) {
+                    nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
+                }
 
                 if (nemo_file_is_thumbnailing (file)) {
                     nemo_thumbnail_prioritize (nemo_file_peek_uri (file));
