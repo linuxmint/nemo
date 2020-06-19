@@ -235,6 +235,8 @@ typedef enum
 
 /* Terminal */
 #define GNOME_DESKTOP_TERMINAL_EXEC        "exec"
+#define GNOME_DESKTOP_TERMINAL_EXEC_ARGS   "exec-arg"
+
 
 /* Tooltips */
 #define NEMO_PREFERENCES_TOOLTIPS_DESKTOP              "tooltips-on-desktop"
