@@ -1,3 +1,14 @@
+nemo (4.6.4) ulyana; urgency=medium
+
+  [ Ԝеѕ ]
+  * display last modified date property on directories
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Fix regression with using the icon-name property in GtkCellRendererPixbuf.
+  * nemo-directory: Improve visual performance in smaller folders.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 21 Jun 2020 13:39:41 +0100
+
 nemo (4.6.3) ulyana; urgency=medium
 
   [ Michael Webster ]
