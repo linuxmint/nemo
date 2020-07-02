@@ -830,6 +830,25 @@ nemo_window_pane_dispose (GObject *object)
 	G_OBJECT_CLASS (nemo_window_pane_parent_class)->dispose (object);
 }
 
+gboolean
+only_show_active_pane_toolbar_mapping (GValue *value,
+                                       GVariant *variant,
+                                       gpointer user_data)
+{
+    NemoWindowPane *pane = user_data;
+
+    if (nemo_window_disable_chrome_mapping (value,
+                                            variant,
+                                            pane->window)) {
+        gboolean chrome_allowed = g_value_get_boolean (value);
+        gboolean self_is_active = (pane == nemo_window_get_active_pane (pane->window));
+
+        g_value_set_boolean (value, chrome_allowed && self_is_active);
+    }
+
+    return TRUE;
+}
+
 static void
 nemo_window_pane_constructed (GObject *obj)
 {
@@ -875,8 +894,8 @@ nemo_window_pane_constructed (GObject *obj)
 				      pane->tool_bar,
 				      "visible",
 				      G_SETTINGS_BIND_GET,
-				      nemo_window_disable_chrome_mapping, NULL,
-				      window, NULL);
+				      only_show_active_pane_toolbar_mapping, NULL,
+				      pane, NULL);
 
 	/* connect to the pathbar signals */
 	pane->path_bar = nemo_toolbar_get_path_bar (NEMO_TOOLBAR (pane->tool_bar));
