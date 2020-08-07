@@ -1088,8 +1088,6 @@ nemo_icon_view_end_loading (NemoView *view,
 	icon_container = GTK_WIDGET (get_icon_container (icon_view));
 	nemo_icon_container_end_loading (NEMO_ICON_CONTAINER (icon_container), all_files_seen);
 
-    nemo_icon_container_update_selection (NEMO_ICON_CONTAINER (icon_container));
-
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);
     nemo_icon_container_set_ok_to_load_deferred_attrs (NEMO_ICON_CONTAINER (icon_container), TRUE);
@@ -1869,8 +1867,6 @@ selection_changed_callback (NemoIconContainer *container,
 {
 	g_assert (NEMO_IS_ICON_VIEW (icon_view));
 	g_assert (container == get_icon_container (icon_view));
-
-    nemo_icon_container_update_selection (container);
 
 	nemo_view_notify_selection_changed (NEMO_VIEW (icon_view));
 }

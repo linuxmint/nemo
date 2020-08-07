@@ -5483,12 +5483,14 @@ activate_selected_items (NemoIconContainer *container)
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
-	selection = nemo_icon_container_peek_selection (container);
+	selection = nemo_icon_container_get_selection (container);
 	if (selection != NULL) {
 	  	g_signal_emit (container,
 				 signals[ACTIVATE], 0,
 				 selection);
 	}
+
+    g_list_free (selection);
 }
 
 static void
@@ -5500,7 +5502,7 @@ preview_selected_items (NemoIconContainer *container)
 
 	g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
 
-	selection = nemo_icon_container_peek_selection (container);
+	selection = nemo_icon_container_get_selection (container);
 	locations = nemo_icon_container_get_selected_icon_locations (container);
 
 	for (idx = 0; idx < locations->len; idx++) {
@@ -5519,6 +5521,8 @@ preview_selected_items (NemoIconContainer *container)
 			       signals[ACTIVATE_PREVIEWER], 0,
 			       selection, locations);
 	}
+
+    g_list_free (selection);
 }
 
 static void
@@ -7356,10 +7360,11 @@ nemo_icon_container_accessible_do_action (AtkAction *accessible, int i)
 	container = NEMO_ICON_CONTAINER (widget);
 	switch (i) {
 	case ACTION_ACTIVATE :
-		selection = nemo_icon_container_peek_selection (container);
+		selection = nemo_icon_container_get_selection (container);
 
 		if (selection) {
 			g_signal_emit_by_name (container, "activate", selection);
+            g_list_free (selection);
 		}
 		break;
 	case ACTION_MENU :

@@ -796,13 +796,13 @@ nemo_view_peek_selection (NemoView *view)
     return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->peek_selection (view);
 }
 
-int
-nemo_view_get_selection_count (NemoView *view)
-{
-    g_return_val_if_fail (NEMO_IS_VIEW (view), 0);
+// int
+// nemo_view_get_selection_count (NemoView *view)
+// {
+//     g_return_val_if_fail (NEMO_IS_VIEW (view), 0);
 
-    return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->get_selection_count (view);
-}
+//     return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->get_selection_count (view);
+// }
 
 /**
  * nemo_view_update_menus:
@@ -2599,6 +2599,20 @@ nemo_view_grab_focus (NemoView *view)
 	}
 }
 
+int
+nemo_view_get_selection_count (NemoView *view)
+{
+    /* FIXME: This could be faster if we special cased it in subclasses */
+    GList *files;
+    int len;
+
+    files = nemo_view_get_selection (NEMO_VIEW (view));
+    len = g_list_length (files);
+    nemo_file_list_free (files);
+
+    return len;
+}
+
 static void
 update_undo_actions (NemoView *view)
 {
@@ -3071,7 +3085,7 @@ nemo_view_display_selection_info (NemoView *view)
 
 	g_return_if_fail (NEMO_IS_VIEW (view));
 
-	selection = nemo_file_list_ref (nemo_view_peek_selection (view));
+	selection = nemo_view_get_selection (view);
 
 	folder_item_count_known = TRUE;
 	folder_count = 0;
@@ -3110,7 +3124,7 @@ nemo_view_display_selection_info (NemoView *view)
 		}
 	}
 
-	nemo_file_list_unref (selection);
+	nemo_file_list_free (selection);
 
 	/* Break out cases for localization's sake. But note that there are still pieces
 	 * being assembled in a particular order, which may be a problem for some localizers.
@@ -3787,12 +3801,12 @@ process_old_files (NemoView *view)
 		g_signal_emit (view, signals[END_FILE_CHANGES], 0);
 
 		if (files_changed != NULL) {
-			selection = nemo_file_list_ref (nemo_view_peek_selection (view));
+			selection = nemo_view_get_selection (view);
 			files = file_and_directory_list_to_files (files_changed);
 			send_selection_change = eel_g_lists_sort_and_check_for_intersection
 				(&files, &selection);
 			nemo_file_list_free (files);
-			nemo_file_list_unref (selection);
+			nemo_file_list_free (selection);
 		}
 
 		file_and_directory_list_free (view->details->old_added_files);
@@ -8723,8 +8737,8 @@ clipboard_targets_received (GtkClipboard     *clipboard,
 	}
 
 
-	selection = nemo_file_list_ref (nemo_view_peek_selection (view));
-	count = nemo_view_get_selection_count (view);
+	selection = nemo_view_get_selection (view);
+	count = g_list_length (selection);
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_PASTE);
@@ -8748,7 +8762,7 @@ clipboard_targets_received (GtkClipboard     *clipboard,
 				  GPOINTER_TO_INT (g_object_get_data (G_OBJECT (action),
 								      "can-paste-according-to-destination")));
 
-	nemo_file_list_unref (selection);
+	nemo_file_list_free (selection);
 
 	g_object_unref (view);
 }
@@ -9575,13 +9589,12 @@ clipboard_changed_callback (NemoClipboardMonitor *monitor, NemoView *view)
 		return;
 	}
 
-	selection = nemo_file_list_ref (nemo_view_peek_selection (view));
-	selection_count = nemo_view_get_selection_count (view);
+	selection = nemo_view_get_selection (view);
+	selection_count = g_list_length (selection);
 
 	real_update_paste_menu (view, selection, selection_count);
 
-	nemo_file_list_unref (selection);
-
+	nemo_file_list_free (selection);
 }
 
 static gboolean
@@ -9680,8 +9693,8 @@ real_update_menus (NemoView *view)
 	gboolean show_properties;
     gboolean first_selected_is_pinned;
 
-	selection = nemo_file_list_ref (nemo_view_peek_selection (view));
-	selection_count = nemo_view_get_selection_count (view);
+	selection = nemo_view_get_selection (view);
+	selection_count = g_list_length (selection);
 
 	selection_contains_special_link = special_link_in_selection (view, selection);
 	selection_contains_desktop_or_home_dir = desktop_or_home_dir_in_selection (view, selection);
@@ -10077,7 +10090,7 @@ real_update_menus (NemoView *view)
 
     update_configurable_context_menu_items (view);
 
-    nemo_file_list_unref (selection);
+    nemo_file_list_free (selection);
 }
 
 /**
@@ -10319,9 +10332,10 @@ nemo_view_notify_selection_changed (NemoView *view)
 
 	g_return_if_fail (NEMO_IS_VIEW (view));
 
-	selection = nemo_view_peek_selection (view);
+	selection = nemo_view_get_selection (view);
 	window = nemo_view_get_containing_window (view);
 	DEBUG_FILES (selection, "Selection changed in window %p", window);
+    nemo_file_list_free (selection);
 
 	view->details->selection_was_removed = FALSE;
 

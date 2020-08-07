@@ -272,8 +272,6 @@ list_selection_changed_callback (GtkTreeSelection *selection, gpointer user_data
 
 	view = NEMO_VIEW (user_data);
 
-    nemo_list_view_update_selection (view);
-
 	nemo_view_notify_selection_changed (view);
 }
 
@@ -3304,8 +3302,7 @@ nemo_list_view_set_selection (NemoView *view, GList *selection)
 	}
 
 	g_signal_handlers_unblock_by_func (tree_selection, list_selection_changed_callback, view);
-
-	list_selection_changed_callback (tree_selection, view);
+	nemo_view_notify_selection_changed (view);
 }
 
 static void
@@ -3342,8 +3339,7 @@ nemo_list_view_invert_selection (NemoView *view)
 	g_list_free (selection);
 
 	g_signal_handlers_unblock_by_func (tree_selection, list_selection_changed_callback, view);
-
-    list_selection_changed_callback (tree_selection, view);
+	nemo_view_notify_selection_changed (view);
 }
 
 static void
@@ -4009,8 +4005,6 @@ nemo_list_view_end_loading (NemoView *view,
 {
 	NemoClipboardMonitor *monitor;
 	NemoClipboardInfo *info;
-
-    nemo_list_view_update_selection (view);
 
     set_ok_to_load_deferred_attrs (NEMO_LIST_VIEW (view), TRUE);
 
