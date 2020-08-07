@@ -5,6 +5,7 @@ export LC_ALL=C.UTF-8
 
 CONFIGURE_EXTRA_FLAGS = \
 	--libexecdir=/usr/lib/$(DEB_HOST_MULTIARCH)/nemo \
+	--buildtype=debug \
 	-D deprecated_warnings=false \
 	-D gtk_doc=true \
 	-D selinux=false
