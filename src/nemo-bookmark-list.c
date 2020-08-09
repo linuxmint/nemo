@@ -360,8 +360,6 @@ connect_bookmark_signals (NemoBookmark     *bookmark,
                  G_CALLBACK (bookmark_location_mounted_callback), bookmarks, 0);
     g_signal_connect_object (bookmark, "contents-changed",
                  G_CALLBACK (bookmark_in_list_changed_callback), bookmarks, 0);
-    g_signal_connect_object (bookmark, "notify::icon-name",
-                 G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
     g_signal_connect_object (bookmark, "notify::name",
                  G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
 
