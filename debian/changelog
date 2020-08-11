@@ -1,3 +1,10 @@
+nemo (4.4.3) tricia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window-pane.c: Only show the active window-pane's toolbar when toggling toolbar visiblity.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Aug 2020 12:31:28 +0100
+
 nemo (4.4.2) tricia; urgency=medium
 
   [ leigh123linux ]
