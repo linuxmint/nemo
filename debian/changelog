@@ -1,3 +1,13 @@
+nemo (4.6.5) ulyana; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window-pane.c: Only show the active window-pane's toolbar when toggling toolbar visiblity.
+  * nemo-view.c: Don't cache the selection, this has been broken by deferred attribute loading.
+  * debian/rules: Set buildtype to 'debug'.
+  * nemo-bookmark-list.c: Don't get bookmark icon property notifications.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Aug 2020 12:32:30 +0100
+
 nemo (4.6.4) ulyana; urgency=medium
 
   [ Ԝеѕ ]
