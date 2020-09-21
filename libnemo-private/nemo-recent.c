@@ -52,6 +52,7 @@ nemo_recent_add_file (NemoFile *file,
 	if (eel_uri_is_trash (uri)  ||
 	    eel_uri_is_search (uri) ||
         eel_uri_is_recent (uri) ||
+        eel_uri_is_favorite (uri) ||
 	    eel_uri_is_desktop (uri)) {
 		g_free (uri);
 		return;

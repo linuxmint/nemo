@@ -548,6 +548,18 @@ nemo_directory_is_in_recent (NemoDirectory *directory)
 }
 
 gboolean
+nemo_directory_is_in_favorites (NemoDirectory *directory)
+{
+   g_assert (NEMO_IS_DIRECTORY (directory));
+
+   if (directory->details->location == NULL) {
+       return FALSE;
+   }
+
+   return g_file_has_uri_scheme (directory->details->location, "favorites");
+}
+
+gboolean
 nemo_directory_is_in_admin (NemoDirectory *directory)
 {
     g_assert (NEMO_IS_DIRECTORY (directory));

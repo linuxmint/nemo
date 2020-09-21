@@ -45,18 +45,16 @@ typedef enum {
 } Knowledge;
 
 typedef enum {
-    FILE_PINNING_UNKNOWN = -1,
-    FILE_PINNED = 0,
-    FILE_NOT_PINNED,
-} NemoFilePinning;
+    FILE_META_STATE_INIT = -1,
+    FILE_META_STATE_FALSE = 0,
+    FILE_META_STATE_TRUE = 1,
+} NemoFileMetaState;
 
 struct NemoFileDetails
 {
 	NemoDirectory *directory;
 	
 	eel_ref_str name;
-
-    gchar *cached_uri;
 
 	/* File info: */
 	GFileType type;
@@ -203,6 +201,8 @@ struct NemoFileDetails
 	eel_boolean_bit is_mountpoint                 : 1;
 	eel_boolean_bit is_hidden                     : 1;
 
+    eel_boolean_bit favorite_checked              : 1;
+
 	eel_boolean_bit has_permissions               : 1;
 	
 	eel_boolean_bit can_read                      : 1;
@@ -226,7 +226,8 @@ struct NemoFileDetails
     eel_boolean_bit filesystem_info_is_up_to_date : 1;
 
     NemoFileLoadDeferredAttrs load_deferred_attrs;
-    NemoFilePinning pinning;
+    NemoFileMetaState pinning;
+    NemoFileMetaState favorite;
 
 	time_t trash_time; /* 0 is unknown */
 

@@ -331,6 +331,7 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 					    char                 **editable_text,
 					    char                 **additional_text,
                         gboolean              *pinned,
+                        gboolean              *fav_unavailable,
 					    gboolean               include_invisible)
 {
 	GQuark *attributes;
@@ -360,9 +361,13 @@ nemo_icon_view_container_get_icon_text (NemoIconContainer *container,
 		/* Strip the suffix for nemo object xml files. */
 		*editable_text = nemo_file_get_display_name (file);
         if (pinned) {
-            *pinned = nemo_file_get_pinning (file);
+            *pinned = nemo_file_get_pinning (file) && !nemo_file_is_in_favorites (file);
         }
 	}
+
+    if (fav_unavailable) {
+        *fav_unavailable = nemo_file_is_unavailable_favorite (file);
+    }
 
 	if (!use_additional) {
 		return;
@@ -1479,6 +1484,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
     char *editable_text, *additional_text;
     gboolean has_open_window;
     gboolean pinned;
+    gboolean fav_unavailable;
 
     if (icon == NULL) {
         return;
@@ -1526,6 +1532,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                            &editable_text,
                            &additional_text,
                            &pinned,
+                           &fav_unavailable,
                            FALSE);
 
 
@@ -1545,6 +1552,7 @@ nemo_icon_view_container_update_icon (NemoIconContainer *container,
                  "additional_text", additional_text,
                  "highlighted_for_drop", icon == details->drop_target,
                  "pinned", pinned,
+                 "fav-unavailable", fav_unavailable,
                  NULL);
 
     nemo_icon_canvas_item_set_image (icon->item, pixbuf);

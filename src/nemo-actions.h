@@ -156,6 +156,8 @@
 
 #define NEMO_ACTION_PIN_FILE        "Pin File"
 #define NEMO_ACTION_UNPIN_FILE      "Unpin File"
+#define NEMO_ACTION_FAVORITE_FILE        "Favorite File"
+#define NEMO_ACTION_UNFAVORITE_FILE      "Unfavorite File"
 #define NEMO_ACTION_DESKTOP_OVERLAY "Desktop Overlay"
 
 typedef struct
@@ -198,6 +200,11 @@ static const ConfigurableMenuItemInfo CONFIGURABLE_MENU_ITEM_INFO [] = {
      "/selection/File Actions/Pin File", "selection-menu-pin" },
     { NEMO_ACTION_UNPIN_FILE, NULL,
      "/selection/File Actions/Unpin File", "selection-menu-pin" },
+
+    { NEMO_ACTION_FAVORITE_FILE, "selection_menu__favorite_check",
+     "/selection/File Actions/Favorite File", "selection-menu-favorite" },
+    { NEMO_ACTION_UNFAVORITE_FILE, NULL,
+     "/selection/File Actions/Unfavorite File", "selection-menu-favorite" },
 
     { NEMO_ACTION_CREATE_LINK, "selection_menu__make_link_check",
      "/selection/File Actions/Create Link", "selection-menu-make-link" },

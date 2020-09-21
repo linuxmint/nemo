@@ -76,6 +76,7 @@
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
 #include <libnotify/notify.h>
+#include <libxapp/xapp-favorites.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>

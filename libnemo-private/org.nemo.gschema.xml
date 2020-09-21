@@ -722,6 +722,10 @@
       <default>true</default>
       <summary>Show the selection context menu's Pin/Unpin item.</summary>
     </key>
+    <key name="selection-menu-favorite" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Favorite/Unfavorite item.</summary>
+    </key>
     <key name="selection-menu-make-link" type="b">
       <default>false</default>
       <summary>Show the selection context menu's Create Link item.</summary>
