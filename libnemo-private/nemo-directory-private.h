@@ -43,6 +43,7 @@ typedef struct MimeListState MimeListState;
 typedef struct ThumbnailState ThumbnailState;
 typedef struct MountState MountState;
 typedef struct FilesystemInfoState FilesystemInfoState;
+typedef struct FavoriteCheckState FavoriteCheckState;
 
 typedef enum {
 	REQUEST_LINK_INFO,
@@ -56,6 +57,7 @@ typedef enum {
 	REQUEST_MOUNT,
 	REQUEST_FILESYSTEM_INFO,
     REQUEST_BTIME,
+    REQUEST_FAVORITE_CHECK,
 	REQUEST_TYPE_LAST
 } RequestType;
 
@@ -124,6 +126,9 @@ struct NemoDirectoryDetails
 
     NemoFile *get_btime_file;
     GetBTimeState *get_btime_in_progress;
+
+    NemoFile *favorite_check_file;
+    FavoriteCheckState *favorite_check_in_progress;
 
 	NemoFile *extension_info_file;
 	NemoInfoProvider *extension_info_provider;

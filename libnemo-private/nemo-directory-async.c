@@ -37,6 +37,7 @@
 #include <libxml/parser.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <libxapp/xapp-favorites.h>
 
 /* turn this on to see messages about each load_directory call: */
 #if 0
@@ -135,7 +136,11 @@ struct DeepCountState {
 	char *fs_id;
 };
 
-
+struct FavoriteCheckState {
+    NemoDirectory *directory;
+    GCancellable *cancellable;
+    gboolean is_favorite;
+};
 
 typedef struct {
 	NemoFile *file; /* Which file, NULL means all. */
@@ -566,6 +571,19 @@ btime_cancel (NemoDirectory *directory)
 }
 
 static void
+favorite_check_cancel (NemoDirectory *directory)
+{
+    if (directory->details->favorite_check_in_progress != NULL) {
+        g_cancellable_cancel (directory->details->favorite_check_in_progress->cancellable);
+        directory->details->favorite_check_in_progress->directory = NULL;
+        directory->details->favorite_check_in_progress = NULL;
+        directory->details->favorite_check_file = NULL;
+
+        async_job_end (directory, "favorite check");
+    }
+}
+
+static void
 new_files_cancel (NemoDirectory *directory)
 {
 	GList *l;
@@ -701,6 +719,10 @@ nemo_directory_set_up_request (NemoFileAttributes file_attributes)
 	if (file_attributes & NEMO_FILE_ATTRIBUTE_FILESYSTEM_INFO) {
 		REQUEST_SET_TYPE (request, REQUEST_FILESYSTEM_INFO);
 	}
+
+    if (file_attributes & NEMO_FILE_ATTRIBUTE_FAVORITE_CHECK) {
+        REQUEST_SET_TYPE (request, REQUEST_FAVORITE_CHECK);
+    }
 
 	return request;
 }
@@ -1580,6 +1602,10 @@ nemo_async_destroying_file (NemoFile *file)
         directory->details->get_btime_file = NULL;
         changed = TRUE;
     }
+    if (directory->details->favorite_check_file == file) {
+        directory->details->favorite_check_file = NULL;
+        changed = TRUE;
+    }
 	if (directory->details->link_info_read_state != NULL &&
 	    directory->details->link_info_read_state->file == file) {
 		directory->details->link_info_read_state->file = NULL;
@@ -1639,6 +1665,13 @@ static gboolean
 lacks_btime (NemoFile *file)
 {
     return !file->details->btime_is_up_to_date
+        && !file->details->is_gone;
+}
+
+static gboolean
+lacks_favorite_check (NemoFile *file)
+{
+    return !file->details->favorite_checked
         && !file->details->is_gone;
 }
 
@@ -1800,6 +1833,12 @@ request_is_satisfied (NemoDirectory *directory,
 			return FALSE;
 		}
 	}
+
+    if (REQUEST_WANTS_TYPE (request, REQUEST_FAVORITE_CHECK)) {
+        if (has_problem (directory, file, lacks_favorite_check)) {
+            return FALSE;
+        }
+    }
 
 	return TRUE;
 }
@@ -3393,6 +3432,123 @@ btime_start (NemoDirectory *directory,
     g_object_unref (location);
 }
 
+static void
+favorite_check_state_free (FavoriteCheckState *state)
+{
+    g_object_unref (state->cancellable);
+    g_free (state);
+}
+
+static void
+favorite_check_callback (GObject *source_object,
+                         GAsyncResult *res,
+                         gpointer user_data)
+{
+    NemoDirectory *directory;
+    NemoFile *favorite_check_file;
+    FavoriteCheckState *state;
+
+    state = user_data;
+
+    if (state->directory == NULL) {
+        /* Operation was cancelled. Bail out */
+        favorite_check_state_free (state);
+        return;
+    }
+
+    directory = nemo_directory_ref (state->directory);
+
+    favorite_check_file = directory->details->favorite_check_file;
+    g_assert (NEMO_IS_FILE (favorite_check_file));
+
+    directory->details->favorite_check_file = NULL;
+    directory->details->favorite_check_in_progress = NULL;
+    
+    /* ref here because we might be removing the last ref when we
+     * mark the file gone below, but we need to keep a ref at
+     * least long enough to send the change notification. 
+     */
+    nemo_file_ref (favorite_check_file);
+
+    gchar *uri;
+    gboolean is_favorite;
+
+    uri = nemo_file_get_uri (favorite_check_file);
+    is_favorite = xapp_favorites_find_by_uri (xapp_favorites_get_default (), uri) != NULL;
+
+    favorite_check_file->details->favorite_checked = TRUE;
+
+    if (!nemo_file_is_in_favorites (favorite_check_file) && 
+        is_favorite != nemo_file_get_is_favorite (favorite_check_file)) {
+        nemo_file_set_is_favorite (favorite_check_file, is_favorite);
+        nemo_file_changed (favorite_check_file);
+    }
+
+    g_free (uri);
+    nemo_file_unref (favorite_check_file);
+
+    async_job_end (directory, "favorite check");
+    nemo_directory_async_state_changed (directory);
+
+    nemo_directory_unref (directory);
+
+    favorite_check_state_free (state);
+}
+
+static void
+favorite_check_stop (NemoDirectory *directory)
+{
+    NemoFile *file;
+
+    if (directory->details->favorite_check_in_progress != NULL) {
+        file = directory->details->favorite_check_file;
+        if (file != NULL) {
+            g_assert (NEMO_IS_FILE (file));
+            g_assert (file->details->directory == directory);
+            if (is_needy (file, lacks_favorite_check, REQUEST_FAVORITE_CHECK)) {
+                return;
+            }
+        }
+
+        /* The info is not wanted, so stop it. */
+        favorite_check_cancel (directory);
+    }
+}
+
+static void
+favorite_check_start (NemoDirectory *directory,
+                      NemoFile *file,
+                      gboolean *doing_io)
+{
+    FavoriteCheckState *state;
+    favorite_check_stop (directory);
+
+    if (directory->details->favorite_check_in_progress != NULL) {
+        *doing_io = TRUE;
+        return;
+    }
+
+    if (!is_needy (file, lacks_favorite_check, REQUEST_FAVORITE_CHECK)) {
+        return;
+    }
+
+    *doing_io = TRUE;
+
+    if (!async_job_start (directory, "favorite check")) {
+        return;
+    }
+
+    directory->details->favorite_check_file = file;
+
+    state = g_new (FavoriteCheckState, 1);
+    state->directory = directory;
+    state->cancellable = g_cancellable_new ();
+
+    directory->details->favorite_check_in_progress = state;
+
+    g_idle_add ((GSourceFunc) favorite_check_callback, state);
+}
+
 static gboolean
 is_link_trusted (NemoFile *file,
 		 gboolean is_launcher)
@@ -3822,6 +3978,7 @@ thumbnail_read_callback (GObject *source_object,
 		state->trying_original = FALSE;
 
 		location = g_file_new_for_path (state->file->details->thumbnail_path);
+
 		g_file_load_contents_async (location,
 					    state->cancellable,
 					    thumbnail_read_callback,
@@ -4411,6 +4568,7 @@ start_or_stop_io (NemoDirectory *directory)
 	mount_stop (directory);
 	thumbnail_stop (directory);
 	filesystem_info_stop (directory);
+    favorite_check_stop (directory);
 
 	doing_io = FALSE;
 	/* Take files that are all done off the queue. */
@@ -4440,6 +4598,7 @@ start_or_stop_io (NemoDirectory *directory)
 		mime_list_start (directory, file, &doing_io);
 		thumbnail_start (directory, file, &doing_io);
 		filesystem_info_start (directory, file, &doing_io);
+        favorite_check_start (directory, file, &doing_io);
 
 		if (doing_io) {
 			return;
@@ -4511,6 +4670,7 @@ nemo_directory_cancel (NemoDirectory *directory)
 	thumbnail_cancel (directory);
 	mount_cancel (directory);
 	filesystem_info_cancel (directory);
+    favorite_check_cancel (directory);
 
 	/* We aren't waiting for anything any more. */
 	if (waiting_directories != NULL) {
@@ -4565,6 +4725,15 @@ cancel_btime_for_file (NemoDirectory *directory,
 {
     if (directory->details->get_btime_file == file) {
         btime_cancel (directory);
+    }
+}
+
+static void
+cancel_favorite_check_for_file (NemoDirectory *directory,
+                                NemoFile      *file)
+{
+    if (directory->details->favorite_check_file == file) {
+        favorite_check_cancel (directory);
     }
 }
 
@@ -4650,7 +4819,9 @@ cancel_loading_attributes (NemoDirectory *directory,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_MOUNT)) {
 		mount_cancel (directory);
 	}
-	
+   if (REQUEST_WANTS_TYPE (request, REQUEST_FAVORITE_CHECK)) {
+        favorite_check_cancel (directory);
+    }
 	nemo_directory_async_state_changed (directory);
 }
 
@@ -4692,7 +4863,9 @@ nemo_directory_cancel_loading_file_attributes (NemoDirectory      *directory,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_MOUNT)) {
 		cancel_mount_for_file (directory, file);
 	}
-
+    if (REQUEST_WANTS_TYPE (request, REQUEST_FAVORITE_CHECK)) {
+        cancel_favorite_check_for_file (directory, file);
+    }
 	nemo_directory_async_state_changed (directory);
 }
 

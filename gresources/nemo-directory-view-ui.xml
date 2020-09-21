@@ -67,6 +67,8 @@
 		<menuitem name="Invert Selection" action="Invert Selection"/>
 		</placeholder>
 		<placeholder name="File Items Placeholder">
+            <menuitem name="Favorite" action="Favorite File"/>
+            <menuitem name="Unfavorite" action="Unfavorite File"/>
             <menuitem name="Pin File" action="Pin File"/>
             <menuitem name="Unpin File" action="Unpin File"/>
 			<menuitem name="Duplicate" action="Duplicate"/>
@@ -179,6 +181,8 @@
 	</placeholder>
 	<separator name="File actions separator"/>
 	<placeholder name="File Actions">
+        <menuitem name="Favorite File" action="Favorite File"/>
+        <menuitem name="Unfavorite File" action="Unfavorite File"/>
         <menuitem name="Pin File" action="Pin File"/>
         <menuitem name="Unpin File" action="Unpin File"/>
 		<menuitem name="Create Link" action="Create Link"/>

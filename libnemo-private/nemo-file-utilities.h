@@ -28,6 +28,11 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 
+/* Used in view classes to mark pinned and favorite files */
+#define UNAVAILABLE_TEXT_WEIGHT PANGO_WEIGHT_LIGHT
+#define NORMAL_TEXT_WEIGHT PANGO_WEIGHT_NORMAL
+#define PINNED_TEXT_WEIGHT PANGO_WEIGHT_BOLD
+
 #define NEMO_SAVED_SEARCH_EXTENSION ".savedSearch"
 #define NEMO_SAVED_SEARCH_MIMETYPE "application/x-gnome-saved-search"
 

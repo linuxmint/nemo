@@ -476,6 +476,13 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		return;
 	}
 
+    dropped_uri = ((NemoDragSelectionItem *)items->data)->uri;
+
+    if (eel_uri_is_favorite (dropped_uri)) {
+        *action = GDK_ACTION_COPY;
+        return;
+    }
+
 	actions = gdk_drag_context_get_actions (context) & (GDK_ACTION_MOVE | GDK_ACTION_COPY);
 	if (actions == 0) {
 		 /* We can't use copy or move, just go with the suggested action. */
@@ -488,9 +495,8 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 		*action = gdk_drag_context_get_suggested_action (context);
 		return;
 	}
-	
-	dropped_uri = ((NemoDragSelectionItem *)items->data)->uri;
-	dropped_file = nemo_file_get_existing_by_uri (dropped_uri);
+
+    dropped_file = nemo_file_get_existing_by_uri (dropped_uri);
 
     /* To/from desktop preparation - since we are separate processes, we don't have the full filesystem
      * info on the source and destination - we only have the destination info.  Creating a NemoFile for it

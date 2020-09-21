@@ -55,6 +55,8 @@
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib.h>
+#include <libxapp/xapp-favorites.h>
+
 #include "nemo-file-changes-queue.h"
 #include "nemo-file-private.h"
 #include "nemo-desktop-icon-file.h"
@@ -1898,6 +1900,11 @@ delete_file (CommonJob *job, GFile *file,
 	error = NULL;
 	if (file_delete_wrapper (file, job->cancellable, &error)) {
 		nemo_file_changes_queue_file_removed (file);
+
+        gchar *uri = g_file_get_uri (file);
+        xapp_favorites_remove (xapp_favorites_get_default (), uri);
+        g_free (uri);
+
 		transfer_info->num_files ++;
 		report_delete_progress (job, source_info, transfer_info);
 		return;
@@ -2087,6 +2094,10 @@ trash_files (CommonJob *job, GList *files, guint *files_skipped)
 			total_files--;
 		} else {
 			nemo_file_changes_queue_file_removed (file);
+
+            gchar *uri = g_file_get_uri (file);
+            xapp_favorites_remove (xapp_favorites_get_default (), uri);
+            g_free (uri);
 
 			if (job->undo_info != NULL) {
 				nemo_file_undo_info_trash_add_file (NEMO_FILE_UNDO_INFO_TRASH (job->undo_info), file);

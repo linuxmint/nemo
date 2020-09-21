@@ -80,6 +80,8 @@
 #define NEMO_METADATA_KEY_DESKTOP_GRID_ADJUST      "desktop-grid-adjust"
 
 #define NEMO_METADATA_KEY_PINNED                   "pinned-to-top"
+#define NEMO_METADATA_KEY_FAVORITE                 "xapp-favorite"
+#define NEMO_METADATA_KEY_FAVORITE_AVAILABLE     "xapp-favorite-available"
 
 guint nemo_metadata_get_id (const char *metadata);
 

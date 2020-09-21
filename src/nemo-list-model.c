@@ -414,11 +414,18 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
         g_value_init (value, G_TYPE_INT);
 
         if (file != NULL) {
-            g_value_set_int (value, nemo_file_get_pinning (file) ? PINNED_TEXT_WEIGHT : UNPINNED_TEXT_WEIGHT);
-        } else {
-            g_value_set_int (value, UNPINNED_TEXT_WEIGHT);
+            if (nemo_file_is_unavailable_favorite (file)) {
+                g_value_set_int (value, UNAVAILABLE_TEXT_WEIGHT);
+            }
+            else
+            if (nemo_file_get_pinning (file) && !nemo_file_is_in_favorites (file)) {
+                g_value_set_int (value, PINNED_TEXT_WEIGHT);
+            }
+            else
+            {
+                g_value_set_int (value, NORMAL_TEXT_WEIGHT);
+            }
         }
-
         break;
     case NEMO_LIST_MODEL_ICON_SHOWN:
         g_value_init (value, G_TYPE_BOOLEAN);

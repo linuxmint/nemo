@@ -628,11 +628,27 @@ nemo_create_thumbnail (NemoFile      *file,
     NemoThumbnailInfo *existing_info;
     GList *existing, *node;
 
+    /* The gdk-pixbuf-thumbnailer tool has special hardcoded handling for recent: and trash: uris.
+     * we need to find the activation uri here instead */
+    if (nemo_file_is_in_favorites (file)) {
+        NemoFile *real_file;
+        gchar *uri;
+
+        uri = nemo_file_get_symbolic_link_target_uri (file);
+
+        real_file = nemo_file_get_by_uri (uri);
+        nemo_create_thumbnail (real_file, 0, FALSE);
+
+        nemo_file_unref (real_file);
+        return;
+    }
+
     nemo_file_set_is_thumbnailing (file, TRUE);
 
     info = g_new0 (NemoThumbnailInfo, 1);
     info->image_uri = nemo_file_get_uri (file);
-    info->mime_type = nemo_file_get_mime_type (file);
+
+    info->mime_type = nemo_file_get_mime_type (file);    // info->image_uri = nemo_file_is_in_favorites (file) ? nemo_file_get_activation_uri (file) :
     info->throttle_count = MIN (10, throttle_count);
     
     /* Hopefully the NemoFile will already have the image file mtime,

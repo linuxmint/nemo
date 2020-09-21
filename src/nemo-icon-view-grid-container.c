@@ -260,6 +260,7 @@ nemo_icon_view_grid_container_get_icon_text (NemoIconContainer *container,
 					    char                 **editable_text,
 					    char                 **additional_text,
                         gboolean              *pinned,
+                        gboolean              *fav_unavailable,
 					    gboolean               include_invisible)
 {
 	GQuark *attributes;
@@ -891,6 +892,7 @@ nemo_icon_view_grid_container_update_icon (NemoIconContainer *container,
                            icon->data,
                            &editable_text,
                            &additional_text,
+                           NULL,
                            NULL,
                            FALSE);
 

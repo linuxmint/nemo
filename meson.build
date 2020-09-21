@@ -82,7 +82,7 @@ cinnamon= dependency('cinnamon-desktop',            version: '>=2.6.1')
 gail    = dependency('gail-3.0')
 libxml  = dependency('libxml-2.0',                  version: '>=2.7.8')
 x11     = dependency('x11')
-xapp    = dependency('xapp',                        version: '>=1.4.0')
+xapp    = dependency('xapp',                        version: '>=1.9.0')
 
 # Facultative dependencies
 

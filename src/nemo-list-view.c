@@ -203,6 +203,14 @@ static const char * default_recent_columns_order[] = {
     "name", "size", "type", "date_accessed", NULL
 };
 
+static const char * default_favorites_visible_columns[] = {
+    "name", "size", "date_modified", NULL
+};
+
+static const char * default_favorites_columns_order[] = {
+    "name", "size", "date_modified", NULL
+};
+
 static gchar **
 string_array_from_string_glist (GList *list)
 {
@@ -2241,7 +2249,10 @@ prioritize_visible_files (NemoListView *view)
                 }
 
                 if (nemo_file_is_thumbnailing (file)) {
-                    nemo_thumbnail_prioritize (nemo_file_peek_uri (file));
+                    gchar *uri = nemo_file_get_uri (file);
+
+                    nemo_thumbnail_prioritize (uri);
+                    g_free (uri);
                 } else {
                     nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
                 }
@@ -2578,6 +2589,10 @@ get_default_visible_columns (NemoListView *list_view)
         return g_strdupv ((gchar **) default_recent_visible_columns);
     }
 
+    if (nemo_file_is_in_favorites (file)) {
+        return g_strdupv ((gchar **) default_favorites_visible_columns);
+    }
+
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
     if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
         return g_settings_get_strv (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS);
@@ -2631,6 +2646,10 @@ get_default_column_order (NemoListView *list_view)
 
     if (nemo_file_is_in_recent (file)) {
         return g_strdupv ((gchar **) default_recent_columns_order);
+    }
+
+    if (nemo_file_is_in_favorites (file)) {
+        return g_strdupv ((gchar **) default_favorites_columns_order);
     }
 
     directory = nemo_view_get_model (NEMO_VIEW (list_view));
@@ -4168,6 +4187,9 @@ nemo_list_view_supports_uri (const char *uri,
 		return TRUE;
 	}
     if (g_str_has_prefix (uri, "recent:")) {
+        return TRUE;
+    }
+    if (g_str_has_prefix (uri, "favorites:")) {
         return TRUE;
     }
 	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {

@@ -117,6 +117,7 @@ struct NemoIconCanvasItemDetails {
 	guint is_visible : 1;
 
     guint is_pinned : 1;
+    guint fav_unavailable : 1;
 
 	/* Cached PangoLayouts. Only used if the icon is visible */
 	PangoLayout *editable_text_layout;
@@ -145,7 +146,8 @@ enum {
     	PROP_HIGHLIGHTED_AS_KEYBOARD_FOCUS,
     	PROP_HIGHLIGHTED_FOR_DROP,
 	PROP_HIGHLIGHTED_FOR_CLIPBOARD,
-    PROP_PINNED
+    PROP_PINNED,
+    PROP_FAV_UNAVAILABLE
 };
 
 typedef enum {
@@ -366,6 +368,14 @@ nemo_icon_canvas_item_set_property (GObject        *object,
             return;
         }
         details->is_pinned = g_value_get_boolean (value);
+        nemo_icon_canvas_item_invalidate_label (item);
+
+        break;
+    case PROP_FAV_UNAVAILABLE:
+        if (!details->fav_unavailable == !g_value_get_boolean (value)) {
+            return;
+        }
+        details->fav_unavailable = g_value_get_boolean (value);
         nemo_icon_canvas_item_invalidate_label (item);
 
         break;
@@ -1469,8 +1479,15 @@ create_label_layout (NemoIconCanvasItem *item,
                                          container->details->font_size_table [container->details->zoom_level]);
     }
 
+    if (item->details->fav_unavailable) {
+        pango_font_description_set_weight (desc, UNAVAILABLE_TEXT_WEIGHT);
+    }
+    else
     if (item->details->is_pinned) {
-        pango_font_description_set_weight (desc, PANGO_WEIGHT_BOLD);
+        pango_font_description_set_weight (desc, PINNED_TEXT_WEIGHT);
+    }
+    else {
+        pango_font_description_set_weight (desc, NORMAL_TEXT_WEIGHT);
     }
 
 	pango_layout_set_font_description (layout, desc);
@@ -2112,6 +2129,14 @@ nemo_icon_canvas_item_class_init (NemoIconCanvasItemClass *class)
         g_param_spec_boolean ("pinned",
                               "pinned",
                               "backing file is pinned",
+                      FALSE, G_PARAM_READWRITE));
+
+    g_object_class_install_property (
+        object_class,
+        PROP_FAV_UNAVAILABLE,
+        g_param_spec_boolean ("fav-unavailable",
+                              "fav-unavailable",
+                              "backing file is a favorite and is not reachable",
                       FALSE, G_PARAM_READWRITE));
 
 	item_class->update = nemo_icon_canvas_item_update;

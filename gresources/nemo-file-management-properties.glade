@@ -3546,6 +3546,25 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                                 <property name="can_focus">True</property>
                                                 <property name="selectable">False</property>
                                                 <child>
+                                                  <object class="GtkCheckButton" id="selection_menu__favorite_check">
+                                                    <property name="label" translatable="yes">Favorite</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="margin_left">2</property>
+                                                    <property name="margin_right">2</property>
+                                                    <property name="use_underline">True</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkListBoxRow">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="selectable">False</property>
+                                                <child>
                                                   <object class="GtkCheckButton" id="selection_menu__make_link_check">
                                                     <property name="label" translatable="yes">Ma_ke Link</property>
                                                     <property name="visible">True</property>

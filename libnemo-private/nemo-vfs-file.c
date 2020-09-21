@@ -132,6 +132,7 @@ set_metadata_callback (GObject *source_object,
 					 NULL,
 					 set_metadata_get_info_callback, file);
 	} else {
+        g_printerr ("ERROR SET META:%d %s\n", error->code, error->message);
 		nemo_file_unref (file);
 		g_error_free (error);
 	}
@@ -360,7 +361,8 @@ vfs_file_get_where_string (NemoFile *file)
     NemoFile *location;
     char *where_string;
 
-    if (!nemo_file_is_in_recent (file)) {
+    if (!nemo_file_is_in_recent (file) &&
+        !nemo_file_is_in_favorites (file)) {
         location = nemo_file_ref (file);
     } else {
         activation_location = nemo_file_get_activation_location (file);

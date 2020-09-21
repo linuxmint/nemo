@@ -3786,6 +3786,7 @@ nemo_icon_container_get_icon_text (NemoIconContainer *container,
 				       char                 **editable_text,
 				       char                 **additional_text,
                        gboolean              *pinned,
+                       gboolean              *fav_unavailable,
 				       gboolean               include_invisible)
 {
 	NemoIconContainerClass *klass;
@@ -3793,7 +3794,7 @@ nemo_icon_container_get_icon_text (NemoIconContainer *container,
 	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
 	g_assert (klass->get_icon_text != NULL);
 
-    klass->get_icon_text (container, data, editable_text, additional_text, pinned, include_invisible);
+    klass->get_icon_text (container, data, editable_text, additional_text, pinned, fav_unavailable, include_invisible);
 }
 
 static gboolean
@@ -3826,7 +3827,7 @@ nemo_icon_container_search_iter (NemoIconContainer *container,
 	for (p = container->details->icons; p != NULL && count != n; p = p->next) {
 		icon = p->data;
 		nemo_icon_container_get_icon_text (container, icon->data, &name,
-						       NULL, NULL, TRUE);
+						       NULL, NULL, NULL, TRUE);
 
 		/* This can happen if a key event is handled really early while
 		 * loading the icon container, before the items have all been
