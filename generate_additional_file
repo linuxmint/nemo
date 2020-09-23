@@ -19,7 +19,7 @@ prefix = """[Desktop Entry]
 """
 
 suffix = """Exec=nemo %U
-Icon=folder
+Icon=system-file-manager
 # Translators: these are keywords of the file manager
 Keywords=folders;filesystem;explorer;
 Terminal=false
