@@ -212,7 +212,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="model32">
+  <object class="GtkListStore" id="model64">
     <columns>
       <!-- column-name gchararray -->
       <column type="gchararray"/>
@@ -256,6 +256,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       </row>
       <row>
         <col id="0" translatable="yes">32 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">64 GB</col>
       </row>
     </data>
   </object>
@@ -2356,7 +2359,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                               <object class="GtkComboBox" id="preview_image_size_combobox">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="model">model32</property>
+                                                <property name="model">model64</property>
                                                 <child>
                                                   <object class="GtkCellRendererText" id="renderer8"/>
                                                   <attributes>
