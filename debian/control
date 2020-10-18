@@ -20,6 +20,7 @@ Build-Depends:
  libgtk-3-dev (>= 3.9.10),
  libgtk-3-doc,
  libnotify-dev (>= 0.7.0),
+ libpango1.0-dev,
  libx11-dev,
  libxapp-dev (>= 1.4.0),
  libxext-dev,
