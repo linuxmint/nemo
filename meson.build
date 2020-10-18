@@ -131,6 +131,9 @@ if libselinux_enabled
 endif
 conf.set('HAVE_SELINUX', libselinux_enabled)
 
+# make sure pango development files are installed
+pango = dependency('pango', version: '>=1.40.0')
+# check for newer pango for necessary workarounds
 new_pango = dependency('pango', version: '>=1.44.0', required: false)
 if new_pango.found()
   conf.set('HAVE_PANGO_144', true)
