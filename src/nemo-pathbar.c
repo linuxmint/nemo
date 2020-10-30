@@ -364,7 +364,7 @@ nemo_path_bar_init (NemoPathBar *path_bar)
 
     gtk_drag_dest_set (GTK_WIDGET (path_bar->priv->down_slider_button),
                0, NULL, 0, 0);
-    gtk_drag_dest_set_track_motion (GTK_WIDGET (path_bar->priv->up_slider_button), TRUE);
+    gtk_drag_dest_set_track_motion (GTK_WIDGET (path_bar->priv->down_slider_button), TRUE);
     g_signal_connect (path_bar->priv->down_slider_button,
               "drag-motion",
               G_CALLBACK (nemo_path_bar_slider_drag_motion),
