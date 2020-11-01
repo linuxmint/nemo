@@ -30,3 +30,7 @@ override_dh_strip:
 override_dh_python3:
 	dh_python3 -p nemo-data /usr/share/nemo
 
+# workaround for fix lmde4 build
+override_dh_dwz:
+	# Disabled
+	:
