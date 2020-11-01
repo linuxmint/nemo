@@ -31,8 +31,3 @@ override_dh_makeshlibs:
 
 override_dh_installmime:
 	dh_installmime -pnemo-data
-
-# --list-missing will be default in compat 12
-override_dh_missing:
-	dh_missing --list-missing
-
