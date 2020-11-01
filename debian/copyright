@@ -32,8 +32,7 @@ Copyright: 2009, Alexander Larsson
            1999-2000, Red Hat Inc
 License: GPL-2+
 
-Files: COPYING.LIB
-       cut-n-paste-code/libegg/eggtreemultidnd.c
+Files: cut-n-paste-code/libegg/eggtreemultidnd.c
        cut-n-paste-code/libegg/eggtreemultidnd.h
        data/dbus-interfaces.xml
        data/freedesktop-dbus-interfaces.xml
@@ -100,8 +99,6 @@ Files: COPYING.LIB
        libnemo-private/nemo-column-chooser.h
        libnemo-private/nemo-column-utilities.c
        libnemo-private/nemo-column-utilities.h
-       libnemo-private/nemo-context-menu-menu-item.c
-       libnemo-private/nemo-context-menu-menu-item.h
        libnemo-private/nemo-dnd.c
        libnemo-private/nemo-dnd.h
        libnemo-private/nemo-entry.c

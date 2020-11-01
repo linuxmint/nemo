@@ -1,5 +1,5 @@
 # No libtool files
-usr/lib/x86_64-linux-gnu/libnemo-extension.la
+usr/lib/*/libnemo-extension.la
 # False positives
 usr/share/man/man1/nemo.1
 usr/share/man/man1/nemo-connect-server.1
