@@ -27,5 +27,6 @@ override_dh_auto_test:
 override_dh_strip:
 	dh_strip --dbg-package=nemo-dbg
 
-
+override_dh_python3:
+	dh_python3 -p nemo-data /usr/share/nemo
 

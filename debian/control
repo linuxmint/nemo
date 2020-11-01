@@ -5,6 +5,7 @@ Maintainer: Linux Mint <root@linuxmint.com>
 Build-Depends:
  cinnamon-l10n,
  debhelper-compat (= 12),
+ dh-python,
  gobject-introspection,
  gtk-doc-tools (>= 1.4),
  intltool (>= 0.40.1),
