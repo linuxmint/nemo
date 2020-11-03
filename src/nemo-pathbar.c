@@ -445,8 +445,6 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
     ButtonData *button_data;
     NemoPathBar *path_bar;
     GList *list;
-    gint child_height;
-    gint height;
     gint child_min, child_nat;
 
     path_bar = NEMO_PATH_BAR (widget);
@@ -457,8 +455,6 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
     for (list = path_bar->priv->button_list; list; list = list->next) {
         button_data = BUTTON_DATA (list->data);
         gtk_widget_get_preferred_width (button_data->button, &child_min, &child_nat);
-        gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
-        height = MAX (height, child_height);
         *minimum = MAX (*minimum, child_min);
         *natural = MAX (*natural, child_nat);
     }
