@@ -450,7 +450,6 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
     path_bar = NEMO_PATH_BAR (widget);
 
     *minimum = *natural = 0;
-    height = 0;
 
     for (list = path_bar->priv->button_list; list; list = list->next) {
         button_data = BUTTON_DATA (list->data);
