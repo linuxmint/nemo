@@ -4900,7 +4900,6 @@ nemo_file_get_date_as_string (NemoFile       *file,
 	gboolean use_24;
 	const gchar *format;
 	gchar *result;
-	gchar *result_with_ratio;
     int date_format_pref;
 
   	if (!nemo_file_get_date (file, date_type, &file_time_raw))
@@ -5055,12 +5054,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
  out:
 	g_date_time_unref (file_date_time);
 
-	/* Replace ":" with ratio. Replacement is done afterward because g_date_time_format
-	 * may fail with utf8 chars in some locales */
-	result_with_ratio = eel_str_replace_substring (result, ":", "∶");
- 	g_free (result);
-
-        return  result_with_ratio;
+	return result;
 }
 
 static NemoSpeedTradeoffValue show_directory_item_count;
