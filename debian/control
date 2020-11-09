@@ -26,11 +26,9 @@ Build-Depends:
  libxext-dev,
  libxml2-dev (>= 2.7.8),
  libxrender-dev,
- libxt-dev,
  meson,
  python3,
  python3-gi,
- shared-mime-info (>= 0.50),
  x11proto-core-dev,
 Homepage: http://www.github.com/linuxmint/nemo/
 Standards-Version: 3.9.5
