@@ -320,17 +320,15 @@ xdg_dir_changed (NemoFile *file,
 
 		if (path) {
 			char *argv[5];
-			int i;
 
 			g_free (dir->path);
 			dir->path = path;
 
-			i = 0;
-			argv[i++] = (char *)"xdg-user-dirs-update";
-			argv[i++] = (char *)"--set";
-			argv[i++] = dir->type;
-			argv[i++] = dir->path;
-			argv[i++] = NULL;
+			argv[0] = (char *)"xdg-user-dirs-update";
+			argv[1] = (char *)"--set";
+			argv[2] = dir->type;
+			argv[3] = dir->path;
+			argv[4] = NULL;
 
 			/* We do this sync, to avoid possible race-conditions
 			   if multiple dirs change at the same time. Its
