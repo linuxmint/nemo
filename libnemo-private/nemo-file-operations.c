@@ -250,30 +250,33 @@ static char * query_fs_type (GFile *file,
 static int
 seconds_count_format_time_units (int seconds)
 {
-	int minutes;
-	int hours;
-
 	if (seconds < 0) {
 		/* Just to make sure... */
 		seconds = 0;
 	}
 
+	/* less than 1 minute */
 	if (seconds < 60) {
 		/* seconds */
 		return seconds;
 	}
 
-	if (seconds < 60*60) {
+	int minutes;
+
+	/* less than 1 hour */
+	if (seconds < 3600) {
 		/* minutes */
 		minutes = seconds / 60;
 		return minutes;
 	}
 
-	hours = seconds / (60*60);
+	int hours;
+	hours = seconds / (3600);
 
-	if (seconds < 60*60*4) {
+	/* less than 4 hour */
+	if (seconds < 14400) {
 		/* minutes + hours */
-		minutes = (seconds - hours * 60 * 60) / 60;
+		minutes = (seconds - hours * 3600) / 60;
 		return minutes + hours;
 	}
 
@@ -283,33 +286,36 @@ seconds_count_format_time_units (int seconds)
 static char *
 format_time (int seconds)
 {
-	int minutes;
-	int hours;
-	char *res;
-
 	if (seconds < 0) {
 		/* Just to make sure... */
 		seconds = 0;
 	}
 
+	/* less than 1 minute */
 	if (seconds < 60) {
 		return g_strdup_printf (ngettext ("%'d second","%'d seconds", (int) seconds), (int) seconds);
 	}
 
-	if (seconds < 60*60) {
+	int minutes;
+
+	/* less than 1 hour */
+	if (seconds < 3600) {
 		minutes = seconds / 60;
 		return g_strdup_printf (ngettext ("%'d minute", "%'d minutes", minutes), minutes);
 	}
 
-	hours = seconds / (60*60);
+	int hours;
+	hours = seconds / (3600);
 
-	if (seconds < 60*60*4) {
+	/* less than 4 hour */
+	if (seconds < 14400) {
 		char *h, *m;
 
 		minutes = (seconds - hours * 60 * 60) / 60;
 
 		h = g_strdup_printf (ngettext ("%'d hour", "%'d hours", hours), hours);
 		m = g_strdup_printf (ngettext ("%'d minute", "%'d minutes", minutes), minutes);
+		char *res;
 		res = g_strconcat (h, ", ", m, NULL);
 		g_free (h);
 		g_free (m);
@@ -325,15 +331,15 @@ static char *
 shorten_utf8_string (const char *base, int reduce_by_num_bytes)
 {
 	int len;
-	char *ret;
-	const char *p;
-
 	len = strlen (base);
 	len -= reduce_by_num_bytes;
 
 	if (len <= 0) {
 		return NULL;
 	}
+	
+	char *ret;
+	const char *p;
 
 	ret = g_new (char, len + 1);
 
