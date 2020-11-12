@@ -395,9 +395,8 @@ unschedule_user_dirs_changed (void)
 static void
 free_xdg_dir_cache (void)
 {
-	int i;
-
 	if (cached_xdg_dirs != NULL) {
+		int i;
 		for (i = 0; cached_xdg_dirs[i].type != NULL; i++) {
 			if (cached_xdg_dirs[i].file != NULL) {
 				nemo_file_monitor_remove (cached_xdg_dirs[i].file,
@@ -1457,12 +1456,11 @@ nemo_get_x_content_types_for_mount_async (GMount *mount,
 char **
 nemo_get_cached_x_content_types_for_mount (GMount *mount)
 {
-	char **cached;
-
 	if (mount == NULL) {
 		return NULL;
 	}
-
+	
+	char **cached;
 	cached = g_object_get_data (G_OBJECT (mount), "nemo-content-type-cache");
 	if (cached != NULL) {
 		return g_strdupv (cached);
