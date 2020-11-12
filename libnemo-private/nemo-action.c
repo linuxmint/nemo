@@ -1175,7 +1175,10 @@ get_path (NemoAction *action, NemoFile *file)
 
     orig = nemo_file_get_path (file);
 
-    quote_escaped = eel_str_escape_quotes (orig);
+    if (action->quote_type != QUOTE_TYPE_DOUBLE && action-quote_type != QUOTE_TYPE_SINGLE)
+        quote_escaped = eel_str_escape_quotes (orig);
+    else
+        quote_escaped = orig;
 
     if (action->escape_space) {
         ret = eel_str_escape_spaces (quote_escaped);
@@ -1184,7 +1187,9 @@ get_path (NemoAction *action, NemoFile *file)
     }
 
     g_free (orig);
-    g_free (quote_escaped);
+
+    if (quote_escaped != orig)
+        g_free (quote_escaped);
 
     return ret;
 }
