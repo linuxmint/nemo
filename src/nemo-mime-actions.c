@@ -1152,9 +1152,20 @@ run_open_with_dialog (ActivateParametersSpecial *params)
     char *mime_type;
     char *uri = NULL;
     GList *uris = NULL;
+    GtkWidget *error_dialog;
 
     mime_type = nemo_file_get_mime_type (params->file);
     uri = nemo_file_get_uri (params->file);
+    if (uri == NULL) {
+        error_dialog = gtk_message_dialog_new (params->parent_window,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_OK,
+                                                "Error occurred while retrieving info about the file");
+        gtk_dialog_run (error_dialog);
+        gtk_widget_destroy (error_dialog);
+        return;
+    }
 
     dialog = gtk_dialog_new_with_buttons (_("Open with"),
                                           params->parent_window,
