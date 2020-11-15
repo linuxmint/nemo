@@ -77,8 +77,10 @@ prepend_terminal_to_command_line (const char *command_line)
         check = g_find_program_in_path ("gnome-terminal");
         if (check != NULL) {
             /* Note that gnome-terminal takes -x and
-             * as -e in gnome-terminal is broken we use that. */
-            prefix = g_strdup_printf ("gnome-terminal -x");
+             * as -e in gnome-terminal is broken we use that.
+               20201114 - There looks to be an issue with -x now with gnome-terminal
+               and -- is now the recommended option */
+            prefix = g_strdup_printf ("gnome-terminal --");
         } else {
             check = g_find_program_in_path ("nxterm");
 
