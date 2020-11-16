@@ -1175,7 +1175,7 @@ get_path (NemoAction *action, NemoFile *file)
 
     orig = nemo_file_get_path (file);
 
-    if (action->quote_type != QUOTE_TYPE_DOUBLE && action-quote_type != QUOTE_TYPE_SINGLE)
+    if (action->quote_type != QUOTE_TYPE_DOUBLE && action->quote_type != QUOTE_TYPE_SINGLE)
         quote_escaped = eel_str_escape_quotes (orig);
     else
         quote_escaped = orig;
