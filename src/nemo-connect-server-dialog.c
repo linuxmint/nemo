@@ -675,8 +675,6 @@ connect_dialog_response_cb (NemoConnectServerDialog *dialog,
 			    int response_id,
 			    gpointer data)
 {
-	GError *error;
-
 	switch (response_id) {
 	case RESPONSE_CONNECT:
 		connect_to_server_or_finish_fill (dialog);
@@ -685,17 +683,6 @@ connect_dialog_response_cb (NemoConnectServerDialog *dialog,
 	case GTK_RESPONSE_DELETE_EVENT:
 	case GTK_RESPONSE_CANCEL:
 		connect_dialog_destroy (dialog);
-		break;
-	case GTK_RESPONSE_HELP :
-		error = NULL;
-		gtk_show_uri (gtk_window_get_screen (GTK_WINDOW (dialog)),
-			      "help:gnome-help/nemo-connect",
-			      gtk_get_current_event_time (), &error);
-		if (error) {
-			eel_show_error_dialog (_("There was an error displaying help."), error->message,
-					       GTK_WINDOW (dialog));
-			g_error_free (error);
-		}
 		break;
 	default :
 		g_assert_not_reached ();
@@ -1100,9 +1087,6 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 
 	bind_visibility (dialog, dialog->details->password_entry, checkbox);
 
-        gtk_dialog_add_button (GTK_DIALOG (dialog),
-                               GTK_STOCK_HELP,
-                               GTK_RESPONSE_HELP);
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
 			       GTK_STOCK_CANCEL,
 			       GTK_RESPONSE_CANCEL);
