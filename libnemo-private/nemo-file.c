@@ -6862,10 +6862,6 @@ get_basic_type_for_mime_type (const char *mime_type)
         }
     }
 
-    if (basic_type == NULL) {
-        basic_type = g_strdup (_("Unknown"));
-    }
-
     g_free (icon_name);
 
     return basic_type;
@@ -6909,6 +6905,10 @@ get_description (NemoFile     *file,
         category = get_basic_type_for_mime_type (mime_type);
         if (category != NULL) {
             return category;
+        }
+
+        if (category == NULL) {
+            return g_content_type_get_description (mime_type);
         }
     }
 
