@@ -1601,6 +1601,7 @@ setup_file_path_mounted_mount (GFile *location, ButtonData *button_data)
         g_object_unref (root);
     }
     g_list_free_full (mounts, g_object_unref);
+    g_object_unref (volume_monitor);
     return result;
 }
 
