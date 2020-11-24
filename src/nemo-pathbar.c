@@ -364,7 +364,7 @@ nemo_path_bar_init (NemoPathBar *path_bar)
 
     gtk_drag_dest_set (GTK_WIDGET (path_bar->priv->down_slider_button),
                0, NULL, 0, 0);
-    gtk_drag_dest_set_track_motion (GTK_WIDGET (path_bar->priv->up_slider_button), TRUE);
+    gtk_drag_dest_set_track_motion (GTK_WIDGET (path_bar->priv->down_slider_button), TRUE);
     g_signal_connect (path_bar->priv->down_slider_button,
               "drag-motion",
               G_CALLBACK (nemo_path_bar_slider_drag_motion),
@@ -445,20 +445,15 @@ nemo_path_bar_get_preferred_width (GtkWidget *widget,
     ButtonData *button_data;
     NemoPathBar *path_bar;
     GList *list;
-    gint child_height;
-    gint height;
     gint child_min, child_nat;
 
     path_bar = NEMO_PATH_BAR (widget);
 
     *minimum = *natural = 0;
-    height = 0;
 
     for (list = path_bar->priv->button_list; list; list = list->next) {
         button_data = BUTTON_DATA (list->data);
         gtk_widget_get_preferred_width (button_data->button, &child_min, &child_nat);
-        gtk_widget_get_preferred_height (button_data->button, &child_height, NULL);
-        height = MAX (height, child_height);
         *minimum = MAX (*minimum, child_min);
         *natural = MAX (*natural, child_nat);
     }
