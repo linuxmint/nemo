@@ -30,6 +30,7 @@
 #include <gio/gio.h>
 #include <math.h>
 #include <cairo-gobject.h>
+#include <libxapp/xapp-favorites.h>
 
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-bookmark.h>
@@ -665,22 +666,29 @@ home_on_different_fs (const gchar *home_uri)
     return res;
 }
 
-static gboolean
-recent_is_supported (void)
+static void
+recent_and_favorites_supported (gboolean *recent,
+                                gboolean *favorites)
 {
-    if (!g_settings_get_boolean (cinnamon_privacy_preferences, NEMO_PREFERENCES_RECENT_ENABLED))
-        return FALSE;
+    gboolean recent_setting;
+    recent_setting = FALSE;
+    *recent = *favorites = FALSE;
+
+    recent_setting = g_settings_get_boolean (cinnamon_privacy_preferences,
+                                             NEMO_PREFERENCES_RECENT_ENABLED);
 
     const char * const *supported;
     int i;
 
     supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
     for (i = 0; supported[i] != NULL; i++) {
-       if (strcmp ("recent", supported[i]) == 0) {
-           return TRUE;
-       }
+        if (strcmp ("recent", supported[i]) == 0 && recent_setting) {
+            *recent = TRUE;
+        }
+        if (strcmp ("favorites", supported[i]) == 0) {
+            *favorites = TRUE;
+        }
     }
-    return FALSE;
 }
 
 static gchar *
@@ -823,7 +831,24 @@ update_places (NemoPlacesSidebar *sidebar)
         g_free (tooltip);
     }
 
-    if (recent_is_supported ()) {
+    gboolean show_recent, show_favorites;
+    recent_and_favorites_supported (&show_recent, &show_favorites);
+
+    if (show_favorites) {
+        gint n = xapp_favorites_get_n_favorites (xapp_favorites_get_default ());
+
+        if (n > 0) {
+            mount_uri = (char *)"favorites:///"; /* No need to strdup */
+            icon = "xapp-favorites-symbolic";
+            cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                                  SECTION_COMPUTER,
+                                  _("Favorites"), icon, mount_uri,
+                                  NULL, NULL, NULL, 0,
+                                  _("Favorite files"), 0, FALSE, cat_iter);
+        }
+    }
+
+    if (show_recent) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
         icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT;
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -853,7 +878,7 @@ update_places (NemoPlacesSidebar *sidebar)
                            cat_iter);
     g_free (tooltip);
 
-    if (!recent_is_supported())
+    if (!show_recent)
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
     mount_uri = (char *)"trash:///"; /* No need to strdup */
@@ -3868,6 +3893,14 @@ trash_state_changed_cb (NemoTrashMonitor *trash_monitor,
 	bookmarks_check_popup_sensitivity (sidebar);
 }
 
+static void
+favorites_changed_cb (gpointer data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (data);
+
+    update_places (sidebar);
+}
+
 static gboolean
 tree_selection_func (GtkTreeSelection *selection,
 		     GtkTreeModel *model,
@@ -4260,6 +4293,11 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 				 "trash_state_changed",
 				 G_CALLBACK (trash_state_changed_cb),
 				 sidebar, 0);
+
+    g_signal_connect_swapped (xapp_favorites_get_default (),
+                              "changed",
+                              G_CALLBACK (favorites_changed_cb),
+                              sidebar);
 }
 
 static void

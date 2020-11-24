@@ -1034,13 +1034,24 @@ handle_nonlocal_move (NemoIconContainer *container,
 		x = nemo_icon_container_get_canvas_width (container, allocation) - x;
 	}
 
-	/* start the copy */
-	g_signal_emit_by_name (container, "move_copy_items",
-			       source_uris,
-			       source_item_locations,
-			       target_uri,
-			       action,
-			       x, y);
+    if (g_strcmp0 (target_uri, "favorites:///") == 0) {
+        GList *l;
+
+        for (l = source_uris; l != NULL; l = l->next) {
+            gchar *uri = (gchar *) l->data;
+            NemoFile *source_file = nemo_file_get_by_uri (uri);
+            nemo_file_set_is_favorite (source_file, TRUE);
+            nemo_file_unref (source_file);
+        }
+    } else {
+        /* start the copy */
+        g_signal_emit_by_name (container, "move_copy_items",
+                               source_uris,
+                               source_item_locations,
+                               target_uri,
+                               action,
+                               x, y);
+    }
 
 	if (free_target_uri) {
 		g_free ((char *)target_uri);
@@ -1448,6 +1459,7 @@ nemo_icon_container_get_drop_action (NemoIconContainer *container,
 {
 	char *drop_target;
 	gboolean icon_hit;
+    gboolean favorites_target;
 	double world_x, world_y;
 
 	icon_hit = FALSE;
@@ -1459,6 +1471,22 @@ nemo_icon_container_get_drop_action (NemoIconContainer *container,
 	/* find out if we're over an icon */
 	canvas_widget_to_world (EEL_CANVAS (container), x, y, &world_x, &world_y);
 	*action = 0;
+
+    drop_target = nemo_icon_container_find_drop_target (container,
+                                context, x, y, &icon_hit, FALSE);
+
+    favorites_target = FALSE;
+
+    if (g_strcmp0 (drop_target, "favorites:///") == 0) {
+        favorites_target = TRUE;
+    }
+
+    g_free (drop_target);
+
+    if (favorites_target) {
+        *action = GDK_ACTION_COPY;
+        return;
+    }
 
 	/* case out on the type of object being dragged */
 	switch (container->details->dnd_info->drag_info.data_type) {

@@ -51,6 +51,7 @@
 #define NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS     "folder-videos-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH "folder-saved-search-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER_RECENT "document-open-recent-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_FAVORITES "xapp-favorites-symbolic"
 
 #define NEMO_ICON_SYMBOLIC_MISSING_BOOKMARK "nemo-bookmark-not-found-symbolic"
 

@@ -27,6 +27,7 @@
 
 #include <gtk/gtk.h>
 #include <gio/gio.h>
+#include <pango/pango.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-icon-info.h>
 
@@ -117,10 +118,7 @@ typedef enum {
 #define NEMO_FILE_EMBLEM_NAME_CANT_WRITE "nowrite"
 #define NEMO_FILE_EMBLEM_NAME_TRASH "trash"
 #define NEMO_FILE_EMBLEM_NAME_NOTE "note"
-
-/* Used in list view and tree-sidebar to mark pinned files */
-#define UNPINNED_TEXT_WEIGHT 400
-#define PINNED_TEXT_WEIGHT 1000
+#define NEMO_FILE_EMBLEM_NAME_FAVORITE "xapp-favorite"
 
 typedef void (*NemoFileCallback)          (NemoFile  *file,
 				               gpointer       callback_data);
@@ -195,7 +193,6 @@ const char *            nemo_file_peek_name                         (NemoFile   
 GFile *                 nemo_file_get_location                      (NemoFile                   *file);
 char *			 nemo_file_get_description			 (NemoFile			 *file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);
-const char *            nemo_file_peek_uri                          (NemoFile                   *file);
 char *                  nemo_file_get_path                          (NemoFile                   *file);
 char *                  nemo_file_get_uri_scheme                    (NemoFile                   *file);
 NemoFile *          nemo_file_get_parent                        (NemoFile                   *file);
@@ -229,6 +226,8 @@ gboolean                nemo_file_is_user_special_directory         (NemoFile   
 gboolean		nemo_file_is_archive			(NemoFile			*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
+gboolean                nemo_file_is_in_favorites                   (NemoFile                   *file);
+gboolean                nemo_file_is_unavailable_favorite           (NemoFile                   *file);
 gboolean                nemo_file_is_in_admin                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
 gboolean		nemo_file_is_home				(NemoFile                   *file);
@@ -529,6 +528,8 @@ void     nemo_file_set_is_desktop_orphan          (NemoFile *file, gboolean is_d
 
 gboolean nemo_file_get_pinning                    (NemoFile *file);
 void     nemo_file_set_pinning                    (NemoFile *file, gboolean  pin);
+gboolean nemo_file_get_is_favorite                (NemoFile *file);
+void     nemo_file_set_is_favorite                (NemoFile *file, gboolean favorite);
 void     nemo_file_set_load_deferred_attrs        (NemoFile *file,
                                                    NemoFileLoadDeferredAttrs load_deferred_attrs);
 NemoFileLoadDeferredAttrs nemo_file_get_load_deferred_attrs (NemoFile *file);

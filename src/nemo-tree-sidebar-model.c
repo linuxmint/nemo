@@ -94,6 +94,7 @@ struct TreeNode {
 	guint force_has_dummy : 1;
 	guint inserted : 1;
     guint pinned : 1;
+    guint fav_unavailable : 1;
 };
 
 struct FMTreeModelDetails {
@@ -379,6 +380,22 @@ tree_node_update_pinning (TreeNode *node)
 
     if (file_value != node->pinned) {
         node->pinned = file_value;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static gboolean
+tree_node_update_fav_unavailable (TreeNode *node)
+{
+    gboolean file_value;
+
+    file_value = nemo_file_is_unavailable_favorite (node->file);
+
+    if (file_value != node->fav_unavailable) {
+        node->fav_unavailable = file_value;
 
         return TRUE;
     }
@@ -828,6 +845,7 @@ update_node_without_reporting (FMTreeModel *model, TreeNode *node)
 	changed |= tree_node_update_closed_icon (node);
     changed |= tree_node_update_open_icon (node);
     changed |= tree_node_update_pinning (node);
+    changed |= tree_node_update_fav_unavailable (node);
 
 	return changed;
 }
@@ -1274,9 +1292,18 @@ fm_tree_model_get_value (GtkTreeModel *model, GtkTreeIter *iter, int column, GVa
         g_value_init (value, G_TYPE_INT);
 
         if (node != NULL) {
-            g_value_set_int (value, node->pinned ? PINNED_TEXT_WEIGHT : UNPINNED_TEXT_WEIGHT);
+            if (node->fav_unavailable) {
+                g_value_set_int (value, UNAVAILABLE_TEXT_WEIGHT);
+            }
+            else
+            if (node->pinned) {
+                g_value_set_int (value, PINNED_TEXT_WEIGHT);
+            }
+            else {
+                g_value_set_int (value, NORMAL_TEXT_WEIGHT);
+            }
         } else {
-            g_value_set_int (value, UNPINNED_TEXT_WEIGHT);
+            g_value_set_int (value, NORMAL_TEXT_WEIGHT);
         }
 
         break;

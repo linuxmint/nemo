@@ -108,6 +108,7 @@ dir_changed (GFileMonitor* monitor,
 	char *uri, *to_uri;
 
 	uri = g_file_get_uri (child);
+    // g_printerr ("ATT CHANGED %s  %d\n", uri, event_type);
 	to_uri = NULL;
 	if (other_file) {
 		to_uri = g_file_get_uri (other_file);

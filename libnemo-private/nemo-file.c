@@ -62,6 +62,7 @@
 #include <glib.h>
 #include <libnemo-extension/nemo-file-info.h>
 #include <libnemo-extension/nemo-extension-private.h>
+#include <libxapp/xapp-favorites.h>
 #include <libxml/parser.h>
 #include <pwd.h>
 #include <stdlib.h>
@@ -187,7 +188,8 @@ nemo_file_init (NemoFile *file)
     file->details->desktop_monitor = -1;
     file->details->cached_position_x = -1;
     file->details->cached_position_y = -1;
-    file->details->pinning = FILE_PINNING_UNKNOWN;
+    file->details->pinning = FILE_META_STATE_INIT;
+    file->details->favorite = FILE_META_STATE_INIT;
     file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_NO;
 
 	nemo_file_clear_info (file);
@@ -432,6 +434,7 @@ nemo_file_update_metadata_from_info (NemoFile *file,
 		changed = TRUE;
 		clear_metadata (file);
 	}
+
 	return changed;
 }
 
@@ -866,8 +869,6 @@ finalize (GObject *object)
 	if (file->details->metadata) {
 		metadata_hash_free (file->details->metadata);
 	}
-
-    g_free (file->details->cached_uri);
 
 	G_OBJECT_CLASS (nemo_file_parent_class)->finalize (object);
 }
@@ -1643,18 +1644,6 @@ nemo_file_get_uri (NemoFile *file)
 	return uri;
 }
 
-const char *
-nemo_file_peek_uri (NemoFile *file)
-{
-    g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
-
-    if (file->details->cached_uri == NULL) {
-        file->details->cached_uri = nemo_file_get_uri (file);
-    }
-
-    return file->details->cached_uri;
-}
-
 /* Return the actual path associated with the passed-in file. */
 char *
 nemo_file_get_path (NemoFile *file)
@@ -1799,6 +1788,11 @@ rename_get_info_callback (GObject *source_object,
 
 		new_uri = nemo_file_get_uri (op->file);
 		nemo_directory_moved (old_uri, new_uri);
+
+        xapp_favorites_rename (xapp_favorites_get_default (),
+                               old_uri,
+                               new_uri);
+
 		g_free (new_uri);
 		g_free (old_uri);
 
@@ -2281,7 +2275,8 @@ update_info_internal (NemoFile *file,
 
     file->details->thumbnail_access_problem = FALSE;
 
-    file->details->pinning = FILE_PINNING_UNKNOWN;
+    file->details->pinning = FILE_META_STATE_INIT;
+    file->details->favorite = FILE_META_STATE_INIT;
 
 	/* FIXME bugzilla.gnome.org 42044: Need to let links that
 	 * point to the old name know that the file has been renamed.
@@ -2467,6 +2462,8 @@ update_info_internal (NemoFile *file,
 	file->details->start_stop_type = start_stop_type;
 	file->details->can_poll_for_media = can_poll_for_media;
 	file->details->is_media_check_automatic = is_media_check_automatic;
+
+    file->details->favorite_checked = FALSE;
 
 	free_owner = FALSE;
 	owner = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_OWNER_USER);
@@ -3098,7 +3095,8 @@ file_has_note (NemoFile *file)
 
 static GList *
 prepend_automatic_keywords (NemoFile *file,
-			    GList *names)
+                            NemoFile *view_file,
+                            GList *names)
 {
 	/* Prepend in reverse order. */
 
@@ -3111,10 +3109,14 @@ prepend_automatic_keywords (NemoFile *file,
 		names = g_list_prepend
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_CANT_READ));
 	}
-	if (nemo_file_is_symbolic_link (file)) {
+	if (nemo_file_is_symbolic_link (file) && !nemo_file_is_in_favorites (file)) {
 		names = g_list_prepend
 			(names, g_strdup (NEMO_FILE_EMBLEM_NAME_SYMBOLIC_LINK));
 	}
+    if (nemo_file_get_is_favorite (file) && !nemo_file_is_in_favorites (file)) {
+        names = g_list_prepend
+            (names, g_strdup (NEMO_FILE_EMBLEM_NAME_FAVORITE));
+    }
 
 	return names;
 }
@@ -3239,9 +3241,21 @@ nemo_file_compare_for_sort_internal (NemoFile *file_1,
 {
 	gboolean is_directory_1, is_directory_2;
     gboolean pinned_1, pinned_2;
+    gboolean favorite_1, favorite_2;
+
+    favorite_1 = nemo_file_get_is_favorite (file_1);
+    favorite_2 = nemo_file_get_is_favorite (file_2);
 
     pinned_1 = nemo_file_get_pinning (file_1);
     pinned_2 = nemo_file_get_pinning (file_2);
+
+    if (favorite_1 && !favorite_2) {
+        return -1;
+    }
+
+    if (favorite_2 && !favorite_1) {
+        return +1;
+    }
 
     if (pinned_1 && !pinned_2) {
         return -1;
@@ -4552,6 +4566,8 @@ nemo_file_get_control_icon_name (NemoFile *file)
         icon_name = nemo_trash_monitor_get_symbolic_icon_name ();
     } else if (eel_uri_is_recent (uri)) {
         icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_RECENT);
+    } else if (eel_uri_is_favorite (uri)) {
+        icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FOLDER_FAVORITES);
     } else if (eel_uri_is_network (uri)) {
         icon_name = g_strdup (NEMO_ICON_SYMBOLIC_NETWORK);
     } else {
@@ -4598,7 +4614,7 @@ nemo_file_get_pinning (NemoFile *file)
 {
     g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
-    if (file->details->pinning == FILE_PINNING_UNKNOWN) {
+    if (file->details->pinning == FILE_META_STATE_INIT) {
         file->details->pinning =  nemo_file_get_boolean_metadata (file, NEMO_METADATA_KEY_PINNED, FALSE);
     }
 
@@ -4612,6 +4628,50 @@ nemo_file_set_pinning (NemoFile *file,
     g_return_if_fail (NEMO_IS_FILE (file));
 
     nemo_file_set_boolean_metadata (file, NEMO_METADATA_KEY_PINNED, TRUE, pin);
+}
+
+gboolean
+nemo_file_get_is_favorite (NemoFile *file)
+{
+    g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
+
+    if (file->details->favorite == FILE_META_STATE_INIT) {
+        gboolean meta_bool = nemo_file_get_boolean_metadata (file, NEMO_METADATA_KEY_FAVORITE, FALSE);
+        file->details->favorite = meta_bool ? FILE_META_STATE_TRUE : FILE_META_STATE_FALSE;
+    }
+
+    return file->details->favorite;
+}
+
+void
+nemo_file_set_is_favorite (NemoFile *file,
+                           gboolean  favorite)
+{
+    g_return_if_fail (NEMO_IS_FILE (file));
+    NemoFile *real_file;
+    gchar *uri;
+
+    if (nemo_file_is_in_favorites (file)) {
+        uri = nemo_file_get_symbolic_link_target_uri (file);
+        real_file = nemo_file_get_existing_by_uri (uri);
+    } else {
+        uri = nemo_file_get_uri (file);
+        real_file = nemo_file_ref (file);
+    }
+
+    if (favorite)
+    {
+        nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, TRUE);
+        xapp_favorites_add (xapp_favorites_get_default (), uri);
+    }
+    else
+    {
+        nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, FALSE);
+        xapp_favorites_remove (xapp_favorites_get_default (), uri);
+    }
+
+    nemo_file_unref (real_file);
+    g_free (uri);
 }
 
 static gint
@@ -4900,7 +4960,6 @@ nemo_file_get_date_as_string (NemoFile       *file,
 	gboolean use_24;
 	const gchar *format;
 	gchar *result;
-	gchar *result_with_ratio;
     int date_format_pref;
 
   	if (!nemo_file_get_date (file, date_type, &file_time_raw))
@@ -5055,12 +5114,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
  out:
 	g_date_time_unref (file_date_time);
 
-	/* Replace ":" with ratio. Replacement is done afterward because g_date_time_format
-	 * may fail with utf8 chars in some locales */
-	result_with_ratio = eel_str_replace_substring (result, ":", "∶");
- 	g_free (result);
-
-        return  result_with_ratio;
+	return result;
 }
 
 static NemoSpeedTradeoffValue show_directory_item_count;
@@ -5436,6 +5490,11 @@ gboolean
 nemo_file_can_set_permissions (NemoFile *file)
 {
 	uid_t user_id;
+
+    if (file == NULL)
+    {
+        return FALSE;
+    }
 
 	if (file->details->uid != -1 &&
 	    nemo_file_is_local (file)) {
@@ -6862,7 +6921,7 @@ update_description_for_link (NemoFile *file, char *string)
 {
 	char *res;
 
-	if (nemo_file_is_symbolic_link (file)) {
+	if (nemo_file_is_symbolic_link (file) && !nemo_file_is_in_favorites (file)) {
 		g_assert (!nemo_file_is_broken_symbolic_link (file));
 		if (string == NULL) {
 			return g_strdup (_("link"));
@@ -7019,7 +7078,7 @@ nemo_file_get_emblem_icons (NemoFile *file,
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
 	keywords = nemo_file_get_keywords (file);
-	keywords = prepend_automatic_keywords (file, keywords);
+	keywords = prepend_automatic_keywords (file, view_file, keywords);
 
     if (view_file && nemo_file_can_write (view_file)) {
         if (!nemo_file_can_write (file) && !nemo_file_is_in_trash (file)) {
@@ -7487,6 +7546,46 @@ nemo_file_is_in_recent (NemoFile *file)
 }
 
 /**
+ * nemo_file_is_in_favorites
+ *
+ * Check if this file is a Favorite file.
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: TRUE if @file is a Favorite.
+ *
+ **/
+gboolean
+nemo_file_is_in_favorites (NemoFile *file)
+{
+   g_assert (NEMO_IS_FILE (file));
+
+   return nemo_directory_is_in_favorites (file->details->directory);
+}
+
+/**
+ * nemo_file_is_unavailable_favorite
+ *
+ * Check if this file is currently an unreachable Favorite file. This is useful
+ * for the NemoView classes to set an appropriate font weight for unavailable files
+ * like unmounted locations.
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: TRUE if @file is a Favorite and is available.
+ *
+ **/
+gboolean
+nemo_file_is_unavailable_favorite (NemoFile *file)
+{
+    g_assert (NEMO_IS_FILE (file));
+
+    if (!nemo_directory_is_in_favorites (file->details->directory)) {
+        return FALSE;
+    }
+
+    return !nemo_file_get_boolean_metadata (file, NEMO_METADATA_KEY_FAVORITE_AVAILABLE, TRUE);
+}
+
+/**
  * nemo_file_is_in_admin
  *
  * Check if this file is using admin backend.
@@ -7872,14 +7971,16 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
     }
 
     if (flags & NEMO_FILE_TOOLTIP_FLAGS_PATH) {
-        NemoFile *parent = nemo_file_get_parent (file);
-        tmp = nemo_file_get_path (parent);
-        nice = g_strdup_printf (_("Location: %s"), tmp);
+        gchar *truncated;
+        tmp = nemo_file_get_where_string (file);
+        truncated = eel_str_middle_truncate (tmp, 60);
+        nice = g_strdup_printf (_("Location: %s"), truncated);
         string = add_line (string, nice, TRUE);
         g_free (tmp);
+        g_free (truncated);
         g_free (nice);
 
-        if (nemo_file_is_symbolic_link (file)) {
+        if (nemo_file_is_symbolic_link (file) && !nemo_file_is_in_favorites (file)) {
             tmp = nemo_file_get_symbolic_link_target_path (file);
             const gchar *existing_i18n = _("Link target:");
             nice = g_strdup_printf ("%s %s", existing_i18n, tmp);
@@ -8031,6 +8132,12 @@ invalidate_mount (NemoFile *file)
 	file->details->mount_is_up_to_date = FALSE;
 }
 
+static void
+invalidate_favorite_check (NemoFile *file)
+{
+    file->details->favorite_checked = FALSE;
+}
+
 void
 nemo_file_invalidate_extension_info_internal (NemoFile *file)
 {
@@ -8101,7 +8208,9 @@ nemo_file_invalidate_attributes_internal (NemoFile *file,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_MOUNT)) {
 		invalidate_mount (file);
 	}
-
+    if (REQUEST_WANTS_TYPE (request, REQUEST_FAVORITE_CHECK)) {
+        invalidate_favorite_check (file);
+    }
 	/* FIXME bugzilla.gnome.org 45075: implement invalidating metadata */
 }
 
@@ -8178,7 +8287,8 @@ nemo_file_get_all_attributes (void)
 		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO |
 		NEMO_FILE_ATTRIBUTE_THUMBNAIL |
 		NEMO_FILE_ATTRIBUTE_MOUNT |
-        NEMO_FILE_ATTRIBUTE_BTIME;
+        NEMO_FILE_ATTRIBUTE_BTIME |
+        NEMO_FILE_ATTRIBUTE_FAVORITE_CHECK;
 }
 
 void

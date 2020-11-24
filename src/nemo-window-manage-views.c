@@ -1979,7 +1979,7 @@ nemo_window_slot_queue_reload (NemoWindowSlot *slot,
 		return;
 	}
 
-    if (clear_thumbs) {
+    if (clear_thumbs && !nemo_file_is_in_favorites (slot->viewed_file)) {
         clear_thumbnails_for_view (slot->content_view);
     }
 

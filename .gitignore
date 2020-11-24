@@ -45,4 +45,4 @@ debian/files
 *.substvars
 *.debhelper
 
-debian/build
+obj-x86_64-linux-gnu
