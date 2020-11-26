@@ -1,3 +1,70 @@
+nemo (4.8.0) ulyssa; urgency=medium
+
+  [ Soapux ]
+  * Misc cleanup
+
+  [ Oliver Smith ]
+  * data/nemo.desktop.in: fix icon
+
+  [ romovs ]
+  * Add option to preview files up to 64GB
+
+  [ Fabio Fantoni ]
+  * Drop Debian menu file
+
+  [ btryba ]
+  * Fixed small copy-paste bug.
+
+  [ Fabio Fantoni ]
+  * debian: Bump debhelper compat level to 12
+  * small improves to debian/copyright and debian/not-installed
+  * debian/rules: Drop no longer neede installmime call
+  * debian/rules: Drop dh_makeshlibs override, no longer needed
+  * debian/rules: Enable hardening bindnow
+  * debian: readd dh-python
+  * fix lmde4 build
+
+  [ Michael Webster ]
+  * debian/control: Remove unused build dependencies.
+
+  [ btryba ]
+  * Removed unused variables in pathbar function (#2549)
+
+  [ okaestne ]
+  * Remove uft8 colon-like char in datetime strings
+
+  [ Michael Webster ]
+  * Add XAppFavorites support.
+  * .gitignore: Change the build directory name.
+
+  [ icarter09 ]
+  * Fix for #2513. Avoid single quote escape by checkng for QUOTE_TYPE_SINGLE and QUOTE_TYPE_DOUBLE.
+
+  [ Michael Webster ]
+  * nemo-action.c: Fix build from previous commit typo.
+
+  [ Fabio Fantoni ]
+  * make sure pango development files are installed
+
+  [ icarter09 ]
+  * Fixes #942. Uses g_content_type_get_description for when mime type is NULL.
+
+  [ btryba ]
+  * Fixing small memory leak. Freeing volume_monitor per GIO documentation.
+
+  [ icarter09 ]
+  * Fixes #2499. Changes the option from -x to -- when using gnome-terminal
+
+  [ Isaac Carter ]
+  * nemo-connect-dialog: Remove Help button (#2562)
+  * nemo-mime-actions.c: Don't show mime button if the activation URI is null (#2559)
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+  * l10n: Generate files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 26 Nov 2020 13:54:02 +0000
+
 nemo (4.6.5) ulyana; urgency=medium
 
   [ Michael Webster ]
