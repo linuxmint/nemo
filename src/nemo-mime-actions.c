@@ -1213,7 +1213,7 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 
     NemoFile *file = nemo_file_get_existing_by_uri (uri);
     gboolean enable_exec_button;
-    char *primary, *secondary, *display_name;
+    char *primary, *secondary, *display_name, *param_uri;
     GtkWidget *dialog;
 
     ActivateParametersSpecial *parameters_special;
@@ -1235,7 +1235,10 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 
     primary = _("Unknown file type");
     display_name = nemo_file_get_display_name (file);
-
+    if (display_name == NULL || g_strcmp0(display_name, "") == 0) {
+        g_free(display_name);
+        display_name = g_strdup(uri);
+    }
     if (enable_exec_button) {
         secondary =
             g_strdup_printf (_("The file \"%s\" has no known programs associated with it.  "
@@ -1257,8 +1260,11 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
               "secondary-text", secondary,
               NULL);
 
-    gtk_dialog_add_button (GTK_DIALOG (dialog),
+    param_uri = nemo_file_get_uri (parameters_special->file);
+    if (param_uri != NULL) {
+        gtk_dialog_add_button (GTK_DIALOG (dialog),
                    _("Choose a program"), RESPONSE_OPEN_WITH);
+    }
 
     if (!nemo_file_can_set_permissions (file) && enable_exec_button) {
         GtkWidget *w = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), RESPONSE_RUN);
@@ -1277,6 +1283,7 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 
     g_free (display_name);
     g_free (secondary);
+    g_free (param_uri);
     return;
 }
 
