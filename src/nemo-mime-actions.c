@@ -1152,20 +1152,9 @@ run_open_with_dialog (ActivateParametersSpecial *params)
     char *mime_type;
     char *uri = NULL;
     GList *uris = NULL;
-    GtkWidget *error_dialog;
 
     mime_type = nemo_file_get_mime_type (params->file);
     uri = nemo_file_get_uri (params->file);
-    if (uri == NULL) {
-        error_dialog = gtk_message_dialog_new (params->parent_window,
-                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                GTK_MESSAGE_ERROR,
-                                                GTK_BUTTONS_OK,
-                                                "Error occurred while retrieving info about the file");
-        gtk_dialog_run (error_dialog);
-        gtk_widget_destroy (error_dialog);
-        return;
-    }
 
     dialog = gtk_dialog_new_with_buttons (_("Open with"),
                                           params->parent_window,
@@ -1224,7 +1213,7 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 
     NemoFile *file = nemo_file_get_existing_by_uri (uri);
     gboolean enable_exec_button;
-    char *primary, *secondary, *display_name;
+    char *primary, *secondary, *display_name, *param_uri;
     GtkWidget *dialog;
 
     ActivateParametersSpecial *parameters_special;
@@ -1268,8 +1257,11 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
               "secondary-text", secondary,
               NULL);
 
-    gtk_dialog_add_button (GTK_DIALOG (dialog),
+    param_uri = nemo_file_get_uri (parameters_special->file);
+    if (param_uri != NULL) {
+        gtk_dialog_add_button (GTK_DIALOG (dialog),
                    _("Choose a program"), RESPONSE_OPEN_WITH);
+    }
 
     if (!nemo_file_can_set_permissions (file) && enable_exec_button) {
         GtkWidget *w = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), RESPONSE_RUN);
@@ -1288,6 +1280,7 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 
     g_free (display_name);
     g_free (secondary);
+    g_free (param_uri);
     return;
 }
 
