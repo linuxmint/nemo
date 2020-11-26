@@ -1235,7 +1235,10 @@ application_unhandled_uri (ActivateParameters *parameters, char *uri)
 
     primary = _("Unknown file type");
     display_name = nemo_file_get_display_name (file);
-
+    if (display_name == NULL || g_strcmp0(display_name, "") == 0) {
+        g_free(display_name);
+        display_name = g_strdup(uri);
+    }
     if (enable_exec_button) {
         secondary =
             g_strdup_printf (_("The file \"%s\" has no known programs associated with it.  "
