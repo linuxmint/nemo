@@ -852,14 +852,11 @@ prepare_pango_layout_for_draw (NemoIconCanvasItem *item,
 {
 	NemoIconCanvasItemDetails *details;
 	NemoIconContainer *container;
-	gboolean needs_highlight;
 
 	prepare_pango_layout_width (item, layout);
 
 	container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
 	details = item->details;
-
-	needs_highlight = details->is_highlighted_for_selection || details->is_highlighted_for_drop;
 
 	if (IS_COMPACT_VIEW (container)) {
 		pango_layout_set_height (layout, -1);
