@@ -1175,6 +1175,11 @@ nemo_window_key_press_event (GtkWidget *widget,
 		if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
 			return TRUE;
 		}
+
+               /* Do not allow for other accelerator bindings to fire off while
+                *  renaming is in progress
+                */
+               return FALSE;
 	}
 
 	focus_widget = gtk_window_get_focus (GTK_WINDOW (window));
