@@ -65,11 +65,11 @@ endif
 ################################################################################
 # Find dependencies
 
-glib_version = '>=2.37.3'
+glib_version = '>=2.45.7'
 
 math    = cc.find_library('m', required: true)
 
-gtk     = dependency('gtk+-3.0',                    version: '>=3.9.10')
+gtk     = dependency('gtk+-3.0',                    version: '>=3.10.0')
 gio     = dependency('gio-2.0',                     version: glib_version)
 gio_unix= dependency('gio-unix-2.0',                version: glib_version)
 glib    = dependency('glib-2.0',                    version: glib_version)
@@ -78,11 +78,11 @@ gobject = dependency('gobject-2.0',                 version: '>=2.0')
 go_intr = dependency('gobject-introspection-1.0',   version: '>=1.0')
 libnotif= dependency('libnotify',                   version: '>=0.7.0')
 
-cinnamon= dependency('cinnamon-desktop',            version: '>=2.6.1')
+cinnamon= dependency('cinnamon-desktop',            version: '>=4.8.0')
 gail    = dependency('gail-3.0')
 libxml  = dependency('libxml-2.0',                  version: '>=2.7.8')
 x11     = dependency('x11')
-xapp    = dependency('xapp',                        version: '>=1.9.0')
+xapp    = dependency('xapp',                        version: '>=2.0.0')
 
 # Facultative dependencies
 
