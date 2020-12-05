@@ -1772,6 +1772,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 	GtkActionGroup *action_group;
 	GtkUIManager *ui_manager;
 	GtkAction *action;
+      GtkAction *action_to_hide;
 	gint i;
 
 	if (window->details->ui_manager == NULL){
@@ -1786,6 +1787,19 @@ nemo_window_initialize_menus (NemoWindow *window)
 	gtk_action_group_add_actions (action_group,
 				      main_entries, G_N_ELEMENTS (main_entries),
 				      window);
+
+      /* if root then hide menu items that do not work */
+      if (geteuid() == 0) {
+          action_to_hide = gtk_action_group_get_action (action_group, "Go to Computer");
+          gtk_action_set_visible (action_to_hide, FALSE);
+          action_to_hide = gtk_action_group_get_action (action_group, "Go to Templates");
+          gtk_action_set_visible (action_to_hide, FALSE);
+          action_to_hide = gtk_action_group_get_action (action_group, "Go to Trash");
+          gtk_action_set_visible (action_to_hide, FALSE);
+          action_to_hide = gtk_action_group_get_action (action_group, "Go to Network");
+          gtk_action_set_visible (action_to_hide, FALSE);
+      }
+
 	gtk_action_group_add_toggle_actions (action_group,
 					     main_toggle_entries, G_N_ELEMENTS (main_toggle_entries),
 					     window);
