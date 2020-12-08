@@ -110,6 +110,7 @@ nemo_query_editor_dispose (GObject *object)
 	}
 
     g_clear_object (&editor->priv->menu);
+    g_clear_pointer (&editor->priv->faves, g_strfreev);
 
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                                           on_saved_searches_setting_changed,

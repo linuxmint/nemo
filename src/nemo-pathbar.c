@@ -220,6 +220,7 @@ desktop_location_changed_callback (gpointer user_data)
 
     g_object_unref (path_bar->priv->desktop_path);
     g_object_unref (path_bar->priv->home_path);
+    g_object_unref (path_bar->priv->root_path);
     path_bar->priv->desktop_path = nemo_get_desktop_location ();
     path_bar->priv->home_path = g_file_new_for_path (g_get_home_dir ());
     desktop_is_home = g_file_equal (path_bar->priv->home_path, path_bar->priv->desktop_path);
