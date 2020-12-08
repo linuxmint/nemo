@@ -1,3 +1,12 @@
+nemo (4.8.2) ulyssa; urgency=medium
+
+  [ Michael Webster ]
+  * Fix some leaks revealed by valgrind.
+  * nemo-directory-async.c: Fix an issue with the idle favorite check.
+  * nemo-places-sidebar.c: Remove favorites signal listener when the sidebar is destroyed.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 08 Dec 2020 12:57:48 +0000
+
 nemo (4.8.1) ulyssa; urgency=medium
 
   [ icarter09 ]
