@@ -1,3 +1,24 @@
+nemo (4.8.1) ulyssa; urgency=medium
+
+  [ icarter09 ]
+  * Removed unused variable
+  * nemo-window.c: Blocks operations while renaming. Fixes #1854
+
+  [ Michael Webster ]
+  * build: Update some dependencies.
+
+  [ NikoKrause ]
+  * change favorites icon
+
+  [ icarter09 ]
+  * Fixes 276. Remove type-ahead search on mouse click
+
+  [ Isaac Carter ]
+  * Remove Send by Email action (#2574)
+  * Hide some menu items when running as root (#2582)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 08 Dec 2020 10:30:16 +0000
+
 nemo (4.8.0) ulyssa; urgency=medium
 
   [ Soapux ]
