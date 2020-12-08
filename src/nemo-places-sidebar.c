@@ -4371,6 +4371,10 @@ nemo_places_sidebar_dispose (GObject *object)
                           desktop_setting_changed_callback,
                           sidebar);
 
+    g_signal_handlers_disconnect_by_func (xapp_favorites_get_default (),
+                                          favorites_changed_cb,
+                                          sidebar);
+
 	if (sidebar->volume_monitor != NULL) {
 		g_signal_handlers_disconnect_by_func (sidebar->volume_monitor,
 						      volume_added_callback, sidebar);
