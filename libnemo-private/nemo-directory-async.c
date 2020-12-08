@@ -138,8 +138,6 @@ struct DeepCountState {
 
 struct FavoriteCheckState {
     NemoDirectory *directory;
-    GCancellable *cancellable;
-    gboolean is_favorite;
 };
 
 typedef struct {
@@ -574,8 +572,13 @@ static void
 favorite_check_cancel (NemoDirectory *directory)
 {
     if (directory->details->favorite_check_in_progress != NULL) {
-        g_cancellable_cancel (directory->details->favorite_check_in_progress->cancellable);
+        if (directory->details->favorite_check_idle_id > 0) {
+            g_source_remove (directory->details->favorite_check_idle_id);
+            directory->details->favorite_check_idle_id = 0;
+        }
+
         directory->details->favorite_check_in_progress->directory = NULL;
+        g_free (directory->details->favorite_check_in_progress);
         directory->details->favorite_check_in_progress = NULL;
         directory->details->favorite_check_file = NULL;
 
@@ -3432,14 +3435,7 @@ btime_start (NemoDirectory *directory,
     g_object_unref (location);
 }
 
-static void
-favorite_check_state_free (FavoriteCheckState *state)
-{
-    g_object_unref (state->cancellable);
-    g_free (state);
-}
-
-static void
+static gboolean
 favorite_check_callback (GObject *source_object,
                          GAsyncResult *res,
                          gpointer user_data)
@@ -3452,8 +3448,8 @@ favorite_check_callback (GObject *source_object,
 
     if (state->directory == NULL) {
         /* Operation was cancelled. Bail out */
-        favorite_check_state_free (state);
-        return;
+        g_free (state);
+        return G_SOURCE_REMOVE;
     }
 
     directory = nemo_directory_ref (state->directory);
@@ -3461,6 +3457,7 @@ favorite_check_callback (GObject *source_object,
     favorite_check_file = directory->details->favorite_check_file;
     g_assert (NEMO_IS_FILE (favorite_check_file));
 
+    directory->details->favorite_check_idle_id = 0;
     directory->details->favorite_check_file = NULL;
     directory->details->favorite_check_in_progress = NULL;
     
@@ -3492,7 +3489,9 @@ favorite_check_callback (GObject *source_object,
 
     nemo_directory_unref (directory);
 
-    favorite_check_state_free (state);
+    g_free (state);
+
+    return G_SOURCE_REMOVE;
 }
 
 static void
@@ -3540,13 +3539,11 @@ favorite_check_start (NemoDirectory *directory,
 
     directory->details->favorite_check_file = file;
 
-    state = g_new (FavoriteCheckState, 1);
+    state = g_new0 (FavoriteCheckState, 1);
     state->directory = directory;
-    state->cancellable = g_cancellable_new ();
 
     directory->details->favorite_check_in_progress = state;
-
-    g_idle_add ((GSourceFunc) favorite_check_callback, state);
+    directory->details->favorite_check_idle_id = g_idle_add ((GSourceFunc) favorite_check_callback, state);
 }
 
 static gboolean

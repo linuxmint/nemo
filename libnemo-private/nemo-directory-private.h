@@ -129,6 +129,7 @@ struct NemoDirectoryDetails
 
     NemoFile *favorite_check_file;
     FavoriteCheckState *favorite_check_in_progress;
+    guint favorite_check_idle_id;
 
 	NemoFile *extension_info_file;
 	NemoInfoProvider *extension_info_provider;
