@@ -6639,6 +6639,15 @@ delete_trash_file (CommonJob *job,
 	}
 
 	if (del_children) {
+        gboolean should_recurse;
+
+        /* The g_file_delete operation works differently for locations provided
+         * by the trash backend as it prevents modifications of trashed items
+         * For that reason, it is enough to call g_file_delete on top-level
+         * items only.
+         */
+        should_recurse = !g_file_has_uri_scheme (file, "trash");
+
 		enumerator = g_file_enumerate_children (file,
 							G_FILE_ATTRIBUTE_STANDARD_NAME ","
 							G_FILE_ATTRIBUTE_STANDARD_TYPE,
@@ -6648,10 +6657,13 @@ delete_trash_file (CommonJob *job,
 		if (enumerator) {
 			while (!job_aborted (job) &&
 			       (info = g_file_enumerator_next_file (enumerator, job->cancellable, NULL)) != NULL) {
+                gboolean is_dir;
+
 				child = g_file_get_child (file,
 							  g_file_info_get_name (info));
-				delete_trash_file (job, child, deletions_since_progress, TRUE,
-						   g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY);
+                is_dir = (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY);
+
+                delete_trash_file (job, child, deletions_since_progress, TRUE, should_recurse && is_dir);
 				g_object_unref (child);
 				g_object_unref (info);
 			}
