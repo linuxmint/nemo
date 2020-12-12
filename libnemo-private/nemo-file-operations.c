@@ -3369,6 +3369,7 @@ make_file_name_valid_for_dest_fs (char *filename,
 	if (dest_fs_type != NULL && filename != NULL) {
 		if (!strcmp (dest_fs_type, "fat")  ||
 		    !strcmp (dest_fs_type, "vfat") ||
+            !strcmp (dest_fs_type, "ntfs") ||
 		    !strcmp (dest_fs_type, "msdos") ||
 		    !strcmp (dest_fs_type, "msdosfs")) {
 			gboolean ret;
