@@ -3341,7 +3341,7 @@ get_max_name_length (GFile *file_dir)
 	return max_length;
 }
 
-#define FAT_FORBIDDEN_CHARACTERS "/:;*?\"<>"
+#define FAT_FORBIDDEN_CHARACTERS "/:*?\"<>\\|"
 
 static gboolean
 str_replace (char *str,
