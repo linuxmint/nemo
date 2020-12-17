@@ -4650,8 +4650,13 @@ nemo_file_set_is_favorite (NemoFile *file,
     g_return_if_fail (NEMO_IS_FILE (file));
     NemoFile *real_file;
     gchar *uri;
+    gboolean is_symlink;
 
-    if (nemo_file_is_in_favorites (file)) {
+    // This file could still be showing in favorites:// but not marked symbolic -
+    // this means the file is not currently available.
+    is_symlink = nemo_file_is_symbolic_link (file);
+
+    if (nemo_file_is_in_favorites (file) && is_symlink) {
         uri = nemo_file_get_symbolic_link_target_uri (file);
         real_file = nemo_file_get_existing_by_uri (uri);
     } else {
@@ -4666,7 +4671,10 @@ nemo_file_set_is_favorite (NemoFile *file,
     }
     else
     {
-        nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, FALSE);
+        if (is_symlink) {
+            nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, FALSE);
+        }
+
         xapp_favorites_remove (xapp_favorites_get_default (), uri);
     }
 
