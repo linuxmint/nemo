@@ -1869,6 +1869,10 @@ delete_dir (CommonJob *job, GFile *dir,
 		skip:
 			g_error_free (error);
 		} else {
+            gchar *uri = g_file_get_uri (dir);
+            xapp_favorites_remove (xapp_favorites_get_default (), uri);
+            g_free (uri);
+
 			nemo_file_changes_queue_file_removed (dir);
 			transfer_info->num_files ++;
 			report_delete_progress (job, source_info, transfer_info);
