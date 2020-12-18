@@ -2109,6 +2109,16 @@ nemo_file_is_local (NemoFile *file)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
+    if (nemo_file_is_in_favorites (file)) {
+        GFile *fav_file = nemo_file_get_location (file);
+        gboolean ret;
+
+        ret = g_file_is_native (fav_file);
+        g_object_unref (fav_file);
+
+        return ret;
+    }
+
 	return nemo_directory_is_local (file->details->directory);
 }
 
