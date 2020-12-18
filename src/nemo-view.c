@@ -1448,8 +1448,8 @@ real_trash (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_TRASH);
-	if (gtk_action_get_sensitive (action) &&
-	    gtk_action_get_visible (action)) {
+	if ((gtk_action_get_sensitive (action) && gtk_action_get_visible (action)) ||
+        (showing_favorites_directory (view) || showing_recent_directory (view))) {
 		trash_or_delete_selected_files (view);
 		return TRUE;
 	}
@@ -9943,9 +9943,13 @@ real_update_menus (NemoView *view)
 		      NULL);
 	gtk_action_set_sensitive (action, can_delete_files);
 
+    if (selection_contains_recent || selection_contains_favorites) {
+        gtk_action_set_visible (action, FALSE);
+    }
+
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_DELETE);
-	gtk_action_set_visible (action, show_separate_delete_command);
+	gtk_action_set_visible (action, show_separate_delete_command && !selection_contains_favorites);
 
     if (selection_contains_recent) {
         label = _("Remo_ve from Recent");

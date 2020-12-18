@@ -1013,14 +1013,19 @@ file_delete_wrapper (GFile        *file,
                      GError      **error)
 {
     gboolean ret;
+    gchar *uri;
 
     ret = FALSE;
 
-    if (g_file_is_native (file)) {
+    uri = g_file_get_uri (file);
+
+    if (g_file_is_native (file) && !eel_uri_is_favorite (uri)) {
         ret = _g_local_file_delete (file, cancellable, error);
     } else {
         ret = g_file_delete (file, cancellable, error);
     }
+
+    g_free (uri);
 
     return ret;
 }
@@ -1225,6 +1230,7 @@ can_delete_without_confirm (GFile *file)
 {
 	if (g_file_has_uri_scheme (file, "burn") ||
         g_file_has_uri_scheme (file, "recent") ||
+        g_file_has_uri_scheme (file, "favorites") ||
 	    g_file_has_uri_scheme (file, "x-nemo-desktop")) {
 		return TRUE;
 	}
@@ -1904,10 +1910,6 @@ delete_file (CommonJob *job, GFile *file,
 	error = NULL;
 	if (file_delete_wrapper (file, job->cancellable, &error)) {
 		nemo_file_changes_queue_file_removed (file);
-
-        gchar *uri = g_file_get_uri (file);
-        xapp_favorites_remove (xapp_favorites_get_default (), uri);
-        g_free (uri);
 
 		transfer_info->num_files ++;
 		report_delete_progress (job, source_info, transfer_info);
