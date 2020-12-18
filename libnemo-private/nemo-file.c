@@ -4664,17 +4664,14 @@ nemo_file_set_is_favorite (NemoFile *file,
         real_file = nemo_file_ref (file);
     }
 
+    nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, favorite);
+
     if (favorite)
     {
-        nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, TRUE);
         xapp_favorites_add (xapp_favorites_get_default (), uri);
     }
     else
     {
-        if (is_symlink) {
-            nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, FALSE);
-        }
-
         xapp_favorites_remove (xapp_favorites_get_default (), uri);
     }
 
