@@ -9942,10 +9942,7 @@ real_update_menus (NemoView *view)
 		      NEMO_ICON_DELETE : NEMO_ICON_SYMBOLIC_TRASH_FULL,
 		      NULL);
 	gtk_action_set_sensitive (action, can_delete_files);
-
-    if (selection_contains_recent || selection_contains_favorites) {
-        gtk_action_set_visible (action, FALSE);
-    }
+    gtk_action_set_visible (action, !(selection_contains_favorites || selection_contains_recent));
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_DELETE);
