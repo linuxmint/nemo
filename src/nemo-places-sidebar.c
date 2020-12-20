@@ -2075,9 +2075,22 @@ drag_data_received_callback (GtkWidget *widget,
 			case TEXT_URI_LIST:
 				selection_list = build_selection_list ((const gchar *) gtk_selection_data_get_data (selection_data));
 				uris = uri_list_from_selection (selection_list);
-				nemo_file_operations_copy_move (uris, NULL, drop_uri,
-								    real_action, GTK_WIDGET (tree_view),
-								    NULL, NULL);
+
+                GList *l;
+
+                if (g_strcmp0 (drop_uri, "favorites:///") == 0) {
+                    for (l = uris; l != NULL; l = l->next) {
+                        gchar *uri = (gchar *) l->data;
+                        NemoFile *source_file = nemo_file_get_by_uri (uri);
+                        nemo_file_set_is_favorite (source_file, TRUE);
+                        nemo_file_unref (source_file);
+                    }
+                } else {
+                    nemo_file_operations_copy_move (uris, NULL, drop_uri,
+                                        real_action, GTK_WIDGET (tree_view),
+                                        NULL, NULL);
+                }
+
 				nemo_drag_destroy_selection_list (selection_list);
 				g_list_free (uris);
 				success = TRUE;

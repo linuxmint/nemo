@@ -1472,22 +1472,6 @@ nemo_icon_container_get_drop_action (NemoIconContainer *container,
 	canvas_widget_to_world (EEL_CANVAS (container), x, y, &world_x, &world_y);
 	*action = 0;
 
-    drop_target = nemo_icon_container_find_drop_target (container,
-                                context, x, y, &icon_hit, FALSE);
-
-    favorites_target = FALSE;
-
-    if (g_strcmp0 (drop_target, "favorites:///") == 0) {
-        favorites_target = TRUE;
-    }
-
-    g_free (drop_target);
-
-    if (favorites_target) {
-        *action = GDK_ACTION_COPY;
-        return;
-    }
-
 	/* case out on the type of object being dragged */
 	switch (container->details->dnd_info->drag_info.data_type) {
 	case NEMO_ICON_DND_GNOME_ICON_LIST:

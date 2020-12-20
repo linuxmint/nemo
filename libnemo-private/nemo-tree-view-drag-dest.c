@@ -395,25 +395,12 @@ get_drop_action (NemoTreeViewDragDest *dest,
 {
 	char *drop_target;
 	int action;
-    gboolean favorites_target = FALSE;;
 
 	if (!dest->details->have_drag_data ||
 	    (dest->details->drag_type == NEMO_ICON_DND_GNOME_ICON_LIST &&
 	     dest->details->drag_list == NULL)) {
 		return 0;
 	}
-
-    drop_target = get_drop_target_uri_for_path (dest, path);
-
-    if (g_strcmp0 (drop_target, "favorites:///") == 0) {
-        favorites_target = TRUE;
-    }
-
-    g_free (drop_target);
-
-    if (favorites_target) {
-        return GDK_ACTION_COPY;
-    }
 
 	switch (dest->details->drag_type) {
 	case NEMO_ICON_DND_GNOME_ICON_LIST :

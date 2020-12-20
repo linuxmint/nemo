@@ -470,6 +470,7 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 	GFile *target, *dropped, *dropped_directory;
 	GdkDragAction actions;
 	NemoFile *dropped_file, *target_file;
+    gboolean fav_target, fav_item;
 
 	if (target_uri_string == NULL) {
 		*action = 0;
@@ -478,7 +479,15 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
 
     dropped_uri = ((NemoDragSelectionItem *)items->data)->uri;
 
-    if (eel_uri_is_favorite (dropped_uri)) {
+    fav_target = eel_uri_is_favorite (target_uri_string);
+    fav_item = eel_uri_is_favorite (dropped_uri);
+
+    if (fav_item && fav_target) {
+        *action = 0;
+        return;
+    }
+
+    if (fav_item != fav_target) {
         *action = GDK_ACTION_COPY;
         return;
     }
