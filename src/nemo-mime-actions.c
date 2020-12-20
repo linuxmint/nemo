@@ -1837,7 +1837,7 @@ activate_activation_uris_ready_callback (GList *files_ignore,
 			continue;
 		}
 
-		if (nemo_file_is_broken_symbolic_link (file)) {
+		if (nemo_file_is_broken_symbolic_link (file) && !nemo_file_is_in_favorites (file)) {
 			launch_location_free (location);
 			parameters->locations = g_list_delete_link (parameters->locations, l);
 			pause_activation_timed_cancel (parameters);

@@ -4666,7 +4666,7 @@ nemo_file_set_is_favorite (NemoFile *file,
     // this means the file is not currently available.
     is_symlink = nemo_file_is_symbolic_link (file);
 
-    if (nemo_file_is_in_favorites (file) && is_symlink) {
+    if (nemo_file_is_in_favorites (file) && !nemo_file_is_broken_symbolic_link (file)) {
         uri = nemo_file_get_symbolic_link_target_uri (file);
         real_file = nemo_file_get_existing_by_uri (uri);
     } else {
