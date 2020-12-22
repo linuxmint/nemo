@@ -112,6 +112,8 @@ file_list_ready_cb (GList *files,
 	GtkWidget *label;
 	GString *str;
 	PangoAttrList *attr_list;
+    cairo_surface_t *surf;
+    gint ui_scale;
 
 	details = fcd->details;
 
@@ -218,28 +220,38 @@ file_list_ready_cb (GList *files,
 	g_free (primary_text);
 	g_free (secondary_text);
 
-	/* Set up file icons */
-	pixbuf = nemo_file_get_icon_pixbuf (dest,
-						NEMO_ICON_SIZE_LARGE,
-						TRUE,
-                        gtk_widget_get_scale_factor (fcd->details->titles_vbox),
-						NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
-	details->dest_image = gtk_image_new_from_pixbuf (pixbuf);
-	gtk_box_pack_start (GTK_BOX (details->first_hbox),
-			    details->dest_image, FALSE, FALSE, 0);
-	gtk_widget_show (details->dest_image);
-	g_object_unref (pixbuf);
+    ui_scale = gtk_widget_get_scale_factor (fcd->details->titles_vbox),
 
-	pixbuf = nemo_file_get_icon_pixbuf (src,
-						NEMO_ICON_SIZE_LARGE,
-						TRUE,
-                        gtk_widget_get_scale_factor (fcd->details->titles_vbox),
-						NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
-	details->src_image = gtk_image_new_from_pixbuf (pixbuf);
-	gtk_box_pack_start (GTK_BOX (details->second_hbox),
-			    details->src_image, FALSE, FALSE, 0);
-	gtk_widget_show (details->src_image);
-	g_object_unref (pixbuf);
+    /* Set up file icons */
+    pixbuf = nemo_file_get_icon_pixbuf (dest,
+                                        NEMO_ICON_SIZE_LARGE,
+                                        TRUE,
+                                        ui_scale,
+                                        NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
+    surf = gdk_cairo_surface_create_from_pixbuf (pixbuf, ui_scale, NULL);
+
+    details->dest_image = gtk_image_new_from_surface (surf);
+    g_clear_pointer (&surf, cairo_surface_destroy);
+    g_clear_object (&pixbuf);
+
+    gtk_box_pack_start (GTK_BOX (details->first_hbox),
+                        details->dest_image, FALSE, FALSE, 0);
+    gtk_widget_show (details->dest_image);
+
+    pixbuf = nemo_file_get_icon_pixbuf (src,
+                                        NEMO_ICON_SIZE_LARGE,
+                                        TRUE,
+                                        ui_scale,
+                                        NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS);
+    surf = gdk_cairo_surface_create_from_pixbuf (pixbuf, ui_scale, NULL);
+
+    details->src_image = gtk_image_new_from_surface (surf);
+    g_clear_pointer (&surf, cairo_surface_destroy);
+    g_clear_object (&pixbuf);
+
+    gtk_box_pack_start (GTK_BOX (details->second_hbox),
+                        details->src_image, FALSE, FALSE, 0);
+    gtk_widget_show (details->src_image);
 
 	/* Set up labels */
 	label = gtk_label_new (NULL);
