@@ -4660,11 +4660,6 @@ nemo_file_set_is_favorite (NemoFile *file,
     g_return_if_fail (NEMO_IS_FILE (file));
     NemoFile *real_file;
     gchar *uri;
-    gboolean is_symlink;
-
-    // This file could still be showing in favorites:// but not marked symbolic -
-    // this means the file is not currently available.
-    is_symlink = nemo_file_is_symbolic_link (file);
 
     if (nemo_file_is_in_favorites (file) && !nemo_file_is_broken_symbolic_link (file)) {
         uri = nemo_file_get_symbolic_link_target_uri (file);
