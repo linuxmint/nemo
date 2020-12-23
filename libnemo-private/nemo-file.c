@@ -2109,16 +2109,6 @@ nemo_file_is_local (NemoFile *file)
 {
 	g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
 
-    if (nemo_file_is_in_favorites (file)) {
-        GFile *fav_file = nemo_file_get_location (file);
-        gboolean ret;
-
-        ret = g_file_is_native (fav_file);
-        g_object_unref (fav_file);
-
-        return ret;
-    }
-
 	return nemo_directory_is_local (file->details->directory);
 }
 
@@ -4279,6 +4269,19 @@ nemo_file_get_filesystem_use_preview (NemoFile *file)
 	return use_preview;
 }
 
+static gboolean
+is_local_favorite (NemoFile *file)
+{
+    GFile *fav_file = nemo_file_get_location (file);
+    gboolean ret;
+
+    // This will be a FavoriteVfsFile - its native check checks the target file.
+    ret = g_file_is_native (fav_file);
+    g_object_unref (fav_file);
+
+    return ret;
+}
+
 gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
@@ -4354,6 +4357,14 @@ nemo_file_should_show_thumbnail (NemoFile *file)
         return FALSE;
     }
     if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL) {
+        // favorites:/// can have local and non-local files.
+        // we check if each individual file is local (nemo_file_is_local()
+        // checks if the parent is native, which for favorites:///
+        // is false.)
+        if (nemo_file_is_in_favorites (file)) {
+            return is_local_favorite (file);
+        }
+
         /* file system says we should treat file as if it's local */
         return TRUE;
     }
@@ -4660,11 +4671,6 @@ nemo_file_set_is_favorite (NemoFile *file,
     g_return_if_fail (NEMO_IS_FILE (file));
     NemoFile *real_file;
     gchar *uri;
-    gboolean is_symlink;
-
-    // This file could still be showing in favorites:// but not marked symbolic -
-    // this means the file is not currently available.
-    is_symlink = nemo_file_is_symbolic_link (file);
 
     if (nemo_file_is_in_favorites (file) && !nemo_file_is_broken_symbolic_link (file)) {
         uri = nemo_file_get_symbolic_link_target_uri (file);

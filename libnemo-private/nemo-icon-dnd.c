@@ -1459,7 +1459,6 @@ nemo_icon_container_get_drop_action (NemoIconContainer *container,
 {
 	char *drop_target;
 	gboolean icon_hit;
-    gboolean favorites_target;
 	double world_x, world_y;
 
 	icon_hit = FALSE;
