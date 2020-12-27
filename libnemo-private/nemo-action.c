@@ -1163,6 +1163,10 @@ find_token_type (const gchar *str, TokenType *token_type)
             *token_type = TOKEN_FILE_DISPLAY_NAME_NO_EXT;
             return ptr;
         }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_LITERAL_PERCENT)) {
+            *token_type = TOKEN_LITERAL_PERCENT;
+            return ptr;
+        }
     }
 
     return NULL;
@@ -1270,6 +1274,9 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
     gboolean first = TRUE;
 
     switch (token_type) {
+        case TOKEN_LITERAL_PERCENT:
+            str = g_string_append(str, "%");
+            break;
         case TOKEN_PATH_LIST:
             if (g_list_length (selection) > 0) {
                 for (l = selection; l != NULL; l = l->next) {

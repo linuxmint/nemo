@@ -50,6 +50,7 @@
 #define TOKEN_EXEC_PARENT_NAME "%p"
 #define TOKEN_EXEC_DEVICE "%D"
 #define TOKEN_EXEC_FILE_NO_EXT "%e"
+#define TOKEN_EXEC_LITERAL_PERCENT "%%"
 
 #define TOKEN_LABEL_FILE_NAME "%N" // Leave in for compatibility, same as TOKEN_EXEC_FILE_NAME
 
@@ -99,7 +100,8 @@ typedef enum {
     TOKEN_PARENT_DISPLAY_NAME,
     TOKEN_PARENT_PATH,
     TOKEN_DEVICE,
-    TOKEN_FILE_DISPLAY_NAME_NO_EXT
+    TOKEN_FILE_DISPLAY_NAME_NO_EXT,
+    TOKEN_LITERAL_PERCENT
 } TokenType;
 
 struct _NemoAction {
