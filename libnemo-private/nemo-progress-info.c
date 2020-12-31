@@ -636,7 +636,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	G_LOCK (progress_info);
 	
 	if (info->activity_mode || /* emit on switch from activity mode */
-	    fabs (current_percent - info->progress) > 0.005 /* Emit on change of 0.5 percent */
+	    fabs (current_percent - info->progress) > 0
 	    ) {
 		info->activity_mode = FALSE;
 		info->progress = current_percent;
