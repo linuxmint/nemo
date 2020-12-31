@@ -290,6 +290,16 @@ queue_update_layout (NemoDesktopManager *manager)
 }
 
 static void
+global_scale_changed (NemoDesktopManager *manager)
+{
+    g_return_if_fail (NEMO_IS_DESKTOP_MANAGER (manager));
+
+    DEBUG ("Monitor scaling changed");
+
+    queue_update_layout (manager);
+}
+
+static void
 create_new_desktop_window (NemoDesktopManager *manager,
                                          gint  monitor,
                                      gboolean  primary,
@@ -311,6 +321,13 @@ create_new_desktop_window (NemoDesktopManager *manager,
     }
 
     info->window = window;
+
+    if (primary) {
+        g_signal_connect_swapped (window,
+                                  "notify::scale-factor",
+                                  G_CALLBACK (global_scale_changed),
+                                  manager);
+    }
 
     gtk_application_add_window (GTK_APPLICATION (nemo_application_get_singleton ()),
                                 GTK_WINDOW (window));
