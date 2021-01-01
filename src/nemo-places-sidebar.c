@@ -424,7 +424,8 @@ add_place (NemoPlacesSidebar *sidebar,
 
     gicon = (icon_name != NULL) ? g_themed_icon_new (icon_name) : NULL;
 
-	gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
+      gtk_tree_store_append (sidebar->store, &iter, &cat_iter);
+
 	gtk_tree_store_set (sidebar->store, &iter,
 			    PLACES_SIDEBAR_COLUMN_GICON, gicon,
 			    PLACES_SIDEBAR_COLUMN_NAME, name,
@@ -919,6 +920,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
     mounts = g_volume_monitor_get_mounts (volume_monitor);
+    mounts = g_list_reverse (mounts);
 
     for (l = mounts; l != NULL; l = l->next) {
         mount = l->data;
