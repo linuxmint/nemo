@@ -1,3 +1,35 @@
+nemo (4.8.3) ulyssa; urgency=medium
+
+  [ Leigh Scott ]
+  * file-operation: Prevent recursion to speed up emptying trash
+  * file-operations: auto-escape filenames on native ntfs mounts
+  * file-operations: auto-escape filenames on fuseblk mounts
+  * file-operations: don't auto-escape semicolon
+  * Clean up
+
+  [ Michael Webster ]
+  * nemo-file-operations: Remove a toplevel folder from favorites during a delete operation.
+  * nemo-file.c: Check if a favorite:///file is a symbolic link before trying to look up its target uri.
+  * nemo-file.c: nemo_file_set_is_favorite - always set metadata, not just when a file is a symlink.
+  * nemo-file.c: nemo_file_is_local - Use the target file uri to decide if a file in the favorites:/// view should be considered local.
+  * nemo-view.c: Hide the 'move to trash' menu items for recent and favorites, and hide the 'delete' item in favorites.
+  * nemo-view.c: Fix visibility check for the trash menu item.
+  * favorites: Accept dnd to places-sidebar item to add favorites, refactor existing dnd in list and icon views.
+  * nemo-file.c: Check for a broken symbolic link before trying to get a favorite's target uri.
+  * nemo-file-conflict-dialog.c: Fix hidpi scaling of the file icons.
+  * nemo-file.c: Allow the favorites folder to better respect the various thumbnailing settings.
+
+  [ Bill Doyle ]
+  * Add escaping for percent sign in action Exec
+
+  [ Érico Rolim ]
+  * build: fix typelibdir in libnemo-extension/meson.build.
+
+  [ Michael Webster ]
+  * nemo-desktop-manager.c: Recreate the desktop when the primary monitor's scale factor changes.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 02 Jan 2021 18:29:32 +0000
+
 nemo (4.8.2) ulyssa; urgency=medium
 
   [ Michael Webster ]
