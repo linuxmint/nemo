@@ -14,6 +14,7 @@
 #define NEMO_ICON_TRASH		"user-trash"
 #define NEMO_ICON_TRASH_FULL	"user-trash-full"
 #define NEMO_ICON_DELETE		"edit-delete-symbolic"
+#define NEMO_ICON_FAVORITES "xapp-user-favorites"
 
 #define NEMO_ICON_FOLDER_DESKTOP    "user-desktop"
 #define NEMO_ICON_FOLDER_DOCUMENTS  "folder-documents"

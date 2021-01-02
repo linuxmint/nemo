@@ -1568,7 +1568,7 @@ create_tree (FMTreeView *view)
 	g_object_unref (icon);
 	g_free (home_uri);
 
-    icon = g_themed_icon_new ("favorites");
+    icon = g_themed_icon_new (NEMO_ICON_FAVORITES);
     fm_tree_model_add_root_uri (view->details->child_model, "favorites:///", _("Favorites"), icon, NULL);
     g_object_unref (icon);
 
