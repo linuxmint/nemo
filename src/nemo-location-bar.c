@@ -471,6 +471,7 @@ nemo_location_bar_set_location (NemoLocationBar *bar,
 {
 	char *formatted_location;
 	GFile *file;
+      char *unescaped_string;
 
 	g_assert (location != NULL);
 
@@ -484,8 +485,17 @@ nemo_location_bar_set_location (NemoLocationBar *bar,
 		file = g_file_new_for_uri (location);
 		formatted_location = g_file_get_parse_name (file);
 		g_object_unref (file);
-		nemo_location_entry_update_current_location (NEMO_LOCATION_ENTRY (bar->details->entry),
-								 formatted_location);
+
+              if (eel_uri_is_network (formatted_location)) {
+                  unescaped_string = g_uri_unescape_string (formatted_location, "%20");
+                  nemo_location_entry_update_current_location (NEMO_LOCATION_ENTRY (bar->details->entry),
+                                                                   unescaped_string);
+                  g_free (unescaped_string);
+              } else {
+                  nemo_location_entry_update_current_location (NEMO_LOCATION_ENTRY (bar->details->entry),
+                                                                   formatted_location);
+              }
+
 		g_free (formatted_location);
 	}
 
