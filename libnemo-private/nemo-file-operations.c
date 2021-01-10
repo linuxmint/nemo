@@ -1909,6 +1909,10 @@ delete_file (CommonJob *job, GFile *file,
 
 	error = NULL;
 	if (file_delete_wrapper (file, job->cancellable, &error)) {
+        gchar *uri = g_file_get_uri (file);
+        xapp_favorites_remove (xapp_favorites_get_default (), uri);
+        g_free (uri);
+
 		nemo_file_changes_queue_file_removed (file);
 
 		transfer_info->num_files ++;
