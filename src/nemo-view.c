@@ -1449,7 +1449,7 @@ real_trash (NemoView *view)
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_TRASH);
 	if ((gtk_action_get_sensitive (action) && gtk_action_get_visible (action)) ||
-        (showing_favorites_directory (view) || showing_recent_directory (view))) {
+        showing_recent_directory (view)) {
 		trash_or_delete_selected_files (view);
 		return TRUE;
 	}

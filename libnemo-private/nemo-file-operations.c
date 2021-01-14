@@ -1876,7 +1876,9 @@ delete_dir (CommonJob *job, GFile *dir,
 			g_error_free (error);
 		} else {
             gchar *uri = g_file_get_uri (dir);
-            xapp_favorites_remove (xapp_favorites_get_default (), uri);
+            if (!eel_uri_is_favorite (uri)) {
+                xapp_favorites_remove (xapp_favorites_get_default (), uri);
+            }
             g_free (uri);
 
 			nemo_file_changes_queue_file_removed (dir);
@@ -1910,7 +1912,13 @@ delete_file (CommonJob *job, GFile *file,
 	error = NULL;
 	if (file_delete_wrapper (file, job->cancellable, &error)) {
         gchar *uri = g_file_get_uri (file);
-        xapp_favorites_remove (xapp_favorites_get_default (), uri);
+        // We need to remove from favorites explicitly only if we're deleting the file
+        // in its native location, otherwise FavoriteVfsFile->file_delete will have
+        // already removed it. This is the same with delete_dir and trash_file
+        if (!eel_uri_is_favorite (uri)) {
+            xapp_favorites_remove (xapp_favorites_get_default (), uri);
+        }
+
         g_free (uri);
 
 		nemo_file_changes_queue_file_removed (file);
@@ -2103,11 +2111,13 @@ trash_files (CommonJob *job, GList *files, guint *files_skipped)
 			g_error_free (error);
 			total_files--;
 		} else {
-			nemo_file_changes_queue_file_removed (file);
-
             gchar *uri = g_file_get_uri (file);
-            xapp_favorites_remove (xapp_favorites_get_default (), uri);
+            if (!eel_uri_is_favorite (uri)) {
+                xapp_favorites_remove (xapp_favorites_get_default (), uri);
+            }
             g_free (uri);
+
+            nemo_file_changes_queue_file_removed (file);
 
 			if (job->undo_info != NULL) {
 				nemo_file_undo_info_trash_add_file (NEMO_FILE_UNDO_INFO_TRASH (job->undo_info), file);
