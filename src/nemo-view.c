@@ -10152,13 +10152,13 @@ real_update_menus (NemoView *view)
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_PIN_FILE);
 
-    gtk_action_set_visible (action, !is_desktop_view && !first_selected_is_pinned &&
+    gtk_action_set_visible (action, selection_count > 0 && !is_desktop_view && !first_selected_is_pinned &&
                                     !(selection_contains_recent || selection_contains_favorites || selection_contains_trash));
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_UNPIN_FILE);
 
-    gtk_action_set_visible (action, !is_desktop_view && first_selected_is_pinned &&
+    gtk_action_set_visible (action, selection_count > 0 && !is_desktop_view && first_selected_is_pinned &&
                                     !(selection_contains_recent || selection_contains_favorites || selection_contains_trash));
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
@@ -10167,7 +10167,7 @@ real_update_menus (NemoView *view)
     gboolean first_selected_is_favorite = selection_count > 0 &&
                                           nemo_file_get_is_favorite (NEMO_FILE (selection->data));
 
-    if (selection_contains_favorites) {
+    if (selection_contains_favorites || selection_count == 0) {
         gtk_action_set_visible (action, FALSE);
     } else {
         gtk_action_set_visible (action, !is_desktop_view && !first_selected_is_favorite &&
@@ -10177,7 +10177,7 @@ real_update_menus (NemoView *view)
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                           NEMO_ACTION_UNFAVORITE_FILE);
 
-    if (selection_contains_favorites) {
+    if (selection_contains_favorites && selection_count > 0) {
         gtk_action_set_visible (action, TRUE);
     } else {
         gtk_action_set_visible (action, !is_desktop_view && first_selected_is_favorite &&
