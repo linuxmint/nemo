@@ -2113,7 +2113,35 @@ trash_files (CommonJob *job, GList *files, guint *files_skipped)
 		} else {
             gchar *uri = g_file_get_uri (file);
             if (!eel_uri_is_favorite (uri)) {
-                xapp_favorites_remove (xapp_favorites_get_default (), uri);
+                XAppFavorites *favorites = xapp_favorites_get_default ();
+                xapp_favorites_remove (favorites, uri);
+
+                // move-to-trash doesn't recurse, it just trashes the toplevel, and
+                // the recent backend (gvfs) takes care of the rest. If we trash a folder
+                // that was a favorite, which also had favorites that descended from it,
+                // we need to explicitly remove them, or we'll have dangling entries in the
+                // favorites list.
+
+                GList *to_remove, *infos, *iter;
+
+                infos = xapp_favorites_get_favorites (favorites, NULL);
+                to_remove = NULL;
+
+                for (iter = infos; iter != NULL; iter = iter->next) {
+                    XAppFavoriteInfo *info = (XAppFavoriteInfo *) iter->data;
+
+                    if (info->uri && g_str_has_prefix (info->uri, uri)) {
+                        to_remove = g_list_prepend (to_remove, g_strdup (info->uri));
+                    }
+                }
+
+                g_list_free_full (infos, (GDestroyNotify) xapp_favorite_info_free);
+
+                for (iter = to_remove; iter != NULL; iter = iter->next) {
+                    xapp_favorites_remove (favorites, (const gchar *) iter->data);
+                }
+
+                g_list_free_full (to_remove, g_free);
             }
             g_free (uri);
 
