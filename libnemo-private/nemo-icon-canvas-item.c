@@ -1483,9 +1483,6 @@ create_label_layout (NemoIconCanvasItem *item,
     if (item->details->is_pinned) {
         pango_font_description_set_weight (desc, PINNED_TEXT_WEIGHT);
     }
-    else {
-        pango_font_description_set_weight (desc, NORMAL_TEXT_WEIGHT);
-    }
 
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
