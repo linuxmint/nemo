@@ -4550,6 +4550,15 @@ copy_move_file (CopyMoveJob *copy_job,
         }
 
 		if (copy_job->is_move) {
+            gchar *src_uri = g_file_get_uri (src);
+            gchar *dest_uri = g_file_get_uri (dest);
+
+            if (!eel_uri_is_favorite (src_uri)) {
+                xapp_favorites_rename (xapp_favorites_get_default (), src_uri, dest_uri);
+            }
+
+            g_free (src_uri);
+            g_free (dest_uri);
 			nemo_file_changes_queue_file_moved (src, dest);
 		} else {
 			nemo_file_changes_queue_file_added (dest);
@@ -5202,6 +5211,16 @@ move_file_prepare (CopyMoveJob *move_job,
 		if (debuting_files) {
 			g_hash_table_replace (debuting_files, g_object_ref (dest), GINT_TO_POINTER (TRUE));
 		}
+
+        gchar *src_uri = g_file_get_uri (src);
+        gchar *dest_uri = g_file_get_uri (dest);
+
+        if (!eel_uri_is_favorite (src_uri)) {
+            xapp_favorites_rename (xapp_favorites_get_default (), src_uri, dest_uri);
+        }
+
+        g_free (src_uri);
+        g_free (dest_uri);
 
 		nemo_file_changes_queue_file_moved (src, dest);
 
