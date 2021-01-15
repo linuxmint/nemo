@@ -4680,7 +4680,9 @@ nemo_file_set_is_favorite (NemoFile *file,
         real_file = nemo_file_ref (file);
     }
 
-    nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, favorite);
+    if (real_file != NULL) {
+        nemo_file_set_boolean_metadata (real_file, NEMO_METADATA_KEY_FAVORITE, FALSE, favorite);
+    }
 
     if (favorite)
     {
