@@ -194,7 +194,7 @@ sync_controls (NemoDesktopOverlay *overlay,
         gtk_combo_box_set_active_id (GTK_COMBO_BOX (priv->direction_combo), combo_id);
 
         /* Sort type */
-        action = gtk_action_group_get_action (priv->action_group, "Vertical Layout");
+        action = gtk_action_group_get_action (priv->action_group, "Desktop Sort by Name");
         active_id = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
         switch (active_id) {
