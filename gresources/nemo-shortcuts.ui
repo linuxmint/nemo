@@ -219,6 +219,13 @@
                 <property name="accelerator">&lt;Primary&gt;L</property>
               </object>
             </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">True</property>
+                <property name="title" translatable="yes" context="shortcut window">Same location as other pane</property>
+                <property name="accelerator">&lt;alt&gt;S</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
