@@ -1407,7 +1407,7 @@ static const GtkActionEntry main_entries[] = {
 				 "F6", N_("Move focus to the other pane in a split view window"),
 				 G_CALLBACK (action_split_view_switch_next_pane_callback) },
   /* name, stock id, label */  { "SplitViewSameLocation", NULL, N_("Sa_me Location as Other Pane"),
-				 NULL, N_("Go to the same location as in the extra pane"),
+				 "<alt>S", N_("Go to the same location as in the extra pane"),
 				 G_CALLBACK (action_split_view_same_location_callback) },
   /* name, stock id, label */  { "Add Bookmark", "bookmark-new-symbolic", N_("_Add Bookmark"),
                                  "<control>d", N_("Add a bookmark for the current location to this menu"),
