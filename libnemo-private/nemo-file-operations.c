@@ -3174,7 +3174,7 @@ verify_destination (CommonJob *job,
 		free_size = g_file_info_get_attribute_uint64 (fsinfo,
 							      G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
 
-		if (free_size < abs(required_size)) {
+		if (free_size < required_size) {
 			size_difference = required_size - free_size;
 			primary = f (_("Error while copying to \"%B\"."), dest);
 			secondary = f (_("There is not enough space on the destination. Try to remove files to make space."));
