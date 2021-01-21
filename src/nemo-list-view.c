@@ -1063,6 +1063,16 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	}
 
     if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
+        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER) &&
+                                    (event->button == 1)) {
+            /* double left click on blank will go to parent folder */
+            if (!gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
+                                                NULL, NULL, NULL, NULL)) {
+                NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+                nemo_window_slot_go_up (slot, 0);
+            }
+        }
+
         return TRUE;
     }
 
