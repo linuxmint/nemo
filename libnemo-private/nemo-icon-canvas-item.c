@@ -1143,6 +1143,7 @@ draw_label_text (NemoIconCanvasItem *item,
 		gtk_render_layout (context, cr,
 				   x, text_rect.y0 + details->editable_text_height + LABEL_LINE_SPACING + TEXT_TOP_GAP,
 				   additional_layout);
+        gtk_style_context_restore (context);
 	}
 
 	if (item->details->is_highlighted_as_keyboard_focus) {
