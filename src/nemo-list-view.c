@@ -732,6 +732,8 @@ query_tooltip_callback (GtkWidget *widget,
 
                     ret = TRUE;
                 }
+
+                nemo_file_unref (file);
             }
         }
         gtk_tree_path_free (path);
@@ -2257,6 +2259,8 @@ prioritize_visible_files (NemoListView *view)
                     nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
                 }
             }
+
+            nemo_file_unref (file);
         }
 
         cy -= stepdown;
