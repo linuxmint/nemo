@@ -4783,6 +4783,7 @@ create_open_with_page (NemoPropertiesWindow *window)
 	}
 
 	vbox = nemo_mime_application_chooser_new (uri, uris, mime_type, NULL);
+    g_free (uri);
 
 	gtk_widget_show (vbox);
 	g_free (mime_type);
