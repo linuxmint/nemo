@@ -8062,8 +8062,8 @@ nemo_file_get_position (NemoFile *file, GdkPoint *point)
             point->y = -1;
         }
 
-        file->details->cached_position_x = x;
-        file->details->cached_position_y = y;
+        file->details->cached_position_x = point->x;
+        file->details->cached_position_y = point->y;
     } else {
         point->x = file->details->cached_position_x;
         point->y = file->details->cached_position_y;
