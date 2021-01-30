@@ -627,4 +627,11 @@ typedef struct {
 	void                 (* poll_for_media)          (NemoFile                   *file);
 } NemoFileClass;
 
+#define NEMO_FILE_URI(msg,f)                                    \
+    {                                                           \
+        gchar *uri = nemo_file_get_uri (NEMO_FILE (f));         \
+        g_message ("%s: %p - %s", msg, f, uri);                 \
+        g_free (uri);                                           \
+    }                                                           \
+
 #endif /* NEMO_FILE_H */

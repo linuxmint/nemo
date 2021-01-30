@@ -798,6 +798,10 @@ finalize (GObject *object)
 
 	file = NEMO_FILE (object);
 
+#ifdef NEMO_FILE_DEBUG_REF
+    NEMO_FILE_URI ("finalize: ", file);
+#endif
+
 	g_assert (file->details->operations_in_progress == NULL);
 
 	if (file->details->is_thumbnailing) {
