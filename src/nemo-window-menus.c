@@ -587,36 +587,6 @@ action_show_hide_sidebar_callback (GtkAction *action,
 }
 
 static void
-action_split_view_callback (GtkAction *action,
-			    gpointer user_data)
-{
-	NemoWindow *window;
-	gboolean is_active;
-
-    if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
-        return;
-    }
-
-	window = NEMO_WINDOW (user_data);
-
-	is_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-	if (is_active != nemo_window_split_view_showing (window)) {
-		NemoWindowSlot *slot;
-
-		if (is_active) {
-			nemo_window_split_view_on (window);
-		} else {
-			nemo_window_split_view_off (window);
-		}
-
-		slot = nemo_window_get_active_slot (window);
-		if (slot != NULL) {
-			nemo_view_update_menus (slot->content_view);
-		}
-	}
-}
-
-static void
 nemo_window_update_split_view_actions_sensitivity (NemoWindow *window)
 {
 	GtkActionGroup *action_group;
@@ -660,6 +630,38 @@ nemo_window_update_split_view_actions_sensitivity (NemoWindow *window)
 	/* clean up */
 	g_clear_object (&active_pane_location);
 	g_clear_object (&next_pane_location);
+}
+
+static void
+action_split_view_callback (GtkAction *action,
+			    gpointer user_data)
+{
+	NemoWindow *window;
+	gboolean is_active;
+
+    if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        return;
+    }
+
+	window = NEMO_WINDOW (user_data);
+
+	is_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+	if (is_active != nemo_window_split_view_showing (window)) {
+		NemoWindowSlot *slot;
+
+		if (is_active) {
+			nemo_window_split_view_on (window);
+		} else {
+			nemo_window_split_view_off (window);
+		}
+
+		slot = nemo_window_get_active_slot (window);
+		if (slot != NULL) {
+			nemo_view_update_menus (slot->content_view);
+		}
+	}
+
+    nemo_window_update_split_view_actions_sensitivity (window);
 }
 
 static void
