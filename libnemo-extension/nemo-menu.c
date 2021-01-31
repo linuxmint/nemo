@@ -100,7 +100,7 @@ nemo_menu_finalize (GObject *object)
 	NemoMenu *menu = NEMO_MENU (object);
 
 	if (menu->priv->item_list) {
-		g_list_free (menu->priv->item_list);
+        nemo_menu_item_list_free (menu->priv->item_list);
 	}
 
 	G_OBJECT_CLASS (nemo_menu_parent_class)->finalize (object);

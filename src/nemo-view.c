@@ -5852,6 +5852,8 @@ add_extension_menu_items (NemoView *view,
     			g_free (subdir);
     		}
         }
+
+        g_clear_object (&menu);
 	}
 }
 
