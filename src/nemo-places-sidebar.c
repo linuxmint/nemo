@@ -666,29 +666,21 @@ home_on_different_fs (const gchar *home_uri)
     return res;
 }
 
-static void
-recent_and_favorites_supported (gboolean *recent,
-                                gboolean *favorites)
+static gboolean
+vfs_supports_uri_scheme (const gchar *scheme)
 {
-    gboolean recent_setting;
-    recent_setting = FALSE;
-    *recent = *favorites = FALSE;
+   const gchar * const *supported;
+   gint i;
 
-    recent_setting = g_settings_get_boolean (cinnamon_privacy_preferences,
-                                             NEMO_PREFERENCES_RECENT_ENABLED);
+   supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
 
-    const char * const *supported;
-    int i;
+   for (i = 0; supported[i] != NULL; i++) {
+      if (g_strcmp0 (scheme, supported[i]) == 0) {
+          return TRUE;
+      }
+   }
 
-    supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
-    for (i = 0; supported[i] != NULL; i++) {
-        if (strcmp ("recent", supported[i]) == 0 && recent_setting) {
-            *recent = TRUE;
-        }
-        if (strcmp ("favorites", supported[i]) == 0) {
-            *favorites = TRUE;
-        }
-    }
+   return FALSE;
 }
 
 static gchar *
@@ -831,10 +823,7 @@ update_places (NemoPlacesSidebar *sidebar)
         g_free (tooltip);
     }
 
-    gboolean show_recent, show_favorites;
-    recent_and_favorites_supported (&show_recent, &show_favorites);
-
-    if (show_favorites) {
+    if (vfs_supports_uri_scheme ("favorites")) {
         gint n = xapp_favorites_get_n_favorites (xapp_favorites_get_default ());
 
         if (n > 0) {
@@ -848,7 +837,11 @@ update_places (NemoPlacesSidebar *sidebar)
         }
     }
 
-    if (show_recent) {
+    gboolean recent_enabled;
+    recent_enabled = g_settings_get_boolean (cinnamon_privacy_preferences,
+                                             NEMO_PREFERENCES_RECENT_ENABLED);
+
+    if (recent_enabled && vfs_supports_uri_scheme ("recent")) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
         icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT;
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -878,7 +871,7 @@ update_places (NemoPlacesSidebar *sidebar)
                            cat_iter);
     g_free (tooltip);
 
-    if (!show_recent)
+    if (!recent_enabled)
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
     mount_uri = (char *)"trash:///"; /* No need to strdup */
