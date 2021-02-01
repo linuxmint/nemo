@@ -984,13 +984,17 @@ handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton 
         return FALSE;
     }
 
+    if (event->button == GDK_BUTTON_SECONDARY) {
+        return FALSE;
+    }
+
     if (clicked_within_double_click_interval (view) &&
         view->details->double_click_path[1] &&
         gtk_tree_path_compare (view->details->double_click_path[0], view->details->double_click_path[1]) == 0 &&
         !on_expander) {
         /* NOTE: Activation can actually destroy the view if we're switching */
         if (!button_event_modifies_selection (event)) {
-            if ((event->button == 1 || event->button == 3)) {
+            if (event->button == 1) {
                 activate_selected_items (view);
             } else if (event->button == 2) {
                 activate_selected_items_alternate (view, NULL, TRUE);
