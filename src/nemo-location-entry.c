@@ -330,11 +330,16 @@ nemo_location_entry_activate (GtkEntry *entry)
 	if (entry_text != NULL && *entry_text != '\0') {
 		uri_scheme = g_uri_parse_scheme (entry_text);
 
-		if (!g_path_is_absolute (entry_text) && uri_scheme == NULL && entry_text[0] != '~') {
-			/* Fix non absolute paths */
-			full_path = g_build_filename (loc_entry->details->current_directory, entry_text, NULL);
-			gtk_entry_set_text (entry, full_path);
-			g_free (full_path);
+              if (!g_path_is_absolute (entry_text) && uri_scheme == NULL && entry_text[0] != '~') {
+                  g_strstrip (entry_text); 
+                  if (entry_text[0] == '/') {
+                    gtk_entry_set_text (entry, entry_text);
+                  } else {
+                    /* Fix non absolute paths */
+                    full_path = g_build_filename (loc_entry->details->current_directory, entry_text, NULL);
+                    gtk_entry_set_text (entry, full_path);
+                    g_free (full_path);
+                  }
 		}
 
 		g_free (uri_scheme);
