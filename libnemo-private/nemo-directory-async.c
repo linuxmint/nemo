@@ -3436,9 +3436,7 @@ btime_start (NemoDirectory *directory,
 }
 
 static gboolean
-favorite_check_callback (GObject *source_object,
-                         GAsyncResult *res,
-                         gpointer user_data)
+favorite_check_callback (gpointer user_data)
 {
     NemoDirectory *directory;
     NemoFile *favorite_check_file;
@@ -3447,8 +3445,9 @@ favorite_check_callback (GObject *source_object,
     state = user_data;
 
     if (state->directory == NULL) {
-        /* Operation was cancelled. Bail out */
-        g_free (state);
+        /* This should never run, favorite_check_cancel removes the idle timer and frees
+         * the state. */
+        g_warn_if_reached ();
         return G_SOURCE_REMOVE;
     }
 
