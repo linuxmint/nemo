@@ -495,7 +495,7 @@ fm_desktop_icon_container_icons_compare (NemoIconContainer *container,
 		return nemo_file_compare_for_sort
 			(file_a, file_b, NEMO_FILE_SORT_BY_DISPLAY_NAME,
 			 nemo_view_should_sort_directories_first (directory_view),
-             nemo_view_should_sort_favorites_first (directory_view),
+			 nemo_view_should_sort_favorites_first (directory_view),
 			 FALSE);
 	}
 

@@ -268,7 +268,7 @@ struct NemoViewDetails
 	gboolean is_renaming;
 
 	gboolean sort_directories_first;
-    gboolean sort_favorites_first;
+	gboolean sort_favorites_first;
 
 	gboolean show_foreign_files;
 	gboolean show_hidden_files;
@@ -2912,7 +2912,7 @@ nemo_view_init (NemoView *view)
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST,
 				  G_CALLBACK(sort_directories_first_changed_callback), view);
-    g_signal_connect_swapped (nemo_preferences,
+	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SORT_FAVORITES_FIRST,
 				  G_CALLBACK(sort_favorites_first_changed_callback), view);
 	g_signal_connect_swapped (gnome_lockdown_preferences,

@@ -1763,7 +1763,7 @@ nemo_icon_view_compare_files (NemoIconView   *icon_view,
 		(a, b, icon_view->details->sort->sort_type,
 		 /* Use type-unsafe cast for performance */
 		 nemo_view_should_sort_directories_first ((NemoView *)icon_view),
-         nemo_view_should_sort_favorites_first ((NemoView *)icon_view),
+		 nemo_view_should_sort_favorites_first ((NemoView *)icon_view),
 		 icon_view->details->sort_reversed);
 }
 

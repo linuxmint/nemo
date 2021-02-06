@@ -433,19 +433,19 @@ int                     nemo_file_compare_for_sort                  (NemoFile   
 									 NemoFile                   *file_2,
 									 NemoFileSortType            sort_type,
 									 gboolean			 directories_first,
-                                     gboolean            favorites_first,
+									 gboolean            favorites_first,
 									 gboolean		  	 reversed);
 int                     nemo_file_compare_for_sort_by_attribute     (NemoFile                   *file_1,
 									 NemoFile                   *file_2,
 									 const char                     *attribute,
 									 gboolean                        directories_first,
-                                     gboolean                        favorites_first,
+									 gboolean                        favorites_first,
 									 gboolean                        reversed);
 int                     nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 									 NemoFile                   *file_2,
 									 GQuark                          attribute,
 									 gboolean                        directories_first,
-                                     gboolean                        favorites_first,
+									 gboolean                        favorites_first,
 									 gboolean                        reversed);
 gboolean                nemo_file_is_date_sort_attribute_q          (GQuark                          attribute);
 
