@@ -116,6 +116,7 @@ struct FMTreeViewDetails {
     GList *action_items;
     guint hidden_files_changed_id;
     guint sort_directories_first : 1;
+    guint sort_favorites_first : 1;
 };
 
 typedef struct {
@@ -543,6 +544,7 @@ compare_rows (GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer call
         result = nemo_file_compare_for_sort (file_a, file_b,
                                              NEMO_FILE_SORT_BY_DISPLAY_NAME,
                                              FM_TREE_VIEW (callback_data)->details->sort_directories_first,
+                                             FM_TREE_VIEW (callback_data)->details->sort_favorites_first,
                                              FALSE);
 	}
 
@@ -1742,6 +1744,27 @@ sort_directories_first_changed_callback (gpointer callback_data)
 }
 
 static void
+sort_favorites_first_changed_callback (gpointer callback_data)
+{
+    FMTreeView *view;
+    gboolean preference_value;
+
+    view = FM_TREE_VIEW (callback_data);
+
+    preference_value = g_settings_get_boolean (nemo_preferences,
+                                               NEMO_PREFERENCES_SORT_FAVORITES_FIRST);
+
+    if (preference_value != view->details->sort_favorites_first) {
+        view->details->sort_favorites_first = preference_value;
+    }
+
+    gtk_tree_model_sort_reset_default_sort_func (GTK_TREE_MODEL_SORT (view->details->sort_model));
+
+    gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (view->details->sort_model),
+                         compare_rows, view, NULL);
+}
+
+static void
 fm_tree_view_init (FMTreeView *view)
 {
 	view->details = g_new0 (FMTreeViewDetails, 1);
@@ -1769,9 +1792,15 @@ fm_tree_view_init (FMTreeView *view)
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST,
                   G_CALLBACK (sort_directories_first_changed_callback), view);
+                  
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SORT_FAVORITES_FIRST,
+                  G_CALLBACK (sort_favorites_first_changed_callback), view);
 
     view->details->sort_directories_first = g_settings_get_boolean (nemo_preferences,
                                                                     NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+    view->details->sort_favorites_first = g_settings_get_boolean (nemo_preferences,
+                                                                    NEMO_PREFERENCES_SORT_FAVORITES_FIRST);
 
 	view->details->popup_file = NULL;
 
@@ -1864,6 +1893,10 @@ fm_tree_view_dispose (GObject *object)
     g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
                           G_CALLBACK(sort_directories_first_changed_callback),
                           view);
+    g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
+                          G_CALLBACK(sort_favorites_first_changed_callback),
+                          view);
+        
 
 	view->details->window = NULL;
 

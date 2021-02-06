@@ -111,6 +111,7 @@ typedef enum
 
 /* Sorting order */
 #define NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST		"sort-directories-first"
+#define NEMO_PREFERENCES_SORT_FAVORITES_FIRST		"sort-favorites-first"
 #define NEMO_PREFERENCES_DEFAULT_SORT_ORDER			"default-sort-order"
 #define NEMO_PREFERENCES_DEFAULT_SORT_IN_REVERSE_ORDER	"default-sort-in-reverse-order"
 

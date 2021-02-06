@@ -72,6 +72,7 @@ struct NemoListModelDetails {
 	GtkSortType order;
 
 	gboolean sort_directories_first;
+    gboolean sort_favorites_first;
 
 	GtkTreeView *drag_view;
 	int drag_begin_x;
@@ -717,6 +718,7 @@ nemo_list_model_file_entry_compare_func (gconstpointer a,
 		result = nemo_file_compare_for_sort_by_attribute_q (file_entry1->file, file_entry2->file,
 									model->details->sort_attribute,
 									model->details->sort_directories_first,
+                                    model->details->sort_favorites_first,
 									(model->details->order == GTK_SORT_DESCENDING));
 	} else if (file_entry1->file == NULL) {
 		return -1;
@@ -737,6 +739,7 @@ nemo_list_model_compare_func (NemoListModel *model,
 	result = nemo_file_compare_for_sort_by_attribute_q (file1, file2,
 								model->details->sort_attribute,
 								model->details->sort_directories_first,
+                                model->details->sort_favorites_first,
 								(model->details->order == GTK_SORT_DESCENDING));
 
 	return result;
@@ -1435,6 +1438,17 @@ nemo_list_model_set_should_sort_directories_first (NemoListModel *model, gboolea
 	}
 
 	model->details->sort_directories_first = sort_directories_first;
+	nemo_list_model_sort (model);
+}
+
+void
+nemo_list_model_set_should_sort_favorites_first (NemoListModel *model, gboolean sort_favorites_first)
+{
+	if (model->details->sort_favorites_first == sort_favorites_first) {
+		return;
+	}
+
+	model->details->sort_favorites_first = sort_favorites_first;
 	nemo_list_model_sort (model);
 }
 

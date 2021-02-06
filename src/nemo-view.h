@@ -300,6 +300,7 @@ struct NemoViewClass {
     void    (* click_policy_changed)       (NemoView *view);
 	void	(* click_to_rename_mode_changed)   (NemoView *view);
 	void	(* sort_directories_first_changed) (NemoView *view);
+    void	(* sort_favorites_first_changed) (NemoView *view);
 
 	/* Get the id string for this view. Its a constant string, not memory managed */
 	const char *   (* get_view_id)            (NemoView          *view);
@@ -361,6 +362,7 @@ void                nemo_view_pop_up_selection_context_menu    (NemoView  *view,
 gboolean            nemo_view_should_show_file                 (NemoView  *view,
 								    NemoFile     *file);
 gboolean	    nemo_view_should_sort_directories_first    (NemoView  *view);
+gboolean	    nemo_view_should_sort_favorites_first    (NemoView  *view);
 void                nemo_view_ignore_hidden_file_preferences   (NemoView  *view);
 void                nemo_view_set_show_foreign                 (NemoView  *view,
 								    gboolean          show_foreign);

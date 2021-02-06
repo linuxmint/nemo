@@ -573,6 +573,22 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="position">4</property>
                                           </packing>
                                         </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="sort_favorites_first_checkbutton">
+                                            <property name="label" translatable="yes">Sort _favorites before other files</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">5</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>

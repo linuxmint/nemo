@@ -1763,6 +1763,7 @@ nemo_icon_view_compare_files (NemoIconView   *icon_view,
 		(a, b, icon_view->details->sort->sort_type,
 		 /* Use type-unsafe cast for performance */
 		 nemo_view_should_sort_directories_first ((NemoView *)icon_view),
+         nemo_view_should_sort_favorites_first ((NemoView *)icon_view),
 		 icon_view->details->sort_reversed);
 }
 
@@ -2152,6 +2153,19 @@ all_columns_same_width_changed_callback (gpointer callback_data)
 
 static void
 nemo_icon_view_sort_directories_first_changed (NemoView *directory_view)
+{
+	NemoIconView *icon_view;
+
+	icon_view = NEMO_ICON_VIEW (directory_view);
+
+	if (nemo_icon_view_using_auto_layout (icon_view)) {
+		nemo_icon_container_sort
+			(get_icon_container (icon_view));
+	}
+}
+
+static void
+nemo_icon_view_sort_favorites_first_changed (NemoView *directory_view)
 {
 	NemoIconView *icon_view;
 
@@ -2715,6 +2729,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
         nemo_view_class->merge_menus = nemo_icon_view_merge_menus;
         nemo_view_class->unmerge_menus = nemo_icon_view_unmerge_menus;
         nemo_view_class->sort_directories_first_changed = nemo_icon_view_sort_directories_first_changed;
+        nemo_view_class->sort_favorites_first_changed = nemo_icon_view_sort_favorites_first_changed;
         nemo_view_class->start_renaming_file = nemo_icon_view_start_renaming_file;
         nemo_view_class->update_menus = nemo_icon_view_update_menus;
 	nemo_view_class->using_manual_layout = nemo_icon_view_using_manual_layout;

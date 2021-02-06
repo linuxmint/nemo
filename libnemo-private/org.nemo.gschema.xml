@@ -247,6 +247,11 @@
       <summary>Show folders first in windows</summary>
       <description>If set to true, then Nemo shows folders prior to showing files in the icon and list views.</description>
     </key>
+    <key name="sort-favorites-first" type="b">
+      <default>true</default>
+      <summary>Show favorites first in windows</summary>
+      <description>If set to true, then Nemo shows favorites prior to other files in the icon and list views.</description>
+    </key>
     <key name="default-sort-order" enum="org.nemo.SortOrder">
       <aliases>
 	<alias value='modification_date' target='mtime'/>
