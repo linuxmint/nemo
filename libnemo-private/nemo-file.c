@@ -3241,7 +3241,7 @@ static int
 nemo_file_compare_for_sort_internal (NemoFile *file_1,
 					 NemoFile *file_2,
 					 gboolean directories_first,
-                     gboolean favorites_first,
+					 gboolean favorites_first,
 					 gboolean reversed)
 {
 	gboolean is_directory_1, is_directory_2;
@@ -3315,7 +3315,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				NemoFile *file_2,
 				NemoFileSortType sort_type,
 				gboolean directories_first,
-                gboolean favorites_first,
+				gboolean favorites_first,
 				gboolean reversed)
 {
 	int result;
@@ -3397,7 +3397,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						 NemoFile                   *file_2,
 						 GQuark                          attribute,
 						 gboolean                        directories_first,
-                         gboolean                        favorites_first,
+						 gboolean                        favorites_first,
 						 gboolean                        reversed)
 {
 	int result;
@@ -3413,19 +3413,19 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_DISPLAY_NAME,
 						       directories_first,
-                               favorites_first,
+						       favorites_first,
 						       reversed);
 	} else if (attribute == attribute_size_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_SIZE,
 						       directories_first,
-                               favorites_first,
+						       favorites_first,
 						       reversed);
 	} else if (attribute == attribute_type_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TYPE,
 						       directories_first,
-                               favorites_first,
+						       favorites_first,
 						       reversed);
 	} else if (attribute == attribute_detailed_type_q) {
         return nemo_file_compare_for_sort (file_1, file_2,
@@ -3440,7 +3440,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_MTIME,
 						       directories_first,
-                               favorites_first,
+						       favorites_first,
 						       reversed);
     } else if (attribute == attribute_accessed_date_q ||
                attribute == attribute_date_accessed_q ||
@@ -3448,7 +3448,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_ATIME,
 						       directories_first,
-                               favorites_first,
+						       favorites_first,
 						       reversed);
     } else if (attribute == attribute_creation_date_q ||
                attribute == attribute_date_created_q ||
@@ -3464,7 +3464,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TRASHED_TIME,
 						       directories_first,
-                               favorites_first,
+						       favorites_first,
 						       reversed);
 	}
 
@@ -3501,13 +3501,13 @@ nemo_file_compare_for_sort_by_attribute     (NemoFile                   *file_1,
 						 NemoFile                   *file_2,
 						 const char                     *attribute,
 						 gboolean                        directories_first,
-                         gboolean                        favorites_first,
+						 gboolean                        favorites_first,
 						 gboolean                        reversed)
 {
 	return nemo_file_compare_for_sort_by_attribute_q (file_1, file_2,
 							      g_quark_from_string (attribute),
 							      directories_first,
-                                  favorites_first,
+							      favorites_first,
 							      reversed);
 }
 

@@ -4097,7 +4097,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->invert_selection = nemo_list_view_invert_selection;
 	nemo_view_class->compare_files = nemo_list_view_compare_files;
 	nemo_view_class->sort_directories_first_changed = nemo_list_view_sort_directories_first_changed;
-    nemo_view_class->sort_favorites_first_changed = nemo_list_view_sort_favorites_first_changed;
+	nemo_view_class->sort_favorites_first_changed = nemo_list_view_sort_favorites_first_changed;
 	nemo_view_class->start_renaming_file = nemo_list_view_start_renaming_file;
 	nemo_view_class->get_zoom_level = nemo_list_view_get_zoom_level;
 	nemo_view_class->zoom_to_level = nemo_list_view_zoom_to_level;
@@ -4168,7 +4168,7 @@ nemo_list_view_init (NemoListView *list_view)
     nemo_list_view_click_to_rename_mode_changed (NEMO_VIEW (list_view));
 
 	nemo_list_view_sort_directories_first_changed (NEMO_VIEW (list_view));
-    nemo_list_view_sort_favorites_first_changed (NEMO_VIEW (list_view));
+	nemo_list_view_sort_favorites_first_changed (NEMO_VIEW (list_view));
 
     list_view->details->current_selection_count = -1;
 
