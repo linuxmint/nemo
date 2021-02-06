@@ -3241,6 +3241,7 @@ static int
 nemo_file_compare_for_sort_internal (NemoFile *file_1,
 					 NemoFile *file_2,
 					 gboolean directories_first,
+                     gboolean favorites_first,
 					 gboolean reversed)
 {
 	gboolean is_directory_1, is_directory_2;
@@ -3252,13 +3253,15 @@ nemo_file_compare_for_sort_internal (NemoFile *file_1,
 
     pinned_1 = nemo_file_get_pinning (file_1);
     pinned_2 = nemo_file_get_pinning (file_2);
+    
+    if (favorites_first) {
+        if (favorite_1 && !favorite_2) {
+            return -1;
+        }
 
-    if (favorite_1 && !favorite_2) {
-        return -1;
-    }
-
-    if (favorite_2 && !favorite_1) {
-        return +1;
+        if (favorite_2 && !favorite_1) {
+            return +1;
+        }
     }
 
     if (pinned_1 && !pinned_2) {
@@ -3297,6 +3300,7 @@ nemo_file_compare_for_sort_internal (NemoFile *file_1,
  * @file_2: Another file object
  * @sort_type: Sort criterion
  * @directories_first: Put all directories before any non-directories
+ * @favorites_first: Put all favorited items before any non-favorited items
  * @reversed: Reverse the order of the items, except that
  * the directories_first flag is still respected.
  *
@@ -3311,6 +3315,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				NemoFile *file_2,
 				NemoFileSortType sort_type,
 				gboolean directories_first,
+                gboolean favorites_first,
 				gboolean reversed)
 {
 	int result;
@@ -3319,7 +3324,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 		return 0;
 	}
 
-	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, reversed);
+	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, favorites_first, reversed);
 
 	if (result == 0) {
 		switch (sort_type) {
@@ -3392,6 +3397,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						 NemoFile                   *file_2,
 						 GQuark                          attribute,
 						 gboolean                        directories_first,
+                         gboolean                        favorites_first,
 						 gboolean                        reversed)
 {
 	int result;
@@ -3407,21 +3413,25 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_DISPLAY_NAME,
 						       directories_first,
+                               favorites_first,
 						       reversed);
 	} else if (attribute == attribute_size_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_SIZE,
 						       directories_first,
+                               favorites_first,
 						       reversed);
 	} else if (attribute == attribute_type_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TYPE,
 						       directories_first,
+                               favorites_first,
 						       reversed);
 	} else if (attribute == attribute_detailed_type_q) {
         return nemo_file_compare_for_sort (file_1, file_2,
                                NEMO_FILE_SORT_BY_DETAILED_TYPE,
                                directories_first,
+                               favorites_first,
                                reversed);
 	} else if (attribute == attribute_modification_date_q ||
                attribute == attribute_date_modified_q ||
@@ -3430,6 +3440,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_MTIME,
 						       directories_first,
+                               favorites_first,
 						       reversed);
     } else if (attribute == attribute_accessed_date_q ||
                attribute == attribute_date_accessed_q ||
@@ -3437,6 +3448,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_ATIME,
 						       directories_first,
+                               favorites_first,
 						       reversed);
     } else if (attribute == attribute_creation_date_q ||
                attribute == attribute_date_created_q ||
@@ -3445,18 +3457,20 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
         return nemo_file_compare_for_sort (file_1, file_2,
                                NEMO_FILE_SORT_BY_BTIME,
                                directories_first,
+                               favorites_first,
                                reversed);
     } else if (attribute == attribute_trashed_on_q ||
                attribute == attribute_trashed_on_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TRASHED_TIME,
 						       directories_first,
+                               favorites_first,
 						       reversed);
 	}
 
 	/* it is a normal attribute, compare by strings */
 
-	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, reversed);
+	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, favorites_first, reversed);
 
 	if (result == 0) {
 		char *value_1;
@@ -3487,11 +3501,13 @@ nemo_file_compare_for_sort_by_attribute     (NemoFile                   *file_1,
 						 NemoFile                   *file_2,
 						 const char                     *attribute,
 						 gboolean                        directories_first,
+                         gboolean                        favorites_first,
 						 gboolean                        reversed)
 {
 	return nemo_file_compare_for_sort_by_attribute_q (file_1, file_2,
 							      g_quark_from_string (attribute),
 							      directories_first,
+                                  favorites_first,
 							      reversed);
 }
 
@@ -9040,12 +9056,14 @@ nemo_self_check_file (void)
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_1)->ref_count, 1);
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_2)->ref_count, 1);
 
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE) < 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, TRUE) > 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE) == 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE) == 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, TRUE) == 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, TRUE) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, FALSE) < 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, TRUE) > 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, FALSE) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE, FALSE) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, TRUE) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE, TRUE) == 0, TRUE);
+    
+    
 
 	nemo_file_unref (file_1);
 	nemo_file_unref (file_2);

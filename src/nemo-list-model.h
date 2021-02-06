@@ -97,7 +97,8 @@ gboolean nemo_list_model_get_first_iter_for_file           (NemoListModel       
 								GtkTreeIter          *iter);
 void     nemo_list_model_set_should_sort_directories_first (NemoListModel          *model,
 								gboolean              sort_directories_first);
-
+void     nemo_list_model_set_should_sort_favorites_first (NemoListModel          *model,
+								gboolean              sort_favorites_first);
 int      nemo_list_model_get_sort_column_id_from_attribute (NemoListModel *model,
 								GQuark       attribute);
 GQuark   nemo_list_model_get_attribute_from_sort_column_id (NemoListModel *model,

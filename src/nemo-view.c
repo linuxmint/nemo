@@ -268,6 +268,7 @@ struct NemoViewDetails
 	gboolean is_renaming;
 
 	gboolean sort_directories_first;
+    gboolean sort_favorites_first;
 
 	gboolean show_foreign_files;
 	gboolean show_hidden_files;
@@ -2396,6 +2397,12 @@ nemo_view_should_sort_directories_first (NemoView *view)
 	return view->details->sort_directories_first;
 }
 
+gboolean
+nemo_view_should_sort_favorites_first (NemoView *view)
+{
+	return view->details->sort_favorites_first;
+}
+
 static void
 sort_directories_first_changed_callback (gpointer callback_data)
 {
@@ -2410,6 +2417,23 @@ sort_directories_first_changed_callback (gpointer callback_data)
 	if (preference_value != view->details->sort_directories_first) {
 		view->details->sort_directories_first = preference_value;
 		return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->sort_directories_first_changed (view);
+	}
+}
+
+static void
+sort_favorites_first_changed_callback (gpointer callback_data)
+{
+	NemoView *view;
+	gboolean preference_value;
+
+	view = NEMO_VIEW (callback_data);
+
+	preference_value =
+		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_FAVORITES_FIRST);
+
+	if (preference_value != view->details->sort_favorites_first) {
+		view->details->sort_favorites_first = preference_value;
+		return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->sort_favorites_first_changed (view);
 	}
 }
 
@@ -2852,6 +2876,9 @@ nemo_view_init (NemoView *view)
 	view->details->sort_directories_first =
 		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
 
+	view->details->sort_favorites_first =
+		g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SORT_FAVORITES_FIRST);
+
 	g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
 				 G_CALLBACK (nemo_view_trash_state_changed_callback), view, 0);
 
@@ -2885,6 +2912,9 @@ nemo_view_init (NemoView *view)
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST,
 				  G_CALLBACK(sort_directories_first_changed_callback), view);
+    g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SORT_FAVORITES_FIRST,
+				  G_CALLBACK(sort_favorites_first_changed_callback), view);
 	g_signal_connect_swapped (gnome_lockdown_preferences,
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
 				  G_CALLBACK (schedule_update_menus), view);
@@ -3080,6 +3110,8 @@ nemo_view_finalize (GObject *object)
                           click_to_rename_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      sort_directories_first_changed_callback, view);
+	g_signal_handlers_disconnect_by_func (nemo_preferences,
+					      sort_favorites_first_changed_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_window_state,
 					      nemo_view_display_selection_info, view);
     g_signal_handlers_disconnect_by_func (nemo_menu_config_preferences,
