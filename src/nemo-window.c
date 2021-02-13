@@ -1166,6 +1166,13 @@ nemo_window_key_press_event (GtkWidget *widget,
 	active_slot = nemo_window_get_active_slot (window);
 	view = active_slot->content_view;
 
+      /**
+       * Disable the GTK Emoji Chooser
+       */
+      if ((event->keyval == GDK_KEY_semicolon || event->keyval == GDK_KEY_period) && (event->state & GDK_CONTROL_MASK)) {
+          return FALSE;
+      }
+
 	if (view != NULL && nemo_view_get_is_renaming (view)) {
 		/* if we're renaming, just forward the event to the
 		 * focused widget and return. We don't want to process the window
