@@ -48,6 +48,7 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-mime-application-chooser.h>
+#include <libnemo-private/nemo-global-preferences.h>
 #include <sys/stat.h>
 
 enum {
@@ -1733,11 +1734,31 @@ activation_mount_not_mounted (ActivateParameters *parameters)
 	LaunchLocation *loc;
 	GMountOperation *mount_op;
 	GList *l, *next, *files;
+	int preferences_value;
 
 	if (parameters->not_mounted != NULL) {
 		file = parameters->not_mounted->data;
 		mount_op = gtk_mount_operation_new (parameters->parent_window);
-		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+
+		preferences_value = g_settings_get_enum	(nemo_preferences,
+									 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+		switch (preferences_value) {
+		case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_NEVER);
+			break;
+		case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+			break;
+		case NEMO_REMEMBER_PASSWORDS_FOREVER:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_PERMANENTLY);
+			break;
+		default:
+			/* Complain non-fatally, since preference data can't be trusted */
+			g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+				   preferences_value);
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		}
+
 		g_signal_connect (mount_op, "notify::is-showing",
 				  G_CALLBACK (activate_mount_op_active), parameters);
 		location = nemo_file_get_location (file);
@@ -1994,11 +2015,31 @@ activation_mount_mountables (ActivateParameters *parameters)
 {
 	NemoFile *file;
 	GMountOperation *mount_op;
+	int preferences_value;
 
 	if (parameters->mountables != NULL) {
 		file = parameters->mountables->data;
 		mount_op = gtk_mount_operation_new (parameters->parent_window);
-		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+
+		preferences_value = g_settings_get_enum	(nemo_preferences,
+									 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+		switch (preferences_value) {
+		case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_NEVER);
+			break;
+		case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+			break;
+		case NEMO_REMEMBER_PASSWORDS_FOREVER:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_PERMANENTLY);
+			break;
+		default:
+			/* Complain non-fatally, since preference data can't be trusted */
+			g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+				   preferences_value);
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		}
+
 		g_signal_connect (mount_op, "notify::is-showing",
 				  G_CALLBACK (activate_mount_op_active), parameters);
 		nemo_file_mount (file,

@@ -7614,8 +7614,30 @@ action_mount_volume_callback (GtkAction *action,
 	GList *selection, *l;
 	NemoView *view;
 	GMountOperation *mount_op;
+	int preferences_value;
+	GPasswordSave save_pref;
 
-        view = NEMO_VIEW (data);
+	preferences_value = g_settings_get_enum	(nemo_preferences,
+								 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+
+	switch (preferences_value) {
+	case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+		save_pref = G_PASSWORD_SAVE_NEVER;
+		break;
+	case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+		save_pref = G_PASSWORD_SAVE_FOR_SESSION;
+		break;
+	case NEMO_REMEMBER_PASSWORDS_FOREVER:
+		save_pref = G_PASSWORD_SAVE_PERMANENTLY;
+		break;
+	default:
+		/* Complain non-fatally, since preference data can't be trusted */
+		g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+			   preferences_value);
+		save_pref = G_PASSWORD_SAVE_FOR_SESSION;
+	}
+
+    view = NEMO_VIEW (data);
 
 	selection = nemo_view_get_selection (view);
 	for (l = selection; l != NULL; l = l->next) {
@@ -7623,7 +7645,7 @@ action_mount_volume_callback (GtkAction *action,
 
 		if (nemo_file_can_mount (file)) {
 			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
-			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+			g_mount_operation_set_password_save (mount_op, save_pref);
 			nemo_file_mount (file, mount_op, NULL,
 					     file_mount_callback, NULL);
 			g_object_unref (mount_op);
@@ -7776,6 +7798,7 @@ action_self_mount_volume_callback (GtkAction *action,
 	NemoFile *file;
 	NemoView *view;
 	GMountOperation *mount_op;
+	int preferences_value;
 
 	view = NEMO_VIEW (data);
 
@@ -7785,7 +7808,26 @@ action_self_mount_volume_callback (GtkAction *action,
 	}
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
-	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+
+	preferences_value = g_settings_get_enum	(nemo_preferences,
+								 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+	switch (preferences_value) {
+	case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_NEVER);
+		break;
+	case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		break;
+	case NEMO_REMEMBER_PASSWORDS_FOREVER:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_PERMANENTLY);
+		break;
+	default:
+		/* Complain non-fatally, since preference data can't be trusted */
+		g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+			   preferences_value);
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+	}
+
 	nemo_file_mount (file, mount_op, NULL, file_mount_callback, NULL);
 	g_object_unref (mount_op);
 }
@@ -7895,6 +7937,7 @@ action_location_mount_volume_callback (GtkAction *action,
 	NemoFile *file;
 	NemoView *view;
 	GMountOperation *mount_op;
+	int preferences_value;
 
 	view = NEMO_VIEW (data);
 
@@ -7904,7 +7947,26 @@ action_location_mount_volume_callback (GtkAction *action,
 	}
 
 	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
-	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+
+	preferences_value = g_settings_get_enum	(nemo_preferences,
+								 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+	switch (preferences_value) {
+	case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_NEVER);
+		break;
+	case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		break;
+	case NEMO_REMEMBER_PASSWORDS_FOREVER:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_PERMANENTLY);
+		break;
+	default:
+		/* Complain non-fatally, since preference data can't be trusted */
+		g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+			   preferences_value);
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+	}
+
 	nemo_file_mount (file, mount_op, NULL, file_mount_callback, NULL);
 	g_object_unref (mount_op);
 }

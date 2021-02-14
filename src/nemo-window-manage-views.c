@@ -807,6 +807,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
 	NemoApplication *app;
+	int preferences_value;
 
 	slot = callback_data;
 	window = nemo_window_slot_get_window (slot);
@@ -825,7 +826,24 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		slot->tried_mount = TRUE;
 
 		mount_op = gtk_mount_operation_new (GTK_WINDOW (window));
-		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		preferences_value = g_settings_get_enum	(nemo_preferences,
+									 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+		switch (preferences_value) {
+		case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_NEVER);
+			break;
+		case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+			break;
+		case NEMO_REMEMBER_PASSWORDS_FOREVER:
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_PERMANENTLY);
+			break;
+		default:
+			/* Complain non-fatally, since preference data can't be trusted */
+			g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+				   preferences_value);
+			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		}
 		location = nemo_file_get_location (file);
 		data = g_new0 (MountNotMountedData, 1);
 		data->cancellable = g_cancellable_new ();

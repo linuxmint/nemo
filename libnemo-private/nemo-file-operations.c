@@ -44,6 +44,8 @@
 
 #include "nemo-progress-info.h"
 
+#include "nemo-global-preferences.h"
+
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-stock-dialogs.h>
@@ -2726,9 +2728,29 @@ nemo_file_operations_mount_volume_full (GtkWindow *parent_window,
 					    GObject *mount_callback_data_object)
 {
 	GMountOperation *mount_op;
+	int preferences_value;
 
 	mount_op = gtk_mount_operation_new (parent_window);
-	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+
+	preferences_value = g_settings_get_enum	(nemo_preferences,
+								 NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT);
+	switch (preferences_value) {
+	case NEMO_REMEMBER_PASSWORDS_IMMEDIATELY:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_NEVER);
+		break;
+	case NEMO_REMEMBER_PASSWORDS_LOGOUT:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+		break;
+	case NEMO_REMEMBER_PASSWORDS_FOREVER:
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_PERMANENTLY);
+		break;
+	default:
+		/* Complain non-fatally, since preference data can't be trusted */
+		g_warning ("Unknown value %d for NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT",
+			   preferences_value);
+		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
+	}
+
 	g_object_set_data (G_OBJECT (mount_op),
 			   "mount-callback",
 			   mount_callback);

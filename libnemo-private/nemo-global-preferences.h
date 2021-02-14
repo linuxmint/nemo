@@ -74,6 +74,9 @@ typedef enum
 /* Activating executable text files */
 #define NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION		"executable-text-activation"
 
+/* Default for remembering password */
+#define NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT		"remember-passwords-default"
+
 /* Spatial or browser mode */
 #define NEMO_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
@@ -181,6 +184,13 @@ enum
 	NEMO_EXECUTABLE_TEXT_LAUNCH,
 	NEMO_EXECUTABLE_TEXT_DISPLAY,
 	NEMO_EXECUTABLE_TEXT_ASK
+};
+
+enum
+{
+	NEMO_REMEMBER_PASSWORDS_IMMEDIATELY,
+	NEMO_REMEMBER_PASSWORDS_LOGOUT,
+	NEMO_REMEMBER_PASSWORDS_FOREVER
 };
 
 typedef enum

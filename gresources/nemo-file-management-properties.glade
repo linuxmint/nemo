@@ -212,56 +212,6 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="model64">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">100 KB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">500 KB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">1 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">3 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">5 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">10 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">100 MB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">1 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">2 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">4 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">8 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">16 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">32 GB</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">64 GB</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="model4">
     <columns>
       <!-- column-name gchararray -->
@@ -334,6 +284,56 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       </row>
       <row>
         <col id="0" translatable="yes">Never</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="model64">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">100 KB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">500 KB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">3 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">5 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">10 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">100 MB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">2 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">4 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">8 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">16 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">32 GB</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">64 GB</col>
       </row>
     </data>
   </object>
@@ -1579,6 +1579,106 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="position">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="vbox20">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="border_width">6</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel" id="label1">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Remember Passwords Default&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment10">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">40</property>
+                                    <property name="right_padding">40</property>
+                                    <child>
+                                      <object class="GtkBox" id="vbox39">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">6</property>
+                                        <child>
+                                          <object class="GtkRadioButton" id="passwords_forget_immediately_radiobutton">
+                                            <property name="label" translatable="yes">_Forget password immediately</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="passwords_remember_logout_radiobutton">
+                                            <property name="label" translatable="yes">_Remember password until you logout</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">passwords_forget_immediately_radiobutton</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="passwords_remember_forever_radiobutton">
+                                            <property name="label" translatable="yes">_Remember forever</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="use_underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">passwords_forget_immediately_radiobutton</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">5</property>
                               </packing>
                             </child>
                           </object>

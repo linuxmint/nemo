@@ -15,6 +15,12 @@
     <value nick="display" value="1"/>
     <value nick="ask" value="2"/>
   </enum>
+  
+  <enum id="org.nemo.RememberPasswords">
+  	<value nick="immediately" value="0"/>
+    <value nick="logout" value="1"/>
+    <value nick="forever" value="2"/>
+  </enum>
 
   <enum id="org.nemo.FolderView">
     <value nick="icon-view" value="0"/>
@@ -205,6 +211,11 @@
       <default>'ask'</default>
       <summary>What to do with executable text files when activated</summary>
       <description>What to do with executable text files when they are activated (single or double clicked). Possible values are "launch" to launch them as programs, "ask" to ask what to do via a dialog, and "display" to display them as text files.</description>
+    </key>
+    <key name="remember-passwords-default" enum="org.nemo.RememberPasswords">
+      <default>'logout'</default>
+      <summary>Default option selected when prompted for a password.</summary>
+      <description>Default save option when prompted for a password. Can be used to prevent accidentally saving passwords to the keyring.</description>
     </key>
     <key name="mouse-use-extra-buttons" type="b">
       <default>true</default>

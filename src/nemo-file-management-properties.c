@@ -194,6 +194,20 @@ static const char * const executable_text_values[] = {
 	NULL
 };
 
+static const char * const remember_passwords_components[] = {
+	"passwords_forget_immediately_radiobutton",
+	"passwords_remember_logout_radiobutton",
+	"passwords_remember_forever_radiobutton",
+	NULL
+};
+
+static const char * const remember_passwords_values[] = {
+	"immediately",
+	"logout",
+	"forever",
+	NULL
+};
+
 static const char * const size_prefixes_values[] = {
 	"base-10",
 	"base-10-full",
@@ -962,6 +976,11 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 			    (const char **) executable_text_components,
 			    NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION,
 			    (const char **) executable_text_values);
+
+	bind_builder_radio (builder, nemo_preferences,
+			    (const char **) remember_passwords_components,
+			    NEMO_PREFERENCES_REMEMBER_PASSWORDS_DEFAULT,
+			    (const char **) remember_passwords_values);
 
 	bind_builder_uint_enum (builder, nemo_preferences,
 				NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET,
