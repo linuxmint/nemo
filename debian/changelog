@@ -1,3 +1,44 @@
+nemo (4.8.5) ulyssa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: re-add favorite removal during a delete operation.
+  * nemo-view.c: Hide favorites and pinning menu items when in the trash folder.
+  * nemo-view.c: Don't allow trash/delete to work inside the favorites view.
+  * nemo-view.c: Don't show favorite/pinning items in menubar->edit when there is no selection.
+  * nemo-file-operations.c: When trashing (not deleting) a folder, check favorites and remove any descendents of the toplevel.
+  * nemo-file-operations.c: Update favorites when moving files from their real location.
+  * nemo-file.c: Don't try to set metadata on a null file when adding or removing favorites.
+
+  [ Leigh Scott ]
+  * Fix desktop bold fonts
+
+  [ Michael Webster ]
+  * nemo-icon-canvas-item.c: restore the style context after drawing any caption text.
+  * nemo-list-view.c: Fix NemoFile leaks.
+  * nemo-properties-window.c: Fix leak. nemo-directory-async.c: remove extra g_object_unref.
+  * nemo-file: Add a convenience macro to print file uris.
+  * nemo-view.c: Fix leak when generating extension menu items, nemo- menu.c: Free list of menu items during finalize, not just the list itself.
+  * nemo-places-sidebar.c: Use a safer function to check for favorite and recent support.
+
+  [ Lars Mueller ]
+  * nemo-file-operations.c: Fix #2075
+
+  [ Michael Webster ]
+  * nemo-list-view.c: Only allow double-clicks with the primary and middle buttons.
+
+  [ icarter09 ]
+  * Fixes #2239. The value for customizing the desktop layout for Sort items was not being saved.
+
+  [ Michael Webster ]
+  * nemo-directory-async.c: Fix favorite check callback arguments, remove unnecessary g_free().
+
+  [ icarter09 ]
+  * Issue 1908: Sets correct values for x and y for file->details->cached_position.
+  * Issue 2666. Blocks emoji chooser from breaking Nemo
+  * Issue 591. Increases emit time of change for progress update.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 26 Feb 2021 11:37:53 +0000
+
 nemo (4.8.4) ulyssa; urgency=medium
 
   [ Michael Webster ]
