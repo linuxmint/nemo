@@ -219,11 +219,32 @@
                 <property name="accelerator">&lt;Primary&gt;L</property>
               </object>
             </child>
+
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">True</property>
+            <property name="title" translatable="yes" context="shortcut window">Dual Pane</property>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">True</property>
-                <property name="title" translatable="yes" context="shortcut window">Same location as other pane</property>
+                <property name="title" translatable="yes" context="shortcut window">Toggle extra pane</property>
+                <property name="accelerator">F3</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">True</property>
+                <property name="title" translatable="yes" context="shortcut window">Go to other pane's location</property>
                 <property name="accelerator">&lt;alt&gt;S</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">True</property>
+                <property name="title" translatable="yes" context="shortcut window">Focus other pane</property>
+                <property name="accelerator">F6</property>
               </object>
             </child>
           </object>
