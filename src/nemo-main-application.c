@@ -43,6 +43,7 @@
 #include "nemo-window-private.h"
 #include "nemo-window-slot.h"
 #include "nemo-statusbar.h"
+#include "nemo-notebook.h"
 
 #include <libnemo-private/nemo-dbus-manager.h>
 #include <libnemo-private/nemo-directory-private.h>
@@ -392,12 +393,61 @@ open_tabs (NemoMainApplication *application,
 }
 
 static void
+open_tabs_in_existing_window (NemoMainApplication *application,
+                              GFile **locations,
+                              guint n_files,
+                              GdkScreen *screen,
+                              const char *geometry)
+{
+    gchar *uri;
+
+    GList *list_copy;
+    GList *l;
+
+    list_copy = g_list_copy (gtk_application_get_windows (GTK_APPLICATION (&application->parent)));
+    for (l = list_copy; l != NULL; l = l->next) {
+        if (NEMO_IS_WINDOW (l->data)) {
+            NemoWindow *window;
+
+            window = NEMO_WINDOW (l->data);
+
+            /* open all locations */
+            for (int i = 1; i <= n_files; i++) {
+                /* open tabs in reverse order because each
+                 * tab is opened before the previous one */
+                guint tab = n_files - i;
+                uri = g_file_get_uri (locations[tab]);
+                g_debug ("Opening new tab at uri %s\n", uri);
+                nemo_window_go_to_tab (window, locations[tab]);
+                g_free(uri);
+            }
+
+            /* go to the last tab we opened */
+            NemoWindowPane *pane;
+
+            pane = nemo_window_get_active_pane (window);
+            nemo_notebook_set_current_page_relative (NEMO_NOTEBOOK (pane->notebook), n_files);
+
+            gtk_window_present (GTK_WINDOW (window));
+
+            break;
+        }
+    }
+    if (l == NULL) {
+        /* no existing window was found, so open a new window */
+        open_tabs (application, locations, n_files, screen, geometry);
+    }
+    g_list_free (list_copy);
+}
+
+static void
 open_windows (NemoMainApplication *application,
 	      GFile **files,
 	      gint n_files,
 	      GdkScreen *screen,
 	      const char *geometry,
-	      gboolean open_in_tabs)
+	      gboolean open_in_tabs,
+	      gboolean open_in_existing_window)
 {
 	gint i;
 
@@ -405,7 +455,10 @@ open_windows (NemoMainApplication *application,
 		/* Open a window pointing at the default location. */
 		open_window (application, NULL, screen, geometry);
 	} else {
-		if (open_in_tabs) {
+		if (open_in_existing_window) {
+			/* Open one tab at each requested location in an existing window */
+			open_tabs_in_existing_window (application, files, n_files, screen, geometry);
+		} else if (open_in_tabs) {
 			/* Open one window with one tab at each requested location */
 			open_tabs (application, files, n_files, screen, geometry);
 		} else {
@@ -457,26 +510,31 @@ nemo_main_application_open (GApplication *app,
 
 	gboolean open_in_tabs = FALSE;
 	gchar *geometry = NULL;
+	gboolean open_in_existing_window = strcmp (options, "EXISTING_WINDOW") == 0;
 	const char splitter = '=';
 
 	g_debug ("Open called on the GApplication instance; %d files", n_files);
 
-	/* Check if local command line passed --geometry or --tabs */
-	if (strlen (options) > 0) {
-		gchar** split_options = g_strsplit (options, &splitter, 2);
-		if (strcmp (split_options[0], "NULL") != 0) {
-			geometry = g_strdup (split_options[0]);
+	if (!open_in_existing_window) {
+		/* Check if local command line passed --geometry or --tabs */
+		if (strlen (options) > 0) {
+			gchar** split_options = g_strsplit (options, &splitter, 2);
+			if (strcmp (split_options[0], "NULL") != 0) {
+				geometry = g_strdup (split_options[0]);
+			}
+			sscanf (split_options[1], "%d", &open_in_tabs);
+			g_strfreev (split_options);
 		}
-		sscanf (split_options[1], "%d", &open_in_tabs);
-		g_strfreev (split_options);
 	}
 
-	DEBUG ("Open called on the GApplication instance; %d files, open in tabs: %s, geometry: '%s'",
+	DEBUG ("Open called on the GApplication instance; %d files, open in tabs: %s, geometry: '%s',"
+           "open in existing window: %s",
            n_files,
            open_in_tabs ? "yes" : "no",
-           geometry ? geometry : "none");
+           geometry ? geometry : "none",
+           open_in_existing_window ? "yes" : "no");
 
-	open_windows (self, files, n_files, gdk_screen_get_default (), geometry, open_in_tabs);
+	open_windows (self, files, n_files, gdk_screen_get_default (), geometry, open_in_tabs, open_in_existing_window);
 
     g_clear_pointer (&geometry, g_free);
 }
@@ -570,6 +628,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	gboolean version = FALSE;
 	gboolean browser = FALSE;
 	gboolean open_in_tabs = FALSE;
+	gboolean open_in_existing_window = FALSE;
 	gboolean kill_shell = FALSE;
 	gboolean no_default_window = FALSE;
     gboolean no_desktop_ignored = FALSE;
@@ -598,6 +657,8 @@ nemo_main_application_local_command_line (GApplication *application,
           N_("Ignored argument - left for compatibility only."), NULL },
 		{ "tabs", 't', 0, G_OPTION_ARG_NONE, &open_in_tabs,
 		  N_("Open URIs in tabs."), NULL },
+		{ "existing-window", 0, 0, G_OPTION_ARG_NONE, &open_in_existing_window,
+		  N_("Open URIs in an existing window."), NULL },
 		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
 		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
@@ -733,13 +794,17 @@ post_registration:
 		files[0] = g_file_new_for_path (g_get_home_dir ());
 		files[1] = NULL;
 	}
-	/* Invoke "Open" to create new windows */
+	/* Invoke "Open" to open in existing window or create new windows */
 	if (len > 0) {
 		gchar* concatOptions = g_malloc0(64);
-		if (self->priv->geometry == NULL) {
-			g_snprintf (concatOptions, 64, "NULL=%d", open_in_tabs);
+		if (open_in_existing_window) {
+			g_stpcpy (concatOptions, "EXISTING_WINDOW");
 		} else {
-			g_snprintf (concatOptions, 64, "%s=%d", self->priv->geometry, open_in_tabs);
+			if (self->priv->geometry == NULL) {
+				g_snprintf (concatOptions, 64, "NULL=%d", open_in_tabs);
+			} else {
+				g_snprintf (concatOptions, 64, "%s=%d", self->priv->geometry, open_in_tabs);
+			}
 		}
 		g_application_open (application, files, len, concatOptions);
 		g_free (concatOptions);
