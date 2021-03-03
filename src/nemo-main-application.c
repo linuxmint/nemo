@@ -882,7 +882,6 @@ nemo_main_application_get_singleton (void)
     return nemo_application_initialize_singleton (NEMO_TYPE_MAIN_APPLICATION,
                                                   "application-id", "org.Nemo",
                                                   "flags", G_APPLICATION_HANDLES_OPEN,
-                                                  "inactivity-timeout", 30 * 1000, // seconds
                                                   "register-session", TRUE,
                                                   NULL);
 }
