@@ -75,6 +75,10 @@ nemo_menu_provider_get_file_items (NemoMenuProvider *provider,
 {
 	g_return_val_if_fail (NEMO_IS_MENU_PROVIDER (provider), NULL);
 
+    if (files == NULL) {
+        return NULL;
+    }
+
 	if (NEMO_MENU_PROVIDER_GET_IFACE (provider)->get_file_items) {
 		return NEMO_MENU_PROVIDER_GET_IFACE (provider)->get_file_items 
 			(provider, window, files);
