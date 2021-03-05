@@ -1,3 +1,10 @@
+nemo (4.8.6) ulyssa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-view.c: Partially revert b4d0318b318f4f4f20cbd8e89c7859f69aeb6214
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 05 Mar 2021 13:57:14 +0000
+
 nemo (4.8.5) ulyssa; urgency=medium
 
   [ Michael Webster ]
