@@ -66,6 +66,7 @@
 #include <pwd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <gdk/gdkx.h>
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
@@ -428,9 +429,12 @@ open_tabs_in_existing_window (NemoMainApplication *application,
             pane = nemo_window_get_active_pane (window);
             nemo_notebook_set_current_page_relative (NEMO_NOTEBOOK (pane->notebook), n_files);
 
-            gtk_window_present (GTK_WINDOW (window));
+            /* Don't use `gtk_window_present()`, as the window manager will ignore this window's focus request and try
+             * to just mark it urgent instead (flashing in the window list for example). */
+            gtk_window_present_with_time (GTK_WINDOW (window),
+                                          gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
 
-            break;
+          break;
         }
     }
     if (l == NULL) {
