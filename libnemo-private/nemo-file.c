@@ -595,6 +595,7 @@ modify_link_hash_table (NemoFile *file,
 	}
 
 	target_uri = nemo_file_get_symbolic_link_target_uri (file);
+	g_return_if_fail (target_uri != NULL);
 
 	/* Find the old contents of the hash table. */
 	found = g_hash_table_lookup_extended
@@ -2591,7 +2592,9 @@ update_info_internal (NemoFile *file,
 		file->details->thumbnailing_failed = thumbnailing_failed;
 	}
 
-	symlink_name = g_file_info_get_symlink_target (info);
+	symlink_name = is_symlink ?
+		g_file_info_get_symlink_target (info) :
+		NULL;
 	if (g_strcmp0 (file->details->symlink_name, symlink_name) != 0) {
 		changed = TRUE;
 		g_free (file->details->symlink_name);
