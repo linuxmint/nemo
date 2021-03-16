@@ -874,15 +874,17 @@ update_places (NemoPlacesSidebar *sidebar)
     if (!recent_enabled)
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
 
-    mount_uri = (char *)"trash:///"; /* No need to strdup */
-    icon = nemo_trash_monitor_get_symbolic_icon_name ();
-    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                           SECTION_COMPUTER,
-                           _("Trash"), icon, mount_uri,
-                           NULL, NULL, NULL, 0,
-                           _("Open the trash"), 0, FALSE,
-                           cat_iter);
-    g_free (icon);
+    if (vfs_supports_uri_scheme("trash")) {
+        mount_uri = (char *)"trash:///"; /* No need to strdup */
+        icon = nemo_trash_monitor_get_symbolic_icon_name ();
+        cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                               SECTION_COMPUTER,
+                               _("Trash"), icon, mount_uri,
+                               NULL, NULL, NULL, 0,
+                               _("Open the trash"), 0, FALSE,
+                               cat_iter);
+        g_free (icon);
+    }
 
     cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
                                     _("Bookmarks"));
