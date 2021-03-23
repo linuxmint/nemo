@@ -1452,10 +1452,13 @@ add_sorted_view_uris (GList *uris,
 					prior_uris = g_list_prepend (prior_uris, uri);
 				}
 
-				// Shuffle latest mime type to start of list, so fewer iterations are required for more common types.
-				supported_mime_types = g_list_remove_link (supported_mime_types, mime_type_link);
-				supported_mime_types = g_list_insert_before_link (
-					supported_mime_types, supported_mime_types, mime_type_link);
+				if (supported_mime_types != mime_type_link) {
+					// Shuffle latest mime type to start of list, so fewer iterations are required for more common types.
+					supported_mime_types = g_list_remove_link (supported_mime_types, mime_type_link);
+					supported_mime_types->prev = mime_type_link;
+					mime_type_link->next = supported_mime_types;
+					supported_mime_types = mime_type_link;
+				}
 			}
 			g_free (mime_type);
 		}
@@ -1464,8 +1467,12 @@ add_sorted_view_uris (GList *uris,
 	if (found_selected_uri) {
 		l = uris; // This will become the last list link.
 		uris = g_list_reverse (uris);
-		prior_uris = g_list_reverse (prior_uris);
-		l->next = prior_uris; //Connect the lists.
+		if (prior_uris != NULL) {
+			prior_uris = g_list_reverse (prior_uris);
+			// Connect the lists.
+			prior_uris->prev = l;
+			l->next = prior_uris;
+		}
 	} else {
 		// The selected file unexpectedly wasn't found, possibly due to custom application associations.
 		g_list_free_full (prior_uris, g_free);
