@@ -206,6 +206,11 @@
       <summary>What to do with executable text files when activated</summary>
       <description>What to do with executable text files when they are activated (single or double clicked). Possible values are "launch" to launch them as programs, "ask" to ask what to do via a dialog, and "display" to display them as text files.</description>
     </key>
+    <key name="image-viewers-with-external-sort" type="as">
+      <default>['xviewer','feh','sxiv']</default>
+      <summary>Image viewer executables to pass sort order to</summary>
+      <description>When opening a single image with an application in this list, allow that viewer to display other images in the current nemo view, in the presented order (including searches). Other image viewers can be added, but are likely to ignore the order.</description>
+    </key>
     <key name="mouse-use-extra-buttons" type="b">
       <default>true</default>
       <summary>Use extra mouse button events in Nemo' browser window</summary>

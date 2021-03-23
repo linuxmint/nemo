@@ -74,6 +74,9 @@ typedef enum
 /* Activating executable text files */
 #define NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION		"executable-text-activation"
 
+/* Image viewers to pass nemo view sort order to */
+#define NEMO_PREFERENCES_IMAGE_VIEWERS_WITH_EXTERNAL_SORT "image-viewers-with-external-sort"
+
 /* Spatial or browser mode */
 #define NEMO_PREFERENCES_ALWAYS_USE_BROWSER			"always-use-browser"
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
