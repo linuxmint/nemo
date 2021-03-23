@@ -776,6 +776,11 @@ nemo_mime_file_opens_in_view (NemoFile *file)
 	  NEMO_IS_DESKTOP_ICON_FILE (file));
 }
 
+static gboolean
+nemo_mime_file_is_image (NemoFile *file) {
+	return nemo_file_is_mime_type(file, "image/*");
+}
+
 static ActivationAction
 get_activation_action (NemoFile *file, gboolean is_desktop)
 {
@@ -827,7 +832,6 @@ nemo_mime_file_opens_in_external_app (NemoFile *file)
 
   return (activation_action == ACTIVATION_ACTION_OPEN_IN_APPLICATION);
 }
-
 
 static unsigned int
 mime_application_hash (GAppInfo *app)
@@ -1390,6 +1394,119 @@ activate_desktop_file (ActivateParameters *parameters,
 	g_free (uri);
 }
 
+static int
+compare_files_by_view_order (gconstpointer a,
+							 gconstpointer b,
+							 gpointer callback_data)
+{
+	NemoFile *file1, *file2;
+	NemoView *view;
+
+	file1 = (NemoFile *) a;
+	file2 = (NemoFile *) b;
+	view = callback_data;
+
+	return NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->compare_files (view, file1, file2);
+}
+
+// Adds all images that application can display to uris, which is expected
+// to contain only a single uri (the selected one)
+static void
+add_sorted_view_uris (GList *uris,
+					  GAppInfo *application,
+					  ActivateParameters *parameters)
+{
+	NemoDirectory *current_directory;
+	NemoFile *file;
+	GList *files, *l, *prior_uris, *supported_mime_types, *mime_type_link;
+	gboolean found_selected_uri;
+	char *uri, *selected_uri, *mime_type;
+
+	prior_uris = NULL;
+	found_selected_uri = FALSE;
+	selected_uri = uris->data;
+
+	// Construct a list starting with selected_uri, that will form a correctly
+	// ordered loop in the image viewer, if the back of the list wraps around
+	// to the front and vice versa.
+
+	supported_mime_types = eel_strv_to_glist ((gchar **) g_app_info_get_supported_types (application));
+	current_directory = nemo_view_get_model (parameters->slot->content_view);
+	files = nemo_directory_get_file_list (current_directory);
+	files = g_list_sort_with_data (files, compare_files_by_view_order, parameters->slot->content_view);
+
+	for (l = files; l != NULL; l = l->next) {
+		file = l->data;
+
+		if (nemo_mime_file_is_image (file)) {
+			mime_type = nemo_file_get_mime_type (file);
+			mime_type_link = g_list_find_custom (supported_mime_types, mime_type, (GCompareFunc) g_strcmp0);
+
+			if (mime_type_link != NULL) {
+				uri = nemo_file_get_uri (file);
+				if (found_selected_uri) {
+					uris = g_list_prepend (uris, uri);
+				} else if (g_strcmp0 (uri, selected_uri) == 0) {
+					found_selected_uri = TRUE;
+				} else {
+					prior_uris = g_list_prepend (prior_uris, uri);
+				}
+
+				// Shuffle latest mime type to start of list, so fewer iterations are required for more common types.
+				supported_mime_types = g_list_remove_link (supported_mime_types, mime_type_link);
+				supported_mime_types = g_list_insert_before_link (
+					supported_mime_types, supported_mime_types, mime_type_link);
+			}
+			g_free (mime_type);
+		}
+	}
+
+	if (found_selected_uri) {
+		l = uris; // This will become the last list link.
+		uris = g_list_reverse (uris);
+		prior_uris = g_list_reverse (prior_uris);
+		l->next = prior_uris; //Connect the lists.
+	} else {
+		// The selected file unexpectedly wasn't found, possibly due to custom application associations.
+		g_list_free_full (prior_uris, g_free);
+	}
+
+	g_list_free_full (supported_mime_types, g_free);
+	nemo_file_list_free (files);
+}
+
+// Launch application. If a single image is given as a parameter and @application is an image viewer that
+// allows an external sort order to be defined, adds all supported images in current nemo view to @uris.
+static void
+launch_application (GAppInfo *application,
+				GList *uris,
+				ActivateParameters *parameters)
+{
+	NemoFile *single_file;
+	char **sortable_image_viewers;
+
+	if (uris != NULL && uris->next == NULL) {
+
+		sortable_image_viewers = g_settings_get_strv (nemo_preferences,
+													  NEMO_PREFERENCES_IMAGE_VIEWERS_WITH_EXTERNAL_SORT);
+
+		if (sortable_image_viewers != NULL &&
+			g_strv_contains ((const gchar * const*) sortable_image_viewers, g_app_info_get_executable (application))) {
+
+			single_file = nemo_file_get_by_uri (uris->data);
+			if (nemo_mime_file_is_image (single_file)) {
+				add_sorted_view_uris (uris, application, parameters);
+			}
+			nemo_file_unref (single_file);
+		}
+		g_strfreev (sortable_image_viewers);
+	}
+
+	nemo_launch_application_by_uri (application,
+					uris,
+					parameters->parent_window);
+}
+
 static void
 activate_files (ActivateParameters *parameters)
 {
@@ -1642,9 +1759,8 @@ activate_files (ActivateParameters *parameters)
 		for (l = open_in_app_parameters; l != NULL; l = l->next) {
 			one_parameters = l->data;
 
-			nemo_launch_application_by_uri (one_parameters->application,
-							    one_parameters->uris,
-							    parameters->parent_window);
+			launch_application (one_parameters->application, one_parameters->uris, parameters);
+
 			application_launch_parameters_free (one_parameters);
 		}
 
