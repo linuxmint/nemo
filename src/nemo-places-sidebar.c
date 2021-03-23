@@ -834,6 +834,8 @@ update_places (NemoPlacesSidebar *sidebar)
                                   _("Favorites"), icon, mount_uri,
                                   NULL, NULL, NULL, 0,
                                   _("Favorite files"), 0, FALSE, cat_iter);
+
+            sidebar->bottom_bookend_uri = g_strdup (mount_uri);
         }
     }
 
@@ -849,7 +851,10 @@ update_places (NemoPlacesSidebar *sidebar)
                               _("Recent"), icon, mount_uri,
                               NULL, NULL, NULL, 0,
                               _("Recent files"), 0, FALSE, cat_iter);
-        sidebar->bottom_bookend_uri = g_strdup (mount_uri);
+
+        if (sidebar->bottom_bookend_uri == NULL) {
+            sidebar->bottom_bookend_uri = g_strdup (mount_uri);
+        }
     }
 
     /* file system root */
@@ -871,8 +876,9 @@ update_places (NemoPlacesSidebar *sidebar)
                            cat_iter);
     g_free (tooltip);
 
-    if (!recent_enabled)
+    if (sidebar->bottom_bookend_uri == NULL) {
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
+    }
 
     if (vfs_supports_uri_scheme("trash")) {
         mount_uri = (char *)"trash:///"; /* No need to strdup */
