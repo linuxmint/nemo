@@ -71,6 +71,17 @@ Show a summary of options.
 Show Nemo' version.
 .TP
 Other standard GNOME options not listed here are also supported.
+
+.SH NOTE ON THE ROOT USER
+Ordinarily, nemo and nemo-desktop treat being run as the root user as special, with certain
+restrictions and UI changes. This behavior can be bypassed via a gsettings key. You can use
+the following command to enable/disable this override:
+
+gsettings set org.nemo.preferences treat-root-as-normal true|false
+
+.SH BUG REPORTS
+Please report bugs and feature requests here: https://github.com/linuxmint/nemo
+
 .SH AUTHOR
 This manual page was originally written for Nautilus by Takuo KITAME <kitame@debian.org> and Dafydd
 Harries <daf@muse.19inch.net> for the Debian GNU/Linux system (but may be used

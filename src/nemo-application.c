@@ -558,10 +558,15 @@ nemo_application_startup (GApplication *app)
     self->priv->cache_problem = FALSE;
     self->priv->ignore_cache_problem = FALSE;
 
+    /* If 'treat-root-as-normal' is true, assume we're running root as well,
+       so we can skip the permission checks */
+    if (nemo_user_is_root () && nemo_treating_root_as_normal ()) {
+        return;
+    }
     /* silently do a full check of the cache and fix if running as root.
      * If running as a normal user, do a quick check, and we'll notify the
      * user later if there's a problem via an infobar */
-    if (geteuid () == 0) {
+    if (nemo_user_is_root ()) {
         if (!gnome_desktop_thumbnail_cache_check_permissions (NULL, FALSE))
             gnome_desktop_thumbnail_cache_fix_permissions ();
     } else {

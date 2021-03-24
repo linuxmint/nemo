@@ -409,6 +409,10 @@
       <summary>Maximum number of files to preload deferred attributes for when opening a directory</summary>
       <description>Certain file attributes (like thumbnail and extension info) are deferred until a folder finishes loading.  This number specifies how many files to skip this behavior on so that smaller folders won't have an obvious delay when loading these attributes.</description>
     </key>
+    <key name="treat-root-as-normal" type="b">
+      <default>false</default>
+      <summary>Suppress any safeguards when running nemo/nemo-desktop as the root user. For some systems there is only a root user.</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

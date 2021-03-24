@@ -1791,7 +1791,7 @@ nemo_window_initialize_menus (NemoWindow *window)
 				      window);
 
       /* if root then hide menu items that do not work */
-      if (geteuid() == 0) {
+      if (nemo_user_is_root () && !nemo_treating_root_as_normal ()) {
           action_to_hide = gtk_action_group_get_action (action_group, "Go to Computer");
           gtk_action_set_visible (action_to_hide, FALSE);
           action_to_hide = gtk_action_group_get_action (action_group, "Go to Templates");

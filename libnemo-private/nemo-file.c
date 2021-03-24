@@ -5860,7 +5860,7 @@ nemo_file_can_set_owner (NemoFile *file)
 	}
 
 	/* Only root is also allowed to set the owner. */
-	return geteuid() == 0;
+	return nemo_user_is_root ();
 }
 
 /**

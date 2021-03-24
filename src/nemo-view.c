@@ -9830,11 +9830,9 @@ real_update_menus (NemoView *view)
     gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
                                         selection_count == 0);
 
-    gboolean show_open_as_root = (geteuid() != 0) && no_selection_or_one_dir;
-
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_AS_ROOT);
-    gtk_action_set_visible (action, show_open_as_root);
+    gtk_action_set_visible (action, (!nemo_user_is_root ()) && no_selection_or_one_dir);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_IN_TERMINAL);

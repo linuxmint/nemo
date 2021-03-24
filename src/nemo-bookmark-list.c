@@ -64,7 +64,7 @@ G_DEFINE_TYPE(NemoBookmarkList, nemo_bookmark_list, G_TYPE_OBJECT);
 static void
 ensure_proper_file_permissions (GFile *file)
 {
-    if (geteuid () == 0) {
+    if (nemo_user_is_root () && !nemo_treating_root_as_normal ()) {
         struct passwd *pwent;
         pwent = gnome_desktop_get_session_user_pwent ();
 

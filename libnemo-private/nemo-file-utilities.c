@@ -1793,6 +1793,42 @@ nemo_query_btime_finish (GFile         *file,
   return (time_t) g_task_propagate_int (G_TASK (res), error);
 }
 
+gboolean
+nemo_treating_root_as_normal (void)
+{
+    static gboolean root_is_normal = FALSE;
+    static gsize once_init = 0;
+
+    // We only need to set this at startup then cache the result, as we check
+    // quite a bit in various parts of the code.
+    if (g_once_init_enter (&once_init)) {
+        GSettings *prefs = g_settings_new("org.nemo.preferences");
+
+        root_is_normal = g_settings_get_boolean (prefs, "treat-root-as-normal");
+        g_object_unref (prefs);
+
+        g_once_init_leave (&once_init, 1);
+    }
+
+    return root_is_normal;
+}
+
+gboolean
+nemo_user_is_root (void)
+{
+    static gboolean elevated = FALSE;
+    static gsize once_init = 0;
+
+    // We only need to set this at startup then cache the result, as we check
+    // quite a bit in various parts of the code.
+    if (g_once_init_enter (&once_init)) {
+        elevated = (geteuid () == 0);
+        g_once_init_leave (&once_init, 1);
+    }
+
+    return elevated;
+}
+
 /* End copied section */
 
 #if !defined (NEMO_OMIT_SELF_CHECK)

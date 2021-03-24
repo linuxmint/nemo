@@ -716,9 +716,14 @@ nemo_main_application_local_command_line (GApplication *application,
 	}
 
     if (fix_cache) {
-        if (geteuid () != 0) {
+        if (nemo_user_is_root () && nemo_treating_root_as_normal ()) {
+            g_printerr ("Ignoring --fix-cache as root-is-normal setting is true and this "
+                        "check is probably unnecessary.\n");
+        } else
+        if (!nemo_user_is_root ()) {
             g_printerr ("The --fix-cache option must be run with sudo or as the root user.\n");
-        } else {
+        } else
+        {
             gnome_desktop_thumbnail_cache_fix_permissions ();
             g_print ("User thumbnail cache successfully repaired.\n");
         }

@@ -127,4 +127,6 @@ time_t nemo_query_btime_finish (GFile         *file,
                                 GAsyncResult  *res,
                                 GError       **error);
 
+gboolean nemo_treating_root_as_normal (void);
+gboolean nemo_user_is_root (void);
 #endif /* NEMO_FILE_UTILITIES_H */

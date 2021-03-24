@@ -31,6 +31,7 @@
 #include "nemo-pathbar.h"
 #include "nemo-window-private.h"
 #include "nemo-actions.h"
+#include "nemo-file-utilities.h"
 #include <glib/gi18n.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-ui-utilities.h>
@@ -86,7 +87,8 @@ G_DEFINE_TYPE (NemoToolbar, nemo_toolbar, GTK_TYPE_BOX);
 static void
 nemo_toolbar_update_root_state (NemoToolbar *self)
 {
-    if (geteuid() == 0 && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_ROOT_WARNING)) {
+    if ((nemo_user_is_root () && !nemo_treating_root_as_normal()) &&
+         g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_ROOT_WARNING)) {
         if (self->priv->show_root_bar != TRUE) {
             self->priv->show_root_bar = TRUE;
         }

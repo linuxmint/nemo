@@ -295,6 +295,12 @@ nemo_desktop_application_local_command_line (GApplication *application,
         g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
     }
 
+    if (nemo_user_is_root () && !nemo_treating_root_as_normal ()) {
+        g_printerr ("nemo-desktop cannot be run as root, please try again as a normal user.\n"
+                    "Check 'man nemo' to see how to change this behavior.");
+        goto out;
+    }
+
     g_application_register (application, NULL, &error);
 
     if (error != NULL) {
