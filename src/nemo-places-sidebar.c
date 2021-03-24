@@ -52,6 +52,7 @@
 #include <eel/eel-graphic-effects.h>
 #include <eel/eel-string.h>
 #include <eel/eel-stock-dialogs.h>
+#include <eel/eel-vfs-extensions.h>
 
 #include "nemo-application.h"
 #include "nemo-bookmark-list.h"
@@ -666,23 +667,6 @@ home_on_different_fs (const gchar *home_uri)
     return res;
 }
 
-static gboolean
-vfs_supports_uri_scheme (const gchar *scheme)
-{
-   const gchar * const *supported;
-   gint i;
-
-   supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
-
-   for (i = 0; supported[i] != NULL; i++) {
-      if (g_strcmp0 (scheme, supported[i]) == 0) {
-          return TRUE;
-      }
-   }
-
-   return FALSE;
-}
-
 static gchar *
 get_icon_name (const gchar *uri)
 {
@@ -823,7 +807,7 @@ update_places (NemoPlacesSidebar *sidebar)
         g_free (tooltip);
     }
 
-    if (vfs_supports_uri_scheme ("favorites")) {
+    if (eel_vfs_supports_uri_scheme ("favorites")) {
         gint n = xapp_favorites_get_n_favorites (xapp_favorites_get_default ());
 
         if (n > 0) {
@@ -843,7 +827,7 @@ update_places (NemoPlacesSidebar *sidebar)
     recent_enabled = g_settings_get_boolean (cinnamon_privacy_preferences,
                                              NEMO_PREFERENCES_RECENT_ENABLED);
 
-    if (recent_enabled && vfs_supports_uri_scheme ("recent")) {
+    if (recent_enabled && eel_vfs_supports_uri_scheme ("recent")) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
         icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT;
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
@@ -880,7 +864,7 @@ update_places (NemoPlacesSidebar *sidebar)
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);
     }
 
-    if (vfs_supports_uri_scheme("trash")) {
+    if (eel_vfs_supports_uri_scheme("trash")) {
         mount_uri = (char *)"trash:///"; /* No need to strdup */
         icon = nemo_trash_monitor_get_symbolic_icon_name ();
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,

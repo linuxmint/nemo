@@ -9786,6 +9786,7 @@ real_update_menus (NemoView *view)
 	gboolean next_pane_is_writable;
 	gboolean show_properties;
     gboolean first_selected_is_pinned;
+    gboolean trash_supported;
 
 	selection = nemo_view_get_selection (view);
 	selection_count = g_list_length (selection);
@@ -9809,6 +9810,7 @@ real_update_menus (NemoView *view)
 	can_link_files = can_create_files && can_copy_files;
 
     is_desktop_view = get_is_desktop_view (view);
+    trash_supported = eel_vfs_supports_uri_scheme ("trash");
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_RENAME);
@@ -9976,7 +9978,7 @@ real_update_menus (NemoView *view)
 		      NEMO_ICON_DELETE : NEMO_ICON_SYMBOLIC_TRASH_FULL,
 		      NULL);
 	gtk_action_set_sensitive (action, can_delete_files);
-    gtk_action_set_visible (action, !(selection_contains_favorites || selection_contains_recent));
+    gtk_action_set_visible (action, trash_supported && !(selection_contains_favorites || selection_contains_recent));
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_DELETE);

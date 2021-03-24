@@ -45,6 +45,7 @@ gboolean           eel_uri_is_search                     (const char           *
 gboolean           eel_uri_is_recent                     (const char           *uri);
 gboolean           eel_uri_is_favorite                   (const char           *uri);
 gboolean           eel_uri_is_network                    (const char           *uri);
+gboolean           eel_vfs_supports_uri_scheme           (const gchar       *scheme);
 
 char *             eel_make_valid_utf8                   (const char           *name);
 

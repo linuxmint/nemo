@@ -76,6 +76,23 @@ eel_uri_is_network (const char *uri)
     return g_str_has_prefix (uri, "smb:") || g_str_has_prefix (uri, "network:");
 }
 
+gboolean
+eel_vfs_supports_uri_scheme (const gchar *scheme)
+{
+   const gchar * const *supported;
+   gint i;
+
+   supported = g_vfs_get_supported_uri_schemes (g_vfs_get_default ());
+
+   for (i = 0; supported[i] != NULL; i++) {
+      if (g_strcmp0 (scheme, supported[i]) == 0) {
+          return TRUE;
+      }
+   }
+
+   return FALSE;
+}
+
 char *
 eel_make_valid_utf8 (const char *name)
 {
