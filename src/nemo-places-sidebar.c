@@ -25,9 +25,11 @@
 #include <config.h>
 
 #include <gdk/gdkkeysyms.h>
+#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
+#include <gio/gdesktopappinfo.h>
 #include <math.h>
 #include <cairo-gobject.h>
 #include <libxapp/xapp-favorites.h>
@@ -118,6 +120,7 @@ typedef struct {
 	GtkWidget *popup_menu_stop_item;
 	GtkWidget *popup_menu_properties_separator_item;
 	GtkWidget *popup_menu_properties_item;
+	GtkWidget *popup_menu_format_item;
     GtkWidget *popup_menu_action_separator_item;
     GtkWidget *popup_menu_remove_rename_separator_item;
 
@@ -2148,8 +2151,22 @@ bookmarks_popup_menu_detach_cb (GtkWidget *attach_widget,
 	sidebar->popup_menu_empty_trash_item = NULL;
 	sidebar->popup_menu_properties_separator_item = NULL;
 	sidebar->popup_menu_properties_item = NULL;
+	sidebar->popup_menu_format_item = NULL;
     sidebar->popup_menu_action_separator_item = NULL;
     sidebar->popup_menu_remove_rename_separator_item = NULL;
+}
+
+static gboolean
+check_have_gnome_disks (void)
+{
+	gchar *disks_path;
+	gboolean res;
+
+	disks_path = g_find_program_in_path ("gnome-disks");
+	res = (disks_path != NULL);
+	g_free (disks_path);
+
+	return res;
 }
 
 static void
@@ -2184,12 +2201,16 @@ check_visibility (GMount           *mount,
 		  gboolean         *show_eject,
 		  gboolean         *show_rescan,
 		  gboolean         *show_start,
-		  gboolean         *show_stop)
+		  gboolean         *show_stop,
+		  gboolean         *show_format)
 {
+	gchar *unix_device_id;
+
 	*show_mount = FALSE;
 	*show_rescan = FALSE;
 	*show_start = FALSE;
 	*show_stop = FALSE;
+	*show_format = FALSE;
 
 	check_unmount_and_eject (mount, volume, drive, show_unmount, show_eject);
 
@@ -2209,6 +2230,10 @@ check_visibility (GMount           *mount,
 	if (volume != NULL) {
 		if (mount == NULL)
 			*show_mount = g_volume_can_mount (volume);
+
+		unix_device_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+		*show_format = (unix_device_id != NULL) && check_have_gnome_disks ();
+		g_free (unix_device_id);
 	}
 }
 
@@ -2241,6 +2266,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	gboolean show_stop;
 	gboolean show_empty_trash;
 	gboolean show_properties;
+	gboolean show_format;
 	char *uri = NULL;
 
 	type = PLACES_BUILT_IN;
@@ -2269,7 +2295,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	gtk_widget_set_sensitive (sidebar->popup_menu_empty_trash_item, !nemo_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
- 			  &show_mount, &show_unmount, &show_eject, &show_rescan, &show_start, &show_stop);
+			  &show_mount, &show_unmount, &show_eject, &show_rescan, &show_start, &show_stop, &show_format);
 
 	/* We actually want both eject and unmount since eject will unmount all volumes.
 	 * TODO: hide unmount if the drive only has a single mountable volume
@@ -2301,6 +2327,7 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	gtk_widget_set_visible (sidebar->popup_menu_empty_trash_item, show_empty_trash);
 	gtk_widget_set_visible (sidebar->popup_menu_properties_separator_item, show_properties);
 	gtk_widget_set_visible (sidebar->popup_menu_properties_item, show_properties);
+	gtk_widget_set_visible (sidebar->popup_menu_format_item, show_format);
 
 	/* Adjust start/stop items to reflect the type of the drive */
 	gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_start_item), _("_Start"));
@@ -3150,6 +3177,47 @@ stop_shortcut_cb (GtkMenuItem           *item,
 }
 
 static void
+format_shortcut_cb (GtkMenuItem           *item,
+		    NemoPlacesSidebar *sidebar)
+{
+	GAppInfo *app_info;
+	gchar *cmdline, *device_identifier, *xid_string;
+	GVolume *volume;
+	GtkTreeIter iter;
+	gint xid;
+
+	if (!get_selected_iter (sidebar, &iter)) {
+		return;
+	}
+
+	gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
+			    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
+			    -1);
+
+	if (!volume) {
+		return;
+	}
+
+	device_identifier = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+	xid = (gint) gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (sidebar->window)));
+	xid_string = g_strdup_printf ("%d", xid);
+
+	cmdline = g_strconcat ("gnome-disks ",
+			       "--block-device ", device_identifier, " ",
+			       "--format-device ",
+			       "--xid ", xid_string,
+			       NULL);
+	app_info = g_app_info_create_from_commandline (cmdline, NULL, 0, NULL);
+	g_app_info_launch (app_info, NULL, NULL, NULL);
+
+	g_free (cmdline);
+	g_free (device_identifier);
+	g_free (xid_string);
+	g_clear_object (&volume);
+	g_clear_object (&app_info);
+}
+
+static void
 empty_trash_cb (GtkMenuItem           *item,
 		NemoPlacesSidebar *sidebar)
 {
@@ -3593,6 +3661,12 @@ bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
 	g_signal_connect (item, "activate",
 			  G_CALLBACK (stop_shortcut_cb), sidebar);
 	gtk_widget_show (item);
+	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
+
+	item = gtk_menu_item_new_with_mnemonic (_("_Format"));
+	sidebar->popup_menu_format_item = item;
+	g_signal_connect (item, "activate",
+			  G_CALLBACK (format_shortcut_cb), sidebar);
 	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
 
 	/* Empty Trash menu item */
