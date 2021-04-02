@@ -72,9 +72,10 @@ action_activated_callback (GtkMenuItem *item, NemoAction *action)
 {
     GFile *desktop_location = nemo_get_desktop_location ();
     NemoFile *desktop_file = nemo_file_get (desktop_location);
+    GtkWindow *window = g_object_get_data (G_OBJECT (item), "nemo-window");
     g_object_unref (desktop_location);
 
-    nemo_action_activate (NEMO_ACTION (action), NULL, desktop_file);
+    nemo_action_activate (NEMO_ACTION (action), NULL, desktop_file, GTK_WINDOW (window));
 }
 
 static void
@@ -121,7 +122,7 @@ build_menu (NemoBlankDesktopWindow *window)
         action = l->data;
 
         if (action->show_in_blank_desktop && action->dbus_satisfied && action->gsettings_satisfied) {
-            gchar *label = nemo_action_get_label (action, NULL, NULL);
+            gchar *label = nemo_action_get_label (action, NULL, NULL, GTK_WINDOW (window));
             item = gtk_image_menu_item_new_with_mnemonic (label);
             g_free (label);
 
@@ -137,6 +138,7 @@ build_menu (NemoBlankDesktopWindow *window)
             }
 
             gtk_widget_set_visible (item, TRUE);
+            g_object_set_data (G_OBJECT (item), "nemo-window", window);
             g_signal_connect (item, "activate", G_CALLBACK (action_activated_callback), action);
             gtk_menu_shell_append (GTK_MENU_SHELL (window->details->popup_menu), item);
         }

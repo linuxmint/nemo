@@ -2351,8 +2351,8 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 
     for (l = sidebar->action_items; l != NULL; l = l->next) {
         p = l->data;
-        if (nemo_action_get_visibility (p->action, tmp, parent, TRUE)) {
-            gchar *action_label = nemo_action_get_label (p->action, tmp, parent);
+        if (nemo_action_get_visibility (p->action, tmp, parent, TRUE, GTK_WINDOW (sidebar->window))) {
+            gchar *action_label = nemo_action_get_label (p->action, tmp, parent, GTK_WINDOW (sidebar->window));
 
             gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), action_label);
             gtk_widget_set_visible (p->item, TRUE);
@@ -3380,7 +3380,7 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
     GList *tmp = NULL;
     tmp = g_list_append (tmp, file);
 
-    nemo_action_activate (NEMO_ACTION (payload->action), tmp, parent);
+    nemo_action_activate (NEMO_ACTION (payload->action), tmp, parent, GTK_WINDOW (sidebar->window));
 
     nemo_file_list_free (tmp);
 

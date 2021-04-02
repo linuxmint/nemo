@@ -51,6 +51,7 @@
 #define TOKEN_EXEC_DEVICE "%D"
 #define TOKEN_EXEC_FILE_NO_EXT "%e"
 #define TOKEN_EXEC_LITERAL_PERCENT "%%"
+#define TOKEN_EXEC_XID "%X"
 
 #define TOKEN_LABEL_FILE_NAME "%N" // Leave in for compatibility, same as TOKEN_EXEC_FILE_NAME
 
@@ -101,7 +102,8 @@ typedef enum {
     TOKEN_PARENT_PATH,
     TOKEN_DEVICE,
     TOKEN_FILE_DISPLAY_NAME_NO_EXT,
-    TOKEN_LITERAL_PERCENT
+    TOKEN_LITERAL_PERCENT,
+    TOKEN_XID
 } TokenType;
 
 struct _NemoAction {
@@ -138,12 +140,12 @@ struct _NemoActionClass {
 
 GType         nemo_action_get_type             (void);
 NemoAction   *nemo_action_new                  (const gchar *name, const gchar *path);
-void          nemo_action_activate             (NemoAction *action, GList *selection, NemoFile *parent);
+void          nemo_action_activate             (NemoAction *action, GList *selection, NemoFile *parent, GtkWindow *window);
 
 const gchar  *nemo_action_get_orig_label       (NemoAction *action);
 const gchar  *nemo_action_get_orig_tt          (NemoAction *action);
-gchar        *nemo_action_get_label            (NemoAction *action, GList *selection, NemoFile *parent);
-gchar        *nemo_action_get_tt               (NemoAction *action, GList *selection, NemoFile *parent);
-gboolean      nemo_action_get_visibility       (NemoAction *action, GList *selection, NemoFile *parent, gboolean for_places);
+gchar        *nemo_action_get_label            (NemoAction *action, GList *selection, NemoFile *parent, GtkWindow *window);
+gchar        *nemo_action_get_tt               (NemoAction *action, GList *selection, NemoFile *parent, GtkWindow *window);
+gboolean      nemo_action_get_visibility       (NemoAction *action, GList *selection, NemoFile *parent, gboolean for_places, GtkWindow *window);
 
 #endif /* NEMO_ACTION_H */

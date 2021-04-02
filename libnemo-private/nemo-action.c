@@ -20,6 +20,7 @@
 #include "nemo-action.h"
 #include <eel/eel-string.h>
 #include <eel/eel-vfs-extensions.h>
+#include <eel/eel-gtk-extensions.h>
 #include <glib/gi18n.h>
 #include <gdk/gdk.h>
 #include "nemo-file-utilities.h"
@@ -1167,6 +1168,10 @@ find_token_type (const gchar *str, TokenType *token_type)
             *token_type = TOKEN_LITERAL_PERCENT;
             return ptr;
         }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_XID)) {
+            *token_type = TOKEN_XID;
+            return ptr;
+        }
     }
 
     return NULL;
@@ -1266,7 +1271,11 @@ get_device_path (NemoAction *action, NemoFile *file)
 }
 
 static gchar *
-get_insertion_string (NemoAction *action, TokenType token_type, GList *selection, NemoFile *parent)
+get_insertion_string (NemoAction *action,
+                      TokenType   token_type,
+                      GList      *selection,
+                      NemoFile   *parent,
+                      GtkWindow  *window)
 {
     GList *l;
 
@@ -1276,6 +1285,9 @@ get_insertion_string (NemoAction *action, TokenType token_type, GList *selection
     switch (token_type) {
         case TOKEN_LITERAL_PERCENT:
             str = g_string_append(str, "%");
+            break;
+        case TOKEN_XID:
+            g_string_append_printf (str, "%lu", eel_gtk_get_window_xid (window));
             break;
         case TOKEN_PATH_LIST:
             if (g_list_length (selection) > 0) {
@@ -1392,7 +1404,11 @@ default_parent_display_name:
 }
 
 static GString *
-expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GString *str)
+expand_action_string (NemoAction *action,
+                      GList      *selection,
+                      NemoFile   *parent,
+                      GString    *str,
+                      GtkWindow  *window)
 {
     gchar *ptr;
     TokenType token_type;
@@ -1402,7 +1418,7 @@ expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GS
     while (ptr != NULL) {
         gint shift = ptr - str->str;
 
-        gchar *insertion = get_insertion_string (action, token_type, selection, parent);
+        gchar *insertion = get_insertion_string (action, token_type, selection, parent, window);
         str = g_string_erase (str, shift, 2);
         str = g_string_insert (str, shift, insertion);
 
@@ -1423,7 +1439,10 @@ expand_action_string (NemoAction *action, GList *selection, NemoFile *parent, GS
 }
 
 void
-nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
+nemo_action_activate (NemoAction *action,
+                      GList      *selection,
+                      NemoFile   *parent,
+                      GtkWindow  *window)
 {
     GError *error;
     GString *exec = g_string_new (action->exec);
@@ -1432,7 +1451,7 @@ nemo_action_activate (NemoAction *action, GList *selection, NemoFile *parent)
 
     action->escape_underscores = FALSE;
 
-    exec = expand_action_string (action, selection, parent, exec);
+    exec = expand_action_string (action, selection, parent, exec, window);
 
     if (action->use_parent_dir) {
         exec = g_string_prepend (exec, G_DIR_SEPARATOR_S);
@@ -1594,7 +1613,10 @@ nemo_action_get_orig_tt (NemoAction *action)
 
 
 gchar *
-nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
+nemo_action_get_label (NemoAction *action,
+                       GList      *selection,
+                       NemoFile   *parent,
+                       GtkWindow  *window)
 {
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
@@ -1605,7 +1627,7 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
 
     GString *str = g_string_new (orig_label);
 
-    str = expand_action_string (action, selection, parent, str);
+    str = expand_action_string (action, selection, parent, str, window);
 
     DEBUG ("Action Label: %s", str->str);
 
@@ -1615,7 +1637,10 @@ nemo_action_get_label (NemoAction *action, GList *selection, NemoFile *parent)
 }
 
 gchar *
-nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
+nemo_action_get_tt (NemoAction *action,
+                    GList      *selection,
+                    NemoFile   *parent,
+                    GtkWindow  *window)
 {
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
@@ -1626,7 +1651,7 @@ nemo_action_get_tt (NemoAction *action, GList *selection, NemoFile *parent)
 
     GString *str = g_string_new (orig_tt);
 
-    str = expand_action_string (action, selection, parent, str);
+    str = expand_action_string (action, selection, parent, str, window);
 
     DEBUG ("Action Tooltip: %s", str->str);
 
@@ -1651,7 +1676,8 @@ static gboolean
 check_exec_condition (NemoAction  *action,
                       const gchar *condition,
                       GList       *selection,
-                      NemoFile    *parent)
+                      NemoFile    *parent,
+                      GtkWindow   *window)
 {
     GString *exec;
     GError *error;
@@ -1684,7 +1710,7 @@ check_exec_condition (NemoAction  *action,
 
     action->escape_underscores = FALSE;
 
-    exec = expand_action_string (action, selection, parent, exec);
+    exec = expand_action_string (action, selection, parent, exec, window);
 
     if (use_parent_dir) {
         exec = g_string_prepend (exec, G_DIR_SEPARATOR_S);
@@ -1734,9 +1760,10 @@ get_is_dir (NemoFile *file)
 
 gboolean
 nemo_action_get_visibility (NemoAction *action,
-                            GList *selection,
-                            NemoFile *parent,
-                            gboolean for_places)
+                            GList      *selection,
+                            NemoFile   *parent,
+                            gboolean    for_places,
+                            GtkWindow  *window)
 {
     // Check DBUS
     if (!get_dbus_satisfied (action))
@@ -1911,7 +1938,8 @@ nemo_action_get_visibility (NemoAction *action,
                 condition_type_show = check_exec_condition (action,
                                                             condition,
                                                             selection,
-                                                            parent);
+                                                            parent,
+                                                            window);
             }
 
             if (!condition_type_show)

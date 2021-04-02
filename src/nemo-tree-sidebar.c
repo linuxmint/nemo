@@ -806,10 +806,10 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 
         for (l = view->details->action_items; l != NULL; l = l->next) {
             p = l->data;
-            if (nemo_action_get_visibility (p->action, tmp, parent, FALSE)) {
+            if (nemo_action_get_visibility (p->action, tmp, parent, FALSE, GTK_WINDOW (view->details->window))) {
                 gchar *action_label;
 
-                action_label = nemo_action_get_label (p->action, tmp, parent);
+                action_label = nemo_action_get_label (p->action, tmp, parent, GTK_WINDOW (view->details->window));
                 gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), action_label);
                 g_free (action_label);
 
@@ -1208,7 +1208,7 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
     GList *tmp = NULL;
     tmp = g_list_append (tmp, file);
 
-    nemo_action_activate (NEMO_ACTION (payload->action), tmp, parent);
+    nemo_action_activate (NEMO_ACTION (payload->action), tmp, parent, GTK_WINDOW (view->details->window));
 
     nemo_file_list_free (tmp);
 

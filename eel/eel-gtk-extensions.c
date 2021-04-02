@@ -37,7 +37,6 @@
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkprivate.h>
-#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
 #include <math.h>
@@ -339,4 +338,15 @@ eel_gtk_message_dialog_set_details_label (GtkMessageDialog *dialog,
 
 	gtk_widget_show (label);
 	gtk_widget_show (expander);
+}
+
+XID
+eel_gtk_get_window_xid (GtkWindow *window)
+{
+    g_return_val_if_fail (GTK_IS_WINDOW (window), 0);
+
+    GdkWindow *gdkw = gtk_widget_get_window (GTK_WIDGET (window));
+    g_return_val_if_fail (GDK_IS_X11_WINDOW (gdkw), 0);
+
+    return gdk_x11_window_get_xid (gdkw);
 }
