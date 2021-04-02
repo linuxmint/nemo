@@ -49,6 +49,7 @@
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 
+#include <eel/eel-vfs-extensions.h>
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 
@@ -1791,16 +1792,18 @@ nemo_window_initialize_menus (NemoWindow *window)
 				      window);
 
       /* if root then hide menu items that do not work */
-      if (nemo_user_is_root () && !nemo_treating_root_as_normal ()) {
-          action_to_hide = gtk_action_group_get_action (action_group, "Go to Computer");
-          gtk_action_set_visible (action_to_hide, FALSE);
-          action_to_hide = gtk_action_group_get_action (action_group, "Go to Templates");
-          gtk_action_set_visible (action_to_hide, FALSE);
-          action_to_hide = gtk_action_group_get_action (action_group, "Go to Trash");
-          gtk_action_set_visible (action_to_hide, FALSE);
-          action_to_hide = gtk_action_group_get_action (action_group, "Go to Network");
-          gtk_action_set_visible (action_to_hide, FALSE);
-      }
+    if (nemo_user_is_root () && !nemo_treating_root_as_normal ()) {
+        action_to_hide = gtk_action_group_get_action (action_group, "Go to Templates");
+        gtk_action_set_visible (action_to_hide, FALSE);
+    }
+
+    /* hide menu items that are not currently supported by the vfs */
+    action_to_hide = gtk_action_group_get_action (action_group, "Go to Computer");
+    gtk_action_set_visible (action_to_hide, eel_vfs_supports_uri_scheme ("computer"));
+    action_to_hide = gtk_action_group_get_action (action_group, "Go to Trash");
+    gtk_action_set_visible (action_to_hide, eel_vfs_supports_uri_scheme ("trash"));
+    action_to_hide = gtk_action_group_get_action (action_group, "Go to Network");
+    gtk_action_set_visible (action_to_hide, eel_vfs_supports_uri_scheme ("network"));
 
 	gtk_action_group_add_toggle_actions (action_group,
 					     main_toggle_entries, G_N_ELEMENTS (main_toggle_entries),
