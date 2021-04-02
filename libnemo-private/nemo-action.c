@@ -925,20 +925,37 @@ nemo_action_new (const gchar *name,
     if (deps != NULL) {
         guint i = 0;
         for (i = 0; i < g_strv_length (deps); i++) {
-            if (g_path_is_absolute (deps[i])) {
-                if (!g_file_test (deps[i], G_FILE_TEST_EXISTS)) {
-                    finish = FALSE;
-                    DEBUG ("Missing action dependency: %s", deps[i]);
+            gboolean reverse, found;
+
+            reverse = g_str_has_prefix (deps[i], "!");
+            found = FALSE;
+
+            const gchar *prg_name = reverse ? deps[i] + 1 : deps[i];
+
+            if (g_path_is_absolute (prg_name)) {
+                if (g_file_test (prg_name, G_FILE_TEST_EXISTS)) {
+                    found = TRUE;
                 }
             } else {
-                gchar *p = g_find_program_in_path (deps[i]);
-                if (p == NULL) {
-                    finish = FALSE;
-                    DEBUG ("Missing action dependency: %s", deps[i]);
+                gchar *p = g_find_program_in_path (prg_name);
+                if (p != NULL) {
+                    found = TRUE;
                     g_free (p);
+                }
+            }
+
+            if (reverse) {
+                if (found) {
+                    finish = FALSE;
+                    DEBUG ("Missing action reverse dependency: %s", deps[i]);
                     break;
                 }
-                g_free (p);
+            } else {
+                if (!found) {
+                    finish = FALSE;
+                    DEBUG ("Missing action dependency: %s", deps[i]);
+                    break;
+                }
             }
         }
     }
