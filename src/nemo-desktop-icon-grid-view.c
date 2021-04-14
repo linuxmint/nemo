@@ -349,7 +349,7 @@ nemo_desktop_icon_grid_view_dispose (GObject *object)
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
-					      nemo_view_update_menus,
+					      nemo_view_menu_needs_update,
 					      icon_view);
 
 	G_OBJECT_CLASS (nemo_desktop_icon_grid_view_parent_class)->dispose (object);
@@ -641,7 +641,7 @@ nemo_desktop_icon_grid_view_constructed (GObject *object)
 
     g_signal_connect_swapped (gnome_lockdown_preferences,
                   "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
-                  G_CALLBACK (nemo_view_update_menus),
+                  G_CALLBACK (nemo_view_menu_needs_update),
                   desktop_icon_grid_view);
 }
 
@@ -716,7 +716,7 @@ action_reverse_sort_callback (GtkAction               *action,
     nemo_icon_container_sort (get_icon_container (view));
     nemo_icon_container_redo_layout (container);
 
-    nemo_view_update_menus (NEMO_VIEW (view));
+    nemo_view_menu_needs_update (NEMO_VIEW (view));
 
     nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
@@ -737,7 +737,7 @@ set_sort_type (NemoDesktopIconGridView *view,
 
     nemo_icon_container_redo_layout (get_icon_container (view));
 
-    nemo_view_update_menus (NEMO_VIEW (view));
+    nemo_view_menu_needs_update (NEMO_VIEW (view));
 
     nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
@@ -775,7 +775,7 @@ set_direction (NemoDesktopIconGridView *view,
 
     nemo_icon_view_set_directory_horizontal_layout (NEMO_ICON_VIEW (view), file, horizontal);
 
-    nemo_view_update_menus (NEMO_VIEW (view));
+    nemo_view_menu_needs_update (NEMO_VIEW (view));
 
     nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
@@ -830,7 +830,7 @@ action_desktop_size_callback (GtkAction               *action,
 
     nemo_icon_container_redo_layout (container);
 
-    nemo_view_update_menus (NEMO_VIEW (view));
+    nemo_view_menu_needs_update (NEMO_VIEW (view));
 
     nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 }
@@ -1245,7 +1245,7 @@ nemo_desktop_icon_grid_view_set_grid_adjusts (NemoDesktopIconGridView *view,
 
     nemo_icon_container_redo_layout (container);
 
-    nemo_view_update_menus (NEMO_VIEW (view));
+    nemo_view_menu_needs_update (NEMO_VIEW (view));
 
     nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 
