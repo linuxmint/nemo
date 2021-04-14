@@ -1143,9 +1143,9 @@ nemo_icon_view_set_zoom_level (NemoIconView *view,
 
 	g_signal_emit_by_name (view, "zoom_level_changed");
 
-	if (nemo_view_get_active (NEMO_VIEW (view))) {
-		nemo_view_update_menus (NEMO_VIEW (view));
-	}
+    if (nemo_view_get_active (NEMO_VIEW (view))) {
+        nemo_view_menu_needs_update (NEMO_VIEW (view));
+    }
 }
 
 static void
@@ -1909,7 +1909,7 @@ nemo_icon_view_react_to_icon_change_idle_callback (gpointer data)
 	/* Rebuild the menus since some of them (e.g. Restore Stretched Icons)
 	 * may be different now.
 	 */
-	nemo_view_update_menus (NEMO_VIEW (icon_view));
+        nemo_view_menu_needs_update (NEMO_VIEW (icon_view));
 
         /* Don't call this again (unless rescheduled) */
         return FALSE;
@@ -2404,10 +2404,10 @@ create_icon_container (NemoIconView *icon_view)
 	g_signal_connect_object (icon_container, "icon_rename_ended",
 				 G_CALLBACK (icon_rename_ended_cb), icon_view, 0);
 	g_signal_connect_object (icon_container, "icon_stretch_started",
-				 G_CALLBACK (nemo_view_update_menus), icon_view,
+				 G_CALLBACK (nemo_view_menu_needs_update), icon_view,
 				 G_CONNECT_SWAPPED);
 	g_signal_connect_object (icon_container, "icon_stretch_ended",
-				 G_CALLBACK (nemo_view_update_menus), icon_view,
+				 G_CALLBACK (nemo_view_menu_needs_update), icon_view,
 				 G_CONNECT_SWAPPED);
 
 	g_signal_connect_object (icon_container, "get_stored_layout_timestamp",
