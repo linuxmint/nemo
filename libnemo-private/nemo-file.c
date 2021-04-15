@@ -2253,7 +2253,6 @@ update_info_internal (NemoFile *file,
 	int sort_order;
 	time_t atime, mtime, ctime;
 	time_t trash_time;
-	GTimeVal g_trash_time;
 	const char * time_string;
 	const char *symlink_name, *selinux_context, *name, *thumbnail_path;
     char *mime_type;
@@ -2625,8 +2624,12 @@ update_info_internal (NemoFile *file,
 	trash_time = 0;
 	time_string = g_file_info_get_attribute_string (info, "trash::deletion-date");
 	if (time_string != NULL) {
-		g_time_val_from_iso8601 (time_string, &g_trash_time);
-		trash_time = g_trash_time.tv_sec;
+        	/* For the final trash time, use a cast instead of a
+		   g_date_time_to_unix. All this does is try to make GLib
+		   process a NULL timezone, and it floods the logs with
+		   assertion failures. */
+		GDateTime *g_trash_time = g_date_time_new_from_iso8601 (time_string, NULL);
+		trash_time = (gint64) g_trash_time;
 	}
 	if (file->details->trash_time != trash_time) {
 		changed = TRUE;

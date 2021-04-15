@@ -1034,7 +1034,7 @@ trash_redo_func_callback (GHashTable *debuting_uris,
 {
 	NemoFileUndoInfoTrash *self = user_data;
 	GHashTable *new_trashed_files;
-	GTimeVal current_time;
+	GDateTime *current_time;
 	gsize updated_trash_time;
 	GFile *file;
 	GList *keys, *l;
@@ -1046,8 +1046,8 @@ trash_redo_func_callback (GHashTable *debuting_uris,
 
 		keys = g_hash_table_get_keys (self->priv->trashed);
 
-		g_get_current_time (&current_time);
-		updated_trash_time = current_time.tv_sec;
+		current_time = (GDateTime *)g_get_real_time ();
+		updated_trash_time = g_date_time_get_second (current_time);
 
 		for (l = keys; l != NULL; l = l->next) {
 			file = l->data;
@@ -1122,7 +1122,6 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 		GFileInfo *info;
 		gpointer lookupvalue;
 		GFile *item;
-		GTimeVal timeval;
 		glong trash_time, orig_trash_time;
 		const char *origpath;
 		GFile *origfile;
@@ -1139,8 +1138,12 @@ trash_retrieve_files_to_restore_thread (GSimpleAsyncResult *res,
 				orig_trash_time = GPOINTER_TO_SIZE (lookupvalue);
 				time_string = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
 				if (time_string != NULL) {
-					g_time_val_from_iso8601 (time_string, &timeval);
-					trash_time = timeval.tv_sec;
+       					/* For the final trash time, use a cast instead of a
+		 			   g_date_time_to_unix. All this does is try to make GLib
+		  		    	   process a NULL timezone, and it floods the logs with
+				 	   assertion failures. */
+					GDateTime *time = g_date_time_new_from_iso8601 (time_string, NULL);
+					trash_time = (gint64) time;
 				} else {
 					trash_time = 0;
 				}
