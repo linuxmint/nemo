@@ -238,16 +238,19 @@ clear_bookmarks (NemoBookmarkList *bookmarks, GList *list)
 static void
 do_finalize (GObject *object)
 {
-	if (NEMO_BOOKMARK_LIST (object)->monitor != NULL) {
-		g_file_monitor_cancel (NEMO_BOOKMARK_LIST (object)->monitor);
-		NEMO_BOOKMARK_LIST (object)->monitor = NULL;
+	NemoBookmarkList *self = NEMO_BOOKMARK_LIST (object);
+
+	if (self->monitor != NULL)
+	{
+		g_file_monitor_cancel (self->monitor);
+		g_clear_object (&self->monitor);
 	}
 
-	g_queue_free (NEMO_BOOKMARK_LIST (object)->pending_ops);
+	g_queue_free (self->pending_ops);
 
-	clear_bookmarks (NEMO_BOOKMARK_LIST (object), NEMO_BOOKMARK_LIST (object)->list);
+	clear_bookmarks (self, self->list);
 
-    g_object_unref (NEMO_BOOKMARK_LIST (object)->volume_monitor);
+        g_object_unref (self->volume_monitor);
 
 	G_OBJECT_CLASS (nemo_bookmark_list_parent_class)->finalize (object);
 }
@@ -307,10 +310,12 @@ bookmark_monitor_changed_cb (GFileMonitor      *monitor,
 			     GFileMonitorEvent  eflags,
 			     gpointer           user_data)
 {
+	NemoBookmarkList *self = NEMO_BOOKMARK_LIST (user_data);
+
 	if (eflags == G_FILE_MONITOR_EVENT_CHANGED ||
 	    eflags == G_FILE_MONITOR_EVENT_CREATED) {
-		g_return_if_fail (NEMO_IS_BOOKMARK_LIST (NEMO_BOOKMARK_LIST (user_data)));
-		nemo_bookmark_list_load_file (NEMO_BOOKMARK_LIST (user_data));
+		g_return_if_fail (NEMO_IS_BOOKMARK_LIST (self));
+		nemo_bookmark_list_load_file (self);
 	}
 }
 
@@ -537,11 +542,12 @@ nemo_bookmark_list_delete_items_with_uri (NemoBookmarkList *bookmarks,
 	list_changed = FALSE;
 	for (node = bookmarks->list; node != NULL;  node = next) {
 		next = node->next;
+		NemoBookmark *bookmark = NEMO_BOOKMARK (node->data);
 
-		bookmark_uri = nemo_bookmark_get_uri (NEMO_BOOKMARK (node->data));
+		bookmark_uri = nemo_bookmark_get_uri (bookmark);
 		if (g_strcmp0 (bookmark_uri, uri) == 0) {
 			bookmarks->list = g_list_remove_link (bookmarks->list, node);
-			stop_monitoring_bookmark (bookmarks, NEMO_BOOKMARK (node->data));
+			stop_monitoring_bookmark (bookmarks, bookmark);
 			g_object_unref (node->data);
 			g_list_free_1 (node);
 			list_changed = TRUE;
