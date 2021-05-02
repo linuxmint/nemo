@@ -526,8 +526,6 @@ icon_get_row_and_column_bounds (NemoIconContainer *container,
 			bounds->y1 = MAX (bounds->y1, one_bounds.y1);
 		}
 	}
-
-
 }
 
 static void
@@ -647,7 +645,7 @@ schedule_keyboard_icon_reveal (NemoIconContainer *container,
 static void
 clear_keyboard_focus (NemoIconContainer *container)
 {
-        if (container->details->keyboard_focus != NULL) {
+    if (container->details->keyboard_focus != NULL) {
 		eel_canvas_item_set (EEL_CANVAS_ITEM (container->details->keyboard_focus->item),
 				       "highlighted_as_keyboard_focus", 0,
 				       NULL);
@@ -1047,7 +1045,7 @@ redo_layout_callback (gpointer callback_data)
 static void
 unschedule_redo_layout (NemoIconContainer *container)
 {
-        if (container->details->idle_id != 0) {
+    if (container->details->idle_id != 0) {
 		g_source_remove (container->details->idle_id);
 		container->details->idle_id = 0;
 	}
@@ -2704,14 +2702,14 @@ destroy (GtkWidget *object)
 
 	container = NEMO_ICON_CONTAINER (object);
 
-        nemo_icon_container_clear (container);
+    nemo_icon_container_clear (container);
 
 	if (container->details->rubberband_info.timer_id != 0) {
 		g_source_remove (container->details->rubberband_info.timer_id);
 		container->details->rubberband_info.timer_id = 0;
 	}
 
-        if (container->details->idle_id != 0) {
+    if (container->details->idle_id != 0) {
 		g_source_remove (container->details->idle_id);
 		container->details->idle_id = 0;
 	}
@@ -2721,17 +2719,17 @@ destroy (GtkWidget *object)
 		container->details->stretch_idle_id = 0;
 	}
 
-        if (container->details->align_idle_id != 0) {
+    if (container->details->align_idle_id != 0) {
 		g_source_remove (container->details->align_idle_id);
 		container->details->align_idle_id = 0;
 	}
 
-        if (container->details->selection_changed_id != 0) {
+    if (container->details->selection_changed_id != 0) {
 		g_source_remove (container->details->selection_changed_id);
 		container->details->selection_changed_id = 0;
 	}
 
-        if (container->details->size_allocation_count_id != 0) {
+    if (container->details->size_allocation_count_id != 0) {
 		g_source_remove (container->details->size_allocation_count_id);
 		container->details->size_allocation_count_id = 0;
 	}
@@ -3018,7 +3016,7 @@ button_press_event (GtkWidget *widget,
 	 */
   	if (!gtk_widget_has_focus (widget) && !(is_renaming (container) || is_renaming_pending (container))) {
     		gtk_widget_grab_focus (widget);
-    	}
+	}
 
     if (clicked_on_item) {
         NemoIcon *icon; // current icon which was clicked on
@@ -6101,10 +6099,8 @@ nemo_icon_container_get_icon_locations (NemoIconContainer *container,
 	result = g_array_set_size (result, g_list_length (icons));
 
 	for (index = 0, node = icons; node != NULL; index++, node = node->next) {
-	     	g_array_index (result, GdkPoint, index).x =
-	     		((NemoIcon *)node->data)->x;
-	     	g_array_index (result, GdkPoint, index).y =
-			((NemoIcon *)node->data)->y;
+	    g_array_index (result, GdkPoint, index).x = ((NemoIcon *)node->data)->x;
+	    g_array_index (result, GdkPoint, index).y = ((NemoIcon *)node->data)->y;
 	}
 
 	return result;
@@ -6335,13 +6331,13 @@ get_nth_selected_icon (NemoIconContainer *container, int index)
 static NemoIcon *
 get_first_selected_icon (NemoIconContainer *container)
 {
-        return get_nth_selected_icon (container, 1);
+    return get_nth_selected_icon (container, 1);
 }
 
 static gboolean
 has_multiple_selection (NemoIconContainer *container)
 {
-        return get_nth_selected_icon (container, 2) != NULL;
+    return get_nth_selected_icon (container, 2) != NULL;
 }
 
 static gboolean
@@ -6362,7 +6358,7 @@ all_selected (NemoIconContainer *container)
 static gboolean
 has_selection (NemoIconContainer *container)
 {
-        return get_nth_selected_icon (container, 1) != NULL;
+    return get_nth_selected_icon (container, 1) != NULL;
 }
 
 /**
@@ -6673,7 +6669,7 @@ align_icons_callback (gpointer callback_data)
 static void
 unschedule_align_icons (NemoIconContainer *container)
 {
-        if (container->details->align_idle_id != 0) {
+    if (container->details->align_idle_id != 0) {
 		g_source_remove (container->details->align_idle_id);
 		container->details->align_idle_id = 0;
 	}
@@ -7558,7 +7554,7 @@ nemo_icon_container_accessible_add_selection (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NEMO_ICON_CONTAINER (widget);
+    container = NEMO_ICON_CONTAINER (widget);
 
 	icon = g_list_nth_data (container->details->icons, i);
 	if (icon) {
@@ -7585,7 +7581,7 @@ nemo_icon_container_accessible_clear_selection (AtkSelection *accessible)
 		return FALSE;
 	}
 
-        container = NEMO_ICON_CONTAINER (widget);
+    container = NEMO_ICON_CONTAINER (widget);
 
 	nemo_icon_container_unselect_all (container);
 
@@ -7643,7 +7639,7 @@ nemo_icon_container_accessible_is_child_selected (AtkSelection *accessible,
 		return FALSE;
 	}
 
-        container = NEMO_ICON_CONTAINER (widget);
+    container = NEMO_ICON_CONTAINER (widget);
 
 	icon = g_list_nth_data (container->details->icons, i);
 	return icon ? icon->is_selected : FALSE;
@@ -7667,7 +7663,7 @@ nemo_icon_container_accessible_remove_selection (AtkSelection *accessible,
 	nemo_icon_container_accessible_update_selection (ATK_OBJECT (accessible));
 	priv = accessible_get_priv (ATK_OBJECT (accessible));
 
-        container = NEMO_ICON_CONTAINER (widget);
+    container = NEMO_ICON_CONTAINER (widget);
 
 	icon = g_list_nth_data (priv->selection, i);
 	if (icon) {
@@ -7693,7 +7689,7 @@ nemo_icon_container_accessible_select_all_selection (AtkSelection *accessible)
 		return FALSE;
 	}
 
-        container = NEMO_ICON_CONTAINER (widget);
+    container = NEMO_ICON_CONTAINER (widget);
 
 	nemo_icon_container_select_all (container);
 
@@ -7758,9 +7754,9 @@ nemo_icon_container_accessible_get_n_children (AtkObject *accessible)
 static AtkObject*
 nemo_icon_container_accessible_ref_child (AtkObject *accessible, int i)
 {
-        AtkObject *atk_object;
-        NemoIconContainer *container;
-        NemoIcon *icon;
+    AtkObject *atk_object;
+    NemoIconContainer *container;
+    NemoIcon *icon;
 	GtkWidget *widget;
 
 	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (accessible));
@@ -7768,25 +7764,25 @@ nemo_icon_container_accessible_ref_child (AtkObject *accessible, int i)
 		return NULL;
 	}
 
-        container = NEMO_ICON_CONTAINER (widget);
+    container = NEMO_ICON_CONTAINER (widget);
 
-        icon = g_list_nth_data (container->details->icons, i);
-        if (icon) {
-                atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
-                g_object_ref (atk_object);
+    icon = g_list_nth_data (container->details->icons, i);
+    if (icon) {
+        atk_object = atk_gobject_accessible_for_object (G_OBJECT (icon->item));
+        g_object_ref (atk_object);
 
-                return atk_object;
-        } else {
+        return atk_object;
+    } else {
 		if (i == (int)g_list_length (container->details->icons)) {
 			if (container->details->rename_widget) {
 				atk_object = gtk_widget_get_accessible (container->details->rename_widget);
 				g_object_ref (atk_object);
 
-                		return atk_object;
+                return atk_object;
 			}
 		}
-                return NULL;
-        }
+        return NULL;
+    }
 }
 
 static void
