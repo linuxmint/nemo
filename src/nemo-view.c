@@ -9954,7 +9954,6 @@ real_update_menus (NemoView *view)
 
 	/* Broken into its own function just for convenience */
 	reset_open_with_menu (view, selection, show_app);
-	reset_extension_actions_menu (view, selection);
     reset_move_copy_to_menu (view);
 
 	if (selection_contains_trash) {
@@ -10110,12 +10109,6 @@ real_update_menus (NemoView *view)
 		update_templates_menu (view);
 	}
 
-    if (view->details->actions_invalid) {
-        update_actions_menu (view);
-    }
-
-    update_actions_visibility (view, selection);
-
 	next_pane_is_writable = has_writable_extra_pane (view);
 
 	/* next pane: works if file is copyable, and next pane is writable */
@@ -10221,6 +10214,25 @@ real_update_menus (NemoView *view)
     nemo_file_list_free (selection);
 }
 
+static void
+update_actions_and_extensions(NemoView *view)
+{
+    GList *selection;
+
+    update_menus_if_pending (view);
+
+    if (view->details->actions_invalid) {
+        update_actions_menu (view);
+    }
+
+    selection = nemo_view_get_selection (view);
+
+    update_actions_visibility (view, selection);
+    reset_extension_actions_menu (view, selection);
+
+    nemo_file_list_free (selection);
+}
+
 /**
  * nemo_view_pop_up_selection_context_menu
  *
@@ -10240,9 +10252,8 @@ nemo_view_pop_up_selection_context_menu  (NemoView *view,
 	/* Make the context menu items not flash as they update to proper disabled,
 	 * etc. states by forcing menus to update now.
 	 */
-	update_menus_if_pending (view);
-
-	update_context_menu_position_from_event (view, event);
+    update_actions_and_extensions (view);
+    update_context_menu_position_from_event (view, event);
 
 	eel_pop_up_context_menu (create_popup_menu
 				 (view, NEMO_VIEW_POPUP_PATH_SELECTION),
@@ -10267,10 +10278,8 @@ nemo_view_pop_up_background_context_menu (NemoView *view,
 	/* Make the context menu items not flash as they update to proper disabled,
 	 * etc. states by forcing menus to update now.
 	 */
-	update_menus_if_pending (view);
-
-	update_context_menu_position_from_event (view, event);
-
+    update_actions_and_extensions (view);
+    update_context_menu_position_from_event (view, event);
 
 	eel_pop_up_context_menu (create_popup_menu
 				 (view, NEMO_VIEW_POPUP_PATH_BACKGROUND),
