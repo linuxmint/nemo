@@ -3570,7 +3570,7 @@ nemo_list_view_set_zoom_level (NemoListView *view,
 	gtk_cell_renderer_set_fixed_size (GTK_CELL_RENDERER (view->details->pixbuf_cell),
 					  -1, icon_size);
 
-	nemo_view_menu_needs_update (NEMO_VIEW (view));
+	nemo_view_update_menus (NEMO_VIEW (view));
 
 	/* FIXME: https://bugzilla.gnome.org/show_bug.cgi?id=641518 */
 	gtk_tree_view_columns_autosize (view->details->tree_view);

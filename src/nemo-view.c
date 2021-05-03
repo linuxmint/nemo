@@ -214,6 +214,7 @@ struct NemoViewDetails
 	guint extensions_menu_merge_id;
 
 	guint display_selection_idle_id;
+	guint update_menus_timeout_id;
 	guint update_status_idle_id;
 	guint reveal_selection_idle_id;
 
@@ -330,6 +331,9 @@ static void     clipboard_changed_callback                     (NemoClipboardMon
 								NemoView      *view);
 static void     open_one_in_new_window                         (gpointer              data,
 								gpointer              callback_data);
+static void     schedule_update_menus                          (NemoView      *view);
+static void     schedule_update_menus_callback                 (gpointer              callback_data);
+static void     remove_update_menus_timeout_callback           (NemoView      *view);
 static void     schedule_update_status                          (NemoView      *view);
 static void     remove_update_status_idle_callback             (NemoView *view);
 static void     reset_update_interval                          (NemoView      *view);
@@ -1816,8 +1820,8 @@ action_save_search_callback (GtkAction *action,
 		search = NEMO_SEARCH_DIRECTORY (directory_view->details->model);
 		nemo_search_directory_save_search (search);
 
-        /* Save search is disabled */
-        nemo_view_menu_needs_update (directory_view);
+		/* Save search is disabled */
+		schedule_update_menus (directory_view);
 	}
 }
 
@@ -2498,7 +2502,7 @@ scripts_added_or_changed_callback (NemoDirectory *directory,
 
 	view->details->scripts_invalid = TRUE;
 	if (view->details->active) {
-        nemo_view_menu_needs_update (view);
+		schedule_update_menus (view);
 	}
 }
 
@@ -2513,7 +2517,7 @@ templates_added_or_changed_callback (NemoDirectory *directory,
 
 	view->details->templates_invalid = TRUE;
 	if (view->details->active) {
-        nemo_view_menu_needs_update (view);
+		schedule_update_menus (view);
 	}
 }
 
@@ -2522,7 +2526,7 @@ actions_added_or_changed_callback (NemoView *view)
 {
     view->details->actions_invalid = TRUE;
     if (view->details->active) {
-        nemo_view_menu_needs_update (view);
+        schedule_update_menus (view);
     }
 }
 
@@ -2619,7 +2623,7 @@ slot_active (NemoWindowSlot *slot,
 	view->details->active = TRUE;
 
 	nemo_view_merge_menus (view);
-    nemo_view_menu_needs_update (view);
+	schedule_update_menus (view);
 }
 
 static void
@@ -2633,7 +2637,7 @@ slot_inactive (NemoWindowSlot *slot,
 	view->details->active = FALSE;
 
 	nemo_view_unmerge_menus (view);
-    view->details->menu_states_untrustworthy = FALSE;
+	remove_update_menus_timeout_callback (view);
 }
 
 static void slot_changed_pane (NemoWindowSlot *slot,
@@ -2644,7 +2648,7 @@ static void slot_changed_pane (NemoWindowSlot *slot,
 					      NULL, NULL, view);
 
 	view->details->window = nemo_window_slot_get_window (slot);
-    nemo_view_menu_needs_update (view);
+	schedule_update_menus (view);
 
 	g_signal_connect_object (view->details->window,
 		"hidden-files-mode-changed", G_CALLBACK (hidden_files_mode_changed),
@@ -2884,16 +2888,16 @@ nemo_view_init (NemoView *view)
 
 	/* Register to menu provider extension signal managing menu updates */
 	g_signal_connect_object (nemo_signaller_get_current (), "popup_menu_changed",
-				 G_CALLBACK (nemo_view_menu_needs_update), view, G_CONNECT_SWAPPED);
+				 G_CALLBACK (nemo_view_update_menus), view, G_CONNECT_SWAPPED);
 
 	gtk_widget_show (GTK_WIDGET (view));
 
 	g_signal_connect_swapped (nemo_preferences,
 				  "changed::" NEMO_PREFERENCES_ENABLE_DELETE,
-				  G_CALLBACK (nemo_view_menu_needs_update), view);
+				  G_CALLBACK (schedule_update_menus_callback), view);
     g_signal_connect_swapped (nemo_menu_config_preferences,
                               "changed",
-                              G_CALLBACK (nemo_view_menu_needs_update), view);
+                              G_CALLBACK (schedule_update_menus_callback), view);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SWAP_TRASH_DELETE,
                   G_CALLBACK (swap_delete_keybinding_changed_callback), view);
@@ -2913,7 +2917,7 @@ nemo_view_init (NemoView *view)
 				  G_CALLBACK(sort_favorites_first_changed_callback), view);
 	g_signal_connect_swapped (gnome_lockdown_preferences,
 				  "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
-				  G_CALLBACK (nemo_view_menu_needs_update), view);
+				  G_CALLBACK (schedule_update_menus), view);
 
 	g_signal_connect_swapped (nemo_window_state,
 				  "changed::" NEMO_WINDOW_STATE_START_WITH_STATUS_BAR,
@@ -2952,7 +2956,7 @@ nemo_view_init (NemoView *view)
 
     view->details->bookmarks_changed_id =
         g_signal_connect_swapped (view->details->bookmarks, "changed",
-                      G_CALLBACK (nemo_view_menu_needs_update),
+                      G_CALLBACK (schedule_update_menus),
                       view);
 }
 
@@ -3058,6 +3062,7 @@ nemo_view_destroy (GtkWidget *object)
 						   view->details->subdirectory_list->data);
 	}
 
+	remove_update_menus_timeout_callback (view);
 	remove_update_status_idle_callback (view);
 
 	if (view->details->display_selection_idle_id != 0) {
@@ -3098,7 +3103,7 @@ nemo_view_finalize (GObject *object)
 	view = NEMO_VIEW (object);
 
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
-					      nemo_view_menu_needs_update, view);
+					      schedule_update_menus_callback, view);
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      click_policy_changed_callback, view);
     g_signal_handlers_disconnect_by_func (nemo_preferences,
@@ -3110,13 +3115,16 @@ nemo_view_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_window_state,
 					      nemo_view_display_selection_info, view);
     g_signal_handlers_disconnect_by_func (nemo_menu_config_preferences,
-                          nemo_view_menu_needs_update, view);
+                          schedule_update_menus_callback, view);
 
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
-					      nemo_view_menu_needs_update, view);
+					      schedule_update_menus, view);
 
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                           nemo_to_menu_preferences_changed_callback, view);
+
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                          schedule_update_menus, view);
 
 	unschedule_pop_up_location_context_menu (view);
 	if (view->details->location_popup_event != NULL) {
@@ -3447,7 +3455,7 @@ done_loading (NemoView *view,
 			nemo_window_report_load_complete (view->details->window, NEMO_VIEW (view));
 		}
 
-        nemo_view_menu_needs_update (view);
+		schedule_update_menus (view);
 		schedule_update_status (view);
 		reset_update_interval (view);
 
@@ -3697,8 +3705,8 @@ copy_move_done_callback (GHashTable *debuting_files,
 					       (GClosureNotify) debuting_files_data_free,
 					       G_CONNECT_AFTER);
 		}
-		/* Require a menu update for undo items */
-        nemo_view_menu_needs_update (directory_view);
+		/* Schedule menu update for undo items */
+		schedule_update_menus (directory_view);
 	}
 
 	copy_move_done_data_free (copy_move_done_data);
@@ -3961,13 +3969,39 @@ display_selection_info_idle_callback (gpointer data)
 }
 
 static void
+remove_update_menus_timeout_callback (NemoView *view)
+{
+	if (view->details->update_menus_timeout_id != 0) {
+		g_source_remove (view->details->update_menus_timeout_id);
+		view->details->update_menus_timeout_id = 0;
+	}
+}
+
+static void
 update_menus_if_pending (NemoView *view)
 {
 	if (!view->details->menu_states_untrustworthy) {
 		return;
 	}
 
+	remove_update_menus_timeout_callback (view);
 	nemo_view_update_menus (view);
+}
+
+static gboolean
+update_menus_timeout_callback (gpointer data)
+{
+	NemoView *view;
+	view = NEMO_VIEW (data);
+
+	g_object_ref (G_OBJECT (view));
+
+	view->details->update_menus_timeout_id = 0;
+	nemo_view_update_menus (view);
+
+	g_object_unref (G_OBJECT (view));
+
+	return FALSE;
 }
 
 static gboolean
@@ -4176,7 +4210,7 @@ files_changed_callback (NemoDirectory *directory,
 	/* A change in MIME type could affect the Open with menu, for
 	 * one thing, so we need to update menus when files change.
 	 */
-    nemo_view_menu_needs_update (view);
+	schedule_update_menus (view);
 }
 
 static void
@@ -4886,7 +4920,7 @@ get_x_content_async_callback (const char **content,
 	view = NEMO_VIEW (user_data);
 
 	if (view->details->window != NULL) {
-        nemo_view_menu_needs_update (view);
+		schedule_update_menus (view);
 	}
 	g_object_unref (view);
 }
@@ -6669,7 +6703,7 @@ user_dirs_changed (NemoView *view)
 {
 	update_templates_directory (view);
 	view->details->templates_invalid = TRUE;
-    nemo_view_menu_needs_update (view);
+	schedule_update_menus (view);
 }
 
 static gboolean
@@ -9777,7 +9811,7 @@ real_update_menus (NemoView *view)
 
     is_desktop_view = get_is_desktop_view (view);
     trash_supported = eel_vfs_supports_uri_scheme ("trash");
-    g_printerr ("UPDATE\n");
+
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_RENAME);
 	/* rename sensitivity depending on selection */
@@ -10346,6 +10380,29 @@ nemo_view_pop_up_location_context_menu (NemoView *view,
 }
 
 static void
+schedule_update_menus (NemoView *view)
+{
+	g_assert (NEMO_IS_VIEW (view));
+	/* Don't schedule updates after destroy (#349551),
+ 	 * or if we are not active.
+	 */
+	if (view->details->window == NULL ||
+	    !view->details->active) {
+		return;
+	}
+
+	view->details->menu_states_untrustworthy = TRUE;
+	/* Schedule a menu update with the current update interval */
+    if (view->details->update_menus_timeout_id != 0) {
+        g_source_remove (view->details->update_menus_timeout_id);
+        view->details->update_menus_timeout_id = 0;
+    }
+    view->details->update_menus_timeout_id = g_timeout_add (view->details->update_interval,
+                                                            update_menus_timeout_callback,
+                                                            view);
+}
+
+static void
 remove_update_status_idle_callback (NemoView *view)
 {
 	if (view->details->update_status_idle_id != 0) {
@@ -10420,11 +10477,22 @@ nemo_view_notify_selection_changed (NemoView *view)
         view->details->display_selection_idle_id = 0;
         nemo_window_slot_set_status (view->details->slot, "", "");
     }
-
-    nemo_view_menu_needs_update (view);
     view->details->display_selection_idle_id = g_timeout_add (100,
                                                               display_selection_info_idle_callback,
                                                               view);
+
+	if (view->details->batching_selection_level != 0) {
+		view->details->selection_changed_while_batched = TRUE;
+	} else {
+		/* Here is the work we do only when we're not
+		 * batching selection changes. In other words, it's the slower
+		 * stuff that we don't want to slow down selection techniques
+		 * such as rubberband-selecting in icon view.
+		 */
+
+		/* Schedule an update of menu item states to match selection */
+		schedule_update_menus (view);
+	}
 }
 
 static void
@@ -10433,7 +10501,8 @@ file_changed_callback (NemoFile *file, gpointer callback_data)
 	NemoView *view = NEMO_VIEW (callback_data);
 
 	schedule_changes (view);
-    nemo_view_menu_needs_update (view);
+
+	schedule_update_menus (view);
 	schedule_update_status (view);
 }
 
@@ -10466,7 +10535,7 @@ load_directory (NemoView *view,
 	 * location, so they won't have any false lingering knowledge
 	 * of old selection.
 	 */
-	nemo_view_menu_needs_update (view);
+	schedule_update_menus (view);
 
 	while (view->details->subdirectory_list != NULL) {
 		nemo_view_remove_subdirectory (view,
@@ -10792,6 +10861,12 @@ real_using_manual_layout (NemoView *view)
 	return FALSE;
 }
 
+static void
+schedule_update_menus_callback (gpointer callback_data)
+{
+	schedule_update_menus (NEMO_VIEW (callback_data));
+}
+
 void
 nemo_view_ignore_hidden_file_preferences (NemoView *view)
 {
@@ -10907,7 +10982,7 @@ nemo_view_trash_state_changed_callback (NemoTrashMonitor *trash_monitor,
 	view = (NemoView *) callback_data;
 	g_assert (NEMO_IS_VIEW (view));
 
-    nemo_view_menu_needs_update (view);
+	schedule_update_menus (view);
 }
 
 void
@@ -10937,13 +11012,6 @@ nemo_view_get_active (NemoView *view)
 {
 	g_assert (NEMO_IS_VIEW (view));
 	return view->details->active;
-}
-
-void
-nemo_view_menu_needs_update (NemoView *view)
-{
-    g_assert (NEMO_IS_VIEW (view));
-    view->details->menu_states_untrustworthy = TRUE;
 }
 
 static GArray *
@@ -11094,11 +11162,11 @@ nemo_view_parent_set (GtkWidget *widget,
 			view->details->active = TRUE;
 
 			nemo_view_merge_menus (view);
-            nemo_view_menu_needs_update (view);
+			schedule_update_menus (view);
 		}
 	} else {
 		nemo_view_unmerge_menus (view);
-        view->details->menu_states_untrustworthy = FALSE;
+		remove_update_menus_timeout_callback (view);
 	}
 }
 

@@ -273,7 +273,7 @@ nemo_desktop_icon_view_dispose (GObject *object)
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (gnome_lockdown_preferences,
-					      nemo_view_menu_needs_update,
+					      nemo_view_update_menus,
 					      icon_view);
 
 	G_OBJECT_CLASS (nemo_desktop_icon_view_parent_class)->dispose (object);
@@ -595,7 +595,7 @@ nemo_desktop_icon_view_constructed (GObject *object)
 
     g_signal_connect_swapped (gnome_lockdown_preferences,
                   "changed::" NEMO_PREFERENCES_LOCKDOWN_COMMAND_LINE,
-                  G_CALLBACK (nemo_view_menu_needs_update),
+                  G_CALLBACK (nemo_view_update_menus),
                   desktop_icon_view);
 }
 

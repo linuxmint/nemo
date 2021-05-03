@@ -658,7 +658,7 @@ action_split_view_callback (GtkAction *action,
 
 		slot = nemo_window_get_active_slot (window);
 		if (slot != NULL) {
-			nemo_view_menu_needs_update (slot->content_view);
+			nemo_view_update_menus (slot->content_view);
 		}
 	}
 
