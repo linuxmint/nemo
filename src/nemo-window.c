@@ -586,6 +586,17 @@ on_menu_focus_out (GtkMenuShell *widget,
     return GDK_EVENT_PROPAGATE;
 }
 
+void
+on_menu_selection_done (GtkMenuShell *menushell,
+                        gpointer      user_data)
+{
+	NemoWindow *window = NEMO_WINDOW (user_data);
+
+	/* Remove the menu inmediately after selecting an item. */
+	clear_menu_hide_delay (window);
+	window->details->menu_hide_delay_id = g_timeout_add (0, (GSourceFunc) hide_menu_on_delay, window);
+}
+
 static void
 nemo_window_constructed (GObject *self)
 {
@@ -630,6 +641,12 @@ nemo_window_constructed (GObject *self)
     g_signal_connect_object (menu,
                              "focus-out-event",
                              G_CALLBACK (on_menu_focus_out),
+                             window,
+                             0);
+
+    g_signal_connect_object (menu,
+                             "selection-done",
+                             G_CALLBACK (on_menu_selection_done),
                              window,
                              0);
 
