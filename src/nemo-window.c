@@ -563,7 +563,7 @@ hide_menu_on_delay (NemoWindow *window)
 }
 
 static gboolean
-on_menu_focus_out (GtkWidget *widget,
+on_menu_focus_out (GtkMenuShell *widget,
                    GdkEvent  *event,
                    gpointer   user_data)
 {
@@ -577,7 +577,11 @@ on_menu_focus_out (GtkWidget *widget,
      * complete their click action. */
     clear_menu_hide_delay (window);
 
-    window->details->menu_hide_delay_id = g_timeout_add (200, (GSourceFunc) hide_menu_on_delay, window);
+    /* When a submenu pops-up, the menu loses focus. The menu should disappear
+     * only when none of its elements is selected. */
+    if (!gtk_menu_shell_get_selected_item (widget)) {
+        window->details->menu_hide_delay_id = g_timeout_add (200, (GSourceFunc) hide_menu_on_delay, window);
+    }
 
     return GDK_EVENT_PROPAGATE;
 }
