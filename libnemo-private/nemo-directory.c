@@ -972,28 +972,25 @@ nemo_directory_notify_files_added (GList *files)
 			continue;
 		}
 
-		file = nemo_file_get_existing (location);
-		/* We check is_added here, because the file could have been added
-		 * to the directory by a nemo_file_get() but not gotten 
-		 * files_added emitted
-		 */
-        if (file != NULL) {
-            if (file->details->is_added) {
-                /* A file already exists, it was probably renamed
-                 * If it was renamed this could be ignored, but
-                 * queue a change just in case */
-                nemo_file_changed (file);
-            } else {
-                hash_table_list_prepend (added_lists,
-                                         directory,
-                                         g_object_ref (location));
-            }
-
-            nemo_file_unref (file);
+        file = nemo_file_get_existing (location);
+        /* We check is_added here, because the file could have been added
+         * to the directory by a nemo_file_get() but not gotten
+         * files_added emitted
+         */
+        if (file && file->details->is_added) {
+            /* A file already exists, it was probably renamed.
+             * If it was renamed this could be ignored, but
+             * queue a change just in case */
+            nemo_file_changed (file);
+        } else {
+            hash_table_list_prepend (added_lists,
+                                     directory,
+                                     g_object_ref (location));
         }
 
-		nemo_directory_unref (directory);
-	}
+        nemo_file_unref (file);
+        nemo_directory_unref (directory);
+    }
 
 	/* Now get file info for the new files. This creates NemoFile
 	 * objects for the new files, and sends out a files_added signal. 
