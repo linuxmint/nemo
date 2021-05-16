@@ -977,17 +977,21 @@ nemo_directory_notify_files_added (GList *files)
 		 * to the directory by a nemo_file_get() but not gotten 
 		 * files_added emitted
 		 */
-		if (file && file->details->is_added) {
-			/* A file already exists, it was probably renamed.
-			 * If it was renamed this could be ignored, but 
-			 * queue a change just in case */
-			nemo_file_changed (file);
-			nemo_file_unref (file);
-		} else {
-			hash_table_list_prepend (added_lists, 
-						 directory, 
-						 g_object_ref (location));
-		}
+        if (file != NULL) {
+            if (file->details->is_added) {
+                /* A file already exists, it was probably renamed
+                 * If it was renamed this could be ignored, but
+                 * queue a change just in case */
+                nemo_file_changed (file);
+            } else {
+                hash_table_list_prepend (added_lists,
+                                         directory,
+                                         g_object_ref (location));
+            }
+
+            nemo_file_unref (file);
+        }
+
 		nemo_directory_unref (directory);
 	}
 
