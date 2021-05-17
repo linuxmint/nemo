@@ -387,6 +387,74 @@ check_heading_for_devices (NemoPlacesSidebar *sidebar,
     return cat_iter;
 }
 
+typedef struct {
+       PlaceType place_type;
+       SectionType section_type;
+       gchar *name;
+       gchar *icon_name;
+       gchar *uri;
+       GDrive *drive;
+       GVolume *volume;
+       GMount *mount;
+       gint index;
+       gchar *tooltip;
+       gint df_percent;
+       gboolean show_df_percent;
+} PlaceInfo;
+
+static gint
+sort_places_func (gconstpointer a,
+                  gconstpointer b)
+{
+    return g_utf8_collate (((PlaceInfo *) a)->name, ((PlaceInfo *) b)->name);
+}
+
+static PlaceInfo *
+new_place_info (PlaceType place_type,
+                SectionType section_type,
+                gchar *name,
+                gchar *icon_name,
+                gchar *uri,
+                GDrive *drive,
+                GVolume *volume,
+                GMount *mount,
+                gint index,
+                gchar *tooltip,
+                gint df_percent,
+                gboolean show_df_percent)
+{
+    PlaceInfo *info = g_slice_new0 (PlaceInfo);
+
+    info->place_type = place_type;
+    info->section_type = section_type;
+    info->name = g_utf8_make_valid (name, -1);
+    info->icon_name = g_strdup (icon_name);
+    info->uri = (g_strdup (uri));
+    info->drive = drive ? g_object_ref (drive) : NULL;
+    info->volume = volume ? g_object_ref (volume) : NULL;
+    info->mount = mount ? g_object_ref (mount) : NULL;
+    info->index = index;
+    info->tooltip = g_strdup (tooltip);
+    info->df_percent = df_percent;
+    info->show_df_percent = show_df_percent;
+
+    return info;
+}
+
+static void
+free_place_info (PlaceInfo *info)
+{
+    g_free (info->name);
+    g_free (info->icon_name);
+    g_free (info->uri);
+    g_clear_object (&info->drive);
+    g_clear_object (&info->volume);
+    g_clear_object (&info->mount);
+    g_free (info->tooltip);
+
+    g_slice_free (PlaceInfo, info);
+}
+
 static GtkTreeIter
 add_place (NemoPlacesSidebar *sidebar,
 	   PlaceType place_type,
@@ -902,6 +970,9 @@ update_places (NemoPlacesSidebar *sidebar)
         ++bookmark_index;
     }
 
+    GList *place_infos = NULL;
+    PlaceInfo *place_info;
+
     /* add mounts that has no volume (/etc/mtab mounts, ftp, sftp,...) */
     mounts = g_volume_monitor_get_mounts (volume_monitor);
 
@@ -951,11 +1022,11 @@ update_places (NemoPlacesSidebar *sidebar)
         mount_uri = g_file_get_uri (root);
         name = g_mount_get_name (mount);
         tooltip = g_file_get_parse_name (root);
-        cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                               SECTION_DEVICES,
-                               name, icon, mount_uri,
-                               NULL, NULL, mount, 0, tooltip, 0, FALSE,
-                               cat_iter);
+        place_info = new_place_info (PLACES_MOUNTED_VOLUME,
+                                     SECTION_DEVICES,
+                                     name, icon, mount_uri,
+                                     NULL, NULL, mount, 0, tooltip, 0, FALSE);
+        place_infos = g_list_prepend (place_infos, place_info);
         g_object_unref (root);
         g_object_unref (mount);
         g_free (icon);
@@ -1006,12 +1077,11 @@ update_places (NemoPlacesSidebar *sidebar)
                                                volume_id,
                                                tooltip_info);
                     g_free (tooltip_info);
-                    cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                                           SECTION_DEVICES,
-                                           name, icon, mount_uri,
-                                           drive, volume, mount, 0, tooltip,
-                                           full, full > -1,
-                                           cat_iter);
+                    place_info = new_place_info (PLACES_MOUNTED_VOLUME,
+                                                 SECTION_DEVICES,
+                                                 name, icon, mount_uri,
+                                                 drive, volume, mount, 0, tooltip, full, full > -1);
+                    place_infos = g_list_prepend (place_infos, place_info);
                     g_object_unref (root);
                     g_object_unref (mount);
                     g_free (icon);
@@ -1037,11 +1107,12 @@ update_places (NemoPlacesSidebar *sidebar)
                                                          G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
                     tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name, volume_id);
 
-                    cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                                           SECTION_DEVICES,
-                                           name, icon, NULL,
-                                           drive, volume, NULL, 0, tooltip, 0, FALSE,
-                                           cat_iter);
+                    place_info = new_place_info (PLACES_MOUNTED_VOLUME,
+                                                 SECTION_DEVICES,
+                                                 name, icon, NULL,
+                                                 drive, volume, NULL, 0, tooltip, 0, FALSE);
+                    place_infos = g_list_prepend (place_infos, place_info);
+
                     g_free (icon);
                     g_free (name);
                     g_free (tooltip);
@@ -1064,11 +1135,12 @@ update_places (NemoPlacesSidebar *sidebar)
                 name = g_drive_get_name (drive);
                 tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
-                cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                                       SECTION_DEVICES,
-                                       name, icon, NULL,
-                                       drive, NULL, NULL, 0, tooltip, 0, FALSE,
-                                       cat_iter);
+                place_info = new_place_info (PLACES_BUILT_IN,
+                                             SECTION_DEVICES,
+                                             name, icon, NULL,
+                                             drive, NULL, NULL, 0, tooltip, 0, FALSE);
+                place_infos = g_list_prepend (place_infos, place_info);
+
                 g_free (icon);
                 g_free (tooltip);
                 g_free (name);
@@ -1114,11 +1186,13 @@ update_places (NemoPlacesSidebar *sidebar)
             g_free (tooltip_info);
             g_object_unref (root);
             name = g_mount_get_name (mount);
-            cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                                   SECTION_DEVICES,
-                                   name, icon, mount_uri,
-                                   NULL, volume, mount, 0, tooltip, full, full > -1,
-                                   cat_iter);
+
+            place_info = new_place_info (PLACES_MOUNTED_VOLUME,
+                                         SECTION_DEVICES,
+                                         name, icon, mount_uri,
+                                         NULL, volume, mount, 0, tooltip, full, full > -1);
+            place_infos = g_list_prepend (place_infos, place_info);
+
             g_object_unref (mount);
             g_free (icon);
             g_free (name);
@@ -1128,17 +1202,44 @@ update_places (NemoPlacesSidebar *sidebar)
             /* see comment above in why we add an icon for an unmounted mountable volume */
             icon = nemo_get_volume_icon_name (volume);
             name = g_volume_get_name (volume);
-            cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                                   SECTION_DEVICES,
-                                   name, icon, NULL,
-                                   NULL, volume, NULL, 0, name, 0, FALSE,
-                                   cat_iter);
+
+            place_info = new_place_info (PLACES_MOUNTED_VOLUME,
+                                         SECTION_DEVICES,
+                                         name, icon, NULL,
+                                         NULL, volume, NULL, 0, name, 0, FALSE);
+            place_infos = g_list_prepend (place_infos, place_info);
+
             g_free (icon);
             g_free (name);
         }
         g_object_unref (volume);
     }
     g_list_free (volumes);
+
+    place_infos = g_list_sort (place_infos, (GCompareFunc) sort_places_func);
+
+    for (l = place_infos; l != NULL; l = l->next) {
+        PlaceInfo *info = (PlaceInfo *) l->data;
+
+        cat_iter = add_place (sidebar,
+                              info->place_type,
+                              info->section_type,
+                              info->name,
+                              info->icon_name,
+                              info->uri,
+                              info->drive,
+                              info->volume,
+                              info->mount,
+                              info->index,
+                              info->tooltip,
+                              info->df_percent,
+                              info->show_df_percent,
+                              cat_iter);
+
+        free_place_info (info);
+    }
+
+    g_list_free (place_infos);
 
 	/* network */
 	cat_iter = add_heading (sidebar, SECTION_NETWORK,
