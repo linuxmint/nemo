@@ -86,6 +86,9 @@
 
 #define NEMO_ACCEL_MAP_SAVE_DELAY 30
 
+/* Disable the self-check functionality */
+#define NEMO_OMIT_SELF_CHECK "omit"
+
 static void     mount_removed_callback            (GVolumeMonitor            *monitor,
 						   GMount                    *mount,
 						   NemoMainApplication       *application);
