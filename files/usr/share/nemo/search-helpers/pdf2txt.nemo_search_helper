@@ -1,0 +1,5 @@
+[Nemo Search Cat Helper]
+TryExec=pdf2txt
+Exec=pdf2txt %s
+MimeType=application/pdf;
+Priority=100

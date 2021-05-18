@@ -56,6 +56,7 @@
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-undo-manager.h>
 #include <libnemo-private/nemo-thumbnails.h>
+#include <libnemo-private/nemo-search-engine-advanced.h>
 #include <libnemo-extension/nemo-menu-provider.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_APPLICATION
@@ -568,6 +569,8 @@ nemo_main_application_finalize (GObject *object)
 
     g_clear_object (&application->priv->dbus_manager);
     g_clear_object (&application->priv->fdb_manager);
+
+    free_search_helpers ();
 
     G_OBJECT_CLASS (nemo_main_application_parent_class)->finalize (object);
 }

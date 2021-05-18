@@ -36,21 +36,35 @@
 
 typedef struct
 {
+    GtkBuilder *builder;
     GtkWidget *infobar;
-	GtkWidget *entry;
-    GtkWidget *menu;
+    GtkWidget *file_entry;
+    GtkWidget *file_entry_combo;
+    GtkWidget *content_entry;
+    GtkWidget *content_entry_combo;
+    GtkWidget *content_case_toggle;
+    GtkWidget *file_case_toggle;
+    GtkWidget *regex_toggle;
+    GtkWidget *file_recurse_toggle;
+    GtkWidget *content_main_box;
+
+    GtkWidget *content_view;
+    GtkWidget *last_focus_widget;
+    GList *focus_chain;
 
 	gboolean change_frozen;
 	guint typing_timeout_id;
 	gboolean is_visible;
 	GtkWidget *vbox;
 
-    gchar **faves;
+    gboolean history_enabled;
+    gboolean focus_frozen;
 
-	char *current_uri;
-    char *base_uri;
+    gchar *current_uri;
+    gchar *base_uri;
 
-	char *last_set_query_text;
+    gchar *last_set_query_file_pattern;
+    gchar *last_set_query_content_pattern;
 } NemoQueryEditorPrivate;
 
 struct _NemoQueryEditor
@@ -70,23 +84,17 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-static void entry_activate_cb (GtkWidget *entry, NemoQueryEditor *editor);
-static void entry_changed_cb  (GtkWidget *entry, NemoQueryEditor *editor);
 static void nemo_query_editor_changed_force (NemoQueryEditor *editor,
 						 gboolean             force);
 static void nemo_query_editor_changed (NemoQueryEditor *editor);
 
-static void on_saved_searches_setting_changed (GSettings *settings,
-                                               gchar     *key,
-                                               gpointer   user_data);
-
 static gchar *
-get_sanitized_query_string (NemoQueryEditor *editor)
+get_sanitized_file_search_string (NemoQueryEditor *editor)
 {
     const gchar *entry_text;
     gchar *ret;
 
-    entry_text = gtk_entry_get_text (GTK_ENTRY (editor->priv->entry));
+    entry_text = gtk_entry_get_text (GTK_ENTRY (editor->priv->file_entry));
 
     ret = g_strdup (entry_text);
     ret = g_strstrip (ret);
@@ -102,19 +110,23 @@ nemo_query_editor_dispose (GObject *object)
 	editor = NEMO_QUERY_EDITOR (object);
 
     g_clear_pointer (&editor->priv->base_uri, g_free);
-    g_clear_pointer (&editor->priv->last_set_query_text, g_free);
+    g_clear_pointer (&editor->priv->current_uri, g_free);
+    g_clear_pointer (&editor->priv->last_set_query_file_pattern, g_free);
+    g_clear_pointer (&editor->priv->last_set_query_content_pattern, g_free);
 
 	if (editor->priv->typing_timeout_id > 0) {
 		g_source_remove (editor->priv->typing_timeout_id);
 		editor->priv->typing_timeout_id = 0;
 	}
 
-    g_clear_object (&editor->priv->menu);
-    g_clear_pointer (&editor->priv->faves, g_strfreev);
+    g_clear_object (&editor->priv->builder);
 
-    g_signal_handlers_disconnect_by_func (nemo_preferences,
-                                          on_saved_searches_setting_changed,
-                                          editor);
+    if (editor->priv->focus_chain != NULL) {
+        editor->priv->focus_chain->prev->next = NULL;
+        editor->priv->focus_chain->prev = NULL;
+        g_list_free (editor->priv->focus_chain);
+        editor->priv->focus_chain = NULL;
+    }
 
 	G_OBJECT_CLASS (nemo_query_editor_parent_class)->dispose (object);
 }
@@ -125,7 +137,11 @@ nemo_query_editor_grab_focus (GtkWidget *widget)
 	NemoQueryEditor *editor = NEMO_QUERY_EDITOR (widget);
 
 	if (gtk_widget_get_visible (widget)) {
-		gtk_entry_grab_focus_without_selecting (GTK_ENTRY (editor->priv->entry));
+        if (editor->priv->last_focus_widget != NULL) {
+            gtk_entry_grab_focus_without_selecting (GTK_ENTRY (editor->priv->last_focus_widget));
+        } else {
+            gtk_entry_grab_focus_without_selecting (GTK_ENTRY (editor->priv->file_entry));
+        }
 	}
 }
 
@@ -160,484 +176,47 @@ nemo_query_editor_class_init (NemoQueryEditorClass *class)
     gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "cancel", 0);
 }
 
-GFile *
-nemo_query_editor_get_location (NemoQueryEditor *editor)
-{
-	GFile *file = NULL;
-	if (editor->priv->current_uri != NULL)
-		file = g_file_new_for_uri (editor->priv->current_uri);
-	return file;
-}
-
 static void
 entry_activate_cb (GtkWidget *entry, NemoQueryEditor *editor)
 {
-    g_autofree gchar *text = NULL;
-
 	if (editor->priv->typing_timeout_id > 0) {
 		g_source_remove (editor->priv->typing_timeout_id);
 		editor->priv->typing_timeout_id = 0;
 	}
 
-    text = get_sanitized_query_string (editor);
-
-    if (strlen (text) > 2) {
-        nemo_query_editor_changed_force (editor, TRUE);
-    }
-}
-
-static gboolean
-typing_timeout_cb (gpointer user_data)
-{
-	NemoQueryEditor *editor;
-
-	editor = NEMO_QUERY_EDITOR (user_data);
-	editor->priv->typing_timeout_id = 0;
-
-	nemo_query_editor_changed (editor);
-
-	return FALSE;
-}
-
-#define TYPING_TIMEOUT 250
-
-static gchar *
-construct_favorite_entry (const gchar *uri,
-                          const gchar *key)
-{
-    return g_strdup_printf ("%s::%s", uri, key);
-}
-
-static gboolean
-parse_favorite_entry (const gchar  *favorite_entry,
-                      gchar       **uri,
-                      gchar       **key)
-{
-    gchar **split;
-
-    split = g_strsplit (favorite_entry, "::", 2);
-
-    if (split == NULL || g_strv_length (split) < 2) {
-        *key = NULL;
-        *uri = NULL;
-        return FALSE;
-    }
-
-    *uri = g_strdup (split[0]);
-    *key = g_strdup (split[1]);
-
-    g_strfreev (split);
-
-    return TRUE;
-}
-
-static gboolean
-is_search_criteria_in_faves (NemoQueryEditor *editor,
-                             const gchar     *key)
-{
-    gint i, length;
-    gboolean ret;
-
-    length = g_strv_length (editor->priv->faves);
-
-    if (length == 0) {
-        return FALSE;
-    }
-
-    ret = FALSE;
-
-    for (i = 0; i < length; i++) {
-        gchar *favorite_uri, *favorite_key;
-
-        if (parse_favorite_entry (editor->priv->faves[i],
-                                  &favorite_uri,
-                                  &favorite_key)) {
-            if (g_strcmp0 (editor->priv->current_uri, favorite_uri) == 0) {
-                if (g_strcmp0 (key, favorite_key) == 0) {
-                    ret = TRUE;
-                }
-            }
-
-            g_clear_pointer (&favorite_uri, g_free);
-            g_clear_pointer (&favorite_key, g_free);
-        }
-
-        if (ret) {
-            break;
-        }
-    }
-
-    return ret;
+    nemo_query_editor_changed_force (editor, TRUE);
 }
 
 static void
-add_key_to_faves (NemoQueryEditor *editor,
-                  const gchar     *entry)
+content_case_button_toggled_cb (GtkWidget *toggle, NemoQueryEditor *editor)
 {
-    gint i;
-    GPtrArray *array;
-
-    array = g_ptr_array_new ();
-
-    g_ptr_array_add (array, g_strdup (entry));
-
-    if (editor->priv->faves != NULL) {
-        for (i = 0; i < g_strv_length (editor->priv->faves); i++) {
-            g_ptr_array_add (array, g_strdup (editor->priv->faves[i]));
-        }
-    }
-
-    g_ptr_array_add (array, NULL);
-
-    g_signal_handlers_block_by_func (nemo_preferences,
-                                     on_saved_searches_setting_changed,
-                                     editor);
-
-    g_settings_set_strv (nemo_preferences,
-                         NEMO_PREFERENCES_SAVED_SEARCHES,
-                         (const gchar * const *) array->pdata);
-
-    g_signal_handlers_unblock_by_func (nemo_preferences,
-                                       on_saved_searches_setting_changed,
-                                       editor);
-
-    g_clear_pointer (&editor->priv->faves, g_strfreev);
-    editor->priv->faves = (gchar **) g_ptr_array_free (array, FALSE);
+    g_settings_set_boolean (nemo_search_preferences,
+                            NEMO_PREFERENCES_SEARCH_CONTENT_CASE,
+                            gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->content_case_toggle)));
 }
 
 static void
-remove_key_from_faves (NemoQueryEditor *editor,
-                       const gchar     *entry)
+file_case_button_toggled_cb (GtkWidget *toggle, NemoQueryEditor *editor)
 {
-    gint i;
-    gchar *key, *uri;
-    GPtrArray *array;
-
-    if (!parse_favorite_entry (entry, &uri, &key)) {
-        return;
-    }
-
-    array = g_ptr_array_new ();
-
-    if (editor->priv->faves != NULL) {
-        for (i = 0; i < g_strv_length (editor->priv->faves); i++) {
-            gchar *favorite_key, *favorite_uri;
-
-            if (parse_favorite_entry (editor->priv->faves[i],
-                                      &favorite_uri,
-                                      &favorite_key)) {
-                if (g_strcmp0 (key, favorite_key) != 0 ||
-                    g_strcmp0 (uri, favorite_uri) != 0) {
-                    g_ptr_array_add (array, g_strdup (editor->priv->faves[i]));
-                }
-
-                g_free (favorite_key);
-                g_free (favorite_uri);
-            }
-        }
-    }
-
-    g_ptr_array_add (array, NULL);
-
-    g_signal_handlers_block_by_func (nemo_preferences,
-                                     on_saved_searches_setting_changed,
-                                     editor);
-
-    g_settings_set_strv (nemo_preferences,
-                         NEMO_PREFERENCES_SAVED_SEARCHES,
-                         (const gchar * const *) array->pdata);
-
-    g_signal_handlers_unblock_by_func (nemo_preferences,
-                                       on_saved_searches_setting_changed,
-                                       editor);
-
-    g_free (key);
-    g_free (uri);
-
-    g_clear_pointer (&editor->priv->faves, g_strfreev);
-    editor->priv->faves = (gchar **) g_ptr_array_free (array, FALSE);
+    g_settings_set_boolean (nemo_search_preferences,
+                            NEMO_PREFERENCES_SEARCH_FILE_CASE,
+                            gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->file_case_toggle)));
 }
 
 static void
-update_fav_icon (NemoQueryEditor *editor)
+regex_button_toggled_cb (GtkWidget *toggle, NemoQueryEditor *editor)
 {
-    g_autofree gchar *current_key = NULL;
-
-    current_key = get_sanitized_query_string (editor);
-
-    if (is_search_criteria_in_faves (editor, current_key)) {
-        gtk_entry_set_icon_from_icon_name (GTK_ENTRY (editor->priv->entry),
-                                           GTK_ENTRY_ICON_SECONDARY,
-                                           "starred-symbolic");
-        return;
-    }
-
-    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (editor->priv->entry),
-                                       GTK_ENTRY_ICON_SECONDARY,
-                                       "non-starred-symbolic");
+    g_settings_set_boolean (nemo_search_preferences,
+                            NEMO_PREFERENCES_SEARCH_CONTENT_REGEX,
+                            gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->regex_toggle)));
 }
 
 static void
-entry_changed_cb (GtkWidget *entry, NemoQueryEditor *editor)
+file_recurse_button_toggled_cb (GtkWidget *toggle, NemoQueryEditor *editor)
 {
-    g_autofree gchar *text = NULL;
-
-	if (editor->priv->change_frozen) {
-		return;
-	}
-
-    if (editor->priv->typing_timeout_id > 0) {
-        g_source_remove (editor->priv->typing_timeout_id);
-        editor->priv->typing_timeout_id = 0;
-    }
-
-    update_fav_icon (editor);
-
-    text = get_sanitized_query_string (editor);
-
-    if (strlen (text) > 2) {
-        editor->priv->typing_timeout_id = g_timeout_add (TYPING_TIMEOUT,
-                                                         typing_timeout_cb,
-                                                         editor);
-    }
-}
-
-static void
-get_markup_for_fave (NemoQueryEditor *editor,
-                     const gchar     *favorite,
-                     gchar          **loc_markup,
-                     gchar          **key_markup)
-{
-    GFile *location;
-    gchar *favorite_key, *favorite_location;
-    gchar *location_string, *mnemonic_key;
-
-    if (!parse_favorite_entry (favorite, &favorite_location, &favorite_key)) {
-        *loc_markup = NULL;
-        *key_markup = NULL;
-        return;
-    }
-
-    location = g_file_new_for_uri (favorite_location);
-    location_string = nemo_compute_search_title_for_location (location);
-
-    mnemonic_key = g_strdup_printf ("_%s", favorite_key);
-
-    *loc_markup = g_strdup_printf (_("in <tt><b>%s</b></tt>"), location_string);
-    *key_markup = g_strdup_printf (_("Search for <b>%s</b>"), mnemonic_key);
-
-    g_free (favorite_location);
-    g_free (favorite_key);
-    g_free (location_string);
-    g_free (mnemonic_key);
-    g_object_unref (location);
-}
-
-static void
-on_menu_item_activated (GtkMenuItem *item,
-                        gpointer     user_data)
-{
-    NemoQueryEditor *editor;
-    NemoQuery *query;
-    const gchar *fave_entry;
-    gchar *favorite_key, *favorite_location;
-
-    editor = NEMO_QUERY_EDITOR (user_data);
-
-    fave_entry = g_object_get_data (G_OBJECT (item),
-                                   "fave-entry");
-
-    if (parse_favorite_entry (fave_entry, &favorite_location, &favorite_key)) {
-        query = nemo_query_new ();
-
-        nemo_query_set_location (query, favorite_location);
-        nemo_query_set_text (query, favorite_key);
-
-        nemo_query_editor_set_query (editor, query);
-        nemo_query_editor_changed (editor);
-        update_fav_icon (editor);
-
-        g_free (favorite_location);
-        g_free (favorite_key);
-        g_object_unref (query);
-    }
-}
-
-static gboolean
-on_menu_item_key_press (GtkWidget    *widget,
-                        GdkEvent     *event,
-                        gpointer user_data)
-{
-    if (event->key.state == 0 && event->key.keyval == GDK_KEY_Delete) {
-        NemoQueryEditor *editor;
-        GtkWidget *item;
-        const gchar *fave_entry;
-
-        editor = NEMO_QUERY_EDITOR (user_data);
-
-        item = gtk_menu_shell_get_selected_item (GTK_MENU_SHELL (widget));
-
-        if (item == NULL) {
-            return GDK_EVENT_PROPAGATE;
-        }
-
-        fave_entry = g_object_get_data (G_OBJECT (item),
-                                        "fave-entry");
-
-        remove_key_from_faves (editor, fave_entry);
-
-        gtk_widget_set_sensitive (item, FALSE);
-        update_fav_icon (editor);
-
-        return GDK_EVENT_STOP;
-    }
-
-    return GDK_EVENT_PROPAGATE;
-}
-
-#if !GTK_CHECK_VERSION (3, 22, 0)
-static void
-menu_position_function (GtkMenu  *menu,
-                        gint     *x,
-                        gint     *y,
-                        gboolean *push_in,
-                        gpointer  user_data)
-{
-    NemoQueryEditor *editor;
-    GtkWidget *parent;
-    GtkAllocation menu_allocation;
-    gint window_x, window_y, translated_x, translated_y;
-
-    g_return_if_fail (NEMO_IS_QUERY_EDITOR (user_data));
-
-    editor = NEMO_QUERY_EDITOR (user_data);
-
-    parent = gtk_widget_get_toplevel (GTK_WIDGET (editor));
-
-    gtk_widget_translate_coordinates (editor->priv->entry,
-                                      parent,
-                                      0, 0,
-                                      &translated_x,
-                                      &translated_y);
-
-    gdk_window_get_position (gtk_widget_get_window (parent), &window_x, &window_y);
-
-    gtk_widget_get_allocation (GTK_WIDGET (menu), &menu_allocation);
-
-    *x = translated_x + window_x;
-    *y = translated_y + window_y - menu_allocation.height;
-    *push_in = TRUE;
-}
-#endif
-
-static void
-popup_favorites (NemoQueryEditor *editor,
-                 GdkEvent        *event,
-                 gboolean         use_pointer_location)
-{
-    GtkWidget *menu, *item, *item_child;
-    GtkSizeGroup *group;
-    gchar **faves;
-    gint i;
-
-    if (g_strv_length (editor->priv->faves) == 0) {
-        return;
-    }
-
-    g_clear_object (&editor->priv->menu);
-    editor->priv->menu = menu = g_object_ref_sink (gtk_menu_new ());
-
-    group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
-    faves = editor->priv->faves;
-
-    for (i = 0; i < g_strv_length (faves); i++) {
-        GtkWidget *label;
-        gchar *loc_markup, *key_markup;
-
-        get_markup_for_fave (editor,
-                             faves[i],
-                             &loc_markup,
-                             &key_markup);
-
-        if (loc_markup == NULL || key_markup == NULL) {
-            continue;
-        }
-
-        item = gtk_menu_item_new();
-
-        item_child = gtk_bin_get_child (GTK_BIN (item));
-
-        if (item_child != NULL) {
-            gtk_widget_destroy (item_child);
-        }
-
-        item_child = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 10);
-        gtk_container_add (GTK_CONTAINER (item), item_child);
-
-        label = gtk_label_new (NULL);
-
-        gtk_label_set_markup_with_mnemonic (GTK_LABEL (label), key_markup);
-        gtk_label_set_xalign (GTK_LABEL (label), 0.0);
-        gtk_box_pack_start (GTK_BOX (item_child), label, FALSE, FALSE, 0);
-        gtk_size_group_add_widget (group, label);
-
-        label = gtk_label_new (NULL);
-
-        gtk_label_set_markup (GTK_LABEL (label), loc_markup);
-        gtk_label_set_xalign (GTK_LABEL (label), 0.0);
-        gtk_box_pack_start (GTK_BOX (item_child), label, FALSE, FALSE, 0);
-
-        g_object_set_data_full (G_OBJECT (item),
-                                "fave-entry",
-                                g_strdup (faves[i]),
-                                (GDestroyNotify) g_free);
-
-        g_free (loc_markup);
-        g_free (key_markup);
-
-        gtk_widget_show_all (GTK_WIDGET (item));
-
-        gtk_menu_attach (GTK_MENU (menu), item, 0, 1, i, i + 1);
-
-        g_signal_connect (item,
-                          "activate",
-                          G_CALLBACK (on_menu_item_activated),
-                          editor);
-    }
-
-    g_object_unref (group);
-
-    g_signal_connect (menu,
-                      "key-press-event",
-                      G_CALLBACK (on_menu_item_key_press),
-                      editor);
-
-#if GTK_CHECK_VERSION (3, 22, 0)
-    if (use_pointer_location) {
-        gtk_menu_popup_at_pointer (GTK_MENU (menu), event);
-    } else {
-        gtk_menu_popup_at_widget (GTK_MENU (menu),
-                                  editor->priv->entry,
-                                  GDK_GRAVITY_NORTH_WEST,
-                                  GDK_GRAVITY_SOUTH_WEST,
-                                  event);
-    }
-#else
-    if (use_pointer_location) {
-        gtk_menu_popup (GTK_MENU (menu),
-                        NULL, NULL, NULL, NULL,
-                        3,
-                        gtk_get_current_event_time ());
-    } else {
-        gtk_menu_popup (GTK_MENU (menu),
-                        NULL, NULL,
-                        (GtkMenuPositionFunc) menu_position_function,
-                        editor,
-                        0,
-                        gtk_get_current_event_time ());
-    }
-#endif
+    g_settings_set_boolean (nemo_search_preferences,
+                            NEMO_PREFERENCES_SEARCH_FILES_RECURSIVELY,
+                            gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->file_recurse_toggle)));
 }
 
 static gboolean
@@ -645,22 +224,41 @@ on_key_press_event (GtkWidget    *widget,
                     GdkEvent     *event,
                     gpointer user_data)
 {
-    if ((event->key.state & gtk_accelerator_get_default_mod_mask ()) == 0 && event->key.keyval == GDK_KEY_Up) {
-        popup_favorites (NEMO_QUERY_EDITOR (user_data), event, FALSE);
-        return GDK_EVENT_STOP;
+    NemoQueryEditor *editor = NEMO_QUERY_EDITOR (user_data);
+
+    if ((event->key.state & gtk_accelerator_get_default_mod_mask ()) == 0) {
+        // if (event->key.keyval == GDK_KEY_Up) {
+            // popup_favorites (NEMO_QUERY_EDITOR (user_data), event, FALSE);
+        // } else
+        if (event->key.keyval == GDK_KEY_Tab) {
+            GList *focus_iter = editor->priv->focus_chain;
+
+            while (focus_iter->data != widget) {
+                focus_iter = focus_iter->next;
+            }
+
+            gtk_widget_grab_focus (GTK_WIDGET (focus_iter->next->data));
+
+            return GDK_EVENT_STOP;
+        }
+        if (event->key.keyval == GDK_KEY_Escape) {
+
+            g_signal_emit (editor, signals[CANCEL], 0);
+
+            return GDK_EVENT_STOP;
+        }
     }
 
     return GDK_EVENT_PROPAGATE;
 }
 
 static void
-fave_icon_clicked_cb (GtkWidget             *widget,
-                      GtkEntryIconPosition   position,
-                      GdkEvent              *event,
-                      gpointer               user_data)
+search_icon_clicked_cb (GtkWidget             *widget,
+                        GtkEntryIconPosition   position,
+                        GdkEvent              *event,
+                        gpointer               user_data)
 {
     NemoQueryEditor *editor;
-    g_autofree gchar *current_key = NULL;
 
     if (position == GTK_ENTRY_ICON_PRIMARY) {
         return;
@@ -668,117 +266,320 @@ fave_icon_clicked_cb (GtkWidget             *widget,
 
     editor = NEMO_QUERY_EDITOR (user_data);
 
-    current_key = get_sanitized_query_string (editor);
-
     if ((event->button.state & gtk_accelerator_get_default_mod_mask ()) == 0 && event->button.button == 1) {
-        gchar *entry;
-
-        if (strlen (current_key) < 3) {
-            return;
-        }
-
-        entry = construct_favorite_entry (editor->priv->current_uri, current_key);
-
-        if (is_search_criteria_in_faves (editor, current_key)) {
-            remove_key_from_faves (editor, entry);
-        } else {
-            add_key_to_faves (editor, entry);
-        }
-
-        g_free (entry);
-
-        update_fav_icon (editor);
-    } else {
-        popup_favorites (editor, event, TRUE);
+        nemo_query_editor_changed (editor);
     }
 }
 
+// static void
+// file_combo_iter_changed (GtkWidget  *widget,
+//                          GParamSpec *spec,
+//                          gpointer    data)
+// {
+//     NemoQueryEditor *editor = NEMO_QUERY_EDITOR (data);
+
+//     if (editor->priv->focus_frozen) {
+//         return;
+//     }
+
+//     gtk_widget_grab_focus (editor->priv->file_entry);
+
+//     editor->priv->last_focus_widget = editor->priv->file_entry;
+//     gtk_editable_set_position (GTK_EDITABLE (editor->priv->file_entry), -1);
+// }
+
+// static void
+// content_combo_iter_changed (GtkWidget  *widget,
+//                             GParamSpec *spec,
+//                             gpointer    data)
+// {
+//     NemoQueryEditor *editor = NEMO_QUERY_EDITOR (data);
+
+//     if (editor->priv->focus_frozen) {
+//         return;
+//     }
+
+//     editor->priv->last_focus_widget = editor->priv->content_entry;
+//     gtk_editable_set_position (GTK_EDITABLE (editor->priv->content_entry), -1);
+// }
+
 static void
-on_saved_searches_setting_changed (GSettings *settings,
-                                   gchar     *key,
-                                   gpointer   user_data)
+entry_focus_changed (GtkWidget  *widget,
+                     GParamSpec *spec,
+                     gpointer    data)
 {
-    NemoQueryEditor *editor;
+    NemoQueryEditor *editor = NEMO_QUERY_EDITOR (data);
 
-    g_return_if_fail (NEMO_IS_QUERY_EDITOR (user_data));
-
-    editor = NEMO_QUERY_EDITOR (user_data);
-
-    g_clear_pointer (&editor->priv->faves, g_strfreev);
-    editor->priv->faves = g_settings_get_strv (settings, key);
+    if (gtk_widget_is_focus (widget)) {
+        editor->priv->last_focus_widget = widget;
+    }
 }
+
+// static void
+// setup_entry_history (NemoQueryEditor *editor,
+//                      GtkComboBoxText *combo,
+//                      const gchar     *settings_key)
+// {
+//     gchar **history_entries;
+//     gchar *active_text;
+//     gint i, n_entries;
+
+//     gtk_combo_box_text_remove_all (combo);
+
+//     history_entries = g_settings_get_strv (nemo_search_preferences, settings_key);
+//     n_entries = g_strv_length (history_entries);
+
+//     for (i = 0; i < n_entries; i++) {
+//         const gchar *entry = history_entries[i];
+
+//         gtk_combo_box_text_prepend_text (combo, entry);
+//     }
+
+//     g_strfreev (history_entries);
+
+//     editor->priv->focus_frozen = TRUE;
+
+//     active_text = gtk_combo_box_text_get_active_text (combo);
+
+//     if (active_text != NULL && active_text[0] != '\0') {
+//         gtk_combo_box_set_active (GTK_COMBO_BOX (combo), n_entries - 1);
+//     }
+
+//     g_free (active_text);
+ 
+//     editor->priv->focus_frozen = FALSE;
+// }
+
+// static void
+// update_history_from_entry (NemoQueryEditor  *editor,
+//                            const gchar      *key,
+//                            gchar           **history,
+//                            GtkWidget        *widget)
+// {
+//     GPtrArray *array;
+//     gchar *current_search;
+//     gint i;
+    
+//     current_search = g_strdup (gtk_entry_get_text (GTK_ENTRY (widget)));
+//     g_strstrip (current_search); // sanitize;
+
+//     if (g_strcmp0 (current_search, "") == 0) {
+//         return;
+//     }
+
+//     array = g_ptr_array_new_full (0, g_free);
+
+//     g_ptr_array_add (array, (gpointer) g_strdup (current_search));
+
+//     if (history != NULL) {
+//         for (i = 0; i < g_strv_length ((gchar **) history); i++) {
+//             if (g_strcmp0 (history[i], current_search) == 0) {
+//                 continue;
+//             }
+
+//             g_ptr_array_add (array, (gpointer) g_strdup (history[i]));
+
+//             if (array->len == g_settings_get_int (nemo_search_preferences,
+//                                                   NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY_LENGTH)) {
+//                 break;
+//             }
+//         }
+//     }
+
+//     g_ptr_array_add (array, NULL);
+//     g_settings_set_strv (nemo_search_preferences, key, (const gchar * const *) array->pdata);
+//     g_ptr_array_free (array, TRUE);
+//     g_free (current_search);
+// }
+
+// static void
+// update_histories (NemoQueryEditor *editor)
+// {
+//     NemoQueryEditorPrivate *priv;
+//     gchar **file_history, **content_history;
+
+//     priv = editor->priv;
+
+//     file_history = g_settings_get_strv (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_FILE_HISTORY);
+//     content_history = g_settings_get_strv (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY);
+
+//     update_history_from_entry (editor,
+//                                NEMO_PREFERENCES_SEARCH_FILE_HISTORY,
+//                                file_history,
+//                                editor->priv->file_entry);
+
+//     update_history_from_entry (editor,
+//                                NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY,
+//                                content_history,
+//                                editor->priv->content_entry);
+
+//     g_strfreev (file_history);
+//     g_strfreev (content_history);
+
+//     setup_entry_history (editor,
+//                          GTK_COMBO_BOX_TEXT (priv->file_entry_combo),
+//                          NEMO_PREFERENCES_SEARCH_FILE_HISTORY);
+
+//     setup_entry_history (editor,
+//                          GTK_COMBO_BOX_TEXT (priv->content_entry_combo),
+//                          NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY);
+// }
+
+// static void
+// apply_privacy_pref (NemoQueryEditor *editor)
+// {
+//     NemoQueryEditorPrivate *priv = editor->priv;
+
+//     priv->history_enabled = g_settings_get_boolean (cinnamon_privacy_preferences,
+//                                                             NEMO_PREFERENCES_RECENT_ENABLED);
+
+//     if (!priv->history_enabled) {
+//         g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_FILE_HISTORY);
+//         g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY);
+//     }
+
+//     setup_entry_history (editor,
+//                          GTK_COMBO_BOX_TEXT (priv->file_entry_combo),
+//                          NEMO_PREFERENCES_SEARCH_FILE_HISTORY);
+//     setup_entry_history (editor,
+//                          GTK_COMBO_BOX_TEXT (priv->content_entry_combo),
+//                          NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY);
+// }
 
 static void
 nemo_query_editor_init (NemoQueryEditor *editor)
 {
     NemoQueryEditorPrivate *priv;
+    GtkBuilder *builder;
     GtkWidget *separator;
 
     editor->priv = G_TYPE_INSTANCE_GET_PRIVATE (editor,
                                                 NEMO_TYPE_QUERY_EDITOR,
                                                 NemoQueryEditorPrivate);
     priv = editor->priv;
-
     priv->base_uri = NULL;
-    priv->menu = NULL;
 
-    priv->faves = g_settings_get_strv (nemo_preferences,
-                                       NEMO_PREFERENCES_SAVED_SEARCHES);
+    builder = gtk_builder_new ();
+    gtk_builder_set_translation_domain (builder, GETTEXT_PACKAGE);
+    if (!gtk_builder_add_from_resource (builder, "/org/nemo/nemo-search-bar.glade", NULL)) {
+        g_object_unref (builder);
+        return;
+    }
+    priv->builder = builder;
 
     gtk_orientable_set_orientation (GTK_ORIENTABLE (editor), GTK_ORIENTATION_VERTICAL);
 
-    priv->infobar = gtk_info_bar_new ();
+    priv->infobar = GTK_WIDGET (gtk_builder_get_object (builder, "search_bar"));
     gtk_box_pack_start (GTK_BOX (editor), priv->infobar, TRUE, TRUE, 0);
-    gtk_widget_set_no_show_all (priv->infobar, TRUE);
-    gtk_info_bar_set_message_type (GTK_INFO_BAR (priv->infobar), GTK_MESSAGE_OTHER);
 
-    priv->entry = gtk_entry_new ();
-    gtk_box_pack_start (GTK_BOX (gtk_info_bar_get_content_area (GTK_INFO_BAR (priv->infobar))),
-                       priv->entry,
-                       TRUE, TRUE, 0);
-    gtk_widget_show (priv->entry);
+    priv->content_main_box = GTK_WIDGET (gtk_builder_get_object (builder, "content_main_box"));
 
-    gtk_entry_set_placeholder_text (GTK_ENTRY (priv->entry), _("Type to search or arrow-up to select a favorite"));
+    // TODO: Need to make a custom combo so entries can be deleted using 'Del' key
+    // priv->file_entry_combo = GTK_WIDGET (gtk_builder_get_object (builder, "file_entry_combo"));
 
-    g_signal_connect (priv->entry,
+    // g_signal_connect (priv->file_entry_combo,
+    //                   "notify::active-id",
+    //                   G_CALLBACK (file_combo_iter_changed),
+    //                   editor);
+
+    // priv->content_entry_combo = GTK_WIDGET (gtk_builder_get_object (builder, "content_entry_combo"));
+
+    // g_signal_connect (priv->content_entry_combo,
+    //                   "notify::active-id",
+    //                   G_CALLBACK (content_combo_iter_changed),
+    //                   editor);
+
+    priv->file_entry = GTK_WIDGET (gtk_builder_get_object (builder, "file_search_entry"));
+    g_signal_connect (priv->file_entry,
                       "activate",
                       G_CALLBACK (entry_activate_cb),
                       editor);
-
-    g_signal_connect (priv->entry,
-                      "changed",
-                      G_CALLBACK (entry_changed_cb),
-                      editor);
-
-    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (priv->entry),
-                                       GTK_ENTRY_ICON_PRIMARY,
-                                       "edit-find-symbolic");
-
-    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (priv->entry),
-                                       GTK_ENTRY_ICON_SECONDARY,
-                                       "non-starred-symbolic");
-
-    gtk_entry_set_icon_tooltip_text (GTK_ENTRY (priv->entry),
-                                     GTK_ENTRY_ICON_SECONDARY,
-                                     _("Click to save or forget a favorite search. "
-                                       "Right-click to display favorites."));
-
-    g_signal_connect (priv->entry,
+    g_signal_connect (priv->file_entry,
                       "icon-press",
-                      G_CALLBACK (fave_icon_clicked_cb),
+                      G_CALLBACK (search_icon_clicked_cb),
+                      editor);
+    g_signal_connect (priv->file_entry,
+                      "notify::is-focus",
+                      G_CALLBACK (entry_focus_changed),
                       editor);
 
-    separator = gtk_separator_new (GTK_ORIENTATION_VERTICAL);
-    gtk_box_pack_start (GTK_BOX (editor), separator, TRUE, TRUE, 0);
-
-    g_object_bind_property (priv->infobar, "visible",
-                            separator, "visible",
-                            G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
-
-    g_signal_connect (nemo_preferences,
-                      "changed::" NEMO_PREFERENCES_SAVED_SEARCHES,
-                      G_CALLBACK (on_saved_searches_setting_changed),
+    priv->content_entry = GTK_WIDGET (gtk_builder_get_object (builder, "content_search_entry"));
+    g_signal_connect (priv->content_entry,
+                      "activate",
+                      G_CALLBACK (entry_activate_cb),
                       editor);
+    g_signal_connect (priv->content_entry,
+                      "icon-press",
+                      G_CALLBACK (search_icon_clicked_cb),
+                      editor);
+    g_signal_connect (priv->content_entry,
+                      "notify::is-focus",
+                      G_CALLBACK (entry_focus_changed),
+                      editor);
+
+    priv->content_case_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "content_search_case_toggle"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->content_case_toggle),
+                                  g_settings_get_boolean (nemo_search_preferences,
+                                                          NEMO_PREFERENCES_SEARCH_CONTENT_CASE));
+
+    g_signal_connect (priv->content_case_toggle,
+                      "toggled",
+                      G_CALLBACK (content_case_button_toggled_cb),
+                      editor);
+
+    priv->file_case_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "file_search_case_toggle"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->file_case_toggle),
+                                  g_settings_get_boolean (nemo_search_preferences,
+                                                          NEMO_PREFERENCES_SEARCH_FILE_CASE));
+
+    g_signal_connect (priv->file_case_toggle,
+                      "toggled",
+                      G_CALLBACK (file_case_button_toggled_cb),
+                      editor);
+
+    priv->regex_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "content_search_regex_toggle"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->regex_toggle),
+                                  g_settings_get_boolean (nemo_search_preferences,
+                                                          NEMO_PREFERENCES_SEARCH_CONTENT_REGEX));
+
+    g_signal_connect (priv->regex_toggle,
+                      "toggled",
+                      G_CALLBACK (regex_button_toggled_cb),
+                      editor);
+
+    priv->file_recurse_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "file_search_recurse_toggle"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->file_recurse_toggle),
+                                  g_settings_get_boolean (nemo_search_preferences,
+                                                          NEMO_PREFERENCES_SEARCH_FILES_RECURSIVELY));
+
+    g_signal_connect (priv->file_recurse_toggle,
+                      "toggled",
+                      G_CALLBACK (file_recurse_button_toggled_cb),
+                      editor);
+
+    gtk_widget_hide (GTK_WIDGET (gtk_builder_get_object (builder, "button_box")));
+
+    separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+    gtk_box_pack_start (GTK_BOX (editor), separator, FALSE, FALSE, 0);
+    gtk_widget_show (separator);
+
+    priv->focus_chain = g_list_append (NULL, priv->file_entry);
+    priv->focus_chain = g_list_append (priv->focus_chain, priv->content_entry);
+    priv->focus_chain->prev = g_list_last (priv->focus_chain);
+    priv->focus_chain->prev->next = priv->focus_chain;
+
+    // g_signal_connect_swapped (cinnamon_privacy_preferences,
+    //                           "changed::" NEMO_PREFERENCES_RECENT_ENABLED,
+    //                           G_CALLBACK (apply_privacy_pref),
+    //                           editor);
+
+    // apply_privacy_pref (editor);
+
+#ifdef ENABLE_TRACKER // No options currently supported with tracker.
+    gtk_widget_hide (priv->content_main_box);
+    gtk_widget_hide (priv->file_recurse_toggle);
+    gtk_widget_hide (priv->file_case_toggle);
+#endif
 
     gtk_widget_show (GTK_WIDGET (editor));
 }
@@ -796,6 +597,10 @@ nemo_query_editor_changed_force (NemoQueryEditor *editor, gboolean force_reload)
 	g_signal_emit (editor, signals[CHANGED], 0,
 		       query, force_reload);
 	g_clear_object (&query);
+
+    // if (editor->priv->history_enabled) {
+    //     update_histories (editor);
+    // }
 }
 
 static void
@@ -821,22 +626,32 @@ NemoQuery *
 nemo_query_editor_get_query (NemoQueryEditor *editor)
 {
     NemoQuery *query;
-    g_autofree gchar *query_text = NULL;
+    gchar *file_search_text = NULL;
+    const gchar *content_search_text = NULL;
 
-	if (editor == NULL || editor->priv == NULL || editor->priv->entry == NULL) {
+	if (editor == NULL || editor->priv == NULL || editor->priv->file_entry == NULL) {
 		return NULL;
 	}
 
-	query_text = get_sanitized_query_string (editor);
+	file_search_text = get_sanitized_file_search_string (editor);
+    content_search_text = gtk_entry_get_text (GTK_ENTRY (editor->priv->content_entry));
 
-    if (g_strcmp0 (query_text, "") == 0) {
-        return NULL;
+    if (g_strcmp0 (file_search_text, "") == 0) {
+        g_free (file_search_text);
+        file_search_text = g_strdup ("*");
     }
 
 	query = nemo_query_new ();
-	nemo_query_set_text (query, query_text);
+    nemo_query_set_file_pattern (query, file_search_text);
+	nemo_query_set_content_pattern (query, content_search_text);
+    nemo_query_set_content_case_sensitive (query, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->content_case_toggle)));
+    nemo_query_set_file_case_sensitive (query, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->file_case_toggle)));
+    nemo_query_set_use_regex (query, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->regex_toggle)));
+    nemo_query_set_recurse (query, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->file_recurse_toggle)));
 
 	add_location_to_query (editor, query);
+
+    g_free (file_search_text);
 
 	return query;
 }
@@ -851,27 +666,44 @@ void
 nemo_query_editor_set_location (NemoQueryEditor *editor,
 				    GFile               *location)
 {
+    gchar *basename, *placeholder_text;
+
 	g_free (editor->priv->current_uri);
 	editor->priv->current_uri = g_file_get_uri (location);
+
+    basename = g_file_get_basename (location);
+    placeholder_text = g_strdup_printf (_("Search in %s"), basename);
+
+    gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->file_entry), placeholder_text);
+
+    g_free (basename);
+    g_free (placeholder_text);
 }
 
 void
 nemo_query_editor_set_query (NemoQueryEditor	*editor,
 				 NemoQuery		*query)
 {
-	char *text = NULL;
+    gchar *file_pattern = NULL;
+    gchar *content_pattern = NULL;
 
-	if (query != NULL) {
-		text = nemo_query_get_text (query);
-	}
+    if (query != NULL) {
+        file_pattern = nemo_query_get_file_pattern (query);
+        content_pattern = nemo_query_get_file_pattern (query);
+    }
 
-	if (!text) {
-		text = g_strdup ("");
-	}
+    if (!file_pattern) {
+        file_pattern = g_strdup ("");
+    }
+
+    if (!content_pattern) {
+        content_pattern = g_strdup ("");
+    }
 
 	editor->priv->change_frozen = TRUE;
-	gtk_entry_set_text (GTK_ENTRY (editor->priv->entry), text);
-    gtk_widget_grab_focus (editor->priv->entry);
+    gtk_entry_set_text (GTK_ENTRY (editor->priv->file_entry), file_pattern);
+	gtk_entry_set_text (GTK_ENTRY (editor->priv->content_entry), content_pattern);
+    gtk_widget_grab_focus (editor->priv->file_entry);
 
 	g_free (editor->priv->current_uri);
 	editor->priv->current_uri = NULL;
@@ -880,8 +712,10 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 		editor->priv->current_uri = nemo_query_get_location (query);
 	}
 
-	g_free (editor->priv->last_set_query_text);
-	editor->priv->last_set_query_text = text;
+    g_free (editor->priv->last_set_query_file_pattern);
+	g_free (editor->priv->last_set_query_content_pattern);
+    editor->priv->last_set_query_file_pattern = file_pattern;
+	editor->priv->last_set_query_content_pattern = content_pattern;
 
 	editor->priv->change_frozen = FALSE;
 }
@@ -894,24 +728,48 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
     g_return_if_fail (NEMO_IS_QUERY_EDITOR (editor));
 
     if (active) {
+        GFile *base;
+
         gtk_widget_show (editor->priv->infobar);
         gtk_widget_queue_resize (GTK_WIDGET (editor->priv->infobar));
 
         g_clear_pointer (&editor->priv->base_uri, g_free);
         editor->priv->base_uri = base_uri;
 
-        g_signal_connect (editor->priv->entry,
+        base = g_file_new_for_uri (base_uri);
+
+        if (g_file_is_native (base)) {
+            gtk_widget_set_sensitive (editor->priv->content_main_box, TRUE);
+            gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry),
+                                            _("Enter text to search for"));
+        } else {
+            gtk_widget_set_sensitive (editor->priv->content_main_box, FALSE);
+            gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry),
+                                            _("Not supported in this location"));
+        }
+
+        g_object_unref (base);
+
+        g_signal_connect (editor->priv->file_entry,
                           "key-press-event",
                           G_CALLBACK (on_key_press_event),
                           editor);
-
-        update_fav_icon (editor);
+        g_signal_connect (editor->priv->content_entry,
+                          "key-press-event",
+                          G_CALLBACK (on_key_press_event),
+                          editor);
+        editor->priv->last_focus_widget = editor->priv->file_entry;
     } else {
-        g_signal_handlers_disconnect_by_func (editor->priv->entry,
+        g_signal_handlers_disconnect_by_func (editor->priv->file_entry,
+                                              on_key_press_event,
+                                              editor);
+        g_signal_handlers_disconnect_by_func (editor->priv->content_entry,
                                               on_key_press_event,
                                               editor);
 
         gtk_widget_hide (editor->priv->infobar);
+
+        editor->priv->last_focus_widget = NULL;
     }
 }
 

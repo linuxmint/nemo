@@ -42,13 +42,13 @@
 #include "nemo-metadata.h"
 #include "nemo-module.h"
 #include "nemo-search-directory.h"
+#include "nemo-search-engine.h"
 #include "nemo-search-directory-file.h"
 #include "nemo-thumbnails.h"
 #include "nemo-trash-monitor.h"
 #include "nemo-vfs-file.h"
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
-#include "nemo-saved-search-file.h"
 #include <eel/eel-debug.h>
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gtk-extensions.h>
@@ -164,7 +164,9 @@ static GQuark attribute_name_q,
 	attribute_where_q,
 	attribute_link_target_q,
 	attribute_volume_q,
-	attribute_free_space_q;
+	attribute_free_space_q,
+    attribute_search_result_snippet_q,
+    attribute_search_result_count_q;
 
 static void     nemo_file_info_iface_init                (NemoFileInfoInterface *iface);
 
@@ -558,8 +560,6 @@ nemo_file_new_from_filename (NemoDirectory *directory,
 			 * that references a file like this. (See #349840) */
 			file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 		}
-	} else if (g_str_has_suffix (filename, NEMO_SAVED_SEARCH_EXTENSION)) {
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_SAVED_SEARCH_FILE, NULL));
 	} else {
 		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 	}
@@ -663,19 +663,11 @@ nemo_file_new_from_info (NemoDirectory *directory,
 			     GFileInfo *info)
 {
 	NemoFile *file;
-	const char *mime_type;
 
 	g_return_val_if_fail (NEMO_IS_DIRECTORY (directory), NULL);
 	g_return_val_if_fail (info != NULL, NULL);
 
-	mime_type = g_file_info_get_content_type (info);
-	if (mime_type &&
-	    strcmp (mime_type, NEMO_SAVED_SEARCH_MIMETYPE) == 0) {
-		g_file_info_set_file_type (info, G_FILE_TYPE_DIRECTORY);
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_SAVED_SEARCH_FILE, NULL));
-	} else {
-		file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
-	}
+	file = NEMO_FILE (g_object_new (NEMO_TYPE_VFS_FILE, NULL));
 
 	file->details->directory = nemo_directory_ref (directory);
 
@@ -3240,6 +3232,17 @@ compare_by_full_path (NemoFile *file_1, NemoFile *file_2)
 	return compare_by_display_name (file_1, file_2);
 }
 
+static gint
+compare_by_search_result_count (NemoFile *file_1,
+                                NemoFile *file_2,
+                                gpointer search_dir)
+{
+    gint count_1 = nemo_file_get_search_result_count (file_1, search_dir);
+    gint count_2 = nemo_file_get_search_result_count (file_2, search_dir);
+
+    return (count_1 == count_2) ? 0 : (count_1 - count_2);
+}
+
 static int
 nemo_file_compare_for_sort_internal (NemoFile *file_1,
 					 NemoFile *file_2,
@@ -3319,7 +3322,8 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				NemoFileSortType sort_type,
 				gboolean directories_first,
 				gboolean favorites_first,
-				gboolean reversed)
+				gboolean reversed,
+                gpointer search_dir)
 {
 	int result;
 
@@ -3382,6 +3386,12 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				result = compare_by_full_path (file_1, file_2);
 			}
 			break;
+        case NEMO_FILE_SORT_BY_SEARCH_RESULT_COUNT:
+            result = compare_by_search_result_count (file_1, file_2, search_dir);
+            if (result == 0) {
+                result = compare_by_full_path (file_1, file_2);
+            }
+            break;
 		case NEMO_FILE_SORT_NONE:
 		default:
 			g_return_val_if_reached (0);
@@ -3401,7 +3411,8 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						 GQuark                          attribute,
 						 gboolean                        directories_first,
 						 gboolean                        favorites_first,
-						 gboolean                        reversed)
+						 gboolean                        reversed,
+                         gpointer                        search_dir)
 {
 	int result;
 
@@ -3417,25 +3428,29 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       NEMO_FILE_SORT_BY_DISPLAY_NAME,
 						       directories_first,
 						       favorites_first,
-						       reversed);
+						       reversed,
+                               search_dir);
 	} else if (attribute == attribute_size_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_SIZE,
 						       directories_first,
 						       favorites_first,
-						       reversed);
+						       reversed,
+                               search_dir);
 	} else if (attribute == attribute_type_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TYPE,
 						       directories_first,
 						       favorites_first,
-						       reversed);
+						       reversed,
+                               search_dir);
 	} else if (attribute == attribute_detailed_type_q) {
         return nemo_file_compare_for_sort (file_1, file_2,
                                NEMO_FILE_SORT_BY_DETAILED_TYPE,
                                directories_first,
                                favorites_first,
-                               reversed);
+                               reversed,
+                               search_dir);
 	} else if (attribute == attribute_modification_date_q ||
                attribute == attribute_date_modified_q ||
                attribute == attribute_date_modified_with_time_q ||
@@ -3444,7 +3459,8 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       NEMO_FILE_SORT_BY_MTIME,
 						       directories_first,
 						       favorites_first,
-						       reversed);
+						       reversed,
+                               search_dir);
     } else if (attribute == attribute_accessed_date_q ||
                attribute == attribute_date_accessed_q ||
                attribute == attribute_date_accessed_full_q) {
@@ -3452,7 +3468,8 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       NEMO_FILE_SORT_BY_ATIME,
 						       directories_first,
 						       favorites_first,
-						       reversed);
+						       reversed,
+                               search_dir);
     } else if (attribute == attribute_creation_date_q ||
                attribute == attribute_date_created_q ||
                attribute == attribute_date_created_with_time_q ||
@@ -3461,15 +3478,24 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
                                NEMO_FILE_SORT_BY_BTIME,
                                directories_first,
                                favorites_first,
-                               reversed);
+                               reversed,
+                               search_dir);
     } else if (attribute == attribute_trashed_on_q ||
                attribute == attribute_trashed_on_full_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_TRASHED_TIME,
 						       directories_first,
 						       favorites_first,
-						       reversed);
-	}
+						       reversed,
+                               search_dir);
+	} else if (attribute == attribute_search_result_count_q) {
+        return nemo_file_compare_for_sort (file_1, file_2,
+                               NEMO_FILE_SORT_BY_SEARCH_RESULT_COUNT,
+                               directories_first,
+                               favorites_first,
+                               reversed,
+                               search_dir);
+    }
 
 	/* it is a normal attribute, compare by strings */
 
@@ -3505,13 +3531,15 @@ nemo_file_compare_for_sort_by_attribute     (NemoFile                   *file_1,
 						 const char                     *attribute,
 						 gboolean                        directories_first,
 						 gboolean                        favorites_first,
-						 gboolean                        reversed)
+						 gboolean                        reversed,
+                         gpointer                        search_dir)
 {
 	return nemo_file_compare_for_sort_by_attribute_q (file_1, file_2,
 							      g_quark_from_string (attribute),
 							      directories_first,
 							      favorites_first,
-							      reversed);
+							      reversed,
+                                  search_dir);
 }
 
 
@@ -7609,6 +7637,23 @@ nemo_file_is_in_favorites (NemoFile *file)
 }
 
 /**
+ * nemo_file_is_in_search
+ *
+ * Check if this file is a search result.
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: TRUE if @file is a search result.
+ *
+ **/
+gboolean
+nemo_file_is_in_search (NemoFile *file)
+{
+   g_assert (NEMO_IS_FILE (file));
+
+   return nemo_directory_is_in_search (file->details->directory);
+}
+
+/**
  * nemo_file_is_unavailable_favorite
  *
  * Check if this file is currently an unreachable Favorite file. This is useful
@@ -7941,7 +7986,7 @@ add_line (GString *string, const gchar *add, gboolean prefix_newline)
 }
 
 gchar *
-nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
+nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags, gpointer search_dir)
 {
     gchar *scheme = nemo_file_get_uri_scheme (file);
     gchar *nice = NULL;
@@ -8033,6 +8078,17 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags)
             string = add_line (string, nice, TRUE);
             g_free (tmp);
             g_free (nice);
+        }
+    }
+
+    if (search_dir != NULL) {
+        gchar *snippet = nemo_file_get_search_result_snippet (file, search_dir);
+        if (snippet != NULL) {
+            gchar *ellipsized = g_strdup_printf ("%s", snippet);
+            string = add_line (string, "\n----------------------", FALSE);
+            string = add_line (string, ellipsized, TRUE);
+            g_free (snippet);
+            g_free (ellipsized);
         }
     }
 
@@ -8822,6 +8878,8 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_link_target_q = g_quark_from_static_string ("link_target");
 	attribute_volume_q = g_quark_from_static_string ("volume");
 	attribute_free_space_q = g_quark_from_static_string ("free_space");
+    attribute_search_result_snippet_q = g_quark_from_string ("search_result_snippet");
+    attribute_search_result_count_q = g_quark_from_string ("search_result_count");
 
 	G_OBJECT_CLASS (class)->finalize = finalize;
 	G_OBJECT_CLASS (class)->constructor = nemo_file_constructor;
@@ -8927,6 +8985,91 @@ nemo_file_add_string_attribute (NemoFile *file,
 	}
 
 	nemo_file_changed (file);
+}
+
+void
+nemo_file_add_search_result_data (NemoFile      *file,
+                                  gpointer       search_dir,
+                                  GPtrArray     *search_hits)
+{
+    if (file->details->search_results == NULL) {
+        file->details->search_results = g_hash_table_new_full (NULL, NULL,
+                                                               NULL, (GDestroyNotify) g_ptr_array_unref);
+    }
+
+    if (!g_hash_table_replace (file->details->search_results,
+                               search_dir,
+                               g_ptr_array_ref (search_hits))) {
+
+#ifndef ENABLE_TRACKER // this is abnormal only in -advanced search.
+        g_warning ("Search hits directory already existed - %s", nemo_file_peek_name (file));
+#endif
+    }
+}
+
+void
+nemo_file_clear_search_result_data (NemoFile      *file,
+                                    gpointer       search_dir)
+{
+    g_return_if_fail (file->details->search_results != NULL);
+
+    if (!g_hash_table_remove (file->details->search_results,
+                              search_dir)) {
+
+        g_warning ("Attempting to remove search hits that don't exist - %s", nemo_file_peek_name (file));
+    }
+
+    if (g_hash_table_size (file->details->search_results) == 0) {
+        g_hash_table_destroy (file->details->search_results);
+        file->details->search_results = NULL;
+    }
+}
+
+static GPtrArray *
+get_file_hit_list (NemoFile *file, gpointer search_dir)
+{
+    if (file->details->search_results == NULL) {
+        return NULL;
+    }
+
+    return g_hash_table_lookup (file->details->search_results, search_dir);
+}
+
+gint
+nemo_file_get_search_result_count (NemoFile *file, gpointer search_dir)
+{
+    GPtrArray *hit_list = get_file_hit_list (file, search_dir);
+
+    if (hit_list != NULL) {
+        return hit_list->len;
+    }
+
+    return 0;
+}
+
+gchar *
+nemo_file_get_search_result_count_as_string (NemoFile *file, gpointer search_dir)
+{
+    gint count = nemo_file_get_search_result_count (file, search_dir);
+
+    if (count > 0) {
+        return g_strdup_printf ("%d", count);
+    }
+
+    return NULL;
+}
+
+gchar *
+nemo_file_get_search_result_snippet (NemoFile *file, gpointer search_dir)
+{
+    GPtrArray *hit_list = get_file_hit_list (file, search_dir);
+
+    if (hit_list != NULL && hit_list->len > 0) {
+        SearchHit *hit = (SearchHit *) g_ptr_array_index (hit_list, 0);
+        return g_strdup (hit->snippet);
+    }
+
+    return NULL;
 }
 
 static void
@@ -9059,12 +9202,12 @@ nemo_self_check_file (void)
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_1)->ref_count, 1);
 	EEL_CHECK_INTEGER_RESULT (G_OBJECT (file_2)->ref_count, 1);
 
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, FALSE) < 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, TRUE) > 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, FALSE) == 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE, FALSE) == 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, TRUE) == 0, TRUE);
-	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE, TRUE) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, FALSE, NULL) < 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_2, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, TRUE, NULL) > 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, FALSE, NULL) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE, FALSE, NULL) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, FALSE, FALSE, TRUE, NULL) == 0, TRUE);
+	EEL_CHECK_BOOLEAN_RESULT (nemo_file_compare_for_sort (file_1, file_1, NEMO_FILE_SORT_BY_DISPLAY_NAME, TRUE, FALSE, TRUE, NULL) == 0, TRUE);
     
     
 

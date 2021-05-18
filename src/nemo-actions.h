@@ -74,8 +74,6 @@
 #define NEMO_ACTION_LOCATION_PROPERTIES "LocationProperties"
 #define NEMO_ACTION_NO_TEMPLATES "No Templates"
 #define NEMO_ACTION_EMPTY_TRASH "Empty Trash"
-#define NEMO_ACTION_SAVE_SEARCH "Save Search"
-#define NEMO_ACTION_SAVE_SEARCH_AS "Save Search As"
 #define NEMO_ACTION_CUT "Cut"
 #define NEMO_ACTION_LOCATION_CUT "LocationCut"
 #define NEMO_ACTION_COPY "Copy"

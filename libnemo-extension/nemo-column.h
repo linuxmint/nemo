@@ -26,6 +26,8 @@
 #define NEMO_COLUMN_H
 
 #include <glib-object.h>
+#include <pango/pango.h>
+
 #include "nemo-extension-types.h"
 
 G_BEGIN_DECLS
@@ -38,6 +40,12 @@ NemoColumn *  nemo_column_new             (const char     *name,
                                            const char     *attribute,
                                            const char     *label,
                                            const char     *description);
+NemoColumn *  nemo_column_new2 (const char         *name,
+                                const char         *attribute,
+                                const char         *label,
+                                const char         *description,
+                                gint                width_chars,
+                                PangoEllipsizeMode  ellipsize);
 
 /* NemoColumn has the following properties:
  *   name (string)        - the identifier for the column
@@ -46,6 +54,8 @@ NemoColumn *  nemo_column_new             (const char     *name,
  *   label (string)       - the user-visible label for the column
  *   description (string) - a user-visible description of the column
  *   xalign (float)       - x-alignment of the column 
+ *   width-chars (int)      default width
+ *   ellipsize (PangoEllipsizeMode  whether to ellipsize when truncating text
  */
 
 G_END_DECLS

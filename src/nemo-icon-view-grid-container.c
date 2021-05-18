@@ -1574,7 +1574,7 @@ on_get_tooltip_text (NemoIconContainer *container,
     gchar *tooltip_text = NULL;
 
     if (container->details->show_desktop_tooltips) {
-        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
+        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags, NULL);
     }
 
     return tooltip_text;

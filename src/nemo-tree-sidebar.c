@@ -545,7 +545,8 @@ compare_rows (GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer call
                                              NEMO_FILE_SORT_BY_DISPLAY_NAME,
                                              FM_TREE_VIEW (callback_data)->details->sort_directories_first,
                                              FM_TREE_VIEW (callback_data)->details->sort_favorites_first,
-                                             FALSE);
+                                             FALSE,
+                                             NULL);
 	}
 
 	nemo_file_unref (file_a);

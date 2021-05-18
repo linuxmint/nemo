@@ -63,3 +63,5 @@
 // we just construct the definitons ourselves instead. Runtime
 // support is still checked at runtime (safely.) 
 #mesondefine NATIVE_STATX
+
+#mesondefine ENABLE_TRACKER

@@ -34,6 +34,8 @@ enum {
 	PROP_LABEL,
 	PROP_DESCRIPTION,
 	PROP_XALIGN,
+    PROP_WIDTH_CHARS,
+    PROP_ELLIPSIZE,
 	LAST_PROP
 };
 
@@ -44,6 +46,8 @@ typedef struct
     char *label;
     char *description;
     float xalign;
+    gint width_chars;
+    gboolean ellipsize;
  } NemoColumnPrivate;
 
 struct _NemoColumn
@@ -74,11 +78,11 @@ G_DEFINE_TYPE_WITH_PRIVATE (NemoColumn, nemo_column, G_TYPE_OBJECT)
  *
  * Creates a new column
  *
- * Returns: a newly created #NemoColumn
+ * Returns: (transfer full): a newly created #NemoColumn
  */
 NemoColumn *
 nemo_column_new (const char *name,
-		     const char *attribute,
+                 const char *attribute,
 		     const char *label,
 		     const char *description)
 {
@@ -97,6 +101,47 @@ nemo_column_new (const char *name,
 			       NULL);
 
 	return column;
+}
+
+
+/**
+ * nemo_column_new2:
+ * @name: identifier of the column
+ * @attribute: the file attribute to be displayed in the column
+ * @label: the user-visible label for the column
+ * @description: a user-visible description of the column
+ * @width_chars: the default width of the column (-1 for auto-calc)
+ * @ellipsize: PangoEllipsizeMode to set when truncating column
+ *
+ * Creates a new column
+ *
+ * Returns: (transfer full): a newly created #NemoColumn
+ */
+NemoColumn *
+nemo_column_new2 (const char         *name,
+                  const char         *attribute,
+                  const char         *label,
+                  const char         *description,
+                  gint                width_chars,
+                  PangoEllipsizeMode  ellipsize)
+{
+    NemoColumn *column;
+
+    g_return_val_if_fail (name != NULL, NULL);
+    g_return_val_if_fail (attribute != NULL, NULL);
+    g_return_val_if_fail (label != NULL, NULL);
+    g_return_val_if_fail (description != NULL, NULL);
+
+    column = g_object_new (NEMO_TYPE_COLUMN, 
+                           "name", name,
+                           "attribute", attribute,
+                           "label", label,
+                           "description", description,
+                           "width-chars", width_chars,
+                           "ellipsize", ellipsize,
+                           NULL);
+
+    return column;
 }
 
 static void
@@ -128,6 +173,13 @@ nemo_column_get_property (GObject *object,
 	case PROP_XALIGN :
 		g_value_set_float (value, column->details->xalign);
 		break;
+    case PROP_WIDTH_CHARS :
+        g_value_set_int (value, column->details->width_chars);
+        break;
+    case PROP_ELLIPSIZE :
+        g_value_set_enum (value, column->details->ellipsize);
+        break;
+    
 	default :
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -169,6 +221,15 @@ nemo_column_set_property (GObject *object,
 		column->details->xalign = g_value_get_float (value);
 		g_object_notify (object, "xalign");		
 		break;
+    case PROP_WIDTH_CHARS :
+        column->details->width_chars = g_value_get_int (value);
+        g_object_notify (object, "width-chars");
+        break;
+    case PROP_ELLIPSIZE :
+        column->details->ellipsize = g_value_get_enum (value);
+        g_object_notify (object, "ellipsize");
+        break;
+
 	default :
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -251,5 +312,20 @@ nemo_column_class_init (NemoColumnClass *class)
 							     1.0,
 							     0.0,
 							     G_PARAM_READWRITE));
+    g_object_class_install_property (G_OBJECT_CLASS (class),
+                     PROP_WIDTH_CHARS,
+                     g_param_spec_int ("width-chars",
+                                "Default column width",
+                                "Default column width",
+                                -1, G_MAXINT, -1,
+                                G_PARAM_READWRITE));
+    g_object_class_install_property (G_OBJECT_CLASS (class),
+                     PROP_ELLIPSIZE,
+                     g_param_spec_enum ("ellipsize",
+                                "Pango ellipsize mode when text won't fit",
+                                "Pango ellipsize mode when text won't fit",
+                                PANGO_TYPE_ELLIPSIZE_MODE,
+                                PANGO_ELLIPSIZE_NONE,
+                                G_PARAM_READWRITE));
 }
 

@@ -172,7 +172,6 @@ enum
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_ZOOM_LEVEL		"default-zoom-level"
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS		"default-visible-columns"
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER		"default-column-order"
-#define NEMO_PREFERENCES_LIST_VIEW_SEARCH_VISIBLE_COLUMNS   "search-visible-columns"
 
 enum
 {
@@ -198,12 +197,6 @@ typedef enum
 #define NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS	"show-image-thumbnails"
 #define NEMO_PREFERENCES_IMAGE_FILE_THUMBNAIL_LIMIT	"thumbnail-limit"
 #define NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS "inherit-show-thumbnails"
-
-typedef enum
-{
-	NEMO_COMPLEX_SEARCH_BAR,
-	NEMO_SIMPLE_SEARCH_BAR
-} NemoSearchBarMode;
 
 #define NEMO_PREFERENCES_DESKTOP_FONT		   "font"
 #define NEMO_PREFERENCES_DESKTOP_HOME_VISIBLE          "home-icon-visible"
@@ -265,9 +258,20 @@ typedef enum
 
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
 
-#define NEMO_PREFERENCES_SAVED_SEARCHES                "saved-searches"
 #define NEMO_PREFERENCES_SHOW_MIME_MAKE_EXECUTABLE     "enable-mime-actions-make-executable"
 #define NEMO_PREFERENCES_DEFERRED_ATTR_PRELOAD_LIMIT   "deferred-attribute-preload-limit"
+
+#define NEMO_PREFERENCES_SEARCH_CONTENT_REGEX          "search-content-use-regex"
+#define NEMO_PREFERENCES_SEARCH_REGEX_FORMAT           "search-regex-format"
+#define NEMO_PREFERENCES_SEARCH_USE_RAW                "search-content-use-raw"
+#define NEMO_PREFERENCES_SEARCH_FILE_CASE              "search-file-case-sensitive"
+#define NEMO_PREFERENCES_SEARCH_CONTENT_CASE           "search-content-case-sensitive"
+#define NEMO_PREFERENCES_SEARCH_SKIP_FOLDERS           "search-skip-folders"
+#define NEMO_PREFERENCES_SEARCH_FILES_RECURSIVELY      "search-files-recursively"
+#define NEMO_PREFERENCES_SEARCH_VISIBLE_COLUMNS        "search-visible-columns"
+#define NEMO_PREFERENCES_SEARCH_FILE_HISTORY           "search-file-history"
+#define NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY        "search-content-history"
+#define NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY_LENGTH "search-content-history-length"
 
 void nemo_global_preferences_init                      (void);
 void nemo_global_preferences_finalize                  (void);
@@ -290,6 +294,7 @@ extern GSettings *nemo_tree_sidebar_preferences;
 extern GSettings *nemo_window_state;
 extern GSettings *nemo_plugin_preferences;
 extern GSettings *nemo_menu_config_preferences;
+extern GSettings *nemo_search_preferences;
 extern GSettings *gnome_lockdown_preferences;
 extern GSettings *gnome_background_preferences;
 extern GSettings *gnome_media_handling_preferences;

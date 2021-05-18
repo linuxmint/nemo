@@ -86,7 +86,7 @@ main (int argc, char **argv)
 	gtk_init (&argc, &argv);
 
 	query = nemo_query_new ();
-	nemo_query_set_text (query, "richard hult");
+	nemo_query_set_file_pattern (query, "richard hult");
 	directory = nemo_directory_get_by_uri ("x-nemo-search://0/");
 	nemo_search_directory_set_query (NEMO_SEARCH_DIRECTORY (directory), query);
 	g_object_unref (query);

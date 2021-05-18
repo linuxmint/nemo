@@ -69,6 +69,7 @@
     <child name="sidebar-panels" schema="org.nemo.sidebar-panels"/>
     <child name="desktop" schema="org.nemo.desktop"/>
     <child name="window-state" schema="org.nemo.window-state"/>
+    <child name="search" schema="org.nemo.search"/>
   </schema>
 
   <schema id="org.nemo.preferences" path="/org/nemo/preferences/" gettext-domain="nemo">
@@ -401,10 +402,6 @@
       <default>false</default>
       <summary>If true, double click left on blank area will go to parent folder</summary>
     </key>
-    <key name="saved-searches" type="as">
-      <default>[]</default>
-      <summary>List of saved search strings</summary>
-    </key>
     <key name="enable-mime-actions-make-executable" type="b">
       <default>false</default>
       <summary>Display the 'Make executable and run' button in the mime-action dialog (open an unknown filetype)</summary>
@@ -502,11 +499,6 @@
       <default>[ 'name', 'size', 'type', 'date_modified' ]</default>
       <summary>Default column order in the list view</summary>
       <description>Default column order in the list view.</description>
-    </key>
-    <key name="search-visible-columns" type="as">
-      <default>[ 'name', 'size', 'type', 'where' ]</default>
-      <summary>Default list of columns visible in the search view.</summary>
-      <description>Default list of columns visible in the search view.</description>
     </key>
   </schema>
 
@@ -817,6 +809,54 @@
     <key name="desktop-menu-customize" type="b">
       <default>true</default>
       <summary>Show the background context menu's Customize item (new-style desktop only).</summary>
+    </key>
+  </schema>
+
+  <schema id="org.nemo.search" path="/org/nemo/search/" gettext-domain="nemo">
+    <key name="search-content-use-regex" type="b">
+      <default>false</default>
+      <summary>Stores the most recent state of the search regex toggle</summary>
+    </key>
+    <key name="search-regex-format" type="s">
+      <default>'pcre'</default>
+      <summary>valid formats: pcre, javascript</summary>
+    </key>
+    <key name="search-content-use-raw" type="b">
+      <default>false</default>
+      <summary>Treat patterns as raw bytes, not utf-8</summary>
+    </key>
+    <key name="search-file-case-sensitive" type="b">
+      <default>true</default>
+      <summary>Stores the most recent state of the file search case toggle</summary>
+    </key>
+    <key name="search-content-case-sensitive" type="b">
+      <default>true</default>
+      <summary>Stores the most recent state of the content search case toggle</summary>
+    </key>
+    <key name="search-skip-folders" type="as">
+      <default>[]</default>
+      <summary>Paths or folder names to never recurse into when searching</summary>
+      <description>List of locations that the search engine will never enter when looking for matches. These can be absolute or simply folder names (like .git). You can still enter those folders and search inside of them, however.</description>
+    </key>
+    <key name="search-files-recursively" type="b">
+      <default>false</default>
+      <summary>Recurse into subfolders when performing a search</summary>
+    </key>
+    <key name="search-visible-columns" type="as">
+      <default>[]</default>
+      <summary>Saved list of columns visible in the search view.</summary>
+    </key>
+    <key name="search-file-history" type="as">
+      <default>[]</default>
+      <summary>List of previous file searches</summary>
+    </key>
+    <key name="search-content-history" type="as">
+      <default>[]</default>
+      <summary>Not currently used</summary>
+    </key>
+    <key name="search-content-history-length" type="i">
+      <default>10</default>
+      <summary>Not currently used</summary>
     </key>
   </schema>
 </schemalist>

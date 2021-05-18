@@ -158,6 +158,8 @@ get_builtin_columns (void)
 					       "attribute", "where",
 					       "label", _("Location"),
 					       "description", _("The location of the file."),
+                           "width-chars", 60,
+                           "ellipsize", PANGO_ELLIPSIZE_END,
 					       NULL));
 
 	return columns;
@@ -213,6 +215,32 @@ get_trash_columns (void)
 	return nemo_column_list_copy (columns);
 }
 
+static GList *
+get_search_columns (void)
+{
+    static GList *columns = NULL;
+
+    if (columns == NULL) {
+        // columns = g_list_append (columns,
+        //              g_object_new (NEMO_TYPE_COLUMN,
+        //                        "name", "search-result-snippet",
+        //                        "attribute", "search_result_snippet",
+        //                        "label", _("Result"),
+        //                        "description", _("A portion of the contents where the string was found"),
+        //                        NULL));
+        columns = g_list_append (columns,
+                             g_object_new (NEMO_TYPE_COLUMN,
+                                           "name", "search_result_count",
+                                           "attribute", "search_result_count",
+                                           "label", _("Hits"),
+                                           "description", _("How many times the search string appeared in the file"),
+                                           NULL));
+    }
+
+    return nemo_column_list_copy (columns);
+}
+
+
 GList *
 nemo_get_common_columns (void)
 {
@@ -229,12 +257,15 @@ nemo_get_common_columns (void)
 GList *
 nemo_get_all_columns (void)
 {
-	GList *columns = NULL;
+    GList *columns = NULL;
+	GList *with_search_columns = NULL;
 
 	columns = g_list_concat (nemo_get_common_columns (),
 	                         get_trash_columns ());
 
-	return columns;
+    with_search_columns = g_list_concat (columns, get_search_columns ());
+
+	return with_search_columns;
 }
 
 GList *
@@ -247,7 +278,11 @@ nemo_get_columns_for_file (NemoFile *file)
 	if (file != NULL && nemo_file_is_in_trash (file)) {
 		columns = g_list_concat (columns,
 		                         get_trash_columns ());
-	}
+	} else
+    if (file != NULL && nemo_file_is_in_search (file)) {
+        columns = g_list_concat (columns,
+                                 get_search_columns ());
+    }
 
 	return columns;
 }

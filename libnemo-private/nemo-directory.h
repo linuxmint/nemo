@@ -219,6 +219,7 @@ gboolean           nemo_directory_is_in_trash              (NemoDirectory       
 gboolean           nemo_directory_is_in_recent             (NemoDirectory         *directory);
 gboolean           nemo_directory_is_in_favorites          (NemoDirectory         *directory);
 gboolean           nemo_directory_is_in_admin              (NemoDirectory         *directory);
+gboolean           nemo_directory_is_in_search             (NemoDirectory         *directory);
 /* Return false if directory contains anything besides a Nemo metafile.
  * Only valid if directory is monitored. Used by the Trash monitor.
  */

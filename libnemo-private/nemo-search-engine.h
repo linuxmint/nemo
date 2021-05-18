@@ -50,7 +50,7 @@ typedef struct {
 	void (*stop) (NemoSearchEngine *engine);
 
 	/* Signals */
-	void (*hits_added) (NemoSearchEngine *engine, GList *hits);
+	void (*hits_added) (NemoSearchEngine *engine, GList *hit_infos);
 	void (*hits_subtracted) (NemoSearchEngine *engine, GList *hits);
 	void (*finished) (NemoSearchEngine *engine);
 	void (*error) (NemoSearchEngine *engine, const char *error_message);
@@ -70,4 +70,16 @@ void	       nemo_search_engine_hits_subtracted (NemoSearchEngine *engine, GList 
 void	       nemo_search_engine_finished (NemoSearchEngine *engine);
 void	       nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message);
 
+typedef struct {
+    gchar   *snippet;
+} SearchHit;
+
+typedef struct {
+    gchar     *uri;           // The file uri;
+    GPtrArray *hits;          // List of hits.
+} FileSearchResult;
+
+FileSearchResult *file_search_result_new     (gchar *uri);
+void              file_search_result_free    (FileSearchResult *result);
+void              file_search_result_add_hit (FileSearchResult *result, gchar *snippet);
 #endif /* NEMO_SEARCH_ENGINE_H */

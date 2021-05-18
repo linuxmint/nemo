@@ -23,7 +23,7 @@
 
 #include <config.h>
 #include "nemo-search-engine.h"
-#include "nemo-search-engine-simple.h"
+#include "nemo-search-engine-advanced.h"
 
 #ifdef ENABLE_TRACKER
 #include "nemo-search-engine-tracker.h"
@@ -102,8 +102,8 @@ nemo_search_engine_new (void)
 		return engine;
 	}
 #endif
-	
-	engine = nemo_search_engine_simple_new ();
+
+	engine = nemo_search_engine_advanced_new ();
 	return engine;
 }
 
@@ -167,4 +167,41 @@ nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message)
 	g_return_if_fail (NEMO_IS_SEARCH_ENGINE (engine));
 
 	g_signal_emit (engine, signals[ERROR], 0, error_message);
+}
+
+static void
+search_hit_free (SearchHit *hit)
+{
+    g_free (hit->snippet);
+    g_slice_free (SearchHit, hit);
+}
+
+FileSearchResult *
+file_search_result_new (gchar *uri)
+{
+    FileSearchResult *ret = g_slice_new0 (FileSearchResult);
+
+    ret->uri = uri;
+    ret->hits = g_ptr_array_new_full (1, (GDestroyNotify) search_hit_free);
+
+    return ret;
+}
+
+void
+file_search_result_free (FileSearchResult *res)
+{
+    g_free (res->uri);
+    g_ptr_array_unref (res->hits);
+
+    g_slice_free (FileSearchResult, res);
+}
+
+void
+file_search_result_add_hit (FileSearchResult *result,
+                            gchar            *snippet)
+{
+    SearchHit *hit = g_slice_new0 (SearchHit);
+    hit->snippet = snippet;
+
+    g_ptr_array_add (result->hits, hit);
 }

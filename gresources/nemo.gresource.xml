@@ -5,6 +5,7 @@
     <file compressed="true">nemo-file-management-properties.glade</file>
     <file compressed="true">nemo-desktop-overlay.glade</file>
     <file compressed="true">nemo-desktop-preferences.glade</file>
+    <file compressed="true">nemo-search-bar.glade</file>
     <file compressed="true">nemo-shortcuts.ui</file>
     <file>nemo-icon-view-ui.xml</file>
     <file>nemo-directory-view-ui.xml</file>

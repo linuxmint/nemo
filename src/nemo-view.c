@@ -1807,147 +1807,6 @@ hidden_files_mode_changed (NemoWindow *window,
 }
 
 static void
-action_save_search_callback (GtkAction *action,
-			     gpointer callback_data)
-{
-	NemoSearchDirectory *search;
-	NemoView	*directory_view;
-
-        directory_view = NEMO_VIEW (callback_data);
-
-	if (directory_view->details->model &&
-	    NEMO_IS_SEARCH_DIRECTORY (directory_view->details->model)) {
-		search = NEMO_SEARCH_DIRECTORY (directory_view->details->model);
-		nemo_search_directory_save_search (search);
-
-		/* Save search is disabled */
-		schedule_update_menus (directory_view);
-	}
-}
-
-static void
-query_name_entry_changed_cb  (GtkWidget *entry, GtkWidget *button)
-{
-	const char *text;
-	gboolean sensitive;
-
-	text = gtk_entry_get_text (GTK_ENTRY (entry));
-
-	sensitive = (text != NULL) && (*text != 0);
-
-	gtk_widget_set_sensitive (button, sensitive);
-}
-
-
-static void
-action_save_search_as_callback (GtkAction *action,
-				gpointer callback_data)
-{
-	NemoView	*directory_view;
-	NemoSearchDirectory *search;
-	GtkWidget *dialog, *grid, *label, *entry, *chooser, *save_button;
-	const char *entry_text;
-	char *filename, *filename_utf8, *dirname, *path, *uri;
-	GFile *location;
-
-        directory_view = NEMO_VIEW (callback_data);
-
-	if (directory_view->details->model &&
-	    NEMO_IS_SEARCH_DIRECTORY (directory_view->details->model)) {
-		search = NEMO_SEARCH_DIRECTORY (directory_view->details->model);
-
-		dialog = gtk_dialog_new_with_buttons (_("Save Search as"),
-						      nemo_view_get_containing_window (directory_view),
-						      0,
-						      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						      NULL);
-		save_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
-						     GTK_STOCK_SAVE, GTK_RESPONSE_OK);
-		gtk_dialog_set_default_response (GTK_DIALOG (dialog),
-						 GTK_RESPONSE_OK);
-		gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
-		gtk_box_set_spacing (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), 2);
-		gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-
-		grid = gtk_grid_new ();
-		g_object_set (grid,
-			      "orientation", GTK_ORIENTATION_VERTICAL,
-			      "border-width", 5,
-			      "row-spacing", 6,
-			      "column-spacing", 12,
-			      NULL);
-		gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), grid, TRUE, TRUE, 0);
-		gtk_widget_show (grid);
-
-		label = gtk_label_new_with_mnemonic (_("Search _name:"));
-		gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-		gtk_container_add (GTK_CONTAINER (grid), label);
-		gtk_widget_show (label);
-
-		entry = gtk_entry_new ();
-		gtk_widget_set_hexpand (entry, TRUE);
-		gtk_grid_attach_next_to (GTK_GRID (grid), entry, label,
-					 GTK_POS_RIGHT, 1, 1);
-		gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-		gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
-
-		gtk_widget_set_sensitive (save_button, FALSE);
-		g_signal_connect (entry, "changed",
-				  G_CALLBACK (query_name_entry_changed_cb), save_button);
-
-		gtk_widget_show (entry);
-		label = gtk_label_new_with_mnemonic (_("_Folder:"));
-		gtk_misc_set_alignment (GTK_MISC(label), 0.0, 0.5);
-		gtk_container_add (GTK_CONTAINER (grid), label);
-		gtk_widget_show (label);
-
-		chooser = gtk_file_chooser_button_new (_("Select Folder to Save Search In"),
-						       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-		gtk_widget_set_hexpand (chooser, TRUE);
-		gtk_grid_attach_next_to (GTK_GRID (grid), chooser, label,
-					 GTK_POS_RIGHT, 1, 1);
-		gtk_label_set_mnemonic_widget (GTK_LABEL (label), chooser);
-		gtk_widget_show (chooser);
-
-		gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (chooser), TRUE);
-
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
-						     g_get_home_dir ());
-
-		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
-			entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
-			if (g_str_has_suffix (entry_text, NEMO_SAVED_SEARCH_EXTENSION)) {
-				filename_utf8 = g_strdup (entry_text);
-			} else {
-				filename_utf8 = g_strconcat (entry_text, NEMO_SAVED_SEARCH_EXTENSION, NULL);
-			}
-
-			filename = g_filename_from_utf8 (filename_utf8, -1, NULL, NULL, NULL);
-			g_free (filename_utf8);
-
-			dirname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-
-			path = g_build_filename (dirname, filename, NULL);
-			g_free (filename);
-			g_free (dirname);
-
-			uri = g_filename_to_uri (path, NULL, NULL);
-			g_free (path);
-
-			nemo_search_directory_save_to_file (search, uri);
-			location = g_file_new_for_uri (uri);
-			nemo_file_changes_queue_file_added (location);
-			g_object_unref (location);
-			nemo_file_changes_consume_changes (TRUE);
-			g_free (uri);
-		}
-
-		gtk_widget_destroy (dialog);
-	}
-}
-
-
-static void
 action_empty_trash_callback (GtkAction *action,
 			     gpointer callback_data)
 {
@@ -8543,15 +8402,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("Open File and Close window"), "<alt><shift>Down",
   /* tooltip */                  NULL,
 				 G_CALLBACK (action_open_close_parent_callback) },
-  /* name, stock id */         { "Save Search", NULL,
-  /* label, accelerator */       N_("Sa_ve Search"), NULL,
-  /* tooltip */                  N_("Save the edited search"),
-				 G_CALLBACK (action_save_search_callback) },
-  /* name, stock id */         { "Save Search As", NULL,
-  /* label, accelerator */       N_("Sa_ve Search As..."), NULL,
-  /* tooltip */                  N_("Save the current search as a file"),
-				 G_CALLBACK (action_save_search_as_callback) },
-
   /* Location-specific actions */
   /* name, stock id */         { NEMO_ACTION_LOCATION_OPEN_ALTERNATE, NULL,
   /* label, accelerator */       N_("Open in Navigation Window"), "",
@@ -9775,9 +9625,6 @@ real_update_menus (NemoView *view)
 	gboolean can_open;
 	gboolean show_app;
     gboolean showing_search;
-	gboolean show_save_search;
-	gboolean save_search_sensitive;
-	gboolean show_save_search_as;
 	gboolean show_desktop_target;
     gboolean is_desktop_view;
 	GtkAction *action;
@@ -10045,29 +9892,6 @@ real_update_menus (NemoView *view)
 	gtk_action_set_visible (action, should_show_empty_trash (view));
 
     showing_search = view->details->model && NEMO_IS_SEARCH_DIRECTORY (view->details->model);
-
-	show_save_search = FALSE;
-	save_search_sensitive = FALSE;
-	show_save_search_as = FALSE;
-	if (showing_search) {
-		NemoSearchDirectory *search;
-
-		search = NEMO_SEARCH_DIRECTORY (view->details->model);
-		if (nemo_search_directory_is_saved_search (search)) {
-			show_save_search = TRUE;
-			save_search_sensitive = nemo_search_directory_is_modified (search);
-		} else {
-			show_save_search_as = TRUE;
-		}
-	}
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_SAVE_SEARCH);
-	gtk_action_set_visible (action, show_save_search);
-	gtk_action_set_sensitive (action, save_search_sensitive);
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_SAVE_SEARCH_AS);
-	gtk_action_set_visible (action, show_save_search_as);
-
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_SELECT_ALL);
