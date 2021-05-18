@@ -321,11 +321,11 @@ static void
 nemo_location_entry_activate (GtkEntry *entry)
 {
 	NemoLocationEntry *loc_entry;
-	const gchar *entry_text;
+	gchar *entry_text;
 	gchar *full_path, *uri_scheme = NULL;
 
 	loc_entry = NEMO_LOCATION_ENTRY (entry);
-	entry_text = gtk_entry_get_text (entry);
+	entry_text = g_strdup (gtk_entry_get_text (entry));
 
 	if (entry_text != NULL && *entry_text != '\0') {
 		uri_scheme = g_uri_parse_scheme (entry_text);
@@ -342,6 +342,7 @@ nemo_location_entry_activate (GtkEntry *entry)
                   }
 		}
 
+        g_free (entry_text);
 		g_free (uri_scheme);
 	}
 
