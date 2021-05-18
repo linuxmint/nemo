@@ -29,6 +29,7 @@ publicIcons = [
   'hicolor/actions/scalable/nemo-horizontal-layout-wide-symbolic.svg',
   'hicolor/actions/scalable/nemo-vertical-layout-symbolic.svg',
   'hicolor/actions/scalable/nemo-vertical-layout-wide-symbolic.svg',
+  'hicolor/actions/scalable/nemo-recursive-search-symbolic.svg',
   'hicolor/devices/scalable/drive-removable-media-usb-symbolic.svg',
   'hicolor/status/48x48/progress-0.png',
   'hicolor/status/48x48/progress-10.png',

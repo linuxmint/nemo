@@ -1,0 +1,5 @@
+[Nemo Search Cat Helper]
+TryExec=ps2txt
+Exec=ps2txt %s
+MimeType=application/ps;
+Priority=100;

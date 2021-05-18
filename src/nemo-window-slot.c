@@ -137,6 +137,7 @@ query_editor_changed_callback (NemoQueryEditor *editor,
 
 	g_assert (NEMO_IS_FILE (slot->viewed_file));
 
+    gtk_widget_hide (slot->no_search_results_box);
 	directory = nemo_directory_get_for_file (slot->viewed_file);
 	if (!NEMO_IS_SEARCH_DIRECTORY (directory)) {
 		/* this is the first change from the query editor. we
@@ -195,6 +196,8 @@ void
 nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 					       gboolean            visible)
 {
+    gtk_widget_hide (slot->no_search_results_box);
+
 	if (visible) {
 		ensure_query_editor (slot);
 
@@ -272,6 +275,34 @@ floating_bar_action_cb (NemoFloatingBar *floating_bar,
 	}
 }
 
+static GtkWidget *
+create_nsr_box (void)
+{
+    GtkWidget *box;
+    GtkWidget *widget;
+    PangoAttrList *attrs;
+
+    box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
+
+    widget = gtk_image_new_from_icon_name ("system-search-symbolic", GTK_ICON_SIZE_DIALOG);
+    gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 0);
+
+    widget = gtk_label_new (_("No files found"));
+    attrs = pango_attr_list_new ();
+    pango_attr_list_insert (attrs, pango_attr_size_new (20 * PANGO_SCALE));
+    gtk_label_set_attributes (GTK_LABEL (widget), attrs);
+    pango_attr_list_unref (attrs);
+    gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 0);
+
+    gtk_widget_set_halign (box, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign (box, GTK_ALIGN_CENTER);
+
+    gtk_widget_show_all (box);
+    gtk_widget_set_no_show_all (box, TRUE);
+    gtk_widget_hide (box);
+    return box;
+}
+
 static void
 nemo_window_slot_init (NemoWindowSlot *slot)
 {
@@ -303,6 +334,10 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
 				 slot->floating_bar);
 
+    slot->no_search_results_box = create_nsr_box ();
+    gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
+                             slot->no_search_results_box);
+
 	g_signal_connect (slot->floating_bar, "action",
 			  G_CALLBACK (floating_bar_action_cb), slot);
 
@@ -319,7 +354,22 @@ view_end_loading_cb (NemoView       *view,
 	if (slot->needs_reload) {
 		nemo_window_slot_queue_reload (slot, FALSE);
 		slot->needs_reload = FALSE;
-	}
+	} else if (all_files_seen) {
+        NemoDirectory *directory;
+
+        directory = nemo_directory_get_for_file (slot->viewed_file);
+
+        if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
+            if (!nemo_directory_is_not_empty (directory)) {
+                gtk_widget_show (slot->no_search_results_box);
+            } else {
+                gtk_widget_hide (slot->no_search_results_box);
+
+            }
+        }
+
+        nemo_directory_unref (directory);
+    }
 }
 
 static void

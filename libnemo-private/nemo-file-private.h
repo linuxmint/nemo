@@ -108,6 +108,8 @@ struct NemoFileDetails
 
 	GList *mime_list; /* If this is a directory, the list of MIME types in it. */
 
+    GHashTable *search_results;
+
 	/* Info you might get from a link (.desktop, .directory or nemo link) */
 	GIcon *custom_icon;
 	char *activation_uri;

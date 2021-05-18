@@ -496,7 +496,8 @@ fm_desktop_icon_container_icons_compare (NemoIconContainer *container,
 			(file_a, file_b, NEMO_FILE_SORT_BY_DISPLAY_NAME,
 			 nemo_view_should_sort_directories_first (directory_view),
 			 nemo_view_should_sort_favorites_first (directory_view),
-			 FALSE);
+			 FALSE,
+             NULL);
 	}
 
 	if (category_a < category_b) {
@@ -2007,7 +2008,7 @@ on_get_tooltip_text (NemoIconContainer *container,
                    (container->details->show_icon_view_tooltips && !is_desktop);
 
     if (show_tooltip) {
-        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags);
+        tooltip_text = nemo_file_construct_tooltip (file, container->details->tooltip_flags, NULL);
     }
 
     return tooltip_text;

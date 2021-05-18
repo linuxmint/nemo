@@ -1764,7 +1764,8 @@ nemo_icon_view_compare_files (NemoIconView   *icon_view,
 		 /* Use type-unsafe cast for performance */
 		 nemo_view_should_sort_directories_first ((NemoView *)icon_view),
 		 nemo_view_should_sort_favorites_first ((NemoView *)icon_view),
-		 icon_view->details->sort_reversed);
+		 icon_view->details->sort_reversed,
+         NULL);
 }
 
 static int
@@ -2823,9 +2824,6 @@ nemo_icon_view_supports_uri (const char *uri,
 			   const char *mime_type)
 {
 	if (file_type == G_FILE_TYPE_DIRECTORY) {
-		return TRUE;
-	}
-	if (strcmp (mime_type, NEMO_SAVED_SEARCH_MIMETYPE) == 0){
 		return TRUE;
 	}
 	if (g_str_has_prefix (uri, "trash:")) {

@@ -47,7 +47,8 @@ enum {
 
 static GQuark attribute_name_q,
 	attribute_modification_date_q,
-	attribute_date_modified_q;
+	attribute_date_modified_q,
+    attribute_search_result_count_q;
 
 /* msec delay after Loading... dummy row turns into (empty) */
 #define LOADING_TO_EMPTY_DELAY 100
@@ -65,6 +66,8 @@ struct NemoListModelDetails {
 	GSequence *files;
 	GHashTable *directory_reverse_map; /* map from directory to GSequenceIter's */
 	GHashTable *top_reverse_map;	   /* map from files in top dir to GSequenceIter's */
+
+    NemoDirectory *view_dir;
 
 	int stamp;
 
@@ -445,8 +448,11 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 				      "attribute_q", &attribute,
 				      NULL);
 			if (file != NULL) {
-				str = nemo_file_get_string_attribute_with_default_q (file,
-											 attribute);
+                if (attribute == attribute_search_result_count_q) {
+                    str = nemo_file_get_search_result_count_as_string (file, (gpointer) model->details->view_dir);
+                } else {
+                    str = nemo_file_get_string_attribute_with_default_q (file, attribute);
+                }
 				g_value_take_string (value, str);
 			} else if (attribute == attribute_name_q) {
 				if (file_entry->parent->loaded) {
@@ -719,7 +725,8 @@ nemo_list_model_file_entry_compare_func (gconstpointer a,
 									model->details->sort_attribute,
 									model->details->sort_directories_first,
 									model->details->sort_favorites_first,
-									(model->details->order == GTK_SORT_DESCENDING));
+									(model->details->order == GTK_SORT_DESCENDING),
+                                    model->details->view_dir);
 	} else if (file_entry1->file == NULL) {
 		return -1;
 	} else {
@@ -740,7 +747,8 @@ nemo_list_model_compare_func (NemoListModel *model,
 								model->details->sort_attribute,
 								model->details->sort_directories_first,
 								model->details->sort_favorites_first,
-								(model->details->order == GTK_SORT_DESCENDING));
+								(model->details->order == GTK_SORT_DESCENDING),
+                                model->details->view_dir);
 
 	return result;
 }
@@ -1686,6 +1694,7 @@ nemo_list_model_class_init (NemoListModelClass *klass)
 	attribute_name_q = g_quark_from_static_string ("name");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");
+    attribute_search_result_count_q = g_quark_from_string ("search_result_count");
 
 	object_class = (GObjectClass *)klass;
 	object_class->finalize = nemo_list_model_finalize;
@@ -1865,3 +1874,10 @@ nemo_list_model_set_expanding (NemoListModel *model, NemoDirectory *directory)
     entry = g_sequence_get (ptr);
     entry->expanding = TRUE;
 }
+
+void
+nemo_list_model_set_view_directory (NemoListModel *model, NemoDirectory *dir)
+{
+    model->details->view_dir = dir;
+}
+

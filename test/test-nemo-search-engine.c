@@ -45,7 +45,7 @@ main (int argc, char* argv[])
 			  G_CALLBACK (finished_cb), NULL);
 
 	query = nemo_query_new ();
-	nemo_query_set_text (query, "richard hult");
+	nemo_query_set_file_pattern (query, "richard hult");
 	nemo_search_engine_set_query (engine, query);
 	g_object_unref (query);
 

@@ -63,7 +63,8 @@ typedef enum {
 	NEMO_FILE_SORT_BY_MTIME,
     NEMO_FILE_SORT_BY_ATIME,
 	NEMO_FILE_SORT_BY_TRASHED_TIME,
-    NEMO_FILE_SORT_BY_BTIME
+    NEMO_FILE_SORT_BY_BTIME,
+    NEMO_FILE_SORT_BY_SEARCH_RESULT_COUNT
 } NemoFileSortType;	
 
 typedef enum {
@@ -227,6 +228,7 @@ gboolean		nemo_file_is_archive			(NemoFile			*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
 gboolean                nemo_file_is_in_favorites                   (NemoFile                   *file);
+gboolean                nemo_file_is_in_search                      (NemoFile                   *file);
 gboolean                nemo_file_is_unavailable_favorite           (NemoFile                   *file);
 gboolean                nemo_file_is_in_admin                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
@@ -434,19 +436,22 @@ int                     nemo_file_compare_for_sort                  (NemoFile   
 									 NemoFileSortType            sort_type,
 									 gboolean			 directories_first,
 									 gboolean            favorites_first,
-									 gboolean		  	 reversed);
+									 gboolean		  	 reversed,
+                                     gpointer                       search_dir);
 int                     nemo_file_compare_for_sort_by_attribute     (NemoFile                   *file_1,
 									 NemoFile                   *file_2,
 									 const char                     *attribute,
 									 gboolean                        directories_first,
 									 gboolean                        favorites_first,
-									 gboolean                        reversed);
+									 gboolean                        reversed,
+                                     gpointer                        search_dir);
 int                     nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 									 NemoFile                   *file_2,
 									 GQuark                          attribute,
 									 gboolean                        directories_first,
 									 gboolean                        favorites_first,
-									 gboolean                        reversed);
+									 gboolean                        reversed,
+                                     gpointer                        search_dir);
 gboolean                nemo_file_is_date_sort_attribute_q          (GQuark                          attribute);
 
 int                     nemo_file_compare_display_name              (NemoFile                   *file_1,
@@ -518,7 +523,7 @@ char *   nemo_file_get_owner_as_string            (NemoFile          *file,
 char *   nemo_file_get_type_as_string             (NemoFile          *file);
 char *   nemo_file_get_detailed_type_as_string    (NemoFile          *file);
 
-gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags);
+gchar *  nemo_file_construct_tooltip              (NemoFile *file, NemoFileTooltipFlags flags, gpointer search_dir);
 
 gboolean nemo_file_has_thumbnail_access_problem   (NemoFile *file);
 
@@ -536,6 +541,13 @@ void     nemo_file_set_is_favorite                (NemoFile *file, gboolean favo
 void     nemo_file_set_load_deferred_attrs        (NemoFile *file,
                                                    NemoFileLoadDeferredAttrs load_deferred_attrs);
 NemoFileLoadDeferredAttrs nemo_file_get_load_deferred_attrs (NemoFile *file);
+
+void nemo_file_add_search_result_data             (NemoFile *file, gpointer search_dir, GPtrArray *search_hits);
+void nemo_file_clear_search_result_data           (NemoFile *file, gpointer search_dir);
+gint nemo_file_get_search_result_count            (NemoFile *file, gpointer search_dir);
+gchar *nemo_file_get_search_result_count_as_string (NemoFile *file, gpointer search_dir);
+gchar *nemo_file_get_search_result_snippet        (NemoFile *file, gpointer search_dir);
+
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 

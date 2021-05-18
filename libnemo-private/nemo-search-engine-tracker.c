@@ -99,6 +99,7 @@ cursor_callback (GObject      *object,
                  gpointer      user_data)
 {
 	NemoSearchEngineTracker *tracker;
+    FileSearchResult *fsr = NULL;
 	GError *error = NULL;
 	TrackerSparqlCursor *cursor;
 	GList *hits;
@@ -127,9 +128,11 @@ cursor_callback (GObject      *object,
 	}
 
 	/* We iterate result by result, not n at a time. */
-	hits = g_list_append (NULL, (gchar*) tracker_sparql_cursor_get_string (cursor, 0, NULL));
-	nemo_search_engine_hits_added (NEMO_SEARCH_ENGINE (tracker), hits);
-	g_list_free (hits);
+
+    fsr = file_search_result_new (g_strdup (tracker_sparql_cursor_get_string (cursor, 0, NULL)));
+    hits = g_list_append (NULL, fsr);
+    nemo_search_engine_hits_added (NEMO_SEARCH_ENGINE (tracker), hits);
+    g_list_free_full (hits, (GDestroyNotify) file_search_result_free);
 
 	/* Get next */
 	cursor_next (tracker, cursor);
@@ -189,7 +192,7 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 
 	g_cancellable_reset (tracker->details->cancellable);
 
-	search_text = nemo_query_get_text (tracker->details->query);
+	search_text = nemo_query_get_file_pattern (tracker->details->query);
 	location_uri = nemo_query_get_location (tracker->details->query);
 	mimetypes = nemo_query_get_mime_types (tracker->details->query);
 

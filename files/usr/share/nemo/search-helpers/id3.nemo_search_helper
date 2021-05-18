@@ -1,0 +1,5 @@
+[Nemo Search Cat Helper]
+TryExec=id3
+Exec=id3 -l %s
+MimeType=audio/mpeg
+Priority=100

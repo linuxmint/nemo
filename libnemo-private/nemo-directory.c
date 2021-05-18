@@ -497,8 +497,6 @@ nemo_directory_new (GFile *location)
 		directory = NEMO_DIRECTORY (g_object_new (NEMO_TYPE_DESKTOP_DIRECTORY, NULL));
 	} else if (eel_uri_is_search (uri)) {
 		directory = NEMO_DIRECTORY (g_object_new (NEMO_TYPE_SEARCH_DIRECTORY, NULL));
-	} else if (g_str_has_suffix (uri, NEMO_SAVED_SEARCH_EXTENSION)) {
-		directory = NEMO_DIRECTORY (nemo_search_directory_new_from_saved_search (uri));
 	} else {
 		directory = NEMO_DIRECTORY (g_object_new (NEMO_TYPE_VFS_DIRECTORY, NULL));
 	}
@@ -545,6 +543,18 @@ nemo_directory_is_in_recent (NemoDirectory *directory)
    }
 
    return g_file_has_uri_scheme (directory->details->location, "recent");
+}
+
+gboolean
+nemo_directory_is_in_search (NemoDirectory *directory)
+{
+   g_assert (NEMO_IS_DIRECTORY (directory));
+
+   if (directory->details->location == NULL) {
+       return FALSE;
+   }
+
+   return g_file_has_uri_scheme (directory->details->location, "x-nemo-search");
 }
 
 gboolean

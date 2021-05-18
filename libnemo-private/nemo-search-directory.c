@@ -38,7 +38,6 @@
 
 struct NemoSearchDirectoryDetails {
 	NemoQuery *query;
-	char *saved_search_uri;
 	gboolean modified;
 
 	NemoSearchEngine *engine;
@@ -123,6 +122,9 @@ reset_file_list (NemoSearchDirectory *search)
 			monitor = monitor_list->data;
 			nemo_file_monitor_remove (file, monitor);
 		}
+
+        nemo_file_clear_search_result_data (file, (gpointer) search);
+
 	}
 	
 	nemo_file_list_free (search->details->files);
@@ -472,22 +474,18 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 	GList *hit_list;
 	GList *file_list;
 	NemoFile *file;
-	char *uri;
+    FileSearchResult *fsr;
 	SearchMonitor *monitor;
 	GList *monitor_list;
 
 	file_list = NULL;
 
 	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		uri = hit_list->data;
+		fsr = (FileSearchResult *) hit_list->data;
 
-		if (g_str_has_suffix (uri, NEMO_SAVED_SEARCH_EXTENSION)) {
-			/* Never return saved searches themselves as hits */
-			continue;
-		}
-		
-		file = nemo_file_get_by_uri (uri);
-		
+        file = nemo_file_get_by_uri (fsr->uri);
+        nemo_file_add_search_result_data (file, (gpointer) search, fsr->hits);
+
 		for (monitor_list = search->details->monitor_list; monitor_list; monitor_list = monitor_list->next) {
 			monitor = monitor_list->data;
 
@@ -727,8 +725,6 @@ search_finalize (GObject *object)
 
 	search = NEMO_SEARCH_DIRECTORY (object);
 
-	g_free (search->details->saved_search_uri);
-	
 	g_free (search->details);
 
 	G_OBJECT_CLASS (nemo_search_directory_parent_class)->finalize (object);
@@ -814,71 +810,8 @@ nemo_search_directory_get_query (NemoSearchDirectory *search)
 	return NULL;
 }
 
-NemoSearchDirectory *
-nemo_search_directory_new_from_saved_search (const char *uri)
-{
-	NemoSearchDirectory *search;
-	NemoQuery *query;
-	char *file;
-	
-	search = NEMO_SEARCH_DIRECTORY (g_object_new (NEMO_TYPE_SEARCH_DIRECTORY, NULL));
-
-	search->details->saved_search_uri = g_strdup (uri);
-	
-	file = g_filename_from_uri (uri, NULL, NULL);
-	if (file != NULL) {
-		query = nemo_query_load (file);
-		if (query != NULL) {
-			nemo_search_directory_set_query (search, query);
-			g_object_unref (query);
-		}
-		g_free (file);
-	} else {
-		g_warning ("Non-local saved searches not supported");
-	}
-
-	search->details->modified = FALSE;
-	return search;
-}
-
-gboolean
-nemo_search_directory_is_saved_search (NemoSearchDirectory *search)
-{
-	return search->details->saved_search_uri != NULL;
-}
-
 gboolean
 nemo_search_directory_is_modified (NemoSearchDirectory *search)
 {
 	return search->details->modified;
-}
-
-void
-nemo_search_directory_save_to_file (NemoSearchDirectory *search,
-					const char              *save_file_uri)
-{
-	char *file;
-	
-	file = g_filename_from_uri (save_file_uri, NULL, NULL);
-	if (file == NULL) {
-		return;
-	}
-
-	if (search->details->query != NULL) {
-		nemo_query_save (search->details->query, file);
-	}
-	
-	g_free (file);
-}
-
-void
-nemo_search_directory_save_search (NemoSearchDirectory *search)
-{
-	if (search->details->saved_search_uri == NULL) {
-		return;
-	}
-
-	nemo_search_directory_save_to_file (search,
-						search->details->saved_search_uri);
-	search->details->modified = FALSE;
 }
