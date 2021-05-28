@@ -202,6 +202,7 @@ subdir('libnemo-extension')
 subdir('libnemo-private')
 # subdir('po')
 subdir('src')
+subdir('search-helpers')
 subdir('test')
 subdir('docs')
 
