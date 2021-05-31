@@ -1,3 +1,83 @@
+nemo (5.0.0) uma; urgency=medium
+
+  [ icarter09 ]
+  * Issue 1881. Adds keyboard shortcut for Same Location as other pane. Adds shortcut to shorcut UI.
+  * Issue 1263. Enables F6 to immediately toggle between panes.
+
+  [ Michael Webster ]
+  * nemo-shortcuts.ui: Add a new section for dual-pane and put related shortcuts there.
+
+  [ Eric ]
+  * Added option to toggle sorting favorites before other files
+  * Fixed whitespace
+
+  [ Michael Webster ]
+  * nemo-main-application.c: Remove 30s inactivity timeout.
+  * nemo-menu-provider.c: Don't request menu items for selections if there is no selection - not all extensions guard against this.
+  * nemo-view.c: Partially revert b4d0318b318f4f4f20cbd8e89c7859f69aeb6214
+
+  [ John Lindgren ]
+  * Fix segfault when g_file_info_get_symlink_target() returns "".
+
+  [ Steven Xu ]
+  * feat: added the `--existing-window` flag to open URLs in an existing window, cf https://github.com/linuxmint/nemo/issues/2674
+  * feat: use `gtk_window_present_with_time()` instead of `gtk_window_present()`, otherwise the window manager will ignore this window's focus request and try to just mark it urgent instead (flashing in the window list for example)
+
+  [ icarter09 ]
+  * Fixes 2696. Detects if Trash is supported.
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Fix bookmark separator positioning to account for conditionally hidden immovable elements.
+  * nemo-desktop-application.c: Remove root check.
+  * nemo-view.c: Hide trash menu item when trash is not supported.
+  * Add option to treat root as normal.
+  * actions: Implement passing the active window xid to exec strings.
+  * nemo-window-menus.c: hide gvfs locations based on their actual availability, not strictly on the process uid.
+  * nemo actions: Implement reverse dependencies.
+  * nemo-view.c: Only update the context menu when it's about to be shown.
+
+  [ Steven Xu ]
+  * docs: added docs for the `--existing-window` flag
+
+  [ Cerulean ]
+  * Allow images to be viewed in supported image viewers in the same order as they are shown in the current nemo view (directory or search).
+  * Remove g_list_insert_before_link call for compatibility with older glib versions.
+
+  [ Michael Webster ]
+  * Revert "nemo-view.c: Only update the context menu when it's about to be"
+  * nemo-view.c: Delay actions and extension menu providers from updating until the menu is requested.
+
+  [ Joshua Peisach ]
+  * bookmark-list: Clean up and close memory leak General cleanup. Use NemoBookmarkList instead of casting itself every line.
+
+  [ kysrpex ]
+  * Prevent the menu bar from disappearing when some of its elements is currently selected.
+  * Remove the menu bar inmediately after selecting an item (if configured to auto-hide).
+
+  [ Michael Webster ]
+  * nemo-directory.c: Fix memory leak.
+  * nemo-directory.c: Fix previous commit which altered potential behavior more than necessary.
+
+  [ icarter09 ]
+  * Issue 541. Removes spaces from Samba drive paths in location bar.
+
+  [ Michael Webster ]
+  * nemo-list-view.c: Implement 'double-click blank area to go up one (#2646)
+
+  [ icarter09 ]
+  * Fixes #2244. Adds logic to strip leading whitespace and checks for absolute path when copy/pasting value.
+
+  [ Isaac Carter ]
+  * Fixes Issue #2415. Removes nemo self checks (#2439)
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Sort all devices in the sidebar.
+  * nemo-location-entry.c: Don't modify a string we don't own.
+  * Implement Content search.
+  * Add a search helper for Open XML (MS Office).
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 31 May 2021 12:21:41 +0100
+
 nemo (4.8.5) ulyssa; urgency=medium
 
   [ Michael Webster ]
