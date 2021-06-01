@@ -2010,6 +2010,8 @@ column_header_clicked (GtkWidget *column_button,
         g_clear_pointer (&label, g_free);
     }
 
+    g_list_free (current_view_columns);
+
 	menu_item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 
