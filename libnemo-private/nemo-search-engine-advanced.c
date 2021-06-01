@@ -695,36 +695,40 @@ create_snippet (GMatchInfo  *match_info,
                 const gchar *contents,
                 gssize       total_length)
 {
-    gint start, end, new_start, new_end;
+    gint start_bytes, end_bytes;
     gchar *snippet = NULL;
 
-    start = end = -1;
+    if (g_match_info_fetch_pos (match_info, 0, &start_bytes, &end_bytes) && start_bytes >= 0) {
+        GString *marked_up;
+        glong start, end, new_start, new_end;
+        gchar *matched_str, *start_substr, *end_substr, *start_escaped, *end_escaped;
 
-    if (g_match_info_fetch_pos (match_info, 0, &start, &end) && start >= 0) {
+        start = g_utf8_pointer_to_offset (contents, contents + start_bytes);
+        end = g_utf8_pointer_to_offset (contents, contents + end_bytes);
+
         // Extend the snipped forwards and back a bit to give context.
         new_start = MAX (0, start - SNIPPET_EXTEND_SIZE);
         new_end = MIN (end + SNIPPET_EXTEND_SIZE, total_length - 1);
 
-        gchar *matched_str = g_match_info_fetch (match_info, 0);
-        GString *marked_up = g_string_new (NULL);
-        gchar *escaped_str = NULL;
+        matched_str = g_match_info_fetch (match_info, 0);
 
-        escaped_str = g_markup_escape_text ((const gchar *) contents + new_start, start - new_start);
-        g_string_append (marked_up, escaped_str);
+        start_substr = g_utf8_substring (contents, new_start, start);
+        start_escaped = g_markup_escape_text (start_substr, -1);
+        g_free (start_substr);
+
+        end_substr = g_utf8_substring (contents, end, new_end);
+        end_escaped = g_markup_escape_text (end_substr, -1);
+        g_free (end_substr);
+
+        marked_up = g_string_new (NULL);
+        g_string_append (marked_up, start_escaped);
         g_string_append (marked_up, "<b>");
-
-        g_free (escaped_str);
-        escaped_str = g_markup_escape_text (matched_str, -1);
-
-        g_string_append (marked_up, escaped_str);
+        g_string_append (marked_up, matched_str);
         g_string_append (marked_up, "</b>");
+        g_string_append (marked_up, end_escaped);
 
-        g_free (escaped_str);
-        escaped_str = g_markup_escape_text ((const gchar *) contents + end, new_end - end);
-
-        g_string_append (marked_up, escaped_str);
-
-        g_free (escaped_str);
+        g_free (start_escaped);
+        g_free (end_escaped);
         g_free (matched_str);
 
         snippet = g_string_free (marked_up, FALSE);
@@ -737,8 +741,6 @@ static gchar *
 load_contents (SearchThreadData *data,
                GFile            *file,
                SearchHelper     *helper,
-               gsize            *buffer_size,
-               gboolean         *finish_early,
                GError          **error)
 {
     // TODO: Use flock/mmap for local files?
@@ -763,7 +765,7 @@ load_contents (SearchThreadData *data,
     gssize len = 0;
 
     do {
-        gchar chunk[4097];
+        gchar chunk[4096];
         len = g_input_stream_read (stream, chunk, 4096, data->cancellable, error);
 
         if (len <= 0) {
@@ -771,42 +773,9 @@ load_contents (SearchThreadData *data,
         }
 
         if (chunk != NULL) {
-            gchar *stripped;
-            chunk[len] = '\0';
-
-            if (data->newline_re != NULL) {
-                stripped = g_regex_replace_literal (data->newline_re, (const gchar *) chunk, -1, 0, "\n", 0, NULL);
-            } else {
-                stripped = g_strdup ((const gchar *) chunk);
-            }
-
-            if (!data->count_hits) {
-                GMatchInfo *match_info = NULL;
-                FileSearchResult *fsr = NULL;
-
-                g_regex_match (data->match_re, stripped, 0, &match_info);
-
-                if (g_match_info_matches (match_info) && !g_cancellable_is_cancelled (data->cancellable)) {
-                    if (fsr == NULL) {
-                        fsr = file_search_result_new (g_file_get_uri (file));
-                    }
-
-                    file_search_result_add_hit (fsr, create_snippet (match_info, stripped, strlen (stripped)));
-
-                    g_mutex_lock (&data->hit_list_lock);
-                    data->hit_list = g_list_prepend (data->hit_list, fsr);
-                    g_mutex_unlock (&data->hit_list_lock);
-
-                    *finish_early = TRUE;
-                }
-
-                g_match_info_unref (match_info);
-            }
-
-            g_string_append (str, stripped);
-            g_free (stripped);
+            g_string_append_len (str, chunk, len);
         }
-    } while (!(*finish_early) && !g_cancellable_is_cancelled (data->cancellable));
+    } while (!g_cancellable_is_cancelled (data->cancellable));
 
     g_input_stream_close (stream,
                           data->cancellable,
@@ -815,14 +784,13 @@ load_contents (SearchThreadData *data,
     // GSubprocess owns the input stream for its STDOUT, but we own it for the text/plain stream.
     if (helper_proc != NULL) {
         g_subprocess_wait (helper_proc,
-                           data->cancellable,
+                           NULL,
                            *error == NULL ? error : NULL);
         g_object_unref (helper_proc);
     } else {
         g_object_unref (stream);
     }
 
-    *buffer_size = str->len;
     return g_string_free (str, FALSE);
 }
 
@@ -833,18 +801,16 @@ search_for_content_hits (SearchThreadData *data,
 {
     GMatchInfo *match_info;
     GError *error;
-    gchar *buffer = NULL;
-    gsize buffer_size = 0;
-    gboolean finish_early;
+    gchar *contents = NULL;
+    gchar *stripped, *utf8;
 
     error = NULL;
-    finish_early = FALSE;
 
-    buffer = load_contents (data, file, helper, &buffer_size, &finish_early, &error);
+    contents = load_contents (data, file, helper, &error);
 
-    if (finish_early || g_cancellable_is_cancelled (data->cancellable)) {
+    if (g_cancellable_is_cancelled (data->cancellable)) {
         g_clear_error (&error);
-        g_free (buffer);
+        g_free (contents);
         return;
     }
 
@@ -853,20 +819,35 @@ search_for_content_hits (SearchThreadData *data,
         g_warning ("Could not load contents of '%s' during content search: %s", uri, error->message);
         g_free (uri);
         g_error_free (error);
-        g_free (buffer);
+        g_free (contents);
         return;
     }
 
+    utf8 = g_utf8_make_valid (contents, -1);
+    g_free (contents);
+
+    if (data->newline_re != NULL) {
+        stripped = g_regex_replace_literal (data->newline_re, (const gchar *) utf8, -1, 0, "\n", 0, NULL);
+    } else {
+        stripped = g_strdup ((const gchar *) utf8);
+    }
+
+    g_free (utf8);
+
     FileSearchResult *fsr = NULL;
 
-    g_regex_match (data->match_re, buffer, 0, &match_info);
+    g_regex_match (data->match_re, stripped, 0, &match_info);
 
     while (g_match_info_matches (match_info) && !g_cancellable_is_cancelled (data->cancellable)) {
         if (fsr == NULL) {
             fsr = file_search_result_new (g_file_get_uri (file));
         }
 
-        file_search_result_add_hit (fsr, create_snippet (match_info, buffer, buffer_size));
+        file_search_result_add_hit (fsr, create_snippet (match_info, stripped, g_utf8_strlen (stripped, G_MAXSSIZE)));
+
+        if (!data->count_hits) {
+            break;
+        }
 
         if (!g_match_info_next (match_info, &error) && error) {
             g_warning ("Error iterating thru pattern matches (/%s/): code %d - %s",
@@ -877,7 +858,7 @@ search_for_content_hits (SearchThreadData *data,
     }
 
     g_match_info_unref (match_info);
-    g_free (buffer);
+    g_free (stripped);
 
     if (fsr != NULL) {
         g_mutex_lock (&data->hit_list_lock);
