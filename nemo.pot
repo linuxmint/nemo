@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-31 12:22+0100\n"
+"POT-Creation-Date: 2021-06-02 15:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -303,7 +303,7 @@ msgstr ""
 msgid "_Horizontal"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1074 src/nemo-list-view.c:2494
+#: src/nemo-desktop-icon-grid-view.c:1074 src/nemo-list-view.c:2496
 #: libnemo-private/nemo-column-utilities.c:43
 #: gresources/nemo-desktop-overlay.glade:116
 msgid "Name"
@@ -910,36 +910,36 @@ msgstr ""
 msgid "(Empty)"
 msgstr ""
 
-#: src/nemo-list-view.c:2016
+#: src/nemo-list-view.c:2018
 msgid "Use Default"
 msgstr ""
 
-#: src/nemo-list-view.c:2027
+#: src/nemo-list-view.c:2029
 msgid "Temporarily disable auto-sort"
 msgstr ""
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: src/nemo-list-view.c:2582 src/nemo-list-view.c:4264
+#: src/nemo-list-view.c:2584 src/nemo-list-view.c:4266
 #: src/nemo-window-menus.c:1493 src/nemo-window-menus.c:1651
 #: gresources/nemo-file-management-properties.glade:113
 msgid "List View"
 msgstr ""
 
 #. translators: this is used in the view menu
-#: src/nemo-list-view.c:4266
+#: src/nemo-list-view.c:4268
 msgid "_List"
 msgstr ""
 
-#: src/nemo-list-view.c:4267
+#: src/nemo-list-view.c:4269
 msgid "The list view encountered an error."
 msgstr ""
 
-#: src/nemo-list-view.c:4268
+#: src/nemo-list-view.c:4270
 msgid "The list view encountered an error while starting up."
 msgstr ""
 
-#: src/nemo-list-view.c:4269
+#: src/nemo-list-view.c:4271
 msgid "Display this location with the list view."
 msgstr ""
 
@@ -1814,16 +1814,7 @@ msgstr ""
 msgid "Revert"
 msgstr ""
 
-#: src/nemo-query-editor.c:675
-#, c-format
-msgid "Search in %s"
-msgstr ""
-
-#: src/nemo-query-editor.c:744 gresources/nemo-search-bar.glade:159
-msgid "Enter text to search for"
-msgstr ""
-
-#: src/nemo-query-editor.c:748
+#: src/nemo-query-editor.c:737
 msgid "Not supported in this location"
 msgstr ""
 
@@ -2929,13 +2920,13 @@ msgstr ""
 msgid "Go to the location specified by this bookmark"
 msgstr ""
 
-#: src/nemo-window.c:1413
+#: src/nemo-window.c:1384
 #, c-format
 msgid "%s - File Browser"
 msgstr ""
 
 #. Set initial window title
-#: src/nemo-window.c:2009 src/nemo-window-menus.c:340
+#: src/nemo-window.c:1980 src/nemo-window-menus.c:340
 msgid "Nemo"
 msgstr ""
 
@@ -6330,8 +6321,8 @@ msgstr ""
 msgid "Search for files:"
 msgstr ""
 
-#: gresources/nemo-search-bar.glade:78 gresources/nemo-search-bar.glade:173
-msgid " Case sensitive"
+#: gresources/nemo-search-bar.glade:78 gresources/nemo-search-bar.glade:172
+msgid "Case sensitive"
 msgstr ""
 
 #: gresources/nemo-search-bar.glade:99
@@ -6342,6 +6333,6 @@ msgstr ""
 msgid "Search content:"
 msgstr ""
 
-#: gresources/nemo-search-bar.glade:194
+#: gresources/nemo-search-bar.glade:193
 msgid "Regular expression"
 msgstr ""
