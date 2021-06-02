@@ -1,4 +1,3 @@
-
 libgsf = dependency('libgsf-1', required: true)
 
 mso_to_txt_sources = [
@@ -15,3 +14,5 @@ install_data(
     'mso.nemo_search_helper',
     install_dir: join_paths(nemoDataPath, 'search-helpers')
 )
+
+subdir('third-party')

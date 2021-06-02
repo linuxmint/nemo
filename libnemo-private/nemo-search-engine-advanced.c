@@ -122,6 +122,7 @@ get_cat_helper_directories (void)
     }
 
     helper_dirs = g_list_prepend (helper_dirs, path);
+    helper_dirs = g_list_reverse (helper_dirs);
 
     return helper_dirs;
 }
@@ -160,7 +161,7 @@ process_search_helper_file (const gchar *path)
     try_exec = g_key_file_get_string (key_file, SEARCH_HELPER_GROUP, "TryExec", NULL);
     abs_try_path = g_find_program_in_path (try_exec);
     if (!abs_try_path) {
-        g_message ("Skipping search helper '%s' - program is not available (%s)", path, try_exec);
+        DEBUG ("Skipping search helper '%s' - program is not available (%s)", path, try_exec);
         goto done;
     }
 
@@ -198,10 +199,10 @@ process_search_helper_file (const gchar *path)
 
         existing = g_hash_table_lookup (search_helpers, mime_type);
         if (existing && existing->priority > priority) {
-            g_message ("Existing nemo search_helper for '%s' has higher priority than a new one (%s), ignoring the new one.", mime_type, path);
+            DEBUG ("Existing nemo search_helper for '%s' has higher priority than a new one (%s), ignoring the new one.", mime_type, path);
             continue;
         } else if (existing) {
-            g_message ("Replacing existing nemo search_helper for '%s' with %s based on priority.", mime_type, path);
+            DEBUG ("Replacing existing nemo search_helper for '%s' with %s based on priority.", mime_type, path);
         }
 
         helper = g_slice_new0 (SearchHelper);
@@ -239,6 +240,8 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
         const gchar *path;
 
         path = (const gchar *) d_iter->data;
+        DEBUG ("Checking location '%s' for search helpers", path);
+
         error = NULL;
 
         dir = g_dir_open (path, 0, &error);
@@ -256,6 +259,7 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
             }
 
             file_path = g_build_filename (path, filename, NULL);
+            DEBUG ("Processing '%s'", path);
             process_search_helper_file (file_path);
             g_free (file_path);
         }
