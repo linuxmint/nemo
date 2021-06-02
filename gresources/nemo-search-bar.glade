@@ -75,7 +75,7 @@
                         <property name="can_focus">True</property>
                         <property name="focus_on_click">False</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes"> Case sensitive</property>
+                        <property name="tooltip_text" translatable="yes">Case sensitive</property>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
@@ -170,7 +170,7 @@
                         <property name="can_focus">True</property>
                         <property name="focus_on_click">False</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes"> Case sensitive</property>
+                        <property name="tooltip_text" translatable="yes">Case sensitive</property>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
