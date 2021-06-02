@@ -1055,6 +1055,41 @@ nemo_window_pane_set_active (NemoWindowPane *pane,
 	nemo_window_pane_set_active_style (pane, is_active);
 }
 
+void
+nemo_window_pane_sync_up_actions (NemoWindowPane *pane)
+{
+    NemoWindowSlot *slot;
+    GFile *parent;
+    GtkActionGroup *action_group;
+    GtkAction *action;
+    gboolean allowed;
+
+    slot = pane->active_slot;
+
+    allowed = FALSE;
+    if (slot->location != NULL) {
+        parent = g_file_get_parent (slot->location);
+        allowed = parent != NULL;
+
+        g_clear_object (&parent);
+    }
+
+    action_group = pane->toolbar_action_group;
+
+    action = gtk_action_group_get_action (action_group,
+                                          NEMO_ACTION_UP);
+    gtk_action_set_sensitive (action, allowed);
+
+    action_group = nemo_window_get_main_action_group (pane->window);
+
+    action = gtk_action_group_get_action (action_group,
+                                          NEMO_ACTION_UP);
+    gtk_action_set_sensitive (action, allowed);
+    action = gtk_action_group_get_action (action_group,
+                          NEMO_ACTION_UP_ACCEL);
+    gtk_action_set_sensitive (action, allowed);
+}
+
 GtkActionGroup *
 nemo_window_pane_get_toolbar_action_group (NemoWindowPane *pane)
 {
@@ -1086,7 +1121,7 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 
 	/* Update window global UI if this is the active pane */
 	if (pane == nemo_window_get_active_pane (pane->window)) {
-		nemo_window_sync_up_button (pane->window);
+        nemo_window_pane_sync_up_actions (pane);
 
 		/* Check if the back and forward buttons need enabling or disabling. */
 		active_slot = nemo_window_get_active_slot (pane->window);

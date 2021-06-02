@@ -101,7 +101,7 @@ void nemo_window_pane_set_active (NemoWindowPane *pane, gboolean is_active);
 void nemo_window_pane_close_slot (NemoWindowPane *pane, NemoWindowSlot *slot);
 GtkActionGroup * nemo_window_pane_get_toolbar_action_group (NemoWindowPane   *pane);
 void nemo_window_pane_grab_focus (NemoWindowPane *pane);
-
+void nemo_window_pane_sync_up_actions (NemoWindowPane *pane);
 /* bars */
 void     nemo_window_pane_ensure_location_bar (NemoWindowPane *pane);
 

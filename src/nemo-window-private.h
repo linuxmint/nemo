@@ -157,7 +157,6 @@ void nemo_window_sync_allow_stop       (NemoWindow *window,
 void nemo_window_sync_title            (NemoWindow *window,
 					    NemoWindowSlot *slot);
 void nemo_window_sync_zoom_widgets     (NemoWindow *window);
-void nemo_window_sync_up_button        (NemoWindow *window);
 void nemo_window_sync_menu_bar         (NemoWindow *window);
 void nemo_window_sync_bookmark_action  (NemoWindow *window);
 void nemo_window_sync_thumbnail_action (NemoWindow *window);

@@ -1362,35 +1362,6 @@ nemo_window_sync_menu_bar (NemoWindow *window)
 }
 
 void
-nemo_window_sync_up_button (NemoWindow *window)
-{
-	GtkAction *action;
-	GtkActionGroup *action_group;
-	NemoWindowSlot *slot;
-	gboolean allowed;
-	GFile *parent;
-
-	slot = nemo_window_get_active_slot (window);
-
-	allowed = FALSE;
-	if (slot->location != NULL) {
-		parent = g_file_get_parent (slot->location);
-		allowed = parent != NULL;
-
-		g_clear_object (&parent);
-	}
-
-	action_group = nemo_window_get_main_action_group (window);
-
-	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_UP);
-	gtk_action_set_sensitive (action, allowed);
-	action = gtk_action_group_get_action (action_group,
-					      NEMO_ACTION_UP_ACCEL);
-	gtk_action_set_sensitive (action, allowed);
-}
-
-void
 nemo_window_sync_title (NemoWindow *window,
 			    NemoWindowSlot *slot)
 {
