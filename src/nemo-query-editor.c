@@ -666,18 +666,8 @@ void
 nemo_query_editor_set_location (NemoQueryEditor *editor,
 				    GFile               *location)
 {
-    gchar *basename, *placeholder_text;
-
 	g_free (editor->priv->current_uri);
 	editor->priv->current_uri = g_file_get_uri (location);
-
-    basename = g_file_get_basename (location);
-    placeholder_text = g_strdup_printf (_("Search in %s"), basename);
-
-    gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->file_entry), placeholder_text);
-
-    g_free (basename);
-    g_free (placeholder_text);
 }
 
 void
@@ -740,8 +730,7 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
 
         if (g_file_is_native (base)) {
             gtk_widget_set_sensitive (editor->priv->content_main_box, TRUE);
-            gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry),
-                                            _("Enter text to search for"));
+            gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry), "");
         } else {
             gtk_widget_set_sensitive (editor->priv->content_main_box, FALSE);
             gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry),
