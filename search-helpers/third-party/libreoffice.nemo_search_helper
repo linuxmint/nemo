@@ -1,4 +1,4 @@
-[Nemo Search Cat Helper]
+[Nemo Search Helper]
 TryExec=odt2txt
 Exec=odt2txt %s
 MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.graphics;

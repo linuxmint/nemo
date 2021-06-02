@@ -32,7 +32,7 @@
 #define DEBUG_FLAG NEMO_DEBUG_SEARCH
 #include "nemo-debug.h"
 
-#define SEARCH_HELPER_GROUP "Nemo Search Cat Helper"
+#define SEARCH_HELPER_GROUP "Nemo Search Helper"
 
 #define FILE_SEARCH_ONLY_BATCH_SIZE 500
 #define CONTENT_SEARCH_BATCH_SIZE 1

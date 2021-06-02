@@ -1,5 +1,5 @@
-[Nemo Search Cat Helper]
+[Nemo Search Helper]
 TryExec=nemo-mso-to-txt
 Exec=nemo-mso-to-txt %s
-MimeType=application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.openxmlformats-officedocument.presentationml.presentation
+MimeType=application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.openxmlformats-officedocument.presentationml.presentation;
 priority=100

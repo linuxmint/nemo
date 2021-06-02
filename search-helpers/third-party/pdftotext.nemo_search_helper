@@ -1,4 +1,4 @@
-[Nemo Search Cat Helper]
+[Nemo Search Helper]
 TryExec=pdftotext
 Exec=pdftotext %s -
 MimeType=application/pdf;

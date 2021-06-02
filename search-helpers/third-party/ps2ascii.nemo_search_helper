@@ -1,4 +1,4 @@
-[Nemo Search Cat Helper]
+[Nemo Search Helper]
 TryExec=ps2ascii
 Exec=ps2ascii %s
 MimeType=application/ps;
