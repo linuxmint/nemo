@@ -93,11 +93,13 @@ struct FMTreeViewDetails {
 	GtkWidget *popup_open_in_new_window;
 	GtkWidget *popup_open_in_new_tab;
 	GtkWidget *popup_create_folder;
+    GtkWidget *popup_post_create_folder_separator;
 	GtkWidget *popup_cut;
 	GtkWidget *popup_copy;
 	GtkWidget *popup_paste;
 	GtkWidget *popup_rename;
     GtkWidget *popup_pin;
+    GtkWidget *popup_post_pin_separator;
     GtkWidget *popup_unpin;
 	GtkWidget *popup_trash;
 	GtkWidget *popup_delete;
@@ -692,13 +694,14 @@ static gboolean
 button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 			 FMTreeView *view)
 {
-	GtkTreePath *path, *cursor_path;
+	GtkTreePath *path;
 	gboolean parent_file_is_writable;
 	gboolean file_is_home_or_desktop;
 	gboolean file_is_special_link;
 	gboolean can_move_file_to_trash;
 	gboolean can_delete_file;
 	gboolean using_browser;
+    gint is_toplevel;
 
 	using_browser = g_settings_get_boolean (nemo_preferences,
 						NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
@@ -722,11 +725,10 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 			gtk_tree_path_free (path);
 			return FALSE;
 		}
-		gtk_tree_view_get_cursor (view->details->tree_widget, &cursor_path, NULL);
-
-		gtk_tree_path_free (path);
 
 		create_popup_menu (view);
+
+        is_toplevel = gtk_tree_path_get_depth (path) == 1;
 
 		if (using_browser) {
 			gtk_widget_set_sensitive (view->details->popup_open_in_new_window,
@@ -738,6 +740,15 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 		gtk_widget_set_sensitive (view->details->popup_create_folder,
 			nemo_file_is_directory (view->details->popup_file) &&
 			nemo_file_can_write (view->details->popup_file));
+
+        if (nemo_file_is_in_favorites (view->details->popup_file)) {
+            gtk_widget_hide (view->details->popup_create_folder);
+            gtk_widget_hide (view->details->popup_post_create_folder_separator);
+        } else {
+            gtk_widget_show (view->details->popup_create_folder);
+            gtk_widget_show (view->details->popup_post_create_folder_separator);
+        }
+
 		gtk_widget_set_sensitive (view->details->popup_paste, FALSE);
 		if (nemo_file_is_directory (view->details->popup_file) &&
 			nemo_file_can_write (view->details->popup_file)) {
@@ -788,12 +799,20 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 			gtk_widget_hide (view->details->popup_unmount_separator);
 		}
 
-        if (nemo_file_get_pinning (view->details->popup_file)) {
-            gtk_widget_hide (view->details->popup_pin);
-            gtk_widget_show (view->details->popup_unpin);
+        if (!is_toplevel && !nemo_file_is_in_favorites (view->details->popup_file)) {
+            if (nemo_file_get_pinning (view->details->popup_file)) {
+                gtk_widget_hide (view->details->popup_pin);
+                gtk_widget_show (view->details->popup_unpin);
+            } else {
+                gtk_widget_show (view->details->popup_pin);
+                gtk_widget_hide (view->details->popup_unpin);
+            }
+
+            gtk_widget_show (view->details->popup_post_pin_separator);
         } else {
-            gtk_widget_show (view->details->popup_pin);
+            gtk_widget_hide (view->details->popup_pin);
             gtk_widget_hide (view->details->popup_unpin);
+            gtk_widget_hide (view->details->popup_post_pin_separator);
         }
 
         gboolean actions_visible = FALSE;
@@ -829,8 +848,8 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 				NULL, NULL, NULL, NULL,
 				event->button, event->time);
 
-		gtk_tree_view_set_cursor (view->details->tree_widget, cursor_path, NULL, FALSE);
-		gtk_tree_path_free (cursor_path);
+		gtk_tree_view_set_cursor (view->details->tree_widget, path, NULL, FALSE);
+        gtk_tree_path_free (path);
 
 		return FALSE;
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
@@ -1356,7 +1375,7 @@ create_popup_menu (FMTreeView *view)
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
 	view->details->popup_create_folder = menu_item;
 	
-	eel_gtk_menu_append_separator (GTK_MENU (popup));
+    view->details->popup_post_create_folder_separator = GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (popup)));
 	
 	/* add the "cut folder" menu item */
     menu_image = gtk_image_new_from_icon_name ("edit-cut-symbolic", GTK_ICON_SIZE_MENU);
@@ -1421,8 +1440,7 @@ create_popup_menu (FMTreeView *view)
     gtk_menu_shell_append (GTK_MENU_SHELL (popup), menu_item);
     view->details->popup_unpin = menu_item;
 
-
-    eel_gtk_menu_append_separator (GTK_MENU (popup));
+    view->details->popup_post_pin_separator = GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (popup)));
 
 	/* add the "move to trash" menu item */
 	menu_image = gtk_image_new_from_icon_name (NEMO_ICON_SYMBOLIC_TRASH_FULL,
