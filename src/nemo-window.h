@@ -146,7 +146,7 @@ GtkWidget *          nemo_window_ensure_location_bar   (NemoWindow *window);
 void                 nemo_window_sync_location_widgets (NemoWindow *window);
 void                 nemo_window_sync_search_widgets   (NemoWindow *window);
 void                 nemo_window_grab_focus            (NemoWindow *window);
-
+void                 nemo_window_sync_create_folder_button (NemoWindow *window);
 void     nemo_window_hide_sidebar         (NemoWindow *window);
 void     nemo_window_show_sidebar         (NemoWindow *window);
 void     nemo_window_back_or_forward      (NemoWindow *window,

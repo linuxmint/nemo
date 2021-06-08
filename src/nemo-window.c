@@ -1520,6 +1520,21 @@ nemo_window_sync_thumbnail_action (NemoWindow *window)
                                slot);
 }
 
+void
+nemo_window_sync_create_folder_button (NemoWindow *window)
+{
+    NemoWindowSlot *slot;
+    gboolean allow;
+
+    slot = nemo_window_get_active_slot (window);
+
+    allow = nemo_file_can_write (slot->viewed_file) &&
+            !nemo_file_is_in_favorites (slot->viewed_file) &&
+            !nemo_file_is_in_trash (slot->viewed_file);
+
+    toolbar_set_create_folder_button (allow, slot->pane);
+}
+
 static void
 zoom_level_changed_callback (NemoView *view,
                              NemoWindow *window)

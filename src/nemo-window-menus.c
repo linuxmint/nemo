@@ -1140,6 +1140,20 @@ menu_set_show_thumbnails_action (gboolean value, NemoWindow *window)
 }
 
 void
+toolbar_set_create_folder_button (gboolean value, NemoWindowPane *pane)
+{
+    GtkActionGroup *action_group;
+    GtkAction *action;
+
+    action_group = nemo_window_pane_get_toolbar_action_group (pane);
+
+    action = gtk_action_group_get_action(action_group,
+                                         NEMO_ACTION_NEW_FOLDER);
+
+    gtk_action_set_sensitive (action, value);
+}
+
+void
 menu_set_view_selection (guint action_id,
                          NemoWindow *window)
 {
