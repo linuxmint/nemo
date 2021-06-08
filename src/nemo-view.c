@@ -10038,8 +10038,8 @@ real_update_menus (NemoView *view)
     nemo_file_list_free (selection);
 }
 
-static void
-update_actions_and_extensions(NemoView *view)
+void
+nemo_view_update_actions_and_extensions (NemoView *view)
 {
     GList *selection;
 
@@ -10076,7 +10076,7 @@ nemo_view_pop_up_selection_context_menu  (NemoView *view,
 	/* Make the context menu items not flash as they update to proper disabled,
 	 * etc. states by forcing menus to update now.
 	 */
-    update_actions_and_extensions (view);
+    nemo_view_update_actions_and_extensions (view);
     update_context_menu_position_from_event (view, event);
 
 	eel_pop_up_context_menu (create_popup_menu
@@ -10102,7 +10102,7 @@ nemo_view_pop_up_background_context_menu (NemoView *view,
 	/* Make the context menu items not flash as they update to proper disabled,
 	 * etc. states by forcing menus to update now.
 	 */
-    update_actions_and_extensions (view);
+    nemo_view_update_actions_and_extensions (view);
     update_context_menu_position_from_event (view, event);
 
 	eel_pop_up_context_menu (create_popup_menu

@@ -355,6 +355,8 @@ void                nemo_view_notify_selection_changed         (NemoView  *view)
 GtkUIManager *      nemo_view_get_ui_manager                   (NemoView  *view);
 NemoDirectory  *nemo_view_get_model                        (NemoView  *view);
 NemoFile       *nemo_view_get_directory_as_file            (NemoView  *view);
+void            nemo_view_update_actions_and_extensions        (NemoView *view);
+
 void                nemo_view_pop_up_background_context_menu   (NemoView  *view,
 								    GdkEventButton   *event);
 void                nemo_view_pop_up_selection_context_menu    (NemoView  *view,

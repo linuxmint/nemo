@@ -110,6 +110,8 @@ struct NemoWindowDetails
         GList *ignore_meta_column_order;
         gchar *ignore_meta_sort_column;
         gint ignore_meta_sort_direction;
+
+        gboolean dynamic_menu_entries_current;
 };
 
 /* window geometry */
