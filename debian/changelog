@@ -1,3 +1,29 @@
+nemo (5.0.1) uma; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-search-engine-advanced.c: Convert input data to utf8, and manipulate match snippets as utf8 to ensure they display correctly in the tooltip.
+  * nemo-list-view.c: Fix a memory leak.
+
+  [ Eli Schwartz ]
+  * make ps2txt search helper work on non-debianlike distros
+
+  [ Michael Webster ]
+  * toolbar: Fix updating the state of the "Up" button.
+
+  [ Clement Lefebvre ]
+  * l10n: Fix msgid
+  * l10n: Remove msgids
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * search: Add a readme for search helpers, move third-party helpers into the search-helpers directory, clean up search logging a bit.
+  * search helpers: Change the group name, follow my own rules for mimetype list termination, improve readme.
+  * nemo-window-menus.c: Update extension and action entries in the File menu when it is shown.
+  * nemo-tree-sidebar.c: Fix states for pin/unpin and create-folder menu items.
+  * toolbar: Disable the 'create-folder' button in non-writable locations.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 10 Jun 2021 14:01:43 +0100
+
 nemo (5.0.0) uma; urgency=medium
 
   [ icarter09 ]
