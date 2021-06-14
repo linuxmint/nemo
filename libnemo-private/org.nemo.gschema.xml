@@ -826,11 +826,11 @@
       <summary>Treat patterns as raw bytes, not utf-8</summary>
     </key>
     <key name="search-file-case-sensitive" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Stores the most recent state of the file search case toggle</summary>
     </key>
     <key name="search-content-case-sensitive" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Stores the most recent state of the content search case toggle</summary>
     </key>
     <key name="search-skip-folders" type="as">
@@ -839,7 +839,7 @@
       <description>List of locations that the search engine will never enter when looking for matches. These can be absolute or simply folder names (like .git). You can still enter those folders and search inside of them, however.</description>
     </key>
     <key name="search-files-recursively" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Recurse into subfolders when performing a search</summary>
     </key>
     <key name="search-visible-columns" type="as">
