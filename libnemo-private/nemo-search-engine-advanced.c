@@ -647,7 +647,7 @@ get_stream_from_helper (SearchHelper *helper,
     gchar *ptr, *path, *quoted;
 
     path = g_file_get_path (file);
-    quoted = g_strdup_printf ("\"%s\"", path);
+    quoted = g_shell_quote (path);
     g_free (path);
 
     command_line = g_string_new (helper->exec_format);
@@ -670,6 +670,7 @@ get_stream_from_helper (SearchHelper *helper,
                              error)) {
         g_string_free (command_line, TRUE);
         g_free (quoted);
+        return NULL;
     }
 
     flags = G_SUBPROCESS_FLAGS_STDOUT_PIPE;
