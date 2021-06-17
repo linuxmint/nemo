@@ -561,7 +561,9 @@ nemo_query_editor_init (NemoQueryEditor *editor)
 
     separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
     gtk_box_pack_start (GTK_BOX (editor), separator, FALSE, FALSE, 0);
-    gtk_widget_show (separator);
+    g_object_bind_property (priv->infobar, "visible",
+                            separator, "visible",
+                            G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
 
     priv->focus_chain = g_list_append (NULL, priv->file_entry);
     priv->focus_chain = g_list_append (priv->focus_chain, priv->content_entry);
