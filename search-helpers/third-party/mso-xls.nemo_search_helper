@@ -1,0 +1,5 @@
+[Nemo Search Helper]
+TryExec=xls2csv;
+Exec=xls2csv %s
+MimeType=application/vnd.ms-excel;
+Priority=100

@@ -102,7 +102,9 @@ Recommends:
  poppler-utils,
  exif,
  id3,
- odt2txt
+ odt2txt,
+ catdoc,
+ texlive-binaries
 Suggests: eog, evince | pdf-viewer, totem | mp3-decoder, xdg-user-dirs
 Description: file manager and graphical shell for Cinnamon
  Nemo is the official file manager for the Cinnamon desktop. It allows

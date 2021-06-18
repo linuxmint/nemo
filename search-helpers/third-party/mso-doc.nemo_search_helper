@@ -1,0 +1,5 @@
+[Nemo Search Helper]
+TryExec=catdoc;
+Exec=catdoc %s
+MimeType=application/msword;
+Priority=100
