@@ -1491,9 +1491,12 @@ launch_application (GAppInfo *application,
 {
 	NemoFile *single_file;
 	char **sortable_image_viewers;
+    gboolean accepts_uri_list;
 
-	if (uris != NULL && uris->next == NULL) {
+    accepts_uri_list = g_strstr_len (g_app_info_get_commandline (application), -1, "%F") ||
+                       g_strstr_len (g_app_info_get_commandline (application), -1, "%U");
 
+	if (uris != NULL && uris->next == NULL && accepts_uri_list) {
 		sortable_image_viewers = g_settings_get_strv (nemo_preferences,
 													  NEMO_PREFERENCES_IMAGE_VIEWERS_WITH_EXTERNAL_SORT);
 
