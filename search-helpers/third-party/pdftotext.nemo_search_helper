@@ -1,5 +1,5 @@
 [Nemo Search Helper]
-TryExec=pdftotext
+TryExec=pdftotext;
 Exec=pdftotext %s -
 MimeType=application/pdf;
 Priority=200

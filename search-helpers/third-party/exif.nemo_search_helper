@@ -1,5 +1,5 @@
 [Nemo Search Helper]
-TryExec=exif
+TryExec=exif;
 Exec=exif -m %s
 MimeType=image/jpeg;image/png;image/gif;image/bmp;image/tiff;
 Priority=100

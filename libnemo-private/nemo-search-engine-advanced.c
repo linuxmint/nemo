@@ -132,7 +132,7 @@ process_search_helper_file (const gchar *path)
 {
     GKeyFile *key_file;
     gchar *exec_format = NULL;
-    gchar *try_exec = NULL;
+    gchar **try_exec_list = NULL;
     gchar *abs_try_path = NULL;
     gchar **mime_types = NULL;
     gint priority = 100;
@@ -158,10 +158,24 @@ process_search_helper_file (const gchar *path)
         goto done;
     }
 
-    try_exec = g_key_file_get_string (key_file, SEARCH_HELPER_GROUP, "TryExec", NULL);
-    abs_try_path = g_find_program_in_path (try_exec);
-    if (!abs_try_path) {
-        DEBUG ("Skipping search helper '%s' - program is not available (%s)", path, try_exec);
+    try_exec_list = g_key_file_get_string_list (key_file, SEARCH_HELPER_GROUP, "TryExec", NULL, NULL);
+    gboolean try_failed = FALSE;
+
+    for (i = 0; i < g_strv_length (try_exec_list); i++) {
+        abs_try_path = g_find_program_in_path (try_exec_list[i]);
+
+        if (!abs_try_path) {
+            DEBUG ("Skipping search helper '%s' - program is not available (%s)", path, try_exec_list[i]);
+            try_failed = TRUE;
+            break;
+        }
+
+        g_free (abs_try_path);
+    }
+
+    g_strfreev (try_exec_list);
+
+    if (try_failed) {
         goto done;
     }
 
@@ -215,8 +229,6 @@ process_search_helper_file (const gchar *path)
 done:
     g_key_file_free (key_file);
     g_free (exec_format);
-    g_free (try_exec);
-    g_free (abs_try_path);
 
     if (mime_types != NULL) {
         g_strfreev (mime_types);
