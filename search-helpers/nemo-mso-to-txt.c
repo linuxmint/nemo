@@ -111,18 +111,43 @@ iterate_thru_levels (GString   *collective,
     }
 }
 
+gchar *
+run_regex_replace (const gchar  *pattern,
+                   gchar        *input,
+                   const gchar  *replacement,
+                   GError      **error)
+{
+    GRegex *re;
+    gchar *out;
+
+    out = NULL;
+
+    re = g_regex_new (pattern,
+                      G_REGEX_OPTIMIZE,
+                      0,
+                      error);
+
+    if (re == NULL) {
+        return NULL;
+    }
+
+    out = g_regex_replace_literal (re, input, -1, 0, replacement, 0, error);
+    g_free (input);
+    g_regex_unref (re);
+
+    return out;
+}
+
 int
 main (int argc, char *argv[])
 {
     GsfInput *input;
     GsfInfile *toplevel;
     GString *collective;
-    GRegex *re;
     GError *error;
     GFile *file;
     gchar *filename;
-    gchar *xml_strip_out;
-    gchar *space_strip_out;
+    gchar *content;
 
     if (argc < 2) {
         g_printerr ("Need a filename\n");
@@ -149,6 +174,7 @@ main (int argc, char *argv[])
     if (error != NULL)
     {
         g_critical ("Could not load mso file: %s", error->message);
+        g_object_unref (input);
         g_error_free (error);
         return 1;
     }
@@ -160,33 +186,40 @@ main (int argc, char *argv[])
     g_object_unref (toplevel);
     g_object_unref (input);
 
-    re = g_regex_new ("<[^>]+>",
-                      G_REGEX_OPTIMIZE,
-                      0,
-                      &error);
+    content = g_string_free (collective, FALSE);
 
-    xml_strip_out = g_regex_replace_literal (re, collective->str, -1, 0, " ", 0, &error);
-    g_string_free (collective, TRUE);
-    g_regex_unref (re);
+    if (content == NULL) {
+        goto out;
+    }
 
-    re = g_regex_new ("\\s+",
-                      G_REGEX_OPTIMIZE,
-                      0,
-                      &error);
+    content = run_regex_replace ("<[^>]+>",
+                                 content,
+                                 "",
+                                 &error);
 
-    space_strip_out = g_regex_replace_literal (re, xml_strip_out, -1, 0, " ", 0, &error);
-    g_free (xml_strip_out);
-    g_regex_unref (re);
+    if (content == NULL) {
+        goto out;
+    }
 
+    content = run_regex_replace ("\\s+",
+                                 content,
+                                 " ",
+                                 &error);
+
+    if (content == NULL) {
+        goto out;
+    }
+
+    g_printf ("%s", content);
+    g_free (content);
+
+out:
     if (error != NULL)
     {
-        g_critical ("Could extract strings from mso file: %s", error->message);
+        g_critical ("Could not extract strings from mso 2003+ file: %s", error->message);
         g_error_free (error);
         return 1;
     }
-
-    g_printf ("%s", space_strip_out);
-    g_free (space_strip_out);
 
     return 0;
 }
