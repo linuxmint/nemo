@@ -1,0 +1,5 @@
+[Nemo Search Helper]
+TryExec=nemo-ppt-to-txt;libreoffice;
+Exec=nemo-ppt-to-txt %s
+MimeType=application/vnd.ms-powerpoint;
+Priority=100
