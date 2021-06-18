@@ -17,9 +17,9 @@ Priority=100
 The `Nemo Search Helper` group name is mandatory.
 
 - The filename must end in `.nemo_search_helper`.
-- `TryExec` should be set to the name of the executable (without any arguments). When the helpers are loaded, Nemo will
-  check that the program a) exists and b) is executable. If these checks fail, the helper will be skipped. If only a
-  program name is provided, it must exist in the user's path. This can also be an absolute path. 
+- `TryExec` should be a list executables required. When the helpers are loaded, Nemo will check that the program(s) a) exist and
+  b) are executable. If these checks fail, the helper will be skipped. If only a program name is provided, it must exist in the
+  user's path. This can also be an absolute path. 
 - `Exec` should provide the full command line necessary to extract the text from the file. The `%s` argument will be replaced by
   the file name being processed during content search. Note, uris are not supported, only paths (local files).
 - `MimeType`is a semicolon (`;`)-separated list of mimetypes that this search helper should be used with. It should be
