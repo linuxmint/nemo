@@ -92,19 +92,19 @@ Depends:
  libnemo-extension1 (= ${binary:Version}),
  nemo-data (= ${source:Version}),
  shared-mime-info (>= 0.50),
+ poppler-utils,
+ exif,
+ id3,
+ odt2txt,
+ catdoc,
+ texlive-binaries,
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
  gvfs-backends,
  gvfs-fuse,
  librsvg2-common,
- nemo-fileroller,
- poppler-utils,
- exif,
- id3,
- odt2txt,
- catdoc,
- texlive-binaries
+ nemo-fileroller
 Suggests: eog, evince | pdf-viewer, totem | mp3-decoder, xdg-user-dirs
 Description: file manager and graphical shell for Cinnamon
  Nemo is the official file manager for the Cinnamon desktop. It allows
