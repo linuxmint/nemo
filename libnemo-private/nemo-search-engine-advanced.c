@@ -864,7 +864,7 @@ search_for_content_hits (SearchThreadData *data,
             fsr = file_search_result_new (g_file_get_uri (file));
         }
 
-        file_search_result_add_hit (fsr, create_snippet (match_info, stripped, g_utf8_strlen (stripped, G_MAXSSIZE)));
+        file_search_result_add_hit (fsr, create_snippet (match_info, stripped, g_utf8_strlen (stripped, -1)));
 
         if (!data->count_hits) {
             break;
@@ -1033,7 +1033,7 @@ search_thread_func (gpointer user_data)
 
         if (!toplevel) {
             if (g_hash_table_contains (data->skip_folders, g_file_peek_path (dir))) {
-                g_object_unref (data);
+                g_object_unref (dir);
                 continue;
             }
 
