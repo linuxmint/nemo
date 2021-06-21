@@ -725,7 +725,11 @@ create_snippet (GMatchInfo  *match_info,
 
         // Extend the snipped forwards and back a bit to give context.
         new_start = MAX (0, start - SNIPPET_EXTEND_SIZE);
-        new_end = MIN (end + SNIPPET_EXTEND_SIZE, total_length - 1);
+
+        // g_match_info_fetch_pos() can return an end_bytes that == total_length,
+        // maybe a utf-8 encoding issue - g_utf8_substring can't deal with this,
+        // so just clamp new_end to >= end.
+        new_end = MIN (end + SNIPPET_EXTEND_SIZE, MAX (end, total_length - 1));
 
         matched_str = g_match_info_fetch (match_info, 0);
 
