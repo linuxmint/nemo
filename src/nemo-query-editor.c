@@ -725,12 +725,20 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
         gtk_widget_show (editor->priv->infobar);
         gtk_widget_queue_resize (GTK_WIDGET (editor->priv->infobar));
 
+        const gchar *content_forbidden_dirs[] = {
+            "file:///dev",
+            "file:///proc",
+            "file:///run",
+            "file:///sys",
+            NULL
+        };
+
         g_clear_pointer (&editor->priv->base_uri, g_free);
         editor->priv->base_uri = base_uri;
 
         base = g_file_new_for_uri (base_uri);
 
-        if (g_file_is_native (base)) {
+        if (g_file_is_native (base) && !g_strv_contains (content_forbidden_dirs, base_uri)) {
             gtk_widget_set_sensitive (editor->priv->content_main_box, TRUE);
             gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry), "");
         } else {

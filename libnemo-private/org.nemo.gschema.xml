@@ -834,7 +834,7 @@
       <summary>Stores the most recent state of the content search case toggle</summary>
     </key>
     <key name="search-skip-folders" type="as">
-      <default>[]</default>
+      <default>['/dev', '/proc', '/run', '/sys']</default>
       <summary>Paths or folder names to never recurse into when searching</summary>
       <description>List of locations that the search engine will never enter when looking for matches. These can be absolute or simply folder names (like .git). You can still enter those folders and search inside of them, however.</description>
     </key>
