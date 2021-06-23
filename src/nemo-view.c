@@ -10053,6 +10053,7 @@ nemo_view_update_actions_and_extensions (NemoView *view)
 
     update_actions_visibility (view, selection);
     reset_extension_actions_menu (view, selection);
+    update_configurable_context_menu_items (view);
 
     nemo_file_list_free (selection);
 }
