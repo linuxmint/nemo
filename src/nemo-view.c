@@ -5648,6 +5648,8 @@ add_extension_action_for_files (NemoView *view,
 	gtk_action_set_sensitive (action, sensitive);
 	g_object_set (action, "is-important", priority, NULL);
 
+    // FIXME: Don't add the selection to the action data.
+    // Just grab the selection in the activation callback.
 	data = g_new0 (ExtensionActionCallbackData, 1);
 	data->item = g_object_ref (item);
 	data->view = view;
@@ -9604,6 +9606,7 @@ update_configurable_context_menu_items (NemoView *view)
 static void
 real_update_menus (NemoView *view)
 {
+    GtkUIManager *ui_manager;
 	GList *selection, *l;
 	gint selection_count;
 	const char *tip, *label;
@@ -10032,6 +10035,11 @@ real_update_menus (NemoView *view)
         gtk_action_set_visible (action, !is_desktop_view && first_selected_is_favorite &&
                                         !selection_contains_recent && !selection_contains_trash);
     }
+
+    ui_manager = nemo_window_get_ui_manager (view->details->window);
+    nemo_ui_unmerge_ui (ui_manager,
+                        &view->details->extensions_menu_merge_id,
+                        &view->details->extensions_menu_action_group);
 
     update_configurable_context_menu_items (view);
 
