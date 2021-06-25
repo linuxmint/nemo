@@ -1,3 +1,25 @@
+nemo (5.0.2) uma; urgency=medium
+
+  [ Michael Webster ]
+  * settings: Make the default search button states match the old search behavior.
+  * nemo-search-engine-advanced.c: Escape paths properly before passing them to search helpers.
+  * nemo-query-editor.c: Don't show the bar separator if the search box isn't being shown.
+  * Search: Allow TryExec to be a list of programs.
+  * Search: Update search README.md for TryExec changes.
+  * search-helpers/nemo-mso-to-txt.c: Refactor and improve error handling.
+  * Search: Add .doc, .xls and .tex helpers.
+  * Search: Add .ppt helper.
+  * debian/control: Make search helper programs dependencies instead of recommends.
+  * nemo-mime-actions.c: Only add entire view file list to an image viewer launch if its commandline supports multiple files.
+  * nemo-search-engine-advanced.c: Ensure that the final snippet endpoint is no greater than the original endpoint.
+  * nemo-search-engine-advanced.c: a couple fixes.
+  * search: Disable content search for some special folders.
+  * nemo-view.c: Update context menu item visibility from preferences after updating the menu items from any extensions.
+  * nemo-view.c: Clear extension menu items during real_update_menus.
+  * nemo-view.c: Move call added to last commit to nemo_view_stop_loading.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 25 Jun 2021 16:58:08 +0100
+
 nemo (5.0.1) uma; urgency=medium
 
   [ Michael Webster ]
