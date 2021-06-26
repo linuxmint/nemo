@@ -1,5 +1,5 @@
 [Nemo Search Helper]
-TryExec=detex;
-Exec=detex %s
+TryExec=untex;
+Exec=untex %s
 MimeType=text/x-tex;
 Priority=100

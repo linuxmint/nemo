@@ -97,7 +97,7 @@ Depends:
  id3,
  odt2txt,
  catdoc,
- texlive-binaries,
+ untex,
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
