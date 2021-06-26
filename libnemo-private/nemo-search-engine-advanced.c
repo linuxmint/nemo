@@ -513,7 +513,7 @@ search_thread_data_new (NemoSearchEngineAdvanced *engine,
 
         g_free (escaped);
 
-        data->newline_re = g_regex_new ("\\n{2,}",
+        data->newline_re = g_regex_new ("[\\n\\r]{2,}",
                                            G_REGEX_OPTIMIZE,
                                            0,
                                            &error);
