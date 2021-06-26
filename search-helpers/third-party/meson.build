@@ -1,5 +1,5 @@
 helpers = [
-  'detex.nemo_search_helper',
+  'untex.nemo_search_helper',
   'exif.nemo_search_helper',
   'id3.nemo_search_helper',
   'libreoffice.nemo_search_helper',
