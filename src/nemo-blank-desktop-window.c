@@ -33,6 +33,7 @@
 #include <libnemo-private/nemo-action.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-global-preferences.h>
 
 #include <eel/eel-gtk-extensions.h>
 
@@ -79,7 +80,7 @@ action_activated_callback (GtkMenuItem *item, NemoAction *action)
 }
 
 static void
-actions_changed_cb (NemoBlankDesktopWindow *window)
+reset_popup_menu (NemoBlankDesktopWindow *window)
 {
     g_clear_pointer (&window->details->popup_menu, gtk_widget_destroy);
 }
@@ -91,18 +92,20 @@ build_menu (NemoBlankDesktopWindow *window)
         return;
     }
 
+    gboolean show_customize;
     NemoActionManager *desktop_action_manager = nemo_desktop_manager_get_action_manager ();
 
     if (window->details->actions_changed_id == 0) {
         window->details->actions_changed_id = g_signal_connect_swapped (desktop_action_manager,
                                                                         "changed",
-                                                                        G_CALLBACK (actions_changed_cb),
+                                                                        G_CALLBACK (reset_popup_menu),
                                                                         window);
     }
 
+    show_customize = g_settings_get_boolean (nemo_menu_config_preferences, "desktop-menu-customize");
     GList *action_list = nemo_action_manager_list_actions (desktop_action_manager);
 
-    if (g_list_length (action_list) == 0)
+    if (g_list_length (action_list) == 0 && !show_customize)
         return;
 
     window->details->popup_menu = gtk_menu_new ();
@@ -144,6 +147,10 @@ build_menu (NemoBlankDesktopWindow *window)
         }
     }
 
+    if (!show_customize) {
+        return;
+    }
+
     item = gtk_menu_item_new_with_label (_("Customize"));
 
     gtk_widget_set_visible (item, TRUE);
@@ -155,6 +162,11 @@ static void
 do_popup_menu (NemoBlankDesktopWindow *window, GdkEventButton *event)
 {
     build_menu (window);
+
+    if (window->details->popup_menu == NULL) {
+        return;
+    }
+
     eel_pop_up_context_menu (GTK_MENU(window->details->popup_menu),
                              event);
 }
@@ -191,6 +203,8 @@ nemo_blank_desktop_window_dispose (GObject *obj)
                              window->details->actions_changed_id);
         window->details->actions_changed_id = 0;
     }
+
+    g_signal_handlers_disconnect_by_func (nemo_menu_config_preferences, reset_popup_menu, window);
 
     G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->dispose (obj);
 }
@@ -233,6 +247,11 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 
     g_signal_connect (GTK_WIDGET (window), "button-press-event", G_CALLBACK (on_button_press), window);
     g_signal_connect (GTK_WIDGET (window), "popup-menu", G_CALLBACK (on_popup_menu), window);
+
+    g_signal_connect_swapped (nemo_menu_config_preferences,
+                              "changed::desktop-menu-customize",
+                              G_CALLBACK (reset_popup_menu),
+                              window);
 }
 
 static void
