@@ -1,3 +1,13 @@
+nemo (5.0.3) uma; urgency=medium
+
+  [ Michael Webster ]
+  * search: Use untex instead of detex to search latex files.
+  * search: Fix build from previous commit.
+  * nemo-search-engine-advanced.c: Also match \r (carriage return) in the newline filter.
+  * nemo-blank-desktop-window.c: Don't try to open a nonexistent menu.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 02 Jul 2021 10:49:34 +0100
+
 nemo (5.0.2) uma; urgency=medium
 
   [ Michael Webster ]
