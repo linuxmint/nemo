@@ -5,3 +5,4 @@ xgettext -c --join-existing --from-code=UTF-8 --keyword=_ --keyword=N_ --output=
     src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c         \
     data/nemo-actions/action_i18n_strings.py generate_additional_file
 xgettext -c --join-existing  -L Glade gresources/*.glade --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/*.ui --output=nemo.pot
