@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="xapp" version="0.0"/>
@@ -68,7 +68,7 @@
       </row>
       <row>
         <col id="0">3</col>
-        <col id="1" context="Desktop icon size">Normal</col>
+        <col id="1" translatable="yes" context="Desktop icon size">Normal</col>
         <col id="2">Desktop Normal</col>
       </row>
       <row>
@@ -139,7 +139,7 @@
     <property name="default_width">650</property>
     <property name="icon_name">preferences-desktop</property>
     <signal name="delete-event" handler="on_close_window" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
