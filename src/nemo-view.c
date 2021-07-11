@@ -9661,12 +9661,24 @@ real_update_menus (NemoView *view)
     is_desktop_view = get_is_desktop_view (view);
     trash_supported = eel_vfs_supports_uri_scheme ("trash");
 
-	action = gtk_action_group_get_action (view->details->dir_action_group,
-					      NEMO_ACTION_RENAME);
-	/* rename sensitivity depending on selection */
-	if (selection_count > 1) {
-		/* If multiple files are selected, sensitivity depends on whether a bulk renamer is registered. */
-		gtk_action_set_sensitive (action, have_bulk_rename_tool ());
+    action = gtk_action_group_get_action (view->details->dir_action_group,
+                                          NEMO_ACTION_RENAME);
+    /* rename sensitivity depending on selection */
+    if (selection_count > 1) {
+        GList *ptr;
+        gboolean can_rename = TRUE;
+
+        for (ptr = selection; ptr != NULL; ptr = ptr->next) {
+            NemoFile *item = NEMO_FILE (ptr->data);
+            // Favorites can be renamed, but only one at a time - bulk renamers don't know about the
+            // xapp favorites api.
+            if (!nemo_view_can_rename_file (view, item) || nemo_file_is_in_favorites (item)) {
+                can_rename = FALSE;
+                break;
+            }
+        }
+
+		gtk_action_set_sensitive (action, can_rename);
 	} else {
 		gtk_action_set_sensitive (action,
 					  selection_count == 1 &&
