@@ -79,6 +79,14 @@ install_data(rootPolicyFile,
   install_dir: join_paths(get_option('datadir'), 'polkit-1', 'actions')
 )
 
+foreach lang_file: ['nemo_action.lang', 'nemo_search_helper.lang']
+  foreach sv_dir: ['gtksourceview-2.0', 'gtksourceview-3.0', 'gtksourceview-4']
+    install_data(lang_file,
+      install_dir: join_paths(get_option('datadir'), sv_dir, 'language-specs')
+    )
+  endforeach
+endforeach
+
 ################################################################################
 
 subdir('icons')

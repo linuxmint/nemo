@@ -6,11 +6,16 @@
      <glob pattern="*.savedSearch"/>
    </mime-type>
 
-
    <mime-type type="application/nemo-action">
      <_comment>Nemo action definition</_comment>
      <generic-icon name="text-x-generic"/>
      <sub-class-of type="text/plain"/>
      <glob pattern="*.nemo_action"/>
+   </mime-type>
+   <mime-type type="application/nemo-search-helper">
+     <_comment>Nemo search-helper definition</_comment>
+     <generic-icon name="text-x-generic"/>
+     <sub-class-of type="text/plain"/>
+     <glob pattern="*.nemo_search_helper"/>
    </mime-type>
 </mime-info>
