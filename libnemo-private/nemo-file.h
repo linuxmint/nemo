@@ -115,8 +115,8 @@ typedef enum {
 
 /* Emblems sometimes displayed for NemoFiles. Do not localize. */ 
 #define NEMO_FILE_EMBLEM_NAME_SYMBOLIC_LINK "symbolic-link"
-#define NEMO_FILE_EMBLEM_NAME_CANT_READ "noread"
-#define NEMO_FILE_EMBLEM_NAME_CANT_WRITE "nowrite"
+#define NEMO_FILE_EMBLEM_NAME_CANT_READ "unreadable"
+#define NEMO_FILE_EMBLEM_NAME_CANT_WRITE "readonly"
 #define NEMO_FILE_EMBLEM_NAME_TRASH "trash"
 #define NEMO_FILE_EMBLEM_NAME_NOTE "note"
 #define NEMO_FILE_EMBLEM_NAME_FAVORITE "xapp-favorite"
