@@ -57,6 +57,7 @@ struct _NemoFileConflictDialogDetails
 	GtkWidget *checkbox;
 	GtkWidget *rename_button;
 	GtkWidget *replace_button;
+	GtkWidget *auto_rename_button;
 	GtkWidget *dest_image;
 	GtkWidget *src_image;
 };
@@ -546,6 +547,12 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 				_("_Skip"),
 				CONFLICT_RESPONSE_SKIP,
 				NULL);
+
+	details->auto_rename_button =
+		gtk_dialog_add_button (dialog,
+					   _("Auto_rename"),
+					   CONFLICT_RESPONSE_AUTO_RENAME);
+
 	details->rename_button =
 		gtk_dialog_add_button (dialog,
 				       _("Re_name"),
