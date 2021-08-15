@@ -1494,7 +1494,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* is_active */            TRUE },
   /* name, stock id */     { "Search", "edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
-  /* tooltip */              N_("Search documents and folders by name"),
+  /* tooltip */              N_("Search documents and folders"),
 			     NULL,
   /* is_active */            FALSE },
   /* name, stock id */     { NEMO_ACTION_SHOW_HIDE_EXTRA_PANE, NULL,
@@ -1704,7 +1704,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	g_object_unref (action);
 
  	action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_SEARCH,
- 				_("Search"),_("Search documents and folders by name"),
+ 				_("Search"),_("Search documents and folders"),
  				NULL));
 
   	gtk_action_group_add_action (action_group, action);
