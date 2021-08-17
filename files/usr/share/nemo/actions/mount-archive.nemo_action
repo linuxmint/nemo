@@ -4,7 +4,7 @@ Name=Mount archive
 
 Comment=Mount %f to browse its contents
 
-Exec=/usr/lib/gvfs/gvfsd-archive file="%U"
+Exec=gnome-disk-image-mounter %U
 
 Selection=s
 
@@ -12,7 +12,7 @@ Mimetypes=application/x-7z-compressed;application/x-cd-image;application/x-cpio;
 
 Icon-Name=mount-archive-symbolic
 
-Dependencies=/usr/lib/gvfs/gvfsd-archive;
+Dependencies=gnome-disk-image-mounter;
 
 Selection=s
 Name[lt]=Prijungti archyvą
