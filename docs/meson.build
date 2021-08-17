@@ -1,6 +1,7 @@
 
 install_man(
   'nemo.1',
+  'nemo-desktop.1',
   'nemo-connect-server.1',
 )
 
