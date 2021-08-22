@@ -57,12 +57,6 @@ struct _NemoToolbarPriv {
     GtkWidget *compact_view_button;
     GtkWidget *show_thumbnails_button;
 
-    GtkToolItem *navigation_box;
-    GtkToolItem *refresh_box;
-    GtkToolItem *location_box;
-    GtkToolItem *tools_box;
-    GtkToolItem *view_box;
-
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
     GtkWidget *root_bar;
@@ -119,7 +113,7 @@ toolbar_update_appearance (NemoToolbar *self)
 
     gtk_widget_set_visible (self->priv->root_bar,
                 self->priv->show_root_bar);
-        
+
         /* Please refer to the element name, not the action name after the forward slash, otherwise the prefs will not work*/
 
     widgetitem = self->priv->previous_button;
@@ -161,7 +155,7 @@ toolbar_update_appearance (NemoToolbar *self)
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
-        
+
     widgetitem = self->priv->open_terminal_button;
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR);
     if (icon_toolbar == FALSE ) {gtk_widget_hide (widgetitem); }
@@ -186,55 +180,11 @@ toolbar_update_appearance (NemoToolbar *self)
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
-    
+
     widgetitem = self->priv->show_thumbnails_button;
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
-
-    if (gtk_widget_get_visible(self->priv->previous_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->next_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->up_button) == FALSE)
-    {
-        gtk_widget_hide(GTK_WIDGET (self->priv->navigation_box));
-    } else {
-        gtk_widget_show(GTK_WIDGET (self->priv->navigation_box));
-    }
-
-    if (gtk_widget_get_visible(self->priv->home_button) == FALSE && 
-        gtk_widget_get_visible(self->priv->computer_button) == FALSE)
-    {
-        gtk_widget_hide(GTK_WIDGET (self->priv->location_box));
-    } else {
-        gtk_widget_show(GTK_WIDGET (self->priv->location_box));
-    }
-
-    if (gtk_widget_get_visible(self->priv->refresh_button) == FALSE) 
-    {
-        gtk_widget_hide(GTK_WIDGET (self->priv->refresh_box));
-    } else {
-        gtk_widget_show(GTK_WIDGET (self->priv->refresh_box));
-    }
-
-    if (gtk_widget_get_visible(self->priv->search_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->new_folder_button) == FALSE && 
-        gtk_widget_get_visible(self->priv->open_terminal_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->toggle_location_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->show_thumbnails_button) == FALSE)
-    {
-        gtk_widget_hide(GTK_WIDGET (self->priv->tools_box));
-    } else {
-        gtk_widget_show(GTK_WIDGET (self->priv->tools_box));
-    }
-
-    if (gtk_widget_get_visible(self->priv->icon_view_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->list_view_button) == FALSE &&
-        gtk_widget_get_visible(self->priv->compact_view_button) == FALSE)
-    {
-        gtk_widget_hide(GTK_WIDGET (self->priv->view_box));
-    } else {
-        gtk_widget_show(GTK_WIDGET (self->priv->view_box));
-    }
 }
 
 static void
@@ -275,6 +225,7 @@ toolbar_create_toolbutton (NemoToolbar *self,
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (button), action);
     gtk_button_set_label (GTK_BUTTON (button), NULL);
     gtk_widget_set_tooltip_text (button, gtk_action_get_tooltip (action));
+    gtk_style_context_add_class (gtk_widget_get_style_context (button), GTK_STYLE_CLASS_FLAT);
 
     return button;
 }
@@ -303,13 +254,13 @@ nemo_toolbar_constructed (GObject *obj)
 	toolbar = gtk_toolbar_new ();
 	self->priv->toolbar = toolbar;
     gtk_box_pack_start (GTK_BOX (self), self->priv->toolbar, TRUE, TRUE, 0);
-	
+
 	context = gtk_widget_get_style_context (GTK_WIDGET(toolbar));
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_PRIMARY_TOOLBAR);
-	
-    /* Back/Forward/Up */
-    self->priv->navigation_box = gtk_tool_item_new ();
-    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+
+    /* Left side of the toolbar */
+    tool_box = gtk_tool_item_new ();
+    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 
     self->priv->previous_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_BACK);
     gtk_container_add (GTK_CONTAINER (box), self->priv->previous_button);
@@ -320,32 +271,8 @@ nemo_toolbar_constructed (GObject *obj)
     self->priv->up_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_UP);
     gtk_container_add (GTK_CONTAINER (box), self->priv->up_button);
 
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
-
-    gtk_container_add (GTK_CONTAINER (self->priv->navigation_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->navigation_box));
-
-    gtk_widget_show_all (GTK_WIDGET (self->priv->navigation_box));
-    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->navigation_box), 6);
-
-    /* Refresh */
-    self->priv->refresh_box = gtk_tool_item_new ();
-    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-
     self->priv->refresh_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_RELOAD);
     gtk_container_add (GTK_CONTAINER (box), self->priv->refresh_button);
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-
-    gtk_container_add (GTK_CONTAINER (self->priv->refresh_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->refresh_box));
-
-    gtk_widget_show_all (GTK_WIDGET (self->priv->refresh_box));
-    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->refresh_box), 6);
-
-    /* Home/Computer */
-    self->priv->location_box = gtk_tool_item_new ();
-    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     self->priv->home_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_HOME);
     gtk_container_add (GTK_CONTAINER (box), self->priv->home_button);
@@ -353,14 +280,11 @@ nemo_toolbar_constructed (GObject *obj)
     self->priv->computer_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_COMPUTER);
     gtk_container_add (GTK_CONTAINER (box), self->priv->computer_button);
 
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
 
-    gtk_container_add (GTK_CONTAINER (self->priv->location_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->location_box));
-
-    gtk_widget_show_all (GTK_WIDGET (self->priv->location_box));
-    gtk_widget_set_margin_right (GTK_WIDGET (self->priv->location_box), 6);
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_right (GTK_WIDGET (tool_box), 6);
 
     /* Container to hold the location and pathbars */
     self->priv->stack = gtk_stack_new();
@@ -373,7 +297,7 @@ nemo_toolbar_constructed (GObject *obj)
 
     self->priv->path_bar = g_object_new (NEMO_TYPE_PATH_BAR, NULL);
     gtk_stack_add_named(GTK_STACK (self->priv->stack), GTK_WIDGET (self->priv->path_bar), "path_bar");
-    
+
     /* Entry-Like Location Bar */
     self->priv->location_bar = nemo_location_bar_new ();
     gtk_stack_add_named(GTK_STACK (self->priv->stack), GTK_WIDGET (self->priv->location_bar), "location_bar");
@@ -385,9 +309,9 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
     gtk_widget_show (GTK_WIDGET (tool_box));
 
-    /* Search/Open in Terminal/New Folder/Toggle Location */
-    self->priv->tools_box = gtk_tool_item_new ();
-    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    /* Right Side of the toolbar */
+    tool_box = gtk_tool_item_new ();
+    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
 
     self->priv->toggle_location_button = toolbar_create_toolbutton (self, FALSE, NEMO_ACTION_TOGGLE_LOCATION);
     gtk_container_add (GTK_CONTAINER (box), self->priv->toggle_location_button);
@@ -400,24 +324,11 @@ nemo_toolbar_constructed (GObject *obj)
 
     self->priv->search_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SEARCH);
     gtk_container_add (GTK_CONTAINER (box), self->priv->search_button);
-    
+
     self->priv->show_thumbnails_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SHOW_THUMBNAILS);
     gtk_container_add (GTK_CONTAINER (box), self->priv->show_thumbnails_button);
 
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
-
-    gtk_container_add (GTK_CONTAINER (self->priv->tools_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->tools_box));
-
-    gtk_widget_show_all (GTK_WIDGET (self->priv->tools_box));
-    gtk_widget_set_margin_left (GTK_WIDGET (self->priv->tools_box), 6);
-
     setup_root_info_bar (self);
-
-    /* View Select */
-    self->priv->view_box = gtk_tool_item_new ();
-    box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     self->priv->icon_view_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_ICON_VIEW);
     gtk_container_add (GTK_CONTAINER (box), self->priv->icon_view_button);
@@ -428,14 +339,11 @@ nemo_toolbar_constructed (GObject *obj)
     self->priv->compact_view_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_COMPACT_VIEW);
     gtk_container_add (GTK_CONTAINER (box), self->priv->compact_view_button);
 
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_RAISED);
-    gtk_style_context_add_class (gtk_widget_get_style_context (box), GTK_STYLE_CLASS_LINKED);
+    gtk_container_add (GTK_CONTAINER (tool_box), GTK_WIDGET (box));
+    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (tool_box));
 
-    gtk_container_add (GTK_CONTAINER (self->priv->view_box), GTK_WIDGET (box));
-    gtk_container_add (GTK_CONTAINER (self->priv->toolbar), GTK_WIDGET (self->priv->view_box));
-
-    gtk_widget_show_all (GTK_WIDGET (self->priv->view_box));
-    gtk_widget_set_margin_left (GTK_WIDGET (self->priv->view_box), 6);
+    gtk_widget_show_all (GTK_WIDGET (tool_box));
+    gtk_widget_set_margin_left (GTK_WIDGET (tool_box), 6);
 
     /* nemo patch */
     g_signal_connect_swapped (nemo_preferences,
