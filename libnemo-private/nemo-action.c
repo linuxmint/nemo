@@ -1143,8 +1143,12 @@ find_token_type (const gchar *str, TokenType *token_type)
             *token_type = TOKEN_URI_LIST;
             return ptr;
         }
-        if (g_str_has_prefix (ptr, TOKEN_EXEC_PARENT)) {
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_LOCATION_PATH)) {
             *token_type = TOKEN_PARENT_PATH;
+            return ptr;
+        }
+        if (g_str_has_prefix (ptr, TOKEN_EXEC_LOCATION_URI)) {
+            *token_type = TOKEN_PARENT_URI;
             return ptr;
         }
         if (g_str_has_prefix (ptr, TOKEN_EXEC_FILE_NAME)) {
@@ -1322,7 +1326,7 @@ get_insertion_string (NemoAction *action,
                     first = FALSE;
                 }
             } else {
-                goto default_parent_path;
+                goto default_parent_uri;
             }
             break;
         case TOKEN_PARENT_PATH:
@@ -1342,6 +1346,33 @@ default_parent_path:
             str = score_append (action, str, path);
             str = insert_quote (action, str);
             g_free (path);
+            break;
+        case TOKEN_PARENT_URI:
+            ;
+default_parent_uri:
+            ;
+            gchar *uri;
+            gchar *name = nemo_file_get_display_name (parent);
+            if (g_strcmp0 (name, "x-nemo-desktop") == 0) {
+                gchar *real_desktop_path = nemo_get_desktop_directory ();
+                if (real_desktop_path) {
+                    GFile *file;
+                    file = g_file_new_for_path (real_desktop_path);
+                    uri = g_file_get_uri (file);
+                    g_object_unref (file);
+                    g_free (real_desktop_path);
+                } else {
+                    uri = NULL;
+                }
+            } else {
+                uri = nemo_file_get_uri (parent);
+            }
+
+            str = insert_quote (action, str);
+            str = score_append (action, str, uri);
+            str = insert_quote (action, str);
+            g_free (name);
+            g_free (uri);
             break;
         case TOKEN_FILE_DISPLAY_NAME:
             if (g_list_length (selection) > 0) {
