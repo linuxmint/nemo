@@ -67,7 +67,9 @@ enum
   PROP_QUOTE_TYPE,
   PROP_ESCAPE_SPACE,
   PROP_RUN_IN_TERMINAL,
-  PROP_CONDITIONS
+  PROP_CONDITIONS,
+  PROP_URI_SCHEME,
+  PROP_LAST
 };
 
 enum {
@@ -141,6 +143,7 @@ nemo_action_init (NemoAction *action)
     action->escape_space = FALSE;
     action->show_in_blank_desktop = FALSE;
     action->run_in_terminal = FALSE;
+    action->uri_scheme = NULL;
 
     action->constructing = TRUE;
 }
@@ -276,6 +279,15 @@ nemo_action_class_init (NemoActionClass *klass)
                                                            FALSE,
                                                            G_PARAM_READWRITE)
                                  );
+
+    g_object_class_install_property (object_class,
+                                     PROP_URI_SCHEME,
+                                     g_param_spec_string ("uri-scheme",
+                                                          "Limit selection by uri scheme (like file, sftp, etc...)",
+                                                          "Limit selection by uri scheme (like file, sftp, etc...)",
+                                                          NULL,
+                                                          G_PARAM_READWRITE)
+                                     );
 
     signals[CONDITION_CHANGED] = g_signal_new ("condition-changed",
                                                G_TYPE_FROM_CLASS (object_class),
@@ -685,6 +697,11 @@ nemo_action_constructed (GObject *object)
                                               KEY_SEPARATOR,
                                               NULL);
 
+    gchar *uri_scheme = g_key_file_get_string (key_file,
+                                               ACTION_FILE_GROUP,
+                                               KEY_URI_SCHEME,
+                                               NULL);
+
     gchar *quote_type_string = g_key_file_get_string (key_file,
                                                       ACTION_FILE_GROUP,
                                                       KEY_QUOTE_TYPE,
@@ -829,6 +846,7 @@ nemo_action_constructed (GObject *object)
                    "conditions", conditions,
                    "escape-space", escape_space,
                    "run-in-terminal", run_in_terminal,
+                   "uri-scheme", uri_scheme,
                     NULL);
 
     action->constructing = FALSE;
@@ -846,6 +864,7 @@ nemo_action_constructed (GObject *object)
     g_free (parent_dir);
     g_free (quote_type_string);
     g_free (separator);
+    g_free (uri_scheme);
     g_strfreev (ext);
     g_strfreev (mimes);
     g_strfreev (conditions);
@@ -981,6 +1000,7 @@ nemo_action_finalize (GObject *object)
     g_free (action->orig_label);
     g_free (action->orig_tt);
     g_free (action->separator);
+    g_free (action->uri_scheme);
 
     if (action->dbus) {
         g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
@@ -1060,6 +1080,9 @@ nemo_action_set_property (GObject         *object,
     case PROP_RUN_IN_TERMINAL:
       action->run_in_terminal = g_value_get_boolean (value);
       break;
+    case PROP_URI_SCHEME:
+      action->uri_scheme = g_strdup (g_value_get_string (value));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1119,6 +1142,9 @@ nemo_action_get_property (GObject    *object,
       break;
     case PROP_RUN_IN_TERMINAL:
       g_value_set_boolean (value, action->run_in_terminal);
+      break;
+    case PROP_URI_SCHEME:
+      g_value_set_string (value, action->uri_scheme);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1680,6 +1706,10 @@ nemo_action_get_visibility (NemoAction *action,
 
     if (!action->gsettings_satisfied)
         return FALSE;
+
+    if ((action->uri_scheme != NULL) && !nemo_file_has_uri_scheme (parent, action->uri_scheme)) {
+        return FALSE;
+    }
 
     // Check selection
     gboolean selection_type_show = FALSE;

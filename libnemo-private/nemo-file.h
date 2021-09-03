@@ -196,6 +196,7 @@ char *			 nemo_file_get_description			 (NemoFile			 *file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);
 char *                  nemo_file_get_path                          (NemoFile                   *file);
 char *                  nemo_file_get_uri_scheme                    (NemoFile                   *file);
+gboolean                nemo_file_has_uri_scheme                    (NemoFile *file, const gchar *scheme);
 NemoFile *          nemo_file_get_parent                        (NemoFile                   *file);
 GFile *                 nemo_file_get_parent_location               (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri                    (NemoFile                   *file);

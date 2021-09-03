@@ -75,6 +75,7 @@
 #define KEY_WHITESPACE "EscapeSpaces"
 #define KEY_DOUBLE_ESCAPE_QUOTES "DoubleEscapeQuotes"
 #define KEY_TERMINAL "Terminal"
+#define KEY_URI_SCHEME "UriScheme"
 
 typedef struct _NemoAction NemoAction;
 typedef struct _NemoActionClass NemoActionClass;
@@ -132,6 +133,7 @@ struct _NemoAction {
     gboolean escape_space;
     gboolean show_in_blank_desktop;
     gboolean run_in_terminal;
+    gchar *uri_scheme;
 
     gboolean constructing;
 };

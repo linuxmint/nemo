@@ -113,3 +113,13 @@ EscapeSpaces=true
 # Optional - by default this is false
 
 #Terminal=false
+
+# Uri scheme - provide a uri scheme that the current location's scheme must match
+# For example:
+# ...
+# UriScheme=sftp
+# ...
+# sftp://joe@10.0.0.200/ matches
+# file:///home/joe/.bashrc does not
+
+#UriScheme=file

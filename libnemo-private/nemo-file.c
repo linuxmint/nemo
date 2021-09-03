@@ -1677,6 +1677,22 @@ nemo_file_get_uri_scheme (NemoFile *file)
 	return scheme;
 }
 
+gboolean
+nemo_file_has_uri_scheme (NemoFile    *file,
+                          const gchar *scheme)
+{
+    gchar *file_uri_scheme;
+    gboolean has;
+
+    g_return_val_if_fail (NEMO_IS_FILE (file), FALSE);
+
+    file_uri_scheme = nemo_file_get_uri_scheme (file);
+    has = g_strcmp0 (scheme, file_uri_scheme) == 0;
+    g_free (file_uri_scheme);
+
+    return has;
+}
+
 NemoFileOperation *
 nemo_file_operation_new (NemoFile *file,
 			     NemoFileOperationCallback callback,
