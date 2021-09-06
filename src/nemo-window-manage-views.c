@@ -285,7 +285,7 @@ viewed_file_changed_callback (NemoFile *file,
         if (slot->back_list == NULL) {
             end_location_change (slot);
             gtk_widget_destroy (GTK_WIDGET (slot->content_view));
-            nemo_window_close (nemo_window_slot_get_window (slot));
+            nemo_window_pane_close_slot (slot->pane, slot);
             return;
         }
 
