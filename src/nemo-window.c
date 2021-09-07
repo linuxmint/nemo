@@ -1194,7 +1194,7 @@ nemo_window_key_press_event (GtkWidget *widget,
           return FALSE;
       }
 
-	if (view != NULL && nemo_view_get_is_renaming (view)) {
+	if (view != NULL && nemo_view_get_is_renaming (view) && event->keyval != GDK_KEY_F2) {
 		/* if we're renaming, just forward the event to the
 		 * focused widget and return. We don't want to process the window
 		 * accelerator bindings, as they might conflict with the
