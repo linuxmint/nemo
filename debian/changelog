@@ -1,3 +1,12 @@
+nemo (5.0.4) uma; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-view.c: Follow the same invocation rules for bulk renaming as we do for normal renaming.
+  * nemo-file.h: Use the correct icon names for read-only and unreadable emblems.
+  * nemo-window-manager-views.c: When removing a folder, don't close the entire window if that folder is open on another tab.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 15 Oct 2021 15:39:16 +0100
+
 nemo (5.0.3) uma; urgency=medium
 
   [ Michael Webster ]
