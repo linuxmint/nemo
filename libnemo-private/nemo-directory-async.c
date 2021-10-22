@@ -3902,7 +3902,7 @@ get_pixbuf_for_content (goffset file_len,
 	gboolean res;
 	GdkPixbuf *pixbuf, *pixbuf2;
 	GdkPixbufLoader *loader;
-	gsize chunk_len;
+	gsize chunk_len = 4096;
 	pixbuf = NULL;
 	
 	loader = gdk_pixbuf_loader_new ();
@@ -3913,7 +3913,7 @@ get_pixbuf_for_content (goffset file_len,
 	/* For some reason we have to write in chunks, or gdk-pixbuf fails */
 	res = TRUE;
 	while (res && file_len > 0) {
-		chunk_len = file_len;
+		chunk_len = (file_len > chunk_len) ? chunk_len : file_len;
 		res = gdk_pixbuf_loader_write (loader, (guchar *) file_contents, chunk_len, NULL);
 		file_contents += chunk_len;
 		file_len -= chunk_len;
