@@ -6742,6 +6742,7 @@ copy_or_cut_files (NemoView *view,
 		   GList           *clipboard_contents,
 		   gboolean         cut)
 {
+    GtkClipboard *clipboard;
 	int count;
 	char *status_string, *name;
 	NemoClipboardInfo info;
@@ -6760,11 +6761,14 @@ copy_or_cut_files (NemoView *view,
         targets = gtk_target_table_new_from_list (target_list, &n_targets);
         gtk_target_list_unref (target_list);
 
-	gtk_clipboard_set_with_data (nemo_clipboard_get (GTK_WIDGET (view)),
-				     targets, n_targets,
-				     nemo_get_clipboard_callback, nemo_clear_clipboard_callback,
-				     NULL);
-        gtk_target_table_free (targets, n_targets);
+    clipboard = nemo_clipboard_get (GTK_WIDGET (view));
+
+    gtk_clipboard_set_with_data (clipboard,
+                                 targets, n_targets,
+                                 nemo_get_clipboard_callback, nemo_clear_clipboard_callback,
+                                 NULL);
+    gtk_clipboard_set_can_store (clipboard, NULL, 0);
+    gtk_target_table_free (targets, n_targets);
 
 	nemo_clipboard_monitor_set_clipboard_info (nemo_clipboard_monitor_get (), &info);
 
