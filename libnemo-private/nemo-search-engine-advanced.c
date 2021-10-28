@@ -1032,9 +1032,13 @@ search_thread_func (gpointer user_data)
            (dir = g_queue_pop_head (data->directories)) != NULL) {
 
         if (!toplevel) {
-            if (g_hash_table_contains (data->skip_folders, g_file_peek_path (dir))) {
-                g_object_unref (dir);
-                continue;
+            const gchar *path = g_file_peek_path (dir);
+
+            if (path != NULL) {
+                if (g_hash_table_contains (data->skip_folders, path)) {
+                    g_object_unref (dir);
+                    continue;
+                }
             }
 
             g_autofree gchar *filename = NULL;
