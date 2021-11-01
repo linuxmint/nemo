@@ -1,3 +1,10 @@
+nemo (5.0.5) uma; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-search-engine-advanced.c: Ensure a path before using it as a key in the skip table - g_str_hash cannot be NULL.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 01 Nov 2021 09:25:06 +0000
+
 nemo (5.0.4) uma; urgency=medium
 
   [ Michael Webster ]
