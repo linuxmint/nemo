@@ -1,3 +1,44 @@
+nemo (5.2.0) una; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-desktop-overlay.glade: Fix label marked untranslatable.
+  * makepot: Add shortcuts ui file.
+  * nemo-view.c: Follow the same invocation rules for bulk renaming as we do for normal renaming.
+  * Install language definitions to gtksourceview-4.
+  * nemo-file.h: Use the correct icon names for read-only and unreadable emblems.
+  * mount-archive.nemo_action: Use gnome-disk-image-mounter instead of gvfsd-archive.
+  * debian/control: Add gnome-disk-utility to recommends (for image mount action).
+  * Add a manpage for nemo-desktop and clean up nemo's a bit.
+
+  [ JosephMcc ]
+  * nemo-toolbar.c: Use flat button style
+
+  [ Joshua Peisach ]
+  * extension gir: Export 'libnemo-extension' to the gir
+
+  [ Michael Webster ]
+  * actions: Refactor to remove unnecessary methods.
+  * actions: Add new conversion token for a file's parent uri (with selection_count > 0) and location uri (selection_count == 0).
+  * actions: Add UriScheme specifier in the action definition.
+  * nemo-window-manager-views.c: When removing a folder, don't close the entire window if that folder is open on another tab.
+  * nemo-window.c: Don't ignore tab events when renaming.
+  * nemo-directory-async.c: Don't write the entire buffer into the pixbuf loader all at once.
+  * copy/paste: Make the clipboard contents persist after the process ends.
+  * nemo-search-engine-advanced.c: Ensure a path before using it as a key in the skip table - g_str_hash cannot be NULL.
+
+  [ Isaac Carter ]
+  * search: Update tooltip text (#2810)
+
+  [ Minabsapi ]
+  * file operations: Add duplicate button (#2841)
+
+  [ Clement Lefebvre ]
+  * file-operations: Rename button label in previous commit
+  * l10n: Generate files
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 15 Nov 2021 14:25:48 +0000
+
 nemo (5.0.3) uma; urgency=medium
 
   [ Michael Webster ]
