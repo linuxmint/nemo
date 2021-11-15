@@ -62,8 +62,9 @@ struct _NemoFileConflictDialogClass {
 enum
 {
 	CONFLICT_RESPONSE_SKIP = 1,
-	CONFLICT_RESPONSE_REPLACE = 2,
-	CONFLICT_RESPONSE_RENAME = 3,
+	CONFLICT_RESPONSE_AUTO_RENAME = 2,
+	CONFLICT_RESPONSE_REPLACE = 3,
+	CONFLICT_RESPONSE_RENAME = 4
 };
 
 GType nemo_file_conflict_dialog_get_type (void) G_GNUC_CONST;

@@ -100,6 +100,7 @@ typedef struct {
 	gboolean skip_all_error;
 	gboolean skip_all_conflict;
 	gboolean merge_all;
+	gboolean auto_rename_all;
 	gboolean replace_all;
 	gboolean delete_all;
 } CommonJob;
@@ -4616,7 +4617,7 @@ copy_move_file (CopyMoveJob *copy_job,
 
 		g_error_free (error);
 
-		if (unique_names) {
+		if (unique_names || job->auto_rename_all) {
 			g_object_unref (dest);
 			dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, unique_name_nr++);
 			goto retry;
@@ -4664,6 +4665,13 @@ copy_move_file (CopyMoveJob *copy_job,
 			g_object_unref (dest);
 			dest = get_target_file_for_display_name (dest_dir,
 								 resp->new_name);
+			conflict_response_data_free (resp);
+			goto retry;
+		} else if (resp->id == CONFLICT_RESPONSE_AUTO_RENAME) {
+			if (resp->apply_to_all) {
+				job->auto_rename_all = TRUE;
+			}
+			unique_names = TRUE;
 			conflict_response_data_free (resp);
 			goto retry;
 		} else {
@@ -5130,6 +5138,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	GError *error;
 	CommonJob *job;
 	gboolean overwrite;
+	gboolean auto_rename;
 	char *primary, *secondary, *details;
 	int response;
 	GFileCopyFlags flags;
@@ -5275,6 +5284,12 @@ move_file_prepare (CopyMoveJob *move_job,
 			goto retry;
 		}
 
+		if (job->auto_rename_all || auto_rename) {
+			g_object_unref (dest);
+			dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, 1);
+			goto retry;
+		}
+
 		if (job->skip_all_conflict) {
 			goto out;
 		}
@@ -5305,6 +5320,13 @@ move_file_prepare (CopyMoveJob *move_job,
 			g_object_unref (dest);
 			dest = get_target_file_for_display_name (dest_dir,
 								 resp->new_name);
+			conflict_response_data_free (resp);
+			goto retry;
+		} else if (resp->id == CONFLICT_RESPONSE_AUTO_RENAME) {
+			if (resp->apply_to_all) {
+				job->auto_rename_all = TRUE;
+			}
+			auto_rename = TRUE;
 			conflict_response_data_free (resp);
 			goto retry;
 		} else {
