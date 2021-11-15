@@ -562,7 +562,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 
 	details->auto_rename_button =
 		gtk_dialog_add_button (dialog,
-					   _("Auto_rename"),
+					   _("D_uplicate"),
 					   CONFLICT_RESPONSE_AUTO_RENAME);
 
 	details->rename_button =
