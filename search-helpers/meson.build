@@ -21,8 +21,15 @@ ppt_to_txt = executable('nemo-ppt-to-txt',
 )
 
 install_data(
+    'nemo-xls-to-txt',
+    install_dir: join_paths(get_option('prefix'), get_option('bindir')),
+    install_mode: 'rwxr-xr-x'
+)
+
+install_data(
     'mso.nemo_search_helper',
     'mso-ppt.nemo_search_helper',
+    'mso-xls.nemo_search_helper',
     install_dir: join_paths(nemoDataPath, 'search-helpers')
 )
 
