@@ -1,5 +1,5 @@
 [Nemo Search Helper]
-TryExec=xls2csv;
-Exec=xls2csv %s
+TryExec=nemo-xls-to-txt;
+Exec=nemo-xls-to-txt %s
 MimeType=application/vnd.ms-excel;
 Priority=100

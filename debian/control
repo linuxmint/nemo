@@ -98,6 +98,7 @@ Depends:
  odt2txt,
  catdoc,
  untex,
+ python3-xlrd,
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
