@@ -733,7 +733,7 @@
       <summary>Show the selection context menu's Favorite/Unfavorite item.</summary>
     </key>
     <key name="selection-menu-make-link" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Show the selection context menu's Create Link item.</summary>
     </key>
     <key name="selection-menu-rename" type="b">
