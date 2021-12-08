@@ -107,7 +107,17 @@ Recommends:
  librsvg2-common,
  nemo-fileroller,
  gnome-disk-utility
-Suggests: eog, evince | pdf-viewer, totem | mp3-decoder, xdg-user-dirs
+Suggests:
+ eog,
+ evince | pdf-viewer,
+ totem | mp3-decoder,
+ xdg-user-dirs,
+ catdoc,
+ exif,
+ id3,
+ odt2txt,
+ poppler-utils,
+ untex
 Description: file manager and graphical shell for Cinnamon
  Nemo is the official file manager for the Cinnamon desktop. It allows
  to browse directories, preview files and launch applications associated
