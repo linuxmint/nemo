@@ -1,3 +1,10 @@
+nemo (5.2.1) una; urgency=medium
+
+  [ Michael Webster ]
+  * search: Use the python xlrd module to read .xls files.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 09 Dec 2021 11:23:52 +0000
+
 nemo (5.2.0) una; urgency=medium
 
   [ Michael Webster ]
