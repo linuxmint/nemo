@@ -1,3 +1,14 @@
+nemo (5.2.2) una; urgency=medium
+
+  [ Michael Webster ]
+  * Fix mistake in shortcuts window.
+
+  [ Clement Lefebvre ]
+  * l10n: Generate files
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 16 Dec 2021 10:14:04 +0000
+
 nemo (5.2.1) una; urgency=medium
 
   [ Michael Webster ]
