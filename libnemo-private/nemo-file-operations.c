@@ -5161,6 +5161,8 @@ move_file_prepare (CopyMoveJob *move_job,
     }
 
 	overwrite = FALSE;
+    auto_rename = FALSE;
+
 	handled_invalid_filename = *dest_fs_type != NULL;
 
 	job = (CommonJob *)move_job;
