@@ -681,7 +681,7 @@ nemo_query_editor_set_query (NemoQueryEditor	*editor,
 
     if (query != NULL) {
         file_pattern = nemo_query_get_file_pattern (query);
-        content_pattern = nemo_query_get_file_pattern (query);
+        content_pattern = nemo_query_get_content_pattern (query);
     }
 
     if (!file_pattern) {
@@ -720,7 +720,7 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
     g_return_if_fail (NEMO_IS_QUERY_EDITOR (editor));
 
     if (active) {
-        GFile *base;
+        GFile *location;
 
         gtk_widget_show (editor->priv->infobar);
         gtk_widget_queue_resize (GTK_WIDGET (editor->priv->infobar));
@@ -734,11 +734,17 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
         };
 
         g_clear_pointer (&editor->priv->base_uri, g_free);
-        editor->priv->base_uri = base_uri;
 
-        base = g_file_new_for_uri (base_uri);
+        if (editor->priv->current_uri != NULL) {
+            editor->priv->base_uri = g_strdup (editor->priv->current_uri);
+            g_free (base_uri);
+        } else {
+            editor->priv->base_uri = base_uri;
+        }
 
-        if (g_file_is_native (base) && !g_strv_contains (content_forbidden_dirs, base_uri)) {
+        location = g_file_new_for_uri (editor->priv->base_uri);
+
+        if (g_file_is_native (location) && !g_strv_contains (content_forbidden_dirs, editor->priv->base_uri)) {
             gtk_widget_set_sensitive (editor->priv->content_main_box, TRUE);
             gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry), "");
         } else {
@@ -747,7 +753,7 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
                                             _("Not supported in this location"));
         }
 
-        g_object_unref (base);
+        g_object_unref (location);
 
         g_signal_connect (editor->priv->file_entry,
                           "key-press-event",
