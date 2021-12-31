@@ -1,3 +1,11 @@
+nemo (5.2.3) una; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: Initialize 'auto_rename' before using it.
+  * nemo-query-editor.c: Fix editor issue when using tabs.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 31 Dec 2021 11:17:39 +0000
+
 nemo (5.2.2) una; urgency=medium
 
   [ Michael Webster ]
