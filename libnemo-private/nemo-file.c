@@ -4439,10 +4439,53 @@ nemo_file_should_show_thumbnail (NemoFile *file)
     return nemo_file_is_local (file);
 }
 
+static void
+delete_failed_thumbnail_marker (NemoFile *file)
+{
+    gchar *uri, *filename, *path;
+    GChecksum *checksum;
+    guint8 digest[16];
+    gsize digest_len = sizeof (digest);
+    gint success;
+
+    uri = nemo_file_get_uri (file);
+    checksum = g_checksum_new (G_CHECKSUM_MD5);
+    g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
+
+    g_checksum_get_digest (checksum, digest, &digest_len);
+    g_assert (digest_len == 16);
+
+    filename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+    g_checksum_free (checksum);
+
+    path = g_build_filename (g_get_user_cache_dir (),
+                             "thumbnails/fail/gnome-thumbnail-factory",
+                             filename,
+                             NULL);
+    g_free (filename);
+
+    success = g_unlink (path);
+
+    if (success != 0) {
+        if (errno != ENOENT && errno != EFAULT) {
+            g_warning ("Could not remove failed thumbnail marker for '%s'. The path was '%s'",
+                       file->details->display_name,
+                       path);
+        }
+    }
+
+    g_free (uri);
+    g_free (path);
+}
+
 void
 nemo_file_delete_thumbnail (NemoFile *file)
 {
     if (file->details->thumbnail_path == NULL) {
+        if (file->details->thumbnailing_failed) {
+            delete_failed_thumbnail_marker (file);
+        }
+
         return;
     }
 
