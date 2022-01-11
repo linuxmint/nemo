@@ -1,3 +1,10 @@
+nemo (5.2.4) una; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file.c: Remove a file's 'failed thumbnail' marker when refreshing, if it has one.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Jan 2022 16:05:44 +0000
+
 nemo (5.2.3) una; urgency=medium
 
   [ Michael Webster ]
