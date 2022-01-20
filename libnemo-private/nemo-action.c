@@ -1286,6 +1286,9 @@ static gchar *
 get_device_path (NemoAction *action, NemoFile *file)
 {
     GMount *mount = nemo_file_get_mount (file);
+
+    g_return_val_if_fail (mount != NULL, NULL);
+
     GVolume *volume = g_mount_get_volume (mount);
     gchar *ret = NULL;
 
