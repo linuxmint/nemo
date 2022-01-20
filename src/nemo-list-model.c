@@ -1110,9 +1110,17 @@ update_dummy_row (NemoListModel *model,
 
             if (dummy_entry->file == NULL) {
                 if (!file_entry->expanding) {
+                    GtkTreePath *path;
+                    GtkTreeIter iter;
 
-                    model->details->stamp++;
+                    iter.stamp = model->details->stamp;
+                    iter.user_data = dummy_ptr;
+                    path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+
                     g_sequence_remove (dummy_ptr);
+                    model->details->stamp++;
+                    gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
+                    gtk_tree_path_free (path);
                     changed = TRUE;
                 }
             }
