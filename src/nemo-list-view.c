@@ -642,9 +642,10 @@ motion_notify_callback (GtkWidget *widget,
         selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 
         gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget),
-                           event->x, event->y,
-                           &path,
-                           NULL, NULL, NULL);
+                                       view->details->drag_x,
+                                       view->details->drag_y,
+                                       &path,
+                                       NULL, NULL, NULL);
 
         /* This looks complicated but it's just verbose:  We'll only consider allowing rubber-banding
          * to begin if the following are TRUE: a) The current row is the only row currently selected,
@@ -663,7 +664,8 @@ motion_notify_callback (GtkWidget *widget,
          * This allows DnD to operate on a new selection like before, when the motion begins over text or
          * icons */
         if (is_new_self_selection && gtk_tree_view_is_blank_at_pos (GTK_TREE_VIEW (widget),
-                                                                    event->x, event->y,
+                                                                    view->details->drag_x,
+                                                                    view->details->drag_y,
                                                                     NULL, NULL, NULL, NULL)) {
             /* If this is a candidate for rubber-banding, track that state in the view, and allow the event
              * to continue into Gtk (which handles rubber-band selection for us) */
