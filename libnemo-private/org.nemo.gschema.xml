@@ -415,6 +415,10 @@
       <default>false</default>
       <summary>Suppress any safeguards when running nemo/nemo-desktop as the root user. For some systems there is only a root user.</summary>
     </key>
+    <key name="detect-content" type="b">
+      <default>true</default>
+      <summary>If true, enable detection of the type of content of a mounted media and display a suggested application to open the media.</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

@@ -226,9 +226,10 @@ typedef enum
 
 /* media handling */
 
-#define GNOME_DESKTOP_MEDIA_HANDLING_AUTOMOUNT      "automount"
-#define GNOME_DESKTOP_MEDIA_HANDLING_AUTOMOUNT_OPEN "automount-open"
-#define GNOME_DESKTOP_MEDIA_HANDLING_AUTORUN        "autorun-never"
+#define GNOME_DESKTOP_MEDIA_HANDLING_AUTOMOUNT            "automount"
+#define GNOME_DESKTOP_MEDIA_HANDLING_AUTOMOUNT_OPEN       "automount-open"
+#define GNOME_DESKTOP_MEDIA_HANDLING_AUTORUN              "autorun-never"
+#define NEMO_PREFERENCES_MEDIA_HANDLING_DETECT_CONTENT    "detect-content"
 
 /* Terminal */
 #define GNOME_DESKTOP_TERMINAL_EXEC        "exec"
