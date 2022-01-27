@@ -202,6 +202,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 	progress_window = xapp_gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	self->priv->progress_window = progress_window;
 
+    gtk_window_set_type_hint (GTK_WINDOW (progress_window), GDK_WINDOW_TYPE_HINT_DIALOG);
     gtk_window_set_resizable (GTK_WINDOW (progress_window), FALSE);
     gtk_window_set_default_size (GTK_WINDOW (progress_window), 500, -1);
 
