@@ -716,6 +716,10 @@
       <default>true</default>
       <summary>Show the selection context menu's Copy item.</summary>
     </key>
+    <key name="selection-menu-copy-path" type="b">
+      <default>true</default>
+      <summary>Show the selection context menu's Copy as path item.</summary>
+    </key>
     <key name="selection-menu-paste" type="b">
       <default>true</default>
       <summary>Show the selection context menu's Paste item.</summary>

@@ -437,7 +437,7 @@ static const GtkActionEntry clipboard_entries[] = {
   /* tooltip */               N_("Copy the selected text to the clipboard"),
                               G_CALLBACK (action_copy_callback) },
   /* name, stock id */      { "Copy path", NULL,
-  /* label, accelerator */    "Copy as path", NULL,
+  /* label, accelerator */    "Copy as Path", NULL,
   /* tooltip */               N_("Copy the file path to the clipboard"),
                               G_CALLBACK (action_copy_callback) },
   /* name, stock id */      { "Paste", GTK_STOCK_PASTE,
