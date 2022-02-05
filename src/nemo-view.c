@@ -6823,6 +6823,82 @@ action_copy_files_callback (GtkAction *action,
 }
 
 static void
+copy_file_path (NemoView *view,
+		GList    *files)
+{
+	GtkClipboard *clipboard;
+	NemoFile *file;
+	GList *list;
+	char *text;
+	char *loc;
+	char *tmp;
+
+	text = NULL;
+
+	/* If no files are selected, then do not modify the clipboard contents */
+	if (files == NULL) {
+		return;
+	}
+
+	/* Prepare text */
+	for (list = files; list != NULL; list = list->next) {
+		file = list->data;
+
+		if (file == NULL) {
+			continue;
+		}
+
+		loc = NULL;
+
+		/* Try local path */
+		if (nemo_file_is_local (file)) {
+			loc = nemo_file_get_path (file);
+		}
+
+		if (loc == NULL) {
+			/* Try global uri */
+			loc = nemo_file_get_uri (file);
+			if (loc == NULL) {
+				continue;
+			}
+		}
+
+		/* Push all locations into one string */
+		if (text == NULL)
+		{
+			text = loc;
+		}
+		else
+		{
+			tmp = text;
+			text = g_strjoin (", ", tmp, loc, NULL);
+			g_free (tmp);
+			g_free (loc);
+		}
+	}
+
+	/* Push path text to clipboard */
+	clipboard = nemo_clipboard_get (GTK_WIDGET (view));
+	gtk_clipboard_set_text (clipboard, text, -1);
+
+	g_free (text);
+}
+
+static void
+action_copy_path_callback (GtkAction *action,
+			   gpointer callback_data)
+{
+	NemoView *view;
+	GList *selection;
+
+	view = NEMO_VIEW (callback_data);
+
+	selection = nemo_view_get_selection (view);
+	copy_file_path (view, selection);
+	nemo_file_list_free (selection);
+}
+
+static void
 move_copy_selection_to_next_pane (NemoView *view,
 				  int copy_action)
 {
@@ -8107,6 +8183,24 @@ action_location_copy_callback (GtkAction *action,
 }
 
 static void
+action_location_copy_path_callback (GtkAction *action,
+				    gpointer   callback_data)
+{
+	NemoView *view;
+	NemoFile *file;
+	GList *files;
+
+	view = NEMO_VIEW (callback_data);
+
+	file = view->details->location_popup_directory_as_file;
+	g_return_if_fail (file != NULL);
+
+	files = g_list_append (NULL, file);
+	copy_file_path (view, files);
+	g_list_free (files);
+}
+
+static void
 action_location_paste_files_into_callback (GtkAction *action,
 					   gpointer callback_data)
 {
@@ -8282,6 +8376,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Copy"), "<control>C",
   /* tooltip */                  N_("Prepare the selected files to be copied with a Paste command"),
 				 G_CALLBACK (action_copy_files_callback) },
+  /* name, stock id */         { "Copy path", NULL,
+  /* label, accelerator */       N_("Copy as path"), NULL,
+  /* tooltip */                  N_("Copy the files path to the clipboard"),
+				 G_CALLBACK (action_copy_path_callback) },
   /* name, stock id */         { "Paste", "edit-paste-symbolic",
   /* label, accelerator */       N_("_Paste"), "<control>V",
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command"),
@@ -8426,6 +8524,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Copy"), "",
   /* tooltip */                  N_("Prepare this folder to be copied with a Paste command"),
 				 G_CALLBACK (action_location_copy_callback) },
+  /* name, stock id */         { NEMO_ACTION_LOCATION_COPY_PATH, NULL,
+  /* label, accelerator */       N_("Copy as path"), "",
+  /* tooltip */                  N_("Copy file location to clipboard"),
+				 G_CALLBACK (action_location_copy_path_callback) },
   /* name, stock id */         { NEMO_ACTION_LOCATION_PASTE_FILES_INTO, "edit-paste-symbolic",
   /* label, accelerator */       N_("_Paste Into Folder"), "",
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command into this folder"),
@@ -9930,6 +10032,10 @@ real_update_menus (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_COPY);
+	gtk_action_set_sensitive (action, can_copy_files);
+
+	action = gtk_action_group_get_action (view->details->dir_action_group,
+					      NEMO_ACTION_COPY_PATH);
 	gtk_action_set_sensitive (action, can_copy_files);
 
 	real_update_paste_menu (view, selection, selection_count);
