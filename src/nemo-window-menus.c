@@ -833,6 +833,24 @@ action_new_window_callback (GtkAction *action,
         GFile *loc;
 
         uri = nemo_window_slot_get_current_uri (nemo_window_get_active_slot (current_window));
+
+        if (eel_uri_is_search (uri)) {
+            NemoDirectory *dir;
+            NemoQuery *query;
+
+            dir = nemo_directory_get_by_uri (uri);
+            query = nemo_search_directory_get_query (NEMO_SEARCH_DIRECTORY (dir));
+
+            if (query != NULL) {
+                g_free (uri);
+
+                uri = nemo_query_get_location (query);
+                g_object_unref (query);
+            }
+
+            nemo_directory_unref (dir);
+        }
+
         loc = g_file_new_for_uri (uri);
 
         application = nemo_application_get_singleton ();
