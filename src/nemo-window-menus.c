@@ -307,9 +307,11 @@ action_plugins_callback (GtkAction *action,
 {
     GtkWindow *window;
 
-    window = GTK_WINDOW (user_data);
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        window = GTK_WINDOW (user_data);
 
-    nemo_file_management_properties_dialog_show (window, "plugins");
+        nemo_file_management_properties_dialog_show (window, "plugins");
+    }
 }
 
 static void
@@ -525,7 +527,9 @@ static void
 action_close_all_windows_callback (GtkAction *action,
 				   gpointer user_data)
 {
-	nemo_application_close_all_windows (nemo_application_get_singleton ());
+	if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		nemo_application_close_all_windows (nemo_application_get_singleton ());
+	}
 }
 
 static void
@@ -579,12 +583,14 @@ action_show_hide_sidebar_callback (GtkAction *action,
 {
 	NemoWindow *window;
 
-	window = NEMO_WINDOW (user_data);
+	if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		window = NEMO_WINDOW (user_data);
 
-	if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
-		nemo_window_show_sidebar (window);
-	} else {
-		nemo_window_hide_sidebar (window);
+		if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
+			nemo_window_show_sidebar (window);
+		} else {
+			nemo_window_hide_sidebar (window);
+		}
 	}
 }
 
@@ -770,14 +776,18 @@ static void
 action_add_bookmark_callback (GtkAction *action,
 			      gpointer user_data)
 {
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
         nemo_window_add_bookmark_for_current_location (NEMO_WINDOW (user_data));
+    }
 }
 
 static void
 action_edit_bookmarks_callback (GtkAction *action,
 				gpointer user_data)
 {
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
         nemo_window_edit_bookmarks (NEMO_WINDOW (user_data));
+    }
 }
 
 static void
@@ -935,8 +945,10 @@ action_menu_edit_location_callback (GtkAction *action,
 	NemoWindow *window = user_data;
 	NemoWindowPane *pane;
 
-    pane = nemo_window_get_active_pane (window);
-    toggle_location_entry_setting(window, pane, TRUE);
+    if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+        pane = nemo_window_get_active_pane (window);
+        toggle_location_entry_setting(window, pane, TRUE);
+    }
 }
 
 static void
