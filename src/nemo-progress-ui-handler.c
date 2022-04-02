@@ -31,6 +31,7 @@
 #include "nemo-application.h"
 #include "nemo-progress-info-widget.h"
 
+#include <gio/gio.h>
 #include <glib/gi18n.h>
 
 #include <eel/eel-string.h>
@@ -38,7 +39,6 @@
 #include <libnemo-private/nemo-progress-info.h>
 #include <libnemo-private/nemo-progress-info-manager.h>
 
-#include <libnotify/notify.h>
 #include <libxapp/xapp-gtk-window.h>
 #include <libxapp/xapp-status-icon.h>
 
@@ -262,13 +262,12 @@ progress_ui_handler_add_to_window (NemoProgressUIHandler *self,
 static void
 progress_ui_handler_show_complete_notification (NemoProgressUIHandler *self)
 {
-	NotifyNotification *complete_notification;
+	GNotification *complete_notification;
 
-	complete_notification = notify_notification_new (_("File Operations"),
-							 _("All file operations have been successfully completed"),
-							 NULL);
-	notify_notification_show (complete_notification, NULL);
-
+	complete_notification = g_notification_new (_("File Operations"));
+	g_notification_set_body (complete_notification, _("All file operations have been successfully completed"));
+	
+	g_application_send_notification (G_APPLICATION (nemo_application_get_singleton ()), NULL, complete_notification);
 	g_object_unref (complete_notification);
 }
 

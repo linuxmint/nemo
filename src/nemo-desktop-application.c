@@ -62,7 +62,6 @@
 #include <stdlib.h>
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
-#include <libnotify/notify.h>
 #include <gdk/gdkx.h>
 #include <X11/Xatom.h>
 

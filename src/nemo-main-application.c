@@ -73,7 +73,6 @@
 #include <gio/gio.h>
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-stock-dialogs.h>
-#include <libnotify/notify.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 
@@ -89,6 +88,10 @@
 
 /* Disable the self-check functionality */
 #define NEMO_OMIT_SELF_CHECK "omit"
+
+#define NEMO_NOTIFICATION_UNMOUNT_ICON_NAME  "media-removable"
+#define NEMO_NOTIFICATION_UNMOUNT_ID_PENDING "unmount-pending"
+#define NEMO_NOTIFICATION_UNMOUNT_ID_DONE    "unmount-done"
 
 static void     mount_removed_callback            (GVolumeMonitor            *monitor,
 						   GMount                    *mount,
@@ -106,61 +109,67 @@ struct _NemoMainApplicationPriv {
 	NemoFreedesktopDBus *fdb_manager;
 
 	gchar *geometry;
-
-    NotifyNotification *unmount_notify;
 };
+
+static void
+nemo_main_application_send_notification (NemoApplication *application,
+                                         const gchar *title,
+                                         const gchar *body,
+                                         const gchar *icon_name,
+                                         const gchar *notification_id,
+                                         const GNotificationPriority prio)
+{
+	NemoMainApplication *app = NEMO_MAIN_APPLICATION (application);
+	GNotification *notification;
+	GIcon *icon;
+
+	icon = g_themed_icon_new (icon_name);
+	notification = g_notification_new (title);
+	g_notification_set_body (notification, body);
+	g_notification_set_icon (notification, icon);
+	g_notification_set_priority (notification, prio);
+
+	g_application_send_notification (G_APPLICATION (app), notification_id, notification);
+
+	g_object_unref (notification);
+	g_object_unref (icon);
+}
 
 static void
 nemo_main_application_notify_unmount_done (NemoApplication *application,
                                            const gchar     *message)
 {
-    NemoMainApplication *app = NEMO_MAIN_APPLICATION (application);
+	NemoMainApplication *app = NEMO_MAIN_APPLICATION (application);
+	gchar **strings;
 
-    if (app->priv->unmount_notify) {
-        notify_notification_close (app->priv->unmount_notify, NULL);
-        g_clear_object (&app->priv->unmount_notify);
-    }
+	// remove notification for pending unmount state
+	g_application_withdraw_notification (G_APPLICATION (app), NEMO_NOTIFICATION_UNMOUNT_ID_PENDING);
 
-    if (message != NULL) {
-        NotifyNotification *unplug;
-        gchar **strings;
+	g_return_if_fail (message != NULL);
+	strings = g_strsplit (message, "\n", 2);
 
-        strings = g_strsplit (message, "\n", 0);
-        unplug = notify_notification_new (strings[0], strings[1],
-                                          "media-removable");
-
-        notify_notification_show (unplug, NULL);
-        g_object_unref (unplug);
-        g_strfreev (strings);
-    }
+	nemo_main_application_send_notification (application, strings[0], strings[1],
+	                                         NEMO_NOTIFICATION_UNMOUNT_ICON_NAME,
+	                                         NEMO_NOTIFICATION_UNMOUNT_ID_DONE,
+	                                         G_NOTIFICATION_PRIORITY_NORMAL);
+	
+	g_strfreev (strings);
 }
 
 static void
 nemo_main_application_notify_unmount_show (NemoApplication *application,
                                            const gchar     *message)
 {
-    NemoMainApplication *app = NEMO_MAIN_APPLICATION (application);
+	gchar **strings;
 
-    gchar **strings;
+	g_return_if_fail (message != NULL);
+	strings = g_strsplit (message, "\n", 2);
 
-    strings = g_strsplit (message, "\n", 0);
-
-    if (!app->priv->unmount_notify) {
-        app->priv->unmount_notify = notify_notification_new (strings[0], strings[1],
-                                                             "media-removable");
-
-        notify_notification_set_hint (app->priv->unmount_notify,
-                                      "transient", g_variant_new_boolean (TRUE));
-        notify_notification_set_urgency (app->priv->unmount_notify,
-                                         NOTIFY_URGENCY_CRITICAL);
-    } else {
-        notify_notification_update (app->priv->unmount_notify,
-                                    strings[0], strings[1],
-                                    "media-removable");
-    }
-
-    notify_notification_show (app->priv->unmount_notify, NULL);
-    g_strfreev (strings);
+	nemo_main_application_send_notification (application, strings[0], strings[1],
+	                                         NEMO_NOTIFICATION_UNMOUNT_ICON_NAME,
+	                                         NEMO_NOTIFICATION_UNMOUNT_ID_PENDING,
+	                                         G_NOTIFICATION_PRIORITY_URGENT);
+	g_strfreev (strings);
 }
 
 static void
