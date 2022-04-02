@@ -75,7 +75,6 @@
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
-#include <libnotify/notify.h>
 #include <libxapp/xapp-favorites.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
@@ -552,7 +551,6 @@ nemo_application_startup (GApplication *app)
 	init_menu_provider_callback ();
 
 	/* Initialize the UI handler singleton for file operations */
-	notify_init (GETTEXT_PACKAGE);
 	self->priv->progress_handler = nemo_progress_ui_handler_new ();
 
     self->priv->cache_problem = FALSE;
