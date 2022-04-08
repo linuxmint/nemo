@@ -225,6 +225,7 @@ toolbar_create_toolbutton (NemoToolbar *self,
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (button), action);
     gtk_button_set_label (GTK_BUTTON (button), NULL);
     gtk_widget_set_tooltip_text (button, gtk_action_get_tooltip (action));
+    gtk_widget_set_can_focus (button, FALSE);
     gtk_style_context_add_class (gtk_widget_get_style_context (button), GTK_STYLE_CLASS_FLAT);
 
     return button;
