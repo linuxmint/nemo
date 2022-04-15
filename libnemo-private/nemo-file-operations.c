@@ -3423,6 +3423,7 @@ make_file_name_valid_for_dest_fs (char *filename,
              * This assumption is a pragmatic way to solve
              * https://gitlab.gnome.org/GNOME/nautilus/-/issues/1343 */
 		    !strcmp (dest_fs_type, "fuse") ||
+		    !strcmp (dest_fs_type, "exfat") ||
 		    !strcmp (dest_fs_type, "ntfs") ||
 		    !strcmp (dest_fs_type, "msdos") ||
 		    !strcmp (dest_fs_type, "msdosfs")) {
