@@ -43,6 +43,7 @@ GSettings *nemo_compact_view_preferences;
 GSettings *nemo_desktop_preferences;
 GSettings *nemo_tree_sidebar_preferences;
 GSettings *nemo_window_state;
+GSettings *gtk_filechooser_preferences;
 GSettings *nemo_plugin_preferences;
 GSettings *nemo_menu_config_preferences;
 GSettings *nemo_search_preferences;
@@ -330,6 +331,9 @@ nemo_global_preferences_init (void)
 	nemo_list_view_preferences = g_settings_new("org.nemo.list-view");
 	nemo_compact_view_preferences = g_settings_new("org.nemo.compact-view");
 	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");
+    /* Some settings such as show hidden files are shared between Nautilus and GTK file chooser */
+    gtk_filechooser_preferences = g_settings_new_with_path ("org.gtk.Settings.FileChooser",
+                                                            "/org/gtk/settings/file-chooser/");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
     nemo_plugin_preferences = g_settings_new("org.nemo.plugins");
     nemo_menu_config_preferences = g_settings_new("org.nemo.preferences.menu-config");
