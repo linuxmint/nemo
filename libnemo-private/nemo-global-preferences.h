@@ -292,6 +292,7 @@ extern GSettings *nemo_compact_view_preferences;
 extern GSettings *nemo_desktop_preferences;
 extern GSettings *nemo_tree_sidebar_preferences;
 extern GSettings *nemo_window_state;
+extern GSettings *gtk_filechooser_preferences;
 extern GSettings *nemo_plugin_preferences;
 extern GSettings *nemo_menu_config_preferences;
 extern GSettings *nemo_search_preferences;

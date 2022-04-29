@@ -810,6 +810,15 @@ on_dialog_destroy (GtkWidget *widget,
     g_object_unref (builder);
 }
 
+static void
+set_gtk_filechooser_sort_first (GObject *object,
+				GParamSpec *pspec)
+{
+	g_settings_set_boolean (gtk_filechooser_preferences,
+				NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST,
+				gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (object)));
+}
+
 static  void
 nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
                                               GtkWindow   *window,
@@ -884,6 +893,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 	bind_builder_bool (builder, nemo_preferences,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET,
 			   NEMO_PREFERENCES_SORT_DIRECTORIES_FIRST);
+	g_signal_connect (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_FOLDERS_FIRST_WIDGET),
+                          "notify::active",
+                          G_CALLBACK (set_gtk_filechooser_sort_first), NULL);
 	bind_builder_bool(builder, nemo_preferences,
 			    NEMO_FILE_MANAGEMENT_QUICK_RENAMES_WITH_PAUSE_IN_BETWEEN,
 			    NEMO_PREFERENCES_CLICK_TO_RENAME);
