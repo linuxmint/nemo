@@ -1439,10 +1439,14 @@ found_mount_cb (GObject *source_object,
 						    NULL);
 	if (mount != NULL) {
 		data->mount = mount;
-		nemo_get_x_content_types_for_mount_async (mount,
-							      found_content_type_cb,
-							      data->cancellable,
-							      data);
+		
+		if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_MEDIA_HANDLING_DETECT_CONTENT)) {
+			nemo_get_x_content_types_for_mount_async (mount,
+											found_content_type_cb,
+											data->cancellable,
+											data);
+		}
+
 		return;
 	}
 
