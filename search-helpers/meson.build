@@ -27,10 +27,16 @@ install_data(
 )
 
 install_data(
+    'epub2text.nemo_search_helper',
     'mso.nemo_search_helper',
     'mso-ppt.nemo_search_helper',
     'mso-xls.nemo_search_helper',
     install_dir: join_paths(nemoDataPath, 'search-helpers')
+)
+
+install_data(
+    'nemo-epub2text',
+    install_dir: get_option('bindir')
 )
 
 subdir('third-party')

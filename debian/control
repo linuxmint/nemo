@@ -97,6 +97,7 @@ Depends:
  odt2txt,
  catdoc,
  untex,
+ html2text,
  python3-xlrd,
  ${misc:Depends},
  ${shlibs:Depends},
