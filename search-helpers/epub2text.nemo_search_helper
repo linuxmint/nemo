@@ -1,0 +1,5 @@
+[Nemo Search Helper]
+TryExec=unzip;html2text;nemo-epub2text;
+Exec=nemo-epub2text %s
+MimeType=application/epub+zip;
+Priority=100
