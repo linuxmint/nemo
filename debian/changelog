@@ -1,3 +1,40 @@
+nemo (5.4.0) vanessa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-list-model.c: Fix crash/inconsistent model when expanding an unmonitored directory that no longer has any children.
+  * nemo-list-view.c: Use the original button-press coordinates when deciding on dnd vs rubberbanding.
+  * nemo-action.c: Handle get_device_path() failing more gracefully.
+  * nemo-window-manage-views.c: Only close a window when its location is deleted if its immediate parent was the desktop and the window also has no backward history.
+  * progress handler: Tell the wm that the progress window is a dialog.
+  * menus: when activating File->New Window in a search results view, open a new window using the original uri instead of the virtual search results location.
+  * Don't allow toolbar buttons to gain input focus.
+
+  [ okaestne ]
+  * port from libnotify to GNotification
+  * build: remove dependency on libnotify
+
+  [ Jeffrey Knockel ]
+  * Add !NEMO_IS_DESKTOP_WINDOW() guards to callbacks
+
+  [ Leigh Scott ]
+  * Add native exfat renaming support (#2967)
+  * Sync sort-directories-first with gtk file chooser (#2971)
+
+  [ patlefort ]
+  * Add option to disable or enable content type detection of mounted media. (#2913)
+
+  [ Clement Lefebvre ]
+  * CI: Update targets
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * Add symbols file for the extension library.
+
+  [ Yofenry ]
+  * added nemo github url in THANKS
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 10 Jun 2022 15:58:12 +0200
+
 nemo (5.2.4) una; urgency=medium
 
   [ Michael Webster ]
