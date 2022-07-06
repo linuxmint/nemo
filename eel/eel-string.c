@@ -106,7 +106,7 @@ eel_str_escape_spaces (const char *string)
 char *
 eel_str_escape_non_space_special_characters (const char *string)
 {
-    int quotes_and_tabs;
+    int quotes_tabs_and_backslashes;
     int newlines;
     const char *p;
     char *q;
@@ -116,20 +116,20 @@ eel_str_escape_non_space_special_characters (const char *string)
         return NULL;
     }
 
-    quotes_and_tabs = 0;
+    quotes_tabs_and_backslashes = 0;
     newlines = 0;
     for (p = string; *p != '\0'; p++) {
-        quotes_and_tabs += (*p == '\'') || (*p == '\"') || (*p == '\t');
+        quotes_tabs_and_backslashes += (*p == '\'') || (*p == '\"') || (*p == '\t') || (*p == '\\');
         newlines += (*p == '\n');
     }
 
-    if (quotes_and_tabs + newlines == 0) {
+    if (quotes_tabs_and_backslashes + newlines == 0) {
         return g_strdup (string);
     }
 
-    escaped = g_new (char, strlen (string) + quotes_and_tabs + newlines * 2 + 1);
+    escaped = g_new (char, strlen (string) + quotes_tabs_and_backslashes + newlines * 2 + 1);
     for (p = string, q = escaped; *p != '\0'; p++, q++) {
-        if ((*p == '\'') || (*p == '\"') || (*p == '\t')) {
+        if ((*p == '\'') || (*p == '\"') || (*p == '\t') || (*p == '\\')) {
             *q++ = '\\';
         } else if (*p == '\n') {
             *q++ = '\'';
