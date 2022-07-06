@@ -39,30 +39,30 @@
 /* NULL is allowed for all the str parameters to these functions. */
 
 /* Escape function for '_' character. */
-char *   eel_str_double_underscores        (const char    *str);
+char *   eel_str_double_underscores                  (const char    *str);
 /* Escape function for spaces */
-char *   eel_str_escape_spaces             (const char    *str);
-/* Escape function for quotes */
-char *   eel_str_escape_quotes             (const char    *str);
+char *   eel_str_escape_spaces                       (const char    *str);
+/* Escape function for non-space special characters in a shell context. */
+char *   eel_str_escape_non_space_special_characters (const char    *str);
 /* Capitalize a string */
-char *   eel_str_capitalize                (const char    *str);
+char *   eel_str_capitalize                          (const char    *str);
 
 /* Middle truncate a string to a maximum of truncate_length characters.
  * The resulting string will be truncated in the middle with a "..."
  * delimiter.
  */
-char *   eel_str_middle_truncate           (const char    *str,
-					    guint          truncate_length);
+char *   eel_str_middle_truncate                     (const char    *str,
+						      guint          truncate_length);
 
 
 /* Remove all characters after the passed-in substring. */
-char *   eel_str_strip_substring_and_after (const char    *str,
-					    const char    *substring);
+char *   eel_str_strip_substring_and_after           (const char    *str,
+						      const char    *substring);
 
 /* Replace all occurrences of substring with replacement. */
-char *   eel_str_replace_substring         (const char    *str,
-					    const char    *substring,
-					    const char    *replacement);
+char *   eel_str_replace_substring                   (const char    *str,
+						      const char    *substring,
+						      const char    *replacement);
 
 typedef char * eel_ref_str;
 
