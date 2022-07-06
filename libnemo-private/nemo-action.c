@@ -1213,25 +1213,25 @@ find_token_type (const gchar *str, TokenType *token_type)
 static gchar *
 get_path (NemoAction *action, NemoFile *file)
 {
-    gchar *ret, *quote_escaped, *orig;
+    gchar *ret, *escaped, *orig;
 
     orig = nemo_file_get_path (file);
 
     if (action->quote_type != QUOTE_TYPE_DOUBLE && action->quote_type != QUOTE_TYPE_SINGLE)
-        quote_escaped = eel_str_escape_quotes (orig);
+        escaped = eel_str_escape_non_space_special_characters (orig);
     else
-        quote_escaped = orig;
+        escaped = orig;
 
     if (action->escape_space) {
-        ret = eel_str_escape_spaces (quote_escaped);
+        ret = eel_str_escape_spaces (escaped);
     } else {
-        ret = g_strdup (quote_escaped);
+        ret = g_strdup (escaped);
     }
 
     g_free (orig);
 
-    if (quote_escaped != orig)
-        g_free (quote_escaped);
+    if (escaped != orig)
+        g_free (escaped);
 
     return ret;
 }
