@@ -1,3 +1,21 @@
+nemo (5.4.1) vanessa; urgency=medium
+
+  [ Jeremy7701 ]
+  * Add epub search helper (#2867)
+
+  [ Michael Webster ]
+  * Fix installation of epub search helper.
+
+  [ Joshua Peisach ]
+  * icon-container: Don't free a pointer after it has already been freed
+
+  [ veractor ]
+  * Actions: Escape tabs and newlines in paths
+  * Actions: Escape backslashes in paths
+  * Actions: Escape number signs in paths (#3022)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 15 Jul 2022 15:18:56 +0200
+
 nemo (5.4.0) vanessa; urgency=medium
 
   [ Michael Webster ]
