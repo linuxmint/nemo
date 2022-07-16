@@ -1217,21 +1217,26 @@ get_path (NemoAction *action, NemoFile *file)
 
     orig = nemo_file_get_path (file);
 
-    if (action->quote_type != QUOTE_TYPE_DOUBLE && action->quote_type != QUOTE_TYPE_SINGLE)
+    if (action->quote_type == QUOTE_TYPE_DOUBLE) {
+        escaped = eel_str_escape_double_quoted_content (orig);
+    } else if (action->quote_type == QUOTE_TYPE_SINGLE) {
+        // Replace literal ' with a close ', a \', and an open '
+        escaped = eel_str_replace_substring (orig, "'", "'\\''");
+    } else {
         escaped = eel_str_escape_non_space_special_characters (orig);
-    else
-        escaped = orig;
+    }
 
     if (action->escape_space) {
         ret = eel_str_escape_spaces (escaped);
     } else {
-        ret = g_strdup (escaped);
+        ret = escaped;
     }
 
     g_free (orig);
 
-    if (escaped != orig)
+    if (ret != escaped) {
         g_free (escaped);
+    }
 
     return ret;
 }

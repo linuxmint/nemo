@@ -145,6 +145,39 @@ eel_str_escape_non_space_special_characters (const char *string)
 }
 
 char *
+eel_str_escape_double_quoted_content (const char *string)
+{
+    int double_quotes_and_backslashes;
+    const char *p;
+    char *q;
+    char *escaped;
+
+    if (string == NULL) {
+        return NULL;
+    }
+
+    double_quotes_and_backslashes = 0;
+    for (p = string; *p != '\0'; p++) {
+        double_quotes_and_backslashes += (*p == '\"') || (*p == '\\');
+    }
+
+    if (double_quotes_and_backslashes == 0) {
+        return g_strdup (string);
+    }
+
+    escaped = g_new (char, strlen (string) + double_quotes_and_backslashes + 1);
+    for (p = string, q = escaped; *p != '\0'; p++, q++) {
+        if ((*p == '\"') || (*p == '\\')) {
+            *q++ = '\\';
+        }
+        *q = *p;
+    }
+    *q = '\0';
+
+    return escaped;
+}
+
+char *
 eel_str_capitalize (const char *string)
 {
 	char *capitalized;

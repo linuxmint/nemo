@@ -44,6 +44,8 @@ char *   eel_str_double_underscores                  (const char    *str);
 char *   eel_str_escape_spaces                       (const char    *str);
 /* Escape function for non-space special characters in a GLib shell context. */
 char *   eel_str_escape_non_space_special_characters (const char    *str);
+/* Escape function for content within double quotes in a GLib shell context. */
+char *   eel_str_escape_double_quoted_content        (const char    *str);
 /* Capitalize a string */
 char *   eel_str_capitalize                          (const char    *str);
 
