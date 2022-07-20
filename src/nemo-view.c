@@ -113,6 +113,8 @@
 
 #define MAX_QUEUED_UPDATES 250
 
+#define SELECTION_CHANGED_UPDATE_INTERVAL 50
+
 #define NEMO_VIEW_MENU_PATH_OPEN_PLACEHOLDER                  "/MenuBar/File/Open Placeholder"
 #define NEMO_VIEW_MENU_PATH_APPLICATIONS_SUBMENU_PLACEHOLDER  "/MenuBar/File/Open Placeholder/Open With/Applications Placeholder"
 #define NEMO_VIEW_MENU_PATH_APPLICATIONS_PLACEHOLDER    	  "/MenuBar/File/Open Placeholder/Applications Placeholder"
@@ -10232,9 +10234,8 @@ nemo_view_pop_up_location_context_menu (NemoView *view,
 }
 
 static void
-schedule_update_menus (NemoView *view)
+real_schedule_update_menus (NemoView *view, guint update_interval)
 {
-	g_assert (NEMO_IS_VIEW (view));
 	/* Don't schedule updates after destroy (#349551),
  	 * or if we are not active.
 	 */
@@ -10249,9 +10250,26 @@ schedule_update_menus (NemoView *view)
         g_source_remove (view->details->update_menus_timeout_id);
         view->details->update_menus_timeout_id = 0;
     }
-    view->details->update_menus_timeout_id = g_timeout_add (view->details->update_interval,
+
+    view->details->update_menus_timeout_id = g_timeout_add (update_interval,
                                                             update_menus_timeout_callback,
                                                             view);
+}
+
+static void
+schedule_update_menus (NemoView *view)
+{
+    g_assert (NEMO_IS_VIEW (view));
+
+    real_schedule_update_menus (view, view->details->update_interval);
+}
+
+static void
+selection_changed_schedule_update_menus (NemoView *view)
+{
+    g_assert (NEMO_IS_VIEW (view));
+
+    real_schedule_update_menus (view, SELECTION_CHANGED_UPDATE_INTERVAL);
 }
 
 static void
@@ -10343,7 +10361,7 @@ nemo_view_notify_selection_changed (NemoView *view)
 		 */
 
 		/* Schedule an update of menu item states to match selection */
-		schedule_update_menus (view);
+        selection_changed_schedule_update_menus (view);
 	}
 }
 
