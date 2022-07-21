@@ -154,7 +154,7 @@ main (int argc, char *argv[])
 
     if (lo_proc == NULL) {
         if (error != NULL) {
-            g_warning ("Could not lauch headless libreoffice for conversion: %s", error->message);
+            g_warning ("Could not launch headless libreoffice for conversion: %s", error->message);
             g_clear_error (&error);
         }
         retval = 1;
