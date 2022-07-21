@@ -1,3 +1,16 @@
+nemo (5.4.2) vanessa; urgency=medium
+
+  [ veractor ]
+  * Actions: Escape quoted content in paths (#3026)
+
+  [ Bobby Rong ]
+  * libnemo-private: add missing gio-unix-2.0 dependency (#3028)
+
+  [ Michael Webster ]
+  * nemo-view.c: Use a shorter menu update delay when the update has been triggered by a selection change.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 Jul 2022 11:11:21 +0200
+
 nemo (5.4.1) vanessa; urgency=medium
 
   [ Jeremy7701 ]
