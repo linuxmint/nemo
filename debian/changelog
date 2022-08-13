@@ -1,3 +1,13 @@
+nemo (5.4.3) vanessa; urgency=medium
+
+  [ Fabio Fantoni ]
+  * fix spelling error spotted by lintian
+
+  [ veractor ]
+  * App chooser: Quote custom executable file paths (#3041)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 13 Aug 2022 12:30:16 +0200
+
 nemo (5.4.2) vanessa; urgency=medium
 
   [ veractor ]
