@@ -1295,14 +1295,26 @@ get_device_path (NemoAction *action, NemoFile *file)
     g_return_val_if_fail (mount != NULL, NULL);
 
     GVolume *volume = g_mount_get_volume (mount);
-    gchar *ret = NULL;
+    gchar *ret, *escaped, *id;
+
+    id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+
+    if (action->quote_type == QUOTE_TYPE_DOUBLE) {
+        escaped = eel_str_escape_double_quoted_content (id);
+    } else if (action->quote_type == QUOTE_TYPE_SINGLE) {
+        // Replace literal ' with a close ', a \', and an open '
+        escaped = eel_str_replace_substring (id, "'", "'\\''");
+    } else {
+        escaped = eel_str_escape_non_space_special_characters (id);
+    }
+
+    g_free (id);
 
     if (action->escape_space) {
-        gchar *id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
-        ret = eel_str_escape_spaces (id);
-        g_free (id);
+        ret = eel_str_escape_spaces (escaped);
+        g_free (escaped);
     } else {
-        ret = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        ret = escaped;
     }
 
     g_object_unref (mount);
