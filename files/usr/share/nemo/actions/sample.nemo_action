@@ -96,14 +96,14 @@ Extensions=any;
 
 #Conditions=desktop;
 
-# Escape Spaces - set to true to escape spaces in filenames and uris ($U, $F, $P, $D)
+# Escape Spaces (deprecated)
 #
-# Sometimes this may be preferred to getting raw filenames that must be enclosed in
-# quotes.
+# This field is deprecated and does nothing - paths with spaces, as well as other special
+# shell characters, will now be passed on correctly no matter what, even when Quote is not set.
 #
 # Optional - by default this is false
 
-EscapeSpaces=true
+#EscapeSpaces=true
 
 # Run in terminal - set to true to execute the Exec line in a spawned terminal window.
 #
