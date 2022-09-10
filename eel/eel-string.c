@@ -70,9 +70,9 @@ eel_str_double_underscores (const char *string)
 }
 
 char *
-eel_str_escape_spaces (const char *string)
+eel_str_escape_shell_characters (const char *string)
 {
-    int spaces;
+    int escape_characters;
     const char *p;
     char *q;
     char *escaped;
@@ -81,61 +81,53 @@ eel_str_escape_spaces (const char *string)
         return NULL;
     }
 
-    spaces = 0;
+    escape_characters = 0;
     for (p = string; *p != '\0'; p++) {
-        spaces += (*p == ' ');
-    }
+        switch (*p) {
+        case '\n':
+            escape_characters += 2;
+            break;
 
-    if (spaces == 0) {
-        return g_strdup (string);
-    }
+        case ' ':
+        case '\t':
+        case '\'':
+        case '"':
+        case '\\':
+        case '#':
+            escape_characters++;
+            break;
 
-    escaped = g_new (char, strlen (string) + spaces + 1);
-    for (p = string, q = escaped; *p != '\0'; p++, q++) {
-        /* Add an extra underscore. */
-        if (*p == ' ') {
-            *q++ = '\\';
+        default:
+            break;
         }
-        *q = *p;
-    }
-    *q = '\0';
-
-    return escaped;
-}
-
-char *
-eel_str_escape_non_space_special_characters (const char *string)
-{
-    int special_characters;
-    int newlines;
-    const char *p;
-    char *q;
-    char *escaped;
-
-    if (string == NULL) {
-        return NULL;
     }
 
-    special_characters = 0;
-    newlines = 0;
-    for (p = string; *p != '\0'; p++) {
-        special_characters += (*p == '\'') || (*p == '\"') || (*p == '\t') || (*p == '\\') || (*p == '#') ;
-        newlines += (*p == '\n');
-    }
-
-    if (special_characters + newlines == 0) {
+    if (escape_characters == 0) {
         return g_strdup (string);
     }
 
-    escaped = g_new (char, strlen (string) + special_characters + newlines * 2 + 1);
+    escaped = g_new (char, strlen (string) + escape_characters + 1);
     for (p = string, q = escaped; *p != '\0'; p++, q++) {
-        if ((*p == '\'') || (*p == '\"') || (*p == '\t') || (*p == '\\') || (*p == '#')) {
-            *q++ = '\\';
-        } else if (*p == '\n') {
-            *q++ = '\'';
-            *q++ = *p;
-            *q = '\'';
+        switch (*p) {
+        case '\n':
+            /* Quote newlines, as backslash-newline becomes nothing */
+            q[0] = '\'';
+            q[1] = '\n';
+            q[2] = '\'';
+            q += 3;
             continue;
+
+        case ' ':
+        case '\t':
+        case '\'':
+        case '"':
+        case '\\':
+        case '#':
+            *q++ = '\\';
+            break;
+
+        default:
+            break;
         }
         *q = *p;
     }
