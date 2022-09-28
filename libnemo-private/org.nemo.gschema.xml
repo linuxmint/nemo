@@ -31,12 +31,13 @@
   <enum id="org.nemo.SortOrder">
     <value nick="manually" value="0"/>
     <value nick="name" value="1"/>
-    <value nick="size" value="2"/>
-    <value nick="type" value="3"/>
-    <value nick="detailed_type" value="4"/>
-    <value nick="mtime" value="5"/>
-    <value nick="atime" value="6"/>
-    <value nick="trash-time" value="7"/>
+    <value nick="extension" value="2"/>
+    <value nick="size" value="3"/>
+    <value nick="type" value="4"/>
+    <value nick="detailed_type" value="5"/>
+    <value nick="mtime" value="6"/>
+    <value nick="atime" value="7"/>
+    <value nick="trash-time" value="8"/>
   </enum>
 
   <enum id="org.nemo.ZoomLevel">

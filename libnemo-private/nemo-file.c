@@ -128,6 +128,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 static GHashTable *symbolic_links;
 
 static GQuark attribute_name_q,
+	attribute_ext_q,
 	attribute_size_q,
 	attribute_type_q,
 	attribute_detailed_type_q,
@@ -173,6 +174,7 @@ static void     nemo_file_info_iface_init                (NemoFileInfoInterface 
 static gboolean update_info_and_name                         (NemoFile          *file,
 							      GFileInfo             *info);
 static const char * nemo_file_peek_display_name (NemoFile *file);
+const char * nemo_file_peek_extension_name (NemoFile *file);
 static const char * nemo_file_peek_display_name_collation_key (NemoFile *file);
 static void file_mount_unmounted (GMount *mount,  gpointer data);
 static void metadata_hash_free (GHashTable *hash);
@@ -3075,6 +3077,20 @@ compare_by_display_name (NemoFile *file_1, NemoFile *file_2)
 }
 
 static int
+compare_by_extension_name (NemoFile *file_1, NemoFile *file_2)
+{
+	const char *key_1, *key_2;
+	int compare=0;
+
+	key_1 = nemo_file_peek_extension_name (file_1);
+	key_2 = nemo_file_peek_extension_name (file_2);
+		
+	compare = g_strcmp0 (key_1, key_2);
+
+	return compare;
+}
+
+static int
 compare_by_directory_name (NemoFile *file_1, NemoFile *file_2)
 {
 	char *directory_1, *directory_2;
@@ -3357,6 +3373,12 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 				result = compare_by_directory_name (file_1, file_2);
 			}
 			break;
+		case NEMO_FILE_SORT_BY_EXTENSION_NAME:
+			result = compare_by_extension_name (file_1, file_2);
+			if (result == 0) {
+				result = compare_by_display_name (file_1, file_2);
+			}
+			break;		
 		case NEMO_FILE_SORT_BY_SIZE:
 			/* Compare directory sizes ourselves, then if necessary
 			 * use GnomeVFS to compare file sizes.
@@ -3446,6 +3468,13 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       favorites_first,
 						       reversed,
                                search_dir);
+	} else if (attribute == attribute_ext_q) {
+		return nemo_file_compare_for_sort (file_1, file_2,
+						       NEMO_FILE_SORT_BY_EXTENSION_NAME,
+						       directories_first,
+						       favorites_first,
+						       reversed,
+                               search_dir); 
 	} else if (attribute == attribute_size_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_SIZE,
@@ -4036,6 +4065,28 @@ nemo_file_peek_display_name_collation_key (NemoFile *file)
 	return res;
 }
 
+const char *
+nemo_file_peek_extension_name (NemoFile *file)
+{
+    if (file == NULL) {
+        return NULL;
+    }
+
+    if (nemo_file_is_broken_symbolic_link (file)) {
+        return g_strdup (_("link (broken)"));
+	}
+	
+	char *str, *token, *result;
+	str = g_strdup (eel_ref_str_peek(file->details->name));//strdup()
+	
+	while ((token = strsep(&str, "."))) {result = g_strdup(token);}
+	if (result == NULL) {result = "";}
+	g_free(str);
+	g_free(token);
+	
+	return result;
+}
+
 static const char *
 nemo_file_peek_display_name (NemoFile *file)
 {
@@ -4075,6 +4126,12 @@ char *
 nemo_file_get_display_name (NemoFile *file)
 {
 	return g_strdup (nemo_file_peek_display_name (file));
+}
+
+char *
+nemo_file_get_extension_name (NemoFile *file)
+{
+	return g_strdup (nemo_file_peek_extension_name (file));
 }
 
 char *
@@ -6689,6 +6746,9 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_name_q) {
 		return nemo_file_get_display_name (file);
 	}
+	if (attribute_q == attribute_ext_q) {
+		return nemo_file_get_extension_name (file);
+	}
 	if (attribute_q == attribute_type_q) {
 		return nemo_file_get_type_as_string (file);
 	}
@@ -8900,6 +8960,7 @@ nemo_file_class_init (NemoFileClass *class)
 	nemo_file_info_getter = nemo_file_get_internal;
 
 	attribute_name_q = g_quark_from_static_string ("name");
+	attribute_ext_q = g_quark_from_static_string ("extension");
 	attribute_size_q = g_quark_from_static_string ("size");
 	attribute_type_q = g_quark_from_static_string ("type");
     attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");

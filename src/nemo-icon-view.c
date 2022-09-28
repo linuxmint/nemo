@@ -138,6 +138,13 @@ static const SortCriterion sort_criteria[] = {
 		N_("Keep icons sorted by name in rows")
 	},
 	{
+		NEMO_FILE_SORT_BY_EXTENSION_NAME,
+		"extension",
+		"Sort by Extension",
+		N_("by _Extension"),
+		N_("Keep icons sorted by Extension in rows")
+	},
+	{
 		NEMO_FILE_SORT_BY_SIZE,
 		"size",
 		"Sort by Size",
@@ -1428,6 +1435,10 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By _Name"), NULL,
     N_("Keep icons sorted by name in rows"),
     NEMO_FILE_SORT_BY_DISPLAY_NAME },
+  { "Sort by Extension", NULL,
+    N_("By _Extension"), NULL,
+    N_("Keep icons sorted by extension in rows"),
+    NEMO_FILE_SORT_BY_EXTENSION_NAME },
   { "Sort by Size", NULL,
     N_("By _Size"), NULL,
     N_("Keep icons sorted by size in rows"),

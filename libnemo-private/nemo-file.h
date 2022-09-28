@@ -57,6 +57,7 @@ typedef struct NemoFile NemoFile;
 typedef enum {
 	NEMO_FILE_SORT_NONE,
 	NEMO_FILE_SORT_BY_DISPLAY_NAME,
+	NEMO_FILE_SORT_BY_EXTENSION_NAME,
 	NEMO_FILE_SORT_BY_SIZE,
 	NEMO_FILE_SORT_BY_TYPE,
     NEMO_FILE_SORT_BY_DETAILED_TYPE,
@@ -155,7 +156,7 @@ NemoFile *          nemo_file_get_existing_by_uri               (const char     
  * 1) Using these is type safe.
  * 2) You are allowed to call these with NULL,
  */
-NemoFile *          nemo_file_ref                               (NemoFile                   *file);
+NemoFile *          	nemo_file_ref                               (NemoFile                   *file);
 void                    nemo_file_unref                             (NemoFile                   *file);
 
 /* Monitor the file. */
@@ -189,15 +190,18 @@ gboolean                nemo_file_contains_text                     (NemoFile   
 char *                  nemo_file_get_display_name                  (NemoFile                   *file);
 char *                  nemo_file_get_edit_name                     (NemoFile                   *file);
 char *                  nemo_file_get_name                          (NemoFile                   *file);
+char *                  nemo_file_get_extension_name                (NemoFile                   *file);
+
 const char *            nemo_file_peek_name                         (NemoFile                   *file);
+const char *         	nemo_file_peek_extension_name               (NemoFile                   *file);
 
 GFile *                 nemo_file_get_location                      (NemoFile                   *file);
-char *			 nemo_file_get_description			 (NemoFile			 *file);
+char *					nemo_file_get_description			 		(NemoFile			 		*file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);
 char *                  nemo_file_get_path                          (NemoFile                   *file);
 char *                  nemo_file_get_uri_scheme                    (NemoFile                   *file);
 gboolean                nemo_file_has_uri_scheme                    (NemoFile *file, const gchar *scheme);
-NemoFile *          nemo_file_get_parent                        (NemoFile                   *file);
+NemoFile *          	nemo_file_get_parent                        (NemoFile                   *file);
 GFile *                 nemo_file_get_parent_location               (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri                    (NemoFile                   *file);
 char *                  nemo_file_get_parent_uri_for_display        (NemoFile                   *file);
@@ -208,7 +212,7 @@ time_t                  nemo_file_get_ctime                         (NemoFile   
 GFileType               nemo_file_get_file_type                     (NemoFile                   *file);
 char *                  nemo_file_get_mime_type                     (NemoFile                   *file);
 gboolean                nemo_file_is_mime_type                      (NemoFile                   *file,
-									 const char                     *mime_type);
+									const char                     *mime_type);
 gboolean                nemo_file_is_launchable                     (NemoFile                   *file);
 gboolean                nemo_file_is_symbolic_link                  (NemoFile                   *file);
 gboolean                nemo_file_is_mountpoint                     (NemoFile                   *file);
@@ -220,12 +224,12 @@ char *                  nemo_file_get_volume_name                   (NemoFile   
 char *                  nemo_file_get_symbolic_link_target_path     (NemoFile                   *file);
 char *                  nemo_file_get_symbolic_link_target_uri      (NemoFile                   *file);
 gboolean                nemo_file_is_broken_symbolic_link           (NemoFile                   *file);
-gboolean                nemo_file_is_nemo_link                  (NemoFile                   *file);
+gboolean                nemo_file_is_nemo_link                  	(NemoFile                   *file);
 gboolean                nemo_file_is_executable                     (NemoFile                   *file);
 gboolean                nemo_file_is_directory                      (NemoFile                   *file);
 gboolean                nemo_file_is_user_special_directory         (NemoFile                   *file,
 									 GUserDirectory                 special_directory);
-gboolean		nemo_file_is_archive			(NemoFile			*file);
+gboolean				nemo_file_is_archive						(NemoFile					*file);
 gboolean                nemo_file_is_in_trash                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_recent                      (NemoFile                   *file);
 gboolean                nemo_file_is_in_favorites                   (NemoFile                   *file);
@@ -233,14 +237,14 @@ gboolean                nemo_file_is_in_search                      (NemoFile   
 gboolean                nemo_file_is_unavailable_favorite           (NemoFile                   *file);
 gboolean                nemo_file_is_in_admin                       (NemoFile                   *file);
 gboolean                nemo_file_is_in_desktop                     (NemoFile                   *file);
-gboolean		nemo_file_is_home				(NemoFile                   *file);
+gboolean				nemo_file_is_home							(NemoFile                   *file);
 gboolean                nemo_file_is_desktop_directory              (NemoFile                   *file);
 GError *                nemo_file_get_file_info_error               (NemoFile                   *file);
 gboolean                nemo_file_get_directory_item_count          (NemoFile                   *file,
 									 guint                          *count,
 									 gboolean                       *count_unreadable);
 void                    nemo_file_recompute_deep_counts             (NemoFile                   *file);
-NemoRequestStatus   nemo_file_get_deep_counts                   (NemoFile                   *file,
+NemoRequestStatus   	nemo_file_get_deep_counts                   (NemoFile                   *file,
 									 guint                          *directory_count,
 									 guint                          *file_count,
 									 guint                          *unreadable_directory_count,
@@ -266,7 +270,7 @@ GFilesystemPreviewType  nemo_file_get_filesystem_use_preview        (NemoFile *f
 
 char *                  nemo_file_get_filesystem_id                 (NemoFile                   *file);
 
-NemoFile *          nemo_file_get_trash_original_file           (NemoFile                   *file);
+NemoFile *          	nemo_file_get_trash_original_file           (NemoFile                   *file);
 
 /* Permissions. */
 gboolean                nemo_file_can_get_permissions               (NemoFile                   *file);

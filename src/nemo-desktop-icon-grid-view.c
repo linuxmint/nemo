@@ -95,6 +95,11 @@ static const DesktopSortCriterion sort_criteria[] = {
         "name",
         NEMO_FILE_SORT_BY_DISPLAY_NAME
     },
+	{
+        "Desktop Sort by Extension",
+        "extension",
+        NEMO_FILE_SORT_BY_EXTENSION_NAME
+    },
     {
         "Desktop Sort by Size",
         "size",
@@ -1074,6 +1079,10 @@ static const GtkRadioActionEntry desktop_sort_radio_entries[] = {
       N_("Name"), NULL,
       NULL,
       NEMO_FILE_SORT_BY_DISPLAY_NAME },
+	{ "Desktop Sort by Extension", NULL,
+      N_("Extension"), NULL,
+      NULL,
+      NEMO_FILE_SORT_BY_EXTENSION_NAME },
     { "Desktop Sort by Size", NULL,
       N_("Size"), NULL,
       NULL,
