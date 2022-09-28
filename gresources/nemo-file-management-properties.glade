@@ -164,6 +164,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
         <col id="0" translatable="yes">By Name</col>
       </row>
       <row>
+        <col id="0" translatable="yes">By Extension</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">By Size</col>
       </row>
       <row>
@@ -192,11 +195,14 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       <row>
         <col id="0" translatable="yes">33%</col>
       </row>
-      <row>
-        <col id="0" translatable="yes">50%</col>
+       <row>
+        <col id="0" translatable="yes">45%</col>
       </row>
       <row>
-        <col id="0" translatable="yes">66%</col>
+        <col id="0" translatable="yes">60%</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">75%</col>
       </row>
       <row>
         <col id="0" translatable="yes">100%</col>

@@ -244,6 +244,7 @@ get_default_sort_order (NemoFile *file, gboolean *reversed)
 	const char *attributes[] = {
 		"name", /* is really "manually" which doesn't apply to lists */
 		"name",
+		"extension",
 		"size",
 		"type",
 		"detailed_type",
