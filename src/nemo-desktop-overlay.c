@@ -198,14 +198,14 @@ sync_controls (NemoDesktopOverlay *overlay,
         active_id = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
         switch (active_id) {
-            case NEMO_FILE_SORT_BY_EXTENSION_NAME:
-                combo_id = "Desktop Sort by Extension";
-                break;
             case NEMO_FILE_SORT_BY_SIZE:
                 combo_id = "Desktop Sort by Size";
                 break;
             case NEMO_FILE_SORT_BY_DETAILED_TYPE:
                 combo_id = "Desktop Sort by Type";
+                break;
+            case NEMO_FILE_SORT_BY_EXTENSION_NAME:
+                combo_id = "Desktop Sort by Extension";
                 break;
             case NEMO_FILE_SORT_BY_MTIME:
                 combo_id = "Desktop Sort by Date";

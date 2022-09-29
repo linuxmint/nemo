@@ -6,9 +6,9 @@
 				<menuitem name="Manual Layout" action="Manual Layout"/>
 				<placeholder name="Auto Layout">
 					<menuitem name="Sort by Name" action="Sort by Name"/>
-					<menuitem name="Sort by Extension" action="Sort by Extension"/>
 					<menuitem name="Sort by Size" action="Sort by Size"/>
 					<menuitem name="Sort by Type" action="Sort by Type"/>
+					<menuitem name="Sort by Extension" action="Sort by Extension"/>
 					<menuitem name="Sort by Detailed Type" action="Sort by Detailed Type"/>
 					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
 					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
@@ -29,9 +29,9 @@
 				<menuitem name="Manual Layout" action="Manual Layout"/>
 				<placeholder name="Auto Layout">
 					<menuitem name="Sort by Name" action="Sort by Name"/>
-					<menuitem name="Sort by Extension" action="Sort by Extension"/>
 					<menuitem name="Sort by Size" action="Sort by Size"/>
 					<menuitem name="Sort by Type" action="Sort by Type"/>
+					<menuitem name="Sort by Extension" action="Sort by Extension"/>
 					<menuitem name="Sort by Detailed Type" action="Sort by Detailed Type"/>
 					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
 					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>

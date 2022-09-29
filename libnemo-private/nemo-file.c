@@ -128,9 +128,9 @@ static guint signals[LAST_SIGNAL] = { 0 };
 static GHashTable *symbolic_links;
 
 static GQuark attribute_name_q,
-	attribute_ext_q,
 	attribute_size_q,
 	attribute_type_q,
+	attribute_ext_q,
 	attribute_detailed_type_q,
 	attribute_modification_date_q,
 	attribute_date_modified_q,
@@ -3378,7 +3378,7 @@ nemo_file_compare_for_sort (NemoFile *file_1,
 			if (result == 0) {
 				result = compare_by_display_name (file_1, file_2);
 			}
-			break;		
+			break;
 		case NEMO_FILE_SORT_BY_SIZE:
 			/* Compare directory sizes ourselves, then if necessary
 			 * use GnomeVFS to compare file sizes.
@@ -3474,7 +3474,7 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 						       directories_first,
 						       favorites_first,
 						       reversed,
-                               search_dir); 
+                               search_dir);
 	} else if (attribute == attribute_size_q) {
 		return nemo_file_compare_for_sort (file_1, file_2,
 						       NEMO_FILE_SORT_BY_SIZE,
@@ -4131,7 +4131,7 @@ nemo_file_get_display_name (NemoFile *file)
 char *
 nemo_file_get_extension_name (NemoFile *file)
 {
-	return g_strdup (nemo_file_peek_extension_name (file));
+	return nemo_file_peek_extension_name (file);
 }
 
 char *
@@ -8960,9 +8960,9 @@ nemo_file_class_init (NemoFileClass *class)
 	nemo_file_info_getter = nemo_file_get_internal;
 
 	attribute_name_q = g_quark_from_static_string ("name");
-	attribute_ext_q = g_quark_from_static_string ("extension");
 	attribute_size_q = g_quark_from_static_string ("size");
 	attribute_type_q = g_quark_from_static_string ("type");
+	attribute_ext_q = g_quark_from_static_string ("extension");
     attribute_detailed_type_q = g_quark_from_static_string ("detailed_type");
 	attribute_modification_date_q = g_quark_from_static_string ("modification_date");
 	attribute_date_modified_q = g_quark_from_static_string ("date_modified");

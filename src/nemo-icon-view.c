@@ -138,13 +138,6 @@ static const SortCriterion sort_criteria[] = {
 		N_("Keep icons sorted by name in rows")
 	},
 	{
-		NEMO_FILE_SORT_BY_EXTENSION_NAME,
-		"extension",
-		"Sort by Extension",
-		N_("by _Extension"),
-		N_("Keep icons sorted by Extension in rows")
-	},
-	{
 		NEMO_FILE_SORT_BY_SIZE,
 		"size",
 		"Sort by Size",
@@ -157,6 +150,13 @@ static const SortCriterion sort_criteria[] = {
 		"Sort by Type",
 		N_("by _Type"),
 		N_("Keep icons sorted by type in rows")
+	},
+	{
+		NEMO_FILE_SORT_BY_EXTENSION_NAME,
+		"extension",
+		"Sort by Extension",
+		N_("by _Extension"),
+		N_("Keep icons sorted by Extension in rows")
 	},
     {
         NEMO_FILE_SORT_BY_DETAILED_TYPE,

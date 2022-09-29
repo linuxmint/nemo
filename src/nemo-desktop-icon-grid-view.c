@@ -95,11 +95,6 @@ static const DesktopSortCriterion sort_criteria[] = {
         "name",
         NEMO_FILE_SORT_BY_DISPLAY_NAME
     },
-	{
-        "Desktop Sort by Extension",
-        "extension",
-        NEMO_FILE_SORT_BY_EXTENSION_NAME
-    },
     {
         "Desktop Sort by Size",
         "size",
@@ -109,6 +104,11 @@ static const DesktopSortCriterion sort_criteria[] = {
         "Desktop Sort by Type",
         "detailed_type",
         NEMO_FILE_SORT_BY_DETAILED_TYPE
+    },
+	{
+        "Desktop Sort by Extension",
+        "extension",
+        NEMO_FILE_SORT_BY_EXTENSION_NAME
     },
     {
         "Desktop Sort by Date",

@@ -140,9 +140,9 @@ static const char * const zoom_values[] = {
 
 static const char * const sort_order_values[] = {
 	"name",
-	"extension",
 	"size",
 	"type",
+	"extension",
     "detailed_type",
 	"mtime",
 	"atime",

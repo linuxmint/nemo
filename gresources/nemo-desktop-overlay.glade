@@ -118,18 +118,18 @@
       </row>
       <row>
         <col id="0">2</col>
-        <col id="1" translatable="yes">Extension</col>
-        <col id="2">Desktop Sort by Extension</col>
-      </row>
-      <row>
-        <col id="0">3</col>
         <col id="1" translatable="yes">Size</col>
         <col id="2">Desktop Sort by Size</col>
       </row>
       <row>
-        <col id="0">4</col>
+        <col id="0">3</col>
         <col id="1" translatable="yes">Type</col>
         <col id="2">Desktop Sort by Type</col>
+      </row>
+      <row>
+        <col id="0">4</col>
+        <col id="1" translatable="yes">Extension</col>
+        <col id="2">Desktop Sort by Extension</col>
       </row>
       <row>
         <col id="0">5</col>

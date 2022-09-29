@@ -43,13 +43,6 @@ get_builtin_columns (void)
 					       "label", _("Name"),
 					       "description", _("The name and icon of the file."),
 					       NULL));
-	columns = g_list_append (NULL,                           
-				 g_object_new (NEMO_TYPE_COLUMN,
-					       "name", "extension",
-					       "attribute", "extension",
-					       "label", _("Extension"),
-					       "description", _("The extension of the file."),
-					       NULL));
 	columns = g_list_append (columns,
 				 g_object_new (NEMO_TYPE_COLUMN,
 					       "name", "size",
@@ -64,6 +57,13 @@ get_builtin_columns (void)
 					       "attribute", "type",
 					       "label", _("Type"),
 					       "description", _("The general type of the file."),
+					       NULL));
+	columns = g_list_append (columns,                           
+				 g_object_new (NEMO_TYPE_COLUMN,
+					       "name", "extension",
+					       "attribute", "extension",
+					       "label", _("Extension"),
+					       "description", _("The extension of the file."),
 					       NULL));
     columns = g_list_append (columns,
                  g_object_new (NEMO_TYPE_COLUMN,

@@ -31,9 +31,9 @@
   <enum id="org.nemo.SortOrder">
     <value nick="manually" value="0"/>
     <value nick="name" value="1"/>
-    <value nick="extension" value="2"/>
-    <value nick="size" value="3"/>
-    <value nick="type" value="4"/>
+    <value nick="size" value="2"/>
+    <value nick="type" value="3"/>
+    <value nick="extension" value="4"/>
     <value nick="detailed_type" value="5"/>
     <value nick="mtime" value="6"/>
     <value nick="atime" value="7"/>
@@ -429,7 +429,7 @@
       <description>A list of captions below an icon in the icon view and
       the desktop.  The actual number of captions shown depends on
       the zoom level.  Some possible values are:
-      "size", "type", "date_modified", "date_changed", "date_accessed", "owner",
+      "size", "type", "date_modified", "extension", "date_changed", "date_accessed", "owner",
       "group", "permissions", "octal_permissions" and "mime_type".</description>
     </key>
     <key name="default-use-tighter-layout" type="b">
