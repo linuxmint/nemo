@@ -362,21 +362,5 @@ nemo_search_engine_tracker_init (NemoSearchEngineTracker *engine)
 NemoSearchEngine *
 nemo_search_engine_tracker_new (void)
 {
-	NemoSearchEngineTracker *engine;
-	TrackerSparqlConnection *connection;
-	GError *error = NULL;
-
-	connection = tracker_sparql_connection_get (NULL, &error);
-
-	if (error) {
-		g_warning ("Could not establish a connection to Tracker: %s", error->message);
-		g_error_free (error);
-		return NULL;
-	}
-
-	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_TRACKER, NULL);
-	engine->details->connection = connection;
-	engine->details->cancellable = g_cancellable_new ();
-
-	return NEMO_SEARCH_ENGINE (engine);
+	return (NEMO_TYPE_SEARCH_ENGINE_TRACKER, NULL);
 }
