@@ -1287,8 +1287,6 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 {
 	EelCanvas *canvas;
 	GdkPixbuf *temp_pixbuf, *old_pixbuf;
-	GtkStyleContext *style;
-	GdkRGBA color;
     cairo_surface_t *surface;
 
 	temp_pixbuf = icon_item->details->pixbuf;
@@ -1301,22 +1299,6 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 		old_pixbuf = temp_pixbuf;
 
 		temp_pixbuf = eel_create_spotlight_pixbuf (temp_pixbuf);
-		g_object_unref (old_pixbuf);
-	}
-
-	if (icon_item->details->is_highlighted_for_selection
-	    || icon_item->details->is_highlighted_for_drop) {
-		style = gtk_widget_get_style_context (GTK_WIDGET (canvas));
-
-		if (gtk_widget_has_focus (GTK_WIDGET (canvas))) {
-			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_SELECTED, &color);
-		} else {
-			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_ACTIVE, &color);
-		}
-
-		old_pixbuf = temp_pixbuf;
-		temp_pixbuf = eel_create_colorized_pixbuf (temp_pixbuf, &color);
-
 		g_object_unref (old_pixbuf);
 	}
 
