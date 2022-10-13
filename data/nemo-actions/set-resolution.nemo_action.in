@@ -1,0 +1,18 @@
+[Nemo Action]
+
+Name=Display Settings
+
+Comment=Change the resolution
+
+Exec=cinnamon-settings display
+
+Selection=None
+
+Icon-Name=video-display-symbolic
+
+Extensions=any;
+
+Dependencies=cinnamon-settings;
+
+Conditions=desktop;dbus org.Cinnamon;
+
