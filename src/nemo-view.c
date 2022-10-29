@@ -2160,7 +2160,11 @@ action_properties_callback (GtkAction *action,
 	selection = nemo_view_get_selection (view);
 	if (g_list_length (selection) == 0) {
 		if (view->details->directory_as_file != NULL) {
-			files = g_list_append (NULL, nemo_file_ref (view->details->directory_as_file));
+            if (NEMO_IS_SEARCH_DIRECTORY (view->details->model)) {
+                files = nemo_directory_get_file_list (view->details->model);
+            } else {
+                files = g_list_append (NULL, nemo_file_ref (view->details->directory_as_file));
+            }
 
 			nemo_properties_window_present (files, GTK_WIDGET (view), NULL);
 
@@ -2184,7 +2188,11 @@ action_location_properties_callback (GtkAction *action,
 	view = NEMO_VIEW (callback_data);
 	g_assert (NEMO_IS_FILE (view->details->location_popup_directory_as_file));
 
-	files = g_list_append (NULL, nemo_file_ref (view->details->location_popup_directory_as_file));
+    if (NEMO_IS_SEARCH_DIRECTORY (view->details->model)) {
+        files = nemo_directory_get_file_list (view->details->model);
+    } else {
+        files = g_list_append (NULL, nemo_file_ref (view->details->location_popup_directory_as_file));
+    }
 
 	nemo_properties_window_present (files, GTK_WIDGET (view), NULL);
 
