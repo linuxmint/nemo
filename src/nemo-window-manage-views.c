@@ -1011,6 +1011,10 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 							 G_CALLBACK (viewed_file_changed_callback), slot, 0);
 				nemo_file_unref (viewed_file);
 
+                gchar *path = nemo_file_get_path (file);
+                NEMO_WINDOW_GET_CLASS (window)->prompt_for_location(window, path);
+                g_free (path);
+
 				/* Leave the location bar showing the bad location that the user
 				 * typed (or maybe achieved by dragging or something). Many times
 				 * the mistake will just be an easily-correctable typo. The user

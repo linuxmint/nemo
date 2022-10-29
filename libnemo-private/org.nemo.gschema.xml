@@ -94,7 +94,13 @@
     <key name="show-location-entry" type="b">
       <default>false</default>
       <summary>Show the location entry by default</summary>
-      <description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar.</description>
+      <description>If set to true, then Nemo browser windows will show a textual input entry for the location toolbar. Not functional if 'always-prefer-pathbar' is set to true.</description>
+    </key>
+    <key name="always-prefer-pathbar" type="b">
+      <default>false</default>
+      <summary>Always revert to the location bar after entry actions or cancellation</summary>
+      <description>If set to true, Nemo will always use the location (breadcrumb) bar by default, and always go back to it upon location change. For example, when this is active, if you click on the location entry toggle or current location's breadcrumb, or ctrl-L, the location entry will be
+      shown only for immediate entry. Once activate, or cancelled, the location bar will re-appear. The "show-location-entry" key will be set to false if this key is set to true.</description>
     </key>
     <key type="b" name="show-previous-icon-toolbar">
       <default>true</default>

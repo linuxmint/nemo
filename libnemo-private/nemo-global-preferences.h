@@ -82,6 +82,7 @@ typedef enum
 #define NEMO_PREFERENCES_NEW_TAB_POSITION			"tabs-open-position"
 
 #define NEMO_PREFERENCES_SHOW_LOCATION_ENTRY		"show-location-entry"
+#define NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR      "always-prefer-pathbar"
 #define NEMO_PREFERENCES_SHOW_PREVIOUS_ICON_TOOLBAR     "show-previous-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_NEXT_ICON_TOOLBAR     "show-next-icon-toolbar"
 #define NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR		"show-up-icon-toolbar"

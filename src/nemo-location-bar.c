@@ -316,6 +316,13 @@ editable_changed_callback (GtkEntry *entry,
 }
 
 static void
+nemo_location_bar_cancel (NemoLocationBar *bar)
+{
+    nemo_location_bar_set_location (bar, bar->details->last_location);
+    nemo_entry_select_all (bar->details->entry);
+}
+
+static void
 editable_activate_callback (GtkEntry *entry,
 			    gpointer user_data)
 {
@@ -326,7 +333,9 @@ editable_activate_callback (GtkEntry *entry,
 	entry_text = gtk_entry_get_text (entry);
 	if (entry_text != NULL && *entry_text != '\0') {
 		emit_location_changed (self);
-	}
+	} else {
+        nemo_location_bar_cancel(self);
+    }
 }
 
 void
@@ -337,15 +346,6 @@ nemo_location_bar_activate (NemoLocationBar *bar)
 	 */
 	gtk_widget_grab_focus (GTK_WIDGET (bar->details->entry));
 	nemo_entry_select_all (bar->details->entry);
-}
-
-static void
-nemo_location_bar_cancel (NemoLocationBar *bar)
-{
-	char *last_location;
-
-	last_location = bar->details->last_location;
-	nemo_location_bar_set_location (bar, last_location);
 }
 
 static void

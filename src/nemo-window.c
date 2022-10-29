@@ -303,20 +303,22 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 
 static void
 nemo_window_prompt_for_location (NemoWindow *window,
-				     const char     *initial)
+                                 const char *initial)
 {
-	NemoWindowPane *pane;
+    NemoWindowPane *pane;
 
-	g_return_if_fail (NEMO_IS_WINDOW (window));
+    g_return_if_fail (NEMO_IS_WINDOW (window));
 
-	if (!NEMO_IS_DESKTOP_WINDOW (window)) {
-		if (initial) {
-			nemo_window_show_location_entry(window);
-			pane = window->details->active_pane;
-			nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
-							    initial);
-		}
-	}
+    if (!NEMO_IS_DESKTOP_WINDOW (window)) {
+        if (initial) {
+            NemoEntry *entry;
+            nemo_window_show_location_entry(window);
+            pane = window->details->active_pane;
+            entry = nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar));
+            nemo_entry_set_text (entry, initial);
+            gtk_editable_set_position (GTK_EDITABLE (entry), -1);
+        }
+    }
 }
 
 /* Code should never force the window taller than this size.

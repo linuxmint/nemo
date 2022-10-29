@@ -219,6 +219,14 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 {
 	GtkAction *location;
 
+    if (!g_settings_get_boolean(nemo_preferences, NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR)) {
+        nemo_window_pane_ensure_location_bar (pane);
+        nemo_window_pane_sync_location_widgets (pane);
+        
+        nemo_location_bar_activate (NEMO_LOCATION_BAR (pane->location_bar));
+        return;
+    }
+
 	location = gtk_action_group_get_action (pane->action_group,
 					      NEMO_ACTION_TOGGLE_LOCATION);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (location), FALSE);
@@ -232,11 +240,21 @@ navigation_bar_location_changed_callback (GtkWidget *widget,
                                           GFile *location,
                                           NemoWindowPane *pane)
 {
+    GFile *current_location;
+
     nemo_window_pane_hide_temporary_bars (pane);
 
     restore_focus_widget (pane);
+    current_location = nemo_window_slot_get_location (pane->active_slot);
 
-    nemo_window_slot_open_location (pane->active_slot, location, 0);
+    if (g_file_equal (location, current_location) && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR)) {
+        nemo_window_pane_sync_location_widgets (pane);
+        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+    } else {
+        nemo_window_slot_open_location (pane->active_slot, location, 0);
+    }
+
+    g_object_unref (current_location);
 }
 
 static gboolean
@@ -277,33 +295,59 @@ path_bar_button_pressed_callback (GtkWidget *widget,
 {
 	NemoWindowSlot *slot;
 	NemoView *view;
-	GFile *location;
+    GFile *button_location;
 	char *uri;
 
 	g_object_set_data (G_OBJECT (widget), "handle-button-release",
 			   GINT_TO_POINTER (TRUE));
 
-	if (event->button == 3) {
+	if (event->button == GDK_BUTTON_SECONDARY) {
 		slot = nemo_window_get_active_slot (pane->window);
 		view = slot->content_view;
 		if (view != NULL) {
-			location = nemo_path_bar_get_path_for_button (
+			button_location = nemo_path_bar_get_path_for_button (
 				NEMO_PATH_BAR (pane->path_bar), widget);
-			if (location != NULL) {
-				uri = g_file_get_uri (location);
+			if (button_location != NULL) {
+				uri = g_file_get_uri (button_location);
 				nemo_view_pop_up_location_context_menu (
 					view, event, uri);
-				g_object_unref (location);
+				g_object_unref (button_location);
 				g_free (uri);
-				return TRUE;
+				return GDK_EVENT_STOP;
 			}
 		}
 	}
 
-    if (event->button == 2)
-        return TRUE;
+    if (event->button == GDK_BUTTON_MIDDLE)
+        return GDK_EVENT_STOP;
 
-    return FALSE;
+    gboolean current_location_clicked = FALSE;
+
+    if (event->button == GDK_BUTTON_PRIMARY) {
+        slot = nemo_window_get_active_slot (pane->window);
+        view = slot->content_view;
+        
+        if (view != NULL) {
+            button_location = nemo_path_bar_get_path_for_button (NEMO_PATH_BAR (pane->path_bar), widget);
+            if (button_location != NULL) {
+                GFile *current_location = nemo_window_slot_get_location (slot);
+
+                if (g_file_equal (current_location, button_location)) {
+                    current_location_clicked = TRUE;
+                }
+
+                g_object_unref (button_location);
+                g_object_unref (current_location);
+            }
+        }
+    }
+
+    if (current_location_clicked) {
+        nemo_window_show_location_entry (pane->window);
+        return GDK_EVENT_STOP;
+    }
+
+    return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
@@ -875,8 +919,9 @@ nemo_window_pane_constructed (GObject *obj)
 
 	pane->action_group = action_group;
 
-    if (!NEMO_IS_DESKTOP_WINDOW (window))
+    if (!NEMO_IS_DESKTOP_WINDOW (window)) {
         setup_search_action (pane);
+    }
 
 	g_signal_connect (pane->action_group, "pre-activate",
 			  G_CALLBACK (toolbar_action_group_activated_callback), pane);
@@ -1117,6 +1162,10 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		g_free (uri);
 		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
         restore_focus_widget (pane);
+
+        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR)) {
+            nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+        }
 	}
 
 	/* Update window global UI if this is the active pane */

@@ -1172,6 +1172,23 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="position">7</property>
                                           </packing>
                                         </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="prefer_pathbar_checkbutton">
+                                            <property name="label" translatable="yes">Always show the path bar when the location changes</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="padding">3</property>
+                                            <property name="position">8</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
