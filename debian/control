@@ -131,7 +131,7 @@ Description: data files for nemo
 Package: nemo-dbg
 Section: debug
 Architecture: any
-Priority: extra
+Priority: optional
 Depends: nemo (= ${binary:Version}), ${misc:Depends}
 Replaces: libnemo-extension1-dbg
 Description: file manager and graphical shell for Cinnamon - debugging version
