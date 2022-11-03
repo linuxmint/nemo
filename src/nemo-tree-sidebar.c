@@ -884,6 +884,24 @@ button_pressed_callback (GtkTreeView *treeview, GdkEventButton *event,
 	return FALSE;
 }
 
+static gboolean
+key_press_callback (GtkWidget   *widget,
+                    GdkEventKey *event,
+                    gpointer     user_data)
+{
+    FMTreeView *view = FM_TREE_VIEW (user_data);
+
+    if (event->keyval == GDK_KEY_slash ||
+        event->keyval == GDK_KEY_KP_Divide ||
+        event->keyval == GDK_KEY_asciitilde) {
+        if (gtk_bindings_activate_event (G_OBJECT (view->details->window), event)) {
+            return GDK_EVENT_STOP;
+        }
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+
 static void
 fm_tree_view_activate_file (FMTreeView *view, 
 			    NemoFile *file,
@@ -1568,6 +1586,8 @@ create_tree (FMTreeView *view)
 		(gtk_tree_model_sort_new_with_model (GTK_TREE_MODEL (view->details->child_model)));
 	view->details->tree_widget = GTK_TREE_VIEW
 		(gtk_tree_view_new_with_model (GTK_TREE_MODEL (view->details->sort_model)));
+    gtk_tree_view_set_search_column (GTK_TREE_VIEW (view->details->tree_widget), FM_TREE_MODEL_DISPLAY_NAME_COLUMN);
+
 	g_object_unref (view->details->sort_model);
 
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (view->details->tree_widget)),
@@ -1687,6 +1707,10 @@ create_tree (FMTreeView *view)
 	g_signal_connect (G_OBJECT (view->details->tree_widget), 
 			  "button_press_event", G_CALLBACK (button_pressed_callback),
 			  view);
+
+    g_signal_connect (G_OBJECT (view->details->tree_widget), 
+              "key-press-event", G_CALLBACK (key_press_callback),
+              view);
 
 	slot = nemo_window_get_active_slot (view->details->window);
 	location = nemo_window_slot_get_current_uri (slot);

@@ -1439,6 +1439,14 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 	view = NEMO_VIEW (callback_data);
 	handled = FALSE;
 
+    if (event->keyval == GDK_KEY_slash ||
+        event->keyval == GDK_KEY_KP_Divide ||
+        event->keyval == GDK_KEY_asciitilde) {
+        if (gtk_bindings_activate_event (G_OBJECT (nemo_view_get_nemo_window (view)), event)) {
+            return GDK_EVENT_STOP;
+        }
+    }
+
 	switch (event->keyval) {
 	case GDK_KEY_F10:
 		if (event->state & GDK_CONTROL_MASK) {

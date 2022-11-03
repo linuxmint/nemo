@@ -3357,6 +3357,14 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
   GtkTreeIter selected_iter;
   GtkTreePath *path;
 
+  if (event->keyval == GDK_KEY_slash ||
+    event->keyval == GDK_KEY_KP_Divide ||
+    event->keyval == GDK_KEY_asciitilde) {
+    if (gtk_bindings_activate_event (G_OBJECT (sidebar->window), event)) {
+        return GDK_EVENT_STOP;
+    }
+  }
+
   if (!get_selected_iter (sidebar, &selected_iter)) {
 	  return FALSE;
   }
