@@ -107,11 +107,6 @@ struct GetInfoState {
 	GCancellable *cancellable;
 };
 
-struct GetBTimeState {
-    NemoDirectory *directory;
-    GCancellable *cancellable;
-};
-
 struct NewFilesState {
 	NemoDirectory *directory;
 	GCancellable *cancellable;
@@ -556,19 +551,6 @@ file_info_cancel (NemoDirectory *directory)
 }
 
 static void
-btime_cancel (NemoDirectory *directory)
-{
-    if (directory->details->get_btime_in_progress != NULL) {
-        g_cancellable_cancel (directory->details->get_btime_in_progress->cancellable);
-        directory->details->get_btime_in_progress->directory = NULL;
-        directory->details->get_btime_in_progress = NULL;
-        directory->details->get_btime_file = NULL;
-
-        async_job_end (directory, "get btime");
-    }
-}
-
-static void
 favorite_check_cancel (NemoDirectory *directory)
 {
     if (directory->details->favorite_check_in_progress != NULL) {
@@ -697,9 +679,6 @@ nemo_directory_set_up_request (NemoFileAttributes file_attributes)
 	if ((file_attributes & NEMO_FILE_ATTRIBUTE_INFO) != 0) {
 		REQUEST_SET_TYPE (request, REQUEST_FILE_INFO);
 	}
-	if ((file_attributes & NEMO_FILE_ATTRIBUTE_BTIME) != 0) {
-        REQUEST_SET_TYPE (request, REQUEST_BTIME);
-    }
 	if (file_attributes & NEMO_FILE_ATTRIBUTE_LINK_INFO) {
 		REQUEST_SET_TYPE (request, REQUEST_FILE_INFO);
 		REQUEST_SET_TYPE (request, REQUEST_LINK_INFO);
@@ -1601,10 +1580,6 @@ nemo_async_destroying_file (NemoFile *file)
 		directory->details->get_info_file = NULL;
 		changed = TRUE;
 	}
-    if (directory->details->get_btime_file == file) {
-        directory->details->get_btime_file = NULL;
-        changed = TRUE;
-    }
     if (directory->details->favorite_check_file == file) {
         directory->details->favorite_check_file = NULL;
         changed = TRUE;
@@ -1662,13 +1637,6 @@ lacks_info (NemoFile *file)
 {
 	return !file->details->file_info_is_up_to_date
 		&& !file->details->is_gone;
-}
-
-static gboolean
-lacks_btime (NemoFile *file)
-{
-    return !file->details->btime_is_up_to_date
-        && !file->details->is_gone;
 }
 
 static gboolean
@@ -1794,12 +1762,6 @@ request_is_satisfied (NemoDirectory *directory,
 			return FALSE;
 		}
 	}
-
-    if (REQUEST_WANTS_TYPE (request, REQUEST_BTIME)) {
-        if (has_problem (directory, file, lacks_btime)) {
-            return FALSE;
-        }
-    }
 
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILESYSTEM_INFO)) {
 		if (has_problem (directory, file, lacks_filesystem_info)) {
@@ -3308,133 +3270,6 @@ file_info_start (NemoDirectory *directory,
 	g_object_unref (location);
 }
 
-static void
-get_btime_state_free (GetBTimeState *state)
-{
-    g_object_unref (state->cancellable);
-    g_free (state);
-}
-
-static void
-query_btime_callback (GObject *source_object,
-                      GAsyncResult *res,
-                      gpointer user_data)
-{
-    NemoDirectory *directory;
-    NemoFile *get_btime_file;
-    GetBTimeState *state;
-    GError *error;
-    time_t btime;
-
-    state = user_data;
-
-    if (state->directory == NULL) {
-        /* Operation was cancelled. Bail out */
-        get_btime_state_free (state);
-        return;
-    }
-    
-    directory = nemo_directory_ref (state->directory);
-
-    get_btime_file = directory->details->get_btime_file;
-    g_assert (NEMO_IS_FILE (get_btime_file));
-
-    directory->details->get_btime_file = NULL;
-    directory->details->get_btime_in_progress = NULL;
-    
-    /* ref here because we might be removing the last ref when we
-     * mark the file gone below, but we need to keep a ref at
-     * least long enough to send the change notification. 
-     */
-    nemo_file_ref (get_btime_file);
-
-    error = NULL;
-    btime = nemo_query_btime_finish (G_FILE (source_object), res, &error);
-    
-    if (btime == -1) {
-        get_btime_file->details->btime_is_up_to_date = TRUE;
-        get_btime_file->details->get_btime_failed = TRUE;
-        if (error) {
-            g_clear_error (&error);
-        }
-    } else {
-        get_btime_file->details->btime = btime;
-        get_btime_file->details->btime_is_up_to_date = TRUE;
-        get_btime_file->details->get_btime_failed = FALSE;
-    }
-
-    nemo_file_changed (get_btime_file);
-    nemo_file_unref (get_btime_file);
-
-    async_job_end (directory, "get btime");
-    nemo_directory_async_state_changed (directory);
-
-    nemo_directory_unref (directory);
-
-    get_btime_state_free (state);
-}
-
-static void
-btime_stop (NemoDirectory *directory)
-{
-    NemoFile *file;
-
-    if (directory->details->get_btime_in_progress != NULL) {
-        file = directory->details->get_btime_file;
-        if (file != NULL) {
-            g_assert (NEMO_IS_FILE (file));
-            g_assert (file->details->directory == directory);
-            if (is_needy (file, lacks_btime, REQUEST_BTIME)) {
-                return;
-            }
-        }
-
-        /* The info is not wanted, so stop it. */
-        btime_cancel (directory);
-    }
-}
-
-static void
-btime_start (NemoDirectory *directory,
-         NemoFile *file,
-         gboolean *doing_io)
-{
-    GFile *location;
-    GetBTimeState *state;
-    
-    btime_stop (directory);
-
-    if (directory->details->get_btime_in_progress != NULL) {
-        *doing_io = TRUE;
-        return;
-    }
-
-    if (!is_needy (file, lacks_btime, REQUEST_BTIME)) {
-        return;
-    }
-    *doing_io = TRUE;
-
-    if (!async_job_start (directory, "get btime")) {
-        return;
-    }
-
-    directory->details->get_btime_file = file;
-    file->details->get_btime_failed = FALSE;
-
-    state = g_new (GetBTimeState, 1);
-    state->directory = directory;
-    state->cancellable = g_cancellable_new ();
-
-    directory->details->get_btime_in_progress = state;
-    
-    location = nemo_file_get_location (file);
-    nemo_query_btime_async (location,
-                            state->cancellable,
-                            query_btime_callback,
-                            state);
-    g_object_unref (location);
-}
-
 static gboolean
 favorite_check_callback (gpointer user_data)
 {
@@ -4554,7 +4389,6 @@ start_or_stop_io (NemoDirectory *directory)
 
 	/* Stop any no longer wanted attribute fetches. */
 	file_info_stop (directory);
-    btime_stop (directory);
 	directory_count_stop (directory);
 	deep_count_stop (directory);
 	mime_list_stop (directory);
@@ -4586,7 +4420,6 @@ start_or_stop_io (NemoDirectory *directory)
 		file = nemo_file_queue_head (directory->details->low_priority_queue);
 
 		/* Start getting attributes if possible */
-        btime_start (directory, file, &doing_io);
 		mount_start (directory, file, &doing_io);
 		directory_count_start (directory, file, &doing_io);
 		deep_count_start (directory, file, &doing_io);
@@ -4715,15 +4548,6 @@ cancel_file_info_for_file (NemoDirectory *directory,
 }
 
 static void
-cancel_btime_for_file (NemoDirectory *directory,
-                       NemoFile      *file)
-{
-    if (directory->details->get_btime_file == file) {
-        btime_cancel (directory);
-    }
-}
-
-static void
 cancel_favorite_check_for_file (NemoDirectory *directory,
                                 NemoFile      *file)
 {
@@ -4793,9 +4617,6 @@ cancel_loading_attributes (NemoDirectory *directory,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		file_info_cancel (directory);
 	}
-    if (REQUEST_WANTS_TYPE (request, REQUEST_BTIME)) {
-        btime_cancel (directory);
-    }
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILESYSTEM_INFO)) {
 		filesystem_info_cancel (directory);
 	}
@@ -4843,9 +4664,6 @@ nemo_directory_cancel_loading_file_attributes (NemoDirectory      *directory,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		cancel_file_info_for_file (directory, file);
 	}
-    if (REQUEST_WANTS_TYPE (request, REQUEST_BTIME)) {
-        cancel_btime_for_file (directory, file);
-    }
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILESYSTEM_INFO)) {
 		cancel_filesystem_info_for_file (directory, file);
 	}

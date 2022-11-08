@@ -10518,7 +10518,6 @@ finish_loading (NemoView *view)
 		NEMO_FILE_ATTRIBUTE_LINK_INFO |
 		NEMO_FILE_ATTRIBUTE_MOUNT |
 		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO |
-        NEMO_FILE_ATTRIBUTE_BTIME |
         NEMO_FILE_ATTRIBUTE_FAVORITE_CHECK;
 
 	nemo_directory_file_monitor_add (view->details->model,

@@ -8270,12 +8270,6 @@ invalidate_file_info (NemoFile *file)
 }
 
 static void
-invalidate_btime (NemoFile *file)
-{
-    file->details->btime_is_up_to_date = FALSE;
-}
-
-static void
 invalidate_link_info (NemoFile *file)
 {
 	file->details->link_info_is_up_to_date = FALSE;
@@ -8354,9 +8348,6 @@ nemo_file_invalidate_attributes_internal (NemoFile *file,
 	if (REQUEST_WANTS_TYPE (request, REQUEST_FILE_INFO)) {
 		invalidate_file_info (file);
 	}
-    if (REQUEST_WANTS_TYPE (request, REQUEST_BTIME)) {
-        invalidate_btime (file);
-    }
 	if (REQUEST_WANTS_TYPE (request, REQUEST_LINK_INFO)) {
 		invalidate_link_info (file);
 	}
@@ -8448,7 +8439,6 @@ nemo_file_get_all_attributes (void)
 		NEMO_FILE_ATTRIBUTE_EXTENSION_INFO |
 		NEMO_FILE_ATTRIBUTE_THUMBNAIL |
 		NEMO_FILE_ATTRIBUTE_MOUNT |
-        NEMO_FILE_ATTRIBUTE_BTIME |
         NEMO_FILE_ATTRIBUTE_FAVORITE_CHECK;
 }
 

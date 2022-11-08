@@ -37,7 +37,6 @@ typedef struct DirectoryLoadState DirectoryLoadState;
 typedef struct DirectoryCountState DirectoryCountState;
 typedef struct DeepCountState DeepCountState;
 typedef struct GetInfoState GetInfoState;
-typedef struct GetBTimeState GetBTimeState;
 typedef struct NewFilesState NewFilesState;
 typedef struct MimeListState MimeListState;
 typedef struct ThumbnailState ThumbnailState;
@@ -56,7 +55,6 @@ typedef enum {
 	REQUEST_THUMBNAIL,
 	REQUEST_MOUNT,
 	REQUEST_FILESYSTEM_INFO,
-    REQUEST_BTIME,
     REQUEST_FAVORITE_CHECK,
 	REQUEST_TYPE_LAST
 } RequestType;
@@ -123,9 +121,6 @@ struct NemoDirectoryDetails
 
 	NemoFile *get_info_file;
 	GetInfoState *get_info_in_progress;
-
-    NemoFile *get_btime_file;
-    GetBTimeState *get_btime_in_progress;
 
     NemoFile *favorite_check_file;
     FavoriteCheckState *favorite_check_in_progress;
