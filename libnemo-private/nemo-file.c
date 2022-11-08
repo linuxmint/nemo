@@ -2259,7 +2259,7 @@ update_info_internal (NemoFile *file,
 	int uid, gid;
 	goffset size;
 	int sort_order;
-	time_t atime, mtime, ctime;
+	time_t atime, mtime, ctime, btime;
 	time_t trash_time;
 	GTimeVal g_trash_time;
 	const char * time_string;
@@ -2549,10 +2549,12 @@ update_info_internal (NemoFile *file,
 
 	atime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_ACCESS);
 	ctime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_CHANGED);
-	mtime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+    mtime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+	btime = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_CREATED);
 	if (file->details->atime != atime ||
 	    file->details->mtime != mtime ||
-	    file->details->ctime != ctime) {
+	    file->details->ctime != ctime ||
+        file->details->btime != btime) {
 		if (file->details->thumbnail == NULL) {
 			file->details->thumbnail_is_up_to_date = FALSE;
 		}
@@ -2562,6 +2564,7 @@ update_info_internal (NemoFile *file,
 	file->details->atime = atime;
 	file->details->ctime = ctime;
 	file->details->mtime = mtime;
+    file->details->btime = btime;
 
 	if (file->details->thumbnail != NULL &&
 	    file->details->thumbnail_mtime != 0 &&
