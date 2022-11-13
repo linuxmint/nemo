@@ -54,6 +54,7 @@ static GDebugKey keys[] = {
   { "Desktop", NEMO_DEBUG_DESKTOP },
   { "Thumbnails", NEMO_DEBUG_THUMBNAILS },
   { "Search", NEMO_DEBUG_SEARCH },
+  { "Preferences", NEMO_DEBUG_PREFERENCES },
   { 0, }
 };
 

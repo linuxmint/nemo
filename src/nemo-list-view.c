@@ -2346,6 +2346,62 @@ on_treeview_realized (GtkWidget *widget,
 }
 
 static void
+update_date_fonts (NemoListView *view)
+{
+    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
+
+    PangoFontDescription *font_desc;
+    PangoStyle style;
+    gchar *font_name;
+    const gchar *new_family;
+
+    GtkSettings *settings = gtk_settings_get_default ();
+    g_object_get (settings, "gtk-font-name", &font_name, NULL);
+
+    font_desc = pango_font_description_from_string (font_name);
+
+    if (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT) == NEMO_DATE_FORMAT_INFORMAL ||
+        !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT_MONOSPACE) ||
+        g_strstr_len (font_name, -1, "Mono")) {
+        new_family = pango_font_description_get_family (font_desc);
+    } else {
+        const gchar *current_font_family;
+        current_font_family = pango_font_description_get_family (font_desc);
+        new_family = nemo_global_preferences_get_mono_font_family_match (current_font_family);
+    }
+
+    style = pango_font_description_get_style (font_desc);
+
+    GList *combined = g_list_copy (view->details->cells);
+    combined = g_list_prepend (combined, view->details->file_name_cell);
+    GList *l;
+
+    for (l = combined; l != NULL; l = l->next) {
+        GtkCellRenderer *cell = GTK_CELL_RENDERER (l->data);
+        const gchar *column_id = g_object_get_data (G_OBJECT (cell), "column-id");
+
+        if (g_str_has_prefix (column_id, "date_")) {
+            g_object_set (GTK_CELL_RENDERER_TEXT (cell),
+                          "family", new_family,
+                          "style", style,
+                          NULL);
+        }
+        else {
+            g_object_set (GTK_CELL_RENDERER_TEXT (cell),
+                          "font", font_name,
+                          NULL);
+        }
+    }
+
+    gtk_widget_queue_draw (GTK_WIDGET (view->details->tree_view));
+
+    pango_font_description_free (font_desc);
+    g_list_free (combined);
+    g_free (font_name);
+
+}
+
+static void
 create_and_set_up_tree_view (NemoListView *view)
 {
 	GtkCellRenderer *cell;
@@ -2523,6 +2579,10 @@ create_and_set_up_tree_view (NemoListView *view)
                           "width-chars", 40,
                           NULL);
 
+            g_object_set_data_full (G_OBJECT (cell),
+                                    "column-id", g_strdup ("filename"),
+                                    g_free);
+
 			g_signal_connect (cell, "edited", G_CALLBACK (cell_renderer_edited), view);
 			g_signal_connect (cell, "editing-canceled", G_CALLBACK (cell_renderer_editing_canceled), view);
 			g_signal_connect (cell, "editing-started", G_CALLBACK (cell_renderer_editing_started_cb), view);
@@ -2539,10 +2599,14 @@ create_and_set_up_tree_view (NemoListView *view)
                           "width-chars", width_chars,
                           "ellipsize", ellipsize,
                           NULL);
+
 			view->details->cells = g_list_append (view->details->cells,
 							      cell);
-            column = gtk_tree_view_column_new ();
+            g_object_set_data_full (G_OBJECT (cell),
+                                    "column-id", g_strdup (name),
+                                    g_free);
 
+            column = gtk_tree_view_column_new ();
             g_object_set_data_full (G_OBJECT (column),
                                     "column-id", g_strdup (name),
                                     g_free);
@@ -2573,6 +2637,11 @@ create_and_set_up_tree_view (NemoListView *view)
 		g_free (name);
 		g_free (label);
 	}
+
+    update_date_fonts (view);
+    GtkSettings *gtk_settings = gtk_settings_get_default ();
+    g_signal_connect_swapped (gtk_settings, "notify::gtk-font-name", G_CALLBACK (update_date_fonts), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_FORMAT_MONOSPACE, G_CALLBACK (update_date_fonts), view);
 	nemo_column_list_free (nemo_columns);
 
 	default_visible_columns = g_settings_get_strv (nemo_list_view_preferences,
@@ -3913,6 +3982,9 @@ nemo_list_view_dispose (GObject *object)
 	NemoListView *list_view;
 
 	list_view = NEMO_LIST_VIEW (object);
+
+    g_signal_handlers_disconnect_by_func (gtk_settings_get_default (), update_date_fonts, list_view);
+    g_signal_handlers_disconnect_by_func (nemo_preferences, update_date_fonts, list_view);
 
 	if (list_view->details->model) {
 		stop_cell_editing (list_view);

@@ -36,6 +36,9 @@
 #include <glib/gi18n.h>
 #include <gio/gdesktopappinfo.h>
 
+#define DEBUG_FLAG NEMO_DEBUG_PREFERENCES
+#include <libnemo-private/nemo-debug.h>
+
 GSettings *nemo_preferences;
 GSettings *nemo_icon_view_preferences;
 GSettings *nemo_list_view_preferences;
@@ -273,6 +276,131 @@ nemo_global_preferences_get_fileroller_mimetypes (void)
     return file_roller_mimetypes;
 }
 
+static gint
+sort_shortest_first (gconstpointer a, gconstpointer b)
+{
+    return strlen ((const gchar *) a) > strlen((const gchar *) b);
+}
+
+static GList *mono_families = NULL;
+
+const gchar *
+nemo_global_preferences_get_mono_font_family_match (const gchar *in_family_name)
+{
+    static gsize once_init = 0;
+    DEBUG ("Looking up monospaced version of '%s'", in_family_name);
+    // Create a static list of available monospace family names -
+    //
+    // FreeMono
+    // Noto Mono
+    // Tlwg Mono
+    // ...
+    // ...
+
+    if (g_once_init_enter (&once_init)) {
+        DEBUG ("First run: initialize");
+
+        PangoFontMap *map = pango_cairo_font_map_get_default ();
+        PangoFontFamily **families;
+        gint n_families, i;
+
+        pango_font_map_list_families (map, &families, &n_families);
+
+        for (i = 0; i < n_families; i++) {
+            PangoFontFamily *family = families[i];
+
+            // should be pango_font_family_is_monospace (family)) but Fonts lie.
+            if (g_strstr_len (pango_font_family_get_name (family), -1, "Mono")) {
+                mono_families = g_list_prepend (mono_families, g_strdup (pango_font_family_get_name (family)));
+            }
+        }
+
+        g_free (families);
+
+        mono_families = g_list_sort (mono_families, (GCompareFunc) sort_shortest_first);
+        GList *l;
+
+        if (DEBUGGING) {
+            for (l = mono_families; l != NULL; l = l->next) {
+                DEBUG ("Added '%s'", (gchar *) l->data);
+            }
+        }
+
+        g_once_init_leave (&once_init, 1);
+    }
+
+    // Split the passed-in font string into an array ( like ["Liberation", "Sans" "Regular"] )
+    gchar **split_in_family_name = g_strsplit (in_family_name, " ", -1);
+    GList *tmp = g_list_copy (mono_families);
+    GList *l;
+
+    const gchar *best = NULL;
+    gint best_count = 0;
+
+    l = tmp;
+
+    // Work thru the list of mono font strings
+    do {
+        gint current_count = 0, i;
+        const gchar *iter_family_name = (const gchar *) l->data;
+
+        // Split them the same way ( ["Noto", "Sans", "Mono"] )
+        gchar **split_iter_family_name = g_strsplit (iter_family_name, " ", -1);
+
+        DEBUG ("  Comparing %s with %s", in_family_name, iter_family_name);
+
+        // Now see how many parts split_iter_family_name and split_n_family have in common.
+        for (i = 0; i < g_strv_length (split_iter_family_name); i++) {
+            if (g_strv_contains ((const gchar * const*) split_in_family_name, split_iter_family_name[i])) {
+                current_count++;
+                DEBUG ("    Matched %s to %s (%d segments)", split_iter_family_name[i], in_family_name,  current_count);
+            } else {
+                if (i == 0) { // If you can't get the first segment correct, get  removed. This avoids
+                              // Liberation Sans Regular getting  Noto Sans Mono instead of Liberation Sans Mono.
+                              // In that case, the scores would both be 1, but it's obvious the Noto should be discarded.
+                    l = tmp = g_list_remove (tmp, iter_family_name);
+                    DEBUG ("    Discarded %s\n", iter_family_name);
+                    break;
+                }
+            }
+        }
+        // Is this score better than the last? (more segments matched) - save it.
+        if (current_count > best_count)  {
+            best_count = current_count;
+            best = iter_family_name;
+            DEBUG ("  New winner: %s with %d matches", best, best_count);
+        }
+
+        g_strfreev(split_iter_family_name);
+        l = l->next;
+    } while (l != NULL);
+
+    g_list_free (tmp);
+    g_strfreev (split_in_family_name);
+
+    // We return the best match, or Monospace if there were none - this is the default monospace font Pango uses
+    // if you use <tt></tt> markup.
+    if (!best) {
+        DEBUG ("Match not found, falling back to 'Monospace'");
+        if (g_strstr_len (in_family_name, -1, "Bold")) {
+            best = "Monospace Bold";
+        }
+        else if (g_strstr_len (in_family_name, -1, "Italic")) {
+            best = "Monospace Italic";
+        }
+        else if (g_strstr_len (in_family_name, -1, "Bold Italic")) {
+            best = "Monospace Bold Italic";
+        }
+        else {
+            best = "Monospace";
+        }
+    }
+
+    DEBUG ("Finished: '%s' ---->   '%s'", in_family_name, best);
+    return best;
+}
+
+
 static void
 on_time_data_changed (gpointer user_data)
 {
@@ -355,6 +483,8 @@ void
 nemo_global_preferences_finalize (void)
 {
     g_strfreev (file_roller_mimetypes);
+    g_list_free_full (mono_families, g_free);
+
     g_object_unref (tz_mon);
 
     g_object_unref (nemo_preferences);

@@ -42,7 +42,8 @@ G_BEGIN_DECLS
 /* Display  */
 #define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
-#define NEMO_PREFERENCES_DATE_FORMAT			"date-format"
+#define NEMO_PREFERENCES_DATE_FORMAT            "date-format"
+#define NEMO_PREFERENCES_DATE_FORMAT_MONOSPACE  "date-format-monospace"
 
 /* Mouse */
 #define NEMO_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS		"mouse-use-extra-buttons"
@@ -286,6 +287,8 @@ char *nemo_global_preferences_get_desktop_iid (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 gboolean nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key);
 gchar **nemo_global_preferences_get_fileroller_mimetypes (void);
+
+const gchar *nemo_global_preferences_get_mono_font_family_match (const gchar *in_family);
 
 extern GSettings *nemo_preferences;
 extern GSettings *nemo_icon_view_preferences;
