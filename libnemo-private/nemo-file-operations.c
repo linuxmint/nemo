@@ -826,15 +826,22 @@ custom_basename_to_string (char *format, va_list va)
 		g_object_unref (info);
 	}
 
-	if (name == NULL) {
-		basename = g_file_get_basename (file);
-		if (g_utf8_validate (basename, -1, NULL)) {
-			name = basename;
-		} else {
-			name = g_uri_escape_string (basename, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-			g_free (basename);
-		}
-	}
+    if (name == NULL) {
+        basename = g_file_get_basename (file);
+
+        if (basename != NULL) {
+            if (g_utf8_validate (basename, -1, NULL)) {
+                name = basename;
+            } else {
+                name = g_uri_escape_string (basename, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+                g_free (basename);
+            }
+        }
+    }
+
+    if (name == NULL) {
+        name = g_file_get_parse_name (file);
+    }
 
 	/* Some chars can't be put in the markup we use for the dialogs... */
 	if (has_invalid_xml_char (name)) {
