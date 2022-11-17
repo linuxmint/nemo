@@ -961,6 +961,10 @@ get_best_name (GFile *file, gchar **name)
         g_free (path);
     } else {
         out = g_file_get_basename (file);
+
+        if (out == NULL) {
+            out = g_file_get_parse_name (file);
+        }
     }
 
     *name = out;
@@ -4237,7 +4241,7 @@ is_trusted_desktop_file (GFile *file,
 	}
 
 	basename = g_file_get_basename (file);
-	if (!g_str_has_suffix (basename, ".desktop")) {
+	if (basename && !g_str_has_suffix (basename, ".desktop")) {
 		g_free (basename);
 		return FALSE;
 	}
