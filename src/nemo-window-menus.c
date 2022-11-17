@@ -742,8 +742,8 @@ toolbar_radio_entry_changed_cb (GtkAction *action,
     current_value = gtk_radio_action_get_current_value (current);
     switch (current_value) {
         case TOOLBAR_PATHBAR:
-            NemoWindowPane *pane = nemo_window_get_active_pane (window);
             g_settings_set_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY, FALSE);
+            NemoWindowPane *pane = nemo_window_get_active_pane (window);
             nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
             break;
         case TOOLBAR_ENTRY:
