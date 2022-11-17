@@ -219,7 +219,7 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 {
 	GtkAction *location;
 
-    if (!g_settings_get_boolean(nemo_preferences, NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR)) {
+    if (g_settings_get_boolean(nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY)) {
         nemo_window_pane_ensure_location_bar (pane);
         nemo_window_pane_sync_location_widgets (pane);
         
@@ -247,7 +247,7 @@ navigation_bar_location_changed_callback (GtkWidget *widget,
     restore_focus_widget (pane);
     current_location = nemo_window_slot_get_location (pane->active_slot);
 
-    if (g_file_equal (location, current_location) && g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR)) {
+    if (g_file_equal (location, current_location) && !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY)) {
         nemo_window_pane_sync_location_widgets (pane);
         nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
     } else {
@@ -1163,9 +1163,8 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
         restore_focus_widget (pane);
 
-        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_PREFER_PATHBAR)) {
-            nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
-        }
+        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar),
+                                              g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY));
 	}
 
 	/* Update window global UI if this is the active pane */
