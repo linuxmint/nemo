@@ -923,7 +923,7 @@ toggle_location_entry (NemoWindow     *window,
                        NemoWindowPane *pane,
                        gboolean        from_accel_or_menu)
 {
-    gboolean current_view, temp_toolbar_visible, default_toolbar_visible, grab_focus_only, already_has_focus;
+    gboolean current_view, temp_toolbar_visible, default_toolbar_visible, grab_focus_only, already_has_focus, entry_preferred;
     GtkToggleAction *button_action;
     GtkActionGroup *action_group;
 
@@ -932,8 +932,9 @@ toggle_location_entry (NemoWindow     *window,
     default_toolbar_visible = g_settings_get_boolean (nemo_window_state,
                                                       NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
     already_has_focus = nemo_location_bar_has_focus (NEMO_LOCATION_BAR (pane->location_bar));
+    entry_preferred = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
 
-    grab_focus_only = from_accel_or_menu && (pane->last_focus_widget == NULL || !already_has_focus) && current_view;
+    grab_focus_only = from_accel_or_menu && (pane->last_focus_widget == NULL || !already_has_focus || entry_preferred) && current_view;
 
     if ((temp_toolbar_visible || default_toolbar_visible) && !grab_focus_only) {
         nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), !current_view);

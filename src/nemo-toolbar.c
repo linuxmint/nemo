@@ -163,7 +163,8 @@ toolbar_update_appearance (NemoToolbar *self)
 
     widgetitem = self->priv->toggle_location_button;
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR);
-    if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+    gboolean entry_preferred = g_settings_get_boolean (nemo_preferences,  NEMO_PREFERENCES_SHOW_LOCATION_ENTRY);
+    if (!icon_toolbar || entry_preferred) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 
     widgetitem = self->priv->icon_view_button;
