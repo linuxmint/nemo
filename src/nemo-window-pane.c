@@ -248,8 +248,8 @@ navigation_bar_location_changed_callback (GtkWidget *widget,
     current_location = nemo_window_slot_get_location (pane->active_slot);
 
     if (g_file_equal (location, current_location) && !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY)) {
-        nemo_window_pane_sync_location_widgets (pane);
-        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+        GtkAction *action = gtk_action_group_get_action (pane->action_group, NEMO_ACTION_TOGGLE_LOCATION);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), FALSE);
     } else {
         nemo_window_slot_open_location (pane->active_slot, location, 0);
     }
@@ -343,7 +343,9 @@ path_bar_button_pressed_callback (GtkWidget *widget,
     }
 
     if (current_location_clicked) {
-        nemo_window_show_location_entry (pane->window);
+        GtkAction *action = gtk_action_group_get_action (pane->action_group, NEMO_ACTION_TOGGLE_LOCATION);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
+
         return GDK_EVENT_STOP;
     }
 
@@ -1154,6 +1156,7 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 
 	/* Change the location bar and path bar to match the current location. */
 	if (slot->location != NULL) {
+        GtkAction *action;
 		char *uri;
 
 		/* this may be NULL if we just created the slot */
@@ -1163,8 +1166,9 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 		nemo_path_bar_set_path (NEMO_PATH_BAR (pane->path_bar), slot->location);
         restore_focus_widget (pane);
 
-        nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar),
-                                              g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY));
+        action = gtk_action_group_get_action (pane->action_group, NEMO_ACTION_TOGGLE_LOCATION);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+                                      g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY));
 	}
 
 	/* Update window global UI if this is the active pane */
