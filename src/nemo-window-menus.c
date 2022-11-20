@@ -732,23 +732,27 @@ toolbar_radio_entry_changed_cb (GtkAction *action,
                                 GtkRadioAction *current,
                                 gpointer user_data)
 {
-    gint current_value;
     NemoWindow *window = NEMO_WINDOW (user_data);
+    NemoWindowPane *pane;
+    GtkAction *toggle_action;
+    gint current_value;
 
     if (NEMO_IS_DESKTOP_WINDOW (window)) {
         return;
     }
 
+    pane = nemo_window_get_active_pane (window);
+    toggle_action = gtk_action_group_get_action (pane->action_group, NEMO_ACTION_TOGGLE_LOCATION);
+
     current_value = gtk_radio_action_get_current_value (current);
     switch (current_value) {
         case TOOLBAR_PATHBAR:
             g_settings_set_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY, FALSE);
-            NemoWindowPane *pane = nemo_window_get_active_pane (window);
-            nemo_toolbar_set_show_location_entry (NEMO_TOOLBAR (pane->tool_bar), FALSE);
+            gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (toggle_action), FALSE);
             break;
         case TOOLBAR_ENTRY:
             g_settings_set_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY, TRUE);
-            nemo_window_show_location_entry (window);
+            gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (toggle_action), TRUE);
             break;
         default:
             ;

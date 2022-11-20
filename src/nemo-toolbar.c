@@ -393,6 +393,9 @@ nemo_toolbar_constructed (GObject *obj)
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
                   G_CALLBACK (toolbar_update_appearance), self);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
+                  G_CALLBACK (toolbar_update_appearance), self);
 
 	toolbar_update_appearance (self);
 }
