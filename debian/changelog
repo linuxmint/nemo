@@ -1,3 +1,49 @@
+nemo (5.6.0) vera; urgency=medium
+
+  [ veractor ]
+  * Actions: Escape device paths also (#3057)
+
+  [ Michael Webster ]
+  * Use Github actions instead of CircleCI.
+
+  [ veractor ]
+  * Actions: Escape path spaces when they are unquoted
+  * eel: Merge shell character escape functions
+
+  [ Clement Lefebvre ]
+  * icon view: don't highlight selected icons
+  * nemo-desktop: Rename new-launcher -> 90_new-launcher
+  * nemo-desktop: Add Desktop Settings action
+  * l10n: Update POT and files
+
+  [ Michael Webster ]
+  * search: Perform deep counts on a search directories full file list, instead of the directory itself, when opening properties.
+  * nemo-search-directory-file.c: Add a missing NemoDirectory method.
+  * location bar: Add an option to always switch back to the pathbar (breadcrumbs) widget after entering a location or otherwise using the location entry.
+  * Prevent interactive search from interfering with keystrokes intended for the window handler (for focusing the location entry).
+
+  [ Oliver Kästner ]
+  * debian/control(nemo-dbg): priority extra->optional
+
+  [ Michael Webster ]
+  * Remove custom btime (creation time) code.
+  * Add support for file creation time via GFileInfo.
+  * Add ability to display date columns in a monospaced font.
+  * nemo-file-operations.c: Fix null pointer error.
+  * nemo-file-operations.c: Handle a couple more potential problems with g_file_get_basename().
+
+  [ Clement Lefebvre ]
+  * list view: Do show dates in monospace font by default
+
+  [ Michael Webster ]
+  * Change location entry/pathbar behavior.
+  * Fix build on LMDE.
+  * Toolbar: Use actions to control the location/path bar switching.
+  * toolbar: Hide the location entry toggle when not needed, and limit its shortcut to making sure the entry is focused.
+  * pathbar/entry: Fix a couple of issues when changing pathbar/entry preference.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 21 Nov 2022 10:36:27 +0000
+
 nemo (5.4.3) vanessa; urgency=medium
 
   [ Fabio Fantoni ]
