@@ -146,7 +146,7 @@ set_up_actions_directories (NemoActionManager *action_manager)
     data_dirs = (gchar **) g_get_system_data_dirs ();
 
     for (i = 0; i < g_strv_length (data_dirs); i++) {
-        path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
+        path = nemo_action_manager_get_system_directory_path (data_dirs[i]);
         uri = g_filename_to_uri (path, NULL, NULL);
 
         dir = nemo_directory_get_by_uri (uri);
@@ -411,6 +411,24 @@ GList *
 nemo_action_manager_list_actions (NemoActionManager *action_manager)
 {
     return action_manager->action_list_dirty ? NULL : action_manager->actions;
+}
+
+gchar *
+nemo_action_manager_get_system_directory_path (const gchar *data_dir)
+{
+    const gchar *nemo_path, *target;
+
+    nemo_path = g_build_filename (data_dir, "nemo", NULL);
+
+    // For symbolic links, we try to figure out its actual path
+    // to prevent possible duplicate right-click menu items.
+    target = g_file_read_link (nemo_path, NULL);
+
+    if (target) {
+        return g_build_filename (target, "actions", NULL);
+    } else {
+        return g_build_filename (nemo_path, "actions", NULL);
+    }
 }
 
 gchar *

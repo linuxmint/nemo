@@ -221,7 +221,7 @@ refresh_widget (NemoActionConfigWidget *widget)
     data_dirs = (gchar **) g_get_system_data_dirs ();
 
     for (i = 0; i < g_strv_length (data_dirs); i++) {
-        path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
+        path = nemo_action_manager_get_system_directory_path (data_dirs[i]);
         populate_from_directory (widget, path);
         g_clear_pointer (&path, g_free);
     }
@@ -390,7 +390,7 @@ static void setup_dir_monitors (NemoActionConfigWidget *widget)
 
     guint i;
     for (i = 0; i < g_strv_length (data_dirs); i++) {
-        gchar *path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
+        gchar *path = nemo_action_manager_get_system_directory_path (data_dirs[i]);
         try_monitor_path (widget, path);
         g_free (path);
     }
