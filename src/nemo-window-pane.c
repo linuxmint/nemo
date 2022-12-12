@@ -219,16 +219,9 @@ navigation_bar_cancel_callback (GtkWidget *widget,
 {
 	GtkAction *location;
 
-    if (g_settings_get_boolean(nemo_preferences, NEMO_PREFERENCES_SHOW_LOCATION_ENTRY)) {
-        nemo_window_pane_ensure_location_bar (pane);
-        nemo_window_pane_sync_location_widgets (pane);
-        
-        nemo_location_bar_activate (NEMO_LOCATION_BAR (pane->location_bar));
-        return;
-    }
+    location = gtk_action_group_get_action (pane->action_group,
+                          NEMO_ACTION_TOGGLE_LOCATION);
 
-	location = gtk_action_group_get_action (pane->action_group,
-					      NEMO_ACTION_TOGGLE_LOCATION);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (location), FALSE);
 
 	nemo_window_pane_hide_temporary_bars (pane);
