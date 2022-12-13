@@ -1,3 +1,10 @@
+nemo (5.6.1) vera; urgency=medium
+
+  [ Michael Webster ]
+  * pathbar/entry: Give entry-preferred mode the same persistent behavior as pathbar-preferred.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 13 Dec 2022 15:14:28 +0000
+
 nemo (5.6.0) vera; urgency=medium
 
   [ veractor ]
