@@ -64,7 +64,6 @@
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
-#define EXPANDER_COLUMN_WIDTH 14
 #define EXPANDER_PAD_COLUMN_WIDTH 4
 #define EJECT_COLUMN_WIDTH 22
 #define DRAG_EXPAND_CATEGORY_DELAY 500
@@ -4285,7 +4284,10 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
     gtk_tree_view_column_set_fixed_width (expander_pad_col, EXPANDER_PAD_COLUMN_WIDTH);
 
     gtk_tree_view_column_set_sizing (expander_col, GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_column_set_fixed_width (expander_col, EXPANDER_COLUMN_WIDTH);
+
+    gint expander_size;
+    gtk_widget_style_get (GTK_WIDGET (tree_view), "expander-size", &expander_size, NULL);
+    gtk_tree_view_column_set_fixed_width (expander_col, expander_size);
 
     gtk_tree_view_column_set_sizing (eject_col, GTK_TREE_VIEW_COLUMN_FIXED);
     gtk_tree_view_column_set_fixed_width (eject_col, EJECT_COLUMN_WIDTH);
