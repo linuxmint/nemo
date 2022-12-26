@@ -11,7 +11,6 @@
 #include "nemo-file.h"
 #include "nemo-global-preferences.h"
 #include <libnemo-private/nemo-file-utilities.h>
-#include <libnemo-private/nemo-action-manager.h>
 
 #include <glib.h>
 
@@ -285,16 +284,7 @@ static void setup_dir_monitors (NemoScriptConfigWidget *widget)
 {
     widget->dir_monitors = NULL;
 
-    gchar **data_dirs = (gchar **) g_get_system_data_dirs ();
-
-    guint i;
-    for (i = 0; i < g_strv_length (data_dirs); i++) {
-        gchar *path = nemo_action_manager_get_system_directory_path (data_dirs[i]);
-        try_monitor_path (widget, path);
-        g_free (path);
-    }
-
-    gchar *path = nemo_action_manager_get_user_directory_path ();
+    gchar *path = nemo_get_scripts_directory_path ();
     try_monitor_path (widget, path);
     g_free (path);
 }
