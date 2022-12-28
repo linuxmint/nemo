@@ -314,9 +314,50 @@ path_bar_button_pressed_callback (GtkWidget *widget,
     if (event->button == GDK_BUTTON_MIDDLE)
         return GDK_EVENT_STOP;
 
+    return GDK_EVENT_PROPAGATE;
+}
+
+static gboolean
+path_bar_button_released_callback (GtkWidget *widget,
+				   GdkEventButton *event,
+				   NemoWindowPane *pane)
+{
+	NemoWindowSlot *slot;
+	NemoWindowOpenFlags flags;
+	GFile *button_location;
+	int mask;
+	gboolean handle_button_release;
+
+	mask = event->state & gtk_accelerator_get_default_mod_mask ();
+	flags = 0;
+
+	handle_button_release = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (widget),
+						  "handle-button-release"));
+
+	if (event->type == GDK_BUTTON_RELEASE && handle_button_release) {
+		button_location = nemo_path_bar_get_path_for_button (NEMO_PATH_BAR (pane->path_bar), widget);
+
+		if (event->button == 2 && mask == 0) {
+			flags = NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
+		} else if (event->button == 1 && mask == GDK_CONTROL_MASK) {
+			flags = NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
+		}
+
+		if (flags != 0) {
+			slot = nemo_window_get_active_slot (pane->window);
+			nemo_window_slot_open_location (slot, button_location, flags);
+			g_object_unref (button_location);
+			return TRUE;
+		}
+
+		g_clear_object (&button_location);
+	}
+
     gboolean current_location_clicked = FALSE;
 
     if (event->button == GDK_BUTTON_PRIMARY) {
+        NemoView *view;
+
         slot = nemo_window_get_active_slot (pane->window);
         view = slot->content_view;
         
@@ -336,52 +377,11 @@ path_bar_button_pressed_callback (GtkWidget *widget,
     }
 
     if (current_location_clicked) {
-        GtkAction *action = gtk_action_group_get_action (pane->action_group, NEMO_ACTION_TOGGLE_LOCATION);
-        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
-
+        nemo_window_show_location_entry (pane->window);
         return GDK_EVENT_STOP;
     }
 
     return GDK_EVENT_PROPAGATE;
-}
-
-static gboolean
-path_bar_button_released_callback (GtkWidget *widget,
-				   GdkEventButton *event,
-				   NemoWindowPane *pane)
-{
-	NemoWindowSlot *slot;
-	NemoWindowOpenFlags flags;
-	GFile *location;
-	int mask;
-	gboolean handle_button_release;
-
-	mask = event->state & gtk_accelerator_get_default_mod_mask ();
-	flags = 0;
-
-	handle_button_release = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (widget),
-						  "handle-button-release"));
-
-	if (event->type == GDK_BUTTON_RELEASE && handle_button_release) {
-		location = nemo_path_bar_get_path_for_button (NEMO_PATH_BAR (pane->path_bar), widget);
-
-		if (event->button == 2 && mask == 0) {
-			flags = NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
-		} else if (event->button == 1 && mask == GDK_CONTROL_MASK) {
-			flags = NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW;
-		}
-
-		if (flags != 0) {
-			slot = nemo_window_get_active_slot (pane->window);
-			nemo_window_slot_open_location (slot, location, flags);
-			g_object_unref (location);
-			return TRUE;
-		}
-
-		g_object_unref (location);
-	}
-
-	return FALSE;
 }
 
 static void
