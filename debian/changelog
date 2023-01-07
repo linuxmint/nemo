@@ -1,3 +1,21 @@
+nemo (5.6.2) vera; urgency=medium
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Get the expander width from the current theme instead of hard-coded.
+
+  [ Bobby Rong ]
+  * nemo-action: readlink before populate
+  * nemo-script-config-widget: monitor correct path for setup-dir-monitors
+
+  [ Michael Webster ]
+  * nemo-window-pane.c: Use the button-release event for showing the current location entry.
+  * Run generate_additional_file to populate desktop/action files with new translations.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 07 Jan 2023 15:53:11 +0000
+
 nemo (5.6.1) vera; urgency=medium
 
   [ Michael Webster ]
