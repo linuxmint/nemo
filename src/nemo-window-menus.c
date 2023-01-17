@@ -1351,26 +1351,22 @@ action_open_terminal_callback(GtkAction *action, gpointer callback_data)
     g_object_unref (gfile);
 }
 
+#define NEMO_VIEW_MENUBAR_FILE_PATH                  "/MenuBar/File"
+
 static void
-file_menu_bar_item_activated (GtkAction *action, gpointer user_data)
+on_file_menu_show (GtkWidget *widget, gpointer user_data)
 {
     NemoWindow *window;
     NemoView *view;
 
     window = NEMO_WINDOW (user_data);
-
-    if (window->details->dynamic_menu_entries_current) {
-        return;
-    }
-
     view = get_current_view (window);
-    nemo_view_update_actions_and_extensions (view);
 
-    window->details->dynamic_menu_entries_current = TRUE;
+    nemo_view_update_actions_and_extensions (view);
 }
 
 static const GtkActionEntry main_entries[] = {
-  /* name, stock id, label */  { "File", NULL, N_("_File"), NULL, NULL, G_CALLBACK (file_menu_bar_item_activated) },
+  /* name, stock id, label */  { "File", NULL, N_("_File") },
   /* name, stock id, label */  { "Edit", NULL, N_("_Edit") },
   /* name, stock id, label */  { "View", NULL, N_("_View") },
   /* name, stock id, label */  { "Help", NULL, N_("_Help") },
@@ -1869,16 +1865,6 @@ nemo_window_initialize_actions (NemoWindow *window)
 			  NULL);
 }
 
-static void
-menu_bar_deactivated (GtkMenuShell *menu, gpointer user_data)
-{
-    NemoWindow *window;
-
-    window = NEMO_WINDOW (user_data);
-
-    window->details->dynamic_menu_entries_current = FALSE;
-}
-
 /**
  * nemo_window_initialize_menus
  *
@@ -1890,7 +1876,6 @@ nemo_window_initialize_menus (NemoWindow *window)
 {
 	GtkActionGroup *action_group;
 	GtkUIManager *ui_manager;
-    GtkWidget *menubar;
 	GtkAction *action;
       GtkAction *action_to_hide;
 	gint i;
@@ -2002,13 +1987,10 @@ nemo_window_initialize_menus (NemoWindow *window)
 	/* add the UI */
 	gtk_ui_manager_add_ui_from_resource (ui_manager, "/org/nemo/nemo-shell-ui.xml", NULL);
 
-    // window->details->menubar isn't set yet
-    menubar = gtk_ui_manager_get_widget (window->details->ui_manager, "/MenuBar");
-
-    g_signal_connect (menubar,
-                      "deactivate",
-                      G_CALLBACK (menu_bar_deactivated),
-                      window);
+    GtkWidget *menuitem, *submenu;
+    menuitem = gtk_ui_manager_get_widget (nemo_window_get_ui_manager (window), NEMO_VIEW_MENUBAR_FILE_PATH);
+    submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menuitem));
+    g_signal_connect (submenu, "show", G_CALLBACK (on_file_menu_show), window);
 
 	nemo_window_initialize_trash_icon_monitor (window);
 }
