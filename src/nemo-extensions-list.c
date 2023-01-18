@@ -145,6 +145,13 @@ main (int argc, char *argv[])
 
             g_printf (":::%s\n", (gchar *) nd_list->data);
 
+            // NOTE: This leaks nd_list->data for certain extensions, and not for others, depending on if they
+            // passed a copy of the string or not. Since there are potentially extensions out in the wild (and
+            // a few of our own) that don't use a copy, if we tried to use g_list_free_full(g_free) it would
+            // segfault on those.
+            //
+            // Since this is just a helper for nemo-extension-config-widget.c, and not part of the nemo process,
+            // ignore the leak here.
             g_list_free (nd_list);
         } else {
             g_printf ("\n");
