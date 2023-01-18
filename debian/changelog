@@ -1,3 +1,11 @@
+nemo (5.6.3) vera; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window-menus.c: Recalculate extension/action items at an earlier stage in opening the file manu.
+  * nemo-extensions-list.c: Add a note regarding a memory leak.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 18 Jan 2023 16:11:34 +0000
+
 nemo (5.6.2) vera; urgency=medium
 
   [ Clement Lefebvre ]
