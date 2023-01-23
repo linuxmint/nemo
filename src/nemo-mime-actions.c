@@ -335,7 +335,7 @@ file_has_local_path (NemoFile *file)
 GAppInfo *
 nemo_mime_get_default_application_for_file (NemoFile *file)
 {
-	GAppInfo *app;
+	GAppInfo *app = NULL;
 	char *mime_type;
 	char *uri_scheme;
 
@@ -345,17 +345,21 @@ nemo_mime_get_default_application_for_file (NemoFile *file)
         }
 	}
 
-	mime_type = nemo_file_get_mime_type (file);
-	app = g_app_info_get_default_for_type (mime_type, !file_has_local_path (file));
-	g_free (mime_type);
+    uri_scheme = nemo_file_get_uri_scheme (file);
+
+    if (!g_str_has_prefix (uri_scheme, "http")) {
+        mime_type = nemo_file_get_mime_type (file);
+        app = g_app_info_get_default_for_type (mime_type, !file_has_local_path (file));
+        g_free (mime_type);
+    }
 
 	if (app == NULL) {
-		uri_scheme = nemo_file_get_uri_scheme (file);
 		if (uri_scheme != NULL) {
 			app = g_app_info_get_default_for_uri_scheme (uri_scheme);
-			g_free (uri_scheme);
 		}
 	}
+
+    g_free (uri_scheme);
 
 	return app;
 }
