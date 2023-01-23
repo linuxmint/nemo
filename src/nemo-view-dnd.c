@@ -211,8 +211,8 @@ nemo_view_handle_netscape_url_drop (NemoView  *view,
 	}
 
 	if (action == GDK_ACTION_LINK) {
-		if (g_strcmp0 (title, NULL) == 0) {
-			link_name = g_file_get_basename (f);
+		if (g_strcmp0 (title, NULL) == 0 || strlen (title) == 0) {
+			link_name = g_strdup (url);
 		} else {
 			link_name = g_strdup (title);
 		}
