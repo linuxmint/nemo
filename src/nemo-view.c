@@ -3251,9 +3251,11 @@ nemo_view_display_selection_info (NemoView *view)
 		status_string = g_strdup (view_status_string);
 	}
 
-	nemo_window_slot_set_status (view->details->slot,
-					 status_string,
-					 view_status_string);
+	if (!view->details->loading) {
+		nemo_window_slot_set_status (view->details->slot,
+						status_string,
+						view_status_string);
+	}
 
 	g_free (status_string);
 	g_free (view_status_string);
@@ -10350,7 +10352,8 @@ nemo_view_notify_selection_changed (NemoView *view)
 	}
 
 	/* Schedule a display of the new selection. */
-    if (view->details->display_selection_idle_id != 0) {
+    if (view->details->display_selection_idle_id != 0 &&
+        !view->details->loading) {
         g_source_remove (view->details->display_selection_idle_id);
         view->details->display_selection_idle_id = 0;
         nemo_window_slot_set_status (view->details->slot, "", "");
