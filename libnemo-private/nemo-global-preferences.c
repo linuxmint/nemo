@@ -56,6 +56,7 @@ GSettings *gnome_media_handling_preferences;
 GSettings *gnome_terminal_preferences;
 GSettings *cinnamon_privacy_preferences;
 GSettings *cinnamon_interface_preferences;
+GSettings *gnome_interface_preferences;
 
 GTimeZone      *prefs_current_timezone;
 gboolean        prefs_current_24h_time_format;
@@ -276,6 +277,12 @@ nemo_global_preferences_get_fileroller_mimetypes (void)
     return file_roller_mimetypes;
 }
 
+gchar *
+nemo_global_preferences_get_mono_system_font (void)
+{
+    return g_settings_get_string (gnome_interface_preferences, NEMO_PREFERENCES_MONO_FONT_NAME);
+}
+
 static gint
 sort_shortest_first (gconstpointer a, gconstpointer b)
 {
@@ -284,7 +291,7 @@ sort_shortest_first (gconstpointer a, gconstpointer b)
 
 static GList *mono_families = NULL;
 
-const gchar *
+gchar *
 nemo_global_preferences_get_mono_font_family_match (const gchar *in_family_name)
 {
     static gsize once_init = 0;
@@ -397,7 +404,7 @@ nemo_global_preferences_get_mono_font_family_match (const gchar *in_family_name)
     }
 
     DEBUG ("Finished: '%s' ---->   '%s'", in_family_name, best);
-    return best;
+    return g_strdup (best);
 }
 
 
@@ -472,6 +479,8 @@ nemo_global_preferences_init (void)
 	gnome_terminal_preferences = g_settings_new("org.cinnamon.desktop.default-applications.terminal");
     cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
 	cinnamon_interface_preferences = g_settings_new ("org.cinnamon.desktop.interface");
+    // System mono font
+    gnome_interface_preferences = g_settings_new ("org.gnome.desktop.interface");
 
     setup_cached_pref_keys ();
     setup_cached_time_data ();
@@ -503,4 +512,5 @@ nemo_global_preferences_finalize (void)
     g_object_unref (gnome_terminal_preferences);
     g_object_unref (cinnamon_privacy_preferences);
     g_object_unref (cinnamon_interface_preferences);
+    g_object_unref (gnome_interface_preferences);
 }

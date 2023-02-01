@@ -2349,28 +2349,34 @@ static void
 update_date_fonts (NemoListView *view)
 {
     g_return_if_fail (NEMO_IS_LIST_VIEW (view));
-
-    PangoFontDescription *font_desc;
-    PangoStyle style;
+    NemoDateFontChoice mono_pref;
     gchar *font_name;
-    const gchar *new_family;
+    PangoStyle date_style;
+    gchar *date_name = NULL;
+    gchar *date_family = NULL;
 
     GtkSettings *settings = gtk_settings_get_default ();
     g_object_get (settings, "gtk-font-name", &font_name, NULL);
 
-    font_desc = pango_font_description_from_string (font_name);
+    mono_pref = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_DATE_FONT_CHOICE);
 
     if (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT) == NEMO_DATE_FORMAT_INFORMAL ||
-        !g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT_MONOSPACE) ||
+        mono_pref == NEMO_DATE_FONT_CHOICE_NONE ||
         g_strstr_len (font_name, -1, "Mono")) {
-        new_family = pango_font_description_get_family (font_desc);
+        date_name = g_strdup (font_name);
     } else {
-        const gchar *current_font_family;
-        current_font_family = pango_font_description_get_family (font_desc);
-        new_family = nemo_global_preferences_get_mono_font_family_match (current_font_family);
-    }
+        if (mono_pref == NEMO_DATE_FONT_CHOICE_AUTO) {
+            PangoFontDescription *font_desc = pango_font_description_from_string (font_name);
+            const gchar *current_font_family = pango_font_description_get_family (font_desc);
 
-    style = pango_font_description_get_style (font_desc);
+            date_family = nemo_global_preferences_get_mono_font_family_match (current_font_family);
+            date_style = pango_font_description_get_style (font_desc);
+
+            pango_font_description_free (font_desc);
+        } else {
+            date_name = nemo_global_preferences_get_mono_system_font ();
+        }
+    }
 
     GList *combined = g_list_copy (view->details->cells);
     combined = g_list_prepend (combined, view->details->file_name_cell);
@@ -2381,10 +2387,16 @@ update_date_fonts (NemoListView *view)
         const gchar *column_id = g_object_get_data (G_OBJECT (cell), "column-id");
 
         if (g_str_has_prefix (column_id, "date_")) {
-            g_object_set (GTK_CELL_RENDERER_TEXT (cell),
-                          "family", new_family,
-                          "style", style,
-                          NULL);
+            if (date_family) {
+                g_object_set (GTK_CELL_RENDERER_TEXT (cell),
+                              "family", date_family,
+                              "style", date_style,
+                              NULL);
+            } else {
+                g_object_set (GTK_CELL_RENDERER_TEXT (cell),
+                              "font", date_name,
+                              NULL);
+            }
         }
         else {
             g_object_set (GTK_CELL_RENDERER_TEXT (cell),
@@ -2395,10 +2407,10 @@ update_date_fonts (NemoListView *view)
 
     gtk_widget_queue_draw (GTK_WIDGET (view->details->tree_view));
 
-    pango_font_description_free (font_desc);
     g_list_free (combined);
     g_free (font_name);
-
+    g_free (date_family);
+    g_free (date_name);
 }
 
 static void
@@ -2641,7 +2653,8 @@ create_and_set_up_tree_view (NemoListView *view)
     update_date_fonts (view);
     GtkSettings *gtk_settings = gtk_settings_get_default ();
     g_signal_connect_swapped (gtk_settings, "notify::gtk-font-name", G_CALLBACK (update_date_fonts), view);
-    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_FORMAT_MONOSPACE, G_CALLBACK (update_date_fonts), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_FONT_CHOICE, G_CALLBACK (update_date_fonts), view);
+    g_signal_connect_swapped (gnome_interface_preferences, "changed::" NEMO_PREFERENCES_MONO_FONT_NAME, G_CALLBACK (update_date_fonts), view);
 	nemo_column_list_free (nemo_columns);
 
 	default_visible_columns = g_settings_get_strv (nemo_list_view_preferences,

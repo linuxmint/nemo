@@ -100,6 +100,23 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
     <property name="can-focus">False</property>
     <property name="icon-name">folder-new-symbolic</property>
   </object>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Matching monospace font</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">System monospace font</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Normal font</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="model1">
     <columns>
       <!-- column-name gchararray -->
@@ -1835,6 +1852,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="label" translatable="yes">_Format:</property>
                                             <property name="use-underline">True</property>
                                             <property name="mnemonic-widget">date_format_combobox</property>
+                                            <property name="xalign">0</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1853,18 +1871,56 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment10">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="left-padding">40</property>
+                                    <child>
+                                      <object class="GtkBox" id="hbox2">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="spacing">12</property>
                                         <child>
-                                          <object class="GtkCheckButton" id="date_monospace_font_checkbox">
-                                            <property name="label" translatable="yes">Use a monospace font</property>
+                                          <object class="GtkLabel" id="label1">
                                             <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="draw-indicator">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="label" translatable="yes">Style:</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="mnemonic-widget">date_format_combobox</property>
+                                            <property name="xalign">0</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="date_font_choice_combobox">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="model">liststore1</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="renderer6"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1873,7 +1929,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">1</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -4202,6 +4258,12 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkSizeGroup">
+    <widgets>
+      <widget name="label36"/>
+      <widget name="label1"/>
+    </widgets>
   </object>
   <object class="GtkListStore" id="model9">
     <columns>

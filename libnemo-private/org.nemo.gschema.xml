@@ -28,6 +28,12 @@
     <value nick="informal" value="2"/>
   </enum>
 
+  <enum id="org.nemo.DateFontChoice">
+    <value nick="auto-mono" value="0"/>
+    <value nick="system-mono" value="1"/>
+    <value nick="no-mono" value="2"/>
+  </enum>
+
   <enum id="org.nemo.SortOrder">
     <value nick="manually" value="0"/>
     <value nick="name" value="1"/>
@@ -296,10 +302,10 @@
       <summary>Date Format</summary>
       <description>The format of file dates. Possible values are "locale", "iso", and "informal".</description>
     </key>
-    <key name="date-format-monospace" type="b">
-      <default>true</default>
-      <summary>Whether to display iso and locale date formats with a monospace font.</summary>
-      <description>If true, date columns in the list view will be displayed using a monospace font. A best effort will be done to select a font that matces the current system font.</description>
+    <key name="date-font-choice" enum="org.nemo.DateFontChoice">
+      <default>'auto-mono'</default>
+      <summary>The font to use for the date/time columns.</summary>
+      <description>The format of file dates. Possible values are "auto-mono" (best effort to match the application font), "system-mono" (use the current system mono font), and "no-mono" (use a normal font).</description>
     </key>
     <key name="show-hidden-files" type="b">
       <default>false</default>
