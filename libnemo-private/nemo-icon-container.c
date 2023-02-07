@@ -3216,10 +3216,9 @@ clicked_within_slow_click_interval_on_text (NemoIconContainer *container, NemoIc
                   "gtk-double-click-time", &double_click_interval,
                   NULL);
 
-    /* slow click interval is always 2 seconds longer than the system
-     * double-click interval. */
+    /* Cancel pending click-to-rename after double-click-time + 800ms */
 
-    interval = double_click_interval + 2000;
+    interval = double_click_interval + 800;
 
     current_time = g_get_monotonic_time ();
     if (current_time - last_slow_click_time < interval * 1000) {

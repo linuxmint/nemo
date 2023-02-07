@@ -943,10 +943,10 @@ clicked_within_slow_click_interval_on_text (NemoListView *view, GtkTreePath *pat
                   "gtk-double-click-time", &double_click_interval,
                   NULL);
 
-    /* slow click interval is always 2 seconds longer than the system
+    /* slow click interval is always 800ms longer than the system
      * double-click interval. */
 
-    interval = double_click_interval + 2000;
+    interval = double_click_interval + 800;
 
     current_time = g_get_monotonic_time ();
     if (current_time - last_slow_click_time < interval * 1000) {
