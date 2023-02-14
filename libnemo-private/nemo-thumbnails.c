@@ -61,27 +61,61 @@
 #define NEMO_THUMBNAIL_FRAME_RIGHT 3
 #define NEMO_THUMBNAIL_FRAME_BOTTOM 3
 
-/* structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
 
+typedef enum {
+    THUMBNAIL_ADD,
+    THUMBNAIL_REMOVE,
+    THUMBNAIL_BUMP,
+    THUMBNAIL_THREAD_EXIT
+} ThumbnailCommandType;
+
+/* multipurpose structure used for making thumbnails, associating a uri with where the thumbnail is to be stored */
 typedef struct {
     char *image_uri;
     char *mime_type;
     time_t original_file_mtime;
+    ThumbnailCommandType cmd_type;
     guint cancelled : 1;
 } NemoThumbnailInfo;
 
-/*
- * Thumbnail thread state.
+/* How it works:
+ * 
+ * When nemo_create_thumbnail(), nemo_thumbnail_remove_from_queue or nemo_thumbnail_prioritize are called,
+ * a new NemoThumbnailInfo is made, with info->cmd_type set based on the method called.
+ *
+ * These are added to the feeder queue, which feeds the feeder_task thread. When a new info arrives, it gets
+ * processed based on info->cmd_type.
+
+ * - nemo_create_thumbnail (THUMBNAIL_ADD): The info is looked up by uri in thumbnails_to_make_hash. If
+ *   the info is already there, the existing info's mtime is updated, and the info gets pushed to the front
+ *   of the threadpool queue. Otherwise, the incoming info is added to thumbnails_to_make_hash, and pushed
+ *   to the threadpool queue.
+ *
+ * - nemo_thumbnail_remove_from_queue (THUMBNAIL_REMOVE): The info is looked up by uri in thumbnails_to_make_hash.
+ *   If the info is found, it gets removed from thumbnails_to_make_hash, and info->cancelled is set to TRUE, so when
+ *   it comes up in the threadpool queue, it is ignored and freed.
+ *
+ * - nemo_thumbnail_prioritize (THUMBNAIL_BUMP): The info is looked up by uri in thumbnails_to_make_hash. If found,
+ *   it gets moved to the front of the threadpool queue.
+ *
+ *
+ * - No mutex locking occurs in the public methods, only in the feeder and threadpool threads.
+ * - NemoThumbnailInfos are garbage-collected in the threadpool worker only.
  */
 
-/* Our mutex used when accessing data shared between the main thread and the
-   thumbnail thread, i.e. the thumbnail_thread_is_running flag and the
-   thumbnails_to_make list. */
+/* Workers that actually make the thumbnail. */
+static volatile GThreadPool *tpool = NULL;
+
+/* Table of uris queued to the thread pool (tpool) */
 static GMutex thumbnails_mutex;
-/* Quickly check if uri is in thumbnails_to_make list */
 static GHashTable *thumbnails_to_make_hash = NULL;
 
-static volatile GThreadPool *tpool = NULL;
+/* Every action goes thru the feeder queue. It gets processed in the feeder_task's thread. */
+static GAsyncQueue *feeder_queue = NULL;
+static GTask *feeder_task = NULL;
+
+/* Causes the feeder_task to end. Only called when Nemo is shutting down. */
+GCancellable *cancellable = NULL;
 
 static GnomeDesktopThumbnailFactory *thumbnail_factory = NULL;
 
@@ -294,7 +328,6 @@ pixbuf_can_load_type (const char *mime_type)
 gboolean
 nemo_can_thumbnail_internally (NemoFile *file)
 {
-    return FALSE;
     g_autofree gchar *mime_type = NULL;
 
     mime_type = nemo_file_get_mime_type (file);
@@ -331,27 +364,11 @@ nemo_thumbnail_remove_from_queue (const char *file_uri)
 {
     NemoThumbnailInfo *info;
 
-    DEBUG ("(Remove from queue) Locking mutex");
-    g_mutex_lock (&thumbnails_mutex);
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->image_uri = g_strdup (file_uri);
+    info->cmd_type = THUMBNAIL_REMOVE;
 
-    /*********************************
-     * MUTEX LOCKED
-     *********************************/
-
-    if (thumbnails_to_make_hash) {
-        info = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
-        
-        if (info) {
-            g_hash_table_remove (thumbnails_to_make_hash, file_uri);
-            info->cancelled = TRUE;
-        }
-    }
-
-    /*********************************
-     * MUTEX UNLOCKED
-     *********************************/
-    DEBUG ("(Remove from queue) Unlocking mutex");
-    g_mutex_unlock (&thumbnails_mutex);
+    g_async_queue_push (feeder_queue, info);
 }
 
 void
@@ -359,27 +376,11 @@ nemo_thumbnail_prioritize (const char *file_uri)
 {
     NemoThumbnailInfo *info;
 
-    if (!thumbnails_to_make_hash)
-        return;
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->image_uri = g_strdup (file_uri);
+    info->cmd_type = THUMBNAIL_BUMP;
 
-    DEBUG ("(Prioritize) Locking mutex");
-    g_mutex_lock (&thumbnails_mutex);
-
-    /*********************************
-     * MUTEX LOCKED
-     *********************************/
-
-    info = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
-
-    if (info) {
-        g_thread_pool_move_to_front ((GThreadPool *) tpool, info);
-    }
-
-    /*********************************
-     * MUTEX UNLOCKED
-     *********************************/
-    DEBUG ("(Prioritize) Unlocking mutex");
-    g_mutex_unlock (&thumbnails_mutex);
+    g_async_queue_push (feeder_queue, info);
 }
 
 /* This is a one-shot idle callback called from the main loop to call
@@ -409,6 +410,16 @@ thumbnail_thread_notify_file_changed (gpointer image_uri)
 }
 
 static void
+remove_from_hash_table (NemoThumbnailInfo *info)
+{
+    g_mutex_lock (&thumbnails_mutex);
+    g_hash_table_remove (thumbnails_to_make_hash, info->image_uri);
+    g_mutex_unlock (&thumbnails_mutex);
+
+    free_thumbnail_info (info);
+}
+
+static void
 thumbnail_thread (gpointer data,
                   gpointer user_data)
 {
@@ -416,9 +427,9 @@ thumbnail_thread (gpointer data,
     GdkPixbuf *pixbuf;
     time_t current_time;
 
-    if (info->cancelled) {
+    if (g_cancellable_is_cancelled (cancellable) || info->cancelled) {
         DEBUG ("Skipping cancelled file: %s", info->image_uri);
-        free_thumbnail_info (info);
+        remove_from_hash_table (info);
         return;
     }
 
@@ -433,7 +444,7 @@ thumbnail_thread (gpointer data,
         /* Reschedule thumbnailing via a change notification */
         g_timeout_add_seconds (RECENT_MTIME_COOLDOWN, thumbnail_thread_notify_file_changed,
                                g_strdup (info->image_uri));
-        free_thumbnail_info (info);
+        remove_from_hash_table (info);
         return;
     }
 
@@ -462,27 +473,150 @@ thumbnail_thread (gpointer data,
                      thumbnail_thread_notify_file_changed,
                      g_strdup (info->image_uri), NULL);
 
-    g_mutex_lock (&thumbnails_mutex);
-    g_hash_table_remove (thumbnails_to_make_hash, info->image_uri);
-    g_mutex_unlock (&thumbnails_mutex);
+    remove_from_hash_table (info);
+}
 
-    free_thumbnail_info (info);
+static  void
+feeder_task_complete (GObject      *source,
+                       GAsyncResult *res,
+                       gpointer      user_data)
+{
+    g_task_propagate_boolean (G_TASK (res), NULL);
+    DEBUG ("(Finalize) Feeder task done");
+}
+
+static void
+feeder_thread (GTask        *task,
+                gpointer      source,
+                gpointer      task_data,
+                GCancellable *cancellable)
+{
+    gpointer data;
+
+    while (!g_cancellable_is_cancelled (cancellable) && (data = g_async_queue_pop (feeder_queue))) {
+        NemoThumbnailInfo *feeder_info = (NemoThumbnailInfo *) data;
+        NemoThumbnailInfo *existing_info = NULL;
+
+        switch (feeder_info->cmd_type) {
+            case THUMBNAIL_ADD:
+                DEBUG ("(Add thumbnail) Locking mutex");
+                g_mutex_lock (&thumbnails_mutex);
+                existing_info = g_hash_table_lookup (thumbnails_to_make_hash, feeder_info->image_uri);
+
+                if (existing_info == NULL) {
+                    DEBUG ("(Main Thread) Adding new file to thumbnail: %s", feeder_info->image_uri);
+
+                    g_thread_pool_push ((GThreadPool *) tpool, feeder_info, NULL);
+                    g_hash_table_insert (thumbnails_to_make_hash, feeder_info->image_uri, feeder_info);
+
+                    // Don't free this later.
+                    feeder_info = NULL;
+                } else {
+                    DEBUG ("(Main Thread) Updating existing file mtime and prioritizing: %s", feeder_info->image_uri);
+
+                    /* The file in the queue might need a new original mtime */
+                    existing_info->original_file_mtime = feeder_info->original_file_mtime;
+                    g_thread_pool_move_to_front ((GThreadPool *) tpool, existing_info);
+                }
+                DEBUG ("(Add thumbnail) Unlocking mutex");
+                g_mutex_unlock (&thumbnails_mutex);
+                break;
+            case THUMBNAIL_REMOVE:
+                if (!thumbnails_to_make_hash)
+                    break;
+
+                DEBUG ("(Remove from queue) Locking mutex");
+                g_mutex_lock (&thumbnails_mutex);
+                existing_info = g_hash_table_lookup (thumbnails_to_make_hash, feeder_info->image_uri);
+
+                if (existing_info) {
+                    DEBUG ("(Remove from queue) Removing %s", feeder_info->image_uri);
+                    g_hash_table_remove (thumbnails_to_make_hash, feeder_info->image_uri);
+                    existing_info->cancelled = TRUE;
+                }
+                DEBUG ("(Remove from queue) Unlocking mutex");
+                g_mutex_unlock (&thumbnails_mutex);
+                break;
+            case THUMBNAIL_BUMP:
+                if (!thumbnails_to_make_hash)
+                    break;
+
+                DEBUG ("(Prioritize) Locking mutex");
+                g_mutex_lock (&thumbnails_mutex);
+                existing_info = g_hash_table_lookup (thumbnails_to_make_hash, feeder_info->image_uri);
+
+                if (existing_info) {
+                    DEBUG ("(Prioritize) Moving to front: %s", feeder_info->image_uri);
+                    g_thread_pool_move_to_front ((GThreadPool *) tpool, existing_info);
+                }
+                DEBUG ("(Prioritize) Unlocking mutex");
+                g_mutex_unlock (&thumbnails_mutex);
+                break;
+            case THUMBNAIL_THREAD_EXIT:
+                DEBUG ("(Finalize) Received THUMBNAIL_THREAD_EXIT, cancelling");
+                g_cancellable_cancel (cancellable);
+                break;
+        }
+
+        g_clear_pointer (&feeder_info, free_thumbnail_info);
+    }
+
+    g_task_return_boolean (task, TRUE);
+}
+
+static void
+finalize_thumbnailer (void)
+{
+    NemoThumbnailInfo *info;
+    gpointer data;
+
+    DEBUG ("(Finalize) Shutdown thumbnailer.");
+
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->cmd_type = THUMBNAIL_THREAD_EXIT;
+
+    g_async_queue_push (feeder_queue, info);
+
+    while (!g_task_get_completed (feeder_task)) {
+        gtk_main_iteration ();
+    }
+
+    while ((data = g_async_queue_try_pop (feeder_queue))) {
+        if (!data) {
+            break;
+        }
+        NemoThumbnailInfo *existing_info = (NemoThumbnailInfo *) data;
+        free_thumbnail_info (existing_info);
+    }
+
+    g_object_unref (feeder_task);
+    g_async_queue_unref (feeder_queue);
+
+    // This will drain and free any remaining infos.
+    g_thread_pool_free ((GThreadPool *) tpool, FALSE, TRUE);
+
+    g_hash_table_destroy (thumbnails_to_make_hash);
 }
 
 void
 nemo_create_thumbnail (NemoFile *file)
 {
     time_t file_mtime = 0;
-    NemoThumbnailInfo *existing_info;
     static gsize once_init = 0;
     if (g_once_init_enter (&once_init)) {
         thumbnails_to_make_hash = g_hash_table_new (g_str_hash, g_str_equal);
         DEBUG ("Initialize thread pool");
 
-        tpool = g_thread_pool_new_full ((GFunc) thumbnail_thread, NULL,
-                                        (GDestroyNotify) free_thumbnail_info,
-                                        get_max_threads (),
-                                        TRUE, NULL);
+        tpool = g_thread_pool_new ((GFunc) thumbnail_thread, NULL,
+                                   get_max_threads (),
+                                   TRUE, NULL);
+
+        feeder_queue = g_async_queue_new ();
+        cancellable = g_cancellable_new ();
+        feeder_task = g_task_new (NULL, cancellable, feeder_task_complete, NULL);
+        g_task_run_in_thread (feeder_task, feeder_thread);
+
+        eel_debug_call_at_shutdown ((EelFunction) finalize_thumbnailer);
 
         g_once_init_leave (&once_init, 1);
     }
@@ -517,45 +651,16 @@ nemo_create_thumbnail (NemoFile *file)
         get_file_mtime (file_uri, &file_mtime);
     }
 
-    DEBUG ("(Main Thread - nemo_create_thumbnail) Locking mutex");
-    g_mutex_lock (&thumbnails_mutex);
+    NemoThumbnailInfo *info;
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->image_uri = file_uri;
+    info->mime_type = nemo_file_get_mime_type (file);
+    info->original_file_mtime = file_mtime;
+    info->cmd_type = THUMBNAIL_ADD;
 
-    /*********************************
-     * MUTEX LOCKED
-     *********************************/
-    existing_info = g_hash_table_lookup (thumbnails_to_make_hash, file_uri);
+    nemo_file_set_is_thumbnailing (file, TRUE);
 
-    if (existing_info == NULL) {
-        NemoThumbnailInfo *info;
-
-        /* Add the thumbnail to the list. */
-
-        nemo_file_set_is_thumbnailing (file, TRUE);
-
-        info = g_new0 (NemoThumbnailInfo, 1);
-        info->image_uri = file_uri;
-        info->mime_type = nemo_file_get_mime_type (file);
-        info->original_file_mtime = file_mtime;
-
-        DEBUG ("(Main Thread) Adding new file to thumbnail: %s", file_uri);
-
-        g_thread_pool_push ((GThreadPool *) tpool, info, NULL);
-        g_hash_table_insert (thumbnails_to_make_hash, file_uri, info);
-    } else {
-        DEBUG ("(Main Thread) Updating existing file mtime and prioritizing: %s", file_uri);
-
-        /* The file in the queue might need a new original mtime */
-        existing_info->original_file_mtime = file_mtime;
-        g_thread_pool_move_to_front ((GThreadPool *) tpool, existing_info);
-
-        g_free (file_uri);
-    }
-
-    /*********************************
-     * MUTEX UNLOCKED
-     *********************************/
-    DEBUG ("(Main Thread - nemo_create_thumbnail) Unocking mutex");
-    g_mutex_unlock (&thumbnails_mutex);
+    g_async_queue_push (feeder_queue, info);
 }
 
 gboolean
