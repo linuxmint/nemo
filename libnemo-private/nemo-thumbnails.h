@@ -32,11 +32,9 @@
 #define THUMBNAIL_CREATION_DELAY_SECS 3
 
 /* Returns NULL if there's no thumbnail yet. */
-void       nemo_create_thumbnail                (NemoFile *file, gint throttle_count, gboolean prioritize);
+void       nemo_create_thumbnail                (NemoFile *file);
 gboolean   nemo_can_thumbnail                   (NemoFile *file);
 gboolean   nemo_can_thumbnail_internally        (NemoFile *file);
-gboolean   nemo_thumbnail_is_mimetype_limited_by_size
-						    (const char *mime_type);
 void       nemo_thumbnail_frame_image           (GdkPixbuf **pixbuf);
 void       nemo_thumbnail_pad_top_and_bottom    (GdkPixbuf **pixbuf,
                                                  gint        extra_height);

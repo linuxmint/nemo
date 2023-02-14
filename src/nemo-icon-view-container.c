@@ -208,7 +208,7 @@ nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
 	g_assert (NEMO_IS_FILE (file));
 
     if (nemo_can_thumbnail (file) && !nemo_file_has_loaded_thumbnail (file)) {
-        nemo_create_thumbnail (file, 0, TRUE);
+        nemo_create_thumbnail (file);
     }
 }
 

@@ -430,6 +430,10 @@
       <default>true</default>
       <summary>If true, enable detection of the type of content of a mounted media and display a suggested application to open the media.</summary>
     </key>
+    <key name="thumbnail-threads" type="i">
+      <default>-1</default>
+      <summary>Number of threads to dedicate to thumbnailing. -1 to let the program decide. The maximum allowed threads is half the number of logical processors, regardless of what is set here. If you change this setting you must restart Nemo for it to take effect.</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

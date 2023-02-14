@@ -472,7 +472,6 @@ nemo_file_clear_info (NemoFile *file)
 	g_free (file->details->thumbnail_path);
 	file->details->thumbnail_path = NULL;
 	file->details->thumbnailing_failed = FALSE;
-    file->details->thumbnail_throttle_count = 1;
     file->details->last_thumbnail_try_mtime = 0;
 
 	file->details->is_launcher = FALSE;
@@ -4810,24 +4809,6 @@ nemo_file_set_is_favorite (NemoFile *file,
     g_free (uri);
 }
 
-static gint
-get_throttle_count (NemoFile *file)
-{
-    NemoFileDetails *details = file->details;
-
-    gint diff = (gint)(details->mtime - details->last_thumbnail_try_mtime);
-
-    if (diff != 0 && diff <= (THUMBNAIL_CREATION_DELAY_SECS * (details->thumbnail_throttle_count + 1))) {
-        details->thumbnail_throttle_count++;
-    } else {
-        details->thumbnail_throttle_count = 1;
-    }
-
-    details->last_thumbnail_try_mtime = details->mtime;
-
-    return details->thumbnail_throttle_count;
-}
-
 NemoIconInfo *
 nemo_file_get_icon (NemoFile *file,
 			int size,
@@ -4945,7 +4926,7 @@ nemo_file_get_icon (NemoFile *file,
 			   !file->details->is_thumbnailing &&
 			   !file->details->thumbnailing_failed) {
 			if (nemo_can_thumbnail (file)) {
-				nemo_create_thumbnail (file, get_throttle_count (file), TRUE);
+				nemo_create_thumbnail (file);
 			}
 		}
 	}

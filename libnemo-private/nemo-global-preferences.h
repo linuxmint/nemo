@@ -182,6 +182,8 @@ enum
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS		"default-visible-columns"
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER		"default-column-order"
 
+#define NEMO_PREFERENCES_MAX_THUMBNAIL_THREADS "thumbnail-threads"
+
 enum
 {
 	NEMO_CLICK_POLICY_SINGLE,
