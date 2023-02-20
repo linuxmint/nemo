@@ -388,7 +388,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
                 g_object_unref (gicon);
             }
 
-			icon = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
+			icon = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size * icon_scale);
 
 			nemo_icon_info_unref (icon_info);
 
