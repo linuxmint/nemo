@@ -50,6 +50,8 @@
 
 #include "nemo-file-private.h"
 
+#define DEBUG_THREADS 0
+
 /* Should never be a reasonable actual mtime */
 #define INVALID_MTIME 0
 
@@ -140,7 +142,12 @@ get_max_threads (void) {
 
     max_threads = CLAMP (max_threads, 1, (num_processors / 2));
 
+#if DEBUG_THREADS
+    g_message ("Thumbnailer threads: %d (setting: %d, system count: %d)", max_threads, pref, num_processors);
+#else
     DEBUG ("Thumbnailer threads: %d (setting: %d, system count: %d)", max_threads, pref, num_processors);
+#endif
+
     return max_threads;
 }
 
@@ -210,79 +217,6 @@ nemo_get_thumbnail_frame (void)
     return thumbnail_frame;
 }
 
-void
-nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
-{
-    GdkPixbuf *pixbuf_with_frame, *frame;
-
-    /* The pixbuf isn't already framed (i.e., it was not made by
-     * an old Nemo), so we must embed it in a frame.
-     */
-
-    frame = nemo_get_thumbnail_frame ();
-    if (frame == NULL) {
-        return;
-    }
-
-    pixbuf_with_frame = eel_embed_image_in_frame (*pixbuf, frame,
-                                                  NEMO_THUMBNAIL_FRAME_LEFT,
-                                                  NEMO_THUMBNAIL_FRAME_TOP,
-                                                  NEMO_THUMBNAIL_FRAME_RIGHT,
-                                                  NEMO_THUMBNAIL_FRAME_BOTTOM);
-    g_object_unref (*pixbuf);
-    *pixbuf = pixbuf_with_frame;
-}
-
-void
-nemo_thumbnail_pad_top_and_bottom (GdkPixbuf **pixbuf,
-                                   gint        extra_height)
-{
-    GdkPixbuf *pixbuf_with_padding;
-    GdkRectangle rect;
-    GdkRGBA transparent = { 0, 0, 0, 0.0 };
-    cairo_surface_t *surface;
-    cairo_t *cr;
-    gint width, height;
-
-    width = gdk_pixbuf_get_width (*pixbuf);
-    height = gdk_pixbuf_get_height (*pixbuf);
-
-    surface = gdk_window_create_similar_image_surface (NULL,
-                                                       CAIRO_FORMAT_ARGB32,
-                                                       width,
-                                                       height + extra_height,
-                                                       0);
-
-    cr = cairo_create (surface);
-
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = width;
-    rect.height = height + extra_height;
-
-    gdk_cairo_rectangle (cr, &rect);
-    gdk_cairo_set_source_rgba (cr, &transparent);
-    cairo_fill (cr);
-
-    gdk_cairo_set_source_pixbuf (cr,
-                                 *pixbuf,
-                                 0,
-                                 extra_height / 2);
-    cairo_paint (cr);
-
-    pixbuf_with_padding = gdk_pixbuf_get_from_surface (surface,
-                                                       0,
-                                                       0,
-                                                       width,
-                                                       height + extra_height);
-
-    g_object_unref (*pixbuf);
-    cairo_surface_destroy (surface);
-    cairo_destroy (cr);
-
-    *pixbuf = pixbuf_with_padding;
-}
-
 static GHashTable *
 get_types_table (void)
 {
@@ -325,64 +259,6 @@ pixbuf_can_load_type (const char *mime_type)
     return g_hash_table_contains (image_mime_types, mime_type);
 }
 
-gboolean
-nemo_can_thumbnail_internally (NemoFile *file)
-{
-    g_autofree gchar *mime_type = NULL;
-
-    mime_type = nemo_file_get_mime_type (file);
-    return pixbuf_can_load_type (mime_type);
-}
-
-gboolean
-nemo_can_thumbnail (NemoFile *file)
-{
-    GnomeDesktopThumbnailFactory *factory;
-    g_autofree gchar *mime_type = NULL;
-    g_autofree gchar *uri = NULL;
-    time_t mtime;
-    gboolean res;
-
-    uri = nemo_file_get_uri (file);
-    mime_type = nemo_file_get_mime_type (file);
-    mtime = nemo_file_get_mtime (file);
-    
-    factory = get_thumbnail_factory ();
-    res = gnome_desktop_thumbnail_factory_can_thumbnail (factory,
-                                                         uri,
-                                                         mime_type,
-                                                         mtime);
-    return res;
-}
-
-/***************************************************************************
- * Thumbnail Thread Functions.
- ***************************************************************************/
-
-void
-nemo_thumbnail_remove_from_queue (const char *file_uri)
-{
-    NemoThumbnailInfo *info;
-
-    info = g_new0 (NemoThumbnailInfo, 1);
-    info->image_uri = g_strdup (file_uri);
-    info->cmd_type = THUMBNAIL_REMOVE;
-
-    g_async_queue_push (feeder_queue, info);
-}
-
-void
-nemo_thumbnail_prioritize (const char *file_uri)
-{
-    NemoThumbnailInfo *info;
-
-    info = g_new0 (NemoThumbnailInfo, 1);
-    info->image_uri = g_strdup (file_uri);
-    info->cmd_type = THUMBNAIL_BUMP;
-
-    g_async_queue_push (feeder_queue, info);
-}
-
 /* This is a one-shot idle callback called from the main loop to call
    notify_file_changed() for a thumbnail. It frees the uri afterwards.
    We do this in an idle callback as I don't think nemo_file_changed() is
@@ -409,6 +285,7 @@ thumbnail_thread_notify_file_changed (gpointer image_uri)
     return G_SOURCE_REMOVE;
 }
 
+/* Always on thumbnail thread */
 static void
 remove_from_hash_table (NemoThumbnailInfo *info)
 {
@@ -419,6 +296,7 @@ remove_from_hash_table (NemoThumbnailInfo *info)
     free_thumbnail_info (info);
 }
 
+/* Thumbnail thread */
 static void
 thumbnail_thread (gpointer data,
                   gpointer user_data)
@@ -473,9 +351,15 @@ thumbnail_thread (gpointer data,
                      thumbnail_thread_notify_file_changed,
                      g_strdup (info->image_uri), NULL);
 
+#if DEBUG_THREADS
+    g_message ("%u unprocessed (Done) (%u threads free)",
+               g_thread_pool_unprocessed ((GThreadPool *) tpool),
+               g_thread_pool_get_num_unused_threads ());
+#endif
     remove_from_hash_table (info);
 }
 
+/* Mainloop */
 static  void
 feeder_task_complete (GObject      *source,
                        GAsyncResult *res,
@@ -485,6 +369,7 @@ feeder_task_complete (GObject      *source,
     DEBUG ("(Finalize) Feeder task done");
 }
 
+/* Feeder thread */
 static void
 feeder_thread (GTask        *task,
                 gpointer      source,
@@ -494,6 +379,10 @@ feeder_thread (GTask        *task,
     gpointer data;
 
     while (!g_cancellable_is_cancelled (cancellable) && (data = g_async_queue_pop (feeder_queue))) {
+
+#if DEBUG_THREADS
+    g_message ("Pop from feeder (Add) %i items in feeder", g_async_queue_length (feeder_queue));
+#endif
         NemoThumbnailInfo *feeder_info = (NemoThumbnailInfo *) data;
         NemoThumbnailInfo *existing_info = NULL;
 
@@ -507,6 +396,9 @@ feeder_thread (GTask        *task,
                     DEBUG ("(Main Thread) Adding new file to thumbnail: %s", feeder_info->image_uri);
 
                     g_thread_pool_push ((GThreadPool *) tpool, feeder_info, NULL);
+#if DEBUG_THREADS
+                    g_message ("%u unprocessed (Add)", g_thread_pool_unprocessed ((GThreadPool *) tpool));
+#endif
                     g_hash_table_insert (thumbnails_to_make_hash, feeder_info->image_uri, feeder_info);
 
                     // Don't free this later.
@@ -598,6 +490,7 @@ finalize_thumbnailer (void)
     g_hash_table_destroy (thumbnails_to_make_hash);
 }
 
+/* Mainloop */
 void
 nemo_create_thumbnail (NemoFile *file)
 {
@@ -660,7 +553,149 @@ nemo_create_thumbnail (NemoFile *file)
 
     nemo_file_set_is_thumbnailing (file, TRUE);
 
+#if DEBUG_THREADS
+    g_message ("Push to feeder (Add) %i items in feeder", g_async_queue_length (feeder_queue));
+#endif
+
     g_async_queue_push (feeder_queue, info);
+}
+
+/* Mainloop */
+void
+nemo_thumbnail_remove_from_queue (const char *file_uri)
+{
+    NemoThumbnailInfo *info;
+
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->image_uri = g_strdup (file_uri);
+    info->cmd_type = THUMBNAIL_REMOVE;
+
+#if DEBUG_THREADS
+    g_message ("Push to feeder (Remove) %i items in feeder", g_async_queue_length (feeder_queue));
+#endif
+
+    g_async_queue_push (feeder_queue, info);
+}
+
+/* Mainloop */
+void
+nemo_thumbnail_prioritize (const char *file_uri)
+{
+    NemoThumbnailInfo *info;
+
+    info = g_new0 (NemoThumbnailInfo, 1);
+    info->image_uri = g_strdup (file_uri);
+    info->cmd_type = THUMBNAIL_BUMP;
+
+#if DEBUG_THREADS
+    g_message ("Push to feeder (Bump) %i items in feeder", g_async_queue_length (feeder_queue));
+#endif
+
+    g_async_queue_push (feeder_queue, info);
+}
+
+gboolean
+nemo_can_thumbnail_internally (NemoFile *file)
+{
+    g_autofree gchar *mime_type = NULL;
+
+    mime_type = nemo_file_get_mime_type (file);
+    return pixbuf_can_load_type (mime_type);
+}
+
+gboolean
+nemo_can_thumbnail (NemoFile *file)
+{
+    GnomeDesktopThumbnailFactory *factory;
+    g_autofree gchar *mime_type = NULL;
+    g_autofree gchar *uri = NULL;
+    time_t mtime;
+    gboolean res;
+
+    uri = nemo_file_get_uri (file);
+    mime_type = nemo_file_get_mime_type (file);
+    mtime = nemo_file_get_mtime (file);
+    
+    factory = get_thumbnail_factory ();
+    res = gnome_desktop_thumbnail_factory_can_thumbnail (factory,
+                                                         uri,
+                                                         mime_type,
+                                                         mtime);
+    return res;
+}
+
+
+void
+nemo_thumbnail_frame_image (GdkPixbuf **pixbuf)
+{
+    GdkPixbuf *pixbuf_with_frame, *frame;
+
+    /* The pixbuf isn't already framed (i.e., it was not made by
+     * an old Nemo), so we must embed it in a frame.
+     */
+
+    frame = nemo_get_thumbnail_frame ();
+    if (frame == NULL) {
+        return;
+    }
+
+    pixbuf_with_frame = eel_embed_image_in_frame (*pixbuf, frame,
+                                                  NEMO_THUMBNAIL_FRAME_LEFT,
+                                                  NEMO_THUMBNAIL_FRAME_TOP,
+                                                  NEMO_THUMBNAIL_FRAME_RIGHT,
+                                                  NEMO_THUMBNAIL_FRAME_BOTTOM);
+    g_object_unref (*pixbuf);
+    *pixbuf = pixbuf_with_frame;
+}
+
+void
+nemo_thumbnail_pad_top_and_bottom (GdkPixbuf **pixbuf,
+                                   gint        extra_height)
+{
+    GdkPixbuf *pixbuf_with_padding;
+    GdkRectangle rect;
+    GdkRGBA transparent = { 0, 0, 0, 0.0 };
+    cairo_surface_t *surface;
+    cairo_t *cr;
+    gint width, height;
+
+    width = gdk_pixbuf_get_width (*pixbuf);
+    height = gdk_pixbuf_get_height (*pixbuf);
+
+    surface = gdk_window_create_similar_image_surface (NULL,
+                                                       CAIRO_FORMAT_ARGB32,
+                                                       width,
+                                                       height + extra_height,
+                                                       0);
+
+    cr = cairo_create (surface);
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = width;
+    rect.height = height + extra_height;
+
+    gdk_cairo_rectangle (cr, &rect);
+    gdk_cairo_set_source_rgba (cr, &transparent);
+    cairo_fill (cr);
+
+    gdk_cairo_set_source_pixbuf (cr,
+                                 *pixbuf,
+                                 0,
+                                 extra_height / 2);
+    cairo_paint (cr);
+
+    pixbuf_with_padding = gdk_pixbuf_get_from_surface (surface,
+                                                       0,
+                                                       0,
+                                                       width,
+                                                       height + extra_height);
+
+    g_object_unref (*pixbuf);
+    cairo_surface_destroy (surface);
+    cairo_destroy (cr);
+
+    *pixbuf = pixbuf_with_padding;
 }
 
 gboolean
