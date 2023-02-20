@@ -5662,9 +5662,9 @@ update_visible_icons_cb (NemoIconContainer *container)
 
 			if (visible) {
 				nemo_icon_canvas_item_set_is_visible (icon->item, TRUE);
+                NemoFile *file = NEMO_FILE (icon->data);
 
                 if (!icon->ok_to_show_thumb) {
-                    NemoFile *file = NEMO_FILE (icon->data);
 
                     icon->ok_to_show_thumb = TRUE;
 
@@ -5672,11 +5672,11 @@ update_visible_icons_cb (NemoIconContainer *container)
                         nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
                     }
 
-                    if (nemo_file_is_thumbnailing (file)) {
-                        nemo_icon_container_prioritize_thumbnailing (container, icon);
-                    } else {
-                        nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
-                    }
+                    nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
+                } else {
+                    gchar *uri = nemo_file_get_uri (file);
+                    nemo_thumbnail_prioritize (uri);
+                    g_free (uri);
                 }
 
                 nemo_icon_container_update_icon (container, icon);
