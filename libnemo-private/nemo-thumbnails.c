@@ -76,6 +76,7 @@ typedef struct {
     char *image_uri;
     char *mime_type;
     time_t original_file_mtime;
+    gint64 add_time;
     ThumbnailCommandType cmd_type;
     guint cancelled : 1;
 } NemoThumbnailInfo;
@@ -149,6 +150,17 @@ get_max_threads (void) {
 #endif
 
     return max_threads;
+}
+
+static gint
+lifo_sorter (gconstpointer a,
+             gconstpointer b,
+             gpointer      data)
+{
+    gint64 ta = ((const NemoThumbnailInfo *) a)->add_time;
+    gint64 tb = ((const NemoThumbnailInfo *) b)->add_time;
+
+    return tb > ta ? +1 : ta == tb ? 0 : -1;
 }
 
 static gboolean
@@ -394,12 +406,11 @@ feeder_thread (GTask        *task,
 
                 if (existing_info == NULL) {
                     DEBUG ("(Main Thread) Adding new file to thumbnail: %s", feeder_info->image_uri);
-
-                    g_thread_pool_push ((GThreadPool *) tpool, feeder_info, NULL);
 #if DEBUG_THREADS
                     g_message ("%u unprocessed (Add)", g_thread_pool_unprocessed ((GThreadPool *) tpool));
 #endif
                     g_hash_table_insert (thumbnails_to_make_hash, feeder_info->image_uri, feeder_info);
+                    g_thread_pool_push ((GThreadPool *) tpool, feeder_info, NULL);
 
                     // Don't free this later.
                     feeder_info = NULL;
@@ -408,6 +419,7 @@ feeder_thread (GTask        *task,
 
                     /* The file in the queue might need a new original mtime */
                     existing_info->original_file_mtime = feeder_info->original_file_mtime;
+                    existing_info->add_time = g_get_monotonic_time ();
                     g_thread_pool_move_to_front ((GThreadPool *) tpool, existing_info);
                 }
                 DEBUG ("(Add thumbnail) Unlocking mutex");
@@ -439,6 +451,7 @@ feeder_thread (GTask        *task,
 
                 if (existing_info) {
                     DEBUG ("(Prioritize) Moving to front: %s", feeder_info->image_uri);
+                    existing_info->add_time = g_get_monotonic_time ();
                     g_thread_pool_move_to_front ((GThreadPool *) tpool, existing_info);
                 }
                 DEBUG ("(Prioritize) Unlocking mutex");
@@ -502,7 +515,8 @@ nemo_create_thumbnail (NemoFile *file)
 
         tpool = g_thread_pool_new ((GFunc) thumbnail_thread, NULL,
                                    get_max_threads (),
-                                   TRUE, NULL);
+                                   FALSE, NULL);
+        g_thread_pool_set_sort_function ((GThreadPool *) tpool, (GCompareDataFunc) lifo_sorter, NULL);
 
         feeder_queue = g_async_queue_new ();
         cancellable = g_cancellable_new ();
@@ -549,6 +563,7 @@ nemo_create_thumbnail (NemoFile *file)
     info->image_uri = file_uri;
     info->mime_type = nemo_file_get_mime_type (file);
     info->original_file_mtime = file_mtime;
+    info->add_time = g_get_monotonic_time ();
     info->cmd_type = THUMBNAIL_ADD;
 
     nemo_file_set_is_thumbnailing (file, TRUE);
