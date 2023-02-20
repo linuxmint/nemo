@@ -354,7 +354,7 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
                 gint w, h, s;
                 gboolean bad_ratio;
 
-                initial_pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size);
+                initial_pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size * icon_scale);
 
                 w = gdk_pixbuf_get_width (initial_pixbuf);
                 h = gdk_pixbuf_get_height (initial_pixbuf);
@@ -363,8 +363,8 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
                 if (s < icon_size)
                     icon_size = s;
 
-                bad_ratio = (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > w ||
-                            (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > h;
+                bad_ratio = (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > (int)(w * 0.75) ||
+                            (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > (int)(h * 0.75);
 
                 gicon = G_ICON (initial_pixbuf);
 
