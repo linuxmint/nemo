@@ -477,6 +477,9 @@ finalize_thumbnailer (void)
     NemoThumbnailInfo *info;
     gpointer data;
 
+    if (feeder_queue == NULL)
+        return;
+
     DEBUG ("(Finalize) Shutdown thumbnailer.");
 
     info = g_new0 (NemoThumbnailInfo, 1);
@@ -581,6 +584,9 @@ nemo_create_thumbnail (NemoFile *file)
 void
 nemo_thumbnail_remove_from_queue (const char *file_uri)
 {
+    if (feeder_queue == NULL)
+        return;
+
     NemoThumbnailInfo *info;
 
     info = g_new0 (NemoThumbnailInfo, 1);
@@ -598,6 +604,9 @@ nemo_thumbnail_remove_from_queue (const char *file_uri)
 void
 nemo_thumbnail_prioritize (const char *file_uri)
 {
+    if (feeder_queue == NULL)
+        return;
+
     NemoThumbnailInfo *info;
 
     info = g_new0 (NemoThumbnailInfo, 1);
