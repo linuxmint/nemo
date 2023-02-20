@@ -139,6 +139,8 @@ get_max_threads (void) {
         else {
             max_threads = 1;
         }
+    } else {
+        max_threads = pref;
     }
 
     max_threads = CLAMP (max_threads, 1, (num_processors / 2));
