@@ -5591,18 +5591,6 @@ nemo_icon_container_unfreeze_updates (NemoIconContainer *container)
 	klass->unfreeze_updates (container);
 }
 
-static void
-nemo_icon_container_prioritize_thumbnailing (NemoIconContainer *container,
-						 NemoIcon *icon)
-{
-	NemoIconContainerClass *klass;
-
-	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
-	g_assert (klass->prioritize_thumbnailing != NULL);
-
-	klass->prioritize_thumbnailing (container, icon->data);
-}
-
 static gboolean
 update_visible_icons_cb (NemoIconContainer *container)
 {

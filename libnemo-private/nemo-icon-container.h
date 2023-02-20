@@ -162,8 +162,6 @@ typedef struct {
 	void         (* freeze_updates)           (NemoIconContainer *container);
 	void         (* unfreeze_updates)         (NemoIconContainer *container);
 
-	void         (* prioritize_thumbnailing)  (NemoIconContainer *container,
-						   NemoIconData *data);
     gint         (* get_max_layout_lines_for_pango) (NemoIconContainer *container);
     gint         (* get_max_layout_lines)           (NemoIconContainer *container);
     gint         (* get_additional_text_line_count) (NemoIconContainer *container);
