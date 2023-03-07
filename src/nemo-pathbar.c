@@ -394,6 +394,8 @@ nemo_path_bar_finalize (GObject *object)
     }
 
     g_list_free (path_bar->priv->button_list);
+    g_clear_object (&path_bar->priv->home_path);
+    g_clear_object (&path_bar->priv->root_path);
     g_clear_object (&path_bar->priv->xdg_documents_path);
     g_clear_object (&path_bar->priv->xdg_download_path);
     g_clear_object (&path_bar->priv->xdg_music_path);

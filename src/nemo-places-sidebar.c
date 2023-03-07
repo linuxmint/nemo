@@ -1167,6 +1167,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
         mount = g_volume_get_mount (volume);
         if (mount != NULL) {
+            g_autofree gchar *parse_name = NULL;
             icon = nemo_get_mount_icon_name (mount);
             root = g_mount_get_default_location (mount);
             mount_uri = g_file_get_uri (root);
@@ -1175,9 +1176,9 @@ update_places (NemoPlacesSidebar *sidebar)
             full = get_disk_full (df_file, &tooltip_info);
             g_clear_object (&df_file);
 
-            tooltip = g_strdup_printf (_("%s\n%s"),
-                                       g_file_get_parse_name (root),
-                                       tooltip_info);
+            parse_name = g_file_get_parse_name (root);
+            tooltip = g_strdup_printf (_("%s\n%s"), parse_name, tooltip_info);
+
             g_free (tooltip_info);
             g_object_unref (root);
             name = g_mount_get_name (mount);

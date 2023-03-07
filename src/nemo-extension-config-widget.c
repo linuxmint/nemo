@@ -30,6 +30,7 @@ extension_proxy_free (ExtensionProxy *proxy)
     g_clear_pointer (&proxy->display_name, g_free);
     g_clear_pointer (&proxy->desc, g_free);
     g_clear_pointer (&proxy->config_exec, g_free);
+    g_slice_free (ExtensionProxy, proxy);
 }
 
 static void
@@ -302,6 +303,8 @@ refresh_widget (NemoExtensionConfigWidget *widget)
         }
 
         g_strfreev (blacklist);
+        g_object_unref (row_group);
+        g_object_unref (name_group);
     }
 
     update_restart_visiblity (widget);

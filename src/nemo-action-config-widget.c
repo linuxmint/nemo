@@ -35,6 +35,7 @@ action_proxy_free (ActionProxy *proxy)
     g_clear_pointer (&proxy->stock_id, g_free);
     g_clear_pointer (&proxy->icon_name, g_free);
     g_clear_pointer (&proxy->filename, g_free);
+    g_slice_free (ActionProxy, proxy);
 }
 
 static GtkWidget *
@@ -150,6 +151,7 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
     proxy->filename = g_strdup (filename);
 
     g_free (name);
+    g_free (comment);
     g_free (icon_name);
     g_free (stock_id);
     g_key_file_free (key_file);
