@@ -910,7 +910,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	}
 
 	while ((info = g_file_enumerator_next_file (enumerator, data->cancellable, NULL)) != NULL) {
-		if (g_file_info_get_is_hidden (info) && !data->show_hidden) {
+		if (g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN) && !data->show_hidden) {
 			goto next;
 		}
 
@@ -946,7 +946,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 
 		child = g_file_get_child (dir, g_file_info_get_name (info));
         if (hit) {
-            mime_type = g_file_info_get_content_type (info);
+            mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 
             // Our helpers don't currently support uris, so we shouldn't at all -
             // probably best, as search would transfer the contents of every file

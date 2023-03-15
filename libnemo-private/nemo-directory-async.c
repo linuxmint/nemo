@@ -824,6 +824,7 @@ static gboolean
 should_skip_file (NemoDirectory *directory, GFileInfo *info)
 {
 	static gboolean show_hidden_files_changed_callback_installed = FALSE;
+    gboolean is_hidden;
 
 	/* Add the callback once for the life of our process */
 	if (!show_hidden_files_changed_callback_installed) {
@@ -838,13 +839,14 @@ should_skip_file (NemoDirectory *directory, GFileInfo *info)
 		show_hidden_files_changed_callback (NULL);
 	}
 
-	if (!show_hidden_files &&
-	    (g_file_info_get_is_hidden (info) ||
-	     g_file_info_get_is_backup (info))) {
-		return TRUE;
-	}
+    is_hidden = g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN) ||
+                g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP);
 
-	return FALSE;
+    if (!show_hidden_files && is_hidden) {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static void
@@ -915,7 +917,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 			dir_load_state->load_file_count += 1;
 
 			/* Add the MIME type to the set. */
-			mimetype = g_file_info_get_content_type (file_info);
+            mimetype = g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+
 			if (mimetype != NULL) {
 				istr_set_insert (dir_load_state->load_mime_list_hash,
 						 mimetype);
@@ -2961,7 +2964,8 @@ mime_list_one (MimeListState *state,
 		return;
 	}
 
-	mime_type = g_file_info_get_content_type (info);
+    mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+
 	if (mime_type != NULL) {
 		istr_set_insert (state->mime_list_hash, mime_type);
 	}
