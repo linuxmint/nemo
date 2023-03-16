@@ -1,3 +1,18 @@
+nemo (5.6.4) vera; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-view-dnd.c: Fix the check for a web link's title, and use the url if it's missing.
+  * nemo-mime-actions.c: Prioritize an http link to open in a browser, regardless of the mimetype of the link's target.
+
+  [ kain ]
+  * Fix for List View thumbnail scaling at HiDPI (#3187)
+
+  [ Michael Webster ]
+  * list-view: Scale the thumbnail correctly when applying emblems, and fix the emblem sanity checks everywhere.
+  * file info: Use generic methods for attributes that aren't guaranteed to be supported by the filesystem.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 16 Mar 2023 13:58:16 +0000
+
 nemo (5.6.3) vera; urgency=medium
 
   [ Michael Webster ]
