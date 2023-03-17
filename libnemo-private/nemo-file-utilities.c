@@ -1714,7 +1714,7 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
 
     if (size > 0) {
         /* Default behavior */
-        mime_type = eel_ref_str_get_unique (g_file_info_get_content_type (info));
+        mime_type = eel_ref_str_get_unique (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
     } else {
         gboolean uncertain;
         gchar *guessed_type = NULL;
@@ -1730,7 +1730,7 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
         if (!uncertain) {
             mime_type = eel_ref_str_get_unique (guessed_type);
         } else {
-            mime_type = eel_ref_str_get_unique (g_file_info_get_content_type (info));
+            mime_type = eel_ref_str_get_unique (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
         }
 
         g_free (guessed_type);

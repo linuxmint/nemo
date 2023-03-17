@@ -73,7 +73,7 @@ is_local_file_a_link (const char *uri)
 				  G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
 				  0, NULL, &error);
 	if (info) {
-		link = is_link_mime_type (g_file_info_get_content_type (info));
+		link = is_link_mime_type (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
 		g_object_unref (info);
 	}
 	else {
