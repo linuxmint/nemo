@@ -124,6 +124,8 @@ struct NemoListViewDetails {
 
     GList *current_selection;
     gint current_selection_count;
+
+    gboolean overlay_scrolling;
 };
 
 struct SelectionForeachData {
@@ -2321,7 +2323,36 @@ static void
 handle_vadjustment_changed (GtkAdjustment *adjustment,
                             NemoListView  *view)
 {
+    gboolean reallocate = FALSE;
+
+    if (view->details->overlay_scrolling) {
+        gint upper, current_adjust, page_size, current_margin;
+
+        page_size = gtk_adjustment_get_page_size (adjustment);
+        upper = gtk_adjustment_get_upper (adjustment);
+        current_adjust = gtk_adjustment_get_value (adjustment);
+        current_margin = gtk_widget_get_margin_bottom (GTK_WIDGET (view->details->tree_view));
+
+        if (upper == current_adjust + page_size) {
+            GtkWidget *hscrollbar = gtk_scrolled_window_get_hscrollbar (GTK_SCROLLED_WINDOW (view));
+            gint nat_height;
+
+            gtk_widget_get_preferred_height (hscrollbar, NULL, &nat_height);
+            gtk_widget_set_margin_bottom (GTK_WIDGET (view->details->tree_view), nat_height * 2);
+            if (current_margin != nat_height)
+                reallocate = TRUE;
+        } else {
+            gtk_widget_set_margin_bottom (GTK_WIDGET (view->details->tree_view), 0);
+
+            if (current_margin > 0)
+                reallocate = TRUE;
+        }
+    }
+
     queue_update_visible_icons (view, NORMAL_UPDATE_VISIBLE_DELAY);
+
+    if (reallocate)
+        gtk_widget_queue_allocate (GTK_WIDGET (view->details->tree_view));
 }
 
 static gint
@@ -4251,6 +4282,9 @@ nemo_list_view_init (NemoListView *list_view)
 {
 	list_view->details = g_new0 (NemoListViewDetails, 1);
 
+    GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (list_view));
+    gtk_style_context_add_class (context, "view");
+
 	create_and_set_up_tree_view (list_view);
 
 	g_signal_connect_swapped (nemo_preferences,
@@ -4317,6 +4351,12 @@ nemo_list_view_init (NemoListView *list_view)
 		g_signal_connect (nemo_clipboard_monitor_get (),
 		                  "clipboard_info",
 		                  G_CALLBACK (list_view_notify_clipboard_info), list_view);
+
+    GtkSettings *gtksettings = gtk_settings_get_default ();
+    g_object_get (gtksettings,
+                  "gtk-overlay-scrolling", &list_view->details->overlay_scrolling,
+                  NULL);
+    g_printerr ("overlay: %d\n", list_view->details->overlay_scrolling);
 }
 
 static NemoView *
