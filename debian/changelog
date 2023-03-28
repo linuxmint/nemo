@@ -1,3 +1,10 @@
+nemo (5.6.5) vera; urgency=medium
+
+  [ Michael Webster ]
+  * Fix some more GFileInfo getter problems.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 28 Mar 2023 17:59:50 +0100
+
 nemo (5.6.4) vera; urgency=medium
 
   [ Michael Webster ]
