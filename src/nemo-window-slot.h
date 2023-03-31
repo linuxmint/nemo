@@ -170,7 +170,8 @@ void    nemo_window_slot_set_allow_stop		   (NemoWindowSlot *slot,
 							    gboolean	    allow_stop);
 void    nemo_window_slot_set_status			   (NemoWindowSlot *slot,
 							    const char	 *status,
-							    const char   *short_status);
+							    const char   *short_status,
+                                gboolean      location_loading);
 
 void    nemo_window_slot_add_extra_location_widget     (NemoWindowSlot *slot,
 							    GtkWidget       *widget);

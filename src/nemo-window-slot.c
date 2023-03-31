@@ -758,8 +758,9 @@ set_floating_bar_status (NemoWindowSlot *slot,
 
 void
 nemo_window_slot_set_status (NemoWindowSlot *slot,
-				 const char *status,
-				 const char *short_status)
+                             const char *status,
+                             const char *short_status,
+                             gboolean    location_loading)
 {
 	NemoWindow *window;
 
@@ -768,7 +769,7 @@ nemo_window_slot_set_status (NemoWindowSlot *slot,
 	g_free (slot->status_text);
 	slot->status_text = g_strdup (status);
 
-	if (slot->content_view != NULL) {
+	if (slot->content_view != NULL && !location_loading) {
 		set_floating_bar_status (slot, short_status);
 	}
 

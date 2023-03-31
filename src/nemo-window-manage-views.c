@@ -684,7 +684,7 @@ begin_location_change (NemoWindowSlot        *slot,
 	end_location_change (slot);
 
 	nemo_window_slot_set_allow_stop (slot, TRUE);
-	nemo_window_slot_set_status (slot, " ", NULL);
+	nemo_window_slot_set_status (slot, " ", NULL, FALSE);
 
 	g_assert (slot->pending_location == NULL);
 	g_assert (slot->pending_selection == NULL);
