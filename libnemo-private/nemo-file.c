@@ -4890,8 +4890,8 @@ nemo_file_get_icon (NemoFile *file,
                                                      MAX (h * thumb_scale, 1),
                                                      GDK_INTERP_BILINEAR);
 
-            /* We don't want frames around small icons */
-            if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) || s >= 128 * scale) {
+            /* Only apply frame if icon has no transparency, and is large enough */
+            if (!gdk_pixbuf_get_has_alpha (raw_pixbuf) && s >= 128 * scale) {
                 nemo_thumbnail_frame_image (&scaled_pixbuf);
             }
 
