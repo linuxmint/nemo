@@ -71,15 +71,14 @@ void	       nemo_search_engine_finished (NemoSearchEngine *engine);
 void	       nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message);
 
 typedef struct {
-    gchar   *snippet;
-} SearchHit;
-
-typedef struct {
     gchar     *uri;           // The file uri;
-    GPtrArray *hits;          // List of hits.
+    gchar     *snippet;          // List of hits.
+    gint64     hits;
 } FileSearchResult;
 
-FileSearchResult *file_search_result_new     (gchar *uri);
+FileSearchResult *file_search_result_new     (gchar *uri, gchar *snippet);
 void              file_search_result_free    (FileSearchResult *result);
-void              file_search_result_add_hit (FileSearchResult *result, gchar *snippet);
+void              file_search_result_add_hit (FileSearchResult *result);
+
+void              nemo_search_engine_report_accounting (void);
 #endif /* NEMO_SEARCH_ENGINE_H */

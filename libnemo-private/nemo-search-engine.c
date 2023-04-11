@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include <glib/gprintf.h>
 #include "nemo-search-engine.h"
 #include "nemo-search-engine-advanced.h"
 
@@ -169,20 +170,34 @@ nemo_search_engine_error (NemoSearchEngine *engine, const char *error_message)
 	g_signal_emit (engine, signals[ERROR], 0, error_message);
 }
 
-static void
-search_hit_free (SearchHit *hit)
-{
-    g_free (hit->snippet);
-    g_slice_free (SearchHit, hit);
-}
+#define DEBUG_FSR_ACCOUNTING 0
+
+#if DEBUG_FSR_ACCOUNTING
+static gint64 count = 0;
+static GHashTable *fsr_accounting_table = NULL;
+#endif
 
 FileSearchResult *
-file_search_result_new (gchar *uri)
+file_search_result_new (gchar *uri, gchar *snippet)
 {
     FileSearchResult *ret = g_slice_new0 (FileSearchResult);
 
     ret->uri = uri;
-    ret->hits = g_ptr_array_new_full (1, (GDestroyNotify) search_hit_free);
+    ret->snippet = snippet;
+
+#if DEBUG_FSR_ACCOUNTING
+    count++;
+    g_printf ("%s - New - Count: %ld\n", uri, count);
+    if (fsr_accounting_table == NULL)
+    {
+        fsr_accounting_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+    }
+
+    if (!g_hash_table_add (fsr_accounting_table, g_strdup (uri)))
+    {
+        g_printerr ("************************* %s already existing\n", uri);
+    }
+#endif
 
     return ret;
 }
@@ -190,18 +205,36 @@ file_search_result_new (gchar *uri)
 void
 file_search_result_free (FileSearchResult *res)
 {
-    g_free (res->uri);
-    g_ptr_array_unref (res->hits);
+#if DEBUG_FSR_ACCOUNTING
+    count--;
+    g_printf ("%s - Free - Count: %ld\n", res->uri, count);
+    if (!g_hash_table_remove (fsr_accounting_table, res->uri)) {
+        g_printf ("*************************** URI not found in table");
+    }
+#endif
 
+    g_free (res->uri);
+    g_free (res->snippet);
     g_slice_free (FileSearchResult, res);
 }
 
 void
-file_search_result_add_hit (FileSearchResult *result,
-                            gchar            *snippet)
+file_search_result_add_hit (FileSearchResult *result)
 {
-    SearchHit *hit = g_slice_new0 (SearchHit);
-    hit->snippet = snippet;
+    result->hits++;
+}
 
-    g_ptr_array_add (result->hits, hit);
+void
+nemo_search_engine_report_accounting (void)
+{
+#if DEBUG_FSR_ACCOUNTING
+    GList *keys = NULL;
+
+    for (keys = g_hash_table_get_keys (fsr_accounting_table); keys != NULL; keys = keys->next)
+    {
+        g_printerr ("LEFT: %s\n", keys->data);
+    }
+
+    g_hash_table_unref (fsr_accounting_table);
+#endif
 }

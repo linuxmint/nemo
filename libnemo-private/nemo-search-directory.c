@@ -129,6 +129,9 @@ reset_file_list (NemoSearchDirectory *search)
 	
 	nemo_file_list_free (search->details->files);
 	search->details->files = NULL;
+
+    // DEBUG_FSR_ACCOUNTING
+    nemo_search_engine_report_accounting ();
 }
 
 static void
@@ -157,8 +160,6 @@ start_or_stop_search_engine (NemoSearchDirectory *search, gboolean adding)
 		   search->details->search_running) {
 		search->details->search_running = FALSE;
 		nemo_search_engine_stop (search->details->engine);
-
-		reset_file_list (search);
 	}
 
 }
@@ -484,7 +485,7 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 		fsr = (FileSearchResult *) hit_list->data;
 
         file = nemo_file_get_by_uri (fsr->uri);
-        nemo_file_add_search_result_data (file, (gpointer) search, fsr->hits);
+        nemo_file_add_search_result_data (file, (gpointer) search, fsr);
 
 		for (monitor_list = search->details->monitor_list; monitor_list; monitor_list = monitor_list->next) {
 			monitor = monitor_list->data;
@@ -495,12 +496,12 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 
 		g_signal_connect (file, "changed", G_CALLBACK (file_changed), search),
 
-		file_list = g_list_prepend (file_list, file);
+        file_list = g_list_prepend (file_list, file);
+        search->details->files = g_list_prepend (search->details->files, file);
 	}
 	
-	search->details->files = g_list_concat (search->details->files, file_list);
-
 	nemo_directory_emit_files_added (NEMO_DIRECTORY (search), file_list);
+    g_list_free (file_list);
 
 	file = nemo_directory_get_corresponding_file (NEMO_DIRECTORY (search));
 	nemo_file_emit_changed (file);
@@ -641,12 +642,7 @@ static gboolean
 search_contains_file (NemoDirectory *directory,
 		      NemoFile *file)
 {
-	NemoSearchDirectory *search;
-
-	search = NEMO_SEARCH_DIRECTORY (directory);
-
-	/* FIXME: Maybe put the files in a hash */
-	return (g_list_find (search->details->files, file) != NULL);
+    return nemo_file_has_search_result (file, (gpointer) directory);
 }
 
 static GList *

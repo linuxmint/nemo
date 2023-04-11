@@ -9026,18 +9026,18 @@ nemo_file_add_string_attribute (NemoFile *file,
 }
 
 void
-nemo_file_add_search_result_data (NemoFile      *file,
-                                  gpointer       search_dir,
-                                  GPtrArray     *search_hits)
+nemo_file_add_search_result_data (NemoFile         *file,
+                                  gpointer          search_dir,
+                                  FileSearchResult *result)
 {
     if (file->details->search_results == NULL) {
         file->details->search_results = g_hash_table_new_full (NULL, NULL,
-                                                               NULL, (GDestroyNotify) g_ptr_array_unref);
+                                                               NULL, (GDestroyNotify) file_search_result_free);
     }
 
     if (!g_hash_table_replace (file->details->search_results,
                                search_dir,
-                               g_ptr_array_ref (search_hits))) {
+                               result)) {
 
 #ifndef ENABLE_TRACKER // this is abnormal only in -advanced search.
         g_warning ("Search hits directory already existed - %s", nemo_file_peek_name (file));
@@ -9063,8 +9063,8 @@ nemo_file_clear_search_result_data (NemoFile      *file,
     }
 }
 
-static GPtrArray *
-get_file_hit_list (NemoFile *file, gpointer search_dir)
+static FileSearchResult*
+get_file_search_result (NemoFile *file, gpointer search_dir)
 {
     if (file->details->search_results == NULL) {
         return NULL;
@@ -9073,13 +9073,19 @@ get_file_hit_list (NemoFile *file, gpointer search_dir)
     return g_hash_table_lookup (file->details->search_results, search_dir);
 }
 
+gboolean
+nemo_file_has_search_result (NemoFile *file, gpointer search_dir)
+{
+    return g_hash_table_contains (file->details->search_results, search_dir);
+}
+
 gint
 nemo_file_get_search_result_count (NemoFile *file, gpointer search_dir)
 {
-    GPtrArray *hit_list = get_file_hit_list (file, search_dir);
+    FileSearchResult *result = get_file_search_result (file, search_dir);
 
-    if (hit_list != NULL) {
-        return hit_list->len;
+    if (result != NULL) {
+        return result->hits;
     }
 
     return 0;
@@ -9100,11 +9106,10 @@ nemo_file_get_search_result_count_as_string (NemoFile *file, gpointer search_dir
 gchar *
 nemo_file_get_search_result_snippet (NemoFile *file, gpointer search_dir)
 {
-    GPtrArray *hit_list = get_file_hit_list (file, search_dir);
+    FileSearchResult *result = get_file_search_result (file, search_dir);
 
-    if (hit_list != NULL && hit_list->len > 0) {
-        SearchHit *hit = (SearchHit *) g_ptr_array_index (hit_list, 0);
-        return g_strdup (hit->snippet);
+    if (result != NULL) {
+        return g_strdup (result->snippet);
     }
 
     return NULL;

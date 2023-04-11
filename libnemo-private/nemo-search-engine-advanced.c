@@ -63,7 +63,7 @@ typedef struct {
     GRegex *newline_re;
 
     GMutex hit_list_lock;
-    GList *hit_list; // holds SearchHitData
+    GList *hit_list; // holds FileSearchResults
 
     gboolean show_hidden;
     gboolean count_hits;
@@ -587,9 +587,12 @@ search_thread_add_hits_idle (gpointer user_data)
     if (!g_cancellable_is_cancelled (hits->thread_data->cancellable)) {
         nemo_search_engine_hits_added (NEMO_SEARCH_ENGINE (hits->thread_data->engine),
                                        hits->hit_list);
+        g_list_free (hits->hit_list);
+    } else {
+        // FileSearchResults are normally freed in NemoSearchDirectory reset_file_list()
+        g_list_free_full (hits->hit_list, (GDestroyNotify) file_search_result_free);
     }
 
-    g_list_free_full (hits->hit_list, (GDestroyNotify) file_search_result_free);
 	g_free (hits);
 
 	return FALSE;
@@ -644,6 +647,10 @@ strwildcardcmp(char *a, char *b)
 	G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," \
 	G_FILE_ATTRIBUTE_STANDARD_TYPE "," \
 	G_FILE_ATTRIBUTE_ID_FILE
+
+#define CONTENT_SEARCH_ATTRIBUTES \
+    G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," \
+    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE
 
 static GInputStream *
 get_stream_from_helper (SearchHelper *helper,
@@ -861,14 +868,14 @@ search_for_content_hits (SearchThreadData *data,
 
     while (g_match_info_matches (match_info) && !g_cancellable_is_cancelled (data->cancellable)) {
         if (fsr == NULL) {
-            fsr = file_search_result_new (g_file_get_uri (file));
+            fsr = file_search_result_new (g_file_get_uri (file), create_snippet (match_info, stripped, g_utf8_strlen (stripped, -1)));
         }
-
-        file_search_result_add_hit (fsr, create_snippet (match_info, stripped, g_utf8_strlen (stripped, -1)));
 
         if (!data->count_hits) {
             break;
         }
+
+        file_search_result_add_hit (fsr);
 
         if (!g_match_info_next (match_info, &error) && error) {
             g_warning ("Error iterating thru pattern matches (/%s/): code %d - %s",
@@ -893,16 +900,21 @@ visit_directory (GFile *dir, SearchThreadData *data)
 {
 	GFileEnumerator *enumerator;
 	GFileInfo *info;
-	GFile *child;
-	const char *mime_type, *display_name;
+    GFile *child;
+	const char *display_name;
 	char *cased, *normalized;
 	gboolean hit;
 	int i;
-	const char *id;
-	gboolean visited;
+
+    const gchar *attrs;
+
+    if (data->match_re)
+        attrs = STD_ATTRIBUTES "," CONTENT_SEARCH_ATTRIBUTES;
+    else
+        attrs = STD_ATTRIBUTES;
 
     enumerator = g_file_enumerate_children (dir,
-                                            STD_ATTRIBUTES "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                                            attrs,
                                             0, data->cancellable, NULL);
 
 	if (enumerator == NULL) {
@@ -944,9 +956,15 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		}
 		g_free (cased);
 
-		child = g_file_get_child (dir, g_file_info_get_name (info));
+        child = g_file_get_child (dir, g_file_info_get_name (info));
         if (hit) {
+            const gchar *mime_type;
+
             mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+
+            if (mime_type == NULL) {
+                mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+            }
 
             // Our helpers don't currently support uris, so we shouldn't at all -
             // probably best, as search would transfer the contents of every file
@@ -965,7 +983,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
             } else {
                 FileSearchResult *fsr = NULL;
 
-                fsr = file_search_result_new (g_file_get_uri (child));
+                fsr = file_search_result_new (g_file_get_uri (child), NULL);
                 g_mutex_lock (&data->hit_list_lock);
                 data->hit_list = g_list_prepend (data->hit_list, fsr);
                 g_mutex_unlock (&data->hit_list_lock);
@@ -980,6 +998,9 @@ visit_directory (GFile *dir, SearchThreadData *data)
         }
 
 		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY && data->recurse) {
+            gboolean visited;
+            const char *id;
+
 			id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILE);
 			visited = FALSE;
 			if (id) {
