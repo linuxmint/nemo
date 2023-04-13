@@ -178,8 +178,8 @@ update_info_from_link (NemoDesktopIconFile *icon_file)
 		return;
 	}
 
-	eel_ref_str_unref (file->details->mime_type);
-	file->details->mime_type = eel_ref_str_get_unique ("application/x-nemo-link");
+	g_clear_pointer (&file->details->mime_type, g_ref_string_release);
+	file->details->mime_type = g_ref_string_new_intern ("application/x-nemo-link");
 	file->details->type = G_FILE_TYPE_SHORTCUT;
 	file->details->size = 0;
 	file->details->has_permissions = FALSE;
@@ -282,7 +282,7 @@ nemo_desktop_icon_file_new (NemoDesktopLink *link)
 	icon_file->details->link = link;
 
 	name = nemo_desktop_link_get_file_name (link);
-	file->details->name = eel_ref_str_new (name);
+	file->details->name = g_ref_string_new (name);
 	g_free (name);
 
 	update_info_from_link (icon_file);

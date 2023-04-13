@@ -64,15 +64,6 @@ char *   eel_str_replace_substring            (const char    *str,
 					       const char    *substring,
 					       const char    *replacement);
 
-typedef char * eel_ref_str;
-
-eel_ref_str eel_ref_str_new        (const char  *string);
-eel_ref_str eel_ref_str_get_unique (const char  *string);
-eel_ref_str eel_ref_str_ref        (eel_ref_str  str);
-void        eel_ref_str_unref      (eel_ref_str  str);
-
-#define eel_ref_str_peek(__str) ((const char *)(__str))
-
 GList *eel_strv_to_glist (gchar **strv);
 
 typedef struct {

@@ -595,7 +595,7 @@ add_to_hash_table (NemoDirectory *directory, NemoFile *file, GList *node)
 {
 	const char *name;
 
-	name = eel_ref_str_peek (file->details->name);
+	name = file->details->name;
 
 	g_assert (node != NULL);
 	g_assert (g_hash_table_lookup (directory->details->file_hash,
@@ -609,7 +609,7 @@ extract_from_hash_table (NemoDirectory *directory, NemoFile *file)
 	const char *name;
 	GList *node;
 
-	name = eel_ref_str_peek (file->details->name);
+	name = file->details->name;
 	if (name == NULL) {
 		return NULL;
 	}

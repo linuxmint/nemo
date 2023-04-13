@@ -1714,7 +1714,7 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
 
     if (size > 0) {
         /* Default behavior */
-        mime_type = eel_ref_str_get_unique (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+        mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
     } else {
         gboolean uncertain;
         gchar *guessed_type = NULL;
@@ -1728,12 +1728,11 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
         /* Uncertain means, it's not a registered extension, so we fall back to our (gio's)
          * normal behavior - text/plain (currently at least.) */
         if (!uncertain) {
-            mime_type = eel_ref_str_get_unique (guessed_type);
+            mime_type = guessed_type;
         } else {
-            mime_type = eel_ref_str_get_unique (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+            mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+            g_free (guessed_type);
         }
-
-        g_free (guessed_type);
     }
 
     return mime_type;

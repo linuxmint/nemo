@@ -214,7 +214,7 @@ nemo_search_directory_file_init (NemoSearchDirectoryFile *search_file)
 	file = NEMO_FILE (search_file);
 
 	file->details->got_file_info = TRUE;
-	file->details->mime_type = eel_ref_str_get_unique ("x-directory/normal");
+	file->details->mime_type = g_ref_string_new_intern ("x-directory/normal");
 	file->details->type = G_FILE_TYPE_DIRECTORY;
 	file->details->size = 0;
 
