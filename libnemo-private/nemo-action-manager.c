@@ -416,7 +416,8 @@ nemo_action_manager_list_actions (NemoActionManager *action_manager)
 gchar *
 nemo_action_manager_get_system_directory_path (const gchar *data_dir)
 {
-    const gchar *nemo_path, *target;
+    g_autofree gchar *nemo_path = NULL;
+    g_autofree gchar *target = NULL;
 
     nemo_path = g_build_filename (data_dir, "nemo", NULL);
 

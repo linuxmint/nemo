@@ -4347,7 +4347,7 @@ gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
 	GFilesystemPreviewType use_preview;
-    NemoFile *dir;
+    NemoFile *dir = NULL;
     char* metadata_str = NULL;
 
     if (!NEMO_IS_FILE (file)) {
@@ -4371,32 +4371,46 @@ nemo_file_should_show_thumbnail (NemoFile *file)
     }
 
     if (!nemo_global_preferences_get_ignore_view_metadata ()) {
-        dir = nemo_file_is_directory(file) ? file : nemo_file_get_parent(file);
+        if (nemo_file_is_directory (file)) {
+            dir = nemo_file_ref (file);
+        } else {
+            dir = nemo_file_get_parent (file);
+        }
+
         if (nemo_global_preferences_get_inherit_show_thumbnails_preference ()) {
+            NemoFile *tmp = NULL;
+
             while (dir != NULL) {
                 metadata_str = nemo_file_get_metadata(dir,
                                                     NEMO_METADATA_KEY_SHOW_THUMBNAILS,
                                                     NULL);
                 if (metadata_str == NULL) { // do this here to avoid string comparisons with a NULL string
-                    dir = nemo_file_get_parent(dir);
+                    tmp = nemo_file_get_parent (dir);
+                    nemo_file_unref (dir);
+                    dir = tmp;
                 }
                 else if (g_ascii_strcasecmp (metadata_str, "true") == 0) {
                     g_free(metadata_str);
+                    nemo_file_unref (dir);
                     return TRUE;
                 }
                 else if (g_ascii_strcasecmp (metadata_str, "false") == 0) {
                     g_free(metadata_str);
+                    nemo_file_unref (dir);
                     return FALSE;
                 }
                 else {
                     g_free(metadata_str);
-                    dir = nemo_file_get_parent(dir);
+                    tmp = nemo_file_get_parent (dir);
+                    nemo_file_unref (dir);
+                    dir = tmp;
                 }
             }
         } else {
-            metadata_str = nemo_file_get_metadata(dir,
-                                                NEMO_METADATA_KEY_SHOW_THUMBNAILS,
-                                                NULL);
+            metadata_str = nemo_file_get_metadata (dir,
+                                                   NEMO_METADATA_KEY_SHOW_THUMBNAILS,
+                                                   NULL);
+            nemo_file_unref (dir);
             if (metadata_str != NULL ) {
                 if (g_ascii_strcasecmp (metadata_str, "true") == 0) {
                     g_free(metadata_str);
@@ -5680,10 +5694,12 @@ nemo_file_set_permissions (NemoFile *file,
 
 	if (!nemo_file_undo_manager_pop_flag ()) {
 		NemoFileUndoInfo *undo_info;
+        GFile *location = nemo_file_get_location (file);
 
-		undo_info = nemo_file_undo_info_permissions_new (nemo_file_get_location (file),
+		undo_info = nemo_file_undo_info_permissions_new (location,
 								     file->details->permissions,
 								     new_permissions);
+        g_object_unref (location);
 		nemo_file_undo_manager_set_action (undo_info);
 	}
 
@@ -5993,16 +6009,17 @@ nemo_file_set_owner (NemoFile *file,
 
 	if (!nemo_file_undo_manager_pop_flag ()) {
 		NemoFileUndoInfo *undo_info;
+        GFile *location = nemo_file_get_location (file);
 		char* current_owner;
 
 		current_owner = nemo_file_get_owner_as_string (file, FALSE);
 
 		undo_info = nemo_file_undo_info_ownership_new (NEMO_FILE_UNDO_OP_CHANGE_OWNER,
-								   nemo_file_get_location (file),
+								   location,
 								   current_owner,
 								   user_name_or_id);
 		nemo_file_undo_manager_set_action (undo_info);
-
+        g_object_unref (location);
 		g_free (current_owner);
 	}
 
@@ -6271,15 +6288,16 @@ nemo_file_set_group (NemoFile *file,
 
 	if (!nemo_file_undo_manager_pop_flag ()) {
 		NemoFileUndoInfo *undo_info;
+        GFile *location = nemo_file_get_location (file);
 		char *current_group;
 
 		current_group = nemo_file_get_group_name (file);
 		undo_info = nemo_file_undo_info_ownership_new (NEMO_FILE_UNDO_OP_CHANGE_GROUP,
-								   nemo_file_get_location (file),
+								   location,
 								   current_group,
 								   group_name_or_id);
 		nemo_file_undo_manager_set_action (undo_info);
-
+        g_object_unref (location);
 		g_free (current_group);
 	}
 
