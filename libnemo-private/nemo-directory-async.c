@@ -919,6 +919,11 @@ dequeue_pending_idle_callback (gpointer callback_data)
 			/* Add the MIME type to the set. */
             mimetype = g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 
+            if (mimetype == NULL) {
+                mimetype = g_file_info_get_attribute_string (file_info,
+                                                             G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+            }
+
 			if (mimetype != NULL) {
 				istr_set_insert (dir_load_state->load_mime_list_hash,
 						 mimetype);
@@ -2966,6 +2971,10 @@ mime_list_one (MimeListState *state,
 
     mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 
+    if (mime_type == NULL) {
+        mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+    }
+
 	if (mime_type != NULL) {
 		istr_set_insert (state->mime_list_hash, mime_type);
 	}
@@ -3131,7 +3140,7 @@ mime_list_start (NemoDirectory *directory,
 #endif	
 	
 	g_file_enumerate_children_async (location,
-					 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+					 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
 					 0, /* flags */
 					 G_PRIORITY_LOW, /* prio */
 					 state->cancellable,

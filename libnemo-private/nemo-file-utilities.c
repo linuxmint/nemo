@@ -1715,6 +1715,10 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
     if (size > 0) {
         /* Default behavior */
         mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+
+        if (mime_type == NULL) {
+            mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE));
+        }
     } else {
         gboolean uncertain;
         gchar *guessed_type = NULL;
