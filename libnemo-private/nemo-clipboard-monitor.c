@@ -233,7 +233,7 @@ convert_file_list_to_string (NemoClipboardInfo *info,
 	}
 
         for (i = 0, l = info->files; l != NULL; l = l->next, i++) {
-		uri = nemo_file_get_uri (l->data);
+		uri = nemo_file_get_local_uri (l->data);
 
 		if (format_for_text) {
 			f = g_file_new_for_uri (uri);
@@ -285,7 +285,7 @@ nemo_get_clipboard_callback (GtkClipboard     *clipboard,
 		i = 0;
 
 		for (l = clipboard_info->files; l != NULL; l = l->next) {
-			uris[i] = nemo_file_get_uri (l->data);
+			uris[i] = nemo_file_get_local_uri (l->data);
 			i++;
 		}
 
