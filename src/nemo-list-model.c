@@ -913,7 +913,7 @@ each_path_get_data_binder (NemoDragEachSelectedItemDataGet data_get,
 				 column,
 				 &cell_area);
 
-			uri = nemo_file_get_uri (file);
+			uri = nemo_file_get_local_uri (file);
 
 			(*data_get) (uri,
 				     0,

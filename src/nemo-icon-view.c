@@ -1999,7 +1999,7 @@ get_icon_uri_callback (NemoIconContainer *container,
 	g_assert (NEMO_IS_FILE (file));
 	g_assert (NEMO_IS_ICON_VIEW (icon_view));
 
-	return nemo_file_get_uri (file);
+	return nemo_file_get_local_uri (file);
 }
 
 static char *
