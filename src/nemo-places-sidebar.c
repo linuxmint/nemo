@@ -4232,6 +4232,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	/* eject text renderer */
 	cell = nemo_cell_renderer_disk_new ();
+    NEMO_CELL_RENDERER_DISK (cell)->direction = gtk_widget_get_direction (GTK_WIDGET (tree_view));
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_set_attributes (col, cell,
 					     "text", PLACES_SIDEBAR_COLUMN_NAME,
@@ -4259,6 +4260,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	/* normal text renderer */
 	cell = nemo_cell_renderer_disk_new ();
+    NEMO_CELL_RENDERER_DISK (cell)->direction = gtk_widget_get_direction (GTK_WIDGET (tree_view));
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	g_object_set (G_OBJECT (cell), "editable", FALSE, NULL);
 	gtk_tree_view_column_set_attributes (col, cell,
