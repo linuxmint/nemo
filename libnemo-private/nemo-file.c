@@ -1629,6 +1629,37 @@ nemo_file_get_uri (NemoFile *file)
 	return uri;
 }
 
+
+/* Return the local uri associated with the passed-in file.
+ * If the local uri can't be resolved, the uri from nemo_file_get_uri
+ * is returned instead.
+ */
+char *
+nemo_file_get_local_uri (NemoFile *file)
+{
+	char *uri, *path;
+	GFile *loc;
+
+	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+	if (file->details->activation_uri != NULL) {
+		return g_strdup (file->details->activation_uri);
+	}
+
+	loc = nemo_file_get_location (file);
+	path = g_file_get_path (loc);
+	g_object_unref (loc);
+
+	if (path == NULL) {
+		return nemo_file_get_uri (file);
+	}
+
+	uri = g_filename_to_uri (path, NULL, NULL);
+	g_free (path);
+
+	return uri;
+}
+
 /* Return the actual path associated with the passed-in file. */
 char *
 nemo_file_get_path (NemoFile *file)
