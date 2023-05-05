@@ -168,6 +168,7 @@ enum {
 	SELECTION_CHANGED,
 	TRASH,
 	DELETE,
+    SHOW_DROP_BAR,
 	LAST_SIGNAL
 };
 
@@ -11187,6 +11188,14 @@ nemo_view_class_init (NemoViewClass *klass)
 			      g_signal_accumulator_true_handled, NULL,
 			      g_cclosure_marshal_generic,
 			      G_TYPE_BOOLEAN, 0);
+    signals[SHOW_DROP_BAR] =
+        g_signal_new ("show-drop-bar",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 
 	klass->get_selected_icon_locations = real_get_selected_icon_locations;
 	klass->is_read_only = real_is_read_only;

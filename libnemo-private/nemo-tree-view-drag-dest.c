@@ -157,8 +157,9 @@ expand_timeout (gpointer data)
 {
 	GtkTreeView *tree_view;
 	GtkTreePath *drop_path;
+    NemoTreeViewDragDest *dest = NEMO_TREE_VIEW_DRAG_DEST (data);
 
-	tree_view = GTK_TREE_VIEW (data);
+	tree_view = GTK_TREE_VIEW (dest->details->tree_view);
 
 	gtk_tree_view_get_drag_dest_row (tree_view, &drop_path, NULL);
 
@@ -167,6 +168,7 @@ expand_timeout (gpointer data)
 		gtk_tree_path_free (drop_path);
 	}
 
+    dest->details->expand_id = 0;
 	return FALSE;
 }
 
@@ -515,7 +517,7 @@ drag_motion_callback (GtkWidget *widget,
 			if (gtk_tree_model_iter_has_child (model, &drop_iter)) {
 				dest->details->expand_id = g_timeout_add_seconds (HOVER_EXPAND_TIMEOUT,
 									  expand_timeout,
-									  dest->details->tree_view);
+									  dest);
 			}
 		}
 	} else {

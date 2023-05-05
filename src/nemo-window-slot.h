@@ -70,9 +70,13 @@ struct NemoWindowSlot {
 	GtkWidget *floating_bar;
     GtkWidget *cache_bar;
     GtkWidget *no_search_results_box;
+    GtkWidget *drop_bar;
+    GtkWidget *drop_bar_icon;
+    GtkWidget *drop_bar_label;
 
 	guint set_status_timeout_id;
 	guint loading_timeout_id;
+    guint drop_bar_hide_timeout_id;
 
 	NemoView *content_view;
 	NemoView *new_content_view;

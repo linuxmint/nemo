@@ -599,6 +599,14 @@ drag_begin_callback (GtkWidget *widget,
 				(GDestroyNotify)ref_list_free);
 }
 
+static void
+drag_end_callback (GtkWidget *widget,
+             GdkDragContext *context,
+             NemoListView *view)
+{
+    view->details->drag_started = FALSE;
+}
+
 static gboolean
 motion_notify_callback (GtkWidget *widget,
 			GdkEventMotion *event,
@@ -1771,11 +1779,18 @@ get_file_for_path_callback (NemoTreeViewDragDest *dest,
 			    GtkTreePath *path,
 			    gpointer user_data)
 {
-	NemoListView *view;
+    NemoListView *view;
+    NemoFile *file;
 
-	view = NEMO_LIST_VIEW (user_data);
+    view = NEMO_LIST_VIEW (user_data);
 
-	return nemo_list_model_file_for_path (view->details->model, path);
+    file = nemo_list_model_file_for_path (view->details->model, path);
+
+    if (!view->details->drag_started) {
+        g_signal_emit_by_name (NEMO_VIEW (view), "show-drop-bar");
+    }
+
+    return file;
 }
 
 /* Handles an URL received from Mozilla */
@@ -2504,8 +2519,10 @@ create_and_set_up_tree_view (NemoListView *view)
     g_signal_connect_object (GTK_WIDGET (view->details->tree_view), "query-tooltip",
                              G_CALLBACK (query_tooltip_callback), view, 0);
 
-	g_signal_connect_object (view->details->tree_view, "drag_begin",
-				 G_CALLBACK (drag_begin_callback), view, 0);
+    g_signal_connect_object (view->details->tree_view, "drag_begin",
+                 G_CALLBACK (drag_begin_callback), view, 0);
+    g_signal_connect_object (view->details->tree_view, "drag-end",
+                 G_CALLBACK (drag_end_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "drag_data_get",
 				 G_CALLBACK (drag_data_get_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "motion_notify_event",

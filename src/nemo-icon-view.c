@@ -2240,7 +2240,6 @@ nemo_icon_view_update_click_to_rename_mode (NemoIconView *icon_view)
                                                      enabled);
 }
 
-
 static gboolean
 get_stored_layout_timestamp (NemoIconContainer *container,
 			     NemoIconData *icon_data,

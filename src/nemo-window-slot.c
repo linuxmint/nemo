@@ -32,6 +32,7 @@
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-window-types.h"
+#include "nemo-window-slot-dnd.h"
 
 #include <glib/gi18n.h>
 
@@ -275,6 +276,23 @@ floating_bar_action_cb (NemoFloatingBar *floating_bar,
 	}
 }
 
+static void
+on_drop_bar_state_changed (GtkWidget     *widget,
+                           GtkStateFlags  flags,
+                           gpointer       user_data)
+{
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+    if (gtk_widget_get_state_flags (widget) & GTK_STATE_FLAG_DROP_ACTIVE) {
+        gtk_image_set_from_icon_name (GTK_IMAGE (slot->drop_bar_icon), "folder-drag-accept-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
+        gtk_widget_show (slot->drop_bar_label);
+    } else {
+        gtk_image_set_from_icon_name (GTK_IMAGE (slot->drop_bar_icon), "folder-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
+        gtk_widget_hide (slot->drop_bar_label);
+    }
+
+}
+
 static GtkWidget *
 create_nsr_box (void)
 {
@@ -306,7 +324,7 @@ create_nsr_box (void)
 static void
 nemo_window_slot_init (NemoWindowSlot *slot)
 {
-	GtkWidget *extras_vbox;
+	GtkWidget *extras_vbox, *content;
 
 	gtk_orientable_set_orientation (GTK_ORIENTABLE (slot),
 					GTK_ORIENTATION_VERTICAL);
@@ -340,6 +358,35 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 
 	g_signal_connect (slot->floating_bar, "action",
 			  G_CALLBACK (floating_bar_action_cb), slot);
+
+    slot->drop_bar = gtk_info_bar_new ();
+    g_object_set (G_OBJECT (slot->drop_bar),
+                  "halign", GTK_ALIGN_FILL,
+                  "valign", GTK_ALIGN_START,
+                  "message-type", GTK_MESSAGE_OTHER,
+                  "revealed", FALSE,
+                  "name", "drop-bar",
+                  NULL);
+    gtk_style_context_add_class (gtk_widget_get_style_context (slot->drop_bar), "view");
+
+    slot->drop_bar_icon = gtk_image_new_from_icon_name ("folder-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
+    slot->drop_bar_label = gtk_label_new (_("Drop into current location"));
+    gtk_label_set_xalign (GTK_LABEL (slot->drop_bar_label), 0.0);
+    gtk_style_context_add_class (gtk_widget_get_style_context (slot->drop_bar_label), "dim-label");
+
+    content = gtk_info_bar_get_content_area (GTK_INFO_BAR (slot->drop_bar));
+    gtk_container_set_border_width (GTK_CONTAINER (content), 3);
+    gtk_box_set_center_widget (GTK_BOX (content), slot->drop_bar_icon);
+    gtk_box_pack_start (GTK_BOX (content), slot->drop_bar_label, FALSE, FALSE, 4);
+
+    // Make children visible but then hide the bar overall. It will be made visible in the
+    // show-drop-bar callback, otherwise it shows up on the desktop.
+    gtk_widget_show_all (slot->drop_bar);
+    gtk_widget_hide  (slot->drop_bar);
+
+    gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay), slot->drop_bar);
+
+    g_signal_connect (slot->drop_bar, "state-flags-changed", G_CALLBACK (on_drop_bar_state_changed), slot);
 
     slot->cache_bar = NULL;
 
@@ -618,6 +665,55 @@ nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
   nemo_directory_set_show_thumbnails(directory, show_thumbnails);
 }
 
+static gboolean
+update_drop_bar (gpointer data)
+{
+    g_return_val_if_fail (NEMO_IS_WINDOW_SLOT (data), G_SOURCE_REMOVE);
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (data);
+
+    GdkSeat *seat;
+    GdkDevice *device;
+    GtkAllocation alloc;
+    gboolean in_drop_bar;
+
+    in_drop_bar = FALSE;
+    seat = gdk_display_get_default_seat (gdk_display_get_default ());
+
+    if (seat != NULL) {
+        device = gdk_seat_get_pointer (seat);
+
+        if (device != NULL) {
+            gint x, y;
+            gtk_widget_get_allocation (slot->drop_bar, &alloc);
+            gdk_window_get_device_position (gtk_widget_get_window (slot->drop_bar), device, &x, &y, NULL);
+
+            in_drop_bar = (x >= alloc.x && x <= alloc.x + alloc.width) && (y >= alloc.y && y <= alloc.y + alloc.height);
+        }
+    }
+
+    if (in_drop_bar) {
+        return G_SOURCE_CONTINUE;
+    }
+
+    gtk_info_bar_set_revealed (GTK_INFO_BAR (slot->drop_bar), FALSE);
+
+    slot->drop_bar_hide_timeout_id = 0;
+    return G_SOURCE_REMOVE;
+}
+
+static void
+show_drop_bar_cb (NemoView *view,
+                  gpointer  user_data)
+{
+    NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+    gtk_widget_show (slot->drop_bar);
+    gtk_info_bar_set_revealed (GTK_INFO_BAR (slot->drop_bar), TRUE);
+
+    g_clear_handle_id (&slot->drop_bar_hide_timeout_id, g_source_remove);
+    slot->drop_bar_hide_timeout_id = g_timeout_add_seconds (1, (GSourceFunc) update_drop_bar, slot);
+}
+
 void
 nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 					      NemoView *new_view)
@@ -629,7 +725,8 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
-		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+        g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (show_drop_bar_cb), slot);
 
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
@@ -651,6 +748,9 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
+
+        g_signal_connect (new_view, "show-drop-bar", G_CALLBACK (show_drop_bar_cb), slot);
+        nemo_drag_slot_proxy_init (slot->drop_bar, nemo_view_get_directory_as_file (slot->content_view), NULL);
 	}
 }
 
