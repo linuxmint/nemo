@@ -4376,7 +4376,6 @@ nemo_list_view_init (NemoListView *list_view)
     g_object_get (gtksettings,
                   "gtk-overlay-scrolling", &list_view->details->overlay_scrolling,
                   NULL);
-    g_printerr ("overlay: %d\n", list_view->details->overlay_scrolling);
 }
 
 static NemoView *
