@@ -28,13 +28,8 @@
 
 G_DEFINE_TYPE (NemoActionManager, nemo_action_manager, G_TYPE_OBJECT);
 
-static void     set_up_actions                 (NemoActionManager *action_manager);
-
-static void     nemo_action_manager_constructed (GObject *object);
-
-static void     nemo_action_manager_dispose (GObject *gobject);
-
-static void     nemo_action_manager_finalize (GObject *gobject);
+static void     refresh_actions                 (NemoActionManager *action_manager, NemoDirectory *directory);
+static void     add_action_to_action_list       (NemoActionManager *action_manager, NemoFile *file);
 
 static gpointer parent_class;
 
@@ -52,7 +47,7 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
-actions_added_or_changed (NemoDirectory *directory,
+actions_changed (NemoDirectory *directory,
                           GList         *files,
                           gpointer       callback_data)
 {
@@ -60,15 +55,22 @@ actions_added_or_changed (NemoDirectory *directory,
 
     action_manager = NEMO_ACTION_MANAGER (callback_data);
 
-    action_manager->action_list_dirty = TRUE;
+    if (directory != NULL) {
+        gchar *uri = nemo_directory_get_uri (directory);
+        DEBUG ("Action directory '%s' changed, refreshing its actions.", uri);
+        g_free (uri);
+    }
 
-    set_up_actions (action_manager);
+    refresh_actions (action_manager, directory);
 }
 
 static void
 plugin_prefs_changed (GSettings *settings, gchar *key, gpointer user_data)
 {
-    actions_added_or_changed (NULL, NULL, user_data);
+    g_return_if_fail (NEMO_IS_ACTION_MANAGER (user_data));
+
+    DEBUG ("Enabled actions changed, refreshing all.");
+    refresh_actions (NEMO_ACTION_MANAGER (user_data), NULL);
 }
 
 static void
@@ -82,11 +84,12 @@ add_directory_to_directory_list (NemoActionManager *action_manager,
     if (g_list_find (*directory_list, directory) == NULL) {
         nemo_directory_ref (directory);
 
-        attributes =
-            NEMO_FILE_ATTRIBUTES_FOR_ICON |
-            NEMO_FILE_ATTRIBUTE_INFO |
-            NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT;
+        attributes = NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT;
 
+        // We get an immediate callback from this, which will trigger our first actions_changed
+        // callback. At nemo startup this will typically be before the directory has discovered its
+        // children, but we can't ignore it, as the directory may also already be loaded and have a valid
+        // list of children (and that's the only callback we'll receive).
         nemo_directory_file_monitor_add (directory, directory_list,
                              FALSE, attributes,
                              (NemoDirectoryCallback)changed_callback, action_manager);
@@ -123,7 +126,7 @@ add_directory_to_actions_directory_list (NemoActionManager *action_manager,
 {
     add_directory_to_directory_list (action_manager, directory,
                                      &action_manager->actions_directory_list,
-                                     G_CALLBACK (actions_added_or_changed));
+                                     G_CALLBACK (actions_changed));
 }
 
 static void
@@ -132,7 +135,71 @@ remove_directory_from_actions_directory_list (NemoActionManager *action_manager,
 {
     remove_directory_from_directory_list (action_manager, directory,
                                           &action_manager->actions_directory_list,
-                                          G_CALLBACK (actions_added_or_changed));
+                                          G_CALLBACK (actions_changed));
+}
+
+static gint
+sort_file_list_cb (gconstpointer a, gconstpointer b)
+{
+    NemoFile *file_a;
+    NemoFile *file_b;
+    const char *s0;
+    const char *s1;
+    gint r;
+
+    file_a = (NemoFile *) a;
+    file_b = (NemoFile *) b;
+    s0 = nemo_file_peek_name (file_a);
+    s1 = nemo_file_peek_name (file_b);
+    //
+    // Order alphabetically
+    // Compare ASCII values of file names char by char
+    //    < 0:  a < b
+    //   == 0:  a == b
+    //    > 0:  a > b
+    //
+    do {
+        char c0 = *s0++;
+        char c1 = *s1++;
+        if (c0 < c1) {
+            r = -1;
+            break;
+        }
+        if (c0 > c1) {
+            r = 1;
+            break;
+        }
+        if (c0 == 0) {  // Special case: Both strings are identical and we have hit the \0 char? => Return equal
+            r = 0;
+            break;
+        }
+    } while (TRUE);
+
+    return r;
+}
+
+static void
+process_directory_actions (NemoActionManager *action_manager,
+                           NemoDirectory     *directory)
+{
+    GList *file_list, *node;
+
+    gchar *uri = nemo_directory_get_uri (directory);
+    DEBUG ("Processing directory: %s", uri);
+    g_free (uri);
+
+    file_list = nemo_directory_get_file_list (directory);
+    file_list = g_list_sort (file_list, sort_file_list_cb);
+    for (node = file_list; node != NULL; node = node->next) {
+        NemoFile *file = node->data;
+        if (!g_str_has_suffix (nemo_file_peek_name (file), ".nemo_action") ||
+            !nemo_global_preferences_should_load_plugin (nemo_file_peek_name (file), NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS))
+            continue;
+
+        DEBUG ("Found: %s", nemo_file_peek_name (file));
+        add_action_to_action_list (action_manager, file);
+    }
+    nemo_file_list_free (file_list);
 }
 
 static void
@@ -143,6 +210,8 @@ set_up_actions_directories (NemoActionManager *action_manager)
     gchar **data_dirs;
     guint i;
 
+    DEBUG ("Setting up action directories");
+
     data_dirs = (gchar **) g_get_system_data_dirs ();
 
     for (i = 0; i < g_strv_length (data_dirs); i++) {
@@ -151,9 +220,12 @@ set_up_actions_directories (NemoActionManager *action_manager)
 
         dir = nemo_directory_get_by_uri (uri);
 
-        add_directory_to_actions_directory_list (action_manager, dir);
+        if (dir != NULL) {
+            DEBUG ("Adding system location '%s'", uri);
+            add_directory_to_actions_directory_list (action_manager, dir);
+            nemo_directory_unref (dir);
+        }
 
-        nemo_directory_unref (dir);
         g_clear_pointer (&path, g_free);
         g_clear_pointer (&uri, g_free);
     }
@@ -167,9 +239,12 @@ set_up_actions_directories (NemoActionManager *action_manager)
 
     dir = nemo_directory_get_by_uri (uri);
 
-    add_directory_to_actions_directory_list (action_manager, dir);
+    if (dir != NULL) {
+        DEBUG ("Adding user location '%s'", uri);
+        add_directory_to_actions_directory_list (action_manager, dir);
+        nemo_directory_unref (dir);
+    }
 
-    nemo_directory_unref (dir);
     g_clear_pointer (&path, g_free);
     g_clear_pointer (&uri, g_free);
 }
@@ -249,76 +324,47 @@ add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
 }
 
 static void
-void_action_list (NemoActionManager *action_manager)
+void_actions_for_directory (NemoActionManager *action_manager, NemoDirectory *directory)
 {
-    GList *tmp = action_manager->actions;
+    GFile *dir = nemo_directory_get_location (directory);
+    const gchar *dir_path = g_file_peek_path (dir);
+    GList *new_list = NULL;
+    GList *l, *tmp;
 
-    action_manager->actions = NULL;
+    DEBUG ("Removing existing actions in %s:", dir_path);
 
+    for (l = action_manager->actions; l != NULL; l = l->next) {
+        NemoAction *action = NEMO_ACTION (l->data);
+
+        if (g_strcmp0 (dir_path, action->parent_dir) != 0) {
+            new_list = g_list_prepend (new_list, g_object_ref (action));
+        } else {
+            DEBUG ("Found %s", action->key_file_path);
+        }
+    }
+
+    tmp = action_manager->actions;
+    action_manager->actions = new_list;
     g_list_free_full (tmp, g_object_unref);
 }
 
-static gint
-_cbSortFileList(gconstpointer a, gconstpointer b)
-{
-  gint r;
-  NemoFile* pFileA;
-  NemoFile* pFileB;
-  const char* s0;
-  const char* s1;
-
-  pFileA = (NemoFile*)a;
-  pFileB = (NemoFile*)b;
-  s0 = nemo_file_peek_name(pFileA);
-  s1 = nemo_file_peek_name(pFileB);
-  //
-  // Order alphabetically
-  // Compare ASCII values of file names char by char
-  //    < 0:  a < b
-  //   == 0:  a == b
-  //    > 0:  a > b
-  //
-  do {
-    char c0 = *s0++;
-    char c1 = *s1++;
-    if (c0 < c1) {
-      r = -1;
-      break;
-    }
-    if (c0 > c1) {
-      r = 1;
-      break;
-    }
-    if (c0 == 0) {  // Special case: Both strings are identical and we have hit the \0 char? => Return equal
-      r = 0;
-      break;
-    }
-  } while (1);
-  return r;
-}
-
 static void
-set_up_actions (NemoActionManager *action_manager)
+refresh_actions (NemoActionManager *action_manager, NemoDirectory *directory)
 {
-    GList *dir, *file_list, *node;
-    NemoFile *file;
-    NemoDirectory *directory;
+    action_manager->action_list_dirty = TRUE;
 
-    if (g_list_length (action_manager->actions) > 0)
-        void_action_list (action_manager);
+    if (directory != NULL) {
+        void_actions_for_directory (action_manager, directory);
+        process_directory_actions (action_manager, directory);
+    } else {
+        g_list_free_full (action_manager->actions, g_object_unref);
+        action_manager->actions = NULL;
 
-    for (dir = action_manager->actions_directory_list; dir != NULL; dir = dir->next) {
-        directory = dir->data;
-        file_list = nemo_directory_get_file_list (directory);
-        file_list = g_list_sort(file_list, _cbSortFileList);
-        for (node = file_list; node != NULL; node = node->next) {
-            file = node->data;
-            if (!g_str_has_suffix (nemo_file_peek_name (file), ".nemo_action") ||
-                !nemo_global_preferences_should_load_plugin (nemo_file_peek_name (file), NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS))
-                continue;
-            add_action_to_action_list (action_manager, file);
+        GList *l;
+        for (l = action_manager->actions_directory_list; l != NULL; l = l->next) {
+            NemoDirectory *dir = NEMO_DIRECTORY (l->data);
+            process_directory_actions (action_manager, dir);
         }
-        nemo_file_list_free (file_list);
     }
 
     action_manager->action_list_dirty = FALSE;
@@ -331,26 +377,6 @@ nemo_action_manager_init (NemoActionManager *action_manager)
 {
     action_manager->actions = NULL;
     action_manager->actions_directory_list = NULL;
-    action_manager->action_list_dirty = TRUE;
-}
-
-static void
-nemo_action_manager_class_init (NemoActionManagerClass *klass)
-{
-    GObjectClass         *object_class = G_OBJECT_CLASS(klass);
-    parent_class           = g_type_class_peek_parent (klass);
-    object_class->finalize = nemo_action_manager_finalize;
-    object_class->dispose = nemo_action_manager_dispose;
-    object_class->constructed = nemo_action_manager_constructed;
-
-    signals[CHANGED] =
-        g_signal_new ("changed",
-                      G_TYPE_FROM_CLASS (object_class),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (NemoActionManagerClass, changed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__VOID,
-                      G_TYPE_NONE, 0);
 }
 
 void
@@ -360,13 +386,12 @@ nemo_action_manager_constructed (GObject *object)
 
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
 
+    action_manager->action_list_dirty = TRUE;
     set_up_actions_directories (action_manager);
-    set_up_actions (action_manager);
 
     g_signal_connect (nemo_plugin_preferences,
                       "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
                       G_CALLBACK (plugin_prefs_changed), action_manager);
-
 }
 
 NemoActionManager *
@@ -405,6 +430,25 @@ nemo_action_manager_finalize (GObject *object)
     g_list_free_full (action_manager->actions, g_object_unref);
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+static void
+nemo_action_manager_class_init (NemoActionManagerClass *klass)
+{
+    GObjectClass         *object_class = G_OBJECT_CLASS(klass);
+    parent_class           = g_type_class_peek_parent (klass);
+    object_class->finalize = nemo_action_manager_finalize;
+    object_class->dispose = nemo_action_manager_dispose;
+    object_class->constructed = nemo_action_manager_constructed;
+
+    signals[CHANGED] =
+        g_signal_new ("changed",
+                      G_TYPE_FROM_CLASS (object_class),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (NemoActionManagerClass, changed),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0);
 }
 
 GList *

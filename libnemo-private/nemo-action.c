@@ -880,12 +880,14 @@ nemo_action_new (const gchar *name,
     g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL);
 
     if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP)) {
+        DEBUG ("Action file '%s' is missing [Nemo Action] group, skipping.", path);
         g_key_file_free (key_file);
         return NULL;
     }
 
     if (g_key_file_has_key (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
         if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
+            DEBUG ("Action file '%s' is marked inactive, skipping.", path);
             g_key_file_free (key_file);
             return NULL;
         }
