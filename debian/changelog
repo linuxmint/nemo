@@ -1,3 +1,70 @@
+nemo (5.8.0) victoria; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-view-dnd.c: Fix the check for a web link's title, and use the url if it's missing.
+  * nemo-mime-actions.c: Prioritize an http link to open in a browser, regardless of the mimetype of the link's target.
+  * nemo-file-management-properties.glade: Re-save under glade 3.38.
+  * preferences: Allow displaying dates using the system's current monospace font.
+  * Reduce timeout delay for the click-to-rename feature.
+  * thumbnails: Use multiple threads for generating thumbnails.
+  * nemo-thumbnails: Restore compatibility with older glib versions, move all mutex locks off of the UI thread, clean up when nemo exits.
+  * nemo-icon-container.c: Fix thumbnail prioritization in the icon, compact views.
+  * Remove _prioritize_thumbnailing vfuncs in the icon containers.
+  * Clean up nemo-thumbnails.c, add some thread/queue debugging.
+  * nemo-thumbnails.c: Use LIFO sort for the thumbnailing thread.
+  * nemo-thumbnails.c: Fix thread count when the setting is a positive value (specific count desired instead of automatic).
+
+  [ kain ]
+  * Fix for List View thumbnail scaling at HiDPI (#3187)
+
+  [ Michael Webster ]
+  * thumbnails: Ignore operations if the thumbnailer isn't running.
+  * list-view: Scale the thumbnail correctly when applying emblems, and fix the emblem sanity checks everywhere.
+
+  [ Oliver Kästner ]
+  * Fix memleaks (#3131)
+
+  [ Michael Webster ]
+  * file info: Use generic methods for attributes that aren't guaranteed to be supported by the filesystem.
+  * Fix some more GFileInfo getter problems.
+
+  [ GNL10 ]
+  * Stop "Searching..." pop-up button from disappearing when opening a file (#3177)
+
+  [ Michael Webster ]
+  * Implement a dynamic margin at the end of the file list in the list view.
+  * window-slot: Update status bar selection info when a location is still loading.
+
+  [ kain ]
+  * Icon frame only for non-transparent large icons (#3189)
+
+  [ Michael Webster ]
+  * search: increase performance, reduce memory use.
+  * Use GRefString instead of eel_ref_str for ref-counted strings.
+  * Fix some memory leaks.
+  * nemo-list-view.c: Fix some tooltip markup warnings.
+  * Use fast-content-type when normal content-type lookup fails.
+
+  [ Guldoman ]
+  * Use local URIs for drag&drop, copy/paste operations (#3220)
+
+  [ Michael Webster ]
+  * i18n: Add rtl versions of directional icons.
+  * places-sidebar: Render disk-full bars correctly in RTL languages.
+
+  [ Oliver Kästner ]
+  * properties-window: split dir elem count and size (#3225)
+
+  [ Michael Webster ]
+  * Add a 'drop zone' to the list view. This allows drag-and-drop into the current folder even when only folders are visible in the view.
+  * nemo-application.c: Update the custom css provider when the system theme changes.
+  * nemo-list-view.c: Remove stray debug line.
+  * github workflow: Add optional ssh session.
+  * actions: Make NemoActionManager more efficient, and skip invalid directories.
+  * Update bug/feature templates.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 01 Jun 2023 16:21:09 +0100
+
 nemo (5.6.3) vera; urgency=medium
 
   [ Michael Webster ]
