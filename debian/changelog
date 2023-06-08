@@ -1,3 +1,13 @@
+nemo (5.8.1) victoria; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-list-view.c: Reset dynamic bottom margin when loading a new location.
+
+  [ Clement Lefebvre ]
+  * l10n: Generate additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 08 Jun 2023 13:00:41 +0100
+
 nemo (5.8.0) victoria; urgency=medium
 
   [ Michael Webster ]
