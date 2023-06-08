@@ -3013,6 +3013,8 @@ nemo_list_view_begin_loading (NemoView *view)
 	set_zoom_level_from_metadata_and_preferences (list_view);
 	set_columns_settings_from_metadata_and_preferences (list_view);
 
+    gtk_widget_set_margin_bottom (GTK_WIDGET (list_view->details->tree_view), 0);
+
     set_ok_to_load_deferred_attrs (list_view, FALSE);
 
     nemo_list_model_set_view_directory (list_view->details->model, nemo_view_get_model (view));
