@@ -1642,6 +1642,10 @@ nemo_file_get_local_uri (NemoFile *file)
 
 	g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
 
+    if (NEMO_IS_DESKTOP_ICON_FILE (file)) {
+        return nemo_file_get_uri (file);
+    }
+
 	if (file->details->activation_uri != NULL) {
 		return g_strdup (file->details->activation_uri);
 	}
