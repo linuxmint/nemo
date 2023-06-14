@@ -1,3 +1,10 @@
+nemo (5.8.2) victoria; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file.c: Don't try to get a 'local uri' for psuedo-files on the desktop.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 14 Jun 2023 09:25:47 +0200
+
 nemo (5.8.1) victoria; urgency=medium
 
   [ Michael Webster ]
