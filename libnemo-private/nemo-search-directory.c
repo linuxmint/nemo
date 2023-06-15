@@ -584,6 +584,7 @@ search_engine_finished (NemoSearchEngine *engine, NemoSearchDirectory *search)
 
 	g_list_free (search->details->pending_callback_list);
 	search->details->pending_callback_list = NULL;
+    search->details->search_running = FALSE;
 }
 
 static void
