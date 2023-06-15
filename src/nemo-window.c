@@ -1321,8 +1321,8 @@ sync_view_type_callback (NemoFile *file,
         pane = nemo_window_get_active_pane(window);
         view_id = nemo_window_slot_get_content_view_id (slot);
 
-        toolbar_set_view_button (action_for_view_id (view_id), pane);
-        menu_set_view_selection (action_for_view_id (view_id), window);
+        toolbar_set_view_button (action_for_view_id (view_id), pane, file);
+        menu_set_view_selection (action_for_view_id (view_id), window, file);
     }
 }
 
