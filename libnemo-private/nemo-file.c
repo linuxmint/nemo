@@ -9063,7 +9063,7 @@ nemo_file_add_string_attribute (NemoFile *file,
 	nemo_file_changed (file);
 }
 
-void
+gboolean
 nemo_file_add_search_result_data (NemoFile         *file,
                                   gpointer          search_dir,
                                   FileSearchResult *result)
@@ -9080,7 +9080,10 @@ nemo_file_add_search_result_data (NemoFile         *file,
 #ifndef ENABLE_TRACKER // this is abnormal only in -advanced search.
         g_warning ("Search hits directory already existed - %s", nemo_file_peek_name (file));
 #endif
+        return FALSE;
     }
+
+    return  TRUE;
 }
 
 void

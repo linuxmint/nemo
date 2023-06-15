@@ -90,7 +90,10 @@ tracker_enabled = false
 if trackerChoice != 'false'
   trackerRequired = (trackerChoice == 'true')
   # Check all the possible versions
+    tracker_sparql = dependency('tracker-sparql-3.0',  required: false)
+  if not tracker_sparql.found()
     tracker_sparql = dependency('tracker-sparql-2.0',  required: false)
+  endif
   if not tracker_sparql.found()
     tracker_sparql = dependency('tracker-sparql-1.0',  required: false)
   endif

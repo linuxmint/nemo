@@ -472,7 +472,7 @@ static void
 search_engine_hits_added (NemoSearchEngine *engine, GList *hits, 
 			  NemoSearchDirectory *search)
 {
-	GList *hit_list;
+	GList *hit;
 	GList *file_list;
 	NemoFile *file;
     FileSearchResult *fsr;
@@ -481,25 +481,25 @@ search_engine_hits_added (NemoSearchEngine *engine, GList *hits,
 
 	file_list = NULL;
 
-	for (hit_list = hits; hit_list != NULL; hit_list = hit_list->next) {
-		fsr = (FileSearchResult *) hit_list->data;
+    for (hit = hits; hit != NULL; hit = hit->next) {
+        fsr = (FileSearchResult *) hit->data;
 
         file = nemo_file_get_by_uri (fsr->uri);
-        nemo_file_add_search_result_data (file, (gpointer) search, fsr);
+        if (nemo_file_add_search_result_data (file, (gpointer) search, fsr)) {
+            for (monitor_list = search->details->monitor_list; monitor_list; monitor_list = monitor_list->next) {
+                monitor = monitor_list->data;
 
-		for (monitor_list = search->details->monitor_list; monitor_list; monitor_list = monitor_list->next) {
-			monitor = monitor_list->data;
+                /* Add monitors */
+                nemo_file_monitor_add (file, monitor, monitor->monitor_attributes);
+            }
 
-			/* Add monitors */
-			nemo_file_monitor_add (file, monitor, monitor->monitor_attributes);
-		}
+            g_signal_connect (file, "changed", G_CALLBACK (file_changed), search),
 
-		g_signal_connect (file, "changed", G_CALLBACK (file_changed), search),
+            file_list = g_list_prepend (file_list, file);
+            search->details->files = g_list_prepend (search->details->files, file);
+        }
+    }
 
-        file_list = g_list_prepend (file_list, file);
-        search->details->files = g_list_prepend (search->details->files, file);
-	}
-	
 	nemo_directory_emit_files_added (NEMO_DIRECTORY (search), file_list);
     g_list_free (file_list);
 

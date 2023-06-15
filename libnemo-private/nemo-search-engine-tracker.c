@@ -129,10 +129,10 @@ cursor_callback (GObject      *object,
 
 	/* We iterate result by result, not n at a time. */
 
-    fsr = file_search_result_new (g_strdup (tracker_sparql_cursor_get_string (cursor, 0, NULL)));
+    fsr = file_search_result_new (g_strdup (tracker_sparql_cursor_get_string (cursor, 0, NULL)), NULL);
     hits = g_list_append (NULL, fsr);
     nemo_search_engine_hits_added (NEMO_SEARCH_ENGINE (tracker), hits);
-    g_list_free_full (hits, (GDestroyNotify) file_search_result_free);
+    g_list_free (hits);
 
 	/* Get next */
 	cursor_next (tracker, cursor);
@@ -177,8 +177,6 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 	NemoSearchEngineTracker *tracker;
 	gchar	*search_text, *location_uri;
 	GString *sparql;
-	GList *mimetypes, *l;
-	gint mime_count;
 
 	tracker = NEMO_SEARCH_ENGINE_TRACKER (engine);
 
@@ -194,97 +192,62 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 
 	search_text = nemo_query_get_file_pattern (tracker->details->query);
 	location_uri = nemo_query_get_location (tracker->details->query);
-	mimetypes = nemo_query_get_mime_types (tracker->details->query);
 
-	mime_count = g_list_length (mimetypes);
+// FIXME: Re-implement content search, align capabilities with normal search and
+//        make switching a run-time, not build-time option.
 
-#ifdef FTS_MATCHING
-	/* Using FTS: */
-	sparql = g_string_new ("SELECT nie:url(?urn) "
+#if TRACKER_CHECK_VERSION (3, 0, 0)
+
+
+	sparql = g_string_new ("SELECT ?url "
 			       "WHERE {"
-			       "  ?urn a nfo:FileDataObject ;"
-			       "  tracker:available true ; ");
+			       "  ?file a nfo:FileDataObject ; nie:url ?url; nfo:fileName ?fileName; .");
 
-	if (mime_count > 0) {
-		g_string_append (sparql, "nie:mimeType ?mime ;");
-	}
-
-	g_string_append (sparql, "  fts:match ");
-	sparql_append_string_literal (sparql, search_text);
-
-	if (location_uri || mime_count > 0) {
-		g_string_append (sparql, " . FILTER (");
-	
-		if (location_uri)  {
-			g_string_append (sparql, " fn:starts-with(nie:url(?urn),");
-			sparql_append_string_literal (sparql, location_uri);
-			g_string_append (sparql, ")");
-		}
-
-		if (mime_count > 0) {
-			if (location_uri) {
-				g_string_append (sparql, " && ");
-			}
-
-			g_string_append (sparql, "(");
-			for (l = mimetypes; l != NULL; l = l->next) {
-				if (l != mimetypes) {
-					g_string_append (sparql, " || ");
-				}
-
-				g_string_append (sparql, "?mime = ");
-				sparql_append_string_literal (sparql, l->data);
-			}
-			g_string_append (sparql, ")");
-		}
-
-		g_string_append (sparql, ")");
-	}
-
-	g_string_append (sparql, " } ORDER BY DESC(fts:rank(?urn)) ASC(nie:url(?urn))");
-#else  /* FTS_MATCHING */
-	/* Using filename matching: */
-	sparql = g_string_new ("SELECT nie:url(?urn) "
-			       "WHERE {"
-			       "  ?urn a nfo:FileDataObject ;");
-
-	if (mime_count > 0) {
-		g_string_append (sparql, "nie:mimeType ?mime ;");
-	}
-
-	g_string_append (sparql, "    tracker:available true ."
-			 "  FILTER (fn:contains(nfo:fileName(?urn),");
+	g_string_append (sparql, " FILTER (contains(?fileName,");
 
 	sparql_append_string_literal (sparql, search_text);
 
 	g_string_append (sparql, ")");
 
 	if (location_uri)  {
-		g_string_append (sparql, " && fn:starts-with(nie:url(?urn),");
+		g_string_append (sparql, " && fn:starts-with(?url,");
 		sparql_append_string_literal (sparql, location_uri);
-		g_string_append (sparql, ")");
-	}
-
-	if (mime_count > 0) {
-		g_string_append (sparql, " && ");
-		g_string_append (sparql, "(");
-		for (l = mimetypes; l != NULL; l = l->next) {
-			if (l != mimetypes) {
-				g_string_append (sparql, " || ");
-			}
-
-			g_string_append (sparql, "?mime = ");
-			sparql_append_string_literal (sparql, l->data);
-		}
 		g_string_append (sparql, ")");
 	}
 
 	g_string_append (sparql, ")");
 
-
 	g_string_append (sparql, 
-			 "} ORDER BY DESC(nie:url(?urn)) DESC(nfo:fileName(?urn))");
-#endif /* FTS_MATCHING */
+			 "} ORDER BY DESC(?url) DESC(?filename)");
+
+
+#else /* TRACKER_CHECK_VERSION */
+
+
+    sparql = g_string_new ("SELECT nie:url(?urn) "
+                   "WHERE {"
+                   "  ?urn a nfo:FileDataObject ;");
+
+    g_string_append (sparql, "    tracker:available true ."
+             "  FILTER (fn:contains(nfo:fileName(?urn),");
+
+    sparql_append_string_literal (sparql, search_text);
+
+    g_string_append (sparql, ")");
+
+    if (location_uri)  {
+        g_string_append (sparql, " && fn:starts-with(nie:url(?urn),");
+        sparql_append_string_literal (sparql, location_uri);
+        g_string_append (sparql, ")");
+    }
+
+    g_string_append (sparql, ")");
+
+    g_string_append (sparql, 
+             "} ORDER BY DESC(nie:url(?urn)) DESC(nfo:fileName(?urn))");
+
+
+#endif /* TRACKER_CHECK_VERSION */
 
 	tracker_sparql_connection_query_async (tracker->details->connection,
 					       sparql->str,
@@ -297,10 +260,6 @@ nemo_search_engine_tracker_start (NemoSearchEngine *engine)
 
 	g_free (search_text);
 	g_free (location_uri);
-
-	if (mimetypes != NULL) {
-		g_list_free_full (mimetypes, g_free);
-	}
 }
 
 static void
@@ -366,7 +325,11 @@ nemo_search_engine_tracker_new (void)
 	TrackerSparqlConnection *connection;
 	GError *error = NULL;
 
-	connection = tracker_sparql_connection_get (NULL, &error);
+#if TRACKER_CHECK_VERSION(3, 0, 0)
+    connection = tracker_sparql_connection_bus_new ("org.freedesktop.Tracker3.Miner.Files", NULL, NULL, &error);
+#else
+    connection = tracker_sparql_connection_get (NULL, &error);
+#endif
 
 	if (error) {
 		g_warning ("Could not establish a connection to Tracker: %s", error->message);

@@ -545,7 +545,7 @@ void     nemo_file_set_load_deferred_attrs        (NemoFile *file,
                                                    NemoFileLoadDeferredAttrs load_deferred_attrs);
 NemoFileLoadDeferredAttrs nemo_file_get_load_deferred_attrs (NemoFile *file);
 
-void nemo_file_add_search_result_data             (NemoFile *file, gpointer search_dir, FileSearchResult *result);
+gboolean nemo_file_add_search_result_data             (NemoFile *file, gpointer search_dir, FileSearchResult *result);
 void nemo_file_clear_search_result_data           (NemoFile *file, gpointer search_dir);
 gboolean nemo_file_has_search_result              (NemoFile *file, gpointer search_dir);
 gint nemo_file_get_search_result_count            (NemoFile *file, gpointer search_dir);
