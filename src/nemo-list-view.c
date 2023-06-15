@@ -740,16 +740,13 @@ query_tooltip_callback (GtkWidget *widget,
                                     -1);
                 if (file) {
                     gchar *tooltip_text;
-                    gchar *escaped;
 
                     tooltip_text = nemo_file_construct_tooltip (file,
                                                                 list_view->details->tooltip_flags,
                                                                 nemo_view_get_model (NEMO_VIEW (list_view)));
-                    escaped = g_markup_escape_text (tooltip_text, -1);
-                    gtk_tooltip_set_markup (tooltip, escaped);
+                    gtk_tooltip_set_markup (tooltip, tooltip_text);
                     gtk_tree_view_set_tooltip_cell (GTK_TREE_VIEW (widget), tooltip, path, NULL, NULL);
                     g_free (tooltip_text);
-                    g_free (escaped);
 
                     ret = TRUE;
                 }
