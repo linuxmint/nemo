@@ -2420,7 +2420,13 @@ update_date_fonts (NemoListView *view)
             PangoFontDescription *font_desc = pango_font_description_from_string (font_name);
             const gchar *current_font_family = pango_font_description_get_family (font_desc);
 
-            date_family = nemo_global_preferences_get_mono_font_family_match (current_font_family);
+            if (current_font_family != NULL) {
+                date_family = nemo_global_preferences_get_mono_font_family_match (current_font_family);
+            } else {
+                g_warning ("No font family name set, not using monospace for date columns");
+                date_family = NULL;
+            }
+
             date_style = pango_font_description_get_style (font_desc);
 
             pango_font_description_free (font_desc);
