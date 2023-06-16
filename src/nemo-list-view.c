@@ -1615,9 +1615,12 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
         if (nemo_global_preferences_get_ignore_view_metadata ())
                 nemo_window_set_ignore_meta_sort_column (nemo_view_get_nemo_window (NEMO_VIEW (view)),
                                                          g_quark_to_string (sort_attr));
-        else
-                nemo_file_set_metadata (file, NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN,
-                                        g_quark_to_string (default_sort_attr), g_quark_to_string (sort_attr));
+        else if (nemo_file_is_in_search (file)) {
+            g_settings_set_string (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_SORT_COLUMN, g_quark_to_string (sort_attr));
+        } else {
+            nemo_file_set_metadata (file, NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN,
+                                    g_quark_to_string (default_sort_attr), g_quark_to_string (sort_attr));
+        }
 
 	default_reversed_attr = (default_sort_reversed ? (char *)"true" : (char *)"false");
 
@@ -1646,6 +1649,8 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
         nemo_window_set_ignore_meta_sort_direction (nemo_view_get_nemo_window (NEMO_VIEW (view)),
                                                     reversed ? SORT_DESCENDING : SORT_ASCENDING);
+    } else if (nemo_file_is_in_search (file)) {
+        g_settings_set_boolean (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_REVERSE_SORT, reversed);
     } else {
         reversed_attr = (reversed ? (char *)"true" : (char *)"false");
         nemo_file_set_metadata (file, NEMO_METADATA_KEY_LIST_VIEW_SORT_REVERSED,
@@ -2909,10 +2914,13 @@ set_sort_order_from_metadata_and_preferences (NemoListView *list_view)
 
         if (nemo_global_preferences_get_ignore_view_metadata ())
                 sort_attribute = g_strdup (nemo_window_get_ignore_meta_sort_column (nemo_view_get_nemo_window (NEMO_VIEW (list_view))));
-        else
-                sort_attribute = nemo_file_get_metadata (file,
-                                                         NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN,
-                                                         NULL);
+        else if (nemo_file_is_in_search (file)) {
+            sort_attribute = g_settings_get_string (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_SORT_COLUMN);
+        } else {
+            sort_attribute = nemo_file_get_metadata (file,
+                                                     NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN,
+                                                     NULL);
+        }
 	sort_column_id = nemo_list_model_get_sort_column_id_from_attribute (list_view->details->model,
 									  g_quark_from_string (sort_attribute));
 	g_free (sort_attribute);
@@ -2928,6 +2936,8 @@ set_sort_order_from_metadata_and_preferences (NemoListView *list_view)
     if (nemo_global_preferences_get_ignore_view_metadata ()) {
         gint dir = nemo_window_get_ignore_meta_sort_direction (nemo_view_get_nemo_window (NEMO_VIEW (list_view)));
         sort_reversed = dir > SORT_NULL ? dir == SORT_DESCENDING : default_sort_reversed;
+    } else if (nemo_file_is_in_search (file)) {
+        sort_reversed = g_settings_get_boolean (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_REVERSE_SORT);
     } else {
         sort_reversed = nemo_file_get_boolean_metadata (file,
                                                         NEMO_METADATA_KEY_LIST_VIEW_SORT_REVERSED,
@@ -3639,6 +3649,10 @@ nemo_list_view_reset_to_defaults (NemoView *view)
         nemo_window_set_ignore_meta_zoom_level (window, NEMO_ZOOM_LEVEL_NULL);
         nemo_window_set_ignore_meta_column_order (window, NULL);
         nemo_window_set_ignore_meta_visible_columns (window, NULL);
+    } else if (nemo_file_is_in_search (file)) {
+        g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_VISIBLE_COLUMNS);
+        g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_SORT_COLUMN);
+        g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_REVERSE_SORT);
     } else {
         nemo_file_set_metadata (file, NEMO_METADATA_KEY_LIST_VIEW_SORT_COLUMN, NULL, NULL);
         nemo_file_set_metadata (file, NEMO_METADATA_KEY_LIST_VIEW_SORT_REVERSED, NULL, NULL);
@@ -3647,9 +3661,6 @@ nemo_list_view_reset_to_defaults (NemoView *view)
         nemo_file_set_metadata_list (file, NEMO_METADATA_KEY_LIST_VIEW_VISIBLE_COLUMNS, NULL);
     }
 
-    if (nemo_file_is_in_search (file)) {
-        g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_VISIBLE_COLUMNS);
-    }
 
     char **default_columns, **default_order;
 

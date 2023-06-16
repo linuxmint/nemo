@@ -865,6 +865,14 @@
       <default>[]</default>
       <summary>Saved list of columns visible in the search view.</summary>
     </key>
+    <key name="search-sort-column" type="s">
+      <default>''</default>
+      <summary>Column to sort on when viewing search results</summary>
+    </key>
+    <key name="search-reverse-sort" type="b">
+      <default>false</default>
+      <summary>Reverse the direction of the sort when viewing search results</summary>
+    </key>
     <key name="search-file-history" type="as">
       <default>[]</default>
       <summary>List of previous file searches</summary>

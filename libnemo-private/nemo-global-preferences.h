@@ -281,6 +281,8 @@ typedef enum
 #define NEMO_PREFERENCES_SEARCH_SKIP_FOLDERS           "search-skip-folders"
 #define NEMO_PREFERENCES_SEARCH_FILES_RECURSIVELY      "search-files-recursively"
 #define NEMO_PREFERENCES_SEARCH_VISIBLE_COLUMNS        "search-visible-columns"
+#define NEMO_PREFERENCES_SEARCH_SORT_COLUMN            "search-sort-column"
+#define NEMO_PREFERENCES_SEARCH_REVERSE_SORT           "search-reverse-sort"
 #define NEMO_PREFERENCES_SEARCH_FILE_HISTORY           "search-file-history"
 #define NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY        "search-content-history"
 #define NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY_LENGTH "search-content-history-length"
