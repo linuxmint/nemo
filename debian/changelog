@@ -1,3 +1,16 @@
+nemo (5.8.3) victoria; urgency=medium
+
+  [ Michael Webster ]
+  * Revert "nemo-list-view.c: Fix some tooltip markup warnings."
+  * Disable view selection when viewing search results.
+  * search: Fix tracker search, which was broken by 3c691a8e0e80b5.
+  * nemo-search-directory: Unset the search_running flag when the search completes.
+  * search view: Fix sort column/direction not being remembered.
+  * nemo-list-view.c: Don't try to work out a monospace font to use if no font family is set.
+  * nemo-places-sidebar.c: Allocate extra space for the eject button when overlay-scrollbars are enabled.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 26 Jun 2023 10:47:56 +0200
+
 nemo (5.8.2) victoria; urgency=medium
 
   [ Michael Webster ]
