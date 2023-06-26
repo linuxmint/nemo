@@ -1024,7 +1024,6 @@ action_icon_view_callback (GtkAction *action,
     window = NEMO_WINDOW (user_data);
 
     set_content_view_type (window, NEMO_ICON_VIEW_ID);
-    toolbar_set_view_button (ICON_VIEW, nemo_window_get_active_pane(window), NULL);
 }
 
 
@@ -1037,7 +1036,6 @@ action_list_view_callback (GtkAction *action,
     window = NEMO_WINDOW (user_data);
 
     set_content_view_type (window, NEMO_LIST_VIEW_ID);
-    toolbar_set_view_button (LIST_VIEW, nemo_window_get_active_pane(window), NULL);
 }
 
 
@@ -1050,7 +1048,6 @@ action_compact_view_callback (GtkAction *action,
     window = NEMO_WINDOW (user_data);
 
     set_content_view_type (window, FM_COMPACT_VIEW_ID);
-    toolbar_set_view_button (COMPACT_VIEW, nemo_window_get_active_pane(window), NULL);
 }
 
 guint
@@ -1068,15 +1065,14 @@ action_for_view_id (const char *view_id)
 }
 
 void
-toolbar_set_view_button (guint action_id, NemoWindowPane *pane, NemoFile *file)
+toolbar_set_view_button (guint action_id, NemoWindow *window)
 {
     GtkAction *action, *action1, *action2;
     GtkActionGroup *action_group;
     if (action_id == NULL_VIEW) {
         return;
     }
-    action_group = nemo_window_pane_get_toolbar_action_group (pane);
-
+    action_group = nemo_window_pane_get_toolbar_action_group (nemo_window_get_active_pane (window));
 
     action = gtk_action_group_get_action(action_group,
                                          NEMO_ACTION_ICON_VIEW);
@@ -1090,20 +1086,20 @@ toolbar_set_view_button (guint action_id, NemoWindowPane *pane, NemoFile *file)
                          0, 0,
                          NULL,
                          action_icon_view_callback,
-                         NULL);
+                         window);
 
     g_signal_handlers_block_matched (action1,
                          G_SIGNAL_MATCH_FUNC,
                          0, 0,
                          NULL,
                          action_list_view_callback,
-                         NULL);
+                         window);
     g_signal_handlers_block_matched (action2,
                          G_SIGNAL_MATCH_FUNC,
                          0, 0,
                          NULL,
                          action_compact_view_callback,
-                         NULL);
+                         window);
 
     if (action_id != ICON_VIEW) {
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), FALSE);
@@ -1123,20 +1119,12 @@ toolbar_set_view_button (guint action_id, NemoWindowPane *pane, NemoFile *file)
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action2), TRUE);
     }
 
-    if (file != NULL) {
-        gboolean in_search = nemo_file_is_in_search (file);
-
-        gtk_action_set_sensitive (action, !in_search);
-        gtk_action_set_sensitive (action1, !in_search);
-        gtk_action_set_sensitive (action2, !in_search);
-    }
-
     g_signal_handlers_unblock_matched (action,
                            G_SIGNAL_MATCH_FUNC,
                            0, 0,
                            NULL,
                            action_icon_view_callback,
-                           NULL);
+                           window);
 
 
     g_signal_handlers_unblock_matched (action1,
@@ -1144,7 +1132,7 @@ toolbar_set_view_button (guint action_id, NemoWindowPane *pane, NemoFile *file)
                            0, 0,
                            NULL,
                            action_list_view_callback,
-                           NULL);
+                           window);
 
 
     g_signal_handlers_unblock_matched (action2,
@@ -1152,7 +1140,7 @@ toolbar_set_view_button (guint action_id, NemoWindowPane *pane, NemoFile *file)
                            0, 0,
                            NULL,
                            action_compact_view_callback,
-                           NULL);
+                           window);
 
 }
 
@@ -1226,8 +1214,7 @@ toolbar_set_create_folder_button (gboolean value, NemoWindowPane *pane)
 
 void
 menu_set_view_selection (guint action_id,
-                         NemoWindow *window,
-                         NemoFile   *file)
+                         NemoWindow *window)
 {
     GtkAction *action;
 
@@ -1243,21 +1230,6 @@ menu_set_view_selection (guint action_id,
                                           NEMO_ACTION_ICON_VIEW);
 
     gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), action_id);
-
-    if (file != NULL) {
-        gboolean in_search = nemo_file_is_in_search (file);
-
-        gtk_action_set_sensitive (action, !in_search);
-
-        action = gtk_action_group_get_action (window->details->main_action_group,
-                                              NEMO_ACTION_LIST_VIEW);
-        gtk_action_set_sensitive (action, !in_search);
-
-        action = gtk_action_group_get_action (window->details->main_action_group,
-                                              NEMO_ACTION_COMPACT_VIEW);
-
-        gtk_action_set_sensitive (action, !in_search);
-    }
 
     g_signal_handlers_unblock_by_func (window->details->main_action_group,
                                        view_radio_entry_changed_cb,

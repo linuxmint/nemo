@@ -2829,7 +2829,7 @@ nemo_icon_view_supports_uri (const char *uri,
 		return TRUE;
 	}
 	if (g_str_has_prefix (uri, EEL_SEARCH_URI)) {
-		return FALSE;
+		return TRUE;
 	}
 
 	return FALSE;

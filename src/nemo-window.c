@@ -1311,18 +1311,16 @@ sync_view_type_callback (NemoFile *file,
     window = nemo_window_slot_get_window (slot);
 
     if (slot == nemo_window_get_active_slot (window)) {
-        NemoWindowPane *pane;
         const gchar *view_id;
 
         if (slot->content_view == NULL) {
             return;
         }
 
-        pane = nemo_window_get_active_pane(window);
         view_id = nemo_window_slot_get_content_view_id (slot);
 
-        toolbar_set_view_button (action_for_view_id (view_id), pane, file);
-        menu_set_view_selection (action_for_view_id (view_id), window, file);
+        toolbar_set_view_button (action_for_view_id (view_id), window);
+        menu_set_view_selection (action_for_view_id (view_id), window);
     }
 }
 
