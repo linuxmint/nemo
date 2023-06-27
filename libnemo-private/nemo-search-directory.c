@@ -208,7 +208,9 @@ search_monitor_add (NemoDirectory *directory,
 		nemo_file_monitor_add (file, monitor, file_attributes);
 	}
 
-	start_or_stop_search_engine (search, TRUE);
+    if (!search->details->search_finished) {
+        start_or_stop_search_engine (search, TRUE);
+    }
 }
 
 static void
