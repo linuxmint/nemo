@@ -24,6 +24,7 @@
 #include "nemo-search-engine-advanced.h"
 #include "nemo-global-preferences.h"
 
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
@@ -439,7 +440,13 @@ search_thread_data_new (NemoSearchEngineAdvanced *engine,
     data->skip_folders = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
     gchar **folders_array = g_settings_get_strv (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_SKIP_FOLDERS);
     for (i = 0; i < g_strv_length (folders_array); i++) {
-        DEBUG ("Ignoring folder in search: '%s'", folders_array[i]);
+        /* Don't add an ancestor of the current location if it's in the skip list */
+        if (g_str_has_prefix (g_file_peek_path (location), folders_array[i])) {
+            DEBUG ("Ignoring skip folder that is an ancestor to the search root: '%s'", folders_array[i]);
+            continue;
+        }
+
+        DEBUG ("Skipping folder in search: '%s'", folders_array[i]);
         g_hash_table_add (data->skip_folders, g_strdup (folders_array[i]));
     }
     g_strfreev (folders_array);
@@ -646,6 +653,7 @@ strwildcardcmp(char *a, char *b)
 	G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME "," \
 	G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN "," \
 	G_FILE_ATTRIBUTE_STANDARD_TYPE "," \
+    G_FILE_ATTRIBUTE_STANDARD_SIZE "," \
 	G_FILE_ATTRIBUTE_ID_FILE
 
 #define CONTENT_SEARCH_ATTRIBUTES \
@@ -677,7 +685,7 @@ get_stream_from_helper (SearchHelper *helper,
         g_string_insert (command_line, ptr - command_line->str, quoted);
     } else {
         g_set_error (error, G_SHELL_ERROR, G_SHELL_ERROR_FAILED,
-                     "Search helper exec field missing %%s need to insert file path - '%s'", command_line->str);
+                     "Search helper exec field missing %%s needed to insert file path - '%s'", command_line->str);
         g_string_free (command_line, TRUE);
         g_free (quoted);
         return NULL;
@@ -895,6 +903,68 @@ search_for_content_hits (SearchThreadData *data,
     }
 }
 
+static gboolean
+hash_func_check_skip_file (gpointer key,
+                           gpointer value,
+                           gpointer user_data)
+{
+    const gchar *entry = key;
+    const gchar *path = user_data;
+
+    /* Check the absolute path prefix for skip entries like '/proc' */
+    if (g_str_has_prefix (path, entry)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static gboolean
+hash_func_check_skip_dir (gpointer key,
+                          gpointer value,
+                          gpointer user_data)
+{
+    const gchar *entry = key;
+    const gchar *path = user_data;
+
+    /* Check the absolute path prefix for skip entries like '/proc' */
+    if (g_str_has_prefix (path, entry)) {
+        return TRUE;
+    }
+
+    /* Check the basename for non-absolute file/folder names */
+    g_autofree gchar *basename = g_path_get_basename (path);
+    if (g_strcmp0 (entry, basename) == 0) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static gboolean
+should_skip_child (SearchThreadData *data, GFileInfo *info, GFile *file, gboolean is_dir)
+{
+    if (g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE) == 0) {
+        return TRUE;
+    }
+
+    const gchar *path = g_file_peek_path (file);
+    g_autofree gchar *resolved_path = realpath (path, NULL);
+
+    DEBUG ("Skip check: '%s' realpath is '%s'", path, resolved_path);
+
+    if (resolved_path != NULL) {
+        GHRFunc func = is_dir ? hash_func_check_skip_dir : hash_func_check_skip_file;
+        if (!g_hash_table_find (data->skip_folders, func, resolved_path)) {
+            return FALSE;
+        }
+    }
+
+    DEBUG ("Skip check: skipping '%s' because realpath is invalid or skipped", path);
+
+    return TRUE;
+}
+
 static void
 visit_directory (GFile *dir, SearchThreadData *data)
 {
@@ -903,7 +973,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
     GFile *child;
 	const char *display_name;
 	char *cased, *normalized;
-	gboolean hit;
+	gboolean hit, is_dir, skip_child;
 	int i;
 
     const gchar *attrs;
@@ -957,6 +1027,37 @@ visit_directory (GFile *dir, SearchThreadData *data)
 		g_free (cased);
 
         child = g_file_get_child (dir, g_file_info_get_name (info));
+        is_dir = g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY;
+
+        /* Long explanation, to preserve intent in the future ...
+         *
+         * For normal files, links can appear in a simple filename search, so we allow it as a
+         * 'hit'. But we avoid following the link if its realpath takes us into a skipped folder
+         * (unless it's an ancestor of our starting folder - determined in search_thread_data_new ()).
+         * For directories, we check base names in addition to the realpath check, and don't
+         * queue them.
+
+         * Example:
+         *  test-folder:
+         *     - aaa
+         *     - bbb
+         *     - ccc
+         *     - cccdir/aaachild
+         *     - aaadir
+         *     - aaadirlink -> /run/usr/1000
+         *     - aaalink -> /proc/self/pagemap
+         *
+         * Starting the search in test-folder:
+         * - recursive filename search for 'aaa' returns 'aaa', 'aaadir', 'aaadirlink', 'aaalink', 'aaachild'
+         * - content search * files for 'aaa': searches 'aaa', 'bbb', 'ccc', 'aaachild'
+         *
+         * Adding 'ccc' to the skip list:
+         * - recursive filename search no longer finds 'aaachild'
+         * Entering 'ccc':
+         * - recursive filename search for 'aaa' finds 'aaachild' (a skip entry is ignored if we're in that directory or one of its descendants.)
+         */
+        skip_child = should_skip_child (data, info, child, is_dir);
+
         if (hit) {
             const gchar *mime_type;
 
@@ -970,15 +1071,17 @@ visit_directory (GFile *dir, SearchThreadData *data)
             // probably best, as search would transfer the contents of every file
             // to our machines.
             if (data->match_re && data->location_supports_content_search) {
-                SearchHelper *helper = NULL;
+                if (!skip_child) {
+                    SearchHelper *helper = NULL;
 
-                helper = g_hash_table_lookup (search_helpers, mime_type);
+                    helper = g_hash_table_lookup (search_helpers, mime_type);
 
-                if (helper != NULL || g_content_type_is_a (mime_type, "text/plain")) {
-                    if (DEBUGGING) {
-                        g_message ("Evaluating '%s'", g_file_peek_path (child));
+                    if (helper != NULL || g_content_type_is_a (mime_type, "text/plain")) {
+                        if (DEBUGGING) {
+                            g_message ("Evaluating '%s'", g_file_peek_path (child));
+                        }
+                        search_for_content_hits (data, child, helper);
                     }
-                    search_for_content_hits (data, child, helper);
                 }
             } else {
                 FileSearchResult *fsr = NULL;
@@ -997,7 +1100,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
             send_batch (data);
         }
 
-		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY && data->recurse) {
+		if (is_dir && data->recurse && !skip_child) {
             gboolean visited;
             const char *id;
 
@@ -1033,7 +1136,6 @@ search_thread_func (gpointer user_data)
 	GFile *dir;
 	GFileInfo *info;
 	const char *id;
-    gboolean toplevel;
 	data = user_data;
 
 	/* Insert id for toplevel directory into visited */
@@ -1047,30 +1149,8 @@ search_thread_func (gpointer user_data)
 		g_object_unref (info);
 	}
 
-    toplevel = TRUE;
-
     while (!g_cancellable_is_cancelled (data->cancellable) &&
            (dir = g_queue_pop_head (data->directories)) != NULL) {
-
-        if (!toplevel) {
-            const gchar *path = g_file_peek_path (dir);
-
-            if (path != NULL) {
-                if (g_hash_table_contains (data->skip_folders, path)) {
-                    g_object_unref (dir);
-                    continue;
-                }
-            }
-
-            g_autofree gchar *filename = NULL;
-            filename = g_file_get_basename (dir);
-            if (g_hash_table_contains (data->skip_folders, filename)) {
-                g_object_unref (dir);
-                continue;
-            }
-        }
-
-        toplevel = FALSE;
 
 		visit_directory (dir, data);
 		g_object_unref (dir);
