@@ -340,6 +340,7 @@ nemo_icon_info_lookup (GIcon *icon,
                                                                  GTK_ICON_LOOKUP_FORCE_SIZE);
 
             pixbuf = gtk_icon_info_load_icon (gtkicon_info, NULL);
+            g_object_unref (gtkicon_info);
         }
 
         icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);

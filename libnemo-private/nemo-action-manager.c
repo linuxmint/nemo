@@ -343,6 +343,8 @@ void_actions_for_directory (NemoActionManager *action_manager, NemoDirectory *di
         }
     }
 
+    g_object_unref (dir);
+
     tmp = action_manager->actions;
     action_manager->actions = new_list;
     g_list_free_full (tmp, g_object_unref);
