@@ -3,7 +3,7 @@
 
 /* Inactive F3 pane shading */
 
-.nemo-window .nemo-inactive-pane .view, .nemo-window .nemo-inactive-pane iconview {
+.nemo-window .nemo-inactive-pane .view:not(:selected), .nemo-window .nemo-inactive-pane iconview {
     background-color: @theme_unfocused_bg_color;
 }
 
