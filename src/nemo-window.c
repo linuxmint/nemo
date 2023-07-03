@@ -1691,6 +1691,7 @@ nemo_window_slot_set_viewed_file (NemoWindowSlot *slot,
 	nemo_file_ref (file);
 
 	cancel_sync_view_type_callback (slot);
+    cancel_sync_show_thumbnail_callback (slot);
 
 	if (slot->viewed_file != NULL) {
 		nemo_file_monitor_remove (slot->viewed_file,
