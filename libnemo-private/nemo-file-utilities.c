@@ -1494,85 +1494,70 @@ debug_icon_names (const gchar *format, ...)
     va_end(args);
 }
 
-static gboolean
-icon_name_is_non_specific (const gchar *icon_name)
+static gchar *
+get_best_name (GtkIconTheme *icon_theme,
+                        GIcon        *gicon,
+                        const gchar  *dev_name,
+                        const gchar  *type_name)
 {
-    gint i;
+    gchar *icon_name = NULL;
 
-    static const char * non_specific_icon_names[] = { "drive-harddisk-usb-symbolic" };
+    if (G_IS_THEMED_ICON (gicon)) {
+        const gchar * const *names;
+        gint i;
 
-    for (i = 0; i < G_N_ELEMENTS (non_specific_icon_names); i++) {
-        if (g_strcmp0 (icon_name, non_specific_icon_names[i]) == 0) {
-            return TRUE;
+        // TODO: We should just use what gicon Gio gives us and let the theme deal with it.
+        // but currently everywhere nemo needs this is looking for icon names, so this function
+        // emulates using fallbacks to avoid a lot of refactoring elsewhere.
+
+        names = g_themed_icon_get_names (G_THEMED_ICON (gicon));
+        for (i = 0; i != g_strv_length ((gchar **) names); i++) {
+            const gchar *name = names[i];
+            if (gtk_icon_theme_has_icon (icon_theme, name)) {
+                icon_name = g_strdup (name);
+                break;
+            }
         }
     }
 
-    return FALSE;
+    // Don't ever allow a non-symbolic icon
+    // drawn from Gio gunixmounts.c
+
+    if (icon_name == NULL || !g_str_has_suffix (icon_name, "symbolic")) {
+        g_free (icon_name);
+
+        if (g_strcmp0 (type_name, "volume") == 0 ||
+            g_strcmp0 (type_name, "drive") == 0) {
+            icon_name = g_strdup ("drive-removable-media-symbolic");
+        }
+        else {
+            icon_name = g_strdup ("drive-harddisk-symbolic");
+        }
+    }
+
+    return icon_name;
 }
 
 gchar *
 nemo_get_mount_icon_name (GMount *mount)
 {
-    GDrive *drive;
+    GtkIconTheme *icon_theme;
     GIcon *gicon;
     gchar *icon_name;
-    gchar *mount_icon_name;
     gchar *dev_name;
 
     g_return_val_if_fail (mount != NULL, NULL);
 
     dev_name = g_mount_get_name (mount);
     icon_name = NULL;
-    mount_icon_name = NULL;
 
     gicon = g_mount_get_symbolic_icon (mount);
-
-    if (G_IS_THEMED_ICON (gicon)) {
-        mount_icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-
-        if (icon_name_is_non_specific (mount_icon_name)) {
-            debug_icon_names ("mount %s: icon name '%s' too non-specific", dev_name, mount_icon_name);
-        } else {
-            icon_name = g_strdup (mount_icon_name);
-        }
-    }
-
+    icon_theme = gtk_icon_theme_get_default ();
+    icon_name = get_best_name (icon_theme, gicon, dev_name, "mount");
     g_clear_object (&gicon);
 
-    if (icon_name != NULL) {
-        debug_icon_names ("mount %s: icon name '%s' is being used", dev_name, icon_name);
-
-        g_free (dev_name);
-        g_free (mount_icon_name);
-
-        return icon_name;
-    }
-
-    drive = g_mount_get_drive (mount);
-
-    if (drive != NULL) {
-        gicon = g_drive_get_symbolic_icon (drive);
-        g_object_unref (drive);
-
-        if (G_IS_THEMED_ICON (gicon)) {
-            icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-        }
-
-        g_object_unref (gicon);
-    }
-
-    if (icon_name == NULL) {
-        if (mount_icon_name) {
-            icon_name = g_strdup (mount_icon_name);
-        } else {
-            icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
-        }
-
-        debug_icon_names ("mount %s: no other good icon name found, using fallback of '%s'", dev_name, icon_name);
-    }
-
+    debug_icon_names ("mount %s: using icon name '%s'", dev_name, icon_name);
     g_free (dev_name);
-    g_free (mount_icon_name);
 
     return icon_name;
 }
@@ -1580,67 +1565,23 @@ nemo_get_mount_icon_name (GMount *mount)
 gchar *
 nemo_get_volume_icon_name (GVolume *volume)
 {
-    GDrive *drive;
+    GtkIconTheme *icon_theme;
     GIcon *gicon;
     gchar *icon_name;
     gchar *dev_name;
-    gchar *volume_icon_name;
 
     g_return_val_if_fail (volume != NULL, NULL);
 
     dev_name = g_volume_get_name (volume);
     icon_name = NULL;
-    volume_icon_name = NULL;
 
     gicon = g_volume_get_symbolic_icon (volume);
-
-    if (G_IS_THEMED_ICON (gicon)) {
-        volume_icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-
-        if (icon_name_is_non_specific (volume_icon_name)) {
-            debug_icon_names ("volume %s: icon name '%s' too non-specific", dev_name, volume_icon_name);
-        } else {
-            icon_name = g_strdup (volume_icon_name);
-        }
-    }
-
+    icon_theme = gtk_icon_theme_get_default ();
+    icon_name = get_best_name (icon_theme, gicon, dev_name, "volume");
     g_clear_object (&gicon);
 
-    if (icon_name != NULL) {
-        debug_icon_names ("volume %s: icon name '%s' is being used", dev_name, icon_name);
-
-        g_free (dev_name);
-        g_free (volume_icon_name);
-
-        return icon_name;
-    }
-
-    drive = g_volume_get_drive (volume);
-
-    if (drive != NULL) {
-        gicon = g_drive_get_symbolic_icon (drive);
-        g_object_unref (drive);
-
-        if (G_IS_THEMED_ICON (gicon)) {
-            icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-        }
-
-        g_object_unref (gicon);
-    }
-
-    if (icon_name == NULL) {
-        if (volume_icon_name) {
-            icon_name = g_strdup (volume_icon_name);
-        } else {
-            icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
-
-        }
-
-        debug_icon_names ("volume %s: no good icon name found, using fallback of '%s'", dev_name, icon_name);
-    }
-
+    debug_icon_names ("volume %s: using icon name '%s'", dev_name, icon_name);
     g_free (dev_name);
-    g_free (volume_icon_name);
 
     return icon_name;
 }
@@ -1648,6 +1589,7 @@ nemo_get_volume_icon_name (GVolume *volume)
 gchar *
 nemo_get_drive_icon_name (GDrive *drive)
 {
+    GtkIconTheme *icon_theme;
     GIcon *gicon;
     gchar *icon_name;
     gchar *dev_name;
@@ -1657,17 +1599,11 @@ nemo_get_drive_icon_name (GDrive *drive)
     dev_name = g_drive_get_name (drive);
 
     gicon = g_drive_get_symbolic_icon (drive);
+    icon_theme = gtk_icon_theme_get_default ();
+    icon_name = get_best_name (icon_theme, gicon, dev_name, "drive");
+    g_clear_object (&gicon);
 
-    if (G_IS_THEMED_ICON (gicon)) {
-        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-    } else {
-        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
-    }
-
-    g_object_unref (gicon);
-
-    debug_icon_names ("drive %s: returning icon '%s'", dev_name, icon_name);
-
+    debug_icon_names ("drive %s: using icon name '%s'", dev_name, icon_name);
     g_free (dev_name);
 
     return icon_name;
