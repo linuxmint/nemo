@@ -1,3 +1,21 @@
+nemo (5.8.4) victoria; urgency=medium
+
+  [ Michael Webster ]
+  * search: Fix search directory view selection.
+  * nemo-search-directory.c: Don't restart the search if the query hasn't changed.
+  * advanced search: Fix path handling to prevent symbolic links escaping into forbidden locations.
+  * Fix some leaks.
+
+  [ marcus125 ]
+  * nemo-style-fallback-mandatory.css: Fix styling on inactive pane (#3261)
+
+  [ Michael Webster ]
+  * nemo-window.c: Fix crash when unmounting a network location.
+  * nemo-places-sidebar.c: Remove extra reference to selected sidebar file when using the popup menu.
+  * nemo-file-utilities.c: Simplify symbolic device icon lookup.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 07 Jul 2023 15:26:24 +0200
+
 nemo (5.8.3) victoria; urgency=medium
 
   [ Michael Webster ]
