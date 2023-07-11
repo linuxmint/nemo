@@ -29,7 +29,6 @@ buildtype = get_option('buildtype')
 
 # Surround the version in quotes to make it a C string
 conf.set_quoted('VERSION', meson.project_version())
-conf.set('ENABLE_DEBUG', buildtype == 'debug')
 
 check_headers = [
   'malloc.h',
@@ -57,9 +56,12 @@ if not get_option('deprecated_warnings')
   )
 endif
 
-if get_option('profiling')
-    add_global_arguments('-fno-omit-frame-pointer',
-        language: 'c')
+if buildtype in ['debug', 'debugoptimized']
+    conf.set('ENABLE_DEBUG', true)
+endif
+
+if buildtype == 'debug'
+    add_global_arguments('-fno-omit-frame-pointer', language: 'c')
 endif
 
 ################################################################################
@@ -195,7 +197,6 @@ message('\n'.join(['',
 '    prefix:                 @0@'.format(prefix),
 '    source code location:   @0@'.format(meson.source_root()),
 '    compiler:               @0@'.format(cc.get_id()),
-'    debugging support:      @0@'.format(buildtype),
 '    libexif support:        @0@'.format(libexif_enabled),
 '    exempi  support:        @0@'.format(exempi_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
@@ -203,6 +204,7 @@ message('\n'.join(['',
 '    nemo-extension documentation: @0@'.format(gtkdoc_enabled),
 '    nemo-extension introspection: @0@'.format(true),
 '',
-'    perf profiling support: @0@'.format(get_option('profiling')),
+'    debugging support:      @0@'.format(buildtype),
+'    perf profiling support: @0@'.format(buildtype == 'debug'),
 '',
 ]))
