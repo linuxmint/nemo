@@ -341,7 +341,7 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
   drag_info->desktop_dnd_can_delete_source = FALSE;
 
   if (target_file != NULL)
-    drag_info->target_file = g_object_ref (target_file);
+    drag_info->target_file = nemo_file_ref (target_file);
 
   if (target_slot != NULL)
     drag_info->target_slot = g_object_ref (target_slot);

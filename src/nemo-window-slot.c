@@ -750,8 +750,13 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 		nemo_window_connect_content_view (window, new_view);
 
         g_signal_connect (new_view, "show-drop-bar", G_CALLBACK (show_drop_bar_cb), slot);
-        nemo_drag_slot_proxy_init (slot->drop_bar, nemo_view_get_directory_as_file (slot->content_view), NULL);
 	}
+}
+
+void
+nemo_window_slot_update_drop_zone_target (NemoWindowSlot *slot)
+{
+    nemo_drag_slot_proxy_init (slot->drop_bar, nemo_view_get_directory_as_file (slot->content_view), NULL);
 }
 
 void

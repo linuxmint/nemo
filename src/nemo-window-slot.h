@@ -165,7 +165,7 @@ void    nemo_window_slot_go_home			   (NemoWindowSlot *slot,
 							    NemoWindowOpenFlags flags);
 void    nemo_window_slot_go_up                         (NemoWindowSlot *slot,
 							    NemoWindowOpenFlags flags);
-
+void    nemo_window_slot_update_drop_zone_target (NemoWindowSlot *slot);
 void    nemo_window_slot_set_content_view_widget	   (NemoWindowSlot *slot,
 							    NemoView       *content_view);
 void    nemo_window_slot_set_viewed_file		   (NemoWindowSlot *slot,
