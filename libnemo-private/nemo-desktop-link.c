@@ -137,8 +137,7 @@ nemo_desktop_link_new (NemoDesktopLinkType type)
 		link->details->icon = nemo_trash_monitor_get_icon ();
 
 		link->details->signal_handler_obj = G_OBJECT (nemo_trash_monitor_get ());
-		link->details->signal_handler =
-			g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
+		g_signal_connect_object (nemo_trash_monitor_get (), "trash_state_changed",
 						 G_CALLBACK (trash_state_changed_callback), link, 0);
 		break;
 
