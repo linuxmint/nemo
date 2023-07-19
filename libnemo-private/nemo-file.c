@@ -7482,7 +7482,7 @@ nemo_file_get_volume_name (NemoFile *file)
 	location = nemo_file_get_location (file);
 	mount = g_file_find_enclosing_mount (location, NULL, NULL);
 	if (mount) {
-		res = g_strdup (g_mount_get_name (mount));
+		res = g_mount_get_name (mount);
 		g_object_unref (mount);
 	}
 	g_object_unref (location);

@@ -1350,6 +1350,8 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
 	files.data = file;
 	nemo_launch_application (info, &files, parent_window);
 
+    nemo_file_unref (file);
+
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 	g_object_unref (info);
 }
@@ -1384,6 +1386,9 @@ choose_program (NemoView *view,
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
     GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type, ok_button);
+
+    g_free (mime_type);
+    g_free (uri);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -5188,7 +5193,7 @@ reset_move_copy_to_menu (NemoView *view)
     gtk_action_set_icon_name (action, icon_name);
 
     g_clear_pointer (&icon_name, g_free);
-    g_object_unref (file);
+    nemo_file_unref (file);
 
     mount_uri = nemo_get_desktop_directory_uri ();
     file = nemo_file_get_by_uri (mount_uri);
@@ -5203,7 +5208,7 @@ reset_move_copy_to_menu (NemoView *view)
     gtk_action_set_icon_name (action, icon_name);
 
     g_clear_pointer (&icon_name, g_free);
-    g_object_unref (file);
+    nemo_file_unref (file);
 
     if (view->details->showing_bookmarks_in_to_menus) {
         bookmark_count = nemo_bookmark_list_length (view->details->bookmarks);
@@ -7245,6 +7250,7 @@ action_follow_symlink_callback (GtkAction *action,
             GList *l = NULL;
             l = g_list_append (l, nemo_file_get_existing (location));
             nemo_view_set_selection (view, l);
+            nemo_file_list_free (l);
         } else {
             if (get_is_desktop_view (view)) {
                 nemo_mime_launch_fm_and_select_file (location);

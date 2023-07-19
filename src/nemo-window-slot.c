@@ -663,6 +663,7 @@ nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
 
   directory = nemo_directory_get (slot->location);
   nemo_directory_set_show_thumbnails(directory, show_thumbnails);
+  nemo_directory_unref (directory);
 }
 
 static gboolean

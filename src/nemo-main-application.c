@@ -286,6 +286,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 	root = g_mount_get_root (mount);
 	uri = g_file_get_uri (root);
+    g_object_unref (root);
 
 	DEBUG ("Removed mount at uri %s", uri);
 	g_free (uri);

@@ -2424,6 +2424,10 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 		}
 	}
 
+    g_clear_object (&drive);
+    g_clear_object (&volume);
+    g_clear_object (&mount);
+
     if (!uri) {
         hide_all_action_items (sidebar);
         gtk_widget_set_visible (sidebar->popup_menu_action_separator_item, FALSE);
@@ -3014,6 +3018,10 @@ eject_shortcut_cb (GtkMenuItem           *item,
 			    -1);
 
 	do_eject (mount, volume, drive, sidebar);
+
+    g_clear_object (&mount);
+    g_clear_object (&volume);
+    g_clear_object (&drive);
 }
 
 static gboolean
@@ -3055,12 +3063,9 @@ eject_or_unmount_bookmark (NemoPlacesSidebar *sidebar,
 		ret = TRUE;
 	}
 
-	if (mount != NULL)
-		g_object_unref (mount);
-	if (volume != NULL)
-		g_object_unref (volume);
-	if (drive != NULL)
-		g_object_unref (drive);
+    g_clear_object (&mount);
+    g_clear_object (&volume);
+    g_clear_object (&drive);
 
 	return ret;
 }
@@ -3127,8 +3132,8 @@ rescan_shortcut_cb (GtkMenuItem           *item,
 
 	if (drive != NULL) {
 		g_drive_poll_for_media (drive, NULL, drive_poll_for_media_cb, NULL);
+        g_object_unref (drive);
 	}
-	g_object_unref (drive);
 }
 
 static void
@@ -3177,8 +3182,8 @@ start_shortcut_cb (GtkMenuItem           *item,
 		g_drive_start (drive, G_DRIVE_START_NONE, mount_op, NULL, drive_start_cb, NULL);
 
 		g_object_unref (mount_op);
+        g_object_unref (drive);
 	}
-	g_object_unref (drive);
 }
 
 static void
@@ -3228,8 +3233,8 @@ stop_shortcut_cb (GtkMenuItem           *item,
 		g_drive_stop (drive, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, drive_stop_cb,
 			      g_object_ref (sidebar->window));
 		g_object_unref (mount_op);
+        g_object_unref (drive);
 	}
-	g_object_unref (drive);
 }
 
 static void
@@ -3447,6 +3452,7 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
     nemo_action_activate (NEMO_ACTION (payload->action), tmp, parent, GTK_WINDOW (sidebar->window));
 
     nemo_file_list_free (tmp);
+    nemo_file_unref (parent);
 
     g_free (uri);
 }
@@ -4398,6 +4404,11 @@ nemo_places_sidebar_dispose (GObject *object)
 	sidebar->uri = NULL;
 
 	free_drag_data (sidebar);
+
+    if (sidebar->action_items != NULL) {
+        g_list_free_full (sidebar->action_items, g_free);
+        sidebar->action_items = NULL;
+    }
 
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
