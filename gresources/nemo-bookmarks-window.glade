@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.38.2 -->
 <interface>
-  <requires lib="gtk+" version="3.0"/>
+  <requires lib="gtk+" version="3.20"/>
   <object class="GtkDialog" id="bookmarks_dialog">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="can-focus">False</property>
+    <property name="border-width">5</property>
     <property name="title" translatable="yes">Edit Bookmarks</property>
-    <property name="window_position">center</property>
-    <property name="type_hint">normal</property>
-    <child>
-      <placeholder/>
-    </child>
+    <property name="window-position">center</property>
+    <property name="type-hint">normal</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">spread</property>
             <child>
               <placeholder/>
             </child>
@@ -29,9 +26,9 @@
               <object class="GtkButton" id="bookmark_sort_button">
                 <property name="label">gtk-sort-ascending</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -43,10 +40,10 @@
               <object class="GtkButton" id="bookmark_jump_button">
                 <property name="label">gtk-jump-to</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">False</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -58,10 +55,10 @@
               <object class="GtkButton" id="bookmark_delete_button">
                 <property name="label">gtk-remove</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">False</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -73,10 +70,10 @@
               <object class="GtkButton" id="bookmark_close_button">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">False</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -88,35 +85,35 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox" id="hbox1">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="border_width">5</property>
+            <property name="can-focus">False</property>
+            <property name="border-width">5</property>
             <property name="spacing">18</property>
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkAlignment" id="alignment1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkBox" id="vbox1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="label" translatable="yes">&lt;b&gt;_Bookmarks&lt;/b&gt;</property>
-                        <property name="use_markup">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="mnemonic_widget">bookmark_tree_view</property>
+                        <property name="use-markup">True</property>
+                        <property name="use-underline">True</property>
+                        <property name="mnemonic-widget">bookmark_tree_view</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
@@ -128,11 +125,11 @@
                     <child>
                       <object class="GtkBox" id="hbox4">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label4">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label">    </property>
                           </object>
                           <packing>
@@ -144,14 +141,14 @@
                         <child>
                           <object class="GtkScrolledWindow" id="bookmark_list_window">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="hscrollbar_policy">never</property>
-                            <property name="shadow_type">in</property>
+                            <property name="can-focus">True</property>
+                            <property name="hscrollbar-policy">never</property>
+                            <property name="shadow-type">in</property>
                             <child>
                               <object class="GtkTreeView" id="bookmark_tree_view">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="headers_visible">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="headers-visible">False</property>
                                 <property name="reorderable">True</property>
                                 <child internal-child="selection">
                                   <object class="GtkTreeSelection" id="treeview-selection1"/>
@@ -184,27 +181,27 @@
             <child>
               <object class="GtkAlignment" id="alignment2">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkBox" id="vbox2">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="valign">start</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">18</property>
                     <child>
                       <object class="GtkBox" id="vbox4">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkLabel" id="bookmark_name_label">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="label" translatable="yes">&lt;b&gt;_Name&lt;/b&gt;</property>
-                            <property name="use_markup">True</property>
-                            <property name="use_underline">True</property>
+                            <property name="use-markup">True</property>
+                            <property name="use-underline">True</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -216,11 +213,11 @@
                         <child>
                           <object class="GtkBox" id="hbox3">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="label">    </property>
                               </object>
                               <packing>
@@ -232,7 +229,7 @@
                             <child>
                               <object class="GtkBox" id="bookmark_name_placeholder">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -260,18 +257,18 @@
                     <child>
                       <object class="GtkBox" id="vbox3">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkLabel" id="bookmark_location_label">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <property name="xpad">2</property>
                             <property name="ypad">2</property>
                             <property name="label" translatable="yes">&lt;b&gt;_Location&lt;/b&gt;</property>
-                            <property name="use_markup">True</property>
-                            <property name="use_underline">True</property>
+                            <property name="use-markup">True</property>
+                            <property name="use-underline">True</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -283,11 +280,11 @@
                         <child>
                           <object class="GtkBox" id="hbox2">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can-focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label2">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <property name="label">    </property>
                               </object>
                               <packing>
@@ -299,7 +296,7 @@
                             <child>
                               <object class="GtkBox" id="bookmark_location_placeholder">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can-focus">False</property>
                                 <child>
                                   <placeholder/>
                                 </child>

@@ -454,7 +454,7 @@ nemo_action_config_widget_init (NemoActionConfigWidget *self)
     g_free (title);
     g_free (markup);
 
-    GtkWidget *widget = gtk_button_new_from_icon_name ("folder", GTK_ICON_SIZE_BUTTON);
+    GtkWidget *widget = gtk_button_new_from_icon_name ("folder-symbolic", GTK_ICON_SIZE_BUTTON);
 
     GtkWidget *bb = nemo_config_base_widget_get_buttonbox (NEMO_CONFIG_BASE_WIDGET (self));
     gtk_box_pack_end (GTK_BOX (bb),
