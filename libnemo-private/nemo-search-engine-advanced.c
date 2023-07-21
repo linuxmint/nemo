@@ -944,10 +944,6 @@ hash_func_check_skip_dir (gpointer key,
 static gboolean
 should_skip_child (SearchThreadData *data, GFileInfo *info, GFile *file, gboolean is_dir)
 {
-    if (g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE) == 0) {
-        return TRUE;
-    }
-
     const gchar *path = g_file_peek_path (file);
     g_autofree gchar *resolved_path = realpath (path, NULL);
 
