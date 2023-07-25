@@ -4943,10 +4943,8 @@ nemo_file_get_icon (NemoFile *file,
 			g_object_unref (raw_pixbuf);
 
 			/* Don't scale up if more than 25%, then read the original
-			   image instead. We don't want to compare to exactly 100%,
-			   since the zoom level 150% gives thumbnails at 144, which is
-			   ok to scale up from 128. */
-			if (modified_size > 128 * 1.25 * scale &&
+			   image instead. */
+			if (modified_size > 256 * 1.25 * scale &&
 			    !file->details->thumbnail_wants_original &&
 			    nemo_can_thumbnail_internally (file)) {
 				/* Invalidate if we resize upward */
