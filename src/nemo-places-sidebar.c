@@ -3689,9 +3689,10 @@ static void
 bookmarks_popup_menu (NemoPlacesSidebar *sidebar,
 		      GdkEventButton        *event)
 {
-	bookmarks_update_popup_menu (sidebar);
-	eel_pop_up_context_menu (GTK_MENU(sidebar->popup_menu),
-				 event);
+    bookmarks_update_popup_menu (sidebar);
+    eel_pop_up_context_menu (GTK_MENU(sidebar->popup_menu),
+                             (GdkEvent *) event,
+                             GTK_WIDGET (sidebar));
 }
 
 /* Callback used for the GtkWidget::popup-menu signal of the shortcuts list */

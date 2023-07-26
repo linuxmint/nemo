@@ -44,7 +44,8 @@ char *                eel_gtk_window_get_geometry_string              (GtkWindow
 
 /* GtkMenu and GtkMenuItem */
 void                  eel_pop_up_context_menu                         (GtkMenu              *menu,
-								       GdkEventButton       *event);
+                                                                       GdkEvent             *event,
+                                                                       GtkWidget            *widget);
 GtkMenuItem *         eel_gtk_menu_append_separator                   (GtkMenu              *menu);
 GtkMenuItem *         eel_gtk_menu_insert_separator                   (GtkMenu              *menu,
 								       int                   index);

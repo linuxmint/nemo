@@ -10117,9 +10117,9 @@ nemo_view_pop_up_selection_context_menu  (NemoView *view,
     nemo_view_update_actions_and_extensions (view);
     update_context_menu_position_from_event (view, event);
 
-	eel_pop_up_context_menu (create_popup_menu
-				 (view, NEMO_VIEW_POPUP_PATH_SELECTION),
-				 event);
+    eel_pop_up_context_menu (create_popup_menu (view, NEMO_VIEW_POPUP_PATH_SELECTION),
+                             (GdkEvent *) event,
+                             GTK_WIDGET (view));
 }
 
 /**
@@ -10145,7 +10145,8 @@ nemo_view_pop_up_background_context_menu (NemoView *view,
 
 	eel_pop_up_context_menu (create_popup_menu
 				 (view, NEMO_VIEW_POPUP_PATH_BACKGROUND),
-				 event);
+				 (GdkEvent *) event,
+                 GTK_WIDGET (view));
 }
 
 static void
@@ -10158,7 +10159,8 @@ real_pop_up_location_context_menu (NemoView *view)
 
 	eel_pop_up_context_menu (create_popup_menu
 				 (view, NEMO_VIEW_POPUP_PATH_LOCATION),
-				 view->details->location_popup_event);
+				 (GdkEvent *) view->details->location_popup_event,
+                 GTK_WIDGET (view));
 }
 
 static void
