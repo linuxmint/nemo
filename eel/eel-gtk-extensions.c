@@ -37,6 +37,7 @@
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkprivate.h>
+#include <gdk/gdkwayland.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
 #include <math.h>
@@ -247,53 +248,71 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 	eel_gtk_window_set_initial_geometry (window, geometry_flags, left, top, width, height);
 }
 
+static void
+create_popup_rect (GdkWindow *window, GdkRectangle *rect)
+{
+    GdkSeat *seat;
+    GdkDevice *device;
+
+    seat = gdk_display_get_default_seat (gdk_display_get_default ());
+
+    if (seat != NULL) {
+        device = gdk_seat_get_pointer (seat);
+
+        if (device != NULL) {
+            gint x, y;
+
+            gdk_window_get_device_position (window, device, &x, &y, NULL);
+            rect->x = x;
+            rect->y = y;
+            rect->width = 2;
+            rect->height = 2;
+        }
+    }
+}
+
 /**
  * eel_pop_up_context_menu:
  *
  * Pop up a context menu under the mouse.
  * The menu is sunk after use, so it will be destroyed unless the
  * caller first ref'ed it.
- *
- * This function is more of a helper function than a gtk extension,
- * so perhaps it belongs in a different file.
- *
- * @menu: The menu to pop up under the mouse.
- * @offset_x: Ignored.
- * @offset_y: Ignored.
- * @event: The event that invoked this popup menu, or #NULL if there
- * is no event available.  This is used to get the timestamp for the menu's popup.
- * In case no event is provided, gtk_get_current_event_time() will be used automatically.
  **/
 void
-eel_pop_up_context_menu (GtkMenu *menu,
-			 GdkEventButton *event)
+eel_pop_up_context_menu (GtkMenu        *menu,
+                         GdkEvent       *event,
+                         GtkWidget      *widget)
 {
-	int button;
+    g_return_if_fail (GTK_IS_MENU (menu));
+    static gboolean using_wayland = FALSE;
+    static gsize once_init = 0;
 
-	g_return_if_fail (GTK_IS_MENU (menu));
+    if (g_once_init_enter (&once_init)) {
+        using_wayland = GDK_IS_WAYLAND_DISPLAY (gdk_display_get_default ());
 
-	/* The event button needs to be 0 if we're popping up this menu from
-	 * a button release, else a 2nd click outside the menu with any button
-	 * other than the one that invoked the menu will be ignored (instead
-	 * of dismissing the menu). This is a subtle fragility of the GTK menu code.
-	 */
+        g_once_init_leave (&once_init, 1);
+    }
 
-	if (event) {
-		button = event->type == GDK_BUTTON_RELEASE ? 0 : event->button;
-	} else {
-		button = 0;
-	}
+    // Using gtk_menu_popup_at_rect exclusively in wayland seems to avoid the problem
+    // of being unable to dismiss the menu when clicking to the left of it. See:
+    // https://github.com/linuxmint/nemo/issues/3218
 
-    if (button > 0) {
-        gtk_menu_popup_at_pointer (menu, (GdkEvent *) event);
-    } else {
-        gtk_menu_popup (menu,                   /* menu */
-                        NULL,                   /* parent_menu_shell */
-                        NULL,                   /* parent_menu_item */
-                        NULL,                   /* popup_position_func */
-                        NULL,                   /* popup_position_data */
-                        button,                 /* button */
-                        event ? event->time : gtk_get_current_event_time ()); /* activate_time */
+#ifdef GDK_WINDOWING_X11
+    if (!using_wayland && event && event->type == GDK_BUTTON_PRESS) {
+        gtk_menu_popup_at_pointer (menu, event);
+    } else
+#endif
+    {
+        GdkWindow *window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
+
+        GdkRectangle rect;
+        create_popup_rect (window, &rect);
+        gtk_menu_popup_at_rect (menu,
+                                window,
+                                &rect,
+                                GDK_GRAVITY_NORTH_WEST,
+                                GDK_GRAVITY_NORTH_WEST,
+                                NULL);
     }
 
 	g_object_ref_sink (menu);

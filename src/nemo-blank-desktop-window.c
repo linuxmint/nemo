@@ -168,7 +168,8 @@ do_popup_menu (NemoBlankDesktopWindow *window, GdkEventButton *event)
     }
 
     eel_pop_up_context_menu (GTK_MENU(window->details->popup_menu),
-                             event);
+                             (GdkEvent *) event,
+                             GTK_WIDGET (window));
 }
 
 static gboolean
