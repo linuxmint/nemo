@@ -888,6 +888,20 @@ only_show_active_pane_toolbar_mapping (GValue *value,
     return TRUE;
 }
 
+static gboolean
+toolbar_check_admin_cb (NemoToolbar *toolbar, NemoWindowPane *pane)
+{
+    NemoWindowSlot *slot;
+
+    slot = pane->active_slot;
+
+    if (slot && slot->location != NULL) {
+        return g_file_has_uri_scheme (slot->location, "admin");
+    }
+
+    return FALSE;
+}
+
 static void
 nemo_window_pane_constructed (GObject *obj)
 {
@@ -911,6 +925,9 @@ nemo_window_pane_constructed (GObject *obj)
     g_signal_connect_object (pane->tool_bar, "notify::show-location-entry",
                              G_CALLBACK (location_entry_changed_cb),
                              pane, 0);
+
+    g_signal_connect (pane->tool_bar, "check-admin-location",
+                      G_CALLBACK (toolbar_check_admin_cb), pane);
 
 	pane->action_group = action_group;
 
@@ -1180,6 +1197,8 @@ nemo_window_pane_sync_location_widgets (NemoWindowPane *pane)
 						       active_slot->forward_list != NULL);
 
 	}
+
+    nemo_toolbar_update_for_location (NEMO_TOOLBAR (pane->tool_bar));
 }
 
 static void

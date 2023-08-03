@@ -50,6 +50,7 @@ enum {
 typedef enum {
     NORMAL_BUTTON,
     ROOT_BUTTON,
+    ADMIN_ROOT_BUTTON,
     HOME_BUTTON,
     DESKTOP_BUTTON,
     MOUNT_BUTTON,
@@ -1506,6 +1507,9 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
             case ROOT_BUTTON:
                 icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FILESYSTEM);
                 break;
+            case ADMIN_ROOT_BUTTON:
+                icon_name = g_strdup ("emblem-important-symbolic");
+                break;
             case HOME_BUTTON:
             case DESKTOP_BUTTON:
             case XDG_BUTTON:
@@ -1624,6 +1628,8 @@ setup_button_type (ButtonData       *button_data,
         } else {
             button_data->type = NORMAL_BUTTON;
         }
+    } else if (g_file_has_uri_scheme (location, "admin") && !g_file_has_parent (location, NULL)) {
+        button_data->type = ADMIN_ROOT_BUTTON;
     } else if (path_bar->priv->xdg_documents_path != NULL && g_file_equal (location, path_bar->priv->xdg_documents_path)) {
         button_data->type = XDG_BUTTON;
     } else if (path_bar->priv->xdg_download_path != NULL && g_file_equal (location, path_bar->priv->xdg_download_path)) {
@@ -1838,6 +1844,7 @@ make_directory_button (NemoPathBar  *path_bar,
             button_data->label = NULL;
             break;
         case HOME_BUTTON:
+        case ADMIN_ROOT_BUTTON:
         case DESKTOP_BUTTON:
         case MOUNT_BUTTON:
         case DEFAULT_LOCATION_BUTTON:

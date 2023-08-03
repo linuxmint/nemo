@@ -604,6 +604,20 @@ showing_favorites_directory (NemoView *view)
 }
 
 static gboolean
+showing_admin_enabled_directory (NemoView *view)
+{
+    NemoFile *file;
+
+    file = nemo_view_get_directory_as_file (view);
+
+    if (file != NULL) {
+        return nemo_file_has_uri_scheme (file, "admin");
+    }
+
+    return FALSE;
+}
+
+static gboolean
 nemo_view_supports_creating_files (NemoView *view)
 {
 	g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
@@ -7158,8 +7172,22 @@ cb_open_as_root_watch (GPid pid, gint status, gpointer user_data)
 }
 
 static void
-open_as_root (const gchar *path)
+open_as_admin (NemoView *view, const gchar *path) {
+    g_autoptr(GUri) uri_obj = g_uri_build (0, "admin", NULL, NULL, -1, path, NULL, NULL);
+    g_autofree gchar *uri = g_uri_to_string (uri_obj);
+    g_autoptr(GFile) location = g_file_new_for_uri (uri);
+
+    nemo_window_slot_open_location (view->details->slot, location, 0);
+}
+
+static void
+open_as_root (NemoView *view, const gchar *path)
 {
+    if (eel_check_is_wayland ()) {
+        open_as_admin (view, path);
+        return;
+    }
+
     gchar *argv[4];
     argv[0] = (gchar *)"pkexec";
     argv[1] = (gchar *)"nemo";
@@ -7209,7 +7237,7 @@ action_open_as_root_callback (GtkAction *action,
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
         gchar *path = nemo_file_get_path (NEMO_FILE (selection->data));
-		open_as_root (path);
+		open_as_root (view, path);
 		nemo_file_list_free (selection);
         g_free (path);
 	} else {
@@ -7221,7 +7249,7 @@ action_open_as_root_callback (GtkAction *action,
         } else {
             path = g_file_get_path (gfile);
         }
-        open_as_root (path);
+        open_as_root (view, path);
         g_free (uri);
         g_free (path);
         g_object_unref (gfile);
@@ -9716,7 +9744,7 @@ real_update_menus (NemoView *view)
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_AS_ROOT);
-    gtk_action_set_visible (action, (!nemo_user_is_root ()) && no_selection_or_one_dir);
+    gtk_action_set_visible (action, (!(nemo_user_is_root () || showing_admin_enabled_directory (view))) && no_selection_or_one_dir);
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_IN_TERMINAL);
