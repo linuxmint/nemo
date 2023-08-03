@@ -41,7 +41,7 @@ void                  eel_gtk_window_set_initial_geometry_from_string (GtkWindow
 								       gboolean		     ignore_position);
 char *                eel_gtk_window_get_geometry_string              (GtkWindow            *window);
 
-
+gboolean              eel_check_is_wayland (void);
 /* GtkMenu and GtkMenuItem */
 void                  eel_pop_up_context_menu                         (GtkMenu              *menu,
                                                                        GdkEvent             *event,

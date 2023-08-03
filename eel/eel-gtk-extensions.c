@@ -248,6 +248,21 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 	eel_gtk_window_set_initial_geometry (window, geometry_flags, left, top, width, height);
 }
 
+gboolean
+eel_check_is_wayland (void)
+{
+    static gboolean using_wayland = FALSE;
+    static gsize once_init = 0;
+
+    if (g_once_init_enter (&once_init)) {
+        using_wayland = GDK_IS_WAYLAND_DISPLAY (gdk_display_get_default ());
+
+        g_once_init_leave (&once_init, 1);
+    }
+
+    return using_wayland;
+}
+
 static void
 create_popup_rect (GdkWindow *window, GdkRectangle *rect)
 {
@@ -284,21 +299,13 @@ eel_pop_up_context_menu (GtkMenu        *menu,
                          GtkWidget      *widget)
 {
     g_return_if_fail (GTK_IS_MENU (menu));
-    static gboolean using_wayland = FALSE;
-    static gsize once_init = 0;
-
-    if (g_once_init_enter (&once_init)) {
-        using_wayland = GDK_IS_WAYLAND_DISPLAY (gdk_display_get_default ());
-
-        g_once_init_leave (&once_init, 1);
-    }
 
     // Using gtk_menu_popup_at_rect exclusively in wayland seems to avoid the problem
     // of being unable to dismiss the menu when clicking to the left of it. See:
     // https://github.com/linuxmint/nemo/issues/3218
 
 #ifdef GDK_WINDOWING_X11
-    if (!using_wayland && event && event->type == GDK_BUTTON_PRESS) {
+    if (!eel_check_is_wayland () && event && event->type == GDK_BUTTON_PRESS) {
         gtk_menu_popup_at_pointer (menu, event);
     } else
 #endif
