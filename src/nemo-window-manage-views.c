@@ -1309,7 +1309,6 @@ location_has_really_changed (NemoWindowSlot *slot)
 		g_object_unref (location_copy);
 	}
 
-    nemo_window_slot_update_drop_zone_target (slot);
 	setup_loading_floating_bar (slot);
 }
 
