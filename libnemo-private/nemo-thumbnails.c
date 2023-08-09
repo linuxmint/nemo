@@ -318,6 +318,7 @@ thumbnail_thread (gpointer data,
     NemoThumbnailInfo *info = (NemoThumbnailInfo *) data;
     GdkPixbuf *pixbuf;
     time_t current_time;
+    gchar *image_uri = NULL;
 
     if (g_cancellable_is_cancelled (cancellable) || info->cancelled) {
         DEBUG ("Skipping cancelled file: %s", info->image_uri);
@@ -343,9 +344,32 @@ thumbnail_thread (gpointer data,
     /* Create the thumbnail. */
     DEBUG ("(Thumbnail Thread) Creating thumbnail: %s", info->image_uri);
 
+    if (eel_uri_is_network (info->image_uri)) {
+        GFile *file = g_file_new_for_uri (info->image_uri);
+        GError *err = NULL;
+
+        image_uri = g_filename_to_uri (g_file_peek_path (file), NULL, &err);
+
+        if (err) {
+            DEBUG ("(Thumbnail Thread) Failed to convert local_filepath to uri: %s", err->message);
+            g_error_free (err);
+
+            image_uri = g_strdup (info->image_uri); // revert back to our original image_uri
+        }
+
+        g_object_unref (file);
+    }
+
+    /**
+     * the following function internally uses g_filename_to_uri whenever it finds a %i in the thumbnailer config file
+     * because of that we have to convert our path from the network URI to a local file:// URI or else any
+     * thumbnailers that use %i wont generate thumbnails correctly
+     */
     pixbuf = gnome_desktop_thumbnail_factory_generate_thumbnail (thumbnail_factory,
-                                                                 info->image_uri,
+                                                                 image_uri,
                                                                  info->mime_type);
+
+    g_free (image_uri);
 
     if (pixbuf) {
         gnome_desktop_thumbnail_factory_save_thumbnail (thumbnail_factory,
