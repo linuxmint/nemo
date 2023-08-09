@@ -318,8 +318,7 @@ thumbnail_thread (gpointer data,
     NemoThumbnailInfo *info = (NemoThumbnailInfo *) data;
     GdkPixbuf *pixbuf;
     time_t current_time;
-    char *image_uri = info->image_uri;
-    gboolean image_uri_ptr_changed = FALSE;
+    gchar *image_uri = NULL;
 
     if (g_cancellable_is_cancelled (cancellable) || info->cancelled) {
         DEBUG ("Skipping cancelled file: %s", info->image_uri);
@@ -345,24 +344,20 @@ thumbnail_thread (gpointer data,
     /* Create the thumbnail. */
     DEBUG ("(Thumbnail Thread) Creating thumbnail: %s", info->image_uri);
 
-    if(eel_uri_is_network(info->image_uri)) {
-        GFile *file = g_file_new_for_uri(info->image_uri);
+    if (eel_uri_is_network (info->image_uri)) {
+        GFile *file = g_file_new_for_uri (info->image_uri);
         GError *err = NULL;
-        char *local_filepath = g_file_get_path(file);
 
-        image_uri = g_filename_to_uri(local_filepath, NULL, &err);
-        image_uri_ptr_changed = !err;
+        image_uri = g_filename_to_uri (g_file_peek_path (file), NULL, &err);
 
-        if(err) {
-            DEBUG("(Thumbnail Thread) Failed to convert local_filepath to uri: %s", err->message);
-            g_free(err);
-            
-            image_uri = info->image_uri; // revert back to our original image_uri
+        if (err) {
+            DEBUG ("(Thumbnail Thread) Failed to convert local_filepath to uri: %s", err->message);
+            g_error_free (err);
+
+            image_uri = g_strdup (info->image_uri); // revert back to our original image_uri
         }
 
-        g_free(local_filepath);
-
-        g_object_unref(file);
+        g_object_unref (file);
     }
 
     /**
@@ -374,8 +369,7 @@ thumbnail_thread (gpointer data,
                                                                  image_uri,
                                                                  info->mime_type);
 
-    if(image_uri_ptr_changed)
-        g_free(image_uri);
+    g_free (image_uri);
 
     if (pixbuf) {
         gnome_desktop_thumbnail_factory_save_thumbnail (thumbnail_factory,
