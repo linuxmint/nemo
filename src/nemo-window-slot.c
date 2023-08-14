@@ -386,9 +386,6 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 
     gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay), slot->drop_bar);
 
-    g_signal_connect (slot->drop_bar, "state-flags-changed", G_CALLBACK (on_drop_bar_state_changed), slot);
-    nemo_drag_slot_proxy_init (slot->drop_bar, NULL, slot);
-
     slot->cache_bar = NULL;
 
 	slot->title = g_strdup (_("Loading..."));
@@ -751,8 +748,6 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
-
-        g_signal_connect (new_view, "show-drop-bar", G_CALLBACK (show_drop_bar_cb), slot);
 	}
 }
 
