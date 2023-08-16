@@ -5157,6 +5157,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	MoveFileCopyFallback *fallback;
 	gboolean handled_invalid_filename;
     gboolean target_is_desktop, source_is_desktop;
+	int unique_name_nr = 1;
 
     target_is_desktop = (move_job->desktop_location != NULL &&
                          g_file_equal (move_job->desktop_location, dest_dir));
@@ -5300,7 +5301,7 @@ move_file_prepare (CopyMoveJob *move_job,
 
 		if (job->auto_rename_all || auto_rename) {
 			g_object_unref (dest);
-			dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, 1);
+			dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, unique_name_nr++);
 			goto retry;
 		}
 
