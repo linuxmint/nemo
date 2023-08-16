@@ -956,9 +956,15 @@ nemo_window_save_geometry (NemoWindow *window)
 	g_assert (NEMO_IS_WINDOW (window));
 
 	if (gtk_widget_get_window (GTK_WIDGET (window)) && !nemo_window_is_desktop (window)) {
-		geometry_string = eel_gtk_window_get_geometry_string (GTK_WINDOW (window));
-		is_maximized = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)))
-				& GDK_WINDOW_STATE_MAXIMIZED;
+        GdkWindowState state = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)));
+
+        if (state & GDK_WINDOW_STATE_TILED) {
+            return;
+        }
+
+        geometry_string = eel_gtk_window_get_geometry_string (GTK_WINDOW (window));
+
+		is_maximized = state & GDK_WINDOW_STATE_MAXIMIZED;
 
 		if (!is_maximized) {
 			g_settings_set_string
