@@ -386,8 +386,6 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 
     gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay), slot->drop_bar);
 
-    g_signal_connect (slot->drop_bar, "state-flags-changed", G_CALLBACK (on_drop_bar_state_changed), slot);
-
     slot->cache_bar = NULL;
 
 	slot->title = g_strdup (_("Loading..."));
@@ -430,6 +428,7 @@ nemo_window_slot_dispose (GObject *object)
 	nemo_window_slot_clear_forward_list (slot);
 	nemo_window_slot_clear_back_list (slot);
     nemo_window_slot_remove_extra_location_widgets (slot);
+    g_clear_handle_id (&slot->drop_bar_hide_timeout_id, g_source_remove);
 
 	if (slot->content_view) {
 		widget = GTK_WIDGET (slot->content_view);
@@ -748,9 +747,6 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
-
-        g_signal_connect (new_view, "show-drop-bar", G_CALLBACK (show_drop_bar_cb), slot);
-        nemo_drag_slot_proxy_init (slot->drop_bar, nemo_view_get_directory_as_file (slot->content_view), NULL);
 	}
 }
 
