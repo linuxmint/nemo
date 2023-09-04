@@ -305,6 +305,8 @@ struct NemoViewDetails
     GVolumeMonitor *volume_monitor;
 
     GTimer *load_timer;
+
+    char *detail_string;
 };
 
 typedef struct {
@@ -3022,6 +3024,8 @@ nemo_view_finalize (GObject *object)
 
     g_clear_pointer (&view->details->load_timer, g_timer_destroy);
 
+    g_clear_pointer (&view->details->detail_string, g_free);
+
 	g_hash_table_destroy (view->details->non_ready_files);
 
 	G_OBJECT_CLASS (nemo_view_parent_class)->finalize (object);
@@ -3133,6 +3137,10 @@ nemo_view_display_selection_info (NemoView *view)
 			}
 
 		}
+		if (view->details->detail_string != NULL) {
+			g_free (view->details->detail_string);
+		}
+		view->details->detail_string = g_strdup (folder_item_count_str);
 	}
 
 	if (non_folder_count != 0) {
@@ -3171,11 +3179,17 @@ nemo_view_display_selection_info (NemoView *view)
 							  items_string,
 							  size_string);
 
+
+			if (view->details->detail_string != NULL) {
+				g_free (view->details->detail_string);
+			}
+			view->details->detail_string = g_strdup_printf (_(" (%s)"), size_string);
 			g_free (size_string);
-			g_free (items_string);
 		} else {
-			non_folder_str = items_string;
+			non_folder_str = g_strdup (items_string);
 		}
+
+		g_free (items_string);
 	}
 
 	free_space_str = nemo_file_get_volume_free_space (view->details->directory_as_file);
@@ -3258,6 +3272,10 @@ nemo_view_display_selection_info (NemoView *view)
 							 non_folder_str,
 							 obj_selected_free_space_str);
 		}
+		if (view->details->detail_string != NULL) {
+			g_free (view->details->detail_string);
+		}
+		view->details->detail_string = g_strdup ("");
 	}
 
 	g_free (free_space_str);
@@ -6818,19 +6836,21 @@ copy_or_cut_files (NemoView *view,
 		g_free (name);
 	} else {
 		if (cut) {
+			/* translators: this is preceded with a string of form 'N selected items' (N more than 1) */
 			status_string = g_strdup_printf (ngettext("The %'d selected item will be moved "
 								  "if you select the Paste command",
-								  "The %'d selected items will be moved "
+								  "The %'d selected items%s will be moved "
 								  "if you select the Paste command",
 								  count),
-							 count);
+							 count, view->details->detail_string);
 		} else {
+			/* translators: this is preceded with a string of form 'N selected items' (N more than 1) */
 			status_string = g_strdup_printf (ngettext("The %'d selected item will be copied "
 								  "if you select the Paste command",
-								  "The %'d selected items will be copied "
+								  "The %'d selected items%s will be copied "
 								  "if you select the Paste command",
 								  count),
-							 count);
+							 count, view->details->detail_string);
 		}
 	}
 
