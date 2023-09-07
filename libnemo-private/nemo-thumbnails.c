@@ -318,7 +318,8 @@ thumbnail_thread (gpointer data,
     NemoThumbnailInfo *info = (NemoThumbnailInfo *) data;
     GdkPixbuf *pixbuf;
     time_t current_time;
-    gchar *image_uri = NULL;
+    gchar *image_uri = info->image_uri;
+    gboolean free_uri = FALSE;
 
     if (g_cancellable_is_cancelled (cancellable) || info->cancelled) {
         DEBUG ("Skipping cancelled file: %s", info->image_uri);
@@ -347,6 +348,7 @@ thumbnail_thread (gpointer data,
     if (eel_uri_is_network (info->image_uri)) {
         GFile *file = g_file_new_for_uri (info->image_uri);
         GError *err = NULL;
+        free_uri = TRUE;
 
         image_uri = g_filename_to_uri (g_file_peek_path (file), NULL, &err);
 
@@ -368,8 +370,9 @@ thumbnail_thread (gpointer data,
     pixbuf = gnome_desktop_thumbnail_factory_generate_thumbnail (thumbnail_factory,
                                                                  image_uri,
                                                                  info->mime_type);
-
-    g_free (image_uri);
+    if (free_uri) {
+        g_free (image_uri);
+    }
 
     if (pixbuf) {
         gnome_desktop_thumbnail_factory_save_thumbnail (thumbnail_factory,
