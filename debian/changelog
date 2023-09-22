@@ -1,3 +1,25 @@
+nemo (5.8.5) victoria; urgency=medium
+
+  [ Guldoman ]
+  * Use `activation_uri` as a second choice in `nemo_file_get_local_uri` (#3269)
+
+  [ Michael Webster ]
+  * search: Relax folder restrictions to allow gvfs locations.
+
+  [ marcus125 ]
+  * nemo-file.c: Update hard-coded value for size of thumbnails. (#3278)
+
+  [ Michael Webster ]
+  * nemo-window-slot.c: Disable drop bar, until circular reference can be resolved.
+
+  [ Edgar ]
+  * Fix issue when generating video thumbnails from network shares (#3265)
+
+  [ Lars Mueller ]
+  * Fix thumbnail creation for local files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 22 Sep 2023 14:15:47 +0100
+
 nemo (5.8.4) victoria; urgency=medium
 
   [ Michael Webster ]
