@@ -2,7 +2,7 @@
 
 # https://github.com/linuxmint/nemo
 project('nemo', 'c', version: '5.8.4',
-  meson_version: '>=0.41.0'
+  meson_version: '>=0.56.0'
 )
 
 # 1. If the library code has changed at all since last release, then increment revision.
@@ -176,7 +176,7 @@ nemo_definitions =  [
   '-DLIBEXECDIR="@0@"'.format(libExecPath),
 ]
 
-po_subdir = join_paths(meson.source_root(), 'po')
+po_subdir = join_paths(meson.project_source_root(), 'po')
 
 subdir('install-scripts')
 subdir('cut-n-paste-code/libegg')
@@ -196,7 +196,7 @@ message('\n'.join(['',
 '        @0@-@1@'.format(meson.project_name(), meson.project_version()),
 '',
 '    prefix:                 @0@'.format(prefix),
-'    source code location:   @0@'.format(meson.source_root()),
+'    source code location:   @0@'.format(meson.project_source_root()),
 '    compiler:               @0@'.format(cc.get_id()),
 '    libexif support:        @0@'.format(libexif_enabled),
 '    exempi  support:        @0@'.format(exempi_enabled),
