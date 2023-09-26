@@ -81,7 +81,7 @@ progress_ui_handler_ensure_status_icon (NemoProgressUIHandler *self)
 	}
 
     status_icon = xapp_status_icon_new ();
-    xapp_status_icon_set_icon_name (status_icon, "progress-0-symbolic");
+    xapp_status_icon_set_icon_name (status_icon, "nemo-progress-0-symbolic");
     g_signal_connect (status_icon, "activate",
                       (GCallback) status_icon_activate_cb,
                       self);
@@ -103,7 +103,7 @@ get_icon_name_from_percent (guint pct)
     else
         rounded = pct + (10 - ones);
 
-    icon_name = g_strdup_printf ("progress-%d", rounded);
+    icon_name = g_strdup_printf ("nemo-progress-%d-symbolic", rounded);
 
     return icon_name;
 }
