@@ -10,7 +10,7 @@ configure_file(
 
 gnome.gtkdoc('libnemo-extension',
   main_xml: 'libnemo-extension-docs.xml',
-  src_dir: join_paths(meson.source_root(), 'libnemo-extension'),
+  src_dir: join_paths(meson.project_source_root(), 'libnemo-extension'),
   dependencies: nemo_extension,
   install: true,
   gobject_typesfile: 'libnemo-extension.types',
