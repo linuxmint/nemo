@@ -599,7 +599,7 @@
       <description>An integer specifying how parts of overlong file names should be replaced by ellipses on the desktop. If the number is larger than 0, the file name will not exceed the given number of lines. If the number is 0 or smaller, no limit is imposed on the number of displayed lines.</description>
     </key>
     <key name="ignored-desktop-handlers" type="as">
-      <default>['conky']</default>
+      <default>['conky', 'csd-background']</default>
       <summary>List of desktop-handling to ignore when determining whether or not to manager the desktop.</summary>
       <description>Nemo checks for _NET_WM_WINDOW_TYPE_DESKTOP-type windows, and skips managing the desktop if any others are detected.  Add potential names to this list to ignore when performing this check.  This means that you want nemo to create its own desktop window(s) even though something else already seems to.  The check is based on a program's WM_CLASS.</description>
     </key>
