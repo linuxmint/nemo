@@ -47,4 +47,5 @@ EelGdkGeometryFlags eel_gdk_parse_geometry                 (const char          
 							    guint               *width_return,
 							    guint               *height_return);
 
+GdkDevice *eel_gdk_get_pointer_device                      (void);
 #endif /* EEL_GDK_EXTENSIONS_H */

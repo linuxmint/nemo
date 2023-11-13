@@ -31,6 +31,7 @@
 
 #include "eel-glib-extensions.h"
 #include "eel-gnome-extensions.h"
+#include "eel-gdk-extensions.h"
 #include "eel-string.h"
 
 #include <X11/Xlib.h>
@@ -375,4 +376,64 @@ eel_gtk_get_window_xid (GtkWindow *window)
     g_return_val_if_fail (GDK_IS_X11_WINDOW (gdkw), 0);
 
     return gdk_x11_window_get_xid (gdkw);
+}
+
+gboolean
+eel_gtk_get_treeview_pointer_location (GtkTreeView *treeview,
+                               gint *x, gint *y)
+{
+    GdkWindow *bin_window;
+
+    gint out_x, out_y;
+
+    *x = *y = 0;
+
+    bin_window = gtk_tree_view_get_bin_window (treeview);
+
+    if (bin_window != NULL) {
+        GdkDevice *device = eel_gdk_get_pointer_device ();
+        if (device != NULL) {
+            gdk_window_get_device_position (bin_window, device, &out_x, &out_y, NULL);
+
+            *x = out_x;
+            *y = out_y;
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+gboolean
+eel_gtk_get_treeview_row_text_is_under_pointer (GtkTreeView *tree_view)
+{
+    gint x, y;
+
+    if (eel_gtk_get_treeview_pointer_location (tree_view, &x, &y)) {
+        GdkRectangle area;
+        GtkTreePath *path;
+        GtkTreeViewColumn *column;
+
+        // A positive is_blank_at_pos is a reliable result.
+        if (gtk_tree_view_is_blank_at_pos (tree_view, x, y, &path, &column, NULL, NULL)) {
+            return FALSE;
+        }
+
+        // If not, there's an additional check to do, as the small gap (1px?) between rows
+        // can cause is_blank_at_pos to incorrectly return FALSE when that's not actually the case.
+        // Make sure the pointer position is actually inside the cell's bounds, and ignore edge
+        // events.
+        gtk_tree_view_get_cell_area (tree_view, path, column, &area);
+        if (x > area.x && x < area.x + area.width &&
+            y > area.y && y < area.y + area.height) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    // If we can't figure out the location, we need to default to allowing the operation. The highlighting will
+    // be accurate, so the user knows.
+    return TRUE;
 }

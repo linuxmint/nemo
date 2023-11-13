@@ -1645,7 +1645,7 @@ create_tree (FMTreeView *view)
 	gtk_tree_view_set_headers_visible (view->details->tree_widget, FALSE);
 
 	view->details->drag_dest = 
-		nemo_tree_view_drag_dest_new (view->details->tree_widget);
+		nemo_tree_view_drag_dest_new (view->details->tree_widget, FALSE);
 	g_signal_connect_object (view->details->drag_dest, 
 				 "get_root_uri",
 				 G_CALLBACK (get_root_uri_callback),

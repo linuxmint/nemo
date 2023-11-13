@@ -38,6 +38,7 @@
 #include <string.h>
 #include <eel/eel-vfs-extensions.h>
 #include <eel/eel-gdk-extensions.h>
+#include <eel/eel-gtk-extensions.h>
 #include <eel/eel-glib-extensions.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
@@ -1776,6 +1777,25 @@ get_root_uri_callback (NemoTreeViewDragDest *dest,
 	return nemo_view_get_uri (NEMO_VIEW (view));
 }
 
+// this is confusing... so rename them.
+#define ALLOW_EXPAND FALSE
+#define PREVENT_EXPAND TRUE
+
+static gboolean
+test_expand_row_callback (GtkTreeView *treeview,
+                          GtkTreeIter *iter,
+                          GtkTreePath *path,
+                          gpointer     user_data)
+{
+    NemoListView *view = NEMO_LIST_VIEW (user_data);
+
+    if (eel_gtk_get_treeview_row_text_is_under_pointer (view->details->tree_view)) {
+        return ALLOW_EXPAND;
+    }
+
+    return PREVENT_EXPAND;
+}
+
 static NemoFile *
 get_file_for_path_callback (NemoTreeViewDragDest *dest,
 			    GtkTreePath *path,
@@ -1784,6 +1804,10 @@ get_file_for_path_callback (NemoTreeViewDragDest *dest,
     NemoListView *view;
 
     view = NEMO_LIST_VIEW (user_data);
+
+    if (!eel_gtk_get_treeview_row_text_is_under_pointer (view->details->tree_view)) {
+        return NULL;
+    }
 
     return nemo_list_model_file_for_path (view->details->model, path);
 }
@@ -2490,7 +2514,7 @@ create_and_set_up_tree_view (NemoListView *view)
 	gtk_binding_entry_remove (binding_set, GDK_KEY_BackSpace, 0);
 
 	view->details->drag_dest =
-		nemo_tree_view_drag_dest_new (view->details->tree_view);
+		nemo_tree_view_drag_dest_new (view->details->tree_view, TRUE);
 
 	g_signal_connect_object (view->details->drag_dest,
 				 "get_root_uri",
@@ -2546,6 +2570,8 @@ create_and_set_up_tree_view (NemoListView *view)
                                  G_CALLBACK (row_collapsed_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "row-activated",
                                  G_CALLBACK (row_activated_callback), view, 0);
+    g_signal_connect_object (view->details->tree_view, "test-expand-row",
+                                 G_CALLBACK (test_expand_row_callback), view, 0);
 
     	g_signal_connect_object (view->details->tree_view, "focus_in_event",
 				 G_CALLBACK(focus_in_event_callback), view, 0);
