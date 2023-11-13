@@ -1789,6 +1789,10 @@ test_expand_row_callback (GtkTreeView *treeview,
 {
     NemoListView *view = NEMO_LIST_VIEW (user_data);
 
+    if (!view->details->drag_started) {
+        return ALLOW_EXPAND;
+    }
+
     if (eel_gtk_get_treeview_row_text_is_under_pointer (view->details->tree_view)) {
         return ALLOW_EXPAND;
     }
