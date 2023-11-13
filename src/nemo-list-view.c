@@ -1782,17 +1782,10 @@ get_file_for_path_callback (NemoTreeViewDragDest *dest,
 			    gpointer user_data)
 {
     NemoListView *view;
-    NemoFile *file;
 
     view = NEMO_LIST_VIEW (user_data);
 
-    file = nemo_list_model_file_for_path (view->details->model, path);
-
-    if (!view->details->drag_started) {
-        g_signal_emit_by_name (NEMO_VIEW (view), "show-drop-bar");
-    }
-
-    return file;
+    return nemo_list_model_file_for_path (view->details->model, path);
 }
 
 /* Handles an URL received from Mozilla */
