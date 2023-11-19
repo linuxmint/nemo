@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 16:19+0100\n"
+"POT-Creation-Date: 2023-11-19 14:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,14 +89,14 @@ msgid "Customize"
 msgstr ""
 
 #. hardcode "Desktop"
-#: src/nemo-blank-desktop-window.c:230 src/nemo-desktop-window.c:125
-#: src/nemo-desktop-window.c:294 src/nemo-pathbar.c:1439
-#: src/nemo-places-sidebar.c:826 libnemo-private/nemo-action.c:1424
+#: src/nemo-blank-desktop-window.c:231 src/nemo-desktop-window.c:125
+#: src/nemo-desktop-window.c:279 src/nemo-pathbar.c:1439
+#: src/nemo-places-sidebar.c:828 libnemo-private/nemo-action.c:1424
 #: gresources/nemo-file-management-properties.glade:4125
 msgid "Desktop"
 msgstr ""
 
-#: src/nemo-bookmarks-window.c:171
+#: src/nemo-bookmarks-window.c:172
 msgid "No bookmarks defined"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgid ""
 "Add connect to server mount"
 msgstr ""
 
-#: src/nemo-desktop-application.c:258 src/nemo-main-application.c:669
+#: src/nemo-desktop-application.c:258 src/nemo-main-application.c:670
 msgid "Show the version of the program."
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: src/nemo-desktop-icon-grid-view.c:917 src/nemo-desktop-icon-view.c:682
-#: src/nemo-view.c:8287 src/nemo-view.c:9920
+#: src/nemo-view.c:8307 src/nemo-view.c:9940
 msgid "E_mpty Trash"
 msgstr ""
 
@@ -308,7 +308,7 @@ msgstr ""
 msgid "_Horizontal"
 msgstr ""
 
-#: src/nemo-desktop-icon-grid-view.c:1074 src/nemo-list-view.c:2625
+#: src/nemo-desktop-icon-grid-view.c:1074 src/nemo-list-view.c:2656
 #: libnemo-private/nemo-column-utilities.c:43
 #: gresources/nemo-desktop-overlay.glade:116
 msgid "Name"
@@ -350,7 +350,7 @@ msgstr ""
 
 #. tooltip
 #: src/nemo-desktop-icon-grid-view.c:1099 src/nemo-desktop-icon-view.c:724
-#: src/nemo-trash-bar.c:227 src/nemo-view.c:8288
+#: src/nemo-trash-bar.c:227 src/nemo-view.c:8308
 msgid "Delete all items in the Trash"
 msgstr ""
 
@@ -571,7 +571,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: src/nemo-file-management-properties.c:495 libnemo-private/nemo-file.c:5181
+#: src/nemo-file-management-properties.c:495 libnemo-private/nemo-file.c:5182
 #, no-c-format
 msgid "Yesterday"
 msgstr ""
@@ -703,8 +703,8 @@ msgstr ""
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: src/nemo-icon-view.c:2850 src/nemo-icon-view-container.c:2157
-#: src/nemo-icon-view-grid-container.c:1593 src/nemo-window-menus.c:1583
-#: src/nemo-window-menus.c:1742
+#: src/nemo-icon-view-grid-container.c:1593 src/nemo-window-menus.c:1579
+#: src/nemo-window-menus.c:1738
 #: gresources/nemo-file-management-properties.glade:127
 #: gresources/nemo-file-management-properties.glade:4045
 msgid "Icon View"
@@ -729,8 +729,8 @@ msgstr ""
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: src/nemo-icon-view.c:2864 src/nemo-window-menus.c:1589
-#: src/nemo-window-menus.c:1765
+#: src/nemo-icon-view.c:2864 src/nemo-window-menus.c:1585
+#: src/nemo-window-menus.c:1761
 #: gresources/nemo-file-management-properties.glade:133
 msgid "Compact View"
 msgstr ""
@@ -857,7 +857,7 @@ msgstr ""
 msgid "Software"
 msgstr ""
 
-#: src/nemo-image-properties-page.c:413 src/nemo-window-menus.c:1707
+#: src/nemo-image-properties-page.c:413 src/nemo-window-menus.c:1703
 #: libnemo-private/nemo-column-utilities.c:159
 msgid "Location"
 msgstr ""
@@ -880,11 +880,11 @@ msgstr ""
 
 #: src/nemo-image-properties-page.c:706 src/nemo-list-model.c:461
 #: src/nemo-tree-sidebar-model.c:1270 src/nemo-window-manage-views.c:1232
-#: src/nemo-window-slot.c:393
+#: src/nemo-window-slot.c:347
 msgid "Loading..."
 msgstr ""
 
-#: src/nemo-image-properties-page.c:767 libnemo-private/nemo-file.c:6991
+#: src/nemo-image-properties-page.c:767 libnemo-private/nemo-file.c:6992
 msgid "Image"
 msgstr ""
 
@@ -915,36 +915,36 @@ msgstr ""
 msgid "(Empty)"
 msgstr ""
 
-#: src/nemo-list-view.c:2048
+#: src/nemo-list-view.c:2071
 msgid "Use Default"
 msgstr ""
 
-#: src/nemo-list-view.c:2059
+#: src/nemo-list-view.c:2082
 msgid "Temporarily disable auto-sort"
 msgstr ""
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: src/nemo-list-view.c:2727 src/nemo-list-view.c:4420
-#: src/nemo-window-menus.c:1586 src/nemo-window-menus.c:1753
+#: src/nemo-list-view.c:2758 src/nemo-list-view.c:4459
+#: src/nemo-window-menus.c:1582 src/nemo-window-menus.c:1749
 #: gresources/nemo-file-management-properties.glade:130
 msgid "List View"
 msgstr ""
 
 #. translators: this is used in the view menu
-#: src/nemo-list-view.c:4422
+#: src/nemo-list-view.c:4461
 msgid "_List"
 msgstr ""
 
-#: src/nemo-list-view.c:4423
+#: src/nemo-list-view.c:4462
 msgid "The list view encountered an error."
 msgstr ""
 
-#: src/nemo-list-view.c:4424
+#: src/nemo-list-view.c:4463
 msgid "The list view encountered an error while starting up."
 msgstr ""
 
-#: src/nemo-list-view.c:4425
+#: src/nemo-list-view.c:4464
 msgid "Display this location with the list view."
 msgstr ""
 
@@ -962,74 +962,74 @@ msgid_plural "This will open %d separate windows."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-main-application.c:599
+#: src/nemo-main-application.c:600
 msgid "--check cannot be used with other options."
 msgstr ""
 
-#: src/nemo-main-application.c:605
+#: src/nemo-main-application.c:606
 msgid "--quit cannot be used with URIs."
 msgstr ""
 
-#: src/nemo-main-application.c:613
+#: src/nemo-main-application.c:614
 msgid "--geometry cannot be used with more than one URI."
 msgstr ""
 
-#: src/nemo-main-application.c:663
+#: src/nemo-main-application.c:664
 msgid "Perform a quick set of self-check tests."
 msgstr ""
 
-#: src/nemo-main-application.c:671
+#: src/nemo-main-application.c:672
 msgid ""
 "Create the initial window with the given geometry. Examples: nemo --"
 "geometry=+100+100, nemo --geometry=600x400, nemo --geometry=600x400+100+100."
 msgstr ""
 
-#: src/nemo-main-application.c:672
+#: src/nemo-main-application.c:673
 msgid "GEOMETRY"
 msgstr ""
 
-#: src/nemo-main-application.c:674
+#: src/nemo-main-application.c:675
 msgid "Only create windows for explicitly specified URIs."
 msgstr ""
 
-#: src/nemo-main-application.c:676
+#: src/nemo-main-application.c:677
 msgid "Ignored argument - left for compatibility only."
 msgstr ""
 
-#: src/nemo-main-application.c:678
+#: src/nemo-main-application.c:679
 msgid "Open URIs in tabs."
 msgstr ""
 
-#: src/nemo-main-application.c:680
+#: src/nemo-main-application.c:681
 msgid "Open URIs in an existing window."
 msgstr ""
 
-#: src/nemo-main-application.c:682
+#: src/nemo-main-application.c:683
 msgid ""
 "Repair the user thumbnail cache - this can be useful if you're having "
 "trouble with file thumbnails.  Must be run as root"
 msgstr ""
 
-#: src/nemo-main-application.c:686
+#: src/nemo-main-application.c:687
 msgid "Quit Nemo."
 msgstr ""
 
-#: src/nemo-main-application.c:687
+#: src/nemo-main-application.c:688
 msgid "[URI...]"
 msgstr ""
 
-#: src/nemo-main-application.c:698
+#: src/nemo-main-application.c:699
 msgid ""
 "\n"
 "\n"
 "Browse the file system with the file manager"
 msgstr ""
 
-#: src/nemo-main-application.c:862
+#: src/nemo-main-application.c:863
 msgid "Nemo's main menu is now hidden"
 msgstr ""
 
-#: src/nemo-main-application.c:865
+#: src/nemo-main-application.c:866
 msgid ""
 "You have chosen to hide the main menu.  You can get it back temporarily by:\n"
 "\n"
@@ -1041,7 +1041,7 @@ msgid ""
 "menu."
 msgstr ""
 
-#: src/nemo-main-application.c:876
+#: src/nemo-main-application.c:877
 msgid "Don't show this message again."
 msgstr ""
 
@@ -1067,8 +1067,8 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: src/nemo-mime-actions.c:664 src/nemo-tree-sidebar.c:1471
-#: src/nemo-view.c:8339 src/nemo-view.c:8448 src/nemo-view.c:9505
-#: src/nemo-view.c:9842 gresources/nemo-file-management-properties.glade:3802
+#: src/nemo-view.c:8359 src/nemo-view.c:8468 src/nemo-view.c:9525
+#: src/nemo-view.c:9862 gresources/nemo-file-management-properties.glade:3802
 msgid "Mo_ve to Trash"
 msgstr ""
 
@@ -1091,7 +1091,7 @@ msgid "_Display"
 msgstr ""
 
 #: src/nemo-mime-actions.c:1063 src/nemo-mime-actions.c:1754
-#: src/nemo-view.c:1088
+#: src/nemo-view.c:1104
 msgid "Are you sure you want to open all files?"
 msgstr ""
 
@@ -1103,7 +1103,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/nemo-mime-actions.c:1167 src/nemo-open-with-main.c:151
-#: src/nemo-view.c:1374
+#: src/nemo-view.c:1392
 msgid "Open with"
 msgstr ""
 
@@ -1162,11 +1162,11 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/nemo-mime-actions.c:1833 src/nemo-mime-actions.c:2107
-#: src/nemo-view.c:7457
+#: src/nemo-view.c:7477
 msgid "Unable to mount location"
 msgstr ""
 
-#: src/nemo-mime-actions.c:2186 src/nemo-view.c:7604
+#: src/nemo-mime-actions.c:2186 src/nemo-view.c:7624
 msgid "Unable to start location"
 msgstr ""
 
@@ -1196,27 +1196,27 @@ msgid ""
 "default mimetype handler."
 msgstr ""
 
-#: src/nemo-places-sidebar.c:378
+#: src/nemo-places-sidebar.c:376
 msgid "Devices"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:675 src/nemo-view.c:3164
+#: src/nemo-places-sidebar.c:673 src/nemo-view.c:3192
 #, c-format
 msgid "Free space: %s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:794
+#: src/nemo-places-sidebar.c:796
 msgid "My Computer"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:805
+#: src/nemo-places-sidebar.c:807
 #, c-format
 msgid ""
 "Open your personal folder\n"
 "%s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:809 src/nemo-tree-sidebar.c:1612
+#: src/nemo-places-sidebar.c:811 src/nemo-tree-sidebar.c:1612
 #: libnemo-private/nemo-bookmark.c:130 libnemo-private/nemo-desktop-link.c:118
 #: libnemo-private/nemo-file-utilities.c:66
 #: libnemo-private/nemo-file-utilities.c:114 generate_additional_file:41
@@ -1225,165 +1225,165 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:828
+#: src/nemo-places-sidebar.c:830
 msgid "Open the contents of your desktop in a folder"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:881 src/nemo-tree-sidebar.c:1617
+#: src/nemo-places-sidebar.c:883 src/nemo-tree-sidebar.c:1617
 msgid "Favorites"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:883
+#: src/nemo-places-sidebar.c:885
 msgid "Favorite files"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:898
+#: src/nemo-places-sidebar.c:900
 msgid "Recent"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:900
+#: src/nemo-places-sidebar.c:902
 msgid "Recent files"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:915
+#: src/nemo-places-sidebar.c:917
 #, c-format
 msgid ""
 "Open the contents of the File System\n"
 "%s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:919 src/nemo-tree-sidebar.c:1621
+#: src/nemo-places-sidebar.c:921 src/nemo-tree-sidebar.c:1621
 msgid "File System"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:935 src/nemo-trash-bar.c:211
+#: src/nemo-places-sidebar.c:937 src/nemo-trash-bar.c:211
 #: libnemo-private/nemo-desktop-link.c:135 generate_additional_file:55
 #: gresources/nemo-desktop-preferences.glade:289
 msgid "Trash"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:937
+#: src/nemo-places-sidebar.c:939
 msgid "Open the trash"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:943
+#: src/nemo-places-sidebar.c:945
 msgid "Bookmarks"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:1070
+#: src/nemo-places-sidebar.c:1072
 #, c-format
 msgid ""
 "%s (%s)\n"
 "%s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:1103
+#: src/nemo-places-sidebar.c:1105
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:1131 src/nemo-places-sidebar.c:1255
+#: src/nemo-places-sidebar.c:1133 src/nemo-places-sidebar.c:1257
 #, c-format
 msgid "Mount and open %s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:1180
+#: src/nemo-places-sidebar.c:1182
 #, c-format
 msgid ""
 "%s\n"
 "%s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:1242 src/nemo-places-sidebar.c:1297
-#: src/nemo-tree-sidebar.c:1625 libnemo-private/nemo-desktop-link.c:147
+#: src/nemo-places-sidebar.c:1244 src/nemo-places-sidebar.c:1299
+#: src/nemo-tree-sidebar.c:1625 libnemo-private/nemo-desktop-link.c:146
 #: gresources/nemo-desktop-preferences.glade:445
 msgid "Network"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:1299
+#: src/nemo-places-sidebar.c:1301
 msgid "Browse the contents of the network"
 msgstr ""
 
 #. Adjust start/stop items to reflect the type of the drive
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:2395 src/nemo-places-sidebar.c:3681
-#: src/nemo-view.c:8385 src/nemo-view.c:8409 src/nemo-view.c:8472
-#: src/nemo-view.c:9126 src/nemo-view.c:9130 src/nemo-view.c:9213
-#: src/nemo-view.c:9217 src/nemo-view.c:9317 src/nemo-view.c:9321
+#: src/nemo-places-sidebar.c:2397 src/nemo-places-sidebar.c:3642
+#: src/nemo-view.c:8405 src/nemo-view.c:8429 src/nemo-view.c:8492
+#: src/nemo-view.c:9146 src/nemo-view.c:9150 src/nemo-view.c:9233
+#: src/nemo-view.c:9237 src/nemo-view.c:9337 src/nemo-view.c:9341
 msgid "_Start"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:2396 src/nemo-places-sidebar.c:3688
-#: src/nemo-view.c:8389 src/nemo-view.c:8413 src/nemo-view.c:8476
-#: src/nemo-view.c:9155 src/nemo-view.c:9242 src/nemo-view.c:9346
-#: src/nemo-window-menus.c:1397
+#: src/nemo-places-sidebar.c:2398 src/nemo-places-sidebar.c:3649
+#: src/nemo-view.c:8409 src/nemo-view.c:8433 src/nemo-view.c:8496
+#: src/nemo-view.c:9175 src/nemo-view.c:9262 src/nemo-view.c:9366
+#: src/nemo-window-menus.c:1393
 msgid "_Stop"
 msgstr ""
 
 #. start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used
-#: src/nemo-places-sidebar.c:2401
+#: src/nemo-places-sidebar.c:2403
 msgid "_Power On"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2402 src/nemo-view.c:9159 src/nemo-view.c:9246
-#: src/nemo-view.c:9350
+#: src/nemo-places-sidebar.c:2404 src/nemo-view.c:9179 src/nemo-view.c:9266
+#: src/nemo-view.c:9370
 msgid "_Safely Remove Drive"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2405
+#: src/nemo-places-sidebar.c:2407
 msgid "_Connect Drive"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2406
+#: src/nemo-places-sidebar.c:2408
 msgid "_Disconnect Drive"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2409
+#: src/nemo-places-sidebar.c:2411
 msgid "_Start Multi-disk Device"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2410
+#: src/nemo-places-sidebar.c:2412
 msgid "_Stop Multi-disk Device"
 msgstr ""
 
 #. stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used
-#: src/nemo-places-sidebar.c:2414 src/nemo-view.c:9229 src/nemo-view.c:9333
+#: src/nemo-places-sidebar.c:2416 src/nemo-view.c:9249 src/nemo-view.c:9353
 msgid "_Unlock Drive"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2415 src/nemo-view.c:9171 src/nemo-view.c:9258
-#: src/nemo-view.c:9362
+#: src/nemo-places-sidebar.c:2417 src/nemo-view.c:9191 src/nemo-view.c:9278
+#: src/nemo-view.c:9382
 msgid "_Lock Drive"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2534 src/nemo-places-sidebar.c:3153
+#: src/nemo-places-sidebar.c:2532 src/nemo-places-sidebar.c:3152
 #, c-format
 msgid "Unable to start %s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:2920 src/nemo-places-sidebar.c:2946
-#: src/nemo-places-sidebar.c:2972
+#: src/nemo-places-sidebar.c:2918 src/nemo-places-sidebar.c:2944
+#: src/nemo-places-sidebar.c:2970
 #, c-format
 msgid "Unable to eject %s"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:3109
+#: src/nemo-places-sidebar.c:3108
 #, c-format
 msgid "Unable to poll %s for media changes"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:3207
+#: src/nemo-places-sidebar.c:3206
 #, c-format
 msgid "Unable to stop %s"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3593 src/nemo-tree-sidebar.c:1351
-#: src/nemo-view.c:8246 src/nemo-view.c:9774
+#: src/nemo-places-sidebar.c:3554 src/nemo-tree-sidebar.c:1351
+#: src/nemo-view.c:8266 src/nemo-view.c:9794
 #: libnemo-private/nemo-mime-application-chooser.c:483
 #: gresources/nemo-file-management-properties.glade:3500
 msgid "_Open"
@@ -1392,67 +1392,67 @@ msgstr ""
 #. add the "open in new tab" menu item
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3601 src/nemo-tree-sidebar.c:1362
-#: src/nemo-view.c:8258 src/nemo-view.c:8430 src/nemo-view.c:9452
-#: src/nemo-view.c:9820 gresources/nemo-file-management-properties.glade:3519
+#: src/nemo-places-sidebar.c:3562 src/nemo-tree-sidebar.c:1362
+#: src/nemo-view.c:8278 src/nemo-view.c:8450 src/nemo-view.c:9472
+#: src/nemo-view.c:9840 gresources/nemo-file-management-properties.glade:3519
 msgid "Open in New _Tab"
 msgstr ""
 
 #. add the "open in new window" menu item
-#: src/nemo-places-sidebar.c:3611 src/nemo-tree-sidebar.c:1376
-#: src/nemo-view.c:9443 src/nemo-view.c:9800
+#: src/nemo-places-sidebar.c:3572 src/nemo-tree-sidebar.c:1376
+#: src/nemo-view.c:9463 src/nemo-view.c:9820
 #: gresources/nemo-file-management-properties.glade:3538
 msgid "Open in New _Window"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-places-sidebar.c:3622 src/nemo-window-menus.c:1507
+#: src/nemo-places-sidebar.c:3583 src/nemo-window-menus.c:1503
 msgid "_Add Bookmark"
 msgstr ""
 
-#: src/nemo-places-sidebar.c:3628
+#: src/nemo-places-sidebar.c:3589
 msgid "Remove"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3637 src/nemo-view.c:8331
+#: src/nemo-places-sidebar.c:3598 src/nemo-view.c:8351
 #: gresources/nemo-file-management-properties.glade:3709
 msgid "_Rename..."
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3653 src/nemo-view.c:8373 src/nemo-view.c:8397
-#: src/nemo-view.c:8460
+#: src/nemo-places-sidebar.c:3614 src/nemo-view.c:8393 src/nemo-view.c:8417
+#: src/nemo-view.c:8480
 msgid "_Mount"
 msgstr ""
 
 #. add the "Unmount" menu item
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3660 src/nemo-tree-sidebar.c:1503
-#: src/nemo-view.c:8377 src/nemo-view.c:8401 src/nemo-view.c:8464
+#: src/nemo-places-sidebar.c:3621 src/nemo-tree-sidebar.c:1503
+#: src/nemo-view.c:8397 src/nemo-view.c:8421 src/nemo-view.c:8484
 msgid "_Unmount"
 msgstr ""
 
 #. add the "Eject" menu item
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3667 src/nemo-tree-sidebar.c:1512
-#: src/nemo-view.c:8381 src/nemo-view.c:8405 src/nemo-view.c:8468
+#: src/nemo-places-sidebar.c:3628 src/nemo-tree-sidebar.c:1512
+#: src/nemo-view.c:8401 src/nemo-view.c:8425 src/nemo-view.c:8488
 msgid "_Eject"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3674 src/nemo-view.c:8393 src/nemo-view.c:8417
-#: src/nemo-view.c:8480
+#: src/nemo-places-sidebar.c:3635 src/nemo-view.c:8413 src/nemo-view.c:8437
+#: src/nemo-view.c:8500
 msgid "_Detect Media"
 msgstr ""
 
 #. Empty Trash menu item
-#: src/nemo-places-sidebar.c:3697 src/nemo-trash-bar.c:224
+#: src/nemo-places-sidebar.c:3658 src/nemo-trash-bar.c:224
 #: libnemo-private/nemo-file-operations.c:1314
 #: libnemo-private/nemo-file-operations.c:1631
 #: libnemo-private/nemo-file-operations.c:2566
@@ -1461,7 +1461,7 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-places-sidebar.c:3709 src/nemo-view.c:8228 src/nemo-view.c:8485
+#: src/nemo-places-sidebar.c:3670 src/nemo-view.c:8248 src/nemo-view.c:8505
 #: gresources/nemo-file-management-properties.glade:3821
 #: gresources/nemo-file-management-properties.glade:4007
 msgid "_Properties"
@@ -1525,7 +1525,7 @@ msgstr ""
 #. Fallback, use for both unknown attributes and attributes
 #. * for which we have no more appropriate default.
 #.
-#: src/nemo-properties-window.c:1135 libnemo-private/nemo-file.c:6949
+#: src/nemo-properties-window.c:1135 libnemo-private/nemo-file.c:6950
 msgid "unknown"
 msgstr ""
 
@@ -1607,7 +1607,7 @@ msgstr ""
 msgid "Type:"
 msgstr ""
 
-#: src/nemo-properties-window.c:3150 libnemo-private/nemo-file.c:8158
+#: src/nemo-properties-window.c:3150 libnemo-private/nemo-file.c:8159
 msgid "Link target:"
 msgstr ""
 
@@ -1811,7 +1811,7 @@ msgstr ""
 msgid "Creating Properties window."
 msgstr ""
 
-#: src/nemo-properties-window.c:5264 src/nemo-view.c:1708
+#: src/nemo-properties-window.c:5264 src/nemo-view.c:1729
 msgid "There was an error displaying help."
 msgstr ""
 
@@ -1865,7 +1865,7 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: src/nemo-toolbar.c:197
+#: src/nemo-toolbar.c:209
 msgid "Elevated Privileges"
 msgstr ""
 
@@ -1877,38 +1877,38 @@ msgstr ""
 msgid "Restore selected items to their original position"
 msgstr ""
 
-#: src/nemo-tree-sidebar.c:1012 src/nemo-view.c:6791
+#: src/nemo-tree-sidebar.c:1012 src/nemo-view.c:6794
 #, c-format
 msgid "\"%s\" will be moved if you select the Paste command"
 msgstr ""
 
-#: src/nemo-tree-sidebar.c:1016 src/nemo-view.c:6795
+#: src/nemo-tree-sidebar.c:1016 src/nemo-view.c:6798
 #, c-format
 msgid "\"%s\" will be copied if you select the Paste command"
 msgstr ""
 
-#: src/nemo-tree-sidebar.c:1055 src/nemo-view.c:7045
+#: src/nemo-tree-sidebar.c:1055 src/nemo-view.c:7050
 msgid "There is nothing on the clipboard to paste."
 msgstr ""
 
 #. add the "create new folder" menu item
 #. name, stock id
 #. label, accelerator
-#: src/nemo-tree-sidebar.c:1392 src/nemo-view.c:8236
+#: src/nemo-tree-sidebar.c:1392 src/nemo-view.c:8256
 #: gresources/nemo-file-management-properties.glade:3895
 msgid "Create New _Folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-tree-sidebar.c:1405 src/nemo-view.c:8291 src/nemo-view.c:8435
+#: src/nemo-tree-sidebar.c:1405 src/nemo-view.c:8311 src/nemo-view.c:8455
 #: gresources/nemo-file-management-properties.glade:3576
 msgid "Cu_t"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-tree-sidebar.c:1417 src/nemo-view.c:8295 src/nemo-view.c:8439
+#: src/nemo-tree-sidebar.c:1417 src/nemo-view.c:8315 src/nemo-view.c:8459
 #: gresources/nemo-file-management-properties.glade:3595
 msgid "_Copy"
 msgstr ""
@@ -1917,23 +1917,23 @@ msgstr ""
 #. accelerator for paste
 #. name, stock id
 #. label, accelerator
-#: src/nemo-tree-sidebar.c:1429 src/nemo-view.c:8305 src/nemo-view.c:8443
+#: src/nemo-tree-sidebar.c:1429 src/nemo-view.c:8325 src/nemo-view.c:8463
 msgid "_Paste Into Folder"
 msgstr ""
 
-#: src/nemo-tree-sidebar.c:1443 src/nemo-view.c:8520
+#: src/nemo-tree-sidebar.c:1443 src/nemo-view.c:8540
 #: gresources/nemo-file-management-properties.glade:3652
 msgid "P_in"
 msgstr ""
 
-#: src/nemo-tree-sidebar.c:1455 src/nemo-view.c:8524
+#: src/nemo-tree-sidebar.c:1455 src/nemo-view.c:8544
 msgid "Unp_in"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-tree-sidebar.c:1485 src/nemo-view.c:8343 src/nemo-view.c:8452
-#: src/nemo-view.c:9866
+#: src/nemo-tree-sidebar.c:1485 src/nemo-view.c:8363 src/nemo-view.c:8472
+#: src/nemo-view.c:9886
 msgid "_Delete"
 msgstr ""
 
@@ -1947,71 +1947,71 @@ msgstr ""
 msgid "Computer"
 msgstr ""
 
-#: src/nemo-view.c:1090
+#: src/nemo-view.c:1106
 #, c-format
 msgid "This will open %'d separate tab."
 msgid_plural "This will open %'d separate tabs."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:1093
+#: src/nemo-view.c:1109
 #, c-format
 msgid "This will open %'d separate window."
 msgid_plural "This will open %'d separate windows."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:1728
+#: src/nemo-view.c:1749
 msgid "Select Items Matching"
 msgstr ""
 
-#: src/nemo-view.c:1743
+#: src/nemo-view.c:1764
 msgid "_Pattern:"
 msgstr ""
 
-#: src/nemo-view.c:1749
+#: src/nemo-view.c:1770
 msgid "Examples: "
 msgstr ""
 
 #. Reset to default info
-#: src/nemo-view.c:2601 libnemo-private/nemo-file-undo-operations.c:147
+#: src/nemo-view.c:2622 libnemo-private/nemo-file-undo-operations.c:147
 msgid "Undo"
 msgstr ""
 
-#: src/nemo-view.c:2602 libnemo-private/nemo-file-undo-operations.c:150
+#: src/nemo-view.c:2623 libnemo-private/nemo-file-undo-operations.c:150
 msgid "Undo last action"
 msgstr ""
 
 #. Reset to default info
-#: src/nemo-view.c:2620 libnemo-private/nemo-file-undo-operations.c:154
+#: src/nemo-view.c:2641 libnemo-private/nemo-file-undo-operations.c:154
 msgid "Redo"
 msgstr ""
 
-#: src/nemo-view.c:2621 libnemo-private/nemo-file-undo-operations.c:157
+#: src/nemo-view.c:2642 libnemo-private/nemo-file-undo-operations.c:157
 msgid "Redo last undone action"
 msgstr ""
 
-#: src/nemo-view.c:2815
+#: src/nemo-view.c:2836
 msgid "Content View"
 msgstr ""
 
-#: src/nemo-view.c:2816
+#: src/nemo-view.c:2837
 msgid "View of the current folder"
 msgstr ""
 
-#: src/nemo-view.c:3087 src/nemo-view.c:3124
+#: src/nemo-view.c:3110 src/nemo-view.c:3151
 #, c-format
 msgid "\"%s\" selected"
 msgstr ""
 
-#: src/nemo-view.c:3089
+#: src/nemo-view.c:3112
 #, c-format
 msgid "%'d folder selected"
 msgid_plural "%'d folders selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:3099
+#: src/nemo-view.c:3122
 #, c-format
 msgid " (containing %'d item)"
 msgid_plural " (containing %'d items)"
@@ -2019,14 +2019,14 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: this is preceded with a string of form 'N folders' (N more than 1)
-#: src/nemo-view.c:3110
+#: src/nemo-view.c:3133
 #, c-format
 msgid " (containing a total of %'d item)"
 msgid_plural " (containing a total of %'d items)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:3127
+#: src/nemo-view.c:3154
 #, c-format
 msgid "%'d item selected"
 msgid_plural "%'d items selected"
@@ -2034,190 +2034,142 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. Folders selected also, use "other" terminology
-#: src/nemo-view.c:3134
+#: src/nemo-view.c:3161
 #, c-format
 msgid "%'d other item selected"
 msgid_plural "%'d other items selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#. This is marked for translation in case a localiser
-#. * needs to use something other than parentheses. The
-#. * first message gives the number of items selected;
-#. * the message in parentheses the size of those items.
-#.
-#: src/nemo-view.c:3151
-#, c-format
-msgid "%s (%s)"
-msgstr ""
-
-#: src/nemo-view.c:3172 libnemo-private/nemo-file.c:6467
+#: src/nemo-view.c:3200 libnemo-private/nemo-file.c:6468
 #, c-format
 msgid "%'u item"
 msgid_plural "%'u items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:3175
+#: src/nemo-view.c:3203
 #, c-format
 msgid "%s, Free space: %s"
 msgstr ""
 
-#. Marking this for translation, since you
-#. * might want to change "," to something else.
-#. * After the comma the amount of free space will
-#. * be shown.
-#.
-#: src/nemo-view.c:3190
-#, c-format
-msgid "%s, %s"
-msgstr ""
-
-#. Marking this for translation, since you
-#. * might want to change "," to something else.
-#. * After the comma the amount of free space will
-#. * be shown.
-#.
-#. This is marked for translation in case a localizer
-#. * needs to change ", " to something else. The comma
-#. * is between the message about the number of folders
-#. * and the number of items in those folders and the
-#. * message about the number of other items and the
-#. * total size of those items.
-#.
-#: src/nemo-view.c:3209 src/nemo-view.c:3222
-#, c-format
-msgid "%s%s, %s"
-msgstr ""
-
-#. This is marked for translation in case a localizer
-#. * needs to change ", " to something else. The first comma
-#. * is between the message about the number of folders
-#. * and the number of items in those folders and the
-#. * message about the number of other items and the
-#. * total size of those items. After the second comma
-#. * the free space is written.
-#.
-#: src/nemo-view.c:3236
-#, c-format
-msgid "%s%s, %s, %s"
-msgstr ""
-
-#: src/nemo-view.c:4725
+#: src/nemo-view.c:4728
 #, c-format
 msgid "Open With %s"
 msgstr ""
 
-#: src/nemo-view.c:4727
+#: src/nemo-view.c:4730
 #, c-format
 msgid "Use \"%s\" to open the selected item"
 msgid_plural "Use \"%s\" to open the selected items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:6093
+#: src/nemo-view.c:6096
 #, c-format
 msgid "Run \"%s\" on any selected items"
 msgstr ""
 
-#: src/nemo-view.c:6498
+#: src/nemo-view.c:6501
 #, c-format
 msgid "Create a new document from template \"%s\""
 msgstr ""
 
-#: src/nemo-view.c:6802
+#. translators: this is preceded with a string of form 'N selected items' (N more than 1)
+#: src/nemo-view.c:6806
 #, c-format
 msgid "The %'d selected item will be moved if you select the Paste command"
 msgid_plural ""
-"The %'d selected items will be moved if you select the Paste command"
+"The %'d selected items%s will be moved if you select the Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:6809
+#. translators: this is preceded with a string of form 'N selected items' (N more than 1)
+#: src/nemo-view.c:6814
 #, c-format
 msgid "The %'d selected item will be copied if you select the Paste command"
 msgid_plural ""
-"The %'d selected items will be copied if you select the Paste command"
+"The %'d selected items%s will be copied if you select the Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:6979
+#: src/nemo-view.c:6984
 msgid "Select Target Folder For Move"
 msgstr ""
 
-#: src/nemo-view.c:7002
+#: src/nemo-view.c:7007
 msgid "Select Target Folder For Copy"
 msgstr ""
 
-#: src/nemo-view.c:7477
+#: src/nemo-view.c:7497
 msgid "Unable to unmount location"
 msgstr ""
 
-#: src/nemo-view.c:7497
+#: src/nemo-view.c:7517
 msgid "Unable to eject location"
 msgstr ""
 
-#: src/nemo-view.c:7512
+#: src/nemo-view.c:7532
 msgid "Unable to stop drive"
 msgstr ""
 
-#: src/nemo-view.c:7998
+#: src/nemo-view.c:8018
 #, c-format
 msgid "Connect to Server %s"
 msgstr ""
 
-#: src/nemo-view.c:8003 src/nemo-view.c:9134 src/nemo-view.c:9221
-#: src/nemo-view.c:9325
+#: src/nemo-view.c:8023 src/nemo-view.c:9154 src/nemo-view.c:9241
+#: src/nemo-view.c:9345
 msgid "_Connect"
 msgstr ""
 
-#: src/nemo-view.c:8017
+#: src/nemo-view.c:8037
 msgid "Link _name:"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8224
+#: src/nemo-view.c:8244
 msgid "Create New _Document"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8225
+#: src/nemo-view.c:8245
 msgid "Open Wit_h"
 msgstr ""
 
-#: src/nemo-view.c:8226
+#: src/nemo-view.c:8246
 msgid "Choose a program with which to open the selected item"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8229 src/nemo-view.c:9907
+#: src/nemo-view.c:8249 src/nemo-view.c:9927
 msgid "View or modify the properties of each selected item"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8237
+#: src/nemo-view.c:8257
 msgid "Create a new empty folder inside this folder"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8239
+#: src/nemo-view.c:8259
 msgid "No templates installed"
 msgstr ""
 
 #. name, stock id
 #. translators: this is used to indicate that a document doesn't contain anything
 #. label, accelerator
-#: src/nemo-view.c:8242
+#: src/nemo-view.c:8262
 msgid "_Empty Document"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8243
+#: src/nemo-view.c:8263
 msgid "Create a new empty document inside this folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8247
+#: src/nemo-view.c:8267
 msgid "Open the selected item in this window"
 msgstr ""
 
@@ -2226,171 +2178,171 @@ msgstr ""
 #. Location-specific actions
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8254 src/nemo-view.c:8426
+#: src/nemo-view.c:8274 src/nemo-view.c:8446
 msgid "Open in Navigation Window"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8255
+#: src/nemo-view.c:8275
 msgid "Open each selected item in a navigation window"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8259
+#: src/nemo-view.c:8279
 msgid "Open each selected item in a new tab"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8262 src/nemo-window-menus.c:1730
+#: src/nemo-view.c:8282 src/nemo-window-menus.c:1726
 #: gresources/nemo-file-management-properties.glade:3766
 #: gresources/nemo-file-management-properties.glade:3933
 msgid "Open in Terminal"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8263
+#: src/nemo-view.c:8283
 msgid "Open terminal in the selected folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8266 gresources/nemo-file-management-properties.glade:3784
+#: src/nemo-view.c:8286 gresources/nemo-file-management-properties.glade:3784
 #: gresources/nemo-file-management-properties.glade:3951
 msgid "Open as Root"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8267
+#: src/nemo-view.c:8287
 msgid "Open the folder with administration privileges"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8271
+#: src/nemo-view.c:8291
 msgid "Follow link to original file"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8272
+#: src/nemo-view.c:8292
 msgid "Navigate to the original file that this symbolic link points to"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8275
+#: src/nemo-view.c:8295
 msgid "Open containing folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8276
+#: src/nemo-view.c:8296
 msgid "Navigate to the folder that the selected item is stored in"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8279
+#: src/nemo-view.c:8299
 msgid "Other _Application..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8280 src/nemo-view.c:8284
+#: src/nemo-view.c:8300 src/nemo-view.c:8304
 msgid "Choose another application with which to open the selected item"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8283
+#: src/nemo-view.c:8303
 msgid "Open With Other _Application..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8292
+#: src/nemo-view.c:8312
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8296
+#: src/nemo-view.c:8316
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8299 gresources/nemo-file-management-properties.glade:3614
+#: src/nemo-view.c:8319 gresources/nemo-file-management-properties.glade:3614
 #: gresources/nemo-file-management-properties.glade:3988
 msgid "_Paste"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8300
+#: src/nemo-view.c:8320
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8306
+#: src/nemo-view.c:8326
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8308 gresources/nemo-file-management-properties.glade:3728
+#: src/nemo-view.c:8328 gresources/nemo-file-management-properties.glade:3728
 msgid "Cop_y to"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8309 gresources/nemo-file-management-properties.glade:3747
+#: src/nemo-view.c:8329 gresources/nemo-file-management-properties.glade:3747
 msgid "M_ove to"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8311 libnemo-private/nemo-clipboard.c:444
+#: src/nemo-view.c:8331 libnemo-private/nemo-clipboard.c:444
 msgid "Select _All"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8312
+#: src/nemo-view.c:8332
 msgid "Select all items in this window"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8315
+#: src/nemo-view.c:8335
 msgid "Select I_tems Matching..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8316
+#: src/nemo-view.c:8336
 msgid "Select items in this window matching a given pattern"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8319
+#: src/nemo-view.c:8339
 msgid "_Invert Selection"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8320
+#: src/nemo-view.c:8340
 msgid "Select all and only the items that are not currently selected"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8323 libnemo-private/nemo-file-conflict-dialog.c:565
+#: src/nemo-view.c:8343 libnemo-private/nemo-file-conflict-dialog.c:561
 #: gresources/nemo-file-management-properties.glade:3633
 msgid "D_uplicate"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8324
+#: src/nemo-view.c:8344
 msgid "Duplicate each selected item"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8327 src/nemo-view.c:9892
+#: src/nemo-view.c:8347 src/nemo-view.c:9912
 #: gresources/nemo-file-management-properties.glade:3690
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
@@ -2398,51 +2350,51 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. tooltip
-#: src/nemo-view.c:8328
+#: src/nemo-view.c:8348
 msgid "Create a symbolic link for each selected item"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8332
+#: src/nemo-view.c:8352
 msgid "Rename selected item"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8340 src/nemo-view.c:9843
+#: src/nemo-view.c:8360 src/nemo-view.c:9863
 msgid "Move each selected item to the Trash"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8344 src/nemo-view.c:9867
+#: src/nemo-view.c:8364 src/nemo-view.c:9887
 msgid "Delete each selected item, without moving to the Trash"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8347 src/nemo-view.c:8456
+#: src/nemo-view.c:8367 src/nemo-view.c:8476
 msgid "_Restore"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
 #. name, stock id, label
-#: src/nemo-view.c:8351 src/nemo-window-menus.c:1386
+#: src/nemo-view.c:8371 src/nemo-window-menus.c:1382
 msgid "_Undo"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8352
+#: src/nemo-view.c:8372
 msgid "Undo the last action"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8355
+#: src/nemo-view.c:8375
 msgid "_Redo"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8356
+#: src/nemo-view.c:8376
 msgid "Redo the last undone action"
 msgstr ""
 
@@ -2454,421 +2406,421 @@ msgstr ""
 #.
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8365
+#: src/nemo-view.c:8385
 msgid "Reset View to _Defaults"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8366
+#: src/nemo-view.c:8386
 msgid "Reset sorting order and zoom level to match preferences for this view"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8369
+#: src/nemo-view.c:8389
 msgid "Connect To This Server"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8370
+#: src/nemo-view.c:8390
 msgid "Make a permanent connection to this server"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8374
+#: src/nemo-view.c:8394
 msgid "Mount the selected volume"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8378
+#: src/nemo-view.c:8398
 msgid "Unmount the selected volume"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8382
+#: src/nemo-view.c:8402
 msgid "Eject the selected volume"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8386
+#: src/nemo-view.c:8406
 msgid "Start the selected volume"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8390 src/nemo-view.c:9347
+#: src/nemo-view.c:8410 src/nemo-view.c:9367
 msgid "Stop the selected volume"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8394 src/nemo-view.c:8418 src/nemo-view.c:8481
+#: src/nemo-view.c:8414 src/nemo-view.c:8438 src/nemo-view.c:8501
 msgid "Detect media in the selected drive"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8398
+#: src/nemo-view.c:8418
 msgid "Mount the volume associated with the open folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8402
+#: src/nemo-view.c:8422
 msgid "Unmount the volume associated with the open folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8406
+#: src/nemo-view.c:8426
 msgid "Eject the volume associated with the open folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8410
+#: src/nemo-view.c:8430
 msgid "Start the volume associated with the open folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8414
+#: src/nemo-view.c:8434
 msgid "Stop the volume associated with the open folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8421
+#: src/nemo-view.c:8441
 msgid "Open File and Close window"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8427
+#: src/nemo-view.c:8447
 msgid "Open this folder in a navigation window"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8431
+#: src/nemo-view.c:8451
 msgid "Open this folder in a new tab"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8436
+#: src/nemo-view.c:8456
 msgid "Prepare this folder to be moved with a Paste command"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8440
+#: src/nemo-view.c:8460
 msgid "Prepare this folder to be copied with a Paste command"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8444
+#: src/nemo-view.c:8464
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into this "
 "folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8449
+#: src/nemo-view.c:8469
 msgid "Move this folder to the Trash"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8453
+#: src/nemo-view.c:8473
 msgid "Delete this folder, without moving to the Trash"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8461
+#: src/nemo-view.c:8481
 msgid "Mount the volume associated with this folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8465
+#: src/nemo-view.c:8485
 msgid "Unmount the volume associated with this folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8469
+#: src/nemo-view.c:8489
 msgid "Eject the volume associated with this folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8473
+#: src/nemo-view.c:8493
 msgid "Start the volume associated with this folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8477
+#: src/nemo-view.c:8497
 msgid "Stop the volume associated with this folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-view.c:8486
+#: src/nemo-view.c:8506
 msgid "View or modify the properties of this folder"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8489 src/nemo-view.c:8492
+#: src/nemo-view.c:8509 src/nemo-view.c:8512
 msgid "_Other pane"
 msgstr ""
 
-#: src/nemo-view.c:8490
+#: src/nemo-view.c:8510
 msgid "Copy the current selection to the other pane in the window"
 msgstr ""
 
-#: src/nemo-view.c:8493
+#: src/nemo-view.c:8513
 msgid "Move the current selection to the other pane in the window"
 msgstr ""
 
 #. name, stock id, label
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8496 src/nemo-view.c:8500 src/nemo-window-menus.c:1461
-#: src/nemo-window-menus.c:1680 src/nemo-window-menus.c:1933
+#: src/nemo-view.c:8516 src/nemo-view.c:8520 src/nemo-window-menus.c:1457
+#: src/nemo-window-menus.c:1676 src/nemo-window-menus.c:1929
 msgid "_Home"
 msgstr ""
 
-#: src/nemo-view.c:8497
+#: src/nemo-view.c:8517
 msgid "Copy the current selection to the home folder"
 msgstr ""
 
-#: src/nemo-view.c:8501
+#: src/nemo-view.c:8521
 msgid "Move the current selection to the home folder"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-view.c:8504 src/nemo-view.c:8508
+#: src/nemo-view.c:8524 src/nemo-view.c:8528
 msgid "_Desktop"
 msgstr ""
 
-#: src/nemo-view.c:8505
+#: src/nemo-view.c:8525
 msgid "Copy the current selection to the desktop"
 msgstr ""
 
-#: src/nemo-view.c:8509
+#: src/nemo-view.c:8529
 msgid "Move the current selection to the desktop"
 msgstr ""
 
-#: src/nemo-view.c:8512 src/nemo-view.c:8516
+#: src/nemo-view.c:8532 src/nemo-view.c:8536
 msgid "Browse..."
 msgstr ""
 
-#: src/nemo-view.c:8513
+#: src/nemo-view.c:8533
 msgid "Browse for a folder to move the selection to"
 msgstr ""
 
-#: src/nemo-view.c:8517
+#: src/nemo-view.c:8537
 msgid "Browse for a folder to copy the selection to"
 msgstr ""
 
-#: src/nemo-view.c:8521
+#: src/nemo-view.c:8541
 msgid ""
 "Pin the selected file so it always appears at the top of this location's "
 "file list"
 msgstr ""
 
-#: src/nemo-view.c:8525
+#: src/nemo-view.c:8545
 msgid "Unpin the selected file from the top of this location's file list"
 msgstr ""
 
-#: src/nemo-view.c:8528
+#: src/nemo-view.c:8548
 msgid "Add to favorites"
 msgstr ""
 
-#: src/nemo-view.c:8529
+#: src/nemo-view.c:8549
 msgid "Add the selected file to your favorites"
 msgstr ""
 
-#: src/nemo-view.c:8532
+#: src/nemo-view.c:8552
 msgid "Remove from favorites"
 msgstr ""
 
-#: src/nemo-view.c:8533
+#: src/nemo-view.c:8553
 msgid "Remove the selected file from your favorites"
 msgstr ""
 
-#: src/nemo-view.c:8608
+#: src/nemo-view.c:8628
 msgid "Run scripts"
 msgstr ""
 
 #. Create a script action here specially because its tooltip is dynamic
-#: src/nemo-view.c:8610 gresources/nemo-file-management-properties.glade:3557
+#: src/nemo-view.c:8630 gresources/nemo-file-management-properties.glade:3557
 #: gresources/nemo-file-management-properties.glade:3914
 msgid "_Scripts"
 msgstr ""
 
-#: src/nemo-view.c:8983
+#: src/nemo-view.c:9003
 #, c-format
 msgid "Move the open folder out of the trash to \"%s\""
 msgstr ""
 
-#: src/nemo-view.c:8986
+#: src/nemo-view.c:9006
 #, c-format
 msgid "Move the selected folder out of the trash to \"%s\""
 msgid_plural "Move the selected folders out of the trash to \"%s\""
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:8990
+#: src/nemo-view.c:9010
 msgid "Move the selected folder out of the trash"
 msgid_plural "Move the selected folders out of the trash"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:8996
+#: src/nemo-view.c:9016
 #, c-format
 msgid "Move the selected file out of the trash to \"%s\""
 msgid_plural "Move the selected files out of the trash to \"%s\""
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:9000
+#: src/nemo-view.c:9020
 msgid "Move the selected file out of the trash"
 msgid_plural "Move the selected files out of the trash"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:9006
+#: src/nemo-view.c:9026
 #, c-format
 msgid "Move the selected item out of the trash to \"%s\""
 msgid_plural "Move the selected items out of the trash to \"%s\""
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:9010
+#: src/nemo-view.c:9030
 msgid "Move the selected item out of the trash"
 msgid_plural "Move the selected items out of the trash"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:9127 src/nemo-view.c:9131 src/nemo-view.c:9318
-#: src/nemo-view.c:9322
+#: src/nemo-view.c:9147 src/nemo-view.c:9151 src/nemo-view.c:9338
+#: src/nemo-view.c:9342
 msgid "Start the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9135 src/nemo-view.c:9326
+#: src/nemo-view.c:9155 src/nemo-view.c:9346
 msgid "Connect to the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9138 src/nemo-view.c:9225 src/nemo-view.c:9329
+#: src/nemo-view.c:9158 src/nemo-view.c:9245 src/nemo-view.c:9349
 msgid "_Start Multi-disk Drive"
 msgstr ""
 
-#: src/nemo-view.c:9139 src/nemo-view.c:9330
+#: src/nemo-view.c:9159 src/nemo-view.c:9350
 msgid "Start the selected multi-disk drive"
 msgstr ""
 
-#: src/nemo-view.c:9142
+#: src/nemo-view.c:9162
 msgid "U_nlock Drive"
 msgstr ""
 
-#: src/nemo-view.c:9143 src/nemo-view.c:9334
+#: src/nemo-view.c:9163 src/nemo-view.c:9354
 msgid "Unlock the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9156
+#: src/nemo-view.c:9176
 msgid "Stop the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9160 src/nemo-view.c:9351
+#: src/nemo-view.c:9180 src/nemo-view.c:9371
 msgid "Safely remove the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9163 src/nemo-view.c:9250 src/nemo-view.c:9354
+#: src/nemo-view.c:9183 src/nemo-view.c:9270 src/nemo-view.c:9374
 msgid "_Disconnect"
 msgstr ""
 
-#: src/nemo-view.c:9164 src/nemo-view.c:9355
+#: src/nemo-view.c:9184 src/nemo-view.c:9375
 msgid "Disconnect the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9167 src/nemo-view.c:9254 src/nemo-view.c:9358
+#: src/nemo-view.c:9187 src/nemo-view.c:9274 src/nemo-view.c:9378
 msgid "_Stop Multi-disk Drive"
 msgstr ""
 
-#: src/nemo-view.c:9168 src/nemo-view.c:9359
+#: src/nemo-view.c:9188 src/nemo-view.c:9379
 msgid "Stop the selected multi-disk drive"
 msgstr ""
 
-#: src/nemo-view.c:9172 src/nemo-view.c:9363
+#: src/nemo-view.c:9192 src/nemo-view.c:9383
 msgid "Lock the selected drive"
 msgstr ""
 
-#: src/nemo-view.c:9214 src/nemo-view.c:9218
+#: src/nemo-view.c:9234 src/nemo-view.c:9238
 msgid "Start the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9222
+#: src/nemo-view.c:9242
 msgid "Connect to the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9226
+#: src/nemo-view.c:9246
 msgid "Start the multi-disk drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9230
+#: src/nemo-view.c:9250
 msgid "Unlock the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9243
+#: src/nemo-view.c:9263
 msgid "_Stop the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9247
+#: src/nemo-view.c:9267
 msgid "Safely remove the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9251
+#: src/nemo-view.c:9271
 msgid "Disconnect the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9255
+#: src/nemo-view.c:9275
 msgid "Stop the multi-disk drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9259
+#: src/nemo-view.c:9279
 msgid "Lock the drive associated with the open folder"
 msgstr ""
 
-#: src/nemo-view.c:9501 src/nemo-view.c:9838
+#: src/nemo-view.c:9521 src/nemo-view.c:9858
 msgid "_Delete Permanently"
 msgstr ""
 
-#: src/nemo-view.c:9502
+#: src/nemo-view.c:9522
 msgid "Delete the open folder permanently"
 msgstr ""
 
-#: src/nemo-view.c:9506
+#: src/nemo-view.c:9526
 msgid "Move the open folder to the Trash"
 msgstr ""
 
-#: src/nemo-view.c:9753
+#: src/nemo-view.c:9773
 #, c-format
 msgid "_Open With %s"
 msgstr ""
 
-#: src/nemo-view.c:9802
+#: src/nemo-view.c:9822
 #, c-format
 msgid "Open in %'d New _Window"
 msgid_plural "Open in %'d New _Windows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:9822
+#: src/nemo-view.c:9842
 #, c-format
 msgid "Open in %'d New _Tab"
 msgid_plural "Open in %'d New _Tabs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/nemo-view.c:9839
+#: src/nemo-view.c:9859
 msgid "Delete all selected items permanently"
 msgstr ""
 
-#: src/nemo-view.c:9863
+#: src/nemo-view.c:9883
 msgid "Remo_ve from Recent"
 msgstr ""
 
-#: src/nemo-view.c:9864
+#: src/nemo-view.c:9884
 msgid "Remove each selected item from the recently used list"
 msgstr ""
 
-#: src/nemo-view.c:9905
+#: src/nemo-view.c:9925
 msgid "View or modify the properties of the open folder"
 msgstr ""
 
@@ -2877,7 +2829,7 @@ msgstr ""
 #. * to that kind of file (e.g. "link to folder").
 #.
 #. appended to new link file
-#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:7091
+#: src/nemo-view-dnd.c:125 libnemo-private/nemo-file.c:7092
 #: libnemo-private/nemo-file-operations.c:396
 #, c-format
 msgid "Link to %s"
@@ -2926,13 +2878,13 @@ msgstr ""
 msgid "Go to the location specified by this bookmark"
 msgstr ""
 
-#: src/nemo-window.c:1389
+#: src/nemo-window.c:1393
 #, c-format
 msgid "%s - File Browser"
 msgstr ""
 
 #. Set initial window title
-#: src/nemo-window.c:2000 src/nemo-window-menus.c:345
+#: src/nemo-window.c:2005 src/nemo-window-menus.c:345
 msgid "Nemo"
 msgstr ""
 
@@ -3039,98 +2991,98 @@ msgid ""
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1369
+#: src/nemo-window-menus.c:1365
 msgid "_File"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1370
+#: src/nemo-window-menus.c:1366
 msgid "_Edit"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1371
+#: src/nemo-window-menus.c:1367
 msgid "_View"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1372
+#: src/nemo-window-menus.c:1368
 msgid "_Help"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1374
+#: src/nemo-window-menus.c:1370
 msgid "_Close"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1375
+#: src/nemo-window-menus.c:1371
 msgid "Close this folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1378
+#: src/nemo-window-menus.c:1374
 msgid "Prefere_nces"
 msgstr ""
 
-#: src/nemo-window-menus.c:1379
+#: src/nemo-window-menus.c:1375
 msgid "Edit Nemo preferences"
 msgstr ""
 
-#: src/nemo-window-menus.c:1382
+#: src/nemo-window-menus.c:1378
 #: gresources/nemo-file-management-properties.glade:4240
 msgid "Plugins"
 msgstr ""
 
-#: src/nemo-window-menus.c:1383
+#: src/nemo-window-menus.c:1379
 msgid "Manage extensions, actions and scripts"
 msgstr ""
 
-#: src/nemo-window-menus.c:1387
+#: src/nemo-window-menus.c:1383
 msgid "Undo the last text change"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1390
+#: src/nemo-window-menus.c:1386
 msgid "Open _Parent"
 msgstr ""
 
-#: src/nemo-window-menus.c:1391
+#: src/nemo-window-menus.c:1387
 msgid "Open the parent folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1398
+#: src/nemo-window-menus.c:1394
 msgid "Stop loading the current location"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1401 src/nemo-window-menus.c:1666
+#: src/nemo-window-menus.c:1397 src/nemo-window-menus.c:1662
 msgid "_Reload"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1402 src/nemo-window-menus.c:1668
+#: src/nemo-window-menus.c:1398 src/nemo-window-menus.c:1664
 msgid "Reload the current location"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1405
+#: src/nemo-window-menus.c:1401
 msgid "_All Topics"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1406
+#: src/nemo-window-menus.c:1402
 msgid "Display Nemo help"
 msgstr ""
 
-#: src/nemo-window-menus.c:1409
+#: src/nemo-window-menus.c:1405
 msgid "_Keyboard Shortcuts"
 msgstr ""
 
-#: src/nemo-window-menus.c:1410
+#: src/nemo-window-menus.c:1406
 msgid "Display keyboard shortcuts"
 msgstr ""
 
@@ -3152,431 +3104,431 @@ msgstr ""
 #. G_CALLBACK (action_nemo_manual_callback) }, *
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1429
+#: src/nemo-window-menus.c:1425
 msgid "_About"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1430
+#: src/nemo-window-menus.c:1426
 msgid "Display credits for the creators of Nemo"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1433
+#: src/nemo-window-menus.c:1429
 msgid "Zoom _In"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1434
+#: src/nemo-window-menus.c:1430
 msgid "Increase the view size"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1445
+#: src/nemo-window-menus.c:1441
 msgid "Zoom _Out"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1446
+#: src/nemo-window-menus.c:1442
 msgid "Decrease the view size"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1453
+#: src/nemo-window-menus.c:1449
 msgid "Normal Si_ze"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1454
+#: src/nemo-window-menus.c:1450
 msgid "Use the normal view size"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1457
+#: src/nemo-window-menus.c:1453
 msgid "Connect to _Server..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1458
+#: src/nemo-window-menus.c:1454
 msgid "Connect to a remote computer or shared disk"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1462
+#: src/nemo-window-menus.c:1458
 msgid "Open your personal folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1465 src/nemo-window-menus.c:1694
+#: src/nemo-window-menus.c:1461 src/nemo-window-menus.c:1690
 msgid "_Computer"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1466
+#: src/nemo-window-menus.c:1462
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1469
+#: src/nemo-window-menus.c:1465
 msgid "_Network"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1470
+#: src/nemo-window-menus.c:1466
 msgid "Browse bookmarked and local network locations"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1473
+#: src/nemo-window-menus.c:1469
 msgid "T_emplates"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1474
+#: src/nemo-window-menus.c:1470
 msgid "Open your personal templates folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1477
+#: src/nemo-window-menus.c:1473
 msgid "_Trash"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1478
+#: src/nemo-window-menus.c:1474
 msgid "Open your personal trash folder"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1480
+#: src/nemo-window-menus.c:1476
 msgid "_Go"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1481
+#: src/nemo-window-menus.c:1477
 msgid "_Bookmarks"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1482
+#: src/nemo-window-menus.c:1478
 msgid "_Tabs"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1483
+#: src/nemo-window-menus.c:1479
 msgid "New _Window"
 msgstr ""
 
-#: src/nemo-window-menus.c:1484
+#: src/nemo-window-menus.c:1480
 msgid "Open another Nemo window for the displayed location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1486
+#: src/nemo-window-menus.c:1482
 msgid "New _Tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1487
+#: src/nemo-window-menus.c:1483
 msgid "Open another tab for the displayed location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1489
+#: src/nemo-window-menus.c:1485
 msgid "Close _All Windows"
 msgstr ""
 
-#: src/nemo-window-menus.c:1490
+#: src/nemo-window-menus.c:1486
 msgid "Close all Navigation windows"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1492 src/nemo-window-menus.c:1616
+#: src/nemo-window-menus.c:1488 src/nemo-window-menus.c:1612
 msgid "_Back"
 msgstr ""
 
-#: src/nemo-window-menus.c:1493 src/nemo-window-menus.c:1618
+#: src/nemo-window-menus.c:1489 src/nemo-window-menus.c:1614
 msgid "Go to the previous visited location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1495 src/nemo-window-menus.c:1632
+#: src/nemo-window-menus.c:1491 src/nemo-window-menus.c:1628
 msgid "_Forward"
 msgstr ""
 
-#: src/nemo-window-menus.c:1496 src/nemo-window-menus.c:1634
+#: src/nemo-window-menus.c:1492 src/nemo-window-menus.c:1630
 msgid "Go to the next visited location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1498
+#: src/nemo-window-menus.c:1494
 msgid "Toggle _Location Entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1499
+#: src/nemo-window-menus.c:1495
 msgid "Switch between location entry and breadcrumbs"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1501
+#: src/nemo-window-menus.c:1497
 msgid "S_witch to Other Pane"
 msgstr ""
 
-#: src/nemo-window-menus.c:1502
+#: src/nemo-window-menus.c:1498
 msgid "Move focus to the other pane in a split view window"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1504
+#: src/nemo-window-menus.c:1500
 msgid "Sa_me Location as Other Pane"
 msgstr ""
 
-#: src/nemo-window-menus.c:1505
+#: src/nemo-window-menus.c:1501
 msgid "Go to the same location as in the extra pane"
 msgstr ""
 
-#: src/nemo-window-menus.c:1508
+#: src/nemo-window-menus.c:1504
 msgid "Add a bookmark for the current location to this menu"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1510
+#: src/nemo-window-menus.c:1506
 msgid "_Edit Bookmarks..."
 msgstr ""
 
-#: src/nemo-window-menus.c:1511
+#: src/nemo-window-menus.c:1507
 msgid "Display a window that allows editing the bookmarks in this menu"
 msgstr ""
 
-#: src/nemo-window-menus.c:1513
+#: src/nemo-window-menus.c:1509
 msgid "_Previous Tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1514
+#: src/nemo-window-menus.c:1510
 msgid "Activate previous tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1516
+#: src/nemo-window-menus.c:1512
 msgid "_Next Tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1517
+#: src/nemo-window-menus.c:1513
 msgid "Activate next tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1519 src/nemo-window-pane.c:537
+#: src/nemo-window-menus.c:1515 src/nemo-window-pane.c:537
 msgid "Move Tab _Left"
 msgstr ""
 
-#: src/nemo-window-menus.c:1520
+#: src/nemo-window-menus.c:1516
 msgid "Move current tab to left"
 msgstr ""
 
-#: src/nemo-window-menus.c:1522 src/nemo-window-pane.c:545
+#: src/nemo-window-menus.c:1518 src/nemo-window-pane.c:545
 msgid "Move Tab _Right"
 msgstr ""
 
-#: src/nemo-window-menus.c:1523
+#: src/nemo-window-menus.c:1519
 msgid "Move current tab to right"
 msgstr ""
 
-#: src/nemo-window-menus.c:1525
+#: src/nemo-window-menus.c:1521
 msgid "Sidebar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1526
+#: src/nemo-window-menus.c:1522
 #: gresources/nemo-file-management-properties.glade:3423
 msgid "Toolbar"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1531
+#: src/nemo-window-menus.c:1527
 #: gresources/nemo-file-management-properties.glade:3969
 msgid "Show _Hidden Files"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1532
+#: src/nemo-window-menus.c:1528
 msgid "Toggle the display of hidden files in the current window"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1536
+#: src/nemo-window-menus.c:1532
 msgid "_Main Toolbar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1537
+#: src/nemo-window-menus.c:1533
 msgid "Change the visibility of this window's main toolbar"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1541
+#: src/nemo-window-menus.c:1537
 msgid "_Show Sidebar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1542
+#: src/nemo-window-menus.c:1538
 msgid "Change the visibility of this window's side pane"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1546
+#: src/nemo-window-menus.c:1542
 msgid "St_atusbar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1547
+#: src/nemo-window-menus.c:1543
 msgid "Change the visibility of this window's statusbar"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1551
+#: src/nemo-window-menus.c:1547
 msgid "M_enubar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1552
+#: src/nemo-window-menus.c:1548
 msgid "Change the default visibility of the menubar"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1556
+#: src/nemo-window-menus.c:1552
 msgid "_Search for Files..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1557 src/nemo-window-menus.c:1776
+#: src/nemo-window-menus.c:1553 src/nemo-window-menus.c:1772
 msgid "Search documents and folders"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1561
+#: src/nemo-window-menus.c:1557
 msgid "E_xtra Pane"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1562
+#: src/nemo-window-menus.c:1558
 msgid "Open an extra folder view side-by-side"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1566
+#: src/nemo-window-menus.c:1562
 msgid "Show _Thumbnails"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1567
+#: src/nemo-window-menus.c:1563
 msgid "Toggle the display of thumbnails in the current directory"
 msgstr ""
 
-#: src/nemo-window-menus.c:1574
+#: src/nemo-window-menus.c:1570
 msgid "Places"
 msgstr ""
 
-#: src/nemo-window-menus.c:1574
+#: src/nemo-window-menus.c:1570
 msgid "Select Places as the default sidebar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1577
+#: src/nemo-window-menus.c:1573
 msgid "Tree"
 msgstr ""
 
-#: src/nemo-window-menus.c:1577
+#: src/nemo-window-menus.c:1573
 msgid "Select Tree as the default sidebar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1595
+#: src/nemo-window-menus.c:1591
 msgid "Path Bar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1595
+#: src/nemo-window-menus.c:1591
 msgid "Always prefer the path bar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1598
+#: src/nemo-window-menus.c:1594
 msgid "Location Entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1598
+#: src/nemo-window-menus.c:1594
 msgid "Always prefer the location entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1619
+#: src/nemo-window-menus.c:1615
 msgid "Back history"
 msgstr ""
 
-#: src/nemo-window-menus.c:1635 src/nemo-window-menus.c:1654
+#: src/nemo-window-menus.c:1631 src/nemo-window-menus.c:1650
 msgid "Forward history"
 msgstr ""
 
-#: src/nemo-window-menus.c:1651 src/nemo-window-menus.c:1930
+#: src/nemo-window-menus.c:1647 src/nemo-window-menus.c:1926
 msgid "_Up"
 msgstr ""
 
-#: src/nemo-window-menus.c:1653
+#: src/nemo-window-menus.c:1649
 msgid "Go to parent folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1682
+#: src/nemo-window-menus.c:1678
 msgid "Go to home directory"
 msgstr ""
 
-#: src/nemo-window-menus.c:1696
+#: src/nemo-window-menus.c:1692
 msgid "Go to Computer"
 msgstr ""
 
-#: src/nemo-window-menus.c:1708
+#: src/nemo-window-menus.c:1704
 msgid "Toggle Location Entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1720
+#: src/nemo-window-menus.c:1716
 #: gresources/nemo-file-management-properties.glade:3182
 msgid "New folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1721
+#: src/nemo-window-menus.c:1717
 msgid "Create a new folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1731
+#: src/nemo-window-menus.c:1727
 msgid "Open a terminal in the active folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1741
+#: src/nemo-window-menus.c:1737
 msgid "Icons"
 msgstr ""
 
-#: src/nemo-window-menus.c:1752
+#: src/nemo-window-menus.c:1748
 msgid "List"
 msgstr ""
 
-#: src/nemo-window-menus.c:1764
+#: src/nemo-window-menus.c:1760
 msgid "Compact"
 msgstr ""
 
-#: src/nemo-window-menus.c:1776 libnemo-private/nemo-query.c:189
+#: src/nemo-window-menus.c:1772 libnemo-private/nemo-query.c:189
 #: libnemo-private/nemo-search-directory-file.c:164
 #: libnemo-private/nemo-search-directory-file.c:198
 #: libnemo-private/nemo-search-directory-file.c:232
@@ -3584,12 +3536,12 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/nemo-window-menus.c:1785 src/nemo-window-menus.c:1786
+#: src/nemo-window-menus.c:1781 src/nemo-window-menus.c:1782
 #: gresources/nemo-file-management-properties.glade:3367
 msgid "Show Thumbnails"
 msgstr ""
 
-#: src/nemo-window-menus.c:1936
+#: src/nemo-window-menus.c:1932
 msgid "_Location"
 msgstr ""
 
@@ -3601,12 +3553,8 @@ msgstr ""
 msgid "_Close Tab"
 msgstr ""
 
-#: src/nemo-window-slot.c:308
+#: src/nemo-window-slot.c:291
 msgid "No files found"
-msgstr ""
-
-#: src/nemo-window-slot.c:373
-msgid "Drop into current location"
 msgstr ""
 
 #: src/nemo-x-content-bar.c:97
@@ -3878,72 +3826,72 @@ msgstr ""
 msgid "This file cannot be stopped"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1914
+#: libnemo-private/nemo-file.c:1917
 msgid "Slashes are not allowed in filenames"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1932
+#: libnemo-private/nemo-file.c:1935
 msgid "File not found"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1960
+#: libnemo-private/nemo-file.c:1963
 msgid "Toplevel files cannot be renamed"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:1983
+#: libnemo-private/nemo-file.c:1986
 msgid "Unable to rename desktop icon"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:2012
+#: libnemo-private/nemo-file.c:2015
 msgid "Unable to rename desktop file"
 msgstr ""
 
 #. Translators: Time in 24h format
-#: libnemo-private/nemo-file.c:5171
+#: libnemo-private/nemo-file.c:5172
 msgid "%H:%M"
 msgstr ""
 
 #. Translators: Time in 12h format
-#: libnemo-private/nemo-file.c:5174
+#: libnemo-private/nemo-file.c:5175
 msgid "%l:%M %p"
 msgstr ""
 
 #. Translators: this is the word Yesterday followed by
 #. * a time in 24h format. i.e. "Yesterday 23:04"
-#: libnemo-private/nemo-file.c:5187
+#: libnemo-private/nemo-file.c:5188
 #, no-c-format
 msgid "Yesterday %H:%M"
 msgstr ""
 
 #. Translators: this is the word Yesterday followed by
 #. * a time in 12h format. i.e. "Yesterday 9:04 PM"
-#: libnemo-private/nemo-file.c:5192
+#: libnemo-private/nemo-file.c:5193
 #, no-c-format
 msgid "Yesterday %l:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5200
+#: libnemo-private/nemo-file.c:5201
 #, no-c-format
 msgid "%A"
 msgstr ""
 
 #. Translators: this is the name of the week day followed by
 #. * a time in 24h format. i.e. "Monday 23:04"
-#: libnemo-private/nemo-file.c:5206
+#: libnemo-private/nemo-file.c:5207
 #, no-c-format
 msgid "%A %H:%M"
 msgstr ""
 
 #. Translators: this is the week day name followed by
 #. * a time in 12h format. i.e. "Monday 9:04 PM"
-#: libnemo-private/nemo-file.c:5211
+#: libnemo-private/nemo-file.c:5212
 #, no-c-format
 msgid "%A %l:%M %p"
 msgstr ""
 
 #. Translators: this is the day of the month followed
 #. * by the abbreviated month name i.e. "3 February"
-#: libnemo-private/nemo-file.c:5219
+#: libnemo-private/nemo-file.c:5220
 #, no-c-format
 msgid "%-e %B"
 msgstr ""
@@ -3951,7 +3899,7 @@ msgstr ""
 #. Translators: this is the day of the month followed
 #. * by the abbreviated month name followed by a time in
 #. * 24h format i.e. "3 February 23:04"
-#: libnemo-private/nemo-file.c:5226
+#: libnemo-private/nemo-file.c:5227
 #, no-c-format
 msgid "%-e %B %H:%M"
 msgstr ""
@@ -3959,14 +3907,14 @@ msgstr ""
 #. Translators: this is the day of the month followed
 #. * by the abbreviated month name followed by a time in
 #. * 12h format i.e. "3 February 9:04"
-#: libnemo-private/nemo-file.c:5232
+#: libnemo-private/nemo-file.c:5233
 #, no-c-format
 msgid "%-e %B %l:%M %p"
 msgstr ""
 
 #. Translators: this is the day of the month followed by the abbreviated
 #. * month name followed by the year i.e. "3 Feb 2015"
-#: libnemo-private/nemo-file.c:5240
+#: libnemo-private/nemo-file.c:5241
 #, no-c-format
 msgid "%-e %b %Y"
 msgstr ""
@@ -3974,7 +3922,7 @@ msgstr ""
 #. Translators: this is the day number followed
 #. * by the abbreviated month name followed by the year followed
 #. * by a time in 24h format i.e. "3 Feb 2015 23:04"
-#: libnemo-private/nemo-file.c:5247
+#: libnemo-private/nemo-file.c:5248
 #, no-c-format
 msgid "%-e %b %Y %H:%M"
 msgstr ""
@@ -3982,46 +3930,46 @@ msgstr ""
 #. Translators: this is the day number followed
 #. * by the abbreviated month name followed by the year followed
 #. * by a time in 12h format i.e. "3 Feb 2015 9:04 PM"
-#: libnemo-private/nemo-file.c:5253
+#: libnemo-private/nemo-file.c:5254
 #, no-c-format
 msgid "%-e %b %Y %l:%M %p"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5263
+#: libnemo-private/nemo-file.c:5264
 #, no-c-format
 msgid "%c"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:5711
+#: libnemo-private/nemo-file.c:5712
 msgid "Not allowed to set permissions"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6008
+#: libnemo-private/nemo-file.c:6009
 msgid "Not allowed to set owner"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6026
+#: libnemo-private/nemo-file.c:6027
 #, c-format
 msgid "Specified owner '%s' doesn't exist"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6291
+#: libnemo-private/nemo-file.c:6292
 msgid "Not allowed to set group"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6309
+#: libnemo-private/nemo-file.c:6310
 #, c-format
 msgid "Specified group '%s' doesn't exist"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6468
+#: libnemo-private/nemo-file.c:6469
 #, c-format
 msgid "%'u folder"
 msgid_plural "%'u folders"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:6469
+#: libnemo-private/nemo-file.c:6470
 #, c-format
 msgid "%'u file"
 msgid_plural "%'u files"
@@ -4029,129 +3977,129 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. This means no contents at all were readable
-#: libnemo-private/nemo-file.c:6912 libnemo-private/nemo-file.c:6928
+#: libnemo-private/nemo-file.c:6913 libnemo-private/nemo-file.c:6929
 msgid "? items"
 msgstr ""
 
 #. This means no contents at all were readable
-#: libnemo-private/nemo-file.c:6918
+#: libnemo-private/nemo-file.c:6919
 msgid "? bytes"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6935
+#: libnemo-private/nemo-file.c:6936
 msgid "Unknown"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6988 libnemo-private/nemo-file.c:6996
-#: libnemo-private/nemo-file.c:7044
+#: libnemo-private/nemo-file.c:6989 libnemo-private/nemo-file.c:6997
+#: libnemo-private/nemo-file.c:7045
 msgid "Program"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6989
+#: libnemo-private/nemo-file.c:6990
 msgid "Audio"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6990
+#: libnemo-private/nemo-file.c:6991
 msgid "Font"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6992
+#: libnemo-private/nemo-file.c:6993
 msgid "Archive"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6993
+#: libnemo-private/nemo-file.c:6994
 msgid "Markup"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6994 libnemo-private/nemo-file.c:6995
+#: libnemo-private/nemo-file.c:6995 libnemo-private/nemo-file.c:6996
 #: eel/eel-editable-label.c:319
 msgid "Text"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6997
+#: libnemo-private/nemo-file.c:6998
 msgid "Video"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6998
+#: libnemo-private/nemo-file.c:6999
 msgid "Contacts"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:6999
+#: libnemo-private/nemo-file.c:7000
 msgid "Calendar"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7000
+#: libnemo-private/nemo-file.c:7001
 msgid "Document"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7001
+#: libnemo-private/nemo-file.c:7002
 msgid "Presentation"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7002
+#: libnemo-private/nemo-file.c:7003
 msgid "Spreadsheet"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7046
+#: libnemo-private/nemo-file.c:7047
 #: gresources/nemo-file-management-properties.glade:167
 msgid "Binary"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7050
+#: libnemo-private/nemo-file.c:7051
 msgid "Folder"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7085
+#: libnemo-private/nemo-file.c:7086
 msgid "link"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:7107 libnemo-private/nemo-file.c:7121
+#: libnemo-private/nemo-file.c:7108 libnemo-private/nemo-file.c:7122
 msgid "link (broken)"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8087
+#: libnemo-private/nemo-file.c:8088
 #, c-format
 msgid "Name: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8094
+#: libnemo-private/nemo-file.c:8095
 #, c-format
 msgid "Type: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8104
+#: libnemo-private/nemo-file.c:8105
 #, c-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file.c:8106
+#: libnemo-private/nemo-file.c:8107
 #, c-format
 msgid "Contains: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8116
+#: libnemo-private/nemo-file.c:8117
 #, c-format
 msgid "Size: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8124
+#: libnemo-private/nemo-file.c:8125
 #, c-format
 msgid "Accessed: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8132
+#: libnemo-private/nemo-file.c:8133
 #, c-format
 msgid "Modified: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8140
+#: libnemo-private/nemo-file.c:8141
 #, c-format
 msgid "Created: %s"
 msgstr ""
 
-#: libnemo-private/nemo-file.c:8150
+#: libnemo-private/nemo-file.c:8151
 #, c-format
 msgid "Location: %s"
 msgstr ""
@@ -4238,33 +4186,39 @@ msgid "Merge"
 msgstr ""
 
 #. Setup the expander for the rename action
-#: libnemo-private/nemo-file-conflict-dialog.c:522
+#: libnemo-private/nemo-file-conflict-dialog.c:521
 msgid "_Select a new name for the destination"
 msgstr ""
 
-#: libnemo-private/nemo-file-conflict-dialog.c:536
+#: libnemo-private/nemo-file-conflict-dialog.c:535
 msgid "Reset"
 msgstr ""
 
 #. Setup the checkbox to apply the action to all files
-#: libnemo-private/nemo-file-conflict-dialog.c:548
+#: libnemo-private/nemo-file-conflict-dialog.c:547
 msgid "Apply this action to all files"
 msgstr ""
 
-#: libnemo-private/nemo-file-conflict-dialog.c:559
+#. Add buttons
+#: libnemo-private/nemo-file-conflict-dialog.c:556
+#: libnemo-private/nemo-mime-application-chooser.c:481
+msgid "_Cancel"
+msgstr ""
+
+#: libnemo-private/nemo-file-conflict-dialog.c:557
 #: libnemo-private/nemo-file-operations.c:198
 msgid "_Skip"
 msgstr ""
 
-#: libnemo-private/nemo-file-conflict-dialog.c:570
+#: libnemo-private/nemo-file-conflict-dialog.c:566
 msgid "Re_name"
 msgstr ""
 
-#: libnemo-private/nemo-file-conflict-dialog.c:576
+#: libnemo-private/nemo-file-conflict-dialog.c:572
 msgid "Replace"
 msgstr ""
 
-#: libnemo-private/nemo-file-conflict-dialog.c:648
+#: libnemo-private/nemo-file-conflict-dialog.c:645
 msgid "File conflict"
 msgstr ""
 
@@ -4875,7 +4829,7 @@ msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:3990
 #: libnemo-private/nemo-file-operations.c:4722
-#: libnemo-private/nemo-file-operations.c:5372
+#: libnemo-private/nemo-file-operations.c:5373
 msgid "Error while moving \"%B\"."
 msgstr ""
 
@@ -4902,17 +4856,17 @@ msgstr ""
 
 #. the run_warning() frees all strings passed in automatically
 #: libnemo-private/nemo-file-operations.c:4453
-#: libnemo-private/nemo-file-operations.c:5194
+#: libnemo-private/nemo-file-operations.c:5195
 msgid "You cannot move a folder into itself."
 msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:4454
-#: libnemo-private/nemo-file-operations.c:5195
+#: libnemo-private/nemo-file-operations.c:5196
 msgid "You cannot copy a folder into itself."
 msgstr ""
 
 #: libnemo-private/nemo-file-operations.c:4455
-#: libnemo-private/nemo-file-operations.c:5196
+#: libnemo-private/nemo-file-operations.c:5197
 msgid "The destination folder is inside the source folder."
 msgstr ""
 
@@ -4955,80 +4909,80 @@ msgid_plural "Preparing to move %'d files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file-operations.c:5373
+#: libnemo-private/nemo-file-operations.c:5374
 #, c-format
 msgid "There was an error moving the file into %F."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:5636
+#: libnemo-private/nemo-file-operations.c:5637
 msgid "Moving Files"
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:5669
+#: libnemo-private/nemo-file-operations.c:5670
 msgid "Creating links in \"%B\""
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:5673
+#: libnemo-private/nemo-file-operations.c:5674
 #, c-format
 msgid "Making link to %'d file"
 msgid_plural "Making links to %'d files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libnemo-private/nemo-file-operations.c:5811
+#: libnemo-private/nemo-file-operations.c:5812
 msgid "Error while creating link to %B."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:5813
+#: libnemo-private/nemo-file-operations.c:5814
 msgid "Symbolic links only supported for local files"
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:5816
+#: libnemo-private/nemo-file-operations.c:5817
 msgid "The target doesn't support symbolic links."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:5819
+#: libnemo-private/nemo-file-operations.c:5820
 #, c-format
 msgid "There was an error creating the symlink in %F."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:6137
+#: libnemo-private/nemo-file-operations.c:6138
 msgid "Setting permissions"
 msgstr ""
 
 #. localizers: the initial name of a new folder
-#: libnemo-private/nemo-file-operations.c:6400
+#: libnemo-private/nemo-file-operations.c:6401
 msgid "Untitled Folder"
 msgstr ""
 
 #. localizers: the initial name of a new empty document
-#: libnemo-private/nemo-file-operations.c:6412
+#: libnemo-private/nemo-file-operations.c:6413
 msgid "Untitled Document"
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:6588
+#: libnemo-private/nemo-file-operations.c:6589
 msgid "Error while creating directory %B."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:6590
+#: libnemo-private/nemo-file-operations.c:6591
 msgid "Error while creating file %B."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:6592
+#: libnemo-private/nemo-file-operations.c:6593
 #, c-format
 msgid "There was an error creating the directory in %F."
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:6834
 #: libnemo-private/nemo-file-operations.c:6835
-#: libnemo-private/nemo-file-operations.c:6868
+#: libnemo-private/nemo-file-operations.c:6836
+#: libnemo-private/nemo-file-operations.c:6869
 msgid "Emptying Trash"
 msgstr ""
 
-#: libnemo-private/nemo-file-operations.c:6914
-#: libnemo-private/nemo-file-operations.c:6955
-#: libnemo-private/nemo-file-operations.c:6990
-#: libnemo-private/nemo-file-operations.c:7025
+#: libnemo-private/nemo-file-operations.c:6915
+#: libnemo-private/nemo-file-operations.c:6956
+#: libnemo-private/nemo-file-operations.c:6991
+#: libnemo-private/nemo-file-operations.c:7026
 msgid "Unable to mark launcher trusted (executable)"
 msgstr ""
 
@@ -5429,10 +5383,6 @@ msgstr ""
 msgid "Custom application"
 msgstr ""
 
-#: libnemo-private/nemo-mime-application-chooser.c:481
-msgid "_Cancel"
-msgstr ""
-
 #: libnemo-private/nemo-mime-application-chooser.c:498
 msgid "Executables"
 msgstr ""
@@ -5580,7 +5530,7 @@ msgstr ""
 msgid "Input Methods"
 msgstr ""
 
-#: eel/eel-gtk-extensions.c:328
+#: eel/eel-gtk-extensions.c:355
 msgid "Show more _details"
 msgstr ""
 
@@ -5677,15 +5627,15 @@ msgstr ""
 msgid "Edit Bookmarks"
 msgstr ""
 
-#: gresources/nemo-bookmarks-window.glade:116
+#: gresources/nemo-bookmarks-window.glade:113
 msgid "<b>_Bookmarks</b>"
 msgstr ""
 
-#: gresources/nemo-bookmarks-window.glade:205
+#: gresources/nemo-bookmarks-window.glade:202
 msgid "<b>_Name</b>"
 msgstr ""
 
-#: gresources/nemo-bookmarks-window.glade:272
+#: gresources/nemo-bookmarks-window.glade:269
 msgid "<b>_Location</b>"
 msgstr ""
 
