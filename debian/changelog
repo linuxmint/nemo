@@ -1,3 +1,66 @@
+nemo (6.0.0) virginia; urgency=medium
+
+  [ Michael Webster ]
+  * debian: use buildtype=debugoptimized, use buildtype instead of an option for frame-pointers.
+  * nemo-window-slot.c: Update the drop zone target each time the location changes, not just when the view type changes.
+  * Fix some leaks, g_object_unref safety.
+
+  [ Guldoman ]
+  * Use `activation_uri` as a second choice in `nemo_file_get_local_uri` (#3269)
+
+  [ Michael Webster ]
+  * nemo-desktop-link.c: Fix warning when toggling the Trash icon in desktop settings.
+  * Fix some style/icon problems.
+  * search: Relax folder restrictions to allow gvfs locations.
+  * compact view: Improve text and selection highlight alignment.
+  * eel-gtk-extensions.c: (Wayland) Fix menu popup positioning, popup (#3281)
+
+  [ marcus125 ]
+  * nemo-file.c: Update hard-coded value for size of thumbnails. (#3278)
+
+  [ Michael Webster ]
+  * Update issue template with a link to open and closed issues.
+  * eel-gtk-extensions: Make wayland display check reusable.
+  * nemo-view.c: Use an admin:/// uri for the 'Open as Root' action when running under Wayland.
+  * nemo-window-slot: Set up dnd against the slot itself instead of updating the target data each time the location changes.
+
+  [ Edgar ]
+  * Fix issue when generating video thumbnails from network shares (#3265)
+
+  [ Michael Webster ]
+  * nemo-thumbnails: Use g_file_peek_path to simplify network-to-local uri conversion.
+  * Emphasize checking for duplicate existing issues in the bug report form.
+  * nemo-window-slot.c: Disable drop bar, until circular reference can be resolved.
+  * nemo-window.c: Don't update saved window state if the window is tiled when closing it.
+
+  [ Pedro Montes Alcalde ]
+  * Fix trying the same filename when moving a file with duplicate name (#3299)
+
+  [ Lars Mueller ]
+  * Fix thumbnail creation for local files
+
+  [ Michael Webster ]
+  * file ops: Use symbolic tray icons.
+
+  [ Rick Calixte ]
+  * nemo-view.c: Show detailed actions for some selection types (#3307)
+  * Fix meson.build deprecations up to 0.56.0 (#3316)
+
+  [ Michael Webster ]
+  * nemo-pathbar.c: Remove unnecessary g_object_unref.
+  * nemo-desktop.c: Use Gtk to set the desktop window hint
+  * nemo-desktop: Add csd-background to ignored-desktop-handlers.
+  * list-view: Remove remaining unused 'drop zone' code.
+  * nemo-list-view: Restrict drag-into-folder actions to be triggered only over text-covered regions of a given row.
+  * nemo-list-view.c: Don't apply column-expand test unless there is a drag operation active.
+
+  [ Clement Lefebvre ]
+  * l10n: Remove unnecessary msgid
+  * l10n: Update POT
+  * l10n: Update files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 19 Nov 2023 14:05:19 +0000
+
 nemo (5.8.4) victoria; urgency=medium
 
   [ Michael Webster ]
