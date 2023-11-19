@@ -3170,12 +3170,7 @@ nemo_view_display_selection_info (NemoView *view)
 
 			prefix = nemo_global_preferences_get_size_prefix_preference ();
 			size_string = g_format_size_full (non_folder_size, prefix);
-			/* This is marked for translation in case a localiser
-			 * needs to use something other than parentheses. The
-			 * first message gives the number of items selected;
-			 * the message in parentheses the size of those items.
-			 */
-			non_folder_str = g_strdup_printf (_("%s (%s)"),
+			non_folder_str = g_strdup_printf ("%s (%s)",
 							  items_string,
 							  size_string);
 
@@ -3183,7 +3178,7 @@ nemo_view_display_selection_info (NemoView *view)
 			if (view->details->detail_string != NULL) {
 				g_free (view->details->detail_string);
 			}
-			view->details->detail_string = g_strdup_printf (_(" (%s)"), size_string);
+			view->details->detail_string = g_strdup_printf (" (%s)", size_string);
 			g_free (size_string);
 		} else {
 			non_folder_str = g_strdup (items_string);
@@ -3215,58 +3210,29 @@ nemo_view_display_selection_info (NemoView *view)
 		view_status_string = g_strdup (non_folder_str);
 
 		if (free_space_str != NULL) {
-			/* Marking this for translation, since you
-			 * might want to change "," to something else.
-			 * After the comma the amount of free space will
-			 * be shown.
-			 */
-			status_string = g_strdup_printf (_("%s, %s"),
+			status_string = g_strdup_printf ("%s, %s",
 							 non_folder_str,
 							 obj_selected_free_space_str);
 		}
 	} else if (non_folder_count == 0) {
-		/* No use marking this for translation, since you
-		 * can't reorder the strings, which is the main thing
-		 * you'd want to do.
-		 */
 		view_status_string = g_strdup_printf ("%s%s",
 						      folder_count_str,
 						      folder_item_count_str);
 
 		if (free_space_str != NULL) {
-			/* Marking this for translation, since you
-			 * might want to change "," to something else.
-			 * After the comma the amount of free space will
-			 * be shown.
-			 */
-			status_string = g_strdup_printf (_("%s%s, %s"),
+			status_string = g_strdup_printf ("%s%s, %s",
 							 folder_count_str,
 							 folder_item_count_str,
 							 obj_selected_free_space_str);
 		}
 	} else {
-		/* This is marked for translation in case a localizer
-		 * needs to change ", " to something else. The comma
-		 * is between the message about the number of folders
-		 * and the number of items in those folders and the
-		 * message about the number of other items and the
-		 * total size of those items.
-		 */
-		view_status_string = g_strdup_printf (_("%s%s, %s"),
+		view_status_string = g_strdup_printf ("%s%s, %s",
 						      folder_count_str,
 						      folder_item_count_str,
 						      non_folder_str);
 
 		if (obj_selected_free_space_str != NULL) {
-			/* This is marked for translation in case a localizer
-			 * needs to change ", " to something else. The first comma
-			 * is between the message about the number of folders
-			 * and the number of items in those folders and the
-			 * message about the number of other items and the
-			 * total size of those items. After the second comma
-			 * the free space is written.
-			 */
-			status_string = g_strdup_printf (_("%s%s, %s, %s"),
+			status_string = g_strdup_printf ("%s%s, %s, %s",
 							 folder_count_str,
 							 folder_item_count_str,
 							 non_folder_str,
