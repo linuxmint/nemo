@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 #include <string.h>
 #include <libxml/tree.h>
+#include <libxml/parser.h>
 
 #include <libnemo-private/nemo-metadata.h>
 
