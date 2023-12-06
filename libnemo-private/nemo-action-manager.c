@@ -343,6 +343,8 @@ void_actions_for_directory (NemoActionManager *action_manager, NemoDirectory *di
         }
     }
 
+    new_list = g_list_reverse (new_list);
+
     g_object_unref (dir);
 
     tmp = action_manager->actions;
