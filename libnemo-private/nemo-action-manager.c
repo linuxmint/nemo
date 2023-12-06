@@ -145,37 +145,13 @@ sort_file_list_cb (gconstpointer a, gconstpointer b)
     NemoFile *file_b;
     const char *s0;
     const char *s1;
-    gint r;
 
     file_a = (NemoFile *) a;
     file_b = (NemoFile *) b;
     s0 = nemo_file_peek_name (file_a);
     s1 = nemo_file_peek_name (file_b);
-    //
-    // Order alphabetically
-    // Compare ASCII values of file names char by char
-    //    < 0:  a < b
-    //   == 0:  a == b
-    //    > 0:  a > b
-    //
-    do {
-        char c0 = *s0++;
-        char c1 = *s1++;
-        if (c0 < c1) {
-            r = -1;
-            break;
-        }
-        if (c0 > c1) {
-            r = 1;
-            break;
-        }
-        if (c0 == 0) {  // Special case: Both strings are identical and we have hit the \0 char? => Return equal
-            r = 0;
-            break;
-        }
-    } while (TRUE);
 
-    return r;
+    return g_strcmp0 (s0, s1);
 }
 
 static void
