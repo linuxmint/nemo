@@ -159,15 +159,6 @@ nemo_open_with = executable('nemo-open-with',
 )
 
 # LibExecs
-nemo_convert_metadata = executable('nemo-convert-metadata',
-  [ 'nemo-convert-metadata.c' ],
-  include_directories: [ rootInclude, ],
-  c_args: nemo_definitions,
-  dependencies: nemo_deps,
-  install: true,
-  install_dir: libExecPath,
-)
-
 nemo_extensions_list = executable('nemo-extensions-list',
   [ 'nemo-extensions-list.c' ],
   include_directories: [ rootInclude, ],
