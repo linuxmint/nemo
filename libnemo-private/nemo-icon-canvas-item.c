@@ -1319,12 +1319,22 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 static cairo_surface_t *
 map_surface (NemoIconCanvasItem *icon_item)
 {
+#if 0
+    g_printerr ("%p prelit: %d->%d, high sel: %d->%d, high drop: %d->%d, high clip: %d->%d, focus:%d+%d->%d\n",
+            icon_item->details->rendered_surface,
+            icon_item->details->rendered_is_prelit, icon_item->details->is_prelit,
+            icon_item->details->rendered_is_highlighted_for_selection, icon_item->details->is_highlighted_for_selection,
+            icon_item->details->rendered_is_highlighted_for_drop, icon_item->details->is_highlighted_for_drop,
+            icon_item->details->rendered_is_highlighted_for_clipboard, icon_item->details->is_highlighted_for_clipboard,
+            icon_item->details->is_highlighted_for_selection, icon_item->details->rendered_is_focused, gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas)));
+#endif
+
 	if (!(icon_item->details->rendered_surface != NULL
 	      && icon_item->details->rendered_is_prelit == icon_item->details->is_prelit
 	      && icon_item->details->rendered_is_highlighted_for_selection == icon_item->details->is_highlighted_for_selection
 	      && icon_item->details->rendered_is_highlighted_for_drop == icon_item->details->is_highlighted_for_drop
 	      && icon_item->details->rendered_is_highlighted_for_clipboard == icon_item->details->is_highlighted_for_clipboard
-	      && (icon_item->details->is_highlighted_for_selection && icon_item->details->rendered_is_focused == gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas))))) {
+	      && icon_item->details->rendered_is_focused == gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas)))) {
 		if (icon_item->details->rendered_surface != NULL) {
             cairo_surface_destroy (icon_item->details->rendered_surface);
 		}
