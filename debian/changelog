@@ -1,3 +1,13 @@
+nemo (6.0.1) virginia; urgency=medium
+
+  [ Leigh Scott ]
+  * Remove nemo-convert-metadata tool (#3335)
+
+  [ Michael Webster ]
+  * nemo-icon-canvas-item.c: Fix the state check to see if a surface can be re-used.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 19 Dec 2023 12:25:11 +0000
+
 nemo (6.0.0) virginia; urgency=medium
 
   [ Michael Webster ]
