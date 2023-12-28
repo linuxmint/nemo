@@ -1,3 +1,10 @@
+nemo (6.0.2) virginia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file.c: Escape tooltip text for markup before adding any search result snippet.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 28 Dec 2023 12:23:39 +0000
+
 nemo (6.0.1) virginia; urgency=medium
 
   [ Leigh Scott ]
