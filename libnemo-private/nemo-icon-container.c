@@ -6546,7 +6546,7 @@ nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
                    file,
                    &text);
 
-    gtk_widget_set_tooltip_text (GTK_WIDGET (container), text);
+    gtk_widget_set_tooltip_markup (GTK_WIDGET (container), text);
 
     g_free (text);
 }

@@ -8075,7 +8075,6 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags, gpointe
     gchar *nice = NULL;
     gchar *tmp = NULL;
     gchar *date;
-    gchar *ret;
 
     if (g_strcmp0 (scheme, "x-nemo-desktop") == 0) {
         g_free (scheme);
@@ -8164,6 +8163,10 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags, gpointe
         }
     }
 
+    gchar *escaped = g_markup_escape_text (string->str, -1);
+    string = g_string_assign (string, escaped);
+    g_free (escaped);
+
     if (search_dir != NULL) {
         gchar *snippet = nemo_file_get_search_result_snippet (file, search_dir);
         if (snippet != NULL) {
@@ -8175,12 +8178,8 @@ nemo_file_construct_tooltip (NemoFile *file, NemoFileTooltipFlags flags, gpointe
         }
     }
 
-    ret = string->str;
-
-    g_string_free (string, FALSE);
     g_free (scheme);
-
-    return ret;
+    return g_string_free (string, FALSE);
 }
 
 gint
