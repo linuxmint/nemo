@@ -72,7 +72,6 @@ glib_version = '>=2.45.7'
 math    = cc.find_library('m', required: true)
 
 gtk     = dependency('gtk+-3.0',                    version: '>=3.10.0')
-gtk_wl  = dependency('gtk+-wayland-3.0',            version: '>=3.10.0')
 gio     = dependency('gio-2.0',                     version: glib_version)
 gio_unix= dependency('gio-unix-2.0',                version: glib_version)
 glib    = dependency('glib-2.0',                    version: glib_version)
@@ -201,6 +200,7 @@ message('\n'.join(['',
 '    libexif support:        @0@'.format(libexif_enabled),
 '    exempi  support:        @0@'.format(exempi_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
+'    Wayland support:        @0@'.format(cc.has_header('gdk/gdkwayland.h', dependencies: gtk)),
 '',
 '    nemo-extension documentation: @0@'.format(gtkdoc_enabled),
 '    nemo-extension introspection: @0@'.format(true),
