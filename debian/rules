@@ -12,7 +12,7 @@ CONFIGURE_EXTRA_FLAGS = \
 
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 export DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow
-
+export DPKG_GENSYMBOLS_CHECK_LEVEL = 2
 
 %:
 	dh $@ --with gir
