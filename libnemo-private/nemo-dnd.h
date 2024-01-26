@@ -98,7 +98,8 @@ typedef struct {
 
 } NemoDragInfo;
 
-typedef void		(* NemoDragEachSelectedItemDataGet)	(const char *url, 
+typedef void		(* NemoDragEachSelectedItemDataGet)	(const char *url,
+                                 const char *path_str,
 								 int x, int y, int w, int h, 
 								 gpointer data);
 typedef void		(* NemoDragEachSelectedItemIterator)	(NemoDragEachSelectedItemDataGet iteratee, 

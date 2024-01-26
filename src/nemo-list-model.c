@@ -892,6 +892,7 @@ each_path_get_data_binder (NemoDragEachSelectedItemDataGet data_get,
 	GtkTreeRowReference *row;
 	GtkTreePath *path;
 	char *uri;
+	char *path_str;
 	GdkRectangle cell_area;
 	GtkTreeViewColumn *column;
 
@@ -914,8 +915,10 @@ each_path_get_data_binder (NemoDragEachSelectedItemDataGet data_get,
 				 &cell_area);
 
 			uri = nemo_file_get_local_uri (file);
+			path_str = nemo_file_get_path (file);
 
 			(*data_get) (uri,
+					 path_str,
 				     0,
 				     cell_area.y - info->model->details->drag_begin_y,
 				     cell_area.width, cell_area.height,
