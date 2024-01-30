@@ -1,0 +1,25 @@
+<ui>
+<popup name="selection">
+    <menuitem name="Open" action="Open"/>
+    <menuitem name="NewTab" action="OpenInNewTab"/>
+    <menuitem name="NewWindow" action="OpenAlternate"/>
+    <separator name="OpenNewSeparator"/>
+    <menuitem name="NewFolder" action="New Folder"/>
+    <separator name="CopyItemsSeparator"/>
+    <menuitem name="Cut" action="Cut"/>
+    <menuitem name="Copy" action="Copy"/>
+    <menuitem name="Paste" action="Paste"/>
+    <separator name="PinSeparator"/>
+    <menuitem name="Pin" action="Pin File"/>
+    <menuitem name="Unpin" action="Unpin File"/>
+    <separator name="PinSeparator"/>
+    <menuitem name="Trash" action="Trash"/>
+    <menuitem name="Delete" action="Delete"/>
+    <separator name="ActionSeparator"/>
+    <placeholder name="TreeSidebarActionsPlaceholder"/>
+    <separator name="PostActionsSeparator"/>
+    <menuitem name="Unmount" action="Unmount Volume"/>
+    <menuitem name="Eject" action="Eject Volume"/>
+    <separator name="PropertiesSeparator"/>
+</popup>
+</ui>

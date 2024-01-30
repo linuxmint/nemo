@@ -1,0 +1,7 @@
+<ui>
+<popup name="background">
+    <placeholder name="BlankDesktopActionsPlaceholder"/>
+    <separator name="BlankDesktopActionSeparator"/>
+    <menuitem name="Customize" action="Desktop Overlay"/>
+</popup>
+</ui>

@@ -18,20 +18,35 @@
 */
 
 #include "nemo-action-manager.h"
+#include "nemo-file.h"
 #include "nemo-directory.h"
-#include "nemo-action.h"
-#include <libnemo-private/nemo-global-preferences.h>
-#define DEBUG_FLAG NEMO_DEBUG_ACTIONS
-#include <libnemo-private/nemo-debug.h>
 #include "nemo-file-utilities.h"
 
+#include <libnemo-private/nemo-global-preferences.h>
+#include <libnemo-private/nemo-ui-utilities.h>
+#define DEBUG_FLAG NEMO_DEBUG_ACTIONS
+#include <libnemo-private/nemo-debug.h>
 
-G_DEFINE_TYPE (NemoActionManager, nemo_action_manager, G_TYPE_OBJECT);
+typedef struct {
+    JsonParser *json_parser;
+    GFileMonitor *config_dir_monitor;
+
+    GHashTable *actions_by_uuid;
+    GList *actions;
+
+    GList *actions_directory_list;
+    gboolean action_list_dirty;
+} NemoActionManagerPrivate;
+
+struct _NemoActionManager 
+{
+    GObject parent_instance;
+};
+
+G_DEFINE_TYPE_WITH_PRIVATE (NemoActionManager, nemo_action_manager, G_TYPE_OBJECT)
 
 static void     refresh_actions                 (NemoActionManager *action_manager, NemoDirectory *directory);
 static void     add_action_to_action_list       (NemoActionManager *action_manager, NemoFile *file);
-
-static gpointer parent_class;
 
 enum 
 {
@@ -69,8 +84,11 @@ plugin_prefs_changed (GSettings *settings, gchar *key, gpointer user_data)
 {
     g_return_if_fail (NEMO_IS_ACTION_MANAGER (user_data));
 
+    NemoActionManager *action_manager = NEMO_ACTION_MANAGER (user_data);
+
     DEBUG ("Enabled actions changed, refreshing all.");
-    refresh_actions (NEMO_ACTION_MANAGER (user_data), NULL);
+
+    refresh_actions (action_manager, NULL);
 }
 
 static void
@@ -124,8 +142,9 @@ static void
 add_directory_to_actions_directory_list (NemoActionManager *action_manager,
                                              NemoDirectory *directory)
 {
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
     add_directory_to_directory_list (action_manager, directory,
-                                     &action_manager->actions_directory_list,
+                                     &priv->actions_directory_list,
                                      G_CALLBACK (actions_changed));
 }
 
@@ -133,8 +152,9 @@ static void
 remove_directory_from_actions_directory_list (NemoActionManager *action_manager,
                                                   NemoDirectory *directory)
 {
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
     remove_directory_from_directory_list (action_manager, directory,
-                                          &action_manager->actions_directory_list,
+                                          &priv->actions_directory_list,
                                           G_CALLBACK (actions_changed));
 }
 
@@ -272,6 +292,8 @@ on_action_condition_changed (NemoActionManager *action_manager)
 static void
 add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
 {
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
     gchar *uri;
     gchar *action_name;
     NemoAction *action;
@@ -296,12 +318,15 @@ add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
                               G_CALLBACK (on_action_condition_changed),
                               action_manager);
 
-    action_manager->actions = g_list_append (action_manager->actions, action);
+    priv->actions = g_list_append (priv->actions, action);
+    g_hash_table_insert (priv->actions_by_uuid, action->uuid, action);
 }
 
 static void
 void_actions_for_directory (NemoActionManager *action_manager, NemoDirectory *directory)
 {
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
     GFile *dir = nemo_directory_get_location (directory);
     const gchar *dir_path = g_file_peek_path (dir);
     GList *new_list = NULL;
@@ -309,13 +334,14 @@ void_actions_for_directory (NemoActionManager *action_manager, NemoDirectory *di
 
     DEBUG ("Removing existing actions in %s:", dir_path);
 
-    for (l = action_manager->actions; l != NULL; l = l->next) {
+    for (l = priv->actions; l != NULL; l = l->next) {
         NemoAction *action = NEMO_ACTION (l->data);
 
         if (g_strcmp0 (dir_path, action->parent_dir) != 0) {
             new_list = g_list_prepend (new_list, g_object_ref (action));
         } else {
             DEBUG ("Found %s", action->key_file_path);
+            g_hash_table_remove (priv->actions_by_uuid, action->uuid);
         }
     }
 
@@ -323,51 +349,132 @@ void_actions_for_directory (NemoActionManager *action_manager, NemoDirectory *di
 
     g_object_unref (dir);
 
-    tmp = action_manager->actions;
-    action_manager->actions = new_list;
+    tmp = priv->actions;
+    priv->actions = new_list;
     g_list_free_full (tmp, g_object_unref);
+}
+
+#define LAYOUT_FILENAME "actions-tree.json"
+
+static void
+reload_actions_layout (NemoActionManager *action_manager)
+{
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    GError *error = NULL;
+    g_autofree gchar *path = NULL;
+
+    DEBUG ("Attempting to load action layout.");
+
+    g_clear_object (&priv->json_parser);
+
+    JsonParser *parser = json_parser_new ();
+    path = g_build_filename (g_get_user_config_dir (), "nemo", LAYOUT_FILENAME, NULL);
+
+    if (!json_parser_load_from_file (parser, path, &error)) {
+        if (error != NULL) {
+            DEBUG ("JsonParser couldn't load file: %s\n", error->message);
+            if (error->code != G_FILE_ERROR_NOENT) {
+                g_critical ("Error loading action layout file: %s\n", error->message);
+            }
+        }
+
+        g_clear_error (&error);
+        g_clear_object (&parser);
+        return;
+    }
+
+    priv->json_parser = parser;
+    DEBUG ("Loaded action layout file: %s\n", path);
+}
+
+static void
+nemo_config_dir_changed (GFileMonitor      *monitor,
+                         GFile             *file,
+                         GFile             *other_file,
+                         GFileMonitorEvent  event_type,
+                         gpointer           user_data)
+{
+    NemoActionManager *action_manager = NEMO_ACTION_MANAGER (user_data);
+
+    g_autofree gchar *basename = g_file_get_basename (file);
+
+    if (g_strcmp0 (basename, LAYOUT_FILENAME) != 0) {
+        return;
+    }
+
+    if (event_type != G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT) {
+        return;
+    }
+
+    refresh_actions (action_manager, NULL);
+}
+
+static void
+monitor_nemo_config_dir (NemoActionManager *action_manager)
+{
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+    GFile *file;
+    GFileMonitor *monitor;
+
+    g_autofree gchar *path = g_build_filename (g_get_user_config_dir (), "nemo", NULL);
+
+    file = g_file_new_for_path (path);
+    monitor = g_file_monitor_directory (file, G_FILE_MONITOR_WATCH_MOVES | G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+    g_object_unref (file);
+    g_signal_connect (monitor, "changed", G_CALLBACK (nemo_config_dir_changed), action_manager);
+    priv->config_dir_monitor = monitor;
 }
 
 static void
 refresh_actions (NemoActionManager *action_manager, NemoDirectory *directory)
 {
-    action_manager->action_list_dirty = TRUE;
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    priv->action_list_dirty = TRUE;
+
+    reload_actions_layout (action_manager);
 
     if (directory != NULL) {
         void_actions_for_directory (action_manager, directory);
         process_directory_actions (action_manager, directory);
     } else {
-        g_list_free_full (action_manager->actions, g_object_unref);
-        action_manager->actions = NULL;
+        g_list_free_full (priv->actions, g_object_unref);
+        priv->actions = NULL;
+
+        g_hash_table_destroy (priv->actions_by_uuid);
+        priv->actions_by_uuid = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
 
         GList *l;
-        for (l = action_manager->actions_directory_list; l != NULL; l = l->next) {
+        for (l = priv->actions_directory_list; l != NULL; l = l->next) {
             NemoDirectory *dir = NEMO_DIRECTORY (l->data);
             process_directory_actions (action_manager, dir);
         }
     }
 
-    action_manager->action_list_dirty = FALSE;
-
+    priv->action_list_dirty = FALSE;
     g_signal_emit (action_manager, signals[CHANGED], 0);
 }
 
 static void
 nemo_action_manager_init (NemoActionManager *action_manager)
 {
-    action_manager->actions = NULL;
-    action_manager->actions_directory_list = NULL;
 }
 
 void
 nemo_action_manager_constructed (GObject *object)
 {
-    G_OBJECT_CLASS (parent_class)->constructed (object);
+    G_OBJECT_CLASS (nemo_action_manager_parent_class)->constructed (object);
 
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
 
-    action_manager->action_list_dirty = TRUE;
+    priv->action_list_dirty = TRUE;
+    priv->actions_by_uuid = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
+
     set_up_actions_directories (action_manager);
+    reload_actions_layout (action_manager);
+    monitor_nemo_config_dir (action_manager);
 
     g_signal_connect (nemo_plugin_preferences,
                       "changed::" NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS,
@@ -384,57 +491,81 @@ static void
 nemo_action_manager_dispose (GObject *object)
 {
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
 
-    if (action_manager->actions_directory_list != NULL) {
+    if (priv->actions_directory_list != NULL) {
         GList *node, *copy;
-        copy = nemo_directory_list_copy (action_manager->actions_directory_list);
+        copy = nemo_directory_list_copy (priv->actions_directory_list);
 
         for (node = copy; node != NULL; node = node->next) {
             remove_directory_from_actions_directory_list (action_manager, node->data);
         }
-        g_list_free (action_manager->actions_directory_list);
-        action_manager->actions_directory_list = NULL;
+        g_list_free (priv->actions_directory_list);
+        priv->actions_directory_list = NULL;
         nemo_directory_list_free (copy);
     }
 
+    g_clear_object (&priv->config_dir_monitor);
+    g_clear_object (&priv->json_parser);
     g_signal_handlers_disconnect_by_func (nemo_plugin_preferences, G_CALLBACK (plugin_prefs_changed), action_manager);
 
-    G_OBJECT_CLASS (parent_class)->dispose (object);
+    G_OBJECT_CLASS (nemo_action_manager_parent_class)->dispose (object);
 }
 
 static void
 nemo_action_manager_finalize (GObject *object)
 {
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
 
-    g_list_free_full (action_manager->actions, g_object_unref);
+    g_hash_table_destroy (priv->actions_by_uuid);
+    g_list_free_full (priv->actions, g_object_unref);
 
-    G_OBJECT_CLASS (parent_class)->finalize (object);
+    G_OBJECT_CLASS (nemo_action_manager_parent_class)->finalize (object);
 }
 
 static void
 nemo_action_manager_class_init (NemoActionManagerClass *klass)
 {
     GObjectClass         *object_class = G_OBJECT_CLASS(klass);
-    parent_class           = g_type_class_peek_parent (klass);
     object_class->finalize = nemo_action_manager_finalize;
     object_class->dispose = nemo_action_manager_dispose;
     object_class->constructed = nemo_action_manager_constructed;
 
-    signals[CHANGED] =
-        g_signal_new ("changed",
-                      G_TYPE_FROM_CLASS (object_class),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (NemoActionManagerClass, changed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__VOID,
-                      G_TYPE_NONE, 0);
+    signals[CHANGED] = g_signal_new ("changed",
+                                     NEMO_TYPE_ACTION_MANAGER,
+                                     G_SIGNAL_RUN_LAST,
+                                     0,
+                                     NULL, NULL, NULL,
+                                     G_TYPE_NONE, 0);
 }
 
 GList *
 nemo_action_manager_list_actions (NemoActionManager *action_manager)
 {
-    return action_manager->action_list_dirty ? NULL : action_manager->actions;
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    return priv->action_list_dirty ? NULL : priv->actions;
+}
+
+NemoAction *
+nemo_action_manager_get_action (NemoActionManager *action_manager,
+                                const gchar       *uuid)
+{
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+    NemoAction *action;
+
+    if (priv->action_list_dirty || priv->actions == NULL) {
+        return NULL;
+    }
+
+    action = g_hash_table_lookup (priv->actions_by_uuid, uuid);
+    if (action) {
+        return g_object_ref (action);
+    }
+    else {
+        return NULL;
+    }
 }
 
 gchar *
@@ -460,4 +591,316 @@ gchar *
 nemo_action_manager_get_user_directory_path (void)
 {
     return g_build_filename (g_get_user_data_dir (), "nemo", "actions", NULL);
+}
+
+typedef struct
+{
+    NemoActionManager                *action_manager;
+    JsonReader                       *reader;
+
+    GError                           *error;
+
+    NemoActionManagerIterFunc         func;
+    gpointer                          user_data;
+} ActionsIterData;
+
+static gboolean
+parse_level (ActionsIterData *idata,
+             const gchar     *path);
+
+static void
+item_error (JsonReader  *reader,
+            GError     **error,
+            const gchar *uuid,
+            const gchar *custom_message)
+{
+    if (*error != NULL) {
+        return;
+    }
+
+    const GError *internal_error = json_reader_get_error (reader);
+    gchar *error_message;
+
+    if (internal_error != NULL) {
+        error_message = g_strdup_printf ("(%s) - %s: %s", uuid, custom_message, internal_error->message);
+    } else {
+        error_message = g_strdup_printf ("(%s) - %s", uuid, custom_message);
+    }
+
+    *error = g_error_new_literal (json_parser_error_quark (),
+                                  JSON_PARSER_ERROR_INVALID_DATA,
+                                  error_message);
+    g_free (error_message);
+}
+
+static gboolean
+parse_item (ActionsIterData *idata,
+            const gchar               *path)
+{
+    const gchar *type = NULL;
+    const gchar *uuid = NULL;
+
+    JsonReader *reader = idata->reader;
+
+    if (!json_reader_read_member (reader, "uuid") || json_reader_get_null_value (reader)) {
+        item_error (reader, &idata->error, path, "Action layout member is missing mandatory value");
+        return FALSE;
+    }
+    uuid = json_reader_get_string_value (reader);
+    json_reader_end_member (reader);
+
+    nemo_debug (NEMO_DEBUG_ACTIONS, "Parsing action layout entry for '%s'.", uuid);
+
+    if (!json_reader_read_member  (reader, "type") || json_reader_get_null_value (reader)) {
+        item_error (reader, &idata->error, uuid, "Action layout member is missing mandatory value");
+        return FALSE;
+    }
+    type = json_reader_get_string_value (reader);
+    json_reader_end_member (reader);
+
+    if (g_strcmp0 (type, "separator") == 0) {
+        nemo_debug (NEMO_DEBUG_ACTIONS, "Adding separator to UI.");
+
+        idata->func (idata->action_manager,
+                     NULL,
+                     GTK_UI_MANAGER_SEPARATOR,
+                     path,
+                     idata->user_data);
+        return TRUE;
+    }
+
+    const gchar *user_label = NULL;
+    const gchar *user_icon = NULL;
+
+    // user-label and user-icon are optional, no error if they're missing or null.
+    if (json_reader_read_member (reader, "user-label") && !json_reader_get_null_value (reader)) {
+        user_label = json_reader_get_string_value (reader);
+    }
+    json_reader_end_member (reader);
+
+    if (json_reader_read_member (reader, "user-icon") && !json_reader_get_null_value (reader)) {
+        user_icon = json_reader_get_string_value (reader);
+    }
+    json_reader_end_member (reader);
+
+    if (g_strcmp0 (type, "action") == 0) {
+        NemoAction *action;
+        g_autofree gchar *lookup_uuid = nemo_make_action_uuid_for_path (uuid);
+
+        action = nemo_action_manager_get_action (idata->action_manager, lookup_uuid);
+
+        if (action == NULL) {
+            // Don't fail a bad action, we'll show a message and keep going.
+            DEBUG ("Missing action '%s' ignored in action layout", lookup_uuid);
+            return TRUE;
+        }
+
+        if (user_label != NULL) {
+            nemo_action_override_label (action, user_label);
+        }
+
+        if (user_icon != NULL) {
+            nemo_action_override_icon (action, user_icon);
+        }
+
+        nemo_debug (NEMO_DEBUG_ACTIONS, "Adding action '%s' to UI.", action->uuid);
+
+        idata->func (idata->action_manager,
+                     GTK_ACTION (action),
+                     GTK_UI_MANAGER_MENUITEM,
+                     path,
+                     idata->user_data);
+        g_object_unref (action);
+
+        return TRUE;
+    }
+    else
+    if (g_strcmp0 (type, "submenu") == 0) {
+        GString *uuid_str;
+        g_autofree gchar *safe_uuid = NULL;
+        g_autofree gchar *next_path = NULL;
+
+        // A submenu's UUID is just its label, which can have /'s.  This messes with the action 'paths' being
+        // constructed when adding to the UI.
+        uuid_str = g_string_new (uuid);
+        g_string_replace (uuid_str, "/", "::", 0);
+        safe_uuid = g_string_free (uuid_str, FALSE);
+
+        GtkAction *submenu = gtk_action_new (safe_uuid, user_label ? user_label : "<submenus need a label>", NULL, NULL);
+
+        if (user_icon != NULL) {
+            gtk_action_set_icon_name (submenu, user_icon);
+        }
+
+        // A submenu gets added to the same level (path) as its sibling menuitems
+        nemo_debug (NEMO_DEBUG_ACTIONS, "Adding submenu '%s' to UI.", uuid);
+
+        idata->func (idata->action_manager,
+                     submenu,
+                     GTK_UI_MANAGER_MENU,
+                     path,
+                     idata->user_data);
+
+        if (!json_reader_read_member (reader, "children") || json_reader_get_null_value (reader)) {
+            item_error (reader, &idata->error, uuid, "Layout submenu is missing mandatory 'children' field");
+            return FALSE;
+        }
+
+        // But its children will be added to the next level path (which is the old path + the menu uuid)
+        // Recursion happens, but 'next_path' becomes 'path' on the next level, and is never modified or
+        // freed...
+        if (path != NULL) {
+            next_path = g_strdup_printf ("%s/%s", path, safe_uuid);
+        }
+        else
+        {
+            next_path = g_strdup (safe_uuid);
+        }
+
+        if (parse_level (idata, next_path)) {
+            json_reader_end_member (reader);
+            return TRUE;
+        }
+        // ...So next_path will be freed once return to this block after parse_level.
+    }
+
+    return FALSE;
+}
+
+static gboolean
+parse_level (ActionsIterData *idata,
+             const gchar     *path)
+{
+    JsonReader *reader = idata->reader;
+
+    if (json_reader_is_array (reader)) {
+        guint len = json_reader_count_elements (reader);
+        nemo_debug (NEMO_DEBUG_ACTIONS, "Processing %d children of '%s'.", len, path == NULL ? "root" : path);
+
+        gint i;
+        for (i = 0; i < len; i++) {
+            if (!json_reader_read_element (reader, i)) {
+                idata->error = g_error_copy (json_reader_get_error (reader));
+                return FALSE;
+            }
+
+            if (!parse_item (idata, path)) {
+                return FALSE;
+            }
+
+            json_reader_end_element (reader);
+        }
+
+        return TRUE;
+    } else {
+        idata->error = g_error_new (json_parser_error_quark (),
+                                     JSON_PARSER_ERROR_INVALID_DATA,
+                                     "Current layout depth lacks an array of action, submenu and separator definitions");
+    }
+
+    return FALSE;
+}
+
+static gboolean
+iter_actions (NemoActionManager  *action_manager,
+              ActionsIterData    *idata)
+{
+    JsonReader *reader = idata->reader;
+
+    idata->error = NULL;
+
+    if (json_reader_read_member (reader, "toplevel")) {
+        if (parse_level (idata, NULL)) {
+            json_reader_end_member (reader);
+        }
+    }
+
+    if (idata->error == NULL && json_reader_get_error (reader)) {
+        idata->error = g_error_copy (json_reader_get_error (reader));
+    }
+
+    if (idata->error != NULL) {
+        g_critical ("Structured actions couldn't be set up: %p %s", idata->error, idata->error->message);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static JsonReader *
+get_layout_reader (NemoActionManager *action_manager)
+{
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    if (priv->action_list_dirty || priv->actions == NULL || priv->json_parser == NULL) {
+        return NULL;
+    }
+
+    JsonReader *reader;
+    reader = json_reader_new (json_parser_get_root (priv->json_parser));
+
+    return reader;
+}
+
+void
+nemo_action_manager_iterate_actions (NemoActionManager                *action_manager,
+                                     NemoActionManagerIterFunc         func,
+                                     gpointer                          user_data)
+{
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+    JsonReader *reader = get_layout_reader (action_manager);
+    gboolean ret = FALSE;
+
+    if (reader != NULL) {
+        ActionsIterData idata;
+
+        idata.action_manager = action_manager;
+        idata.reader = reader;
+        idata.func = func;
+        idata.user_data = user_data;
+
+        ret = iter_actions (action_manager, &idata);
+
+        g_object_unref (idata.reader);
+    }
+
+    if (!ret) {
+        NemoAction *action;
+        GList *node;
+
+        for (node = priv->actions; node != NULL; node = node->next) {
+            action = node->data;
+
+            func (action_manager,
+                  GTK_ACTION (action),
+                  GTK_UI_MANAGER_MENUITEM,
+                  NULL,
+                  user_data);
+        }
+    }
+}
+
+void
+nemo_action_manager_update_action_states (NemoActionManager *action_manager,
+                                          GtkActionGroup    *action_group,
+                                          GList             *selection,
+                                          NemoFile          *parent,
+                                          gboolean           for_places,
+                                          GtkWindow         *window)
+{
+    GList *l, *actions;
+
+    actions = gtk_action_group_list_actions (action_group);
+
+    for (l = actions; l != NULL; l = l->next) {
+        if (!NEMO_IS_ACTION (l->data)) {
+            nemo_debug (NEMO_DEBUG_ACTIONS, "Skipping submenu '%s' (visibility managed by GtkUIManager)", gtk_action_get_name (GTK_ACTION (l->data)));
+            gtk_action_set_visible (GTK_ACTION (l->data), TRUE);
+            continue;
+        }
+
+        nemo_action_update_display_state (NEMO_ACTION (l->data), selection, parent, for_places, window);
+    }
+
+    g_list_free (actions);
 }

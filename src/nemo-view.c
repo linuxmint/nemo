@@ -6334,119 +6334,90 @@ run_action_callback (NemoAction *action, gpointer callback_data)
     nemo_file_list_free (selected_files);
 }
 
-typedef struct {
-    NemoView *view;
-    GList    *selection;
-} ActionVisibilityData;
-
-static void
-determine_visibility (gpointer data, gpointer callback_data)
-{
-    NemoAction *action = NEMO_ACTION (data);
-    ActionVisibilityData *av_data = (ActionVisibilityData *) callback_data;
-    GList *selection;
-    NemoView *view;
-
-    view = av_data->view;
-    selection = av_data->selection;
-
-    NemoFile *parent = nemo_view_get_directory_as_file (view);
-
-    if (nemo_action_get_visibility (action, selection, parent, FALSE, GTK_WINDOW (view->details->window))) {
-        gchar *label, *tt;
-
-        label = nemo_action_get_label (action, selection, parent, GTK_WINDOW (view->details->window));
-        tt = nemo_action_get_tt (action, selection, parent, GTK_WINDOW (view->details->window));
-
-        gtk_action_set_label (GTK_ACTION (action), label);
-        gtk_action_set_tooltip (GTK_ACTION (action), tt);
-
-        g_free (label);
-        g_free (tt);
-
-        gtk_action_set_visible (GTK_ACTION (action), TRUE);
-    } else {
-        gtk_action_set_visible (GTK_ACTION (action), FALSE);
-    }
-}
-
 static void
 update_actions_visibility (NemoView *view, GList *selection)
 {
-    GList *actions = gtk_action_group_list_actions (view->details->actions_action_group);
-    ActionVisibilityData data;
+    NemoFile *parent = nemo_view_get_directory_as_file (view);
 
-    data.view = view;
-    data.selection = selection;
-
-    g_list_foreach (actions, determine_visibility, &data);
-
-    g_list_free (actions);
+    nemo_action_manager_update_action_states (view->details->action_manager,
+                                              view->details->actions_action_group,
+                                              selection,
+                                              parent,
+                                              FALSE,
+                                              GTK_WINDOW (view->details->window));
 }
 
 static void
-add_action_to_action_menus (NemoView *directory_view,
-                            NemoAction *action,
-                          const char *menu_path,
-                          const char *popup_path,
-                          const char *popup_bg_path)
+add_action_to_ui (NemoActionManager    *manager,
+                  GtkAction            *action,
+                  GtkUIManagerItemType  type,
+                  const gchar          *path,
+                  gpointer              user_data)
 {
-    GtkUIManager *ui_manager;
+    NemoView *view = NEMO_VIEW (user_data);
 
-    const gchar *action_name = gtk_action_get_name (GTK_ACTION (action));
+    if (type != GTK_UI_MANAGER_SEPARATOR) {
+        if (type == GTK_UI_MANAGER_MENUITEM) {
+            g_signal_handlers_disconnect_by_func (action,
+                                                  run_action_callback,
+                                                  view);
 
-    gtk_action_group_add_action (directory_view->details->actions_action_group,
-                                 GTK_ACTION (action));
+            g_signal_connect (action, "activate",
+                              G_CALLBACK (run_action_callback),
+                              view);
+        }
 
-    gtk_action_set_visible (GTK_ACTION (action), FALSE);
+        gtk_action_group_add_action (view->details->actions_action_group,
+                                     action);
+        gtk_action_set_visible (GTK_ACTION (action), FALSE);
+    }
 
-    g_signal_handlers_disconnect_by_func (action,
-                                          run_action_callback,
-                                          directory_view);
+    static const gchar *roots[] = {
+        NEMO_VIEW_MENU_PATH_ACTIONS_PLACEHOLDER,
+        NEMO_VIEW_POPUP_PATH_ACTIONS_PLACEHOLDER,
+        NEMO_VIEW_POPUP_PATH_BACKGROUND_ACTIONS_PLACEHOLDER,
+        NULL
+    };
 
-    g_signal_connect (action, "activate",
-                   G_CALLBACK (run_action_callback),
-                   directory_view);
+    gint i = 0;
+    while (roots[i] != NULL) {
+        g_autofree gchar *full_path = NULL;
+        const gchar *name;
 
-    ui_manager = nemo_window_get_ui_manager (directory_view->details->window);
+        if (path != NULL) {
+            full_path = g_strdup_printf ("%s/%s", roots[i], path);
+        }
+        else {
+            full_path = g_strdup (roots[i]);
+        }
 
-    gtk_ui_manager_add_ui (ui_manager,
-                   directory_view->details->actions_merge_id,
-                   menu_path,
-                   action_name,
-                   action_name,
-                   GTK_UI_MANAGER_MENUITEM,
-                   FALSE);
-    gtk_ui_manager_add_ui (ui_manager,
-                   directory_view->details->actions_merge_id,
-                   popup_path,
-                   action_name,
-                   action_name,
-                   GTK_UI_MANAGER_MENUITEM,
-                   FALSE);
-    gtk_ui_manager_add_ui (ui_manager,
-                   directory_view->details->actions_merge_id,
-                   popup_bg_path,
-                   action_name,
-                   action_name,
-                   GTK_UI_MANAGER_MENUITEM,
-                   FALSE);
+
+        if (type == GTK_UI_MANAGER_SEPARATOR) {
+            name = NULL;
+        }
+        else {
+            name = gtk_action_get_name (action);
+        }
+
+        gtk_ui_manager_add_ui (nemo_window_get_ui_manager (view->details->window),
+                               view->details->actions_merge_id,
+                               full_path,
+                               name,
+                               name,
+                               type,
+                               FALSE);
+        i++;
+    }
 }
 
 static void
 update_actions (NemoView *view)
 {
-    NemoAction *action;
-    GList *action_list, *node;
+    nemo_debug (NEMO_DEBUG_ACTIONS, "Refreshing menu actions");
 
-    action_list = nemo_action_manager_list_actions (view->details->action_manager);
-
-    for (node = action_list; node != NULL; node = node->next) {
-        action = node->data;
-        add_action_to_action_menus (view, action, NEMO_VIEW_MENU_PATH_ACTIONS_PLACEHOLDER,
-                                                  NEMO_VIEW_POPUP_PATH_ACTIONS_PLACEHOLDER,
-                                                  NEMO_VIEW_POPUP_PATH_BACKGROUND_ACTIONS_PLACEHOLDER);
-    }
+    nemo_action_manager_iterate_actions (view->details->action_manager,
+                                         (NemoActionManagerIterFunc) add_action_to_ui,
+                                         view);
 }
 
 static void
@@ -9722,7 +9693,7 @@ real_update_menus (NemoView *view)
 					  nemo_view_can_rename_file (view, selection->data));
 	}
 
-    gtk_action_set_visible (action, !selection_contains_recent && 
+    gtk_action_set_visible (action, !selection_contains_recent &&
                                     !selection_contains_special_link);
 
     gboolean no_selection_or_one_dir = ((selection_count == 1 && selection_contains_directory) ||
