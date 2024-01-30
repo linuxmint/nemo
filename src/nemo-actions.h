@@ -161,6 +161,9 @@
 #define NEMO_ACTION_UNFAVORITE_FILE      "Unfavorite File"
 #define NEMO_ACTION_DESKTOP_OVERLAY "Desktop Overlay"
 
+#define NEMO_ACTION_SIDEBAR_REMOVE "Remove Bookmark"
+#define NEMO_ACTION_SIDEBAR_DETECT_MEDIA "Detect Media"
+
 typedef struct
 {
     const gchar  *action_name; // The action's name

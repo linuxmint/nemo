@@ -79,6 +79,7 @@ glib    = dependency('glib-2.0',                    version: glib_version)
 gmodule = dependency('gmodule-no-export-2.0',       version: glib_version)
 gobject = dependency('gobject-2.0',                 version: '>=2.0')
 go_intr = dependency('gobject-introspection-1.0',   version: '>=1.0')
+json    = dependency('json-glib-1.0',               version: '>=1.6')
 
 cinnamon= dependency('cinnamon-desktop',            version: '>=4.8.0')
 gail    = dependency('gail-3.0')
@@ -191,6 +192,7 @@ subdir('src')
 subdir('search-helpers')
 subdir('test')
 subdir('docs')
+subdir('action-layout-editor')
 
 message('\n'.join(['',
 '        @0@-@1@'.format(meson.project_name(), meson.project_version()),
