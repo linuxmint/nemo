@@ -35,6 +35,10 @@
 #define g_drive_is_removable g_drive_is_media_removable
 #endif
 
+#ifndef GLIB_VERSION_2_70
+#define g_pattern_spec_match g_pattern_match
+#endif
+
 typedef struct {
     SelectionType selection_type;
     gchar **extensions;
@@ -58,6 +62,15 @@ typedef struct {
     gboolean run_in_terminal;
     gchar *uri_scheme;
 
+    GList *allowed_location_patterns;
+    GList *forbidden_location_patterns;
+    GList *allowed_location_filenames;
+    GList *forbidden_location_filenames;
+
+    GList *allowed_patterns;
+    GList *forbidden_patterns;
+    GList *allowed_filenames;
+    GList *forbidden_filenames;
 
     gboolean constructing;
 } NemoActionPrivate;
@@ -547,6 +560,51 @@ strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
     }
 }
 
+static void
+populate_patterns_and_filenames (NemoAction   *action,
+                                 gchar       **array,
+                                 GList       **allowed_patterns,
+                                 GList       **forbidden_patterns,
+                                 GList       **allowed_filenames,
+                                 GList       **forbidden_filenames)
+{
+    *allowed_patterns = NULL;
+    *forbidden_patterns = NULL;
+    *allowed_filenames = NULL;
+    *forbidden_filenames = NULL;
+
+    if (array == NULL) {
+        return;
+    }
+
+    gint i;
+
+    for (i = 0; i < g_strv_length (array); i++) {
+        const gchar *str = array[i];
+
+        if (g_strstr_len (str, -1, "?") || g_strstr_len (str, -1, "*")) {
+            if (g_str_has_prefix (array[i], "!")) {
+                *forbidden_patterns = g_list_prepend (*forbidden_patterns, g_pattern_spec_new (array[i] + 1));
+            } else {
+                *allowed_patterns = g_list_prepend (*allowed_patterns, g_pattern_spec_new (array[i]));
+            }
+
+            continue;
+        }
+
+        if (g_str_has_prefix (array[i], "!")) {
+            *forbidden_filenames = g_list_prepend (*forbidden_filenames, g_strdup (array[i] + 1));
+        } else {
+            *allowed_filenames = g_list_prepend (*allowed_filenames, g_strdup (array[i]));
+        }
+    }
+
+    *allowed_patterns = g_list_reverse (*allowed_patterns);
+    *forbidden_patterns = g_list_reverse (*forbidden_patterns);
+    *allowed_filenames = g_list_reverse (*allowed_filenames);
+    *forbidden_filenames = g_list_reverse (*forbidden_filenames);
+}
+
 void
 nemo_action_constructed (GObject *object)
 {
@@ -678,6 +736,32 @@ nemo_action_constructed (GObject *object)
                                               ACTION_FILE_GROUP,
                                               KEY_TERMINAL,
                                               NULL);
+
+    gchar **locations = g_key_file_get_string_list (key_file,
+                                                    ACTION_FILE_GROUP,
+                                                    KEY_LOCATIONS,
+                                                    NULL,
+                                                    NULL);
+
+    populate_patterns_and_filenames (action, locations,
+                                     &priv->allowed_location_patterns,
+                                     &priv->forbidden_location_patterns,
+                                     &priv->allowed_location_filenames,
+                                     &priv->forbidden_location_filenames);
+    g_strfreev (locations);
+
+    gchar **files = g_key_file_get_string_list (key_file,
+                                                ACTION_FILE_GROUP,
+                                                KEY_FILES,
+                                                NULL,
+                                                NULL);
+
+    populate_patterns_and_filenames (action, files,
+                                     &priv->allowed_patterns,
+                                     &priv->forbidden_patterns,
+                                     &priv->allowed_filenames,
+                                     &priv->forbidden_filenames);
+    g_strfreev (files);
 
     gboolean is_desktop = FALSE;
 
@@ -907,6 +991,14 @@ nemo_action_finalize (GObject *object)
     g_list_free_full (priv->dbus, (GDestroyNotify) dbus_condition_free);
     g_list_free_full (priv->gsettings, (GDestroyNotify) gsettings_condition_free);
 
+    g_list_free_full (priv->allowed_location_patterns, (GDestroyNotify) g_pattern_spec_free);
+    g_list_free_full (priv->forbidden_location_patterns, (GDestroyNotify) g_pattern_spec_free);
+    g_list_free_full (priv->allowed_patterns, (GDestroyNotify) g_pattern_spec_free);
+    g_list_free_full (priv->forbidden_patterns, (GDestroyNotify) g_pattern_spec_free);
+    g_list_free_full (priv->allowed_location_filenames, (GDestroyNotify) g_free);
+    g_list_free_full (priv->forbidden_location_filenames, (GDestroyNotify) g_free);
+    g_list_free_full (priv->allowed_filenames, (GDestroyNotify) g_free);
+    g_list_free_full (priv->forbidden_filenames, (GDestroyNotify) g_free);
 
     g_clear_handle_id (&priv->dbus_recalc_timeout_id, g_source_remove);
     g_clear_handle_id (&priv->gsettings_recalc_timeout_id, g_source_remove);
@@ -1548,7 +1640,113 @@ get_is_dir (NemoFile *file)
     return ret;
 }
 
+static gboolean
+check_is_allowed (NemoAction *action,
+                  NemoFile   *parent,
+                  GList      *selection,
+                  GList      *allowed_patterns,
+                  GList      *forbidden_patterns,
+                  GList      *allowed_names,
+                  GList      *forbidden_names)
 {
+    // If there are no pattern/name specs, always allow the location..
+    if ((allowed_patterns == NULL && forbidden_patterns == NULL && allowed_names == NULL && forbidden_names == NULL)) {
+        return TRUE;
+    }
+
+    GList *l, *files;
+
+    if (parent != NULL) {
+        DEBUG ("Checking pattern/name matching for location: %s", nemo_file_peek_name (parent));
+        files = g_list_prepend (NULL, parent);
+    }
+    else {
+        DEBUG ("Checking pattern/name matching for selected files");
+        files = selection;
+    }
+
+    gboolean allowed = TRUE;
+
+    for (l = files; l != NULL; l = l->next) {
+        NemoFile *file = NEMO_FILE (l->data);
+
+        g_autofree gchar *path = nemo_file_get_path (file);
+        // If the first file (or the single parent) isn't native, no need to
+        // check all selected items, just exit early.
+        if (path == NULL) {
+            goto check_allowed_done;
+        }
+
+        const gchar *name = nemo_file_peek_name (file);
+        gboolean allowed_allowed = TRUE;
+        gboolean forbidden_allowed = TRUE;
+        GList *ll;
+
+        if (allowed_patterns != NULL || allowed_names != NULL) {
+            allowed_allowed = FALSE;
+
+            for (ll = allowed_patterns; ll != NULL; ll = ll->next) {
+                if (g_pattern_spec_match ((GPatternSpec *) ll->data, strlen (name), name, NULL)) {
+                    allowed_allowed = TRUE;
+                    break;
+                }
+            }
+
+            for (ll = allowed_names; ll != NULL; ll = ll->next) {
+                gchar *aname = (gchar *) ll->data;
+
+                if (name[0] == '/' && g_strcmp0 (path, aname) == 0) {
+                        allowed_allowed = TRUE;
+                        break;
+                }
+                else
+                if (g_str_has_suffix (name, aname)) {
+                    allowed_allowed = TRUE;
+                    break;
+                }
+            }
+        }
+
+        if (forbidden_patterns != NULL || forbidden_names != NULL) {
+            // (forbidden_allowed = TRUE;)
+
+            for (ll = forbidden_patterns; ll != NULL; ll = ll->next) {
+                if (g_pattern_spec_match ((GPatternSpec *) ll->data, strlen (name), name, NULL)) {
+                    forbidden_allowed = FALSE;
+                    break;
+                }
+            }
+
+            for (ll = forbidden_names; ll != NULL; ll = ll->next) {
+                gchar *fname = (gchar *) ll->data;
+                if (name[0] == '/' && g_strcmp0 (path, fname) == 0) {
+                    forbidden_allowed = FALSE;
+                    break;
+                }
+                else
+                if (g_str_has_suffix (name, fname)) {
+                    forbidden_allowed = FALSE;
+                    break;
+                }
+            }
+        }
+
+        DEBUG ("Final result - allowed pass: %d, forbidden pass: %d", allowed_allowed, forbidden_allowed);
+        if (!(allowed_allowed && forbidden_allowed)) {
+            allowed = FALSE;
+            break;
+        }
+    }
+
+check_allowed_done:
+    if (parent != NULL) {
+        g_list_free (files);
+    }
+
+    return allowed;
+}
+
+
 static gboolean
 get_visibility (NemoAction *action,
                 GList      *selection,
@@ -1568,6 +1766,19 @@ get_visibility (NemoAction *action,
         return FALSE;
     }
 
+    if (!check_is_allowed (action, parent, NULL,
+                           priv->allowed_location_patterns,
+                           priv->forbidden_location_patterns,
+                           priv->allowed_location_filenames,
+                           priv->forbidden_location_filenames)) {
+        return FALSE;
+    }
+
+    if (!check_is_allowed (action, NULL, selection,
+                           priv->allowed_patterns,
+                           priv->forbidden_patterns,
+                           priv->allowed_filenames,
+                           priv->forbidden_filenames)) {
         return FALSE;
     }
 

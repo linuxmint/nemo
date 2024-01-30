@@ -123,3 +123,54 @@ Extensions=any;
 # file:///home/joe/.bashrc does not
 
 #UriScheme=file
+
+# Locations - semicolor-separated array of directory names and globs to check against the
+# selection's parent location.
+#
+# If Locations is defined, an action will *only* be valid under one of the following conditions:
+#     - The current location's filename (foo.bar, no path) is captured by *at least one*
+#       of any defined glob patterns.
+#     - The current location's filename exactly matches *at least one* defined filename.
+#
+# If an entry is prefixed with '!', the above conditions are reversed, and an action is
+# considered *invalid* if any matches are made.
+#
+# NOTE: Allowed patterns are considered before forbidden ones. This means that a location
+#       would be invalidated by not matching any allowed patterns before being invalidated
+#       by matching forbidden ones.
+#
+# Example desired condition: Match any dot-file locations except '.config':
+#
+# Locations=.*;!.config
+#
+# Action would be visible when right-clicking the file '.foo/bar', but not '.config/bar'
+#
+# Optional
+
+#Locations=.*;!.config;
+
+# Files - semicolor-separated array of file names and globs to check against the currently
+# selected file list.
+#
+# If Files is defined, an action will *only* be valid under the following conditions:
+#     - All selected filenames (foo.bar, no path) are captured by *at least one* of any
+#       defined glob patterns.
+#     - All file absolute paths exactly match *at least one* of any defined absolute paths.
+#     - All filenames exactly match *at least one* of the defined filenames.
+#
+# If an entry is prefixed with '!', the above conditions are reversed, and an action is
+# considered *invalid* if any matches are made.
+#
+# NOTE: Allowed patterns are considered before forbidden ones. This means that a filename
+#       would be invalidated by not matching any allowed patterns before being invalidated
+#       by matching forbidden ones.
+#
+# Example desired condition: Match .bash* but not '.bashrc':
+#
+# Files=.bash*;!.bashrc;
+#
+# Action would be visible when right-clicking the file '.bash_history', but not '.bashrc'
+#
+# Optional
+
+#Files=.bash*;!.bashrc;
