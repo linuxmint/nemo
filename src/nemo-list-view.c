@@ -2364,36 +2364,7 @@ static void
 handle_vadjustment_changed (GtkAdjustment *adjustment,
                             NemoListView  *view)
 {
-    gboolean reallocate = FALSE;
-
-    if (view->details->overlay_scrolling) {
-        gint upper, current_adjust, page_size, current_margin;
-
-        page_size = gtk_adjustment_get_page_size (adjustment);
-        upper = gtk_adjustment_get_upper (adjustment);
-        current_adjust = gtk_adjustment_get_value (adjustment);
-        current_margin = gtk_widget_get_margin_bottom (GTK_WIDGET (view->details->tree_view));
-
-        if (upper == current_adjust + page_size) {
-            GtkWidget *hscrollbar = gtk_scrolled_window_get_hscrollbar (GTK_SCROLLED_WINDOW (view));
-            gint nat_height;
-
-            gtk_widget_get_preferred_height (hscrollbar, NULL, &nat_height);
-            gtk_widget_set_margin_bottom (GTK_WIDGET (view->details->tree_view), nat_height * 2);
-            if (current_margin != nat_height)
-                reallocate = TRUE;
-        } else {
-            gtk_widget_set_margin_bottom (GTK_WIDGET (view->details->tree_view), 0);
-
-            if (current_margin > 0)
-                reallocate = TRUE;
-        }
-    }
-
     queue_update_visible_icons (view, NORMAL_UPDATE_VISIBLE_DELAY);
-
-    if (reallocate)
-        gtk_widget_queue_allocate (GTK_WIDGET (view->details->tree_view));
 }
 
 static gint
@@ -2415,6 +2386,32 @@ on_treeview_realized (GtkWidget *widget,
                       "value-changed",
                       G_CALLBACK (handle_vadjustment_changed),
                       view);
+}
+
+static void
+on_size_allocation_changed (GtkWidget    *widget,
+                            GdkRectangle *allocation,
+                            gpointer      user_data)
+{
+    NemoListView *view = NEMO_LIST_VIEW (user_data);
+    GtkAdjustment *adjustment;
+    gdouble page_size, upper;
+
+    adjustment = gtk_scrollable_get_hadjustment (GTK_SCROLLABLE (view->details->tree_view));
+    g_object_get (adjustment, "page-size", &page_size, "upper", &upper, NULL);
+
+    if (view->details->overlay_scrolling && page_size < upper) {
+        GtkWidget *hscrollbar = gtk_scrolled_window_get_hscrollbar (GTK_SCROLLED_WINDOW (view));
+        gint nat_height;
+
+        gtk_widget_get_preferred_height (hscrollbar, NULL, &nat_height);
+        gtk_widget_set_margin_bottom (GTK_WIDGET (view->details->tree_view), nat_height + 2);
+    }
+    else {
+        gtk_widget_set_margin_bottom (GTK_WIDGET (view->details->tree_view), 0);
+    }
+
+    gtk_widget_queue_allocate (widget);
 }
 
 static void
@@ -2581,6 +2578,7 @@ create_and_set_up_tree_view (NemoListView *view)
 				 G_CALLBACK(focus_in_event_callback), view, 0);
 
     g_signal_connect (view->details->tree_view, "realize", G_CALLBACK (on_treeview_realized), view);
+    g_signal_connect (view->details->tree_view, "size-allocate", G_CALLBACK (on_size_allocation_changed), view);
 
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
 	gtk_tree_view_set_model (view->details->tree_view, GTK_TREE_MODEL (view->details->model));
