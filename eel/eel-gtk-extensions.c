@@ -38,7 +38,9 @@
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkprivate.h>
+#ifdef GDK_WINDOWING_WAYLAND
 #include <gdk/gdkwayland.h>
+#endif
 #include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
 #include <math.h>
@@ -253,6 +255,7 @@ gboolean
 eel_check_is_wayland (void)
 {
     static gboolean using_wayland = FALSE;
+#ifdef GDK_WINDOWING_WAYLAND
     static gsize once_init = 0;
 
     if (g_once_init_enter (&once_init)) {
@@ -260,7 +263,7 @@ eel_check_is_wayland (void)
 
         g_once_init_leave (&once_init, 1);
     }
-
+#endif
     return using_wayland;
 }
 
