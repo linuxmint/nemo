@@ -133,6 +133,11 @@ typedef struct {
     guint handler_id;
 } GSettingsCondition;
 
+typedef struct {
+    GPatternSpec *pattern;
+    gboolean      absolute;
+} MatchPattern;
+
 static void
 dbus_condition_free (gpointer data)
 {
@@ -155,6 +160,29 @@ gsettings_condition_free (gpointer data)
     g_free (cond->condition_string);
 
     g_free (cond);
+}
+
+static MatchPattern *
+new_match_pattern (const gchar *pattern)
+{
+    MatchPattern *mp = g_new0 (MatchPattern, 1);
+
+    mp->pattern = g_pattern_spec_new (pattern);
+
+    // A pattern with a leading * can be matched against a full path, whether it has
+    // any other path elements or not (*/foo/bar/* or *.foo)
+    mp->absolute = g_str_has_prefix (pattern, "/") || g_str_has_prefix (pattern, "*");
+
+    return mp;
+}
+
+static void
+free_match_pattern (gpointer data)
+{
+    MatchPattern *mp = (MatchPattern *) data;
+
+    g_pattern_spec_free (mp->pattern);
+    g_free (mp);
 }
 
 static void
@@ -580,23 +608,29 @@ populate_patterns_and_filenames (NemoAction   *action,
     gint i;
 
     for (i = 0; i < g_strv_length (array); i++) {
-        const gchar *str = array[i];
+        GString *str = g_string_new (array[i]);
 
-        if (g_strstr_len (str, -1, "?") || g_strstr_len (str, -1, "*")) {
-            if (g_str_has_prefix (array[i], "!")) {
-                *forbidden_patterns = g_list_prepend (*forbidden_patterns, g_pattern_spec_new (array[i] + 1));
+        g_string_replace (str, "~", g_get_home_dir (), 1);
+
+        g_printerr ("str: '%s'\n", str->str);
+
+        if (g_strstr_len (str->str, -1, "?") || g_strstr_len (str->str, -1, "*")) {
+            if (g_str_has_prefix (str->str, "!")) {
+                *forbidden_patterns = g_list_prepend (*forbidden_patterns, new_match_pattern (str->str + 1));
             } else {
-                *allowed_patterns = g_list_prepend (*allowed_patterns, g_pattern_spec_new (array[i]));
+                *allowed_patterns = g_list_prepend (*allowed_patterns, new_match_pattern (str->str));
             }
-
-            continue;
+        }
+        else
+        {
+            if (g_str_has_prefix (str->str, "!")) {
+                *forbidden_filenames = g_list_prepend (*forbidden_filenames, g_strdup (str->str + 1));
+            } else {
+                *allowed_filenames = g_list_prepend (*allowed_filenames, g_strdup (str->str));
+            }
         }
 
-        if (g_str_has_prefix (array[i], "!")) {
-            *forbidden_filenames = g_list_prepend (*forbidden_filenames, g_strdup (array[i] + 1));
-        } else {
-            *allowed_filenames = g_list_prepend (*allowed_filenames, g_strdup (array[i]));
-        }
+        g_string_free (str, TRUE);
     }
 
     *allowed_patterns = g_list_reverse (*allowed_patterns);
@@ -991,10 +1025,10 @@ nemo_action_finalize (GObject *object)
     g_list_free_full (priv->dbus, (GDestroyNotify) dbus_condition_free);
     g_list_free_full (priv->gsettings, (GDestroyNotify) gsettings_condition_free);
 
-    g_list_free_full (priv->allowed_location_patterns, (GDestroyNotify) g_pattern_spec_free);
-    g_list_free_full (priv->forbidden_location_patterns, (GDestroyNotify) g_pattern_spec_free);
-    g_list_free_full (priv->allowed_patterns, (GDestroyNotify) g_pattern_spec_free);
-    g_list_free_full (priv->forbidden_patterns, (GDestroyNotify) g_pattern_spec_free);
+    g_list_free_full (priv->allowed_location_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->forbidden_location_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->allowed_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->forbidden_patterns, (GDestroyNotify) free_match_pattern);
     g_list_free_full (priv->allowed_location_filenames, (GDestroyNotify) g_free);
     g_list_free_full (priv->forbidden_location_filenames, (GDestroyNotify) g_free);
     g_list_free_full (priv->allowed_filenames, (GDestroyNotify) g_free);
@@ -1686,7 +1720,10 @@ check_is_allowed (NemoAction *action,
             allowed_allowed = FALSE;
 
             for (ll = allowed_patterns; ll != NULL; ll = ll->next) {
-                if (g_pattern_spec_match ((GPatternSpec *) ll->data, strlen (name), name, NULL)) {
+                MatchPattern *mp = (MatchPattern *) ll->data;
+                const gchar *test_str = mp->absolute ? path : name;
+
+                if (g_pattern_spec_match (mp->pattern, strlen (test_str), test_str, NULL)) {
                     allowed_allowed = TRUE;
                     break;
                 }
@@ -1711,7 +1748,10 @@ check_is_allowed (NemoAction *action,
             // (forbidden_allowed = TRUE;)
 
             for (ll = forbidden_patterns; ll != NULL; ll = ll->next) {
-                if (g_pattern_spec_match ((GPatternSpec *) ll->data, strlen (name), name, NULL)) {
+                MatchPattern *mp = (MatchPattern *) ll->data;
+                const gchar *test_str = mp->absolute ? path : name;
+
+                if (g_pattern_spec_match (mp->pattern, strlen (test_str), test_str, NULL)) {
                     forbidden_allowed = FALSE;
                     break;
                 }
