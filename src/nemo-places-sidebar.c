@@ -404,7 +404,7 @@ new_place_info (PlaceType place_type,
                 gint df_percent,
                 gboolean show_df_percent)
 {
-    PlaceInfo *info = g_slice_new0 (PlaceInfo);
+    PlaceInfo *info = g_new0 (PlaceInfo, 1);
 
     info->place_type = place_type;
     info->section_type = section_type;
@@ -433,7 +433,7 @@ free_place_info (PlaceInfo *info)
     g_clear_object (&info->mount);
     g_free (info->tooltip);
 
-    g_slice_free (PlaceInfo, info);
+    g_free (info);
 }
 
 static GtkTreeIter

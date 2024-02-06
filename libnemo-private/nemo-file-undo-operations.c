@@ -241,7 +241,7 @@ typedef struct {
 static void
 file_undo_info_op_res_free (gpointer data)
 {
-	g_slice_free (FileUndoInfoOpRes, data);
+	g_free (data);
 }
 
 gboolean
@@ -279,7 +279,7 @@ file_undo_info_complete_apply (NemoFileUndoInfo *self,
 			       gboolean success,
 			       gboolean user_cancel)
 {
-	FileUndoInfoOpRes *op_res = g_slice_new0 (FileUndoInfoOpRes);
+	FileUndoInfoOpRes *op_res = g_new0 (FileUndoInfoOpRes, 1);
 
 	op_res->user_cancel = user_cancel;
 	op_res->success = success;

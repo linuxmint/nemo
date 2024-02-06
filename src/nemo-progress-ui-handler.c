@@ -385,7 +385,7 @@ timeout_data_free (TimeoutData *data)
 	g_clear_object (&data->self);
 	g_clear_object (&data->info);
 
-	g_slice_free (TimeoutData, data);
+	g_free (data);
 }
 
 static TimeoutData *
@@ -394,7 +394,7 @@ timeout_data_new (NemoProgressUIHandler *self,
 {
 	TimeoutData *retval;
 
-	retval = g_slice_new0 (TimeoutData);
+	retval = g_new0 (TimeoutData, 1);
 	retval->self = g_object_ref (self);
 	retval->info = g_object_ref (info);
 

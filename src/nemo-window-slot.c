@@ -710,7 +710,7 @@ set_status_data_free (gpointer data)
 
 	g_free (status_data->status);
 
-	g_slice_free (SetStatusData, data);
+	g_free (data);
 }
 
 static gboolean
@@ -742,7 +742,7 @@ set_floating_bar_status (NemoWindowSlot *slot,
 		      "gtk-double-click-time", &double_click_time,
 		      NULL);
 
-	status_data = g_slice_new0 (SetStatusData);
+	status_data = g_new0 (SetStatusData, 1);
 	status_data->status = g_strdup (status);
 	status_data->slot = slot;
 

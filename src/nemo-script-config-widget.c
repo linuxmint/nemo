@@ -26,7 +26,8 @@ typedef struct {
 static void
 script_proxy_free (ScriptProxy *proxy)
 {
-    g_clear_pointer (&proxy->name, g_free);
+    g_free (proxy->name);
+    g_free (proxy);
 }
 
 static GtkWidget *
@@ -113,7 +114,7 @@ populate_from_directory (NemoScriptConfigWidget *widget, const gchar *path)
                 continue;
             }
 
-            ScriptProxy *p = g_slice_new0 (ScriptProxy);
+            ScriptProxy *p = g_new0 (ScriptProxy, 1);
             p->name = g_strdup (name);
             p->widget = widget;
 

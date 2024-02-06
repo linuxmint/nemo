@@ -2781,7 +2781,7 @@ finalize (GObject *object)
 		g_source_remove (details->a11y_item_action_idle_handler);
 	}
 
-    g_slice_free (NemoViewLayoutConstants, details->view_constants);
+    g_free (details->view_constants);
 
     g_list_free (details->current_selection);
     g_free(details);
@@ -4920,7 +4920,7 @@ nemo_icon_container_init (NemoIconContainer *container)
 
     details->fixed_text_height = -1;
 
-    details->view_constants = g_slice_new0 (NemoViewLayoutConstants);
+    details->view_constants = g_new0 (NemoViewLayoutConstants, 1);
 
 	container->details = details;
 

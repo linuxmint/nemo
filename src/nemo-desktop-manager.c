@@ -101,7 +101,7 @@ free_info (DesktopInfo *info)
     g_return_if_fail (info != NULL);
 
     g_clear_pointer (&info->window, gtk_widget_destroy);
-    g_slice_free (DesktopInfo, info);
+    g_free (info);
 }
 
 static RunState
@@ -308,7 +308,7 @@ create_new_desktop_window (NemoDesktopManager *manager,
     FETCH_PRIV (manager);
     GtkWidget *window;
 
-    DesktopInfo *info = g_slice_new0 (DesktopInfo);
+    DesktopInfo *info = g_new0 (DesktopInfo, 1);
 
     info->monitor_num = monitor;
     info->shows_desktop = show_desktop;

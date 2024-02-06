@@ -137,7 +137,7 @@ drag_info_free (gpointer user_data)
   g_clear_object (&drag_info->target_slot);
   g_clear_pointer (&drag_info->desktop_dnd_source_fs, g_free);
 
-  g_slice_free (NemoDragSlotProxyInfo, drag_info);
+  g_free (drag_info);
 }
 
 static void
@@ -332,7 +332,7 @@ nemo_drag_slot_proxy_init (GtkWidget *widget,
 
   g_assert (GTK_IS_WIDGET (widget));
 
-  drag_info = g_slice_new0 (NemoDragSlotProxyInfo);
+  drag_info = g_new0 (NemoDragSlotProxyInfo, 1);
 
   g_object_set_data_full (G_OBJECT (widget), "drag-slot-proxy-data", drag_info,
                           drag_info_free);

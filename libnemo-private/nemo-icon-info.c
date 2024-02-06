@@ -61,8 +61,7 @@ nemo_icon_info_free (NemoIconInfo *icon)
     }
 
     g_free (icon->icon_name);
-
-    g_slice_free (NemoIconInfo, icon);
+    g_free (icon);
 }
 
 NemoIconInfo *
@@ -106,7 +105,7 @@ nemo_icon_info_create (void)
 {
     NemoIconInfo *icon;
 
-    icon = g_slice_new0 (NemoIconInfo);
+    icon = g_new0 (NemoIconInfo, 1);
 
 	icon->last_use_time = g_get_monotonic_time ();
 	icon->sole_owner = TRUE;
@@ -270,7 +269,7 @@ icon_key_new (GIcon *icon, int size)
 {
 	IconKey *key;
 
-	key = g_slice_new (IconKey);
+	key = g_new0 (IconKey, 1);
 	key->icon = g_object_ref (icon);
 	key->size = size;
 
@@ -281,7 +280,7 @@ static void
 icon_key_free (IconKey *key)
 {
 	g_object_unref (key->icon);
-	g_slice_free (IconKey, key);
+	g_free (key);
 }
 
 NemoIconInfo *

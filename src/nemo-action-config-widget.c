@@ -35,7 +35,7 @@ action_proxy_free (ActionProxy *proxy)
     g_clear_pointer (&proxy->stock_id, g_free);
     g_clear_pointer (&proxy->icon_name, g_free);
     g_clear_pointer (&proxy->filename, g_free);
-    g_slice_free (ActionProxy, proxy);
+    g_free (proxy);
 }
 
 static GtkWidget *
@@ -114,7 +114,7 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
         }
     }
 
-    ActionProxy *proxy = g_slice_new0 (ActionProxy);
+    ActionProxy *proxy = g_new0 (ActionProxy, 1);
 
     gchar *name = g_key_file_get_locale_string (key_file,
                                                 ACTION_FILE_GROUP,
