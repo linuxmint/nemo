@@ -6413,7 +6413,7 @@ add_action_to_ui (NemoActionManager    *manager,
 static void
 update_actions (NemoView *view)
 {
-    nemo_debug (NEMO_DEBUG_ACTIONS, "Refreshing menu actions");
+    DEBUG ("Refreshing menu actions");
 
     nemo_action_manager_iterate_actions (view->details->action_manager,
                                          (NemoActionManagerIterFunc) add_action_to_ui,

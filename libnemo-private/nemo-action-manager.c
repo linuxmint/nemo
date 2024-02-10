@@ -649,7 +649,7 @@ parse_item (ActionsIterData *idata,
     uuid = json_reader_get_string_value (reader);
     json_reader_end_member (reader);
 
-    nemo_debug (NEMO_DEBUG_ACTIONS, "Parsing action layout entry for '%s'.", uuid);
+    DEBUG ("Parsing action layout entry for '%s'.", uuid);
 
     if (!json_reader_read_member  (reader, "type") || json_reader_get_null_value (reader)) {
         item_error (reader, &idata->error, uuid, "Action layout member is missing mandatory value");
@@ -659,7 +659,7 @@ parse_item (ActionsIterData *idata,
     json_reader_end_member (reader);
 
     if (g_strcmp0 (type, "separator") == 0) {
-        nemo_debug (NEMO_DEBUG_ACTIONS, "Adding separator to UI.");
+        DEBUG ("Adding separator to UI.");
 
         idata->func (idata->action_manager,
                      NULL,
@@ -703,7 +703,7 @@ parse_item (ActionsIterData *idata,
             nemo_action_override_icon (action, user_icon);
         }
 
-        nemo_debug (NEMO_DEBUG_ACTIONS, "Adding action '%s' to UI.", action->uuid);
+        DEBUG ("Adding action '%s' to UI.", action->uuid);
 
         idata->func (idata->action_manager,
                      GTK_ACTION (action),
@@ -733,7 +733,7 @@ parse_item (ActionsIterData *idata,
         }
 
         // A submenu gets added to the same level (path) as its sibling menuitems
-        nemo_debug (NEMO_DEBUG_ACTIONS, "Adding submenu '%s' to UI.", uuid);
+        DEBUG ("Adding submenu '%s' to UI.", uuid);
 
         idata->func (idata->action_manager,
                      submenu,
@@ -775,7 +775,7 @@ parse_level (ActionsIterData *idata,
 
     if (json_reader_is_array (reader)) {
         guint len = json_reader_count_elements (reader);
-        nemo_debug (NEMO_DEBUG_ACTIONS, "Processing %d children of '%s'.", len, path == NULL ? "root" : path);
+        DEBUG ("Processing %d children of '%s'.", len, path == NULL ? "root" : path);
 
         gint i;
         for (i = 0; i < len; i++) {
@@ -894,7 +894,7 @@ nemo_action_manager_update_action_states (NemoActionManager *action_manager,
 
     for (l = actions; l != NULL; l = l->next) {
         if (!NEMO_IS_ACTION (l->data)) {
-            nemo_debug (NEMO_DEBUG_ACTIONS, "Skipping submenu '%s' (visibility managed by GtkUIManager)", gtk_action_get_name (GTK_ACTION (l->data)));
+            DEBUG ("Skipping submenu '%s' (visibility managed by GtkUIManager)", gtk_action_get_name (GTK_ACTION (l->data)));
             gtk_action_set_visible (GTK_ACTION (l->data), TRUE);
             continue;
         }

@@ -612,8 +612,6 @@ populate_patterns_and_filenames (NemoAction   *action,
 
         g_string_replace (str, "~", g_get_home_dir (), 1);
 
-        g_printerr ("str: '%s'\n", str->str);
-
         if (g_strstr_len (str->str, -1, "?") || g_strstr_len (str->str, -1, "*")) {
             if (g_str_has_prefix (str->str, "!")) {
                 *forbidden_patterns = g_list_prepend (*forbidden_patterns, new_match_pattern (str->str + 1));
@@ -2010,7 +2008,7 @@ nemo_action_update_display_state (NemoAction *action,
                                   GtkWindow  *window)
 {
     if (get_visibility (action, selection, parent, for_places, window)) {
-        nemo_debug (NEMO_DEBUG_ACTIONS, "Action '%s' determined VISIBLE", gtk_action_get_name (GTK_ACTION (action)));
+        DEBUG ("Action '%s' determined VISIBLE", gtk_action_get_name (GTK_ACTION (action)));
 
         finalize_strings (action, selection, parent, window);
         gtk_action_set_visible (GTK_ACTION (action), TRUE);
@@ -2018,6 +2016,6 @@ nemo_action_update_display_state (NemoAction *action,
         return;
     }
 
-    nemo_debug (NEMO_DEBUG_ACTIONS, "Action '%s' determined HIDDEN", gtk_action_get_name (GTK_ACTION (action)));
+    DEBUG ("Action '%s' determined HIDDEN", gtk_action_get_name (GTK_ACTION (action)));
     gtk_action_set_visible (GTK_ACTION (action), FALSE);
 }
