@@ -829,7 +829,7 @@ nemo_bookmark_get_current_metadata (NemoBookmark *bookmark)
 NemoBookmarkMetadata *
 nemo_bookmark_metadata_new (void)
 {
-    NemoBookmarkMetadata *meta = g_slice_new0 (NemoBookmarkMetadata);
+    NemoBookmarkMetadata *meta = g_new0 (NemoBookmarkMetadata, 1);
 
     return meta;
 }
@@ -873,5 +873,5 @@ nemo_bookmark_metadata_free (NemoBookmarkMetadata *metadata)
     g_free (metadata->bookmark_name);
     g_strfreev (metadata->emblems);
 
-    g_slice_free (NemoBookmarkMetadata, metadata);
+    g_free (metadata);
 }

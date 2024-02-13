@@ -92,7 +92,7 @@ static void
 search_helper_free (SearchHelper *helper)
 {
     g_free (helper->exec_format);
-    g_slice_free (SearchHelper, helper);
+    g_free (helper);
 }
 
 static GList *
@@ -220,7 +220,7 @@ process_search_helper_file (const gchar *path)
             DEBUG ("Replacing existing nemo search_helper for '%s' with %s based on priority.", mime_type, path);
         }
 
-        helper = g_slice_new0 (SearchHelper);
+        helper = g_new0 (SearchHelper, 1);
         helper->exec_format = g_strdup (exec_format);
         helper->priority = priority;
 

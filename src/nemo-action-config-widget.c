@@ -11,7 +11,7 @@
 #include "nemo-file.h"
 #include <glib.h>
 #include <libnemo-private/nemo-action-manager.h>
-#include <libnemo-private/nemo-action.h>
+#include <libnemo-private/nemo-action-symbols.h>
 #include "nemo-global-preferences.h"
 
 G_DEFINE_TYPE (NemoActionConfigWidget, nemo_action_config_widget, NEMO_TYPE_CONFIG_BASE_WIDGET);
@@ -35,7 +35,7 @@ action_proxy_free (ActionProxy *proxy)
     g_clear_pointer (&proxy->stock_id, g_free);
     g_clear_pointer (&proxy->icon_name, g_free);
     g_clear_pointer (&proxy->filename, g_free);
-    g_slice_free (ActionProxy, proxy);
+    g_free (proxy);
 }
 
 static GtkWidget *
@@ -114,7 +114,7 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
         }
     }
 
-    ActionProxy *proxy = g_slice_new0 (ActionProxy);
+    ActionProxy *proxy = g_new0 (ActionProxy, 1);
 
     gchar *name = g_key_file_get_locale_string (key_file,
                                                 ACTION_FILE_GROUP,
@@ -358,6 +358,12 @@ on_open_folder_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
 }
 
 static void
+on_layout_editor_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
+{
+    g_spawn_command_line_async ("nemo-action-layout-editor", NULL);
+}
+
+static void
 on_dir_changed (GFileMonitor     *monitor,
                 GFile            *file,
                 GFile            *other_file,
@@ -461,8 +467,14 @@ nemo_action_config_widget_init (NemoActionConfigWidget *self)
                       widget,
                       FALSE, FALSE, 0);
     gtk_widget_show (widget);
-
     g_signal_connect (widget, "clicked", G_CALLBACK (on_open_folder_clicked), self);
+
+    widget = gtk_button_new_with_label (_("Layout"));
+    gtk_box_pack_start (GTK_BOX (bb),
+                      widget,
+                      FALSE, FALSE, 0);
+    gtk_widget_show (widget);
+    g_signal_connect (widget, "clicked", G_CALLBACK (on_layout_editor_clicked), self);
 
     g_signal_connect (nemo_config_base_widget_get_enable_button (NEMO_CONFIG_BASE_WIDGET (self)), "clicked",
                                                                  G_CALLBACK (on_enable_clicked), self);

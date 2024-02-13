@@ -88,7 +88,9 @@
       <keyword>Dependencies</keyword>
       <keyword>Conditions</keyword>
       <keyword>EscapeSpaces</keyword>
+      <keyword>DoubleEscapeQuotes</keyword>
       <keyword>Terminal</keyword>
+      <keyword>UriScheme</keyword>
     </context>
 
     <context id="non-standard-key" style-ref="key">

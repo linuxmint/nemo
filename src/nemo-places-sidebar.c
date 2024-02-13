@@ -45,6 +45,7 @@
 #include <libnemo-private/nemo-places-tree-view.h>
 #include <libnemo-private/nemo-action-manager.h>
 #include <libnemo-private/nemo-action.h>
+#include <libnemo-private/nemo-ui-utilities.h>
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -54,6 +55,7 @@
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-vfs-extensions.h>
 
+#include "nemo-actions.h"
 #include "nemo-application.h"
 #include "nemo-bookmark-list.h"
 #include "nemo-places-sidebar.h"
@@ -87,8 +89,17 @@ typedef struct {
 	GVolumeMonitor *volume_monitor;
 
     NemoActionManager *action_manager;
-    guint action_manager_changed_id;
-    GList *action_items;
+    gulong actions_changed_id;
+    guint actions_changed_idle_id;
+
+    GtkUIManager *ui_manager;
+
+    GtkActionGroup *bookmark_action_group;
+    guint bookmark_action_group_merge_id;
+    GtkActionGroup *action_action_group;
+    guint action_action_group_merge_id;
+
+    gboolean actions_need_update;
 
 	gboolean devices_header_added;
 	gboolean bookmarks_header_added;
@@ -103,22 +114,6 @@ typedef struct {
     gboolean  desktop_dnd_can_delete_source;
 
 	GtkWidget *popup_menu;
-	GtkWidget *popup_menu_open_in_new_tab_item;
-	GtkWidget *popup_menu_add_shortcut_item;
-	GtkWidget *popup_menu_remove_item;
-	GtkWidget *popup_menu_rename_item;
-	GtkWidget *popup_menu_separator_item;
-	GtkWidget *popup_menu_mount_item;
-	GtkWidget *popup_menu_unmount_item;
-	GtkWidget *popup_menu_eject_item;
-	GtkWidget *popup_menu_rescan_item;
-	GtkWidget *popup_menu_empty_trash_item;
-	GtkWidget *popup_menu_start_item;
-	GtkWidget *popup_menu_stop_item;
-	GtkWidget *popup_menu_properties_separator_item;
-	GtkWidget *popup_menu_properties_item;
-    GtkWidget *popup_menu_action_separator_item;
-    GtkWidget *popup_menu_remove_rename_separator_item;
 
 	/* volume mounting - delayed open process */
 	gboolean mounting;
@@ -143,11 +138,8 @@ typedef struct {
     gchar *bottom_bookend_uri;
 
     gint bookmark_breakpoint;
-
     guint expand_timeout_source;
-
     guint popup_menu_action_index;
-
     guint update_places_on_idle_id;
 
 } NemoPlacesSidebar;
@@ -229,14 +221,10 @@ static void  check_unmount_and_eject                   (GMount *mount,
 							gboolean *show_unmount,
 							gboolean *show_eject);
 
-static void bookmarks_check_popup_sensitivity          (NemoPlacesSidebar *sidebar);
-
-static void add_action_popup_items                     (NemoPlacesSidebar *sidebar);
-
 static void update_places                              (NemoPlacesSidebar *sidebar);
-
 static void update_places_on_idle                      (NemoPlacesSidebar *sidebar);
-
+static void rebuild_menu                               (NemoPlacesSidebar *sidebar);
+static void actions_changed                            (gpointer user_data);
 /* Identifiers for target types */
 enum {
   GTK_TREE_MODEL_ROW,
@@ -416,7 +404,7 @@ new_place_info (PlaceType place_type,
                 gint df_percent,
                 gboolean show_df_percent)
 {
-    PlaceInfo *info = g_slice_new0 (PlaceInfo);
+    PlaceInfo *info = g_new0 (PlaceInfo, 1);
 
     info->place_type = place_type;
     info->section_type = section_type;
@@ -445,7 +433,7 @@ free_place_info (PlaceInfo *info)
     g_clear_object (&info->mount);
     g_free (info->tooltip);
 
-    g_slice_free (PlaceInfo, info);
+    g_free (info);
 }
 
 static GtkTreeIter
@@ -679,7 +667,7 @@ get_disk_full (GFile *file, gchar **tooltip_info)
     }
 
     if (error != NULL) {
-        g_printerr ("Couldn't get disk full info for: %s\n", error->message);
+        g_warning ("Couldn't get disk full info for: %s", error->message);
         g_clear_error (&error);
     }
 
@@ -1304,6 +1292,8 @@ update_places (NemoPlacesSidebar *sidebar)
 	/* restore selection */
     restore_expand_state (sidebar);
 	sidebar_update_restore_selection (sidebar, location, last_uri);
+
+    actions_changed (sidebar);
 
     sidebar->updating_sidebar = FALSE;
 
@@ -2215,34 +2205,6 @@ drag_drop_callback (GtkTreeView *tree_view,
 	return retval;
 }
 
-/* Callback used when the file list's popup menu is detached */
-static void
-bookmarks_popup_menu_detach_cb (GtkWidget *attach_widget,
-				GtkMenu   *menu)
-{
-	NemoPlacesSidebar *sidebar;
-
-	sidebar = NEMO_PLACES_SIDEBAR (attach_widget);
-	g_assert (NEMO_IS_PLACES_SIDEBAR (sidebar));
-
-	sidebar->popup_menu = NULL;
-	sidebar->popup_menu_add_shortcut_item = NULL;
-	sidebar->popup_menu_remove_item = NULL;
-	sidebar->popup_menu_rename_item = NULL;
-	sidebar->popup_menu_separator_item = NULL;
-	sidebar->popup_menu_mount_item = NULL;
-	sidebar->popup_menu_unmount_item = NULL;
-	sidebar->popup_menu_eject_item = NULL;
-	sidebar->popup_menu_rescan_item = NULL;
-	sidebar->popup_menu_start_item = NULL;
-	sidebar->popup_menu_stop_item = NULL;
-	sidebar->popup_menu_empty_trash_item = NULL;
-	sidebar->popup_menu_properties_separator_item = NULL;
-	sidebar->popup_menu_properties_item = NULL;
-    sidebar->popup_menu_action_separator_item = NULL;
-    sidebar->popup_menu_remove_rename_separator_item = NULL;
-}
-
 static void
 check_unmount_and_eject (GMount *mount,
 			 GVolume *volume,
@@ -2303,19 +2265,19 @@ check_visibility (GMount           *mount,
 	}
 }
 
-static void hide_all_action_items (NemoPlacesSidebar *sidebar)
+static void
+set_action_visible (GtkActionGroup *action_group,
+                    const gchar    *name,
+                    gboolean        visible)
 {
-    GList *l;
-    ActionPayload *p;
+    GtkAction *action;
 
-    for (l = sidebar->action_items; l != NULL; l = l->next) {
-        p = l->data;
-        gtk_widget_set_visible (p->item, FALSE);
-    }
+    action = gtk_action_group_get_action (action_group, name);
+    gtk_action_set_visible (action, visible);
 }
 
 static void
-bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
+update_menu_states (NemoPlacesSidebar *sidebar)
 {
 	GtkTreeIter iter;
 	PlaceType type;
@@ -2350,14 +2312,26 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 				    -1);
 	}
 
-    gtk_widget_set_visible (sidebar->popup_menu_remove_rename_separator_item, (type == PLACES_MOUNTED_VOLUME ||
-                                                                               type == PLACES_BOOKMARK));
+    if (uri) {
+        NemoFile *file = nemo_file_get_by_uri (uri);
+        NemoFile *parent = nemo_file_get_parent (file);
 
-	gtk_widget_set_visible (sidebar->popup_menu_add_shortcut_item, (type == PLACES_MOUNTED_VOLUME));
+        GList *selection = g_list_prepend (NULL, file);
 
-	gtk_widget_set_visible (sidebar->popup_menu_remove_item, (type == PLACES_BOOKMARK));
-	gtk_widget_set_visible (sidebar->popup_menu_rename_item, (type == PLACES_BOOKMARK));
-	gtk_widget_set_sensitive (sidebar->popup_menu_empty_trash_item, !nemo_trash_monitor_is_empty ());
+        nemo_action_manager_update_action_states (sidebar->action_manager,
+                                                  sidebar->action_action_group,
+                                                  selection,
+                                                  parent,
+                                                  TRUE,
+                                                  GTK_WINDOW (sidebar->window));
+        nemo_file_list_free (selection);
+        nemo_file_unref (parent);
+    }
+
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_ADD_BOOKMARK, (type == PLACES_MOUNTED_VOLUME));
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SIDEBAR_REMOVE, (type == PLACES_BOOKMARK));
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_RENAME, (type == PLACES_BOOKMARK));
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, !nemo_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
  			  &show_mount, &show_unmount, &show_eject, &show_rescan, &show_start, &show_stop);
@@ -2365,9 +2339,10 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 	/* We actually want both eject and unmount since eject will unmount all volumes.
 	 * TODO: hide unmount if the drive only has a single mountable volume
 	 */
-
 	show_empty_trash = (uri != NULL) &&
 			   (!strcmp (uri, "trash:///"));
+
+    g_free (uri);
 
 	/* Only show properties for local mounts */
 	show_properties = (mount != NULL);
@@ -2381,40 +2356,42 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
 		g_object_unref (location);
 	}
 
-	gtk_widget_set_visible (sidebar->popup_menu_separator_item,
-		      show_mount || show_unmount || show_eject || show_empty_trash);
-	gtk_widget_set_visible (sidebar->popup_menu_mount_item, show_mount);
-	gtk_widget_set_visible (sidebar->popup_menu_unmount_item, show_unmount);
-	gtk_widget_set_visible (sidebar->popup_menu_eject_item, show_eject);
-	gtk_widget_set_visible (sidebar->popup_menu_rescan_item, show_rescan);
-	gtk_widget_set_visible (sidebar->popup_menu_start_item, show_start);
-	gtk_widget_set_visible (sidebar->popup_menu_stop_item, show_stop);
-	gtk_widget_set_visible (sidebar->popup_menu_empty_trash_item, show_empty_trash);
-	gtk_widget_set_visible (sidebar->popup_menu_properties_separator_item, show_properties);
-	gtk_widget_set_visible (sidebar->popup_menu_properties_item, show_properties);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_MOUNT_VOLUME, show_mount);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_UNMOUNT_VOLUME, show_unmount);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_EJECT_VOLUME, show_eject);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SIDEBAR_DETECT_MEDIA, show_rescan);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_START_VOLUME, show_start);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_STOP_VOLUME, show_stop);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, show_empty_trash);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_PROPERTIES, show_properties);
 
 	/* Adjust start/stop items to reflect the type of the drive */
-	gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_start_item), _("_Start"));
-	gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_stop_item), _("_Stop"));
+    GtkAction *start_action, *stop_action;
+
+    start_action = gtk_action_group_get_action (sidebar->bookmark_action_group, NEMO_ACTION_START_VOLUME);
+    stop_action = gtk_action_group_get_action (sidebar->bookmark_action_group, NEMO_ACTION_STOP_VOLUME);
+
+	gtk_action_set_label (start_action, _("_Start"));
+	gtk_action_set_label (stop_action, _("_Stop"));
 	if ((show_start || show_stop) && drive != NULL) {
 		switch (g_drive_get_start_stop_type (drive)) {
 		case G_DRIVE_START_STOP_TYPE_SHUTDOWN:
 			/* start() for type G_DRIVE_START_STOP_TYPE_SHUTDOWN is normally not used */
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_start_item), _("_Power On"));
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_stop_item), _("_Safely Remove Drive"));
+			gtk_action_set_label (start_action, _("_Power On"));
+			gtk_action_set_label (stop_action, _("_Safely Remove Drive"));
 			break;
 		case G_DRIVE_START_STOP_TYPE_NETWORK:
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_start_item), _("_Connect Drive"));
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_stop_item), _("_Disconnect Drive"));
+			gtk_action_set_label (start_action, _("_Connect Drive"));
+			gtk_action_set_label (stop_action, _("_Disconnect Drive"));
 			break;
 		case G_DRIVE_START_STOP_TYPE_MULTIDISK:
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_start_item), _("_Start Multi-disk Device"));
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_stop_item), _("_Stop Multi-disk Device"));
+			gtk_action_set_label (start_action, _("_Start Multi-disk Device"));
+			gtk_action_set_label (stop_action, _("_Stop Multi-disk Device"));
 			break;
 		case G_DRIVE_START_STOP_TYPE_PASSWORD:
 			/* stop() for type G_DRIVE_START_STOP_TYPE_PASSWORD is normally not used */
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_start_item), _("_Unlock Drive"));
-			gtk_menu_item_set_label (GTK_MENU_ITEM (sidebar->popup_menu_stop_item), _("_Lock Drive"));
+			gtk_action_set_label (start_action, _("_Unlock Drive"));
+			gtk_action_set_label (stop_action, _("_Lock Drive"));
 			break;
 
 		default:
@@ -2427,43 +2404,6 @@ bookmarks_check_popup_sensitivity (NemoPlacesSidebar *sidebar)
     g_clear_object (&drive);
     g_clear_object (&volume);
     g_clear_object (&mount);
-
-    if (!uri) {
-        hide_all_action_items (sidebar);
-        gtk_widget_set_visible (sidebar->popup_menu_action_separator_item, FALSE);
-        return;
-    }
-
-    gboolean actions_visible = FALSE;
-
-    GList *l;
-    NemoFile *file = nemo_file_get_by_uri (uri);
-
-    NemoFile *parent = nemo_file_get_parent (file);
-    GList *tmp = NULL;
-    tmp = g_list_append (tmp, file);
-    ActionPayload *p;
-
-    for (l = sidebar->action_items; l != NULL; l = l->next) {
-        p = l->data;
-        if (nemo_action_get_visibility (p->action, tmp, parent, TRUE, GTK_WINDOW (sidebar->window))) {
-            gchar *action_label = nemo_action_get_label (p->action, tmp, parent, GTK_WINDOW (sidebar->window));
-
-            gtk_menu_item_set_label (GTK_MENU_ITEM (p->item), action_label);
-            gtk_widget_set_visible (p->item, TRUE);
-
-            g_free (action_label);
-            actions_visible = TRUE;
-        } else {
-            gtk_widget_set_visible (p->item, FALSE);
-        }
-    }
-
-    gtk_widget_set_visible (sidebar->popup_menu_action_separator_item, actions_visible);
-
-    nemo_file_list_free (tmp);
-    nemo_file_unref (parent);
-	g_free (uri);
 }
 
 /* Callback used when the selection in the shortcuts tree changes */
@@ -2471,7 +2411,7 @@ static void
 bookmarks_selection_changed_cb (GtkTreeSelection      *selection,
 				NemoPlacesSidebar *sidebar)
 {
-	bookmarks_check_popup_sensitivity (sidebar);
+    update_menu_states (sidebar);
 }
 
 static void
@@ -2635,21 +2575,21 @@ open_shortcut_from_menu (NemoPlacesSidebar *sidebar,
 }
 
 static void
-open_shortcut_cb (GtkMenuItem		*item,
+open_shortcut_cb (GtkAction		*item,
 		  NemoPlacesSidebar	*sidebar)
 {
 	open_shortcut_from_menu (sidebar, 0);
 }
 
 static void
-open_shortcut_in_new_window_cb (GtkMenuItem	      *item,
+open_shortcut_in_new_window_cb (GtkAction	      *item,
 				NemoPlacesSidebar *sidebar)
 {
 	open_shortcut_from_menu (sidebar, NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW);
 }
 
 static void
-open_shortcut_in_new_tab_cb (GtkMenuItem	      *item,
+open_shortcut_in_new_tab_cb (GtkAction	      *item,
 				NemoPlacesSidebar *sidebar)
 {
 	open_shortcut_from_menu (sidebar, NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
@@ -2688,7 +2628,7 @@ add_bookmark (NemoPlacesSidebar *sidebar)
 }
 
 static void
-add_shortcut_cb (GtkMenuItem           *item,
+add_shortcut_cb (GtkAction           *item,
 		 NemoPlacesSidebar *sidebar)
 {
 	add_bookmark (sidebar);
@@ -2727,7 +2667,7 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 }
 
 static void
-rename_shortcut_cb (GtkMenuItem           *item,
+rename_shortcut_cb (GtkAction           *item,
 		    NemoPlacesSidebar *sidebar)
 {
 	rename_selected_bookmark (sidebar);
@@ -2764,14 +2704,14 @@ remove_selected_bookmarks (NemoPlacesSidebar *sidebar)
 }
 
 static void
-remove_shortcut_cb (GtkMenuItem           *item,
+remove_shortcut_cb (GtkAction           *item,
 		    NemoPlacesSidebar *sidebar)
 {
 	remove_selected_bookmarks (sidebar);
 }
 
 static void
-mount_shortcut_cb (GtkMenuItem           *item,
+mount_shortcut_cb (GtkAction           *item,
 		   NemoPlacesSidebar *sidebar)
 {
 	GtkTreeIter iter;
@@ -2874,7 +2814,7 @@ do_unmount_selection (NemoPlacesSidebar *sidebar)
 }
 
 static void
-unmount_shortcut_cb (GtkMenuItem           *item,
+unmount_shortcut_cb (GtkAction           *item,
 		     NemoPlacesSidebar *sidebar)
 {
 	do_unmount_selection (sidebar);
@@ -2999,7 +2939,7 @@ do_eject (GMount *mount,
 }
 
 static void
-eject_shortcut_cb (GtkMenuItem           *item,
+eject_shortcut_cb (GtkAction           *item,
 		   NemoPlacesSidebar *sidebar)
 {
 	GtkTreeIter iter;
@@ -3116,7 +3056,7 @@ drive_poll_for_media_cb (GObject *source_object,
 }
 
 static void
-rescan_shortcut_cb (GtkMenuItem           *item,
+rescan_shortcut_cb (GtkAction           *item,
 		    NemoPlacesSidebar *sidebar)
 {
 	GtkTreeIter iter;
@@ -3160,7 +3100,7 @@ drive_start_cb (GObject      *source_object,
 }
 
 static void
-start_shortcut_cb (GtkMenuItem           *item,
+start_shortcut_cb (GtkAction           *item,
 		   NemoPlacesSidebar *sidebar)
 {
 	GtkTreeIter iter;
@@ -3214,7 +3154,7 @@ drive_stop_cb (GObject *source_object,
 }
 
 static void
-stop_shortcut_cb (GtkMenuItem           *item,
+stop_shortcut_cb (GtkAction           *item,
 		  NemoPlacesSidebar *sidebar)
 {
 	GtkTreeIter iter;
@@ -3238,7 +3178,7 @@ stop_shortcut_cb (GtkMenuItem           *item,
 }
 
 static void
-empty_trash_cb (GtkMenuItem           *item,
+empty_trash_cb (GtkAction           *item,
 		NemoPlacesSidebar *sidebar)
 {
 	nemo_file_operations_empty_trash (GTK_WIDGET (sidebar->window));
@@ -3288,7 +3228,7 @@ find_next_row (NemoPlacesSidebar *sidebar, GtkTreeIter *iter)
 }
 
 static void
-properties_cb (GtkMenuItem           *item,
+properties_cb (GtkAction           *item,
 	       NemoPlacesSidebar *sidebar)
 {
 	GtkTreeModel *model;
@@ -3427,12 +3367,11 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
 }
 
 static void
-action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
+run_action_callback (GtkAction *action, gpointer user_data)
 {
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
     gchar *uri = NULL;
     GtkTreeIter iter;
-
-    NemoPlacesSidebar *sidebar = payload->sidebar;
 
     if (get_selected_iter (sidebar, &iter)) {
         gtk_tree_model_get (GTK_TREE_MODEL (sidebar->store_filter), &iter,
@@ -3446,46 +3385,14 @@ action_activated_callback (GtkMenuItem *item, ActionPayload *payload)
 
     NemoFile *file = nemo_file_get_by_uri (uri);
     NemoFile *parent = nemo_file_get_parent (file);
-    GList *tmp = NULL;
-    tmp = g_list_append (tmp, file);
+    GList *selection = g_list_prepend (NULL, file);
 
-    nemo_action_activate (NEMO_ACTION (payload->action), tmp, parent, GTK_WINDOW (sidebar->window));
+    nemo_action_activate (NEMO_ACTION (action), selection, parent, GTK_WINDOW (sidebar->window));
 
-    nemo_file_list_free (tmp);
+    nemo_file_list_free (selection);
     nemo_file_unref (parent);
 
     g_free (uri);
-}
-
-static void
-add_action_popup_items (NemoPlacesSidebar *sidebar)
-{
-    if (sidebar->action_items != NULL)
-        g_list_free_full (sidebar->action_items, g_free);
-
-    sidebar->action_items = NULL;
-
-    GList *action_list = nemo_action_manager_list_actions (sidebar->action_manager);
-    GtkWidget *item;
-    GList *l;
-    NemoAction *action;
-    ActionPayload *payload;
-
-    guint index = 8;
-
-    for (l = action_list; l != NULL; l = l->next) {
-        action = l->data;
-        payload = g_new0 (ActionPayload, 1);
-        payload->action = action;
-        payload->sidebar = sidebar;
-        item = gtk_menu_item_new_with_mnemonic (nemo_action_get_orig_label (action));
-        payload->item = item;
-        g_signal_connect (item, "activate", G_CALLBACK (action_activated_callback), payload);
-        gtk_widget_show (item);
-        gtk_menu_shell_insert (GTK_MENU_SHELL (sidebar->popup_menu), item, index);
-        sidebar->action_items = g_list_append (sidebar->action_items, payload);
-        index ++;
-    }
 }
 
 #if GTK_CHECK_VERSION (3, 24, 8)
@@ -3524,172 +3431,11 @@ popup_menu_realized (GtkWidget    *menu,
 }
 #endif
 
-/* Constructs the popup menu for the file list if needed */
-static void
-bookmarks_build_popup_menu (NemoPlacesSidebar *sidebar)
-{
-	GtkWidget *item;
-	gboolean use_browser;
-
-	if (sidebar->popup_menu) {
-		return;
-	}
-
-	use_browser = g_settings_get_boolean (nemo_preferences,
-					      NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
-
-	sidebar->popup_menu = gtk_menu_new ();
-
-#if GTK_CHECK_VERSION (3, 24, 8)
-    g_signal_connect (sidebar->popup_menu, "realize",
-                      G_CALLBACK (popup_menu_realized),
-                      sidebar);
-    gtk_widget_realize (sidebar->popup_menu);
-#endif
-
-	gtk_menu_attach_to_widget (GTK_MENU (sidebar->popup_menu),
-			           GTK_WIDGET (sidebar),
-			           bookmarks_popup_menu_detach_cb);
-
-	item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
-	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item),
-				       gtk_image_new_from_icon_name ("folder-open-symbolic", GTK_ICON_SIZE_MENU));
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (open_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Tab"));
-	sidebar->popup_menu_open_in_new_tab_item = item;
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (open_shortcut_in_new_tab_cb), sidebar);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	if (use_browser) {
-		gtk_widget_show (item);
-	}
-
-	item = gtk_menu_item_new_with_mnemonic (_("Open in New _Window"));
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (open_shortcut_in_new_window_cb), sidebar);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	if (use_browser) {
-		gtk_widget_show (item);
-	}
-    sidebar->popup_menu_remove_rename_separator_item =
-        GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Add Bookmark"));
-	sidebar->popup_menu_add_shortcut_item = item;
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (add_shortcut_cb), sidebar);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_image_menu_item_new_with_label (_("Remove"));
-	sidebar->popup_menu_remove_item = item;
-	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item),
-				 gtk_image_new_from_icon_name ("list-remove-symbolic", GTK_ICON_SIZE_MENU));
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (remove_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Rename..."));
-	sidebar->popup_menu_rename_item = item;
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (rename_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-    /* Nemo Actions */
-    sidebar->popup_menu_action_separator_item =
-        GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
-
-	/* Mount/Unmount/Eject menu items */
-
-	sidebar->popup_menu_separator_item =
-		GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Mount"));
-	sidebar->popup_menu_mount_item = item;
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (mount_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Unmount"));
-	sidebar->popup_menu_unmount_item = item;
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (unmount_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Eject"));
-	sidebar->popup_menu_eject_item = item;
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (eject_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Detect Media"));
-	sidebar->popup_menu_rescan_item = item;
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (rescan_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Start"));
-	sidebar->popup_menu_start_item = item;
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (start_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Stop"));
-	sidebar->popup_menu_stop_item = item;
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (stop_shortcut_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	/* Empty Trash menu item */
-
-	item = gtk_menu_item_new_with_mnemonic (_("Empty _Trash"));
-	sidebar->popup_menu_empty_trash_item = item;
-	g_signal_connect (item, "activate",
-		    G_CALLBACK (empty_trash_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-	/* Properties menu item */
-
-	sidebar->popup_menu_properties_separator_item =
-		GTK_WIDGET (eel_gtk_menu_append_separator (GTK_MENU (sidebar->popup_menu)));
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Properties"));
-	sidebar->popup_menu_properties_item = item;
-	g_signal_connect (item, "activate",
-			  G_CALLBACK (properties_cb), sidebar);
-	gtk_widget_show (item);
-	gtk_menu_shell_append (GTK_MENU_SHELL (sidebar->popup_menu), item);
-
-    add_action_popup_items (sidebar);
-
-	bookmarks_check_popup_sensitivity (sidebar);
-}
-
-static void
-bookmarks_update_popup_menu (NemoPlacesSidebar *sidebar)
-{
-	bookmarks_build_popup_menu (sidebar);
-}
-
 static void
 bookmarks_popup_menu (NemoPlacesSidebar *sidebar,
 		      GdkEventButton        *event)
 {
-    bookmarks_update_popup_menu (sidebar);
+    update_menu_states (sidebar);
     eel_pop_up_context_menu (GTK_MENU(sidebar->popup_menu),
                              (GdkEvent *) event,
                              GTK_WIDGET (sidebar));
@@ -3705,11 +3451,167 @@ bookmarks_popup_menu_cb (GtkWidget *widget,
 }
 
 static void
-actions_changed_callback (NemoPlacesSidebar *sidebar)
+reset_menu (NemoPlacesSidebar *sidebar)
 {
-    if (sidebar->popup_menu) {
-        gtk_menu_detach (GTK_MENU (sidebar->popup_menu));
+    sidebar->actions_need_update = TRUE;
+    rebuild_menu (sidebar);
+}
+
+static gboolean
+actions_changed_idle_cb (gpointer user_data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+
+    reset_menu (sidebar);
+
+    sidebar->actions_changed_idle_id = 0;
+    return G_SOURCE_REMOVE;
+}
+
+static void
+actions_changed (gpointer user_data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+
+    g_clear_handle_id (&sidebar->actions_changed_idle_id, g_source_remove);
+    sidebar->actions_changed_idle_id = g_idle_add (actions_changed_idle_cb, sidebar);
+}
+
+static void
+add_action_to_ui (NemoActionManager    *manager,
+                  GtkAction            *action,
+                  GtkUIManagerItemType  type,
+                  const gchar          *path,
+                  gpointer              user_data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
+
+    if (type != GTK_UI_MANAGER_SEPARATOR) {
+        if (type == GTK_UI_MANAGER_MENUITEM) {
+            g_signal_handlers_disconnect_by_func (action,
+                                                  run_action_callback,
+                                                  sidebar);
+
+            g_signal_connect (action, "activate",
+                              G_CALLBACK (run_action_callback),
+                              sidebar);
+        }
+
+        gtk_action_group_add_action (sidebar->action_action_group,
+                                     action);
+        gtk_action_set_visible (GTK_ACTION (action), FALSE);
     }
+
+    const gchar *placeholder = "/selection/PlacesSidebarActionsPlaceholder";
+
+    g_autofree gchar *full_path = NULL;
+    const gchar *name;
+
+    if (path != NULL) {
+        full_path = g_strdup_printf ("%s/%s", placeholder, path);
+    }
+    else {
+        full_path = g_strdup (placeholder);
+    }
+
+    if (type == GTK_UI_MANAGER_SEPARATOR) {
+        name = NULL;
+    }
+    else {
+        name = gtk_action_get_name (action);
+    }
+
+    gtk_ui_manager_add_ui (sidebar->ui_manager,
+                           sidebar->action_action_group_merge_id,
+                           full_path,
+                           name,
+                           name,
+                           type,
+                           FALSE);
+}
+
+static void
+clear_ui (NemoPlacesSidebar *sidebar)
+{
+
+    nemo_ui_unmerge_ui (sidebar->ui_manager,
+                        &sidebar->bookmark_action_group_merge_id,
+                        &sidebar->bookmark_action_group);
+
+    nemo_ui_unmerge_ui (sidebar->ui_manager,
+                        &sidebar->action_action_group_merge_id,
+                        &sidebar->action_action_group);
+
+}
+
+static const GtkActionEntry bookmark_action_entries[] = {
+    { NEMO_ACTION_OPEN,                    "folder-open-symbolic", N_("_Open"),                NULL, NULL, G_CALLBACK (open_shortcut_cb)               },
+    { NEMO_ACTION_OPEN_IN_NEW_TAB,         NULL,                   N_("Open in New _Tab"),     NULL, NULL, G_CALLBACK (open_shortcut_in_new_tab_cb)    },
+    { NEMO_ACTION_OPEN_ALTERNATE,          NULL,                   N_("Open in New _Window"),  NULL, NULL, G_CALLBACK (open_shortcut_in_new_window_cb) },
+    { NEMO_ACTION_ADD_BOOKMARK,            NULL,                   N_("_Add Bookmark"),        NULL, NULL, G_CALLBACK (add_shortcut_cb)                },
+    { NEMO_ACTION_SIDEBAR_REMOVE,          "list-remove-symbolic", N_("Remove"),               NULL, NULL, G_CALLBACK (remove_shortcut_cb)             },
+    { NEMO_ACTION_RENAME,                  NULL,                   N_("_Rename..."),           NULL, NULL, G_CALLBACK (rename_shortcut_cb)             },
+    { NEMO_ACTION_MOUNT_VOLUME,            NULL,                   N_("_Mount"),               NULL, NULL, G_CALLBACK (mount_shortcut_cb)              },
+    { NEMO_ACTION_UNMOUNT_VOLUME,          NULL,                   N_("_Unmount"),             NULL, NULL, G_CALLBACK (unmount_shortcut_cb)            },
+    { NEMO_ACTION_EJECT_VOLUME,            NULL,                   N_("_Eject"),               NULL, NULL, G_CALLBACK (eject_shortcut_cb)              },
+    { NEMO_ACTION_SIDEBAR_DETECT_MEDIA,    NULL,                   N_("_Detect Media"),        NULL, NULL, G_CALLBACK (rescan_shortcut_cb)             },
+    { NEMO_ACTION_START_VOLUME,            NULL,                   N_("_Start"),               NULL, NULL, G_CALLBACK (start_shortcut_cb)              },
+    { NEMO_ACTION_STOP_VOLUME,             NULL,                   N_("_Stop"),                NULL, NULL, G_CALLBACK (stop_shortcut_cb)               },
+    { NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, NULL,                   N_("_Empty _Trash"),        NULL, NULL, G_CALLBACK (empty_trash_cb)                 },
+    { NEMO_ACTION_PROPERTIES,              NULL,                   N_("_Properties"),          NULL, NULL, G_CALLBACK (properties_cb)                  },
+};
+
+static void
+rebuild_menu (NemoPlacesSidebar *sidebar)
+{
+    if (!gtk_widget_get_realized (GTK_WIDGET (sidebar))) {
+        return;
+    }
+
+    if (!sidebar->actions_need_update) {
+        return;
+    }
+
+    clear_ui (sidebar);
+
+    nemo_ui_prepare_merge_ui (sidebar->ui_manager,
+                              "NemoPlacesSidebarBookmarkActions",
+                              &sidebar->bookmark_action_group_merge_id,
+                              &sidebar->bookmark_action_group);
+
+    nemo_ui_prepare_merge_ui (sidebar->ui_manager,
+                              "NemoPlacesSidebarActionActions",
+                              &sidebar->action_action_group_merge_id,
+                              &sidebar->action_action_group);
+
+    sidebar->bookmark_action_group_merge_id =
+            gtk_ui_manager_add_ui_from_resource (sidebar->ui_manager, "/org/nemo/nemo-places-sidebar-ui.xml", NULL);
+
+    gtk_action_group_add_actions (sidebar->bookmark_action_group,
+                                  bookmark_action_entries,
+                                  G_N_ELEMENTS (bookmark_action_entries),
+                                  sidebar);
+
+    nemo_action_manager_iterate_actions (sidebar->action_manager,
+                                         (NemoActionManagerIterFunc) add_action_to_ui,
+                                         sidebar);
+
+    if (sidebar->popup_menu == NULL) {
+        GtkWidget *menu = gtk_ui_manager_get_widget (sidebar->ui_manager, "/selection");
+        gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (sidebar->window)));
+        sidebar->popup_menu = menu;
+
+#if GTK_CHECK_VERSION (3, 24, 8)
+        g_signal_connect (sidebar->popup_menu, "realize",
+                          G_CALLBACK (popup_menu_realized),
+                          sidebar);
+        gtk_widget_realize (sidebar->popup_menu);
+#endif
+
+        gtk_widget_show (menu);
+    }
+
+    sidebar->actions_need_update = FALSE;
 }
 
 static gboolean
@@ -3955,7 +3857,7 @@ trash_state_changed_cb (NemoTrashMonitor *trash_monitor,
 	/* The trash icon changed, update the sidebar */
 	update_places (sidebar);
 
-	bookmarks_check_popup_sensitivity (sidebar);
+	// reset_menu (sidebar);
 }
 
 static void
@@ -4102,12 +4004,11 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	GtkStyleContext   *style_context;
 
     sidebar->action_manager = nemo_action_manager_new ();
-    sidebar->action_manager_changed_id = g_signal_connect_swapped (sidebar->action_manager,
-                                                                   "changed",
-                                                                   G_CALLBACK (actions_changed_callback),
-                                                                   sidebar);
-
-    sidebar->action_items = NULL;
+    sidebar->actions_changed_id = g_signal_connect_swapped (sidebar->action_manager,
+                                                            "changed",
+                                                            G_CALLBACK (actions_changed),
+                                                            sidebar);
+    sidebar->ui_manager = gtk_ui_manager_new ();
 
     sidebar->in_drag = FALSE;
 
@@ -4406,21 +4307,16 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	free_drag_data (sidebar);
 
-    if (sidebar->action_items != NULL) {
-        g_list_free_full (sidebar->action_items, g_free);
-        sidebar->action_items = NULL;
-    }
-
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
 					     sidebar->bookmarks_changed_id);
 		sidebar->bookmarks_changed_id = 0;
 	}
 
-    if (sidebar->action_manager_changed_id != 0) {
+    if (sidebar->actions_changed_id != 0) {
         g_signal_handler_disconnect (sidebar->action_manager,
-                                     sidebar->action_manager_changed_id);
-        sidebar->action_manager_changed_id = 0;
+                                     sidebar->actions_changed_id);
+        sidebar->actions_changed_id = 0;
     }
 
     g_clear_object (&sidebar->action_manager);
@@ -4447,10 +4343,6 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      desktop_setting_changed_callback,
-					      sidebar);
-
-	g_signal_handlers_disconnect_by_func (nemo_preferences,
-					      bookmarks_popup_menu_detach_cb,
 					      sidebar);
 
 	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
@@ -4580,7 +4472,7 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 				 G_CALLBACK (drive_changed_callback), sidebar, 0);
 
 	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_ALWAYS_USE_BROWSER,
-				  G_CALLBACK (bookmarks_popup_menu_detach_cb), sidebar);
+				 G_CALLBACK (reset_menu), sidebar);
 	update_places (sidebar);
 }
 

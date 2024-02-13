@@ -147,7 +147,7 @@ handle_netscape_url_drop_link_cb (GObject *source_object,
 	g_free (data->target_uri);
 
 	g_object_unref (data->view);
-	g_slice_free (NetscapeUrlDropLink, data);
+	g_free (data);
 }
 
 void
@@ -220,7 +220,7 @@ nemo_view_handle_netscape_url_drop (NemoView  *view,
 		if (g_strcmp0 (link_name, NULL) != 0) {
 			NetscapeUrlDropLink *data;
 
-			data = g_slice_new0 (NetscapeUrlDropLink);
+			data = g_new0 (NetscapeUrlDropLink, 1);
 			data->link_name = link_name;
 			data->point.x = x;
 			data->point.y = y;

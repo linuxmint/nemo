@@ -4328,13 +4328,13 @@ run_conflict_dialog (CommonJob *job,
 
 	g_timer_stop (job->time);
 
-	data = g_slice_new0 (ConflictDialogData);
+	data = g_new0 (ConflictDialogData, 1);
 	data->parent = job->parent_window;
 	data->src = src;
 	data->dest = dest;
 	data->dest_dir = dest_dir;
 
-	resp_data = g_slice_new0 (ConflictResponseData);
+	resp_data = g_new0 (ConflictResponseData, 1);
 	resp_data->new_name = NULL;
 	data->resp_data = resp_data;
 
@@ -4345,7 +4345,7 @@ run_conflict_dialog (CommonJob *job,
 					     NULL);
 	nemo_progress_info_resume (job->progress);
 
-	g_slice_free (ConflictDialogData, data);
+	g_free (data);
 
 	g_timer_continue (job->time);
 
@@ -4356,7 +4356,7 @@ static void
 conflict_response_data_free (ConflictResponseData *data)
 {
 	g_free (data->new_name);
-	g_slice_free (ConflictResponseData, data);
+	g_free (data);
 }
 
 static GFile *
@@ -6211,7 +6211,7 @@ callback_for_move_to_trash (GHashTable *debuting_uris,
 {
 	if (data->real_callback)
 		data->real_callback (debuting_uris, !user_cancelled, data->real_data);
-	g_slice_free (MoveTrashCBData, data);
+	g_free (data);
 }
 
 void
@@ -6286,7 +6286,7 @@ nemo_file_operations_copy_move (const GList *item_uris,
 		if (g_file_has_uri_scheme (dest, "trash")) {
 			MoveTrashCBData *cb_data;
 
-			cb_data = g_slice_new0 (MoveTrashCBData);
+			cb_data = g_new0 (MoveTrashCBData, 1);
 			cb_data->real_callback = done_callback;
 			cb_data->real_data = done_callback_data;
 

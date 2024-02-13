@@ -180,7 +180,7 @@ static GHashTable *fsr_accounting_table = NULL;
 FileSearchResult *
 file_search_result_new (gchar *uri, gchar *snippet)
 {
-    FileSearchResult *ret = g_slice_new0 (FileSearchResult);
+    FileSearchResult *ret = g_new0 (FileSearchResult, 1);
 
     ret->uri = uri;
     ret->snippet = snippet;
@@ -215,7 +215,7 @@ file_search_result_free (FileSearchResult *res)
 
     g_free (res->uri);
     g_free (res->snippet);
-    g_slice_free (FileSearchResult, res);
+    g_free (res);
 }
 
 void

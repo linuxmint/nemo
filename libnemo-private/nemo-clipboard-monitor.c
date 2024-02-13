@@ -101,7 +101,7 @@ nemo_clipboard_info_new (GList *files,
 {
 	NemoClipboardInfo *info;
 
-	info = g_slice_new0 (NemoClipboardInfo);
+	info = g_new0 (NemoClipboardInfo, 1);
 	info->files = nemo_file_list_copy (files);
 	info->cut = cut;
 
@@ -128,7 +128,7 @@ nemo_clipboard_info_free (NemoClipboardInfo *info)
 {
 	nemo_file_list_free (info->files);
 
-	g_slice_free (NemoClipboardInfo, info);
+	g_free (info);
 }
 
 static void

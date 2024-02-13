@@ -163,7 +163,7 @@ job_finished_cb (NemoJobQueue *self,
     self->priv->running_jobs = g_list_remove (self->priv->running_jobs, job);
     self->priv->queued_jobs = g_list_remove (self->priv->queued_jobs, job);
 
-    g_slice_free (Job, job);
+    g_free (job);
 
     nemo_job_queue_start_next_job (self);
 }
@@ -189,7 +189,7 @@ nemo_job_queue_add_new_job (NemoJobQueue         *self,
 		return;
 	}
 
-    Job *new_job = g_slice_new0 (Job);
+    Job *new_job = g_new0 (Job, 1);
     new_job->job_func = job_func;
     new_job->user_data = user_data;
     new_job->cancellable = cancellable;

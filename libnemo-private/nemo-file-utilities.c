@@ -1318,7 +1318,7 @@ ensure_dirs_task_ready_cb (GObject *_source,
 	g_list_free (original_dirs);
 
 	g_hash_table_unref (data->original_dirs_hash);
-	g_slice_free (RestoreFilesData, data);
+	g_free (data);
 }
 
 static void
@@ -1351,7 +1351,7 @@ restore_files_ensure_parent_directories (GHashTable *original_dirs_hash,
 	RestoreFilesData *data;
 	GTask *ensure_dirs_task;
 
-	data = g_slice_new0 (RestoreFilesData);
+	data = g_new0 (RestoreFilesData, 1);
 	data->parent_window = parent_window;
 	data->original_dirs_hash = g_hash_table_ref (original_dirs_hash);
 
@@ -1417,7 +1417,7 @@ get_types_cb (GObject *source_object,
 		data->callback ((const char **) types, data->user_data);
 	}
 	g_strfreev (types);
-	g_slice_free (GetContentTypesData, data);
+	g_free (data);
 }
 
 void
@@ -1444,7 +1444,7 @@ nemo_get_x_content_types_for_mount_async (GMount *mount,
 		return;
 	}
 
-	data = g_slice_new0 (GetContentTypesData);
+	data = g_new0 (GetContentTypesData, 1);
 	data->callback = callback;
 	data->user_data = user_data;
 

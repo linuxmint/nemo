@@ -72,13 +72,13 @@ glib_version = '>=2.45.7'
 math    = cc.find_library('m', required: true)
 
 gtk     = dependency('gtk+-3.0',                    version: '>=3.10.0')
-gtk_wl  = dependency('gtk+-wayland-3.0',            version: '>=3.10.0')
 gio     = dependency('gio-2.0',                     version: glib_version)
 gio_unix= dependency('gio-unix-2.0',                version: glib_version)
 glib    = dependency('glib-2.0',                    version: glib_version)
 gmodule = dependency('gmodule-no-export-2.0',       version: glib_version)
 gobject = dependency('gobject-2.0',                 version: '>=2.0')
 go_intr = dependency('gobject-introspection-1.0',   version: '>=1.0')
+json    = dependency('json-glib-1.0',               version: '>=1.6')
 
 cinnamon= dependency('cinnamon-desktop',            version: '>=4.8.0')
 gail    = dependency('gail-3.0')
@@ -197,6 +197,7 @@ subdir('src')
 subdir('search-helpers')
 subdir('test')
 subdir('docs')
+subdir('action-layout-editor')
 
 message('\n'.join(['',
 '        @0@-@1@'.format(meson.project_name(), meson.project_version()),
@@ -207,6 +208,7 @@ message('\n'.join(['',
 '    libexif support:        @0@'.format(libexif_enabled),
 '    exempi  support:        @0@'.format(exempi_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
+'    Wayland support:        @0@'.format(cc.has_header('gdk/gdkwayland.h', dependencies: gtk)),
 '',
 '    nemo-extension documentation: @0@'.format(gtkdoc_enabled),
 '    nemo-extension introspection: @0@'.format(true),
