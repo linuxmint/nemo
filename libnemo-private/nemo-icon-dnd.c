@@ -283,6 +283,7 @@ icon_get_data_binder (NemoIcon *icon, gpointer data)
 	EelDRect world_rect;
 	EelIRect widget_rect;
 	char *uri;
+	char *path_str;
 	NemoIconContainer *container;
 
 	context = (IconGetDataBinderContext *)data;
@@ -300,6 +301,7 @@ icon_get_data_binder (NemoIcon *icon, gpointer data)
 		g_warning ("no URI for one of the iterated icons");
 		return TRUE;
 	}
+	path_str = nemo_file_get_path (NEMO_FILE (icon->data));
 
 	widget_rect = eel_irect_offset_by (widget_rect,
 		- container->details->dnd_info->drag_info.start_x,
@@ -310,6 +312,7 @@ icon_get_data_binder (NemoIcon *icon, gpointer data)
 
 	/* pass the uri, mouse-relative x/y and icon width/height */
 	context->iteratee (uri,
+               path_str,
 			   (int) widget_rect.x0,
 			   (int) widget_rect.y0,
 			   widget_rect.x1 - widget_rect.x0,
