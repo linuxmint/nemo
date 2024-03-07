@@ -7121,11 +7121,26 @@ open_as_root (NemoView *view, const gchar *path)
 static void
 open_in_terminal (const gchar *path)
 {
-    gchar *argv[2];
-    argv[0] = g_settings_get_string (gnome_terminal_preferences,
-				     GNOME_DESKTOP_TERMINAL_EXEC);
-    argv[1] = NULL;
-    g_spawn_async(path, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+    gchar *gsetting_terminal;
+    gchar **token;
+    gchar **argv;
+    gint i;
+
+    gsetting_terminal = g_settings_get_string (gnome_terminal_preferences,
+                                               GNOME_DESKTOP_TERMINAL_EXEC);
+
+    token = g_strsplit (gsetting_terminal, " ", 0);
+    argv = g_new (gchar *, g_strv_length (token) + 1);
+    for (i = 0; token[i] != NULL; i++) {
+        argv[i] = token[i];
+    }
+    argv[i] = NULL;
+
+    g_spawn_async (path, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+
+    g_free (gsetting_terminal);
+    g_strfreev (token);
+    g_free (argv);
 }
 
 static void
