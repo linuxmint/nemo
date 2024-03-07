@@ -2,10 +2,5 @@
 # Please keep this file sorted alphabetically.
 libbackground/applier.c
 data/nemo-autorun-software.desktop.in
-data/nemo-computer.desktop.in
-data/nemo-file-management-properties.desktop.in
-data/nemo-folder-handler.desktop.in
-data/nemo-home.desktop.in
-data/nemo.desktop.in
-data/nemo-browser.desktop.in
+data/org.Nemo.desktop.in
 debian

@@ -3,8 +3,6 @@
 [encoding: UTF-8]
 data/action_i18n_strings.py
 data/nemo.xml.in
-data/nemo-autorun-software.desktop.in.in
-data/nemo.desktop.in.in
 eel/eel-canvas.c
 eel/eel-editable-label.c
 eel/eel-glib-extensions.c
