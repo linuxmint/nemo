@@ -2396,8 +2396,8 @@ update_info_internal (NemoFile *file,
 	can_write = TRUE;
 	can_execute = TRUE;
 	can_delete = TRUE;
-	can_trash = TRUE;
 	can_rename = TRUE;
+	can_trash = FALSE;
 	can_mount = FALSE;
 	can_unmount = FALSE;
 	can_eject = FALSE;
