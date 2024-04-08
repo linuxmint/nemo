@@ -881,6 +881,63 @@ nemo_action_manager_iterate_actions (NemoActionManager                *action_ma
 }
 
 void
+nemo_action_manager_add_action_ui (NemoActionManager   *manager,
+                                   GtkUIManager        *ui_manager,
+                                   GtkAction           *action,
+                                   const gchar         *action_path,
+                                   GtkActionGroup      *action_group,
+                                   guint                merge_id,
+                                   const gchar        **placeholder_paths,
+                                   GtkUIManagerItemType type,
+                                   GCallback            activate_callback,
+                                   gpointer             user_data)
+{
+    if (type != GTK_UI_MANAGER_SEPARATOR) {
+        if (type == GTK_UI_MANAGER_MENUITEM) {
+            g_signal_handlers_disconnect_by_func (action,
+                                                  activate_callback,
+                                                  user_data);
+
+            g_signal_connect (action, "activate",
+                              G_CALLBACK (activate_callback),
+                              user_data);
+        }
+
+        gtk_action_group_add_action (action_group, action);
+        gtk_action_set_visible (action, FALSE);
+    }
+
+    gint i = 0;
+    while (placeholder_paths[i] != NULL) {
+        g_autofree gchar *full_path = NULL;
+        const gchar *name;
+
+        if (action_path != NULL) {
+            full_path = g_strdup_printf ("%s/%s", placeholder_paths[i], action_path);
+        }
+        else {
+            full_path = g_strdup (placeholder_paths[i]);
+        }
+
+        if (type == GTK_UI_MANAGER_SEPARATOR) {
+            name = NULL;
+        }
+        else {
+            name = gtk_action_get_name (action);
+        }
+
+        gtk_ui_manager_add_ui (ui_manager,
+                               merge_id,
+                               full_path,
+                               name,
+                               name,
+                               type,
+                               FALSE);
+        i++;
+    }
+}
+
+void
 nemo_action_manager_update_action_states (NemoActionManager *action_manager,
                                           GtkActionGroup    *action_group,
                                           GList             *selection,

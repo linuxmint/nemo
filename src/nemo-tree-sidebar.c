@@ -1315,48 +1315,21 @@ add_action_to_ui (NemoActionManager    *manager,
 {
     FMTreeView *view = FM_TREE_VIEW (user_data);
 
-    if (type != GTK_UI_MANAGER_SEPARATOR) {
-        if (type == GTK_UI_MANAGER_MENUITEM) {
-            g_signal_handlers_disconnect_by_func (action,
-                                                  run_action_callback,
-                                                  view);
+    const gchar *roots[] = {
+        "/selection/TreeSidebarActionsPlaceholder",
+        NULL
+    };
 
-            g_signal_connect (action, "activate",
-                              G_CALLBACK (run_action_callback),
-                              view);
-        }
-
-        gtk_action_group_add_action (view->details->action_action_group,
-                                     action);
-        gtk_action_set_visible (GTK_ACTION (action), FALSE);
-    }
-
-    const gchar *placeholder = "/selection/TreeSidebarActionsPlaceholder";
-
-    g_autofree gchar *full_path = NULL;
-    const gchar *name;
-
-    if (path != NULL) {
-        full_path = g_strdup_printf ("%s/%s", placeholder, path);
-    }
-    else {
-        full_path = g_strdup (placeholder);
-    }
-
-    if (type == GTK_UI_MANAGER_SEPARATOR) {
-        name = NULL;
-    }
-    else {
-        name = gtk_action_get_name (action);
-    }
-
-    gtk_ui_manager_add_ui (view->details->ui_manager,
-                           view->details->action_action_group_merge_id,
-                           full_path,
-                           name,
-                           name,
-                           type,
-                           FALSE);
+    nemo_action_manager_add_action_ui (manager,
+                                       view->details->ui_manager,
+                                       action,
+                                       path,
+                                       view->details->action_action_group,
+                                       view->details->action_action_group_merge_id,
+                                       roots,
+                                       type,
+                                       G_CALLBACK (run_action_callback),
+                                       view);
 }
 
 static void

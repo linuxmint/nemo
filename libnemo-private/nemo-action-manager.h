@@ -52,5 +52,16 @@ void                  nemo_action_manager_update_action_states      (NemoActionM
                                                                      gboolean           for_places,
                                                                      GtkWindow         *window);
 
+void                  nemo_action_manager_add_action_ui             (NemoActionManager   *manager,
+                                                                     GtkUIManager        *ui_manager,
+                                                                     GtkAction           *action,
+                                                                     const gchar         *action_path,
+                                                                     GtkActionGroup      *action_group,
+                                                                     guint                merge_id,
+                                                                     const gchar        **placeholder_paths,
+                                                                     GtkUIManagerItemType type,
+                                                                     GCallback            activate_callback,
+                                                                     gpointer             user_data);
+
 #endif /* NEMO_ACTION_MANAGER_H */
 
