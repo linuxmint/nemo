@@ -921,6 +921,7 @@ class NemoActionsOrganizer():
                 return
         Gtk.drag_finish(context, True, True, etime)
 
+        self.set_needs_saved(True)
         self.update_treeview_state()
 
     def reorder_items(self, target_iter, parent, dropped_data, position):
