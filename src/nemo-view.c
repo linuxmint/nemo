@@ -5858,7 +5858,6 @@ get_file_paths_or_uris_as_newline_delimited_string (GList *selection, gboolean g
 {
 	char *path;
 	char *uri;
-	char *result;
 	NemoDesktopLink *link;
 	GString *expanding_string;
 	GList *node;
@@ -5896,10 +5895,7 @@ get_file_paths_or_uris_as_newline_delimited_string (GList *selection, gboolean g
 		g_free (uri);
 	}
 
-	result = expanding_string->str;
-	g_string_free (expanding_string, FALSE);
-
-	return result;
+    return g_string_free (expanding_string, FALSE);
 }
 
 static char *
