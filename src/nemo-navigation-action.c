@@ -191,8 +191,10 @@ static gboolean
 new_tab_action (NemoNavigationAction *self)
 {
 	NemoWindow *window;
+	NemoWindowSlot *slot;
 
 	window = self->priv->window;
+	slot = nemo_window_get_active_slot (window);
 
 	switch (self->priv->direction) {
 	case NEMO_NAVIGATION_DIRECTION_FORWARD:
@@ -204,11 +206,16 @@ new_tab_action (NemoNavigationAction *self)
 					     NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
 		break;
 	case NEMO_NAVIGATION_DIRECTION_UP:
-		nemo_window_slot_go_up (nemo_window_get_active_slot (window),
+		nemo_window_slot_go_up (slot,
 					NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
 		break;
+	case NEMO_NAVIGATION_DIRECTION_RELOAD:
+		if (slot->location != NULL) {
+			nemo_window_slot_open_location (slot,
+					slot->location, NEMO_WINDOW_OPEN_FLAG_NEW_TAB);
+		}
+		break;
 	/* remaining actions are not supported */
-        case NEMO_NAVIGATION_DIRECTION_RELOAD:
         case NEMO_NAVIGATION_DIRECTION_HOME:
         case NEMO_NAVIGATION_DIRECTION_COMPUTER:
         case NEMO_NAVIGATION_DIRECTION_EDIT:
