@@ -258,7 +258,7 @@ filter_nemo_handler (GList *apps)
 		id = g_app_info_get_id (application);
 		if (id != NULL &&
 		    strcmp (id,
-			    "org.Nemo.desktop") == 0) {
+			    "nemo.desktop") == 0) {
 			g_object_unref (application);
 			apps = g_list_delete_link (apps, l);
 		}

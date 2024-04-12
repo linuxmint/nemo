@@ -30,7 +30,7 @@ MimeType=inode/directory;application/x-gnome-saved-search;
 Actions=open-home;open-computer;open-trash;
 """
 
-additionalfiles.generate(DOMAIN, PATH, "data/org.Nemo.desktop.in", prefix, _("Files"), _("Access and organize files"), suffix)
+additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop.in", prefix, _("Files"), _("Access and organize files"), suffix)
 
 
 prefix = """
@@ -38,18 +38,18 @@ prefix = """
 """
 suffix = """Exec=nemo %U
 """
-additionalfiles.generate(DOMAIN, PATH, "data/org.Nemo.desktop.in", prefix, _("Home"), None, suffix, append=True)
+additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop.in", prefix, _("Home"), None, suffix, append=True)
 
 prefix = """
 [Desktop Action open-computer]
 """
 suffix = """Exec=nemo computer:///
 """
-additionalfiles.generate(DOMAIN, PATH, "data/org.Nemo.desktop.in", prefix, _("Computer"), None, suffix, append=True)
+additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop.in", prefix, _("Computer"), None, suffix, append=True)
 
 prefix = """
 [Desktop Action open-trash]
 """
 suffix = """Exec=nemo trash:///
 """
-additionalfiles.generate(DOMAIN, PATH, "data/org.Nemo.desktop.in", prefix, _("Trash"), None, suffix, append=True)
+additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop.in", prefix, _("Trash"), None, suffix, append=True)
