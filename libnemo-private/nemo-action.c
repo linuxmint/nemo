@@ -1936,7 +1936,7 @@ get_visibility (NemoAction *action,
             condition = conditions[j];
             if (g_strcmp0 (condition, "desktop") == 0) {
                 gchar *name = nemo_file_get_display_name (parent);
-                if (g_strcmp0 (name, "x-nemo-desktop") != 0 && !priv->show_in_blank_desktop)
+                if (g_strcmp0 (name, "x-nemo-desktop") != 0 && !(parent == NULL && priv->show_in_blank_desktop))
                     condition_type_show = FALSE;
                 g_free (name);
             } else if (g_strcmp0 (condition, "removable") == 0) {
