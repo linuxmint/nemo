@@ -2008,7 +2008,7 @@ nemo_action_update_display_state (NemoAction *action,
                                   GtkWindow  *window)
 {
     if (get_visibility (action, selection, parent, for_places, window)) {
-        DEBUG ("Action '%s' determined VISIBLE", gtk_action_get_name (GTK_ACTION (action)));
+        DEBUG ("Action '%s' determined VISIBLE", action->uuid);
 
         finalize_strings (action, selection, parent, window);
         gtk_action_set_visible (GTK_ACTION (action), TRUE);
@@ -2016,6 +2016,6 @@ nemo_action_update_display_state (NemoAction *action,
         return;
     }
 
-    DEBUG ("Action '%s' determined HIDDEN", gtk_action_get_name (GTK_ACTION (action)));
+    DEBUG ("Action '%s' determined HIDDEN", action->uuid);
     gtk_action_set_visible (GTK_ACTION (action), FALSE);
 }

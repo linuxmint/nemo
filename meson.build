@@ -180,6 +180,7 @@ nemo_definitions =  [
   '-DNEMO_DATADIR="@0@"'.format(nemoDataPath),
   '-DNEMO_EXTENSIONDIR="@0@"'.format(nemoExtensionPath),
   '-DLIBEXECDIR="@0@"'.format(libExecPath),
+  '-DG_LOG_DOMAIN="Nemo"'
 ]
 
 po_subdir = join_paths(meson.project_source_root(), 'po')

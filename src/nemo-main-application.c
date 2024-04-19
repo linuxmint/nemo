@@ -717,7 +717,8 @@ nemo_main_application_local_command_line (GApplication *application,
 	}
 
     if (debug) {
-        g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+        const gchar* const domains[] = { "Nemo", NULL };
+        g_log_writer_default_set_debug_domains (domains);
     }
 
 	if (!do_cmdline_sanity_checks (self, perform_self_check,
