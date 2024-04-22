@@ -5,6 +5,8 @@ Nemo
 Nemo is a free and open-source software and official file manager of the Cinnamon desktop environment. 
 It is a fork of GNOME Files (formerly named Nautilus).
 
+Nemo also manages the Cinnamon desktop.
+Since Cinnamon 6.0 (Mint 21.3), users can enhance their own Nemo with Spices named Actions.
 
 
 History
