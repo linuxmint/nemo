@@ -5172,7 +5172,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 				format = _("%H:%M");
 			} else {
 				/* Translators: Time in 12h format */
-				format = _("%l:%M %p");
+				format = _("%-l:%M %p");
 			}
 		}
 		// Show the word "Yesterday" and time if date is on yesterday
@@ -5190,7 +5190,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 					/* Translators: this is the word Yesterday followed by
 					 * a time in 12h format. i.e. "Yesterday 9:04 PM" */
 					// xgettext:no-c-format
-					format = _("Yesterday %l:%M %p");
+					format = _("Yesterday %-l:%M %p");
 				}
 			}
 		}
@@ -5209,7 +5209,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 					/* Translators: this is the week day name followed by
 					 * a time in 12h format. i.e. "Monday 9:04 PM" */
 					// xgettext:no-c-format
-					format = _("%A %l:%M %p");
+					format = _("%A %-l:%M %p");
 				}
 			}
 		} else if (g_date_time_get_year (file_date) == g_date_time_get_year (now)) {
@@ -5230,7 +5230,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 					 * by the abbreviated month name followed by a time in
 					 * 12h format i.e. "3 February 9:04" */
 					// xgettext:no-c-format
-					format = _("%-e %B %l:%M %p");
+					format = _("%-e %B %-l:%M %p");
 				}
 			}
 		} else {
@@ -5251,7 +5251,7 @@ nemo_file_get_date_as_string (NemoFile       *file,
 					 * by the abbreviated month name followed by the year followed
 					 * by a time in 12h format i.e. "3 Feb 2015 9:04 PM" */
 					// xgettext:no-c-format
-					format = _("%-e %b %Y %l:%M %p");
+					format = _("%-e %b %Y %-l:%M %p");
 				}
 			}
 		}
