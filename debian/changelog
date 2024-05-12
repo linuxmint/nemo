@@ -1,3 +1,10 @@
+nemo (6.0.2ubuntu1) virginia; urgency=medium
+
+ * Requires glib >=2.80. 
+ * Remove usr/lib/*/nemo/nemo-extensions-list from nemo.install
+
+ -- Pablo De Nápoli <pdenapo@gmail.com>  Sun, 12 May 2024 14:11:36 +0000
+
 nemo (6.0.2) virginia; urgency=medium
 
   [ Michael Webster ]
