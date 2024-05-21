@@ -143,7 +143,7 @@ get_max_threads (void) {
         max_threads = pref;
     }
 
-    max_threads = CLAMP (max_threads, 1, MAX ((num_processors / 2), 1));
+    max_threads = MAX (1, max_threads);
 
 #if DEBUG_THREADS
     g_message ("Thumbnailer threads: %d (setting: %d, system count: %d)", max_threads, pref, num_processors);
