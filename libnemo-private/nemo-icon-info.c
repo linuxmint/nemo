@@ -665,17 +665,17 @@ nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
     case NEMO_ZOOM_LEVEL_SMALLEST:
         return NEMO_LIST_ICON_SIZE_SMALLEST;
     case NEMO_ZOOM_LEVEL_SMALLER:
-        return NEMO_LIST_ICON_SIZE_SMALLEST;
-    case NEMO_ZOOM_LEVEL_SMALL:
         return NEMO_LIST_ICON_SIZE_SMALLER;
-    case NEMO_ZOOM_LEVEL_STANDARD:
+    case NEMO_ZOOM_LEVEL_SMALL:
         return NEMO_LIST_ICON_SIZE_SMALL;
-    case NEMO_ZOOM_LEVEL_LARGE:
+    case NEMO_ZOOM_LEVEL_STANDARD:
         return NEMO_LIST_ICON_SIZE_STANDARD;
-    case NEMO_ZOOM_LEVEL_LARGER:
+    case NEMO_ZOOM_LEVEL_LARGE:
         return NEMO_LIST_ICON_SIZE_LARGE;
-    case NEMO_ZOOM_LEVEL_LARGEST:
+    case NEMO_ZOOM_LEVEL_LARGER:
         return NEMO_LIST_ICON_SIZE_LARGER;
+    case NEMO_ZOOM_LEVEL_LARGEST:
+        return NEMO_LIST_ICON_SIZE_LARGEST;
     case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);
