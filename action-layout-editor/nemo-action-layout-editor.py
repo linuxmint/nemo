@@ -631,7 +631,7 @@ class NemoActionsOrganizer():
 
         new_iter = self.model.insert_after(parent, selection_iter, [
             new_hash(),
-            _("New Submenu"),
+            _("New submenu"),
             ROW_TYPE_SUBMENU,
             0,
             Row({"uuid": "New Submenu"}, None, None, True)])
