@@ -10289,8 +10289,9 @@ schedule_update_status (NemoView *view)
 
 	if (view->details->update_status_idle_id == 0) {
 		view->details->update_status_idle_id =
-			g_idle_add_full (G_PRIORITY_DEFAULT_IDLE - 20,
-					 update_status_idle_callback, view, NULL);
+			g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
+                                1000,
+                                update_status_idle_callback, view, NULL);
 	}
 }
 
