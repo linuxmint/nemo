@@ -33,13 +33,42 @@
 #include <gtk/gtk.h>
 
 /* Adapted from gio - gdesktopappinfo.c - prepend_terminal_to_vector */
+static const struct {
+    const char *exec;
+    const char *exec_arg;
+    const gboolean escape_command;
+} known_terminals[] = {
+    { "alacritty", "-e", TRUE },
+    { "color-xterm", "-e", TRUE },
+    { "dtterm", "-e", TRUE },
+    { "foot", "--", FALSE },
+    { "gnome-terminal", "--", TRUE },
+    { "kgx", "-e", TRUE },
+    { "kitty", "--", FALSE },
+    { "konsole", "-e", TRUE },
+    { "lxterminal", "-e", TRUE },
+    { "mate-terminal", "-x", TRUE },
+    { "nxterm", "-e", TRUE },
+    { "rxvt", "-e", TRUE },
+    { "sakura", "-x", TRUE },
+    { "st", "-e", TRUE },
+    { "terminator", "-x", TRUE },
+    { "terminology", "-e", TRUE },
+    { "tilix", "-e", TRUE },
+    { "wezterm", "--", TRUE },
+    { "xfce4-terminal", "-x", FALSE },
+    { "xterm", "-e", TRUE },
+};
+
 static char *
 prepend_terminal_to_command_line (const char *command_line)
 {
     GSettings *settings;
-    gchar *prefix = NULL;
+    GString *prefix = NULL;
     gchar *terminal = NULL;
     gchar *ret = NULL;
+    GString *escaped_command_line = NULL;
+    gint i;
 
     g_return_val_if_fail (command_line != NULL, g_strdup (command_line));
 
@@ -47,64 +76,53 @@ prepend_terminal_to_command_line (const char *command_line)
     terminal = g_settings_get_string (settings, "exec");
 
     if (terminal != NULL) {
+        for (i = 0; i < G_N_ELEMENTS (known_terminals); i++) {
+            if (g_strcmp0 (known_terminals[i].exec, terminal) == 0) {
+                gchar *tmp = g_strdup_printf ("%s %s", known_terminals[i].exec, known_terminals[i].exec_arg);
+                prefix = g_string_new (tmp);
+                g_free (tmp);
+                break;
+            }
+        }
+    }
+
+    if (prefix == NULL) {
         gchar *term_path = NULL;
 
-        term_path = g_find_program_in_path (terminal);
-
-        if (term_path != NULL) {
-            gchar *exec_flag = NULL;
-
-            exec_flag = g_settings_get_string (settings, "exec-arg");
-
-            if (exec_flag == NULL) {
-                prefix = g_strdup (term_path);
-            } else {
-                prefix = g_strdup_printf ("%s %s", term_path, exec_flag);
+        for (i = 0; i < G_N_ELEMENTS (known_terminals); i++) {
+            term_path = g_find_program_in_path (known_terminals[i].exec);
+            if (term_path != NULL) {
+                gchar *tmp = g_strdup_printf ("%s %s", known_terminals[i].exec, known_terminals[i].exec_arg);
+                prefix = g_string_new (tmp);
+                g_free (tmp);
+                break;
             }
-
-            g_free (exec_flag);
         }
-
         g_free (term_path);
     }
 
-    g_object_unref (settings);
-    g_free (terminal);
-
-    if (prefix == NULL) {
-        gchar *check = NULL;
-
-        check = g_find_program_in_path ("gnome-terminal");
-        if (check != NULL) {
-            /* Note that gnome-terminal takes -x and
-             * as -e in gnome-terminal is broken we use that.
-               20201114 - There looks to be an issue with -x now with gnome-terminal
-               and -- is now the recommended option */
-            prefix = g_strdup_printf ("gnome-terminal --");
-        } else {
-            check = g_find_program_in_path ("nxterm");
-
-            if (check == NULL)
-                check = g_find_program_in_path ("color-xterm");
-            if (check == NULL)
-                check = g_find_program_in_path ("rxvt");
-            if (check == NULL)
-                check = g_find_program_in_path ("xterm");
-            if (check == NULL)
-                check = g_find_program_in_path ("dtterm");
-            if (check == NULL) {
-                check = g_strdup ("xterm");
-                g_warning ("couldn't find a terminal, falling back to xterm");
+    // Escape space characters in the command line if needed
+    if (prefix != NULL && known_terminals[i].escape_command) {
+        escaped_command_line = g_string_new("");
+        for (const gchar *p = command_line; *p != '\0'; p++) {
+            if (*p == ' ') {
+                g_string_append(escaped_command_line, "\\ ");
+            } else {
+                g_string_append_c(escaped_command_line, *p);
             }
-
-            prefix = g_strdup_printf ("%s -e", check);
         }
-
-        g_free (check);
     }
 
-    ret = g_strdup_printf ("%s %s", prefix, command_line);
-    g_free (prefix);
+    if (escaped_command_line == NULL) {
+        escaped_command_line = g_string_new (command_line);
+    }
+
+    g_object_unref (settings);
+
+    ret = g_strdup_printf ("%s %s", prefix->str, escaped_command_line->str);
+    g_string_free (prefix, TRUE);
+    g_free (terminal);
+    g_string_free (escaped_command_line, TRUE);
 
     return ret;
 }
@@ -141,4 +159,6 @@ eel_gnome_open_terminal_on_screen (const gchar *command,
 
 		g_error_free (error);
 	}
+
+    g_free (command_line);
 }
