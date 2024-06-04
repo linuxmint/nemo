@@ -469,8 +469,10 @@ nemo_action_config_widget_init (NemoActionConfigWidget *self)
     gtk_widget_show (widget);
     g_signal_connect (widget, "clicked", G_CALLBACK (on_open_folder_clicked), self);
 
-    widget = gtk_button_new_with_label (_("Layout"));
-    gtk_box_pack_start (GTK_BOX (bb),
+    widget = gtk_button_new_from_icon_name ("view-list-symbolic", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_set_tooltip_text (widget, _("Edit layout"));
+
+    gtk_box_pack_end (GTK_BOX (bb),
                       widget,
                       FALSE, FALSE, 0);
     gtk_widget_show (widget);
