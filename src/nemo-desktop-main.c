@@ -55,6 +55,10 @@
 #include <exempi/xmp.h>
 #endif
 
+#ifdef HAVE_GTK_LAYER_SHELL
+#include <gtk-layer-shell/gtk-layer-shell.h>
+#endif
+
 int
 main (int argc, char *argv[])
 {
