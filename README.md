@@ -11,8 +11,9 @@ Since Cinnamon 6.0 (Mint 21.3), users can enhance their own Nemo with Spices nam
 
 History
 ====
-Nemo version 1.0.0 was released in July 2012 along with version 1.6 of the Cinnamon reaching version 1.1.2 in November 2012.
-It started as a fork of the GNOME file manager Nautilus v3.4 after the developers of the operating system Linux Mint considered that "Nautilus 3.6 is a catastrophe".
+Nemo started as a fork of the GNOME file manager Nautilus v3.4. Version 1.0.0 was released in July 2012 along with version 1.6 of Cinnamon,
+reaching version 1.1.2 in November 2012.
+
 Developer Gwendal Le Bihan named the project "nemo" after Jules Verne's famous character Captain Nemo, who is the captain of the Nautilus.
 
 Features
