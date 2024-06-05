@@ -25,7 +25,7 @@ bin = configure_file(
 )
 
 install_data(
-    'nemo-action-layout-editor.py',
+    'nemo_action_layout_editor.py',
     install_dir: nemoDataPath / 'layout-editor',
     install_mode: 'rwxr-xr-x'
 )

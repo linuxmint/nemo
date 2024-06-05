@@ -118,47 +118,31 @@ class Row():
             return self.row_meta.get('user-icon')
         return None
 
-class NemoActionsOrganizer():
-    def __init__(self):
-        self.builder = Gtk.Builder.new_from_file(str(GLADE_FILE))
+class NemoActionsOrganizer(Gtk.Box):
+    def __init__(self, window, builder=None):
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
 
-        self.main_window = self.builder.get_object("main_window")
+        if builder is None:
+            self.builder = Gtk.Builder.new_from_file(str(GLADE_FILE))
+        else:
+            self.builder = builder
+
+        self.main_window = window
+        self.layout_editor_box = self.builder.get_object("layout_editor_box")
+        self.add(self.layout_editor_box)
         self.treeview_holder = self.builder.get_object("treeview_holder")
         self.save_button = self.builder.get_object("save_button")
         self.discard_changes_button = self.builder.get_object("discard_changes_button")
+        self.default_layout_button = self.builder.get_object("default_layout_button")
         self.name_entry = self.builder.get_object("name_entry")
         self.new_row_button = self.builder.get_object("new_row_button")
         self.remove_submenu_button = self.builder.get_object("remove_submenu_button")
-        self.hamburger_button = self.builder.get_object("hamburger_button")
         self.clear_icon_button = self.builder.get_object("clear_icon_button")
         self.icon_selector_menu_button = self.builder.get_object("icon_selector_menu_button")
         self.icon_selector_image = self.builder.get_object("icon_selector_image")
         self.action_enabled_switch = self.builder.get_object("action_enabled_switch")
-        self.row_uuid_label = self.builder.get_object("row_uuid_label")
-        self.selected_item_widgets_group = XApp.VisibilityGroup.new(True, True, [
-            self.icon_selector_menu_button,
-            self.name_entry
-        ])
 
         self.nemo_plugin_settings = Gio.Settings(schema_id="org.nemo.plugins")
-
-        # Hamburger menu
-        menu = Gtk.Menu()
-
-        item = Gtk.ImageMenuItem(label=_("Open user actions folder"), image=Gtk.Image(icon_name="folder-symbolic", icon_size=Gtk.IconSize.MENU))
-        item.connect("activate", self.open_actions_folder_clicked)
-        menu.add(item)
-
-        item = Gtk.ImageMenuItem(label=_("Reset layout"), image=Gtk.Image(icon_name="view-sort-ascending-symbolic", icon_size=Gtk.IconSize.MENU))
-        item.connect("activate", self.flatten_layout_clicked)
-        menu.add(item)
-
-        item = Gtk.MenuItem(label=_("Quit"))
-        item.connect("activate", self.quit)
-        menu.add(item)
-
-        menu.show_all()
-        self.hamburger_button.set_popup(menu)
 
         # Icon MenuButton
         menu = Gtk.Menu()
@@ -217,9 +201,9 @@ class NemoActionsOrganizer():
 
         self.treeview_holder.add(self.treeview)
 
-        self.main_window.connect("delete-event", self.window_delete)
         self.save_button.connect("clicked", self.on_save_clicked)
         self.discard_changes_button.connect("clicked", self.on_discard_changes_clicked)
+        self.default_layout_button.connect("clicked", self.on_default_layout_clicked)
         self.treeview.get_selection().connect("changed", self.on_treeview_position_changed)
         self.name_entry.connect("changed", self.on_name_entry_changed)
         self.name_entry.connect("icon-press", self.on_name_entry_icon_clicked)
@@ -256,8 +240,6 @@ class NemoActionsOrganizer():
 
         self.update_treeview_state()
         self.set_needs_saved(False)
-
-        self.main_window.present_with_time(0)
 
     def reload_model(self, flat=False):
         self.reloading_model = True
@@ -490,7 +472,7 @@ class NemoActionsOrganizer():
         path, iter = self.get_selected_row_path_iter()
         return self.model.get_value(iter, field)
 
-    def selected_row_changed(self):
+    def selected_row_changed(self, needs_saved=True):
         if self.reloading_model:
             return
 
@@ -499,7 +481,9 @@ class NemoActionsOrganizer():
             self.model.row_changed(path, iter)
 
         self.update_row_controls()
-        self.set_needs_saved(True)
+
+        if needs_saved:
+            self.set_needs_saved(True)
 
     def on_treeview_position_changed(self, selection):
         if self.reloading_model:
@@ -522,11 +506,11 @@ class NemoActionsOrganizer():
             self.original_icon_menu_item.set_visible(row_type == ROW_TYPE_ACTION)
             orig_icon = row.get_icon_string(original=True)
             self.original_icon_menu_item.set_sensitive(orig_icon is not None and orig_icon != row.get_icon_string())
-            self.selected_item_widgets_group.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
+            self.icon_selector_menu_button.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
+            self.name_entry.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
             self.action_enabled_switch.set_active(row.enabled)
             self.action_enabled_switch.set_sensitive(row_type == ROW_TYPE_ACTION)
             self.remove_submenu_button.set_sensitive(row_type in (ROW_TYPE_SUBMENU, ROW_TYPE_SEPARATOR))
-            self.row_uuid_label.set_text(row_uuid if row_type == ROW_TYPE_ACTION else "")
 
             if row_type == ROW_TYPE_ACTION and row.get_custom_label() is not None:
                 self.name_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-delete-symbolic")
@@ -562,31 +546,26 @@ class NemoActionsOrganizer():
         if needs_saved:
             self.save_button.set_sensitive(True)
             self.discard_changes_button.set_sensitive(True)
-            self.main_window.set_title("* " + _("Nemo Actions Layout Editor"))
         else:
             self.save_button.set_sensitive(False)
             self.discard_changes_button.set_sensitive(False)
-            self.main_window.set_title(_("Nemo Actions Layout Editor"))
 
         self.needs_saved = needs_saved
 
     # Button signal handlers
-
-    def open_actions_folder_clicked(self, button):
-        subprocess.Popen(["xdg-open", USER_ACTIONS_DIR])
 
     def on_save_clicked(self, button):
         self.save_model()
         self.save_disabled_list()
         self.set_needs_saved(False)
 
-    def flatten_layout_clicked(self, button):
-        self.flatten_model()
-
     def on_discard_changes_clicked(self, button):
         self.set_needs_saved(False)
         self.reload_model()
         self.update_treeview_state()
+
+    def on_default_layout_clicked(self, button):
+        self.flatten_model()
 
     def on_clear_icon_clicked(self, menuitem):
         row = self.get_selected_row_field(ROW_OBJ)
@@ -715,7 +694,9 @@ class NemoActionsOrganizer():
         row = self.get_selected_row_field(ROW_OBJ)
         if row is not None:
             row.enabled = switch.get_active()
-            self.selected_row_changed()
+            # The layout file does not track active/inactive actions,
+            # so this shouldn't prompt a layout save.
+            self.selected_row_changed(needs_saved=False)
 
     # Cell render functions
 
@@ -1023,11 +1004,6 @@ class NemoActionsOrganizer():
                 self.update_positions(iter)
             iter = self.model.iter_next(iter)
 
-    def window_delete(self, window, event, data=None):
-        if not self.quit():
-            return Gdk.EVENT_STOP
-        return Gdk.EVENT_PROPAGATE
-
     def quit(self, *args, **kwargs):
         if self.needs_saved:
             dialog = Gtk.MessageDialog(
@@ -1049,14 +1025,53 @@ class NemoActionsOrganizer():
                 self.save_model()
                 self.save_disabled_list()
 
-        self.main_window.destroy()
-        Gtk.main_quit()
         return True
+
+class EditorWindow():
+    def __init__(self):
+        self.builder = Gtk.Builder.new_from_file(str(GLADE_FILE))
+        self.main_window = self.builder.get_object("main_window")
+        self.hamburger_button = self.builder.get_object("hamburger_button")
+        self.editor = NemoActionsOrganizer(self.main_window, self.builder)
+        self.main_window.add(self.editor)
+
+        # Hamburger menu
+        menu = Gtk.Menu()
+
+        item = Gtk.ImageMenuItem(label=_("Open user actions folder"), image=Gtk.Image(icon_name="folder-symbolic", icon_size=Gtk.IconSize.MENU))
+        item.connect("activate", self.open_actions_folder_clicked)
+        menu.add(item)
+
+        item = Gtk.MenuItem(label=_("Quit"))
+        item.connect("activate", self.quit)
+        menu.add(item)
+
+        menu.show_all()
+        self.hamburger_button.set_popup(menu)
+
+        self.main_window.connect("delete-event", self.window_delete)
+
+        self.main_window.show_all()
+        self.main_window.present_with_time(0)
+
+    def quit(self, button):
+        if self.editor.quit():
+            Gtk.main_quit()
+            return True
+        return False
+
+    def window_delete(self, window, event, data=None):
+        if self.editor.quit():
+            Gtk.main_quit()
+        return Gdk.EVENT_STOP
+
+    def open_actions_folder_clicked(self, button):
+        subprocess.Popen(["xdg-open", USER_ACTIONS_DIR])
 
 if __name__ == "__main__":
     import sys
 
-    app = NemoActionsOrganizer()
+    EditorWindow()
     Gtk.main()
 
     sys.exit(0)
