@@ -5,7 +5,6 @@ gi.require_version('XApp', '1.0')
 from gi.repository import Gtk, Gdk, GLib, Gio, XApp, GdkPixbuf, Pango
 import cairo
 import json
-import os
 from pathlib import Path
 import uuid
 import gettext
@@ -22,7 +21,7 @@ GLADE_FILE = Path(leconfig.PKG_DATADIR).joinpath("layout-editor/nemo-action-layo
 
 NON_SPICE_UUID_SUFFIX = "@untracked"
 
-ROW_HASH, ROW_UUID, ROW_TYPE, ROW_POSITION, ROW_OBJ = range(5)
+ROW_HASH, ROW_UUID, ROW_TYPE, ROW_OBJ = range(4)
 
 ROW_TYPE_ACTION = "action"
 ROW_TYPE_SUBMENU = "submenu"
@@ -136,11 +135,21 @@ class NemoActionsOrganizer(Gtk.Box):
         self.default_layout_button = self.builder.get_object("default_layout_button")
         self.name_entry = self.builder.get_object("name_entry")
         self.new_row_button = self.builder.get_object("new_row_button")
+        self.row_controls_box = self.builder.get_object("row_controls_box")
         self.remove_submenu_button = self.builder.get_object("remove_submenu_button")
         self.clear_icon_button = self.builder.get_object("clear_icon_button")
         self.icon_selector_menu_button = self.builder.get_object("icon_selector_menu_button")
         self.icon_selector_image = self.builder.get_object("icon_selector_image")
         self.action_enabled_switch = self.builder.get_object("action_enabled_switch")
+        self.selected_item_widgets_group = XApp.VisibilityGroup.new(True, True, [
+            self.icon_selector_menu_button,
+            self.name_entry
+        ])
+
+        self.up_button = self.builder.get_object("up_button")
+        self.up_button.connect("clicked", self.up_button_clicked)
+        self.down_button = self.builder.get_object("down_button")
+        self.down_button.connect("clicked", self.down_button_clicked)
 
         self.nemo_plugin_settings = Gio.Settings(schema_id="org.nemo.plugins")
 
@@ -180,7 +189,9 @@ class NemoActionsOrganizer(Gtk.Box):
 
         # Tree/model
 
-        self.model = Gtk.TreeStore(str, str, str, int, object)  # (hash, uuid, type, position, Row)
+        self.path_map = []
+
+        self.model = Gtk.TreeStore(str, str, str, object)  # (hash, uuid, type, Row)
 
         self.treeview = Gtk.TreeView(
             model=self.model,
@@ -231,18 +242,18 @@ class NemoActionsOrganizer(Gtk.Box):
         self.treeview.connect("drag-data-get", self.on_drag_data_get)
         self.treeview.connect("drag-data-received", self.on_drag_data_received)
 
-        self.reloading_model = False
+        self.updating_model = False
         self.updating_row_edit_fields = False
         self.dnd_autoscroll_timeout_id = 0
 
         self.needs_saved = False
         self.reload_model()
-
         self.update_treeview_state()
+        self.update_arrow_button_states()
         self.set_needs_saved(False)
 
     def reload_model(self, flat=False):
-        self.reloading_model = True
+        self.updating_model = True
         self.model.clear()
 
         if flat:
@@ -263,7 +274,7 @@ class NemoActionsOrganizer(Gtk.Box):
                     except (ValueError, KeyError) as e:
                         print("Schema validation failed, ignoring saved layout: %s" % e)
                         raise
-            except (FileNotFoundError, ValueError, KeyError, json.decoder.JSONDecodeError) as e:
+            except (FileNotFoundError, ValueError, KeyError, json.decoder.JSONDecodeError):
                 self.data = {
                     'toplevel': []
                 }
@@ -276,7 +287,7 @@ class NemoActionsOrganizer(Gtk.Box):
         self.treeview.scroll_to_cell(start_path, None, True, 0, 0)
         self.update_row_controls()
 
-        self.reloading_model = False
+        self.updating_model = False
 
     def save_model(self):
         # Save the modified model back to the JSON file
@@ -364,7 +375,7 @@ class NemoActionsOrganizer(Gtk.Box):
 
                             actions[uuid] = (file, kf)
                         except GLib.Error as e:
-                            print("Error loading action file '%s': %s" % (action_file, e.message))
+                            print("Error loading action file '%s': %s" % (str(file), e.message))
                             continue
 
         return actions
@@ -375,7 +386,6 @@ class NemoActionsOrganizer(Gtk.Box):
         for item in items:
             row_type = item.get("type")
             uuid = item.get('uuid')
-            position = item.get('position')
 
             if row_type == ROW_TYPE_ACTION:
                 try:
@@ -385,13 +395,13 @@ class NemoActionsOrganizer(Gtk.Box):
                     print("Ignoring missing installed action %s" % uuid)
                     continue
 
-                iter = model.append(parent, [new_hash(), uuid, row_type, position, Row(item, kf, path, path.name not in disabled_actions)])
+                iter = model.append(parent, [new_hash(), uuid, row_type, Row(item, kf, path, path.name not in disabled_actions)])
 
                 del installed_actions[uuid]
             elif row_type == ROW_TYPE_SEPARATOR:
-                iter = model.append(parent, [new_hash(), "separator", ROW_TYPE_SEPARATOR, 0, Row(item, None, None, True)])
+                iter = model.append(parent, [new_hash(), "separator", ROW_TYPE_SEPARATOR, Row(item, None, None, True)])
             else:
-                iter = model.append(parent, [new_hash(), uuid, row_type, position, Row(item, None, None, True)])
+                iter = model.append(parent, [new_hash(), uuid, row_type, Row(item, None, None, True)])
 
                 if 'children' in item:
                     self.fill_model(model, iter, item['children'], installed_actions)
@@ -408,7 +418,7 @@ class NemoActionsOrganizer(Gtk.Box):
 
         for uuid, (path, kf) in sorted_actions.items():
             enabled = path.name not in disabled_actions
-            model.append(parent, [new_hash(), uuid, ROW_TYPE_ACTION, 0, Row(None, kf, path, enabled)])
+            model.append(parent, [new_hash(), uuid, ROW_TYPE_ACTION, Row(None, kf, path, enabled)])
 
     def save_disabled_list(self):
         disabled = []
@@ -438,7 +448,6 @@ class NemoActionsOrganizer(Gtk.Box):
             item = {
                 'uuid': model.get_value(iter, ROW_UUID),
                 'type': row_type,
-                'position': model.get_value(iter, ROW_POSITION),
                 'user-label': row.get_custom_label(),
                 'user-icon': row.get_custom_icon()
             }
@@ -468,12 +477,17 @@ class NemoActionsOrganizer(Gtk.Box):
 
         return (None, None)
 
+    def set_selection(self, iter):
+        selection = self.treeview.get_selection()
+        selection.select_iter(iter)
+        path, niter = self.get_selected_row_path_iter()
+
     def get_selected_row_field(self, field):
         path, iter = self.get_selected_row_path_iter()
         return self.model.get_value(iter, field)
 
     def selected_row_changed(self, needs_saved=True):
-        if self.reloading_model:
+        if self.updating_model:
             return
 
         path, iter = self.get_selected_row_path_iter()
@@ -486,19 +500,28 @@ class NemoActionsOrganizer(Gtk.Box):
             self.set_needs_saved(True)
 
     def on_treeview_position_changed(self, selection):
-        if self.reloading_model:
+        if self.updating_model:
             return
 
         self.update_row_controls()
+        self.update_arrow_button_states()
 
     def update_row_controls(self):
-        row = self.get_selected_row_field(ROW_OBJ)
+        self.updating_row_edit_fields = True
+
+        try:
+            row = self.get_selected_row_field(ROW_OBJ)
+        except TypeError:
+            self.row_controls_box.set_sensitive(False)
+            self.name_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, None)
+            self.icon_selector_image.clear()
+            self.name_entry.set_text("")
+            return
+
+        self.row_controls_box.set_sensitive(True)
 
         if row is not None:
-            self.updating_row_edit_fields = True
-
             row_type = self.get_selected_row_field(ROW_TYPE)
-            row_uuid = self.get_selected_row_field(ROW_UUID)
 
             self.name_entry.set_text(row.get_label())
 
@@ -506,8 +529,7 @@ class NemoActionsOrganizer(Gtk.Box):
             self.original_icon_menu_item.set_visible(row_type == ROW_TYPE_ACTION)
             orig_icon = row.get_icon_string(original=True)
             self.original_icon_menu_item.set_sensitive(orig_icon is not None and orig_icon != row.get_icon_string())
-            self.icon_selector_menu_button.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
-            self.name_entry.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
+            self.selected_item_widgets_group.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
             self.action_enabled_switch.set_active(row.enabled)
             self.action_enabled_switch.set_sensitive(row_type == ROW_TYPE_ACTION)
             self.remove_submenu_button.set_sensitive(row_type in (ROW_TYPE_SUBMENU, ROW_TYPE_SEPARATOR))
@@ -519,7 +541,7 @@ class NemoActionsOrganizer(Gtk.Box):
                 self.name_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, None)
                 self.name_entry.set_icon_sensitive(Gtk.EntryIconPosition.SECONDARY, False)
 
-            self.updating_row_edit_fields = False
+        self.updating_row_edit_fields = False
 
     def on_row_activated(self, path, column, data=None):
         row_type = self.get_selected_row_field(ROW_TYPE)
@@ -552,7 +574,34 @@ class NemoActionsOrganizer(Gtk.Box):
 
         self.needs_saved = needs_saved
 
+    def update_arrow_button_states(self):
+        can_up = True
+        can_down = True
+
+        path, for_iter = self.get_selected_row_path_iter()
+        first_iter = self.model.get_iter_first()
+
+        if self.same_iter(for_iter, first_iter):
+            can_up = False
+        else:
+            last_iter = None
+            while first_iter:
+                last_iter = first_iter
+                first_iter = self.model.iter_next(first_iter)
+
+            if self.same_iter(for_iter, last_iter):
+                can_down = False
+
+        self.up_button.set_sensitive(can_up)
+        self.down_button.set_sensitive(can_down)
+
     # Button signal handlers
+
+    def up_button_clicked(self, button):
+        self.move_selection_up_one()
+
+    def down_button_clicked(self, button):
+        self.move_selection_down_one()
 
     def on_save_clicked(self, button):
         self.save_model()
@@ -612,11 +661,7 @@ class NemoActionsOrganizer(Gtk.Box):
             new_hash(),
             _("New submenu"),
             ROW_TYPE_SUBMENU,
-            0,
             Row({"uuid": "New Submenu"}, None, None, True)])
-
-        # new_path = self.model.get_path(new_iter)
-        # self.treeview.scroll_to_cell(new_path, None, True, 0.5, 0.5)
 
         selection = self.treeview.get_selection()
         selection.select_iter(new_iter)
@@ -638,7 +683,6 @@ class NemoActionsOrganizer(Gtk.Box):
             new_hash(),
             "separator",
             ROW_TYPE_SEPARATOR,
-            0,
             Row({"uuid": "separator", "type": "separator"}, None, None, True)])
 
         selection = self.treeview.get_selection()
@@ -654,11 +698,14 @@ class NemoActionsOrganizer(Gtk.Box):
         if row_type == ROW_TYPE_ACTION:
             return
 
+        self.updating_model = True
         if row_type == ROW_TYPE_SUBMENU:
             parent_iter = self.model.iter_parent(selection_iter)
             self.move_tree(self.model, selection_iter, parent_iter)
 
-        self.remove_source_row_by_hash(self.model, row_hash)
+        self.remove_row_by_hash(self.model, row_hash)
+        self.updating_model = False
+
         self.selected_row_changed()
 
     def on_name_entry_changed(self, entry):
@@ -841,7 +888,6 @@ class NemoActionsOrganizer(Gtk.Box):
         target_row_type = model.get_value(i, ROW_TYPE)
         target_row = model.get_value(i, ROW_OBJ)
         source_path, source_iter = self.get_selected_row_path_iter()
-        source_row = model.get_value(source_iter, ROW_OBJ)
         source_row_type = model.get_value(source_iter, ROW_TYPE)
 
         if source_path.compare(path) == 0 or source_path.is_ancestor(path) and source_row_type == ROW_TYPE_SUBMENU:
@@ -929,21 +975,199 @@ class NemoActionsOrganizer(Gtk.Box):
                 position in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE,
                              Gtk.TreeViewDropPosition.INTO_OR_AFTER,
                              Gtk.TreeViewDropPosition.AFTER):
-            new_iter = self.model.insert(target_iter, 0, [new_hash(), source_uuid, source_type, 0, row])
+            new_iter = self.model.insert(target_iter, 0, [new_hash(), source_uuid, source_type, row])
         else:
             if position == Gtk.TreeViewDropPosition.BEFORE:
-                new_iter = self.model.insert_before(parent, target_iter, [new_hash(), source_uuid, source_type, 0, row])
+                new_iter = self.model.insert_before(parent, target_iter, [new_hash(), source_uuid, source_type, row])
             elif position == Gtk.TreeViewDropPosition.AFTER:
-                new_iter = self.model.insert_after(parent, target_iter, [new_hash(), source_uuid, source_type, 0, row])
+                new_iter = self.model.insert_after(parent, target_iter, [new_hash(), source_uuid, source_type, row])
 
         # we have to recreate all children to the new menu location.
         if new_iter is not None:
             if source_type == ROW_TYPE_SUBMENU:
                 self.move_tree(self.model, source_iter, new_iter)
-            self.remove_source_row_by_hash(self.model, source_hash)
+            self.remove_row_by_hash(self.model, source_hash)
 
-        self.update_positions(parent)
         return True
+
+    # Up/Down button handling
+    def get_new_row_data(self, source_iter):
+        source_hash = self.model.get_value(source_iter, ROW_HASH)
+        source_uuid = self.model.get_value(source_iter, ROW_UUID)
+        source_type = self.model.get_value(source_iter, ROW_TYPE)
+        source_object = self.model.get_value(source_iter, ROW_OBJ)
+        target_hash = new_hash()
+
+        return (
+            source_hash,
+            target_hash,
+            source_type,
+            [
+                target_hash,
+                source_uuid,
+                source_type,
+                source_object
+            ]
+        )
+
+    def get_last_at_level(self, model, iter):
+        if model.iter_has_child(iter):
+            foreach_iter = model.iter_children(iter)
+            while foreach_iter is not None:
+                last_iter = foreach_iter
+                foreach_iter = model.iter_next(foreach_iter)
+                continue
+
+            return self.get_last_at_level(model, last_iter)
+        return iter
+
+    def same_iter(self, iter1, iter2):
+        if iter1 is None and iter2 is None:
+            return True
+        elif iter1 is None and iter2 is not None:
+            return False
+        elif iter2 is None and iter1 is not None:
+            return False
+
+        path1 = self.model.get_path(iter1)
+        path2 = self.model.get_path(iter2)
+        return path1.compare(path2) == 0
+
+    def path_is_valid(self, path):
+        try:
+            test_iter = self.model.get_iter(path)
+        except ValueError:
+            return False
+        return True
+
+    def next_path_validated(self, path):
+        path.next()
+        return self.path_is_valid(path)
+
+    """
+    The move_selection_up_one and _down_one methods are complicated because there are only up/down
+    arrows (to keep things simple to the user). This navigates the treeview as if it was fully
+    expanded, but movement is by row, *not* by level, so it's possible to reach every node in the
+    tree.
+    """
+
+    def move_selection_up_one(self):
+        path, iter = self.get_selected_row_path_iter()
+        if iter is None:
+            return
+
+        parent = self.model.iter_parent(iter)
+
+        target_path = path
+        target_iter = None
+        target_parent = None
+
+        source_hash, target_hash, row_type, inserted_row = self.get_new_row_data(iter)
+        inserted_iter = None
+
+        if target_path.prev():
+            target_iter = self.get_last_at_level(self.model, self.model.get_iter(target_path))
+            target_iter_type = self.model.get_value(target_iter, ROW_TYPE)
+
+            if target_iter_type == ROW_TYPE_SUBMENU:
+                inserted_iter = self.model.prepend(target_iter, inserted_row)
+                target_parent = target_iter
+            else:
+                target_parent = self.model.iter_parent(target_iter)
+
+                if self.same_iter(parent, target_parent):
+                    inserted_iter = self.model.insert_before(target_parent, target_iter, inserted_row)
+                else:
+                    inserted_iter = self.model.insert_after(target_parent, target_iter, inserted_row)
+        elif target_path.up():
+            if target_path.prev():
+                target_iter = self.get_last_at_level(self.model, self.model.get_iter(target_path))
+                target_parent = self.model.iter_parent(target_iter)
+                inserted_iter = self.model.insert_after(target_parent, target_iter, inserted_row)
+            else:
+                # We're at the top?
+                top_iter = self.model.get_iter_first()
+                if not self.same_iter(iter, top_iter):
+                    inserted_iter = self.model.insert_before(None, top_iter, inserted_row)
+
+        source_was_expanded = False
+
+        if inserted_iter is not None:
+            self.updating_model = True
+
+            if row_type == ROW_TYPE_SUBMENU:
+                if self.treeview.row_expanded(self.model.get_path(iter)):
+                    source_was_expanded = True
+                self.move_tree(self.model, iter, inserted_iter)
+
+            if target_parent is not None:
+                self.treeview.expand_row(self.model.get_path(target_parent), True)
+            elif source_was_expanded:
+                self.treeview.expand_row(self.model.get_path(inserted_iter), True)
+
+            self.remove_row_by_hash(self.model, source_hash)
+            self.updating_model = False
+
+            self.select_row_by_hash(self.model, target_hash)
+
+            self.treeview.scroll_to_cell(self.model.get_path(inserted_iter), None, False, 0, 0)
+            self.set_needs_saved(True)
+
+    def move_selection_down_one(self):
+        path, iter = self.get_selected_row_path_iter()
+
+        if iter is None:
+            return
+
+        target_path = path
+        target_iter = None
+        target_parent = None
+
+        source_hash, target_hash, row_type, inserted_row = self.get_new_row_data(iter)
+        inserted_iter = None
+
+        if self.next_path_validated(target_path):
+            # is it a menu? Add it as its first child
+            maybe_submenu_iter = self.model.get_iter(target_path)
+            maybe_submenu_type = self.model.get_value(maybe_submenu_iter, ROW_TYPE)
+            if maybe_submenu_type == ROW_TYPE_SUBMENU:
+                inserted_iter = self.model.prepend(maybe_submenu_iter, inserted_row)
+                target_parent = maybe_submenu_iter
+            else:
+                # or else add after the test row
+                target_iter = self.model.get_iter(target_path)
+                target_parent = self.model.iter_parent(target_iter)
+                inserted_iter = self.model.insert_after(target_parent, target_iter, inserted_row)
+        else:
+            # path_next_validated modifies target_path directly, reset it to the origin
+            target_path = path
+            if target_path.get_depth() > 1 and target_path.up() and self.path_is_valid(target_path):
+                target_iter = self.model.get_iter(target_path)
+                target_parent = self.model.iter_parent(target_iter)
+                inserted_iter = self.model.insert_after(target_parent, target_iter, inserted_row)
+
+        source_was_expanded = False
+
+        if inserted_iter is not None:
+            self.updating_model = True
+
+            if row_type == ROW_TYPE_SUBMENU:
+                if self.treeview.row_expanded(self.model.get_path(iter)):
+                    source_was_expanded = True
+                self.move_tree(self.model, iter, inserted_iter)
+
+            if target_parent is not None:
+                self.treeview.expand_row(self.model.get_path(target_parent), True)
+            elif source_was_expanded:
+                self.treeview.expand_row(self.model.get_path(inserted_iter), True)
+
+            self.remove_row_by_hash(self.model, source_hash)
+            self.updating_model = False
+
+            self.select_row_by_hash(self.model, target_hash)
+
+            self.treeview.scroll_to_cell(self.model.get_path(inserted_iter), None, False, 0, 0)
+            self.set_needs_saved(True)
 
     def move_tree(self, model, source_iter, new_iter):
         foreach_iter = self.model.iter_children(source_iter)
@@ -961,7 +1185,6 @@ class NemoActionsOrganizer(Gtk.Box):
                 new_hash(),
                 row_uuid,
                 row_type,
-                0,
                 row
             ])
 
@@ -984,25 +1207,17 @@ class NemoActionsOrganizer(Gtk.Box):
         model.foreach(compare, hash)
         return result
 
-    def remove_source_row_by_hash(self, model, old_hash):
+    def remove_row_by_hash(self, model, old_hash):
         iter = self.lookup_iter_by_hash(model, old_hash)
 
         if iter is not None:
             model.remove(iter)
 
-    def update_positions(self, parent):
-        if parent:
-            iter = self.model.iter_children(parent)
-        else:
-            iter = self.model.get_iter_first()
+    def select_row_by_hash(self, model, hash):
+        iter = self.lookup_iter_by_hash(model, hash)
 
-        position = 0
-        while iter:
-            self.model.set_value(iter, ROW_POSITION, position)
-            position += 1
-            if self.model.iter_has_child(iter):
-                self.update_positions(iter)
-            iter = self.model.iter_next(iter)
+        if iter is not None:
+            self.set_selection(iter)
 
     def quit(self, *args, **kwargs):
         if self.needs_saved:
