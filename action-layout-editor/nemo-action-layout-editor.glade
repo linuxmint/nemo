@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.40.0 -->
+<!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkImage" id="image2">
@@ -73,13 +73,13 @@
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Add or remove submenus and separators.</property>
                             <child>
                               <object class="GtkMenuButton" id="new_row_button">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="focus-on-click">False</property>
                                 <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Add a submenu or a separator</property>
                                 <child>
                                   <object class="GtkImage" id="image1">
                                     <property name="visible">True</property>
@@ -99,6 +99,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Remove</property>
                                 <property name="image">image2</property>
                               </object>
                               <packing>
@@ -126,7 +127,6 @@
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">You can change how an action appears in the menu by modifying its icon and label.</property>
                                 <child>
                                   <object class="GtkMenuButton" id="icon_selector_menu_button">
                                     <property name="visible">True</property>
@@ -137,6 +137,7 @@
                                       <object class="GtkImage" id="icon_selector_image">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Icon</property>
                                       </object>
                                     </child>
                                   </object>
@@ -150,13 +151,14 @@
                                   <object class="GtkEntry" id="name_entry">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">Label</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">36</property>
                                     <property name="secondary-icon-name">edit-delete-symbolic</property>
                                     <property name="primary-icon-activatable">False</property>
                                     <property name="primary-icon-sensitive">False</property>
-                                    <property name="secondary-icon-tooltip-text" translatable="yes">Restore this action's original label.</property>
-                                    <property name="secondary-icon-tooltip-markup" translatable="yes">Restore this action&amp;apos;s original label.</property>
+                                    <property name="secondary-icon-tooltip-text" translatable="yes">Restore the original label</property>
+                                    <property name="secondary-icon-tooltip-markup" translatable="yes">Restore the original label</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -183,7 +185,7 @@
                                   <object class="GtkSwitch" id="action_enabled_switch">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">Enable or disable the current action. You can also double-click an action in the tree view.</property>
+                                    <property name="tooltip-text" translatable="yes">Enabled</property>
                                     <property name="halign">center</property>
                                     <property name="valign">center</property>
                                   </object>
@@ -247,11 +249,10 @@
         <property name="spacing">6</property>
         <child>
           <object class="GtkButton" id="save_button">
-            <property name="label" translatable="yes">Save Layout</property>
+            <property name="label" translatable="yes">Save</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Saves the current layout.</property>
             <style>
               <class name="suggested-action"/>
             </style>
@@ -265,11 +266,10 @@
         </child>
         <child>
           <object class="GtkButton" id="discard_changes_button">
-            <property name="label" translatable="yes">Discard changes</property>
+            <property name="label" translatable="yes">Cancel</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Discards any changes since the last save.</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -284,7 +284,6 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Removes all action and menu customizations.</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -310,6 +309,7 @@
   <object class="GtkWindow" id="main_window">
     <property name="can-focus">False</property>
     <property name="border-width">10</property>
+    <property name="window-position">center</property>
     <property name="default-width">600</property>
     <property name="default-height">400</property>
     <property name="icon-name">nemo</property>
