@@ -1,3 +1,105 @@
+nemo (6.2.0) wilma; urgency=medium
+
+  [ Clement Lefebvre ]
+  * packaging: Forbid compilation if the symbols file is outdated
+
+  [ zsugabubus ]
+  * nemo-action-manager.c: Fix order of actions
+  * nemo-action-manager.c: Do not reinvent strcmp
+
+  [ Michael Webster ]
+  * mimetype defs: Add missing key names.
+  * nemo-list-view.c: Add a permanent bottom margin when overlay scrolling is enabled.
+  * Implement submenus for actions.
+  * nemo-action.c: Add Locations and Files fields.
+
+  [ Matt Turnbull ]
+  * Make wayland dependency optional (#3347)
+
+  [ Michael Webster ]
+  * nemo-action.c: Allow absolute path pattern matching for File and Location filters.
+  * all: Stop using g_slice, fix a leak and remove an obsolete workaround.
+  * actions: Fix build for non-debug builds, remove a stray debug line.
+
+  [ Lorenzo Colitti ]
+  * Support drawing the desktop on wayland using gtk-layer-shell. (#3349)
+
+  [ Michael Webster ]
+  * meson.build: Build even if gtk-layer-shell's version is too low.
+  * Fix builds with gtk_layer_shell=false or omitted.
+  * meson.build: Show gtk-layer-shell status in the build summary.
+
+  [ Merlijn ]
+  * nemo-dnd: Have the drag and drop text data not be uris but plain paths. (#3356)
+
+  [ Michael Webster ]
+  * org.nemo.root.policy.in: Allow escalation for remote users.
+
+  [ Sertonix ]
+  * nemo-desktop: use app_id as .desktop file name (#3340)
+
+  [ Michael Webster ]
+  * Rename initial desktop file to match final name, clean up some build files.
+  * nemo-thumbnails.c: Always have at least 1 thumbnail thread.
+
+  [ Leigh Scott ]
+  * file: default to not being able to trash (#3381)
+
+  [ Michael Webster ]
+  * nemo-view.c: Fix a build warning.
+  * actions: Refactor some code to reduce duplication.
+  * nemo-action-layout-editor.py: Enable save after drag-and-drop.
+  * polkit: Go back to using auth_admin_keep.
+
+  [ Clement Lefebvre ]
+  * Revert "Rename initial desktop file to match final name, clean up some"
+  * Revert "nemo-desktop: use app_id as .desktop file name (#3340)"
+
+  [ Michael Webster ]
+  * nemo-action.c: Fix regression when processing desktop actions.
+  * Set a log domain to allow restricting debug output to Nemo only.
+  * nemo-file.c: Update default date-time formats to adapt to GDateTime change.
+  * application: Guard a new GLib log function with a version check.
+  * nemo-thumbnails.c: Always respect the thumbnail thread count if the user sets it explicitly.
+
+  [ Rick Calixte ]
+  * nemo-view.c & nemo-window-menus.c: Add support for terminals with whitespace in the exec (#3379)
+
+  [ Bobbe ]
+  * Fix confusing NEMO_LIST_ICON_SIZE_ definitions (#3407)
+
+  [ Michael Webster ]
+  * nemo-view.c: Use an actual timeout duration when updating the status bar/floater while loading a directory.
+  * nemo-desktop-main.c: Add missing include.
+
+  [ Rick Calixte ]
+  * eel-gnome-extensions.c: Support whitespace in execution commands (#3413)
+
+  [ Michael Webster ]
+  * Update makepot, fix some strings in the layout editor.
+  * nemo-config-base-widget.c: Accommodate wider enable/disable buttons in certain languages.
+
+  [ Aliaksandr Kulinkovich ]
+  * Update README.md with details about history and features. (#3390)
+
+  [ Michael Webster ]
+  * nemo-action-layout-editor: Refactor to allow importing the editor widget separately from the default window.
+  * Update README.md
+  * layout-editor: Add a label to explain the editor.
+
+  [ Clement Lefebvre ]
+  * layout-editor: Simplify UI/labels, center dialog
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * Remove Edit->Plugins.
+  * nemo-action-layout-editor: Add up/down arrows as an alternative to drag-and-drop.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 13 Jun 2024 09:53:46 +0100
+
 nemo (6.0.2) virginia; urgency=medium
 
   [ Michael Webster ]
