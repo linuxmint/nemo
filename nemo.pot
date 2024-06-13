@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-12 14:52+0100\n"
+"POT-Creation-Date: 2024-06-13 09:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -703,8 +703,8 @@ msgstr ""
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: src/nemo-icon-view.c:2850 src/nemo-icon-view-container.c:2157
-#: src/nemo-icon-view-grid-container.c:1593 src/nemo-window-menus.c:1595
-#: src/nemo-window-menus.c:1754
+#: src/nemo-icon-view-grid-container.c:1593 src/nemo-window-menus.c:1578
+#: src/nemo-window-menus.c:1737
 #: gresources/nemo-file-management-properties.glade:127
 #: gresources/nemo-file-management-properties.glade:4045
 msgid "Icon View"
@@ -729,8 +729,8 @@ msgstr ""
 
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
-#: src/nemo-icon-view.c:2864 src/nemo-window-menus.c:1601
-#: src/nemo-window-menus.c:1777
+#: src/nemo-icon-view.c:2864 src/nemo-window-menus.c:1584
+#: src/nemo-window-menus.c:1760
 #: gresources/nemo-file-management-properties.glade:133
 msgid "Compact View"
 msgstr ""
@@ -857,7 +857,7 @@ msgstr ""
 msgid "Software"
 msgstr ""
 
-#: src/nemo-image-properties-page.c:413 src/nemo-window-menus.c:1719
+#: src/nemo-image-properties-page.c:413 src/nemo-window-menus.c:1702
 #: libnemo-private/nemo-column-utilities.c:159
 msgid "Location"
 msgstr ""
@@ -926,7 +926,7 @@ msgstr ""
 #. translators: this is used in the view selection dropdown
 #. * of navigation windows and in the preferences dialog
 #: src/nemo-list-view.c:2756 src/nemo-list-view.c:4457
-#: src/nemo-window-menus.c:1598 src/nemo-window-menus.c:1765
+#: src/nemo-window-menus.c:1581 src/nemo-window-menus.c:1748
 #: gresources/nemo-file-management-properties.glade:130
 msgid "List View"
 msgstr ""
@@ -1318,7 +1318,7 @@ msgstr ""
 #: src/nemo-places-sidebar.c:2375 src/nemo-places-sidebar.c:3532
 #: src/nemo-view.c:8356 src/nemo-view.c:8380 src/nemo-view.c:8443
 #: src/nemo-view.c:9122 src/nemo-view.c:9209 src/nemo-view.c:9313
-#: src/nemo-window-menus.c:1409
+#: src/nemo-window-menus.c:1392
 msgid "_Stop"
 msgstr ""
 
@@ -1403,12 +1403,12 @@ msgid "Open in New _Window"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-places-sidebar.c:3524 src/nemo-window-menus.c:1519
+#: src/nemo-places-sidebar.c:3524 src/nemo-window-menus.c:1502
 msgid "_Add Bookmark"
 msgstr ""
 
 #: src/nemo-places-sidebar.c:3525
-#: action-layout-editor/nemo-action-layout-editor.glade:102
+#: action-layout-editor/nemo-action-layout-editor.glade:167
 msgid "Remove"
 msgstr ""
 
@@ -2188,7 +2188,7 @@ msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8229 src/nemo-window-menus.c:1742
+#: src/nemo-view.c:8229 src/nemo-window-menus.c:1725
 #: gresources/nemo-file-management-properties.glade:3766
 #: gresources/nemo-file-management-properties.glade:3933
 msgid "Open in Terminal"
@@ -2372,7 +2372,7 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #. name, stock id, label
-#: src/nemo-view.c:8318 src/nemo-window-menus.c:1398
+#: src/nemo-view.c:8318 src/nemo-window-menus.c:1381
 msgid "_Undo"
 msgstr ""
 
@@ -2564,8 +2564,8 @@ msgstr ""
 #. name, stock id, label
 #. name, stock id
 #. label, accelerator
-#: src/nemo-view.c:8463 src/nemo-view.c:8467 src/nemo-window-menus.c:1473
-#: src/nemo-window-menus.c:1692 src/nemo-window-menus.c:1945
+#: src/nemo-view.c:8463 src/nemo-view.c:8467 src/nemo-window-menus.c:1456
+#: src/nemo-window-menus.c:1675 src/nemo-window-menus.c:1928
 msgid "_Home"
 msgstr ""
 
@@ -2873,7 +2873,7 @@ msgid "Go to the location specified by this bookmark"
 msgstr ""
 
 #. Set initial window title
-#: src/nemo-window.c:629 src/nemo-window.c:2021 src/nemo-window-menus.c:345
+#: src/nemo-window.c:629 src/nemo-window.c:2021 src/nemo-window-menus.c:332
 msgid "Nemo"
 msgstr ""
 
@@ -2949,7 +2949,7 @@ msgid ""
 "Please select another viewer and try again."
 msgstr ""
 
-#: src/nemo-window-menus.c:324
+#: src/nemo-window-menus.c:311
 msgid ""
 "Nemo is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -2957,7 +2957,7 @@ msgid ""
 "version."
 msgstr ""
 
-#: src/nemo-window-menus.c:328
+#: src/nemo-window-menus.c:315
 msgid ""
 "Nemo is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -2965,19 +2965,19 @@ msgid ""
 "details."
 msgstr ""
 
-#: src/nemo-window-menus.c:332
+#: src/nemo-window-menus.c:319
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Nemo; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-1301 USA"
 msgstr ""
 
-#: src/nemo-window-menus.c:347
+#: src/nemo-window-menus.c:334
 msgid ""
 "Nemo lets you organize files and folders, both on your computer and online."
 msgstr ""
 
-#: src/nemo-window-menus.c:408
+#: src/nemo-window-menus.c:395
 #, c-format
 msgid ""
 "There was an error displaying help: \n"
@@ -2985,98 +2985,89 @@ msgid ""
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1381
+#: src/nemo-window-menus.c:1368
 msgid "_File"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1382
+#: src/nemo-window-menus.c:1369
 msgid "_Edit"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1383
+#: src/nemo-window-menus.c:1370
 msgid "_View"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1384
+#: src/nemo-window-menus.c:1371
 msgid "_Help"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1386
+#: src/nemo-window-menus.c:1373
 msgid "_Close"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1387
+#: src/nemo-window-menus.c:1374
 msgid "Close this folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1390
+#: src/nemo-window-menus.c:1377
 msgid "Prefere_nces"
 msgstr ""
 
-#: src/nemo-window-menus.c:1391
+#: src/nemo-window-menus.c:1378
 msgid "Edit Nemo preferences"
 msgstr ""
 
-#: src/nemo-window-menus.c:1394
-#: gresources/nemo-file-management-properties.glade:4240
-msgid "Plugins"
-msgstr ""
-
-#: src/nemo-window-menus.c:1395
-msgid "Manage extensions, actions and scripts"
-msgstr ""
-
-#: src/nemo-window-menus.c:1399
+#: src/nemo-window-menus.c:1382
 msgid "Undo the last text change"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1402
+#: src/nemo-window-menus.c:1385
 msgid "Open _Parent"
 msgstr ""
 
-#: src/nemo-window-menus.c:1403
+#: src/nemo-window-menus.c:1386
 msgid "Open the parent folder"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1410
+#: src/nemo-window-menus.c:1393
 msgid "Stop loading the current location"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1413 src/nemo-window-menus.c:1678
+#: src/nemo-window-menus.c:1396 src/nemo-window-menus.c:1661
 msgid "_Reload"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1414 src/nemo-window-menus.c:1680
+#: src/nemo-window-menus.c:1397 src/nemo-window-menus.c:1663
 msgid "Reload the current location"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1417
+#: src/nemo-window-menus.c:1400
 msgid "_All Topics"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1418
+#: src/nemo-window-menus.c:1401
 msgid "Display Nemo help"
 msgstr ""
 
-#: src/nemo-window-menus.c:1421
+#: src/nemo-window-menus.c:1404
 msgid "_Keyboard Shortcuts"
 msgstr ""
 
-#: src/nemo-window-menus.c:1422
+#: src/nemo-window-menus.c:1405
 msgid "Display keyboard shortcuts"
 msgstr ""
 
@@ -3098,431 +3089,431 @@ msgstr ""
 #. G_CALLBACK (action_nemo_manual_callback) }, *
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1441
+#: src/nemo-window-menus.c:1424
 msgid "_About"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1442
+#: src/nemo-window-menus.c:1425
 msgid "Display credits for the creators of Nemo"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1445
+#: src/nemo-window-menus.c:1428
 msgid "Zoom _In"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1446
+#: src/nemo-window-menus.c:1429
 msgid "Increase the view size"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1457
+#: src/nemo-window-menus.c:1440
 msgid "Zoom _Out"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1458
+#: src/nemo-window-menus.c:1441
 msgid "Decrease the view size"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1465
+#: src/nemo-window-menus.c:1448
 msgid "Normal Si_ze"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1466
+#: src/nemo-window-menus.c:1449
 msgid "Use the normal view size"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1469
+#: src/nemo-window-menus.c:1452
 msgid "Connect to _Server..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1470
+#: src/nemo-window-menus.c:1453
 msgid "Connect to a remote computer or shared disk"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1474
+#: src/nemo-window-menus.c:1457
 msgid "Open your personal folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1477 src/nemo-window-menus.c:1706
+#: src/nemo-window-menus.c:1460 src/nemo-window-menus.c:1689
 msgid "_Computer"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1478
+#: src/nemo-window-menus.c:1461
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1481
+#: src/nemo-window-menus.c:1464
 msgid "_Network"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1482
+#: src/nemo-window-menus.c:1465
 msgid "Browse bookmarked and local network locations"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1485
+#: src/nemo-window-menus.c:1468
 msgid "T_emplates"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1486
+#: src/nemo-window-menus.c:1469
 msgid "Open your personal templates folder"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1489
+#: src/nemo-window-menus.c:1472
 msgid "_Trash"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1490
+#: src/nemo-window-menus.c:1473
 msgid "Open your personal trash folder"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1492
+#: src/nemo-window-menus.c:1475
 msgid "_Go"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1493
+#: src/nemo-window-menus.c:1476
 msgid "_Bookmarks"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1494
+#: src/nemo-window-menus.c:1477
 msgid "_Tabs"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1495
+#: src/nemo-window-menus.c:1478
 msgid "New _Window"
 msgstr ""
 
-#: src/nemo-window-menus.c:1496
+#: src/nemo-window-menus.c:1479
 msgid "Open another Nemo window for the displayed location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1498
+#: src/nemo-window-menus.c:1481
 msgid "New _Tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1499
+#: src/nemo-window-menus.c:1482
 msgid "Open another tab for the displayed location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1501
+#: src/nemo-window-menus.c:1484
 msgid "Close _All Windows"
 msgstr ""
 
-#: src/nemo-window-menus.c:1502
+#: src/nemo-window-menus.c:1485
 msgid "Close all Navigation windows"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1504 src/nemo-window-menus.c:1628
+#: src/nemo-window-menus.c:1487 src/nemo-window-menus.c:1611
 msgid "_Back"
 msgstr ""
 
-#: src/nemo-window-menus.c:1505 src/nemo-window-menus.c:1630
+#: src/nemo-window-menus.c:1488 src/nemo-window-menus.c:1613
 msgid "Go to the previous visited location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1507 src/nemo-window-menus.c:1644
+#: src/nemo-window-menus.c:1490 src/nemo-window-menus.c:1627
 msgid "_Forward"
 msgstr ""
 
-#: src/nemo-window-menus.c:1508 src/nemo-window-menus.c:1646
+#: src/nemo-window-menus.c:1491 src/nemo-window-menus.c:1629
 msgid "Go to the next visited location"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1510
+#: src/nemo-window-menus.c:1493
 msgid "Toggle _Location Entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1511
+#: src/nemo-window-menus.c:1494
 msgid "Switch between location entry and breadcrumbs"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1513
+#: src/nemo-window-menus.c:1496
 msgid "S_witch to Other Pane"
 msgstr ""
 
-#: src/nemo-window-menus.c:1514
+#: src/nemo-window-menus.c:1497
 msgid "Move focus to the other pane in a split view window"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1516
+#: src/nemo-window-menus.c:1499
 msgid "Sa_me Location as Other Pane"
 msgstr ""
 
-#: src/nemo-window-menus.c:1517
+#: src/nemo-window-menus.c:1500
 msgid "Go to the same location as in the extra pane"
 msgstr ""
 
-#: src/nemo-window-menus.c:1520
+#: src/nemo-window-menus.c:1503
 msgid "Add a bookmark for the current location to this menu"
 msgstr ""
 
 #. name, stock id, label
-#: src/nemo-window-menus.c:1522
+#: src/nemo-window-menus.c:1505
 msgid "_Edit Bookmarks..."
 msgstr ""
 
-#: src/nemo-window-menus.c:1523
+#: src/nemo-window-menus.c:1506
 msgid "Display a window that allows editing the bookmarks in this menu"
 msgstr ""
 
-#: src/nemo-window-menus.c:1525
+#: src/nemo-window-menus.c:1508
 msgid "_Previous Tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1526
+#: src/nemo-window-menus.c:1509
 msgid "Activate previous tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1528
+#: src/nemo-window-menus.c:1511
 msgid "_Next Tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1529
+#: src/nemo-window-menus.c:1512
 msgid "Activate next tab"
 msgstr ""
 
-#: src/nemo-window-menus.c:1531 src/nemo-window-pane.c:537
+#: src/nemo-window-menus.c:1514 src/nemo-window-pane.c:537
 msgid "Move Tab _Left"
 msgstr ""
 
-#: src/nemo-window-menus.c:1532
+#: src/nemo-window-menus.c:1515
 msgid "Move current tab to left"
 msgstr ""
 
-#: src/nemo-window-menus.c:1534 src/nemo-window-pane.c:545
+#: src/nemo-window-menus.c:1517 src/nemo-window-pane.c:545
 msgid "Move Tab _Right"
 msgstr ""
 
-#: src/nemo-window-menus.c:1535
+#: src/nemo-window-menus.c:1518
 msgid "Move current tab to right"
 msgstr ""
 
-#: src/nemo-window-menus.c:1537
+#: src/nemo-window-menus.c:1520
 msgid "Sidebar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1538
+#: src/nemo-window-menus.c:1521
 #: gresources/nemo-file-management-properties.glade:3423
 msgid "Toolbar"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1543
+#: src/nemo-window-menus.c:1526
 #: gresources/nemo-file-management-properties.glade:3969
 msgid "Show _Hidden Files"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1544
+#: src/nemo-window-menus.c:1527
 msgid "Toggle the display of hidden files in the current window"
 msgstr ""
 
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1548
+#: src/nemo-window-menus.c:1531
 msgid "_Main Toolbar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1549
+#: src/nemo-window-menus.c:1532
 msgid "Change the visibility of this window's main toolbar"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1553
+#: src/nemo-window-menus.c:1536
 msgid "_Show Sidebar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1554
+#: src/nemo-window-menus.c:1537
 msgid "Change the visibility of this window's side pane"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1558
+#: src/nemo-window-menus.c:1541
 msgid "St_atusbar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1559
+#: src/nemo-window-menus.c:1542
 msgid "Change the visibility of this window's statusbar"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1563
+#: src/nemo-window-menus.c:1546
 msgid "M_enubar"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1564
+#: src/nemo-window-menus.c:1547
 msgid "Change the default visibility of the menubar"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1568
+#: src/nemo-window-menus.c:1551
 msgid "_Search for Files..."
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1569 src/nemo-window-menus.c:1788
+#: src/nemo-window-menus.c:1552 src/nemo-window-menus.c:1771
 msgid "Search documents and folders"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1573
+#: src/nemo-window-menus.c:1556
 msgid "E_xtra Pane"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1574
+#: src/nemo-window-menus.c:1557
 msgid "Open an extra folder view side-by-side"
 msgstr ""
 
 #. is_active
 #. name, stock id
 #. label, accelerator
-#: src/nemo-window-menus.c:1578
+#: src/nemo-window-menus.c:1561
 msgid "Show _Thumbnails"
 msgstr ""
 
 #. tooltip
-#: src/nemo-window-menus.c:1579
+#: src/nemo-window-menus.c:1562
 msgid "Toggle the display of thumbnails in the current directory"
 msgstr ""
 
-#: src/nemo-window-menus.c:1586
+#: src/nemo-window-menus.c:1569
 msgid "Places"
 msgstr ""
 
-#: src/nemo-window-menus.c:1586
+#: src/nemo-window-menus.c:1569
 msgid "Select Places as the default sidebar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1589
+#: src/nemo-window-menus.c:1572
 msgid "Tree"
 msgstr ""
 
-#: src/nemo-window-menus.c:1589
+#: src/nemo-window-menus.c:1572
 msgid "Select Tree as the default sidebar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1607
+#: src/nemo-window-menus.c:1590
 msgid "Path Bar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1607
+#: src/nemo-window-menus.c:1590
 msgid "Always prefer the path bar"
 msgstr ""
 
-#: src/nemo-window-menus.c:1610
+#: src/nemo-window-menus.c:1593
 msgid "Location Entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1610
+#: src/nemo-window-menus.c:1593
 msgid "Always prefer the location entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1631
+#: src/nemo-window-menus.c:1614
 msgid "Back history"
 msgstr ""
 
-#: src/nemo-window-menus.c:1647 src/nemo-window-menus.c:1666
+#: src/nemo-window-menus.c:1630 src/nemo-window-menus.c:1649
 msgid "Forward history"
 msgstr ""
 
-#: src/nemo-window-menus.c:1663 src/nemo-window-menus.c:1942
+#: src/nemo-window-menus.c:1646 src/nemo-window-menus.c:1925
 msgid "_Up"
 msgstr ""
 
-#: src/nemo-window-menus.c:1665
+#: src/nemo-window-menus.c:1648
 msgid "Go to parent folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1694
+#: src/nemo-window-menus.c:1677
 msgid "Go to home directory"
 msgstr ""
 
-#: src/nemo-window-menus.c:1708
+#: src/nemo-window-menus.c:1691
 msgid "Go to Computer"
 msgstr ""
 
-#: src/nemo-window-menus.c:1720
+#: src/nemo-window-menus.c:1703
 msgid "Toggle Location Entry"
 msgstr ""
 
-#: src/nemo-window-menus.c:1732
+#: src/nemo-window-menus.c:1715
 #: gresources/nemo-file-management-properties.glade:3182
 msgid "New folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1733
+#: src/nemo-window-menus.c:1716
 msgid "Create a new folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1743
+#: src/nemo-window-menus.c:1726
 msgid "Open a terminal in the active folder"
 msgstr ""
 
-#: src/nemo-window-menus.c:1753
+#: src/nemo-window-menus.c:1736
 msgid "Icons"
 msgstr ""
 
-#: src/nemo-window-menus.c:1764
+#: src/nemo-window-menus.c:1747
 msgid "List"
 msgstr ""
 
-#: src/nemo-window-menus.c:1776
+#: src/nemo-window-menus.c:1759
 msgid "Compact"
 msgstr ""
 
-#: src/nemo-window-menus.c:1788 libnemo-private/nemo-query.c:189
+#: src/nemo-window-menus.c:1771 libnemo-private/nemo-query.c:189
 #: libnemo-private/nemo-search-directory-file.c:164
 #: libnemo-private/nemo-search-directory-file.c:198
 #: libnemo-private/nemo-search-directory-file.c:232
@@ -3530,12 +3521,12 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/nemo-window-menus.c:1797 src/nemo-window-menus.c:1798
+#: src/nemo-window-menus.c:1780 src/nemo-window-menus.c:1781
 #: gresources/nemo-file-management-properties.glade:3367
 msgid "Show Thumbnails"
 msgstr ""
 
-#: src/nemo-window-menus.c:1948
+#: src/nemo-window-menus.c:1931
 msgid "_Location"
 msgstr ""
 
@@ -3797,7 +3788,7 @@ msgid "_Link Here"
 msgstr ""
 
 #: libnemo-private/nemo-dnd.c:899
-#: action-layout-editor/nemo-action-layout-editor.glade:269
+#: action-layout-editor/nemo-action-layout-editor.glade:334
 msgid "Cancel"
 msgstr ""
 
@@ -3982,7 +3973,7 @@ msgid "? bytes"
 msgstr ""
 
 #: libnemo-private/nemo-file.c:6936
-#: action-layout-editor/nemo_action_layout_editor.py:95
+#: action-layout-editor/nemo_action_layout_editor.py:94
 msgid "Unknown"
 msgstr ""
 
@@ -6324,6 +6315,10 @@ msgstr ""
 msgid "Context Menus"
 msgstr ""
 
+#: gresources/nemo-file-management-properties.glade:4240
+msgid "Plugins"
+msgstr ""
+
 #: gresources/nemo-search-bar.glade:46
 msgid "Search for files:"
 msgstr ""
@@ -6634,76 +6629,84 @@ msgctxt "shortcut window"
 msgid "Show item properties"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:19
+#: action-layout-editor/nemo-action-layout-editor.glade:29
 msgid "Customize the layout and appearance of your actions in Nemo's menus"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:82
+#: action-layout-editor/nemo-action-layout-editor.glade:93
+msgid "Move up"
+msgstr ""
+
+#: action-layout-editor/nemo-action-layout-editor.glade:107
+msgid "Move down"
+msgstr ""
+
+#: action-layout-editor/nemo-action-layout-editor.glade:147
 msgid "Add a submenu or a separator"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:140
+#: action-layout-editor/nemo-action-layout-editor.glade:205
 msgid "Icon"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:154
+#: action-layout-editor/nemo-action-layout-editor.glade:219
 msgid "Label"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:160
-#: action-layout-editor/nemo-action-layout-editor.glade:161
+#: action-layout-editor/nemo-action-layout-editor.glade:225
+#: action-layout-editor/nemo-action-layout-editor.glade:226
 msgid "Restore the original label"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:188
+#: action-layout-editor/nemo-action-layout-editor.glade:253
 msgid "Enabled"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:252
+#: action-layout-editor/nemo-action-layout-editor.glade:317
 msgid "Save"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:283
+#: action-layout-editor/nemo-action-layout-editor.glade:348
 msgid "Restore default layout"
 msgstr ""
 
-#: action-layout-editor/nemo-action-layout-editor.glade:323
+#: action-layout-editor/nemo-action-layout-editor.glade:389
 msgid "Nemo Actions Layout Editor"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:150
+#: action-layout-editor/nemo_action_layout_editor.py:159
 msgid "No icon"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:155
+#: action-layout-editor/nemo_action_layout_editor.py:164
 msgid "Use the original icon (if there is one)"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:159
+#: action-layout-editor/nemo_action_layout_editor.py:168
 msgid "Choose..."
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:170
-#: action-layout-editor/nemo_action_layout_editor.py:613
+#: action-layout-editor/nemo_action_layout_editor.py:179
+#: action-layout-editor/nemo_action_layout_editor.py:662
 msgid "New submenu"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:174
+#: action-layout-editor/nemo_action_layout_editor.py:183
 msgid "New separator"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:1014
+#: action-layout-editor/nemo_action_layout_editor.py:1229
 msgid "The layout has changed. Save it?"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:1017
+#: action-layout-editor/nemo_action_layout_editor.py:1232
 msgid "Unsaved changes"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:1041
+#: action-layout-editor/nemo_action_layout_editor.py:1256
 msgid "Open user actions folder"
 msgstr ""
 
-#: action-layout-editor/nemo_action_layout_editor.py:1045
+#: action-layout-editor/nemo_action_layout_editor.py:1260
 msgid "Quit"
 msgstr ""

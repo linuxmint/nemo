@@ -90,7 +90,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Move row up</property>
+                                <property name="tooltip-text" translatable="yes">Move up</property>
                                 <property name="image">image5</property>
                               </object>
                               <packing>
@@ -104,7 +104,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Move row down</property>
+                                <property name="tooltip-text" translatable="yes">Move down</property>
                                 <property name="image">image6</property>
                               </object>
                               <packing>
