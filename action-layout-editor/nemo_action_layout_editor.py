@@ -438,15 +438,24 @@ class NemoActionsOrganizer(Gtk.Box):
         self.nemo_plugin_settings.set_strv("disabled-actions", disabled)
 
     def serialize_model(self, parent, model):
+        used_uuids = {}
         result = []
 
         iter = model.iter_children(parent)
         while iter:
             row_type = model.get_value(iter, ROW_TYPE)
             row = model.get_value(iter, ROW_OBJ)
+            raw_uuid = model.get_value(iter, ROW_UUID)
+
+            uuid = raw_uuid
+            if raw_uuid in used_uuids:
+                uuid = raw_uuid + str(used_uuids[raw_uuid])
+                used_uuids[raw_uuid] += 1
+            else:
+                used_uuids[raw_uuid] = 0
 
             item = {
-                'uuid': model.get_value(iter, ROW_UUID),
+                'uuid': uuid,
                 'type': row_type,
                 'user-label': row.get_custom_label(),
                 'user-icon': row.get_custom_icon()
