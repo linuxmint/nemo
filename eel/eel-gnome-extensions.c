@@ -42,7 +42,7 @@ static const struct {
     { "color-xterm", "-e", TRUE },
     { "dtterm", "-e", TRUE },
     { "foot", "--", FALSE },
-    { "gnome-terminal", "--", TRUE },
+    { "gnome-terminal", "--", FALSE },
     { "kgx", "-e", TRUE },
     { "kitty", "--", FALSE },
     { "konsole", "-e", TRUE },
