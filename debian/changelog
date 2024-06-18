@@ -1,3 +1,13 @@
+nemo (6.2.1) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * layout editor: Don't allow duplicate uuids when saving the layout.
+
+  [ Rick Calixte ]
+  * eel-gnome-extensions.c: Set GNOME Terminal to FALSE (#3421)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 18 Jun 2024 18:49:10 +0100
+
 nemo (6.2.0) wilma; urgency=medium
 
   [ Clement Lefebvre ]

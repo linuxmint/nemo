@@ -1,7 +1,7 @@
 # Meson build file
 
 # https://github.com/linuxmint/nemo
-project('nemo', 'c', version : '6.2.0', meson_version : '>=0.56.0')
+project('nemo', 'c', version : '6.2.1', meson_version : '>=0.56.0')
 
 # 1. If the library code has changed at all since last release, then increment revision.
 # 2. If any interfaces have been added, then increment current and set revision to 0.
