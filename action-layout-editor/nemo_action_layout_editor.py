@@ -152,6 +152,8 @@ class NemoActionsOrganizer(Gtk.Box):
         self.down_button.connect("clicked", self.down_button_clicked)
 
         self.nemo_plugin_settings = Gio.Settings(schema_id="org.nemo.plugins")
+        # Disabled/Enabled may be toggled in nemo preferences directly, keep us in sync.
+        self.nemo_plugin_settings.connect("changed", self.on_disabled_settings_list_changed)
 
         # Icon MenuButton
         menu = Gtk.Menu()
@@ -436,6 +438,23 @@ class NemoActionsOrganizer(Gtk.Box):
         self.model.foreach(get_disabled)
 
         self.nemo_plugin_settings.set_strv("disabled-actions", disabled)
+
+    def on_disabled_settings_list_changed(self, settings, key, data=None):
+        disabled_actions = self.nemo_plugin_settings.get_strv("disabled-actions")
+
+        def update_disabled(model, path, iter, data=None):
+            row = model.get_value(iter, ROW_OBJ)
+            row_uuid = model.get_value(iter, ROW_UUID)
+            old_enabled = row.enabled
+            row.enabled = (row_uuid not in disabled_actions)
+            if old_enabled != row.enabled:
+                self.model.row_changed(path, iter)
+            return False
+
+        self.updating_model = True
+        self.model.foreach(update_disabled)
+        self.updating_model = False
+        self.queue_draw()
 
     def serialize_model(self, parent, model):
         used_uuids = {}
@@ -753,6 +772,7 @@ class NemoActionsOrganizer(Gtk.Box):
             # The layout file does not track active/inactive actions,
             # so this shouldn't prompt a layout save.
             self.selected_row_changed(needs_saved=False)
+            self.save_disabled_list()
 
     # Cell render functions
 
