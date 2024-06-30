@@ -1,3 +1,10 @@
+nemo (6.2.2) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * layout editor: Update the disabled list immediately when an action is toggled.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 30 Jun 2024 11:37:53 +0100
+
 nemo (6.2.1) wilma; urgency=medium
 
   [ Michael Webster ]
