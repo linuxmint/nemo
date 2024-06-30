@@ -9,6 +9,7 @@ from pathlib import Path
 import uuid
 import gettext
 import subprocess
+import os
 
 import leconfig
 
@@ -248,6 +249,9 @@ class NemoActionsOrganizer(Gtk.Box):
         self.updating_row_edit_fields = False
         self.dnd_autoscroll_timeout_id = 0
 
+        self.monitors = []
+        self.monitor_action_dirs()
+
         self.needs_saved = False
         self.reload_model()
         self.update_treeview_state()
@@ -290,6 +294,29 @@ class NemoActionsOrganizer(Gtk.Box):
         self.update_row_controls()
 
         self.updating_model = False
+
+    def monitor_action_dirs (self):
+        data_dirs = GLib.get_system_data_dirs() + [GLib.get_user_data_dir()]
+
+        for d in data_dirs:
+            full = os.path.join(d, "nemo", "actions")
+            file = Gio.File.new_for_path(full)
+            try:
+                if not file.query_exists(None):
+                    continue
+                monitor = file.monitor_directory(Gio.FileMonitorFlags.WATCH_MOVES | Gio.FileMonitorFlags.SEND_MOVED, None)
+                monitor.connect("changed", self.actions_folder_changed)
+                self.monitors.append(monitor)
+            except GLib.Error as e:
+                print("Error monitoring action directory '%s'" % full)
+
+    def actions_folder_changed(self, monitor, file, other, event_type, data=None):
+        if not file.get_basename().endswith(".nemo_action"):
+            return
+
+        self.reload_model()
+        self.update_treeview_state()
+        self.set_needs_saved(False)
 
     def save_model(self):
         # Save the modified model back to the JSON file
@@ -1268,6 +1295,9 @@ class NemoActionsOrganizer(Gtk.Box):
             if response == Gtk.ResponseType.YES:
                 self.save_model()
                 self.save_disabled_list()
+
+        for monitor in self.monitors:
+            monitor.cancel()
 
         return True
 

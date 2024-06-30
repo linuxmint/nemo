@@ -597,6 +597,7 @@ typedef struct
 {
     NemoActionManager                *action_manager;
     JsonReader                       *reader;
+    GHashTable                       *used_uuids;
 
     GError                           *error;
 
@@ -711,6 +712,8 @@ parse_item (ActionsIterData *idata,
                      path,
                      idata->user_data);
         g_object_unref (action);
+
+        g_hash_table_add (idata->used_uuids, action->uuid);
 
         return TRUE;
     }
@@ -851,6 +854,8 @@ nemo_action_manager_iterate_actions (NemoActionManager                *action_ma
     JsonReader *reader = get_layout_reader (action_manager);
     gboolean ret = FALSE;
 
+    GHashTable *used_uuids = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
+
     if (reader != NULL) {
         ActionsIterData idata;
 
@@ -858,6 +863,7 @@ nemo_action_manager_iterate_actions (NemoActionManager                *action_ma
         idata.reader = reader;
         idata.func = func;
         idata.user_data = user_data;
+        idata.used_uuids = used_uuids;
 
         ret = iter_actions (action_manager, &idata);
 
@@ -865,11 +871,19 @@ nemo_action_manager_iterate_actions (NemoActionManager                *action_ma
     }
 
     if (!ret) {
+        g_hash_table_remove_all (used_uuids);
+    }
+
+    if (g_hash_table_size (used_uuids) < g_hash_table_size (priv->actions_by_uuid)) {
         NemoAction *action;
         GList *node;
 
         for (node = priv->actions; node != NULL; node = node->next) {
             action = node->data;
+
+            if (g_hash_table_contains (used_uuids, action->uuid)) {
+                continue;
+            }
 
             func (action_manager,
                   GTK_ACTION (action),
@@ -878,6 +892,8 @@ nemo_action_manager_iterate_actions (NemoActionManager                *action_ma
                   user_data);
         }
     }
+
+    g_hash_table_destroy (used_uuids);
 }
 
 void
