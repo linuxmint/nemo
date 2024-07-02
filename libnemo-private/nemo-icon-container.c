@@ -4038,7 +4038,6 @@ nemo_icon_container_ensure_interactive_directory (NemoIconContainer *container)
     gtk_window_set_transient_for (GTK_WINDOW (container->details->search_window),
                                   GTK_WINDOW (toplevel));
 
-    gtk_window_set_destroy_with_parent (GTK_WINDOW (container->details->search_window), TRUE);
 	gtk_window_set_type_hint (GTK_WINDOW (container->details->search_window),
 				  GDK_WINDOW_TYPE_HINT_COMBO);
 
