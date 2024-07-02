@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.40.0 -->
-<interface>
+<interface domain="nemo">
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>

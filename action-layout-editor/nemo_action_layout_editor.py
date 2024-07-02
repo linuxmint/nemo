@@ -13,7 +13,6 @@ import os
 
 import leconfig
 
-#FIXME build config
 gettext.install(leconfig.PACKAGE, leconfig.LOCALE_DIR)
 
 JSON_FILE = Path(GLib.get_user_config_dir()).joinpath("nemo/actions-tree.json")
