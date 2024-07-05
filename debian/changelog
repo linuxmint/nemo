@@ -1,3 +1,12 @@
+nemo (6.2.3) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * Fix handling of actions that are not part of the layout.
+  * nemo-icon-container.c: Don't tie the interactive search box with the window's lifetime.
+  * nemo-action-layout-editor.glade: Set a translation domain.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 05 Jul 2024 20:58:12 +0100
+
 nemo (6.2.2) wilma; urgency=medium
 
   [ Michael Webster ]
