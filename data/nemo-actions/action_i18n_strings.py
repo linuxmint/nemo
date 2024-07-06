@@ -8,7 +8,7 @@
 set-as-background_nemo_action_in_Name = _("Set as Wallpaper...")
 set-as-background_nemo_action_in_Tooltip = _("Set the selected image as your Cinnamon desktop wallpaper")
 add-desklets_nemo_action_in_Name = _("Add Desklets")
-add-desklets_nemo_action_in_Tooltip = _("Add Cinamon desklets")
+add-desklets_nemo_action_in_Tooltip = _("Add Cinnamon desklets")
 mount-archive_nemo_action_in_Name = _("Mount archive")
 mount-archive_nemo_action_in_Tooltip = _("Mount %f to browse its contents")
 change-background_nemo_action_in_Name = _("Change Desktop _Background")
