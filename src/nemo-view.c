@@ -2124,8 +2124,8 @@ nemo_view_new_file (NemoView *directory_view,
 		nemo_view_new_file_with_initial_contents (directory_view,
 							      parent_uri != NULL ? parent_uri : container_uri,
 							      NULL,
-							      NULL,
-							      0,
+							      "\n",
+							      1,
 							      NULL);
 		g_free (container_uri);
 		return;
