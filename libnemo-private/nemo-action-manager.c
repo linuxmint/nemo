@@ -246,19 +246,20 @@ set_up_actions_directories (NemoActionManager *action_manager)
 }
 
 static char *
-escape_action_name (const char *action_name,
-            const char *prefix)
+create_action_name (const char *uri)
 {
     GString *s;
+    g_autofree gchar *prefix = NULL;
 
-    if (action_name == NULL) {
+    if (uri == NULL) {
         return NULL;
     }
-    
+
+    prefix = g_strdup_printf ("action_%d_", g_random_int_range (0, 9999));
     s = g_string_new (prefix);
 
-    while (*action_name != 0) {
-        switch (*action_name) {
+    while (*uri != 0) {
+        switch (*uri) {
         case '\\':
             g_string_append (s, "\\\\");
             break;
@@ -272,10 +273,10 @@ escape_action_name (const char *action_name,
             g_string_append (s, "\\q");
             break;
         default:
-            g_string_append_c (s, *action_name);
+            g_string_append_c (s, *uri);
         }
 
-        action_name ++;
+        uri++;
     }
     return g_string_free (s, FALSE);
 }
@@ -300,7 +301,7 @@ add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
 
     uri = nemo_file_get_uri (file);
 
-    action_name = escape_action_name (uri, "action_");
+    action_name = create_action_name (uri);
     gchar *path = g_filename_from_uri (uri, NULL, NULL);
 
     action = nemo_action_new (action_name, path);
