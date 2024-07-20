@@ -85,7 +85,7 @@ class Row():
         if label is None:
             if self.keyfile is not None:
                 try:
-                    label = self.keyfile.get_string('Nemo Action', 'Name').replace("_", "")
+                    label = self.keyfile.get_locale_string('Nemo Action', 'Name', None).replace("_", "")
                 except GLib.Error as e:
                     print(e)
                     pass
