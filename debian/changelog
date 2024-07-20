@@ -1,3 +1,9 @@
+nemo (6.2.5) wilma; urgency=medium
+
+  * action-layout-editor: Translate action names
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 20 Jul 2024 09:55:59 +0100
+
 nemo (6.2.4) wilma; urgency=medium
 
   [ Leigh Scott ]
