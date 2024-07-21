@@ -1,3 +1,10 @@
+nemo (6.2.6) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-action-manager.c: Generate unique names for actions when they're loaded.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 21 Jul 2024 11:31:31 +0100
+
 nemo (6.2.5) wilma; urgency=medium
 
   * action-layout-editor: Translate action names
