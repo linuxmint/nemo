@@ -983,7 +983,7 @@ nemo_action_new (const gchar *name,
 
     if (orig_label == NULL || exec_raw == NULL || (ext == NULL && mimes == NULL) || selection_string == NULL) {
         g_warning ("An action definition requires, at minimum, "
-                   "a Label field, an Exec field, a Selection field, and an either an Extensions or Mimetypes field.\n"
+                   "Name, Exec and Selection fields, and either an Extensions or Mimetypes field.\n"
                    "Check the %s file for missing fields.", path);
         finish = FALSE;
     }
