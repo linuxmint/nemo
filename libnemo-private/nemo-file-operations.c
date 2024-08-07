@@ -409,7 +409,7 @@ get_link_name (const char *name, int count, int max_length)
 		 */
 		switch (count % 10) {
 		case 1:
-			/* Localizers: Feel free to leave out the "st" suffix
+			/* Localizers: Feel free to leave out the "st" suffix                                 codespell:ignore
 			 * if there's no way to do that nicely for a
 			 * particular language.
 			 */
@@ -459,7 +459,7 @@ get_link_name (const char *name, int count, int max_length)
 
 
 /* Localizers:
- * Feel free to leave out the st, nd, rd and th suffix or
+ * Feel free to leave out the st, nd, rd and th suffix or                codespell:ignore
  * make some or all of them match.
  */
 

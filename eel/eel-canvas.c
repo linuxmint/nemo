@@ -2769,7 +2769,7 @@ emit_event (EelCanvas *canvas, GdkEvent *event)
 			return FALSE;
 	}
 
-	/* Convert to world coordinates -- we have two cases because of diferent
+	/* Convert to world coordinates -- we have two cases because of different
 	 * offsets of the fields in the event structures.
 	 */
 
@@ -3537,7 +3537,7 @@ eel_canvas_set_pixels_per_unit (EelCanvas *canvas, double n)
 	 *
 	 * TODO: We would like to temporarily set the bin_window background to
 	 * None to avoid clearing the bin_window to the background, but gdk doesn't
-	 * expose enought to let us do this, so we get a flash-effect here. At least
+	 * expose enough to let us do this, so we get a flash-effect here. At least
 	 * it looks better than scroll + expose.
 	 */
 	if (window != NULL) {
@@ -3558,7 +3558,7 @@ eel_canvas_set_pixels_per_unit (EelCanvas *canvas, double n)
  * Makes a canvas scroll to the specified offsets, given in canvas pixel units.
  * The canvas will adjust the view so that it is not outside the scrolling
  * region.  This function is typically not used, as it is better to hook
- * scrollbars to the canvas layout's scrolling adjusments.
+ * scrollbars to the canvas layout's scrolling adjustments.
  **/
 void
 eel_canvas_scroll_to (EelCanvas *canvas, int cx, int cy)
@@ -3713,7 +3713,7 @@ eel_canvas_w2c (EelCanvas *canvas, double wx, double wy, int *cx, int *cy)
  * eel_canvas_w2c:
  * @canvas: A canvas.
  * @world: rectangle in world coordinates.
- * @canvas: rectangle in canvase coordinates.
+ * @canvas: rectangle in canvas coordinates.
  *
  * Converts rectangles in world coordinates into canvas pixel coordinates.
  **/

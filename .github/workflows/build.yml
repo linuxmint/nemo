@@ -22,5 +22,7 @@ jobs:
       commit_id: master
       ############################## Comma separated list - like 'linuxmint/xapp, linuxmint/cinnamon-desktop'
       dependencies: linuxmint/xapp, linuxmint/cinnamon-desktop, linuxmint/cinnamon-translations
+      codespell_ignore_words_list: nd
+      codespell_ignore_files_list:
       ##############################
 

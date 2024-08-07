@@ -1446,7 +1446,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                         <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="media_automount_checkbutton">
-                                            <property name="label" translatable="yes">Automatically mount removeable media when inserted and on startup</property>
+                                            <property name="label" translatable="yes">Automatically mount removable media when inserted and on startup</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
