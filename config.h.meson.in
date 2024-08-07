@@ -19,8 +19,6 @@
 #mesondefine HAVE_SELINUX
 // Define to enable pango-1.44 fixes
 #mesondefine HAVE_PANGO_144
-// Define to use gtk-layer-shell
-#mesondefine HAVE_GTK_LAYER_SHELL
 
 
 

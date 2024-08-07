@@ -113,10 +113,6 @@ if libexif_enabled
   nemo_deps += libexif
 endif
 
-if gtk_layer_shell_enabled
-  nemo_deps += gtk_layer_shell
-endif
-
 nemo = executable('nemo',
   nemoCommon_sources + nemoWindow_sources,
   include_directories: [ rootInclude ],

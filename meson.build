@@ -134,12 +134,6 @@ if libselinux_enabled
 endif
 conf.set('HAVE_SELINUX', libselinux_enabled)
 
-gtk_layer_shell_enabled = get_option('gtk_layer_shell')
-if gtk_layer_shell_enabled
-  gtk_layer_shell = dependency('gtk-layer-shell-0', version: '>=0.8', required: false)
-  conf.set('HAVE_GTK_LAYER_SHELL', gtk_layer_shell.found())
-endif
-
 # make sure pango development files are installed
 pango = dependency('pango', version: '>=1.40.0')
 # check for newer pango for necessary workarounds
@@ -208,7 +202,6 @@ message('\n'.join(['',
 '    exempi  support:        @0@'.format(exempi_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
 '    Wayland support:        @0@'.format(cc.has_header('gdk/gdkwayland.h', dependencies: gtk)),
-'    gtk-layer-shell-0:      @0@'.format(gtk_layer_shell_enabled and gtk_layer_shell.found()),
 '',
 '    nemo-extension documentation: @0@'.format(gtkdoc_enabled),
 '    nemo-extension introspection: @0@'.format(true),
