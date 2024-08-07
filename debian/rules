@@ -8,8 +8,7 @@ CONFIGURE_EXTRA_FLAGS = \
 	--buildtype=debugoptimized \
 	-D deprecated_warnings=false \
 	-D gtk_doc=true \
-	-D selinux=false \
-	-D gtk_layer_shell=true
+	-D selinux=false
 
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 export DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow

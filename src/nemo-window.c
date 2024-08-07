@@ -77,10 +77,6 @@
 #include <math.h>
 #include <sys/time.h>
 
-#ifdef HAVE_GTK_LAYER_SHELL
-#include <gtk-layer-shell/gtk-layer-shell.h>
-#endif
-
 #define MAX_TITLE_LENGTH 180
 
 /* Forward and back buttons on the mouse */
@@ -622,18 +618,6 @@ nemo_window_constructed (GObject *self)
 
 	window = NEMO_WINDOW (self);
 	application = nemo_application_get_singleton ();
-
-#ifdef HAVE_GTK_LAYER_SHELL
-	if (gtk_layer_is_supported() && window->details->disable_chrome) {
-		gtk_layer_init_for_window(GTK_WINDOW(window));
-		gtk_layer_set_namespace(GTK_WINDOW(window), _("Nemo"));
-		gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_BOTTOM);
-		gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, 0);
-		for (int anchor = 0; anchor < 4; anchor++) {
-			gtk_layer_set_anchor(GTK_WINDOW(window), anchor, 1);
-		}
-	}
-#endif
 
 	G_OBJECT_CLASS (nemo_window_parent_class)->constructed (self);
 	gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
