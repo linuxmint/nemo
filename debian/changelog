@@ -1,3 +1,16 @@
+nemo (6.2.8) wilma; urgency=medium
+
+  [ Michael Webster ]
+  * Remove .nemo_action language files from files/usr, they're already being installed from data/.
+
+  [ Rick Calixte ]
+  * Remove gtk-layer-shell (#3443)
+
+  [ Michael Webster ]
+  * Fix some codespell complaints.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 08 Aug 2024 16:25:53 +0100
+
 nemo (6.2.7) wilma; urgency=medium
 
   [ Michael Webster ]
