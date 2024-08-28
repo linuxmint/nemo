@@ -952,7 +952,7 @@ nemo_action_new (const gchar *name,
             const gchar *prg_name = reverse ? deps[i] + 1 : deps[i];
 
             if (g_path_is_absolute (prg_name)) {
-                if (g_file_test (prg_name, G_FILE_TEST_EXISTS)) {
+                if ((!nemo_path_is_network_safe (prg_name)) && g_file_test (prg_name, G_FILE_TEST_EXISTS)) {
                     found = TRUE;
                 }
             } else {
@@ -1657,7 +1657,7 @@ get_is_dir (NemoFile *file)
 
     GFile *f = nemo_file_get_location (file);
 
-    if (g_file_is_native (f)) {
+    if (g_file_is_native (f) && (!nemo_location_is_network_safe (f))) {
         gchar *path;
 
         path = g_file_get_path (f);
@@ -1958,7 +1958,7 @@ get_visibility (NemoAction *action,
                         f = nemo_file_get_location (file);
 
                         if (g_file_is_native (f)) {
-                            mount = g_file_find_enclosing_mount (f, NULL, NULL);
+                            mount = nemo_get_mount_for_location_safe (f);
                             nemo_file_set_mount (file, mount);
                         }
 

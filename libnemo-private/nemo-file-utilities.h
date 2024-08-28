@@ -118,4 +118,8 @@ gchar *nemo_get_best_guess_file_mimetype (const gchar *filename,
 
 gboolean nemo_treating_root_as_normal (void);
 gboolean nemo_user_is_root (void);
+
+GMount *nemo_get_mount_for_location_safe (GFile *location);
+gboolean nemo_location_is_network_safe (GFile *location);
+gboolean nemo_path_is_network_safe (const gchar *path);
 #endif /* NEMO_FILE_UTILITIES_H */

@@ -1714,7 +1714,91 @@ nemo_user_is_root (void)
     return elevated;
 }
 
-/* End copied section */
+static gint
+sort_by_length (GMount *a, GMount *b)
+{
+    g_autoptr(GFile) a_root = g_mount_get_root (a);
+    g_autoptr(GFile) b_root = g_mount_get_root (b);
+    g_autofree gchar *a_uri = g_file_get_uri (a_root);
+    g_autofree gchar *b_uri = g_file_get_uri (b_root);
+    gint a_len = g_utf8_strlen (a_uri, -1);
+    gint b_len = g_utf8_strlen (b_uri, -1);
+
+    return b_len - a_len;
+}
+
+GMount *
+nemo_get_mount_for_location_safe (GFile *location)
+{
+    GVolumeMonitor *monitor;
+    GList *mounts = NULL;
+    GList *mount_iter;
+    GMount *ret = NULL;
+
+
+    monitor = g_volume_monitor_get ();
+    mounts = g_volume_monitor_get_mounts (monitor);
+
+    mounts = g_list_sort (mounts, (GCompareFunc) sort_by_length);
+
+    for (mount_iter = mounts; mount_iter != NULL; mount_iter = mount_iter->next) {
+        GMount *mount = G_MOUNT (mount_iter->data);
+        GFile *mount_location = g_mount_get_root (mount);
+        gchar *mount_root_uri = g_file_get_uri (mount_location);
+        gchar *location_uri = g_file_get_uri (location);
+
+        if (g_str_has_prefix (location_uri, mount_root_uri)) {
+            // Add a ref for our match, as it will lose one when the list is freed.
+            ret = g_object_ref (mount);
+        }
+
+        g_free (mount_root_uri);
+        g_free (location_uri);
+        g_object_unref (mount_location);
+
+        if (ret != NULL)
+            break;
+    }
+
+    g_list_free_full (mounts, (GDestroyNotify) g_object_unref);
+    g_object_unref (monitor);
+
+    return ret;
+}
+
+gboolean
+nemo_location_is_network_safe (GFile *location)
+{
+    GVolume *volume;
+    GMount *mount;
+    gboolean is_network = FALSE;
+
+    mount = nemo_get_mount_for_location_safe (location);
+    if (mount != NULL) {
+        volume = g_mount_get_volume (mount);
+        if (volume != NULL) {
+            g_autofree gchar *identifier = g_volume_get_identifier (volume, "class");
+
+            if (g_strcmp0 (identifier, "network") == 0) {
+                is_network = TRUE;
+            }
+
+            g_object_unref (volume);
+        }
+
+        g_object_unref (mount);
+    }
+
+    return is_network;
+}
+
+gboolean
+nemo_path_is_network_safe (const gchar *path)
+{
+    g_autoptr(GFile) location = g_file_new_for_path (path);
+
+    return nemo_location_is_network_safe (location);
+}
 
 #if !defined (NEMO_OMIT_SELF_CHECK)
 
