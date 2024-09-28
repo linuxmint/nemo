@@ -667,12 +667,14 @@ parse_item (ActionsIterData *idata,
                      NULL,
                      GTK_UI_MANAGER_SEPARATOR,
                      path,
+                     NULL,
                      idata->user_data);
         return TRUE;
     }
 
     const gchar *user_label = NULL;
     const gchar *user_icon = NULL;
+    const gchar *accelerator = NULL;
 
     // user-label and user-icon are optional, no error if they're missing or null.
     if (json_reader_read_member (reader, "user-label") && !json_reader_get_null_value (reader)) {
@@ -682,6 +684,14 @@ parse_item (ActionsIterData *idata,
 
     if (json_reader_read_member (reader, "user-icon") && !json_reader_get_null_value (reader)) {
         user_icon = json_reader_get_string_value (reader);
+    }
+    json_reader_end_member (reader);
+
+    if (json_reader_read_member (reader, "accelerator") && !json_reader_get_null_value (reader)) {
+        accelerator = json_reader_get_string_value (reader);
+        if (accelerator[0] == '\0') {
+            accelerator = NULL;
+        }
     }
     json_reader_end_member (reader);
 
@@ -705,12 +715,17 @@ parse_item (ActionsIterData *idata,
             nemo_action_override_icon (action, user_icon);
         }
 
+        if (accelerator != NULL) {
+            action->has_accel = TRUE;
+        }
+
         DEBUG ("Adding action '%s' to UI.", action->uuid);
 
         idata->func (idata->action_manager,
                      GTK_ACTION (action),
                      GTK_UI_MANAGER_MENUITEM,
                      path,
+                     accelerator,
                      idata->user_data);
         g_object_unref (action);
 
@@ -743,6 +758,7 @@ parse_item (ActionsIterData *idata,
                      submenu,
                      GTK_UI_MANAGER_MENU,
                      path,
+                     NULL,
                      idata->user_data);
 
         if (!json_reader_read_member (reader, "children") || json_reader_get_null_value (reader)) {
@@ -890,6 +906,7 @@ nemo_action_manager_iterate_actions (NemoActionManager                *action_ma
                   GTK_ACTION (action),
                   GTK_UI_MANAGER_MENUITEM,
                   NULL,
+                  NULL,
                   user_data);
         }
     }
@@ -902,6 +919,7 @@ nemo_action_manager_add_action_ui (NemoActionManager   *manager,
                                    GtkUIManager        *ui_manager,
                                    GtkAction           *action,
                                    const gchar         *action_path,
+                                   const gchar         *accelerator,
                                    GtkActionGroup      *action_group,
                                    guint                merge_id,
                                    const gchar        **placeholder_paths,
@@ -920,7 +938,7 @@ nemo_action_manager_add_action_ui (NemoActionManager   *manager,
                               user_data);
         }
 
-        gtk_action_group_add_action (action_group, action);
+        gtk_action_group_add_action_with_accel (action_group, action, accelerator ? accelerator : "");
         gtk_action_set_visible (action, FALSE);
     }
 
@@ -960,9 +978,12 @@ nemo_action_manager_update_action_states (NemoActionManager *action_manager,
                                           GList             *selection,
                                           NemoFile          *parent,
                                           gboolean           for_places,
+                                          gboolean           for_accelerators,
                                           GtkWindow         *window)
 {
     GList *l, *actions;
+
+    DEBUG ("Updating action states: for accelerated actions only: %s", for_accelerators ? "yes" : "no");
 
     actions = gtk_action_group_list_actions (action_group);
 
@@ -970,6 +991,12 @@ nemo_action_manager_update_action_states (NemoActionManager *action_manager,
         if (!NEMO_IS_ACTION (l->data)) {
             DEBUG ("Skipping submenu '%s' (visibility managed by GtkUIManager)", gtk_action_get_name (GTK_ACTION (l->data)));
             gtk_action_set_visible (GTK_ACTION (l->data), TRUE);
+            continue;
+        }
+
+
+        if (for_accelerators && !NEMO_ACTION (l->data)->has_accel) {
+            DEBUG ("Skipping '%s' (no accelerator assigned to this action)", NEMO_ACTION (l->data)->uuid);
             continue;
         }
 

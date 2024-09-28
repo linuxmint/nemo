@@ -33,6 +33,7 @@ typedef void (* NemoActionManagerIterFunc) (NemoActionManager    *manager,
                                             GtkAction            *action,
                                             GtkUIManagerItemType  type,
                                             const gchar          *path,
+                                            const gchar          *accelerator,
                                             gpointer              user_data);
 
 NemoActionManager   * nemo_action_manager_new                       (void);
@@ -50,12 +51,14 @@ void                  nemo_action_manager_update_action_states      (NemoActionM
                                                                      GList             *selection,
                                                                      NemoFile          *parent,
                                                                      gboolean           for_places,
+                                                                     gboolean           for_accelerators,
                                                                      GtkWindow         *window);
 
 void                  nemo_action_manager_add_action_ui             (NemoActionManager   *manager,
                                                                      GtkUIManager        *ui_manager,
                                                                      GtkAction           *action,
                                                                      const gchar         *action_path,
+                                                                     const gchar         *accelerator,
                                                                      GtkActionGroup      *action_group,
                                                                      guint                merge_id,
                                                                      const gchar        **placeholder_paths,

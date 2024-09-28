@@ -2323,6 +2323,7 @@ update_menu_states (NemoPlacesSidebar *sidebar)
                                                   selection,
                                                   parent,
                                                   TRUE,
+                                                  FALSE,
                                                   GTK_WINDOW (sidebar->window));
         nemo_file_list_free (selection);
         nemo_file_unref (parent);
@@ -3482,6 +3483,7 @@ add_action_to_ui (NemoActionManager    *manager,
                   GtkAction            *action,
                   GtkUIManagerItemType  type,
                   const gchar          *path,
+                  const gchar          *accelerator,
                   gpointer              user_data)
 {
     NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
@@ -3495,6 +3497,7 @@ add_action_to_ui (NemoActionManager    *manager,
                                        sidebar->ui_manager,
                                        action,
                                        path,
+                                       accelerator,
                                        sidebar->action_action_group,
                                        sidebar->action_action_group_merge_id,
                                        roots,
@@ -3830,7 +3833,7 @@ trash_state_changed_cb (NemoTrashMonitor *trash_monitor,
 	/* The trash icon changed, update the sidebar */
 	update_places (sidebar);
 
-	// reset_menu (sidebar);
+	reset_menu (sidebar);
 }
 
 static void

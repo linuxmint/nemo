@@ -364,6 +364,7 @@ static gboolean file_list_all_are_folders                      (GList *file_list
 static void unschedule_pop_up_location_context_menu (NemoView *view);
 static void disconnect_bookmark_signals (NemoView *view);
 static void run_action_callback (NemoAction *action, gpointer callback_data);
+static void update_accelerated_actions (NemoView *view);
 
 G_DEFINE_TYPE (NemoView, nemo_view, GTK_TYPE_SCROLLED_WINDOW);
 #define parent_class nemo_view_parent_class
@@ -6331,7 +6332,9 @@ run_action_callback (NemoAction *action, gpointer callback_data)
 }
 
 static void
-update_actions_visibility (NemoView *view, GList *selection)
+update_actions_visibility (NemoView *view,
+                           GList    *selection,
+                           gboolean  for_accelerators)
 {
     NemoFile *parent = nemo_view_get_directory_as_file (view);
 
@@ -6340,6 +6343,7 @@ update_actions_visibility (NemoView *view, GList *selection)
                                               selection,
                                               parent,
                                               FALSE,
+                                              for_accelerators,
                                               GTK_WINDOW (view->details->window));
 }
 
@@ -6348,6 +6352,7 @@ add_action_to_ui (NemoActionManager    *manager,
                   GtkAction            *action,
                   GtkUIManagerItemType  type,
                   const gchar          *path,
+                  const gchar          *accelerator,
                   gpointer              user_data)
 {
     NemoView *view = NEMO_VIEW (user_data);
@@ -6363,6 +6368,7 @@ add_action_to_ui (NemoActionManager    *manager,
                                        nemo_window_get_ui_manager (view->details->window),
                                        action,
                                        path,
+                                       accelerator,
                                        view->details->actions_action_group,
                                        view->details->actions_merge_id,
                                        roots,
@@ -6379,6 +6385,8 @@ update_actions (NemoView *view)
     nemo_action_manager_iterate_actions (view->details->action_manager,
                                          (NemoActionManagerIterFunc) add_action_to_ui,
                                          view);
+
+    update_accelerated_actions (view);
 }
 
 static void
@@ -9931,6 +9939,8 @@ real_update_menus (NemoView *view)
 		update_templates_menu (view);
 	}
 
+    update_accelerated_actions (view);
+
 	next_pane_is_writable = has_writable_extra_pane (view);
 
 	/* next pane: works if file is copyable, and next pane is writable */
@@ -10049,9 +10059,25 @@ nemo_view_update_actions_and_extensions (NemoView *view)
 
     selection = nemo_view_get_selection (view);
 
-    update_actions_visibility (view, selection);
+    update_actions_visibility (view, selection, FALSE);
     reset_extension_actions_menu (view, selection);
     update_configurable_context_menu_items (view);
+
+    nemo_file_list_free (selection);
+}
+
+static void
+update_accelerated_actions (NemoView *view)
+{
+    GList *selection;
+
+    if (view->details->actions_invalid) {
+        update_actions_menu (view);
+    }
+
+    selection = nemo_view_get_selection (view);
+
+    update_actions_visibility (view, selection, TRUE);
 
     nemo_file_list_free (selection);
 }

@@ -738,6 +738,7 @@ update_menu_states (FMTreeView *view,
                                               selected,
                                               parent,
                                               FALSE,
+                                              FALSE,
                                               GTK_WINDOW (view->details->window));
     nemo_file_list_free (selected);
     nemo_file_unref (parent);
@@ -1311,6 +1312,7 @@ add_action_to_ui (NemoActionManager    *manager,
                   GtkAction            *action,
                   GtkUIManagerItemType  type,
                   const gchar          *path,
+                  const gchar          *accelerator,
                   gpointer              user_data)
 {
     FMTreeView *view = FM_TREE_VIEW (user_data);
@@ -1324,6 +1326,7 @@ add_action_to_ui (NemoActionManager    *manager,
                                        view->details->ui_manager,
                                        action,
                                        path,
+                                       accelerator,
                                        view->details->action_action_group,
                                        view->details->action_action_group_merge_id,
                                        roots,

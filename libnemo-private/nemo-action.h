@@ -36,6 +36,7 @@ struct _NemoAction {
     gchar *uuid; // basename of key_file_path
     gchar *key_file_path;
     gchar *parent_dir;
+    gboolean has_accel;
 };
 
 struct _NemoActionClass {

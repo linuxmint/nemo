@@ -22,6 +22,7 @@
 #include <config.h>
 #include "nemo-blank-desktop-window.h"
 #include "nemo-desktop-manager.h"
+#include "nemo-application.h"
 
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
@@ -145,6 +146,7 @@ update_actions_visibility (NemoBlankDesktopWindow *window)
                                               NULL,
                                               NULL,
                                               FALSE,
+                                              FALSE,
                                               GTK_WINDOW (window));
 }
 
@@ -153,6 +155,7 @@ add_action_to_ui (NemoActionManager    *manager,
                   GtkAction            *action,
                   GtkUIManagerItemType  type,
                   const gchar          *path,
+                  const gchar          *accelerator,
                   gpointer              user_data)
 {
     NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (user_data);
@@ -166,6 +169,7 @@ add_action_to_ui (NemoActionManager    *manager,
                                        window->details->ui_manager,
                                        action,
                                        path,
+                                       accelerator,
                                        window->details->action_group,
                                        window->details->actions_merge_id,
                                        roots,
@@ -262,6 +266,7 @@ actions_changed_idle_cb (gpointer user_data)
     NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (user_data);
 
     reset_popup_menu (window);
+    update_actions_visibility (window);
 
     window->details->actions_changed_idle_id = 0;
     return G_SOURCE_REMOVE;
@@ -276,13 +281,35 @@ actions_changed (gpointer user_data)
     window->details->actions_changed_idle_id = g_idle_add (actions_changed_idle_cb, window);
 }
 
+/**
+ * nemo_window_show:
+ * @widget: GtkWidget
+ *
+ * Call parent and then show/hide window items
+ * base on user prefs.
+ */
+static void
+show (GtkWidget *widget)
+{
+    NemoBlankDesktopWindow *window;
+
+    window = NEMO_BLANK_DESKTOP_WINDOW (widget);
+
+    GTK_WIDGET_CLASS (nemo_blank_desktop_window_parent_class)->show (widget);
+    gtk_ui_manager_ensure_update (window->details->ui_manager);
+}
+
 static void
 nemo_blank_desktop_window_constructed (GObject *obj)
 {
 	AtkObject *accessible;
+    NemoApplication *application;
 	NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (obj);
 
 	G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->constructed (obj);
+
+    application = nemo_application_get_singleton ();
+    gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
 
 	/* Set the accessible name so that it doesn't inherit the cryptic desktop URI. */
 	accessible = gtk_widget_get_accessible (GTK_WIDGET (window));
@@ -292,6 +319,9 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 	}
 
     window->details->ui_manager = gtk_ui_manager_new ();
+    gtk_window_add_accel_group (GTK_WINDOW (window),
+                                gtk_ui_manager_get_accel_group (window->details->ui_manager));
+
     window->details->action_manager = nemo_action_manager_new ();
 
     if (window->details->actions_changed_id == 0) {
@@ -444,6 +474,7 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+    wclass->show = show;
 	wclass->delete_event = nemo_blank_desktop_window_delete_event;
 
     properties[PROP_MONITOR] =
