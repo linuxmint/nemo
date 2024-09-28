@@ -18,7 +18,7 @@ eel_sources = [
 ]
 
 
-eel_deps = [ gtk, libxml, gail ]
+eel_deps = [ gtk, gail ]
 
 eel_lib = static_library('eel',
   eel_sources,

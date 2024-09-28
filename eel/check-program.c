@@ -30,7 +30,6 @@
 #include <eel/eel-self-checks.h>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
-#include <libxml/parser.h>
 #include <stdlib.h>
 
 int
@@ -41,7 +40,6 @@ main (int argc, char *argv[])
 	eel_make_warnings_and_criticals_stop_in_debugger ();
 	
 
-	LIBXML_TEST_VERSION
 	gtk_init (&argc, &argv);
 
 	/* Run the checks for eel twice. */

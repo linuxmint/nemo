@@ -102,7 +102,7 @@ if enableEmptyView
   nemoCommon_sources += 'nemo-empty-view.c'
 endif
 
-nemo_deps = [ cinnamon, gail, glib, gtk, libxml, math,
+nemo_deps = [ cinnamon, gail, glib, gtk, math,
   egg, nemo_extension, nemo_private, xapp ]
 
 if exempi_enabled
