@@ -119,7 +119,7 @@ Description: file manager and graphical shell for Cinnamon
 
 Package: nemo-data
 Architecture: all
-Depends: python3, ${misc:Depends}, ${python3:Depends}
+Depends: python3, gir1.2-xmlb-2.0, ${misc:Depends}, ${python3:Depends}
 Suggests: nemo
 Description: data files for nemo
  Nemo is the official file manager and graphical shell for the

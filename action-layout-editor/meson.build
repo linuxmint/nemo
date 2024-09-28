@@ -29,8 +29,3 @@ install_data(
     install_dir: nemoDataPath / 'layout-editor',
     install_mode: 'rwxr-xr-x'
 )
-
-install_data(
-    'nemo-action-layout-editor.glade',
-    install_dir: nemoDataPath / 'layout-editor'
-)

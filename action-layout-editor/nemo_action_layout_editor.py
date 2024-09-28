@@ -2,7 +2,8 @@
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('XApp', '1.0')
-from gi.repository import Gtk, Gdk, GLib, Gio, XApp, GdkPixbuf, Pango
+gi.require_version('Xmlb', '2.0')
+from gi.repository import Gtk, Gdk, GLib, Gio, XApp, GdkPixbuf, Pango, Xmlb
 import cairo
 import json
 from pathlib import Path
@@ -15,9 +16,11 @@ import leconfig
 
 gettext.install(leconfig.PACKAGE, leconfig.LOCALE_DIR)
 
+gresources = Gio.Resource.load(os.path.join(leconfig.PKG_DATADIR, "nemo-action-layout-editor-resources.gresource"))
+gresources._register()
+
 JSON_FILE = Path(GLib.get_user_config_dir()).joinpath("nemo/actions-tree.json")
 USER_ACTIONS_DIR = Path(GLib.get_user_data_dir()).joinpath("nemo/actions")
-GLADE_FILE = Path(leconfig.PKG_DATADIR).joinpath("layout-editor/nemo-action-layout-editor.glade")
 
 NON_SPICE_UUID_SUFFIX = "@untracked"
 
@@ -29,6 +32,15 @@ ROW_TYPE_SEPARATOR = "separator"
 
 def new_hash():
     return uuid.uuid4().hex
+
+class BuiltinShortcut():
+    def __init__(self, label, accel_string):
+        self.key, self.mods = Gtk.accelerator_parse(accel_string)
+
+        if self.key == 0 and self.mods == 0:
+            self.label = "invalid (%s)" % accel_string
+
+        self.label = _(label)
 
 class Row():
     def __init__(self, row_meta=None, keyfile=None, path=None, enabled=True):
@@ -95,6 +107,17 @@ class Row():
 
         return label
 
+    def get_accelerator_string(self):
+        if self.row_meta is not None:
+            try:
+                accel_string = self.row_meta['accelerator']
+                if accel_string is not None:
+                    return accel_string
+            except KeyError:
+                pass
+
+        return None if accel_string == "" else None
+
     def set_custom_label(self, label):
         if not self.row_meta:
             self.row_meta = {}
@@ -106,6 +129,12 @@ class Row():
             self.row_meta = {}
 
         self.row_meta['user-icon'] = icon
+
+    def set_accelerator_string(self, accel_string):
+        if not self.row_meta:
+            self.row_meta = {}
+
+        self.row_meta['accelerator'] = accel_string
 
     def get_custom_label(self):
         if self.row_meta:
@@ -122,9 +151,12 @@ class NemoActionsOrganizer(Gtk.Box):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
 
         if builder is None:
-            self.builder = Gtk.Builder.new_from_file(str(GLADE_FILE))
+            self.builder = Gtk.Builder.new_from_resource("/org/nemo/action-layout-editor/nemo-action-layout-editor.glade")
         else:
             self.builder = builder
+
+        self.builtin_shortcuts = []
+        self.load_nemo_shortcuts()
 
         self.main_window = window
         self.layout_editor_box = self.builder.get_object("layout_editor_box")
@@ -202,8 +234,10 @@ class NemoActionsOrganizer(Gtk.Box):
             visible=True
         )
 
+        # Icon and label
         column = Gtk.TreeViewColumn()
         self.treeview.append_column(column)
+        column.set_expand(True)
 
         cell = Gtk.CellRendererPixbuf()
         column.pack_start(cell, False)
@@ -211,6 +245,27 @@ class NemoActionsOrganizer(Gtk.Box):
         cell = Gtk.CellRendererText()
         column.pack_start(cell, False)
         column.set_cell_data_func(cell, self.menu_label_render_func)
+
+        # Accelerators
+        column = Gtk.TreeViewColumn()
+        column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
+        column.set_expand(True)
+        self.treeview.append_column(column)
+
+        cell = Gtk.CellRendererAccel()
+        cell.set_property("editable", True)
+        cell.set_property("xalign", 0)
+        column.pack_end(cell, False)
+        column.set_cell_data_func(cell, self.accel_render_func)
+
+        layout = self.treeview.create_pango_layout(_("Click to add a shortcut"))
+        w, h = layout.get_pixel_size()
+        column.set_min_width(w + 20)
+
+        cell.connect("editing-started", self.on_accel_edit_started)
+        cell.connect("accel-edited", self.on_accel_edited)
+        cell.connect("accel-cleared", self.on_accel_cleared)
+        self.editing_accel = False
 
         self.treeview_holder.add(self.treeview)
 
@@ -256,6 +311,27 @@ class NemoActionsOrganizer(Gtk.Box):
         self.update_treeview_state()
         self.update_arrow_button_states()
         self.set_needs_saved(False)
+
+    def load_nemo_shortcuts(self):
+        source = Xmlb.BuilderSource()
+        try:
+            xml = Gio.resources_lookup_data("/org/nemo/action-layout-editor/nemo-shortcuts.ui", Gio.ResourceLookupFlags.NONE)
+            ret = source.load_bytes(xml, Xmlb.BuilderSourceFlags.NONE)
+            builder = Xmlb.Builder()
+            builder.import_source(source)
+            silo = builder.compile(Xmlb.BuilderCompileFlags.NONE, None)
+        except GLib.Error as e:
+            print("Could not load nemo-shortcuts.ui from resource file - we won't be able to detect built-in shortcut collisions: %s" % e.message)
+            return
+
+        root = silo.query_first("interface")
+        for child in root.query(f"object/child", 0):
+            for section in child.query("object[@class='GtkShortcutsSection']", 0):
+                for group in section.query("child/object[@class='GtkShortcutsGroup']", 0):
+                    for shortcut in group.query("child/object[@class='GtkShortcutsShortcut']", 0):
+                        label = shortcut.query_text("property[@name='title']")
+                        accel = shortcut.query_text("property[@name='accelerator']")
+                        self.builtin_shortcuts.append(BuiltinShortcut(label, accel))
 
     def reload_model(self, flat=False):
         self.updating_model = True
@@ -365,6 +441,17 @@ class NemoActionsOrganizer(Gtk.Box):
                 raise ValueError("%s: Invalid icon '%s' (must be an any-length string or null)" % (uuid, icon))
         except KeyError:
             # not mandatory
+            pass
+
+        # Check the node has a valid accelerator
+        try:
+            accel_str = node['accelerator']
+
+            if accel_str not in ("", None):
+                key, mods = Gtk.accelerator_parse(accel_str)
+                if key == 0 and mods == 0:
+                    raise ValueError("%s: Invalid accelerator string '%s'" % (uuid, accel_str))
+        except KeyError:
             pass
 
         # Check that the node has a valid children list
@@ -503,7 +590,8 @@ class NemoActionsOrganizer(Gtk.Box):
                 'uuid': uuid,
                 'type': row_type,
                 'user-label': row.get_custom_label(),
-                'user-icon': row.get_custom_icon()
+                'user-icon': row.get_custom_icon(),
+                'accelerator': row.get_accelerator_string()
             }
 
             if row_type == ROW_TYPE_SUBMENU:
@@ -800,6 +888,90 @@ class NemoActionsOrganizer(Gtk.Box):
             self.selected_row_changed(needs_saved=False)
             self.save_disabled_list()
 
+    def on_accel_edited(self, accel, path, key, mods, kc, data=None):
+        if not self.validate_accelerator(key, mods):
+            return
+
+        row = self.get_selected_row_field(ROW_OBJ)
+        if row is not None:
+            row.set_accelerator_string(Gtk.accelerator_name(key, mods))
+            self.selected_row_changed()
+
+    def on_accel_cleared(self, accel, path, data=None):
+        row = self.get_selected_row_field(ROW_OBJ)
+        if row is not None:
+            row.set_accelerator_string(None)
+            self.selected_row_changed()
+
+    def on_accel_edit_started(self, cell, editable, path, data=None):
+        self.editing_accel = True
+        editable.connect("editing-done", self.accel_editing_done)
+
+    def accel_editing_done(self, editable, data=None):
+        self.editing_accel = False
+        editable.disconnect_by_func(self.accel_editing_done)
+
+    def validate_accelerator(self, key, mods):
+        # Check nemo's built-ins (copy, paste, etc...)
+        for shortcut in self.builtin_shortcuts:
+            if shortcut.key == key and shortcut.mods == mods:
+                dialog = Gtk.MessageDialog(
+                    transient_for=self.main_window,
+                    modal=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_("This key combination is already in use by Nemo (<b>%s</b>). It cannot be changed.") % shortcut.label,
+                    use_markup=True
+                )
+                dialog.run()
+                dialog.destroy()
+                return False
+
+        conflict = False
+
+        def check_for_action_conflict(iter):
+            foreach_iter = self.model.iter_children(iter)
+
+            nonlocal conflict
+
+            while not conflict and foreach_iter is not None:
+                row = self.model.get_value(foreach_iter, ROW_OBJ)
+                accel_string = row.get_accelerator_string()
+
+                if accel_string is not None:
+                    row_key, row_mod = Gtk.accelerator_parse(accel_string)
+                    if row_key == key and row_mod == mods:
+                        dialog = Gtk.MessageDialog(
+                            transient_for=self.main_window,
+                            modal=True,
+                            message_type=Gtk.MessageType.WARNING,
+                            buttons=Gtk.ButtonsType.YES_NO,
+                            text=_("This key combination is already in use by another action:"
+                                   "\n\n<b>%s</b>\n\n"
+                                   "Do you want to replace it?") % row.get_label(),
+                            use_markup=True
+                        )
+                        resp = dialog.run()
+                        dialog.destroy()
+
+                        # nonlocal conflict
+
+                        if resp == Gtk.ResponseType.YES:
+                            row.set_accelerator_string(None)
+                            conflict = False
+                        else:
+                            conflict = True
+                        break
+
+                foreach_type = self.model.get_value(foreach_iter, ROW_TYPE)
+                if foreach_type == ROW_TYPE_SUBMENU:
+                    check_for_action_conflict(foreach_iter)
+
+                foreach_iter = self.model.iter_next(foreach_iter)
+
+        check_for_action_conflict(None)
+        return not conflict
+
     # Cell render functions
 
     def menu_icon_render_func(self, column, cell, model, iter, data):
@@ -822,6 +994,31 @@ class NemoActionsOrganizer(Gtk.Box):
         else:
             cell.set_property("markup", row.get_label())
             cell.set_property("weight", Pango.Weight.NORMAL if row.enabled else Pango.Weight.ULTRALIGHT)
+
+    def accel_render_func(self, column, cell, model, iter, data):
+        row_type = model.get_value(iter, ROW_TYPE)
+        if row_type in (ROW_TYPE_SUBMENU, ROW_TYPE_SEPARATOR):
+            cell.set_property("visible", False)
+            return
+
+        row = model.get_value(iter, ROW_OBJ)
+
+        accel_string = row.get_accelerator_string() or ""
+        key, mods = Gtk.accelerator_parse(accel_string)
+        cell.set_property("visible", True)
+        cell.set_property("accel-key", key)
+        cell.set_property("accel-mods", mods)
+
+        if accel_string == "":
+            spath, siter = self.get_selected_row_path_iter()
+            current_path = model.get_path(iter)
+            if current_path is not None and current_path.compare(spath) == 0:
+                if not self.editing_accel:
+                    cell.set_property("text", _("Click to add a shortcut"))
+                else:
+                    cell.set_property("text", None)
+            else:
+                cell.set_property("text", " ")
 
     # DND
 
@@ -1302,7 +1499,7 @@ class NemoActionsOrganizer(Gtk.Box):
 
 class EditorWindow():
     def __init__(self):
-        self.builder = Gtk.Builder.new_from_file(str(GLADE_FILE))
+        self.builder = Gtk.Builder.new_from_resource("/org/nemo/action-layout-editor/nemo-action-layout-editor.glade")
         self.main_window = self.builder.get_object("main_window")
         self.hamburger_button = self.builder.get_object("hamburger_button")
         self.editor = NemoActionsOrganizer(self.main_window, self.builder)
