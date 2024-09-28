@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/org/nemo">
-    <file compressed="true">nemo-bookmarks-window.glade</file>
-    <file compressed="true">nemo-file-management-properties.glade</file>
-    <file compressed="true">nemo-desktop-overlay.glade</file>
-    <file compressed="true">nemo-desktop-preferences.glade</file>
-    <file compressed="true">nemo-search-bar.glade</file>
-    <file compressed="true">nemo-shortcuts.ui</file>
+    <file>nemo-bookmarks-window.glade</file>
+    <file>nemo-desktop-overlay.glade</file>
+    <file>nemo-desktop-preferences.glade</file>
+    <file>nemo-file-management-properties.glade</file>
+    <file>nemo-search-bar.glade</file>
+
+    <file>nemo-shortcuts.ui</file>
+
     <file>nemo-blank-desktop-window-ui.xml</file>
-    <file>nemo-icon-view-ui.xml</file>
-    <file>nemo-directory-view-ui.xml</file>
-    <file>nemo-desktop-icon-view-ui.xml</file>
     <file>nemo-desktop-icon-grid-view-ui.xml</file>
+    <file>nemo-desktop-icon-view-ui.xml</file>
+    <file>nemo-directory-view-ui.xml</file>
+    <file>nemo-icon-view-ui.xml</file>
     <file>nemo-list-view-ui.xml</file>
     <file>nemo-places-sidebar-ui.xml</file>
     <file>nemo-shell-ui.xml</file>
     <file>nemo-statusbar-ui.xml</file>
     <file>nemo-tree-sidebar-ui.xml</file>
-    <file alias="icons/thumbnail_frame.png">thumbnail_frame.png</file>
+
     <file alias="icons/knob.png">knob.png</file>
+    <file alias="icons/thumbnail_frame.png">thumbnail_frame.png</file>
+
     <file>nemo-style-fallback.css</file>
     <file>nemo-style-fallback-mandatory.css</file>
     <file>nemo-style-application.css</file>
