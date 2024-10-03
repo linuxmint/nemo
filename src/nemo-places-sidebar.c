@@ -72,6 +72,11 @@
 #define DRAG_EXPAND_CATEGORY_DELAY 500
 #define EJECT_PAD_COLUMN_WIDTH 14
 
+static gint EJECT_ICON_SIZE_NOT_HOVERED = 0;
+static gint EJECT_ICON_SIZE_HOVERED = GTK_ICON_SIZE_MENU;
+static gint menu_icon_pixels = 16;
+#define EJECT_ICON_SIZE_REDUCTION 4
+
 #if (!GLIB_CHECK_VERSION(2,50,0))
 #define g_drive_is_removable g_drive_is_media_removable
 #endif
@@ -79,6 +84,7 @@
 typedef struct {
 	GtkScrolledWindow  parent;
 	GtkTreeView        *tree_view;
+    GtkTreeViewColumn  *eject_column;
     GtkCellRenderer    *eject_icon_cell_renderer;
 	char 	           *uri;
 	GtkTreeStore       *store;
@@ -174,8 +180,9 @@ enum {
 	PLACES_SIDEBAR_COLUMN_EJECT,
 	PLACES_SIDEBAR_COLUMN_NO_EJECT,
 	PLACES_SIDEBAR_COLUMN_BOOKMARK,
-	PLACES_SIDEBAR_COLUMN_TOOLTIP,
-	PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+    PLACES_SIDEBAR_COLUMN_TOOLTIP,
+    PLACES_SIDEBAR_COLUMN_EJECT_ICON,
+	PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE,
 	PLACES_SIDEBAR_COLUMN_SECTION_TYPE,
 	PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
     PLACES_SIDEBAR_COLUMN_DF_PERCENT,
@@ -487,8 +494,9 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_EJECT, show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
-			    PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-			    PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "media-eject-symbolic" : NULL,
+                PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
+                PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "media-eject-symbolic" : NULL,
+			    PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, EJECT_ICON_SIZE_NOT_HOVERED,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
                 PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
@@ -1379,52 +1387,47 @@ over_eject_button (NemoPlacesSidebar *sidebar,
 		   gint y,
 		   GtkTreePath **path)
 {
-	GtkTreeViewColumn *column, *eject_column;
-	int width, x_offset, x_col_offset;
-	gboolean show_eject;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
+    GtkTreeViewColumn *column;
+    int width, col_x_offset, cell_x_offset;
+    gboolean show_eject;
+    GtkTreeIter iter;
+    GtkTreeModel *model;
 
-	*path = NULL;
-	model = gtk_tree_view_get_model (sidebar->tree_view);
+    *path = NULL;
+    model = gtk_tree_view_get_model (sidebar->tree_view);
 
-	if (gtk_tree_view_get_path_at_pos (sidebar->tree_view,
-					   x, y,
-					   path, &column, NULL, NULL)) {
+    if (gtk_tree_view_get_path_at_pos (sidebar->tree_view,
+                                       x, y,
+                                       path, &column, &col_x_offset, NULL)) {
 
-		gtk_tree_model_get_iter (model, &iter, *path);
-		gtk_tree_model_get (model, &iter,
-				    PLACES_SIDEBAR_COLUMN_EJECT, &show_eject,
-				    -1);
+        gtk_tree_model_get_iter (model, &iter, *path);
+        gtk_tree_model_get (model, &iter,
+                            PLACES_SIDEBAR_COLUMN_EJECT, &show_eject,
+                            -1);
 
-		if (!show_eject) {
-			goto out;
-		}
+        if (!show_eject) {
+            goto out;
+        }
 
-        eject_column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 3);
-        x_col_offset = gtk_tree_view_column_get_x_offset (eject_column);
+        if (column == sidebar->eject_column) {
+            gtk_tree_view_column_cell_set_cell_data (column, model, &iter, FALSE, FALSE);
 
-		/* Reload cell attributes for this particular row */
-		gtk_tree_view_column_cell_set_cell_data (eject_column,
-							 model, &iter, FALSE, FALSE);
+            gtk_tree_view_column_cell_get_position (column,
+                                                    sidebar->eject_icon_cell_renderer,
+                                                    &cell_x_offset, &width);
+            if ((col_x_offset >= cell_x_offset) && (col_x_offset < cell_x_offset + width)) {
+                return TRUE;
+            }
+        }
+    }
 
-		gtk_tree_view_column_cell_get_position (eject_column,
-							sidebar->eject_icon_cell_renderer,
-							&x_offset, &width);
+    out:
+    if (*path != NULL) {
+        gtk_tree_path_free (*path);
+        *path = NULL;
+    }
 
-		if (x - x_col_offset >= 0 &&
-		    x - x_col_offset <= width) {
-			return TRUE;
-		}
-	}
-
- out:
-	if (*path != NULL) {
-		gtk_tree_path_free (*path);
-		*path = NULL;
-	}
-
-	return FALSE;
+    return FALSE;
 }
 
 static gboolean
@@ -3696,6 +3699,160 @@ bookmarks_button_press_event_cb (GtkWidget             *widget,
 	return retval;
 }
 
+typedef struct {
+    NemoPlacesSidebar *sidebar;
+    GtkTreePath *hovered_path;
+} ClearHoverData;
+
+static gboolean
+clear_eject_hover (GtkTreeModel *model,
+                    GtkTreePath  *path,
+                    GtkTreeIter  *iter,
+                    gpointer      data)
+{
+    ClearHoverData *hdata = data;
+    gint size;
+    gboolean can_eject = FALSE;
+
+    gtk_tree_model_get (model, iter,
+                        PLACES_SIDEBAR_COLUMN_EJECT, &can_eject,
+                        -1);
+
+    if (can_eject && hdata->hovered_path != NULL && gtk_tree_path_compare (path, hdata->hovered_path) == 0) {
+        size = EJECT_ICON_SIZE_HOVERED;
+
+    } else {
+        size = EJECT_ICON_SIZE_NOT_HOVERED;
+    }
+
+    gtk_tree_store_set (hdata->sidebar->store, iter,
+                        PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, size,
+                        -1);
+
+    return FALSE;
+}
+
+static gboolean
+motion_notify_cb (GtkWidget         *widget,
+                  GdkEventMotion    *event,
+                  NemoPlacesSidebar *sidebar)
+{
+    GtkTreeModel *model;
+    GtkTreePath *path = NULL;
+    GtkTreePath *store_path = NULL;
+
+    if (event->type != GDK_MOTION_NOTIFY) {
+        return TRUE;
+    }
+
+    model = gtk_tree_view_get_model (GTK_TREE_VIEW (sidebar->tree_view));
+
+    if (over_eject_button (sidebar, event->x, event->y, &path)) {
+        store_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (model), path);
+    }
+
+    ClearHoverData data = { sidebar, store_path };
+    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store), (GtkTreeModelForeachFunc) clear_eject_hover, &data);
+
+    if (store_path != NULL) {
+        gtk_tree_path_free (store_path);
+    }
+
+    gtk_tree_path_free (path);
+
+    return FALSE;
+}
+
+static gboolean
+leave_notify_cb (GtkWidget         *widget,
+                 GdkEventCrossing  *event,
+                 NemoPlacesSidebar *sidebar)
+{
+    if (event->type != GDK_LEAVE_NOTIFY) {
+        return TRUE;
+    }
+
+    ClearHoverData data = { sidebar, NULL };
+    gtk_tree_model_foreach (GTK_TREE_MODEL (sidebar->store), (GtkTreeModelForeachFunc) clear_eject_hover, &data);
+
+    return FALSE;
+}
+
+
+static gboolean
+query_tooltip_callback (GtkWidget *widget,
+                        gint x,
+                        gint y,
+                        gboolean kb_mode,
+                        GtkTooltip *tooltip,
+                        gpointer user_data)
+{
+    GtkTreeIter iter;
+    GtkTreePath *path = NULL;
+    GtkTreeModel *model;
+
+    if (gtk_tree_view_get_tooltip_context (GTK_TREE_VIEW (widget), &x, &y,
+                                           kb_mode,
+                                           &model, &path, &iter)) {
+        gboolean can_eject;
+        gint icon_size, type;
+
+        gtk_tree_model_get (model,
+                            &iter,
+                            PLACES_SIDEBAR_COLUMN_ROW_TYPE, &type,
+                            PLACES_SIDEBAR_COLUMN_EJECT, &can_eject,
+                            // HACK: If we store a bool 'hovered' we still need to have an
+                            // icon size column or else make a cell_data_func to render the icon
+                            // manually. This is simpler.
+                            PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, &icon_size,
+                            -1);
+
+        if (type == PLACES_HEADING) {
+            gtk_tree_path_free (path);
+            return FALSE;
+        }
+
+        g_autofree gchar *tooltip_markup = NULL;
+
+        if (can_eject && icon_size == EJECT_ICON_SIZE_HOVERED) {
+            g_autoptr(GMount) mount = NULL;
+            g_autoptr(GDrive) drive = NULL;
+            g_autoptr(GVolume) volume = NULL;
+
+            gtk_tree_model_get (model,
+                                &iter,
+                                PLACES_SIDEBAR_COLUMN_MOUNT, &mount,
+                                PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
+                                PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
+                                -1);
+            if (mount != NULL) {
+                tooltip_markup = g_strdup (_("Unmount"));
+            }
+            else
+            if (drive != NULL) {
+                tooltip_markup = g_strdup (_("Eject"));
+            }
+            else
+            if (volume != NULL) {
+                tooltip_markup = g_strdup (_("Stop"));
+            }
+        } else {
+            gtk_tree_model_get (model,
+                                &iter,
+                                PLACES_SIDEBAR_COLUMN_TOOLTIP, &tooltip_markup,
+                                -1);
+        }
+
+        gtk_tooltip_set_markup (tooltip, tooltip_markup);
+        gtk_tree_view_set_tooltip_cell (GTK_TREE_VIEW (widget), tooltip, path, NULL, NULL);
+    }
+
+    gtk_tree_path_free (path);
+
+    return TRUE;
+}
+
+
 static void
 update_expanded_state (GtkTreeView *tree_view,
                        GtkTreeIter *iter,
@@ -3974,10 +4131,15 @@ static void
 nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 {
 	GtkTreeView       *tree_view;
-	GtkTreeViewColumn *col, *expander_col, *eject_col, *expander_pad_col;
+	GtkTreeViewColumn *primary_column, *expander_column, *expander_pad_column;
 	GtkCellRenderer   *cell;
 	GtkTreeSelection  *selection;
 	GtkStyleContext   *style_context;
+
+    gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &menu_icon_pixels, NULL);
+    EJECT_ICON_SIZE_NOT_HOVERED = gtk_icon_size_register ("menu-icon-size-small",
+                                                          menu_icon_pixels - EJECT_ICON_SIZE_REDUCTION,
+                                                          menu_icon_pixels - EJECT_ICON_SIZE_REDUCTION);
 
     sidebar->action_manager = nemo_action_manager_new ();
     sidebar->actions_changed_id = g_signal_connect_swapped (sidebar->action_manager,
@@ -4024,19 +4186,18 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	gtk_tree_view_set_headers_visible (tree_view, FALSE);
 
-	col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
-    expander_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
-    eject_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
-    expander_pad_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new());
+    primary_column = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+    gtk_tree_view_column_set_max_width (GTK_TREE_VIEW_COLUMN (primary_column), NEMO_ICON_SIZE_SMALLER);
+    gtk_tree_view_column_set_expand (primary_column, TRUE);
 
 	/* initial padding */
 	cell = gtk_cell_renderer_text_new ();
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
+	gtk_tree_view_column_pack_start (primary_column, cell, FALSE);
 
 	/* headings */
 	cell = gtk_cell_renderer_text_new ();
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (col, cell,
+	gtk_tree_view_column_pack_start (primary_column, cell, FALSE);
+	gtk_tree_view_column_set_attributes (primary_column, cell,
 					     "text", PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
 					     NULL);
 	g_object_set (cell,
@@ -4045,14 +4206,14 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 		      "ypad", 0,
 		      "xpad", 0,
 		      NULL);
-	gtk_tree_view_column_set_cell_data_func (col, cell,
+	gtk_tree_view_column_set_cell_data_func (primary_column, cell,
 						 heading_cell_renderer_func,
 						 sidebar, NULL);
 
 	/* icon padding */
 	cell = gtk_cell_renderer_text_new ();
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_cell_data_func (col, cell,
+	gtk_tree_view_column_pack_start (primary_column, cell, FALSE);
+	gtk_tree_view_column_set_cell_data_func (primary_column, cell,
 						 padding_cell_renderer_func,
 						 sidebar, NULL);
 
@@ -4061,28 +4222,44 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
     g_object_set (cell,
                   "follow-state", TRUE,
                   NULL);
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (col, cell,
+	gtk_tree_view_column_pack_start (primary_column, cell, FALSE);
+	gtk_tree_view_column_set_attributes (primary_column, cell,
 					     "gicon", PLACES_SIDEBAR_COLUMN_GICON,
 					     NULL);
-	gtk_tree_view_column_set_cell_data_func (col, cell,
+	gtk_tree_view_column_set_cell_data_func (primary_column, cell,
 						 icon_cell_renderer_func,
 						 sidebar, NULL);
 
-	/* eject text renderer */
-	cell = nemo_cell_renderer_disk_new ();
+    /* normal text renderer */
+    cell = nemo_cell_renderer_disk_new ();
     NEMO_CELL_RENDERER_DISK (cell)->direction = gtk_widget_get_direction (GTK_WIDGET (tree_view));
-	gtk_tree_view_column_pack_start (col, cell, TRUE);
-	gtk_tree_view_column_set_attributes (col, cell,
-					     "text", PLACES_SIDEBAR_COLUMN_NAME,
-					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
+    gtk_tree_view_column_pack_start (primary_column, cell, TRUE);
+    g_object_set (G_OBJECT (cell), "editable", FALSE, NULL);
+    gtk_tree_view_column_set_attributes (primary_column, cell,
+                         "text", PLACES_SIDEBAR_COLUMN_NAME,
+                         "editable-set", PLACES_SIDEBAR_COLUMN_BOOKMARK,
                          "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
                          "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
-					     NULL);
-	g_object_set (cell,
-		      "ellipsize", PANGO_ELLIPSIZE_END,
-		      "ellipsize-set", TRUE,
-		      NULL);
+                         NULL);
+    g_object_set (cell,
+              "ellipsize", PANGO_ELLIPSIZE_END,
+              "ellipsize-set", TRUE,
+              NULL);
+
+    g_signal_connect (cell, "edited",
+              G_CALLBACK (bookmarks_edited), sidebar);
+    g_signal_connect (cell, "editing-canceled",
+              G_CALLBACK (bookmarks_editing_canceled), sidebar);
+
+    /* eject column */
+    sidebar->eject_column = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+    gtk_tree_view_column_set_sizing (sidebar->eject_column, GTK_TREE_VIEW_COLUMN_GROW_ONLY);
+    gtk_tree_view_column_set_min_width (sidebar->eject_column, EJECT_COLUMN_MIN_WIDTH);
+    gtk_tree_view_column_set_max_width (sidebar->eject_column, EJECT_COLUMN_MAX_WIDTH);
+
+    cell = gtk_cell_renderer_text_new ();
+    gtk_tree_view_column_pack_start (sidebar->eject_column, cell, FALSE);
+    g_object_set (cell, "width", 5, NULL);
 
 	/* eject icon renderer */
 	cell = gtk_cell_renderer_pixbuf_new ();
@@ -4090,77 +4267,54 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	g_object_set (cell,
 		      "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE,
 		      "yalign", 0.8,
+              "width", menu_icon_pixels,
 		      NULL);
-	gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
-	gtk_tree_view_column_set_attributes (eject_col, cell,
+	gtk_tree_view_column_pack_start (sidebar->eject_column, cell, FALSE);
+	gtk_tree_view_column_set_attributes (sidebar->eject_column, cell,
 					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
 					     "icon-name", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
-					     NULL);
+                         "stock-size", PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE,
+                         NULL);
 
+    /* eject icon trailing padding (adjusts to always avoid overlay-scrollbars) */
     gboolean overlay_scrolling;
     GtkSettings *gtksettings = gtk_settings_get_default ();
     g_object_get (gtksettings,
                   "gtk-overlay-scrolling", &overlay_scrolling,
                   NULL);
 
+    cell = gtk_cell_renderer_text_new ();
+    gtk_tree_view_column_pack_start (sidebar->eject_column, cell, FALSE);
+    gtk_tree_view_column_set_attributes (sidebar->eject_column, cell,
+                                         "visible", PLACES_SIDEBAR_COLUMN_EJECT,
+                                         NULL);
+
     if (overlay_scrolling) {
-        /* eject icon padding */
-        cell = gtk_cell_renderer_text_new ();
-        gtk_tree_view_column_pack_start (eject_col, cell, FALSE);
-        gtk_tree_view_column_set_attributes (eject_col, cell,
-                                             "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-                                             NULL);
         GtkWidget *vscrollbar = gtk_scrolled_window_get_vscrollbar (GTK_SCROLLED_WINDOW (sidebar));
         gint nat_width;
 
         gtk_widget_get_preferred_width (vscrollbar, NULL, &nat_width);
         g_object_set (cell, "width", nat_width, NULL);
+    } else {
+        g_object_set (cell, "width", 2, NULL);
     }
 
-	/* normal text renderer */
-	cell = nemo_cell_renderer_disk_new ();
-    NEMO_CELL_RENDERER_DISK (cell)->direction = gtk_widget_get_direction (GTK_WIDGET (tree_view));
-	gtk_tree_view_column_pack_start (col, cell, TRUE);
-	g_object_set (G_OBJECT (cell), "editable", FALSE, NULL);
-	gtk_tree_view_column_set_attributes (col, cell,
-					     "text", PLACES_SIDEBAR_COLUMN_NAME,
-					     "visible", PLACES_SIDEBAR_COLUMN_NO_EJECT,
-					     "editable-set", PLACES_SIDEBAR_COLUMN_BOOKMARK,
-                         "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
-                         "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
-					     NULL);
-	g_object_set (cell,
-		      "ellipsize", PANGO_ELLIPSIZE_END,
-		      "ellipsize-set", TRUE,
-		      NULL);
+    expander_pad_column = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new());
+    gtk_tree_view_column_set_sizing (expander_pad_column, GTK_TREE_VIEW_COLUMN_FIXED);
+    gtk_tree_view_column_set_fixed_width (expander_pad_column, EXPANDER_PAD_COLUMN_WIDTH);
 
-	g_signal_connect (cell, "edited",
-			  G_CALLBACK (bookmarks_edited), sidebar);
-	g_signal_connect (cell, "editing-canceled",
-			  G_CALLBACK (bookmarks_editing_canceled), sidebar);
-
-	/* this is required to align the eject buttons to the right */
-	gtk_tree_view_column_set_max_width (GTK_TREE_VIEW_COLUMN (col), NEMO_ICON_SIZE_SMALLER);
-
-    gtk_tree_view_column_set_sizing (expander_pad_col, GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_column_set_fixed_width (expander_pad_col, EXPANDER_PAD_COLUMN_WIDTH);
-
-    gtk_tree_view_column_set_sizing (expander_col, GTK_TREE_VIEW_COLUMN_FIXED);
+    expander_column = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new ());
+    gtk_tree_view_column_set_sizing (expander_column, GTK_TREE_VIEW_COLUMN_FIXED);
 
     gint expander_size;
     gtk_widget_style_get (GTK_WIDGET (tree_view), "expander-size", &expander_size, NULL);
-    gtk_tree_view_column_set_fixed_width (expander_col, expander_size);
+    gtk_tree_view_column_set_fixed_width (expander_column, expander_size);
 
-    gtk_tree_view_column_set_sizing (eject_col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_column_set_min_width (eject_col, EJECT_COLUMN_MIN_WIDTH);
-    gtk_tree_view_column_set_max_width (eject_col, EJECT_COLUMN_MAX_WIDTH);
+    gtk_tree_view_append_column (tree_view, expander_pad_column);
+    gtk_tree_view_append_column (tree_view, expander_column);
+	gtk_tree_view_append_column (tree_view, primary_column);
+    gtk_tree_view_append_column (tree_view, sidebar->eject_column);
 
-    gtk_tree_view_column_set_expand (col, TRUE);
-
-    gtk_tree_view_append_column (tree_view, expander_pad_col);
-    gtk_tree_view_append_column (tree_view, expander_col);
-	gtk_tree_view_append_column (tree_view, col);
-    gtk_tree_view_append_column (tree_view, eject_col);
 
     if (gtk_get_major_version () == 3 && gtk_get_minor_version () >= 16) {
         if (get_overlay_scrolling_enabled ()) {
@@ -4176,11 +4330,9 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
             gtk_tree_view_append_column (tree_view, eject_pad_col);
         }
     }
-
-    gtk_tree_view_set_expander_column (tree_view, expander_col);
+    gtk_tree_view_set_expander_column (tree_view, expander_column);
 
 	sidebar->store = nemo_shortcuts_model_new (sidebar);
-	gtk_tree_view_set_tooltip_column (tree_view, PLACES_SIDEBAR_COLUMN_TOOLTIP);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (sidebar->store),
                                           GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
                                           GTK_SORT_ASCENDING);
@@ -4244,6 +4396,14 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
               G_CALLBACK (row_collapsed_cb), sidebar);
     g_signal_connect (tree_view, "row-activated",
               G_CALLBACK (row_activated_cb), sidebar);
+    g_signal_connect (tree_view, "motion-notify-event",
+              G_CALLBACK (motion_notify_cb), sidebar);
+    g_signal_connect (tree_view, "leave-notify-event",
+              G_CALLBACK (leave_notify_cb), sidebar);
+
+    g_signal_connect_object (GTK_WIDGET (tree_view), "query-tooltip",
+                             G_CALLBACK (query_tooltip_callback), sidebar, 0);
+    gtk_widget_set_has_tooltip (GTK_WIDGET (tree_view), TRUE);
 
 	g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR,
 				  G_CALLBACK(desktop_setting_changed_callback),
@@ -4538,6 +4698,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_BOOLEAN,
 		G_TYPE_STRING,
 		G_TYPE_STRING,
+        G_TYPE_INT,
 		G_TYPE_INT,
 		G_TYPE_STRING,
         G_TYPE_INT,
