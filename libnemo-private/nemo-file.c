@@ -4380,20 +4380,18 @@ is_local_favorite (NemoFile *file)
 gboolean
 nemo_file_should_show_thumbnail (NemoFile *file)
 {
-	GFilesystemPreviewType use_preview;
+    GFilesystemPreviewType use_preview;
     NemoFile *dir = NULL;
     char* metadata_str = NULL;
+
+    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
+        return FALSE;
+    }
 
     if (!NEMO_IS_FILE (file)) {
         return FALSE;
     }
 
-	use_preview = nemo_file_get_filesystem_use_preview (file);
-    if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
-        /* file system says to never thumbnail anything */
-		return FALSE;
-	}
-    
     /* Only care about the file size, if the thumbnail has not been created yet */
 	if (file->details->thumbnail_path == NULL &&
 	    nemo_file_get_size (file) > cached_thumbnail_limit) {
@@ -4462,9 +4460,16 @@ nemo_file_should_show_thumbnail (NemoFile *file)
     if (show_image_thumbs == NEMO_SPEED_TRADEOFF_ALWAYS) {
         return TRUE;
     }
-    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_NEVER) {
-        return FALSE;
-    }
+
+    use_preview = nemo_file_get_filesystem_use_preview (file);
+    if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
+        /* file system says to never thumbnail anything */
+	    return FALSE;
+	}
+
+    if (show_image_thumbs == NEMO_SPEED_TRADEOFF_RECOMMENDED_ONLY)
+        return use_preview == G_FILESYSTEM_PREVIEW_TYPE_IF_ALWAYS ? TRUE : FALSE;
+
     if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL) {
         // favorites:/// can have local and non-local files.
         // we check if each individual file is local (nemo_file_is_local()
@@ -5290,15 +5295,19 @@ get_speed_tradeoff_preference_for_file (NemoFile *file, NemoSpeedTradeoffValue v
 	use_preview = nemo_file_get_filesystem_use_preview (file);
 
 	if (value == NEMO_SPEED_TRADEOFF_ALWAYS) {
-		if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
-			return FALSE;
-		} else {
-			return TRUE;
-		}
+		return TRUE;
+	}
+
+	if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
+		return FALSE;
 	}
 
 	if (value == NEMO_SPEED_TRADEOFF_NEVER) {
 		return FALSE;
+	}
+
+	if (value == NEMO_SPEED_TRADEOFF_RECOMMENDED_ONLY) {
+		return use_preview == G_FILESYSTEM_PREVIEW_TYPE_IF_ALWAYS ? TRUE : FALSE;
 	}
 
 	g_assert (value == NEMO_SPEED_TRADEOFF_LOCAL_ONLY);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 
+<!-- Generated with glade 3.40.0 
 
 Copyright (C) 
 
@@ -362,6 +362,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
     <data>
       <row>
         <col id="0" translatable="yes">Yes</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Recommended Only</col>
       </row>
       <row>
         <col id="0" translatable="yes">Local Files Only</col>
