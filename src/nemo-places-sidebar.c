@@ -162,12 +162,6 @@ typedef struct {
         GObjectClass parent;
 } NemoPlacesSidebarProviderClass;
 
-typedef struct {
-    NemoAction *action;
-    NemoPlacesSidebar *sidebar;
-    GtkWidget *item;
-} ActionPayload;
-
 enum {
 	PLACES_SIDEBAR_COLUMN_ROW_TYPE,
 	PLACES_SIDEBAR_COLUMN_URI,
@@ -271,25 +265,6 @@ G_DEFINE_TYPE_WITH_CODE (NemoShortcutsModel, _nemo_shortcuts_model, GTK_TYPE_TRE
 static GtkTreeStore *nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar);
 
 G_DEFINE_TYPE (NemoPlacesSidebar, nemo_places_sidebar, GTK_TYPE_SCROLLED_WINDOW);
-
-static gint overlay_scrolling_enabled = -1;
-
-static gboolean get_overlay_scrolling_enabled (void)
-{
-    if (overlay_scrolling_enabled > -1) {
-        return overlay_scrolling_enabled == 1;
-    }
-
-    const gchar *val = g_getenv ("GTK_OVERLAY_SCROLLING");
-
-    if (val == NULL || g_strcmp0 (val, "0") == 0) {
-        overlay_scrolling_enabled = 0;
-    } else {
-        overlay_scrolling_enabled = 1;
-    }
-
-    return overlay_scrolling_enabled == 1;
-}
 
 static void
 breakpoint_changed_cb (NemoPlacesSidebar *sidebar)
@@ -4315,21 +4290,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	gtk_tree_view_append_column (tree_view, primary_column);
     gtk_tree_view_append_column (tree_view, sidebar->eject_column);
 
-
-    if (gtk_get_major_version () == 3 && gtk_get_minor_version () >= 16) {
-        if (get_overlay_scrolling_enabled ()) {
-            GtkTreeViewColumn *eject_pad_col;
-
-            eject_pad_col = GTK_TREE_VIEW_COLUMN (gtk_tree_view_column_new());
-            cell = gtk_cell_renderer_text_new ();
-
-            gtk_tree_view_column_pack_start (eject_pad_col, cell, FALSE);
-            gtk_tree_view_column_set_sizing (eject_pad_col, GTK_TREE_VIEW_COLUMN_FIXED);
-            gtk_tree_view_column_set_fixed_width (eject_pad_col, EJECT_PAD_COLUMN_WIDTH);
-
-            gtk_tree_view_append_column (tree_view, eject_pad_col);
-        }
-    }
     gtk_tree_view_set_expander_column (tree_view, expander_column);
 
 	sidebar->store = nemo_shortcuts_model_new (sidebar);
