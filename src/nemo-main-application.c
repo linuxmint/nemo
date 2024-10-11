@@ -445,8 +445,12 @@ open_tabs_in_existing_window (NemoMainApplication *application,
 
             /* Don't use `gtk_window_present()`, as the window manager will ignore this window's focus request and try
              * to just mark it urgent instead (flashing in the window list for example). */
-            gtk_window_present_with_time (GTK_WINDOW (window),
-                                          gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
+            if (eel_check_is_wayland ()) {
+                gtk_window_present (GTK_WINDOW (window));
+            } else {
+                gtk_window_present_with_time (GTK_WINDOW (window),
+                                              gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
+            }
 
           break;
         }
