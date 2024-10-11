@@ -1205,7 +1205,8 @@ nemo_view_preview_files (NemoView *view,
 	uri = nemo_file_get_uri (files->data);
 	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
-	xid = gdk_x11_window_get_xid (gtk_widget_get_window (toplevel));
+    xid = eel_gtk_get_window_xid (GTK_WINDOW (toplevel));
+
 	nemo_previewer_call_show_file (previewer, uri, xid, TRUE);
 
 	g_free (uri);
