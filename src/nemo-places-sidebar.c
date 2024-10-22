@@ -4398,6 +4398,8 @@ nemo_places_sidebar_dispose (GObject *object)
 
 	free_drag_data (sidebar);
 
+    g_clear_handle_id (&sidebar->actions_changed_idle_id, g_source_remove);
+
 	if (sidebar->bookmarks_changed_id != 0) {
 		g_signal_handler_disconnect (sidebar->bookmarks,
 					     sidebar->bookmarks_changed_id);

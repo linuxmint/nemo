@@ -1754,6 +1754,8 @@ fm_tree_view_dispose (GObject *object)
 	
 	view = FM_TREE_VIEW (object);
 	
+    g_clear_handle_id (&view->details->actions_changed_idle_id, g_source_remove);
+
 	if (view->details->selection_changed_timer) {
 		g_source_remove (view->details->selection_changed_timer);
 		view->details->selection_changed_timer = 0;
