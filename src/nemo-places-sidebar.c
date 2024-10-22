@@ -4111,11 +4111,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	GtkTreeSelection  *selection;
 	GtkStyleContext   *style_context;
 
-    gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &menu_icon_pixels, NULL);
-    EJECT_ICON_SIZE_NOT_HOVERED = gtk_icon_size_register ("menu-icon-size-small",
-                                                          menu_icon_pixels - EJECT_ICON_SIZE_REDUCTION,
-                                                          menu_icon_pixels - EJECT_ICON_SIZE_REDUCTION);
-
     sidebar->action_manager = nemo_action_manager_new ();
     sidebar->actions_changed_id = g_signal_connect_swapped (sidebar->action_manager,
                                                             "changed",
@@ -4489,6 +4484,11 @@ nemo_places_sidebar_class_init (NemoPlacesSidebarClass *class)
 
 	widget_class->style_set = nemo_places_sidebar_style_set;
 	widget_class->focus = nemo_places_sidebar_focus;
+
+    gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &menu_icon_pixels, NULL);
+    EJECT_ICON_SIZE_NOT_HOVERED = gtk_icon_size_register ("menu-icon-size-small",
+                                                          menu_icon_pixels - EJECT_ICON_SIZE_REDUCTION,
+                                                          menu_icon_pixels - EJECT_ICON_SIZE_REDUCTION);
 }
 
 static gboolean
