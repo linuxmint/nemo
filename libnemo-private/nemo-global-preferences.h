@@ -269,6 +269,7 @@ typedef enum
 #define NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS          "never-queue-file-ops"
 
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
+#define NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL       "expand-row-on-dnd-dwell"
 
 #define NEMO_PREFERENCES_SHOW_MIME_MAKE_EXECUTABLE     "enable-mime-actions-make-executable"
 #define NEMO_PREFERENCES_DEFERRED_ATTR_PRELOAD_LIMIT   "deferred-attribute-preload-limit"

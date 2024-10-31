@@ -114,6 +114,7 @@
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_SKIP_FILE_OP_QUEUE_WIDGET "skip_file_op_queue_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET "click_double_parent_folder_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL_WIDGET "expand_row_on_dnd_dwell_checkbutton"
 
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
@@ -1099,6 +1100,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET,
                        NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL_WIDGET,
+                       NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL);
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);

@@ -97,6 +97,10 @@
       <summary>Enables renaming of icons by two times clicking with pause between clicks</summary>
       <description>If set to true, then icons in all Nemo windows will be able to get renamed quickly. Users should click two times on icons with a pause time more than double-click time of their system.</description>
     </key>
+    <key name="expand-row-on-dnd-dwell" type="b">
+      <default>true</default>
+      <summary>During drag-and-drop operations, automatically expand rows when hovering them briefly</summary>
+    </key>
     <key name="show-location-entry" type="b">
       <default>false</default>
       <summary>Show the location entry by default</summary>

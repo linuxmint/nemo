@@ -34,6 +34,7 @@
 
 #include "nemo-file-dnd.h"
 #include "nemo-file-changes-queue.h"
+#include "nemo-global-preferences.h"
 #include "nemo-icon-dnd.h"
 #include "nemo-link.h"
 
@@ -522,14 +523,16 @@ drag_motion_callback (GtkWidget *widget,
 		    gtk_tree_path_compare (old_drop_path, drop_path) != 0)) {
 			remove_expand_timeout (dest);
 		}
-		if (dest->details->expand_id == 0 && drop_path != NULL) {
-			gtk_tree_model_get_iter (model, &drop_iter, drop_path);
-			if (gtk_tree_model_iter_has_child (model, &drop_iter)) {
-				dest->details->expand_id = g_timeout_add_seconds (HOVER_EXPAND_TIMEOUT,
-									  expand_timeout,
-									  dest);
-			}
-		}
+        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL)) {
+            if (dest->details->expand_id == 0 && drop_path != NULL) {
+                gtk_tree_model_get_iter (model, &drop_iter, drop_path);
+                if (gtk_tree_model_iter_has_child (model, &drop_iter)) {
+                    dest->details->expand_id = g_timeout_add_seconds (HOVER_EXPAND_TIMEOUT,
+                                                                      expand_timeout,
+                                                                      dest);
+                }
+            }
+        }
 	} else {
 		clear_drag_dest_row (dest);
 		remove_expand_timeout (dest);
