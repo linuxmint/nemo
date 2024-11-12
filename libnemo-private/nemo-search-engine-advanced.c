@@ -40,7 +40,9 @@
 #define SNIPPET_EXTEND_SIZE 100
 
 typedef struct {
+    gchar *def_path;
     gchar *exec_format;
+
     gint priority;
     /* future? */
 } SearchHelper;
@@ -91,6 +93,7 @@ static GHashTable *search_helpers = NULL;
 static void
 search_helper_free (SearchHelper *helper)
 {
+    g_free (helper->def_path);
     g_free (helper->exec_format);
     g_free (helper);
 }
@@ -214,13 +217,16 @@ process_search_helper_file (const gchar *path)
 
         existing = g_hash_table_lookup (search_helpers, mime_type);
         if (existing && existing->priority > priority) {
-            DEBUG ("Existing nemo search_helper for '%s' has higher priority than a new one (%s), ignoring the new one.", mime_type, path);
+            DEBUG ("Existing nemo search_helper for '%s' (%s) has higher priority than a new one (%s), ignoring the new one.",
+                   mime_type, existing->def_path, path);
             continue;
         } else if (existing) {
-            DEBUG ("Replacing existing nemo search_helper for '%s' with %s based on priority.", mime_type, path);
+            DEBUG ("Replacing existing nemo search_helper for '%s' (%s) with %s based on priority.",
+                   mime_type, existing->def_path, path);
         }
 
         helper = g_new0 (SearchHelper, 1);
+        helper->def_path = g_strdup (path);
         helper->exec_format = g_strdup (exec_format);
         helper->priority = priority;
 
@@ -272,7 +278,6 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
             }
 
             file_path = g_build_filename (path, filename, NULL);
-            DEBUG ("Processing '%s'", path);
             process_search_helper_file (file_path);
             g_free (file_path);
         }
