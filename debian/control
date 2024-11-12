@@ -94,7 +94,6 @@ Depends:
  poppler-utils,
  exif,
  id3,
- odt2txt,
  catdoc,
  untex,
  html2text,

@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+import sys
+import zipfile
+from pathlib import Path
+from html.parser import HTMLParser
+
+class Parser(HTMLParser):
+    parsed = []
+    get_next_data = False
+    concat_next_data = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag.startswith("text") or tag.startswith("meta"):
+            if tag == "text:s":
+                self.concat_next_data = True
+            self.get_next_data = True
+
+    def handle_endtag(self, tag):
+        pass
+
+    def handle_data(self, data):
+        if self.get_next_data:
+            if data != "\n":
+                if self.concat_next_data:
+                    self.parsed[-1] += " " + data
+                    self.concat_next_data = False
+                else:
+                    self.parsed.append(data.strip())
+                self.get_next_data = False
+
+path = sys.argv[1]
+
+parser = Parser()
+zipfile = zipfile.ZipFile(path)
+files = zipfile.infolist()
+
+for f in files:
+    if f.filename in ("meta.xml", "content.xml"):
+        contents = zipfile.read(f.filename).decode()
+        parser.feed(contents)
+        if len(parser.parsed) == 0:
+            continue
+
+        out_str = ", ".join(parser.parsed)
+        print(f"{Path(f.filename).stem}: {out_str}\n", flush=True, file=sys.stdout)
+        parser.parsed = []
+exit(0)
