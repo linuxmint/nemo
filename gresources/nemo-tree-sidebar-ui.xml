@@ -21,5 +21,6 @@
     <menuitem name="Unmount" action="Unmount Volume"/>
     <menuitem name="Eject" action="Eject Volume"/>
     <separator name="PropertiesSeparator"/>
+    <menuitem name="Properties" action="Properties"/>
 </popup>
 </ui>
