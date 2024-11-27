@@ -32,10 +32,10 @@ class Main:
                             print("merge_action_strings - Failed to load .mo file: %s" % (os.path.join(root, file)))
 
         if len(self.mo_files) > 0:
-            for locale in self.mo_files.keys():
+            for locale in sorted(self.mo_files.keys()):
                 for entry in self.mo_files[locale]:
                     self.check_name(locale, entry)
-            for locale in self.mo_files.keys():
+            for locale in sorted(self.mo_files.keys()):
                 for entry in self.mo_files[locale]:
                     self.check_comment(locale, entry)
 
