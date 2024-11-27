@@ -915,12 +915,13 @@ class NemoActionsOrganizer(Gtk.Box):
         # Check nemo's built-ins (copy, paste, etc...)
         for shortcut in self.builtin_shortcuts:
             if shortcut.key == key and shortcut.mods == mods:
+                label = f"<b>{shortcut.label}</b>"
                 dialog = Gtk.MessageDialog(
                     transient_for=self.main_window,
                     modal=True,
                     message_type=Gtk.MessageType.ERROR,
                     buttons=Gtk.ButtonsType.OK,
-                    text=_("This key combination is already in use by Nemo (<b>%s</b>). It cannot be changed.") % shortcut.label,
+                    text=_("This key combination is already in use by Nemo (%s). It cannot be changed.") % label,
                     use_markup=True
                 )
                 dialog.run()
@@ -941,14 +942,14 @@ class NemoActionsOrganizer(Gtk.Box):
                 if accel_string is not None:
                     row_key, row_mod = Gtk.accelerator_parse(accel_string)
                     if row_key == key and row_mod == mods:
+                        label = f"\n\n<b>{row.get_label()}</b>\n\n"
                         dialog = Gtk.MessageDialog(
                             transient_for=self.main_window,
                             modal=True,
                             message_type=Gtk.MessageType.WARNING,
                             buttons=Gtk.ButtonsType.YES_NO,
-                            text=_("This key combination is already in use by another action:"
-                                   "\n\n<b>%s</b>\n\n"
-                                   "Do you want to replace it?") % row.get_label(),
+                            text=_("This key combination is already in use by another action:") + 
+                                   label + _("Do you want to replace it?"),
                             use_markup=True
                         )
                         resp = dialog.run()
