@@ -23,7 +23,7 @@ class Main:
 '''
                 """
             outstring += "\n"
-            for fn in action_files:
+            for fn in sorted(action_files):
                 keyfile = GLib.KeyFile.new()
                 if keyfile.load_from_file(fn, GLib.KeyFileFlags.NONE):
                     if keyfile.has_group(GROUP):
