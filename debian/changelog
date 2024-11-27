@@ -1,3 +1,41 @@
+nemo (6.4.0) xia; urgency=medium
+
+  [ Michael Webster ]
+  * Fix blocking when listing or entering a network location with an inaccessible host.
+  * Remove obsolete libxml dependency.
+  * NemoAction: Add support for keyboard shortcuts.
+  * layout editor: Add support for accelerator keys.
+  * Clean up gresource file.
+  * makepot: Fix some warnings
+  * places sidebar: Improve eject icon behavior.
+  * places-sidebar: Remove some obsolete code.
+  * Guard against gdkx11 calls in a Wayland session.
+  * nemo-places-sidebar.c: Only register the special eject icon size once.
+  * actions: Cancel action update idle callbacks during dispose for non-NemoView types.
+  * Add setting to disable auto-expanding of treeview rows during drag-and-drop operations.
+
+  [ Rick Calixte ]
+  * action_i18n_strings.py & add-desklets.nemo_action.in: Fix spelling error (#3430)
+
+  [ Michael Webster ]
+  * search: Replace third-party OpenDocument search helper.
+  * search: Improve logging when loading search helpers.
+
+  [ patlefort ]
+  * tree-sidebar: Add missing properties menu item. (#3476)
+
+  [ Clement Lefebvre ]
+  * extract_action_strings: Don't use datetime
+  * extract_action_strings: Sort files
+  * makepot: Fix sorting and moved filename
+  * nemo_action_layout_editor.py: Fix non-initialized variable
+  * l10n: Avoid use of pango tags in msgids
+  * l10n: Update POT
+  * nemo-actions/merge_action_strings: Sort by locale
+  * l10n: generate additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 27 Nov 2024 11:30:53 +0000
+
 nemo (6.2.8) wilma; urgency=medium
 
   [ Michael Webster ]
