@@ -116,7 +116,7 @@ class Row():
             except KeyError:
                 pass
 
-        return None if accel_string == "" else None
+        return None
 
     def set_custom_label(self, label):
         if not self.row_meta:
