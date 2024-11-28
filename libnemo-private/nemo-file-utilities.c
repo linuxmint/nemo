@@ -1106,7 +1106,7 @@ nemo_inhibit_power_manager (const char *message)
 					      GSM_INTERFACE,
 					      "Inhibit",
 					      g_variant_new ("(susu)",
-							     "Nemo",
+							     "nemo",
 							     (guint) 0,
 							     message,
 							     (guint) (INHIBIT_LOGOUT | INHIBIT_SUSPEND)),
