@@ -34,7 +34,6 @@
 #include "nemo-link.h"
 #include <eel/eel-glib-extensions.h>
 #include <gtk/gtk.h>
-#include <libxml/parser.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <libxapp/xapp-favorites.h>
