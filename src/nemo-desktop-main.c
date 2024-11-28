@@ -39,8 +39,6 @@
 #include <gtk/gtk.h>
 #include <gio/gdesktopappinfo.h>
 
-#include <libxml/parser.h>
-
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif

@@ -63,7 +63,6 @@
 #include <libnemo-extension/nemo-file-info.h>
 #include <libnemo-extension/nemo-extension-private.h>
 #include <libxapp/xapp-favorites.h>
-#include <libxml/parser.h>
 #include <pwd.h>
 #include <stdlib.h>
 #include <sys/time.h>
