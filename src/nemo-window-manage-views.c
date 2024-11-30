@@ -283,11 +283,14 @@ viewed_file_changed_callback (NemoFile *file,
     /* Close window if the file it's viewing has been deleted or moved to trash. */
     if (nemo_file_is_gone (file) || (is_in_trash && !was_in_trash)) {
         NemoFile *parent;
-        gboolean parent_is_desktop;
+        gboolean parent_is_desktop = FALSE;
 
         parent = nemo_file_get_parent (file);
-        parent_is_desktop = nemo_file_is_desktop_directory (parent);
-        nemo_file_unref (parent);
+
+        if (parent != NULL) {
+            parent_is_desktop = nemo_file_is_desktop_directory (parent);
+            nemo_file_unref (parent);
+        }
 
         if (slot->back_list == NULL && parent_is_desktop) {
             end_location_change (slot);
