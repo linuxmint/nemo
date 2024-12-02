@@ -1,3 +1,13 @@
+nemo (6.4.1) xia; urgency=medium
+
+  [ Michael Webster ]
+  * Fix inhibit name so nemo's desktop file is discovered by cinnamon- session for the logout dialog.
+
+  [ Bobby Rong ]
+  * Remove unused libxml headers. (#3490)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 02 Dec 2024 16:44:26 +0000
+
 nemo (6.4.0) xia; urgency=medium
 
   [ Michael Webster ]
