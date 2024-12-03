@@ -1,3 +1,10 @@
+nemo (6.4.2) xia; urgency=medium
+
+  [ ltsdw ]
+  * nemo-window-manage-views: fix null pointer dereference (#3492)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 03 Dec 2024 10:14:00 +0000
+
 nemo (6.4.1) xia; urgency=medium
 
   [ Michael Webster ]
