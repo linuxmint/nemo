@@ -50,7 +50,6 @@
 		<separator/>
 		<placeholder name="Extension Actions"/>
 		<separator/>
-        <menuitem name="Plugins" action="NemoPluginManager"/>
 		<menuitem name="Preferences" action="Preferences"/>
 	</menu>
 	<menu action="View">
@@ -64,7 +63,12 @@
 				<separator/>
 				<menuitem name="Show Hide Sidebar" action="Show Hide Sidebar"/>
 			</menu>
-			<menuitem name="Show Hide Toolbar" action="Show Hide Toolbar"/>
+            <menu action="Toolbar List">
+                <menuitem name="Toolbar Show Pathbar" action="Toolbar Always Show Pathbar"/>
+                <menuitem name="Toolbar Show Entry" action="Toolbar Always Show Entry"/>
+                <separator/>
+                <menuitem name="Show Hide Toolbar" action="Show Hide Toolbar"/>
+            </menu>
             <menuitem name="Show Hide Menubar" action="Show Hide Menubar"/>
 			<menuitem name="Show Hide Statusbar" action="Show Hide Statusbar"/>
             <separator/>

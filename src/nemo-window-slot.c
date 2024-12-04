@@ -32,6 +32,7 @@
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-window-types.h"
+#include "nemo-window-slot-dnd.h"
 
 #include <glib/gi18n.h>
 
@@ -616,6 +617,7 @@ nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
 
   directory = nemo_directory_get (slot->location);
   nemo_directory_set_show_thumbnails(directory, show_thumbnails);
+  nemo_directory_unref (directory);
 }
 
 void
@@ -629,7 +631,7 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
-		g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+        g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
 
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
@@ -708,7 +710,7 @@ set_status_data_free (gpointer data)
 
 	g_free (status_data->status);
 
-	g_slice_free (SetStatusData, data);
+	g_free (data);
 }
 
 static gboolean
@@ -740,7 +742,7 @@ set_floating_bar_status (NemoWindowSlot *slot,
 		      "gtk-double-click-time", &double_click_time,
 		      NULL);
 
-	status_data = g_slice_new0 (SetStatusData);
+	status_data = g_new0 (SetStatusData, 1);
 	status_data->status = g_strdup (status);
 	status_data->slot = slot;
 
@@ -758,8 +760,9 @@ set_floating_bar_status (NemoWindowSlot *slot,
 
 void
 nemo_window_slot_set_status (NemoWindowSlot *slot,
-				 const char *status,
-				 const char *short_status)
+                             const char *status,
+                             const char *short_status,
+                             gboolean    location_loading)
 {
 	NemoWindow *window;
 
@@ -768,7 +771,7 @@ nemo_window_slot_set_status (NemoWindowSlot *slot,
 	g_free (slot->status_text);
 	slot->status_text = g_strdup (status);
 
-	if (slot->content_view != NULL) {
+	if (slot->content_view != NULL && !location_loading) {
 		set_floating_bar_status (slot, short_status);
 	}
 

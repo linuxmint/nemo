@@ -93,7 +93,7 @@ struct _NemoTreeViewDragDestClass {
 };
 
 GType                     nemo_tree_view_drag_dest_get_type (void);
-NemoTreeViewDragDest *nemo_tree_view_drag_dest_new      (GtkTreeView *tree_view);
+NemoTreeViewDragDest *nemo_tree_view_drag_dest_new      (GtkTreeView *tree_view, gboolean strict_drop);
 
 G_END_DECLS
 

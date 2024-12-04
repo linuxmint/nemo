@@ -409,7 +409,7 @@ get_link_name (const char *name, int count, int max_length)
 		 */
 		switch (count % 10) {
 		case 1:
-			/* Localizers: Feel free to leave out the "st" suffix
+			/* Localizers: Feel free to leave out the "st" suffix                                 codespell:ignore
 			 * if there's no way to do that nicely for a
 			 * particular language.
 			 */
@@ -459,7 +459,7 @@ get_link_name (const char *name, int count, int max_length)
 
 
 /* Localizers:
- * Feel free to leave out the st, nd, rd and th suffix or
+ * Feel free to leave out the st, nd, rd and th suffix or                codespell:ignore
  * make some or all of them match.
  */
 
@@ -826,15 +826,22 @@ custom_basename_to_string (char *format, va_list va)
 		g_object_unref (info);
 	}
 
-	if (name == NULL) {
-		basename = g_file_get_basename (file);
-		if (g_utf8_validate (basename, -1, NULL)) {
-			name = basename;
-		} else {
-			name = g_uri_escape_string (basename, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-			g_free (basename);
-		}
-	}
+    if (name == NULL) {
+        basename = g_file_get_basename (file);
+
+        if (basename != NULL) {
+            if (g_utf8_validate (basename, -1, NULL)) {
+                name = basename;
+            } else {
+                name = g_uri_escape_string (basename, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+                g_free (basename);
+            }
+        }
+    }
+
+    if (name == NULL) {
+        name = g_file_get_parse_name (file);
+    }
 
 	/* Some chars can't be put in the markup we use for the dialogs... */
 	if (has_invalid_xml_char (name)) {
@@ -954,6 +961,10 @@ get_best_name (GFile *file, gchar **name)
         g_free (path);
     } else {
         out = g_file_get_basename (file);
+
+        if (out == NULL) {
+            out = g_file_get_parse_name (file);
+        }
     }
 
     *name = out;
@@ -4230,7 +4241,7 @@ is_trusted_desktop_file (GFile *file,
 	}
 
 	basename = g_file_get_basename (file);
-	if (!g_str_has_suffix (basename, ".desktop")) {
+	if (basename && !g_str_has_suffix (basename, ".desktop")) {
 		g_free (basename);
 		return FALSE;
 	}
@@ -4317,13 +4328,13 @@ run_conflict_dialog (CommonJob *job,
 
 	g_timer_stop (job->time);
 
-	data = g_slice_new0 (ConflictDialogData);
+	data = g_new0 (ConflictDialogData, 1);
 	data->parent = job->parent_window;
 	data->src = src;
 	data->dest = dest;
 	data->dest_dir = dest_dir;
 
-	resp_data = g_slice_new0 (ConflictResponseData);
+	resp_data = g_new0 (ConflictResponseData, 1);
 	resp_data->new_name = NULL;
 	data->resp_data = resp_data;
 
@@ -4334,7 +4345,7 @@ run_conflict_dialog (CommonJob *job,
 					     NULL);
 	nemo_progress_info_resume (job->progress);
 
-	g_slice_free (ConflictDialogData, data);
+	g_free (data);
 
 	g_timer_continue (job->time);
 
@@ -4345,7 +4356,7 @@ static void
 conflict_response_data_free (ConflictResponseData *data)
 {
 	g_free (data->new_name);
-	g_slice_free (ConflictResponseData, data);
+	g_free (data);
 }
 
 static GFile *
@@ -5146,6 +5157,7 @@ move_file_prepare (CopyMoveJob *move_job,
 	MoveFileCopyFallback *fallback;
 	gboolean handled_invalid_filename;
     gboolean target_is_desktop, source_is_desktop;
+	int unique_name_nr = 1;
 
     target_is_desktop = (move_job->desktop_location != NULL &&
                          g_file_equal (move_job->desktop_location, dest_dir));
@@ -5289,7 +5301,7 @@ move_file_prepare (CopyMoveJob *move_job,
 
 		if (job->auto_rename_all || auto_rename) {
 			g_object_unref (dest);
-			dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, 1);
+			dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, unique_name_nr++);
 			goto retry;
 		}
 
@@ -6199,7 +6211,7 @@ callback_for_move_to_trash (GHashTable *debuting_uris,
 {
 	if (data->real_callback)
 		data->real_callback (debuting_uris, !user_cancelled, data->real_data);
-	g_slice_free (MoveTrashCBData, data);
+	g_free (data);
 }
 
 void
@@ -6274,7 +6286,7 @@ nemo_file_operations_copy_move (const GList *item_uris,
 		if (g_file_has_uri_scheme (dest, "trash")) {
 			MoveTrashCBData *cb_data;
 
-			cb_data = g_slice_new0 (MoveTrashCBData);
+			cb_data = g_new0 (MoveTrashCBData, 1);
 			cb_data->real_callback = done_callback;
 			cb_data->real_data = done_callback_data;
 

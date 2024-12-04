@@ -39,8 +39,6 @@
 #include <gtk/gtk.h>
 #include <gio/gdesktopappinfo.h>
 
-#include <libxml/parser.h>
-
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -53,6 +51,10 @@
 
 #ifdef HAVE_EXEMPI
 #include <exempi/xmp.h>
+#endif
+
+#ifdef HAVE_GTK_LAYER_SHELL
+#include <gtk-layer-shell/gtk-layer-shell.h>
 #endif
 
 int

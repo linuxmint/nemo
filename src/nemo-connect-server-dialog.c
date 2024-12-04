@@ -201,7 +201,7 @@ connect_dialog_gvfs_error (NemoConnectServerDialog *dialog)
 	gtk_container_add (GTK_CONTAINER (content_area), hbox);
 	gtk_widget_show (hbox);
 
-	image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_SMALL_TOOLBAR);
+	image = gtk_image_new_from_icon_name ("dialog-error-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 6);
 	gtk_widget_show (image);
 
@@ -253,9 +253,9 @@ iconize_entry (NemoConnectServerDialog *dialog,
 		dialog->details->iconized_entries =
 			g_list_prepend (dialog->details->iconized_entries, entry);
 
-		gtk_entry_set_icon_from_stock (GTK_ENTRY (entry),
-					       GTK_ENTRY_ICON_SECONDARY,
-					       GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry),
+					                       GTK_ENTRY_ICON_SECONDARY,
+					                       "dialog-warning-symbolic");
 
 		gtk_widget_grab_focus (entry);
 
@@ -313,7 +313,7 @@ connect_dialog_set_info_bar_error (NemoConnectServerDialog *dialog,
 	gtk_box_pack_start (GTK_BOX (content_area), hbox, FALSE, FALSE, 6);
 	gtk_widget_show (hbox);
 
-	icon = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
+	icon = gtk_image_new_from_icon_name ("dialog-warning-symbolic",
 					 GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), icon, FALSE, FALSE, 6);
 	gtk_widget_show (icon);
@@ -388,7 +388,7 @@ connect_dialog_request_additional_details (NemoConnectServerDialog *self,
 	gtk_box_pack_start (GTK_BOX (content_area), hbox, FALSE, FALSE, 6);
 	gtk_widget_show (hbox);
 
-	icon = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
+	icon = gtk_image_new_from_icon_name ("dialog-warning-symbolic",
 					 GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), icon, FALSE, FALSE, 6);
 	gtk_widget_show (icon);
@@ -1088,7 +1088,7 @@ nemo_connect_server_dialog_init (NemoConnectServerDialog *dialog)
 	bind_visibility (dialog, dialog->details->password_entry, checkbox);
 
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
-			       GTK_STOCK_CANCEL,
+			       "_Cancel",
 			       GTK_RESPONSE_CANCEL);
 	connect_button = gtk_dialog_add_button (GTK_DIALOG (dialog),
 						_("C_onnect"),

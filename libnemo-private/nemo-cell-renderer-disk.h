@@ -45,6 +45,7 @@ struct _NemoCellRendererDisk {
 	GtkCellRendererText parent;
     gint disk_full_percent;
     gboolean show_disk_full_percent;
+    GtkTextDirection direction;
 };
 
 struct _NemoCellRendererDiskClass {

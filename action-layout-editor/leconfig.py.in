@@ -1,0 +1,6 @@
+# Generated file - DO NOT EDIT.  Edit config.py.in instead.
+
+LOCALE_DIR=@LOCALE_DIR@
+PACKAGE=@PACKAGE@
+VERSION=@VERSION@
+PKG_DATADIR=@PKG_DATADIR@

@@ -1,6 +1,6 @@
 dbusBuiltSources = gnome.gdbus_codegen(
   'nemo-freedesktop-generated',
-  join_paths(meson.source_root(), 'data', 'freedesktop-dbus-interfaces.xml'),
+  join_paths(meson.project_source_root(), 'data', 'freedesktop-dbus-interfaces.xml'),
   interface_prefix: 'org.freedesktop.',
   namespace: 'NemoFreedesktop',
   object_manager: true
@@ -8,7 +8,7 @@ dbusBuiltSources = gnome.gdbus_codegen(
 
 nemoBuiltSources = gnome.gdbus_codegen(
   'nemo-cinnamon-dbus',
-  join_paths(meson.source_root(), 'data', 'org.Cinnamon.xml'),
+  join_paths(meson.project_source_root(), 'data', 'org.Cinnamon.xml'),
   interface_prefix: 'org.',
   namespace: 'Nemo',
   object_manager: true
@@ -102,7 +102,7 @@ if enableEmptyView
   nemoCommon_sources += 'nemo-empty-view.c'
 endif
 
-nemo_deps = [ cinnamon, gail, glib, gtk, libxml, math, x11,
+nemo_deps = [ cinnamon, gail, glib, gtk, math,
   egg, nemo_extension, nemo_private, xapp ]
 
 if exempi_enabled
@@ -159,15 +159,6 @@ nemo_open_with = executable('nemo-open-with',
 )
 
 # LibExecs
-nemo_convert_metadata = executable('nemo-convert-metadata',
-  [ 'nemo-convert-metadata.c' ],
-  include_directories: [ rootInclude, ],
-  c_args: nemo_definitions,
-  dependencies: nemo_deps,
-  install: true,
-  install_dir: libExecPath,
-)
-
 nemo_extensions_list = executable('nemo-extensions-list',
   [ 'nemo-extensions-list.c' ],
   include_directories: [ rootInclude, ],

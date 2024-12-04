@@ -234,7 +234,7 @@ get_simple_text (gpointer object)
 
 	aif = EEL_ACCESSIBLE_TEXT_GET_IFACE (gobject);
 	if (!aif) {
-		g_warning ("No accessible text inferface on '%s'",
+		g_warning ("No accessible text interface on '%s'",
 			   g_type_name_from_instance ((gpointer) gobject));
 
 	} else if (aif->get_text) {

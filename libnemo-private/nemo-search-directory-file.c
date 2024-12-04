@@ -164,6 +164,14 @@ search_directory_file_get_where_string (NemoFile *file)
 	return g_strdup (_("Search"));
 }
 
+static gboolean
+search_directory_get_date (NemoFile     *file,
+                           NemoDateType  date_type,
+                           time_t       *date)
+{
+    return FALSE;
+}
+
 void
 nemo_search_directory_file_update_display_name (NemoSearchDirectoryFile *search_file)
 {
@@ -206,7 +214,7 @@ nemo_search_directory_file_init (NemoSearchDirectoryFile *search_file)
 	file = NEMO_FILE (search_file);
 
 	file->details->got_file_info = TRUE;
-	file->details->mime_type = eel_ref_str_get_unique ("x-directory/normal");
+	file->details->mime_type = g_ref_string_new_intern ("x-directory/normal");
 	file->details->type = G_FILE_TYPE_DIRECTORY;
 	file->details->size = 0;
 
@@ -241,4 +249,5 @@ nemo_search_directory_file_class_init (NemoSearchDirectoryFileClass *klass)
 	file_class->get_item_count = search_directory_file_get_item_count;
 	file_class->get_deep_counts = search_directory_file_get_deep_counts;
 	file_class->get_where_string = search_directory_file_get_where_string;
+    file_class->get_date = search_directory_get_date;
 }

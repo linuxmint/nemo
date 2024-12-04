@@ -182,6 +182,7 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 
 	/* Make it easier for themes authors to style the desktop window separately */
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
+    gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DESKTOP);
 }
 
 NemoDesktopWindow *
@@ -245,19 +246,6 @@ unrealize (GtkWidget *widget)
 }
 
 static void
-set_wmspec_desktop_hint (GdkWindow *window)
-{
-	GdkAtom atom;
-
-	atom = gdk_atom_intern ("_NET_WM_WINDOW_TYPE_DESKTOP", FALSE);
-        
-	gdk_property_change (window,
-			     gdk_atom_intern ("_NET_WM_WINDOW_TYPE", FALSE),
-			     gdk_x11_xatom_to_atom (XA_ATOM), 32,
-			     GDK_PROP_MODE_REPLACE, (guchar *) &atom, 1);
-}
-
-static void
 realize (GtkWidget *widget)
 {
     GdkVisual *visual;
@@ -273,9 +261,6 @@ realize (GtkWidget *widget)
 
 	/* Do the work of realizing. */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->realize (widget);
-
-	/* This is the new way to set up the desktop window */
-	set_wmspec_desktop_hint (gtk_widget_get_window (widget));
 }
 
 static NemoIconInfo *

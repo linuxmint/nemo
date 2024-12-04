@@ -31,12 +31,16 @@
 
 #include "eel-glib-extensions.h"
 #include "eel-gnome-extensions.h"
+#include "eel-gdk-extensions.h"
 #include "eel-string.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkprivate.h>
+#ifdef GDK_WINDOWING_WAYLAND
+#include <gdk/gdkwayland.h>
+#endif
 #include <gtk/gtk.h>
 #include <glib/gi18n-lib.h>
 #include <math.h>
@@ -247,53 +251,79 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 	eel_gtk_window_set_initial_geometry (window, geometry_flags, left, top, width, height);
 }
 
+gboolean
+eel_check_is_wayland (void)
+{
+    static gboolean using_wayland = FALSE;
+#ifdef GDK_WINDOWING_WAYLAND
+    static gsize once_init = 0;
+
+    if (g_once_init_enter (&once_init)) {
+        using_wayland = GDK_IS_WAYLAND_DISPLAY (gdk_display_get_default ());
+
+        g_once_init_leave (&once_init, 1);
+    }
+#endif
+    return using_wayland;
+}
+
+static void
+create_popup_rect (GdkWindow *window, GdkRectangle *rect)
+{
+    GdkSeat *seat;
+    GdkDevice *device;
+
+    seat = gdk_display_get_default_seat (gdk_display_get_default ());
+
+    if (seat != NULL) {
+        device = gdk_seat_get_pointer (seat);
+
+        if (device != NULL) {
+            gint x, y;
+
+            gdk_window_get_device_position (window, device, &x, &y, NULL);
+            rect->x = x;
+            rect->y = y;
+            rect->width = 2;
+            rect->height = 2;
+        }
+    }
+}
+
 /**
  * eel_pop_up_context_menu:
  *
  * Pop up a context menu under the mouse.
  * The menu is sunk after use, so it will be destroyed unless the
  * caller first ref'ed it.
- *
- * This function is more of a helper function than a gtk extension,
- * so perhaps it belongs in a different file.
- *
- * @menu: The menu to pop up under the mouse.
- * @offset_x: Ignored.
- * @offset_y: Ignored.
- * @event: The event that invoked this popup menu, or #NULL if there
- * is no event available.  This is used to get the timestamp for the menu's popup.
- * In case no event is provided, gtk_get_current_event_time() will be used automatically.
  **/
 void
-eel_pop_up_context_menu (GtkMenu *menu,
-			 GdkEventButton *event)
+eel_pop_up_context_menu (GtkMenu        *menu,
+                         GdkEvent       *event,
+                         GtkWidget      *widget)
 {
-	int button;
+    g_return_if_fail (GTK_IS_MENU (menu));
 
-	g_return_if_fail (GTK_IS_MENU (menu));
+    // Using gtk_menu_popup_at_rect exclusively in wayland seems to avoid the problem
+    // of being unable to dismiss the menu when clicking to the left of it. See:
+    // https://github.com/linuxmint/nemo/issues/3218
 
-	/* The event button needs to be 0 if we're popping up this menu from
-	 * a button release, else a 2nd click outside the menu with any button
-	 * other than the one that invoked the menu will be ignored (instead
-	 * of dismissing the menu). This is a subtle fragility of the GTK menu code.
-	 */
+#ifdef GDK_WINDOWING_X11
+    if (!eel_check_is_wayland () && event && event->type == GDK_BUTTON_PRESS) {
+        gtk_menu_popup_at_pointer (menu, event);
+    } else
+#endif
+    {
+        GdkWindow *window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
 
-	if (event) {
-		button = event->type == GDK_BUTTON_RELEASE ? 0 : event->button;
-	} else {
-		button = 0;
-	}
-
-    if (button > 0) {
-        gtk_menu_popup_at_pointer (menu, (GdkEvent *) event);
-    } else {
-        gtk_menu_popup (menu,                   /* menu */
-                        NULL,                   /* parent_menu_shell */
-                        NULL,                   /* parent_menu_item */
-                        NULL,                   /* popup_position_func */
-                        NULL,                   /* popup_position_data */
-                        button,                 /* button */
-                        event ? event->time : gtk_get_current_event_time ()); /* activate_time */
+        GdkRectangle rect;
+        create_popup_rect (window, &rect);
+        gtk_menu_popup_at_rect (menu,
+                                window,
+                                &rect,
+                                GDK_GRAVITY_NORTH_WEST,
+                                GDK_GRAVITY_NORTH_WEST,
+                                NULL);
     }
 
 	g_object_ref_sink (menu);
@@ -345,8 +375,73 @@ eel_gtk_get_window_xid (GtkWindow *window)
 {
     g_return_val_if_fail (GTK_IS_WINDOW (window), 0);
 
+    if (eel_check_is_wayland ()) {
+        g_debug ("eel_gtk_get_window_xid: called on Wayland, returning 0");
+        return 0;
+    }
+
     GdkWindow *gdkw = gtk_widget_get_window (GTK_WIDGET (window));
     g_return_val_if_fail (GDK_IS_X11_WINDOW (gdkw), 0);
 
     return gdk_x11_window_get_xid (gdkw);
+}
+
+gboolean
+eel_gtk_get_treeview_pointer_location (GtkTreeView *treeview,
+                               gint *x, gint *y)
+{
+    GdkWindow *bin_window;
+
+    gint out_x, out_y;
+
+    *x = *y = 0;
+
+    bin_window = gtk_tree_view_get_bin_window (treeview);
+
+    if (bin_window != NULL) {
+        GdkDevice *device = eel_gdk_get_pointer_device ();
+        if (device != NULL) {
+            gdk_window_get_device_position (bin_window, device, &out_x, &out_y, NULL);
+
+            *x = out_x;
+            *y = out_y;
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+gboolean
+eel_gtk_get_treeview_row_text_is_under_pointer (GtkTreeView *tree_view)
+{
+    gint x, y;
+
+    if (eel_gtk_get_treeview_pointer_location (tree_view, &x, &y)) {
+        GdkRectangle area;
+        GtkTreePath *path;
+        GtkTreeViewColumn *column;
+
+        // A positive is_blank_at_pos is a reliable result.
+        if (gtk_tree_view_is_blank_at_pos (tree_view, x, y, &path, &column, NULL, NULL)) {
+            return FALSE;
+        }
+
+        // If not, there's an additional check to do, as the small gap (1px?) between rows
+        // can cause is_blank_at_pos to incorrectly return FALSE when that's not actually the case.
+        // Make sure the pointer position is actually inside the cell's bounds, and ignore edge
+        // events.
+        gtk_tree_view_get_cell_area (tree_view, path, column, &area);
+        if (x > area.x && x < area.x + area.width &&
+            y > area.y && y < area.y + area.height) {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    // If we can't figure out the location, we need to default to allowing the operation. The highlighting will
+    // be accurate, so the user knows.
+    return TRUE;
 }

@@ -2,7 +2,7 @@
 
 Name=Add Desklets
 
-Comment=Add Cinamon desklets
+Comment=Add Cinnamon desklets
 
 Exec=cinnamon-settings desklets
 

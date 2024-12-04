@@ -98,6 +98,8 @@ static NemoApplication *singleton = NULL;
 /* The saving of the accelerator map was requested  */
 static gboolean save_of_accel_map_requested = FALSE;
 
+static GtkCssProvider *mandatory_css_provider = NULL;
+
 static gboolean
 css_provider_load_from_resource (GtkCssProvider *provider,
                      const char     *resource_path,
@@ -168,7 +170,7 @@ out:
 static void
 add_fallback_mandatory_css_provider (const gchar *theme_name)
 {
-    GtkCssProvider *current_provider, *fallback_provider;
+    GtkCssProvider *current_provider;
     gchar *css, *init_fallback_css, *final_fallback_css;
     GError *error = NULL;
 
@@ -218,9 +220,9 @@ add_fallback_mandatory_css_provider (const gchar *theme_name)
 apply:
     g_free (init_fallback_css);
 
-    fallback_provider = gtk_css_provider_new ();
+    mandatory_css_provider = gtk_css_provider_new ();
 
-    gtk_css_provider_load_from_data (fallback_provider,
+    gtk_css_provider_load_from_data (mandatory_css_provider,
                                      final_fallback_css,
                                      -1,
                                      &error);
@@ -232,9 +234,8 @@ apply:
     }
 
     gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
-                                               GTK_STYLE_PROVIDER (fallback_provider),
+                                               GTK_STYLE_PROVIDER (mandatory_css_provider),
                                                GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    g_object_unref (fallback_provider);
 out:
     g_free (css);
 }
@@ -277,10 +278,31 @@ is_known_supported_theme (const gchar *theme_name)
 }
 
 static void
-init_icons_and_styles (void)
+process_system_theme (GtkSettings *gtk_settings)
 {
     gchar *theme_name;
 
+    if (mandatory_css_provider != NULL) {
+        gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (), GTK_STYLE_PROVIDER (mandatory_css_provider));
+        g_clear_object (&mandatory_css_provider);
+    }
+
+    g_object_get (gtk_settings,
+                  "gtk-theme-name", &theme_name,
+                  NULL);
+
+    if (!is_known_supported_theme (theme_name)) {
+        g_warning ("Current gtk theme is not known to have nemo support (%s) - checking...", theme_name);
+        add_fallback_mandatory_css_provider (theme_name);
+    }
+
+    gtk_style_context_reset_widgets (gdk_screen_get_default ());
+    g_free (theme_name);
+}
+
+static void
+init_icons_and_styles (void)
+{
     /* initialize search path for custom icons */
     gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
                        NEMO_DATADIR G_DIR_SEPARATOR_S "icons");
@@ -295,16 +317,14 @@ init_icons_and_styles (void)
     add_css_provider_at_priority ("/org/nemo/nemo-style-application.css",
                                   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-    g_object_get (gtk_settings_get_default (),
-                  "gtk-theme-name", &theme_name,
-                  NULL);
+    GtkSettings *gtk_settings = gtk_settings_get_default ();
+    /* We create our own 'runtime theme' when we encounter one that doesn't
+     * include nemo support. We must listen for the theme changing so this
+     * customization can be removed (then re-applied only if necessary for the
+     * new theme). */
+    g_signal_connect_swapped (gtk_settings, "notify::gtk-theme-name", G_CALLBACK (process_system_theme), gtk_settings);
 
-    if (!is_known_supported_theme (theme_name)) {
-        g_warning ("Current gtk theme is not known to have nemo support (%s) - checking...", theme_name);
-        add_fallback_mandatory_css_provider (theme_name);
-    }
-
-    g_free (theme_name);
+    process_system_theme (gtk_settings);
 }
 
 static gboolean
@@ -581,6 +601,7 @@ nemo_application_quit_mainloop (GApplication *app)
     nemo_icon_info_clear_caches ();
     save_accel_map (NULL);
     g_object_unref (NEMO_APPLICATION (app)->undo_manager);
+    g_clear_object (&mandatory_css_provider);
 
     nemo_application_notify_unmount_done (NEMO_APPLICATION (app), NULL);
 

@@ -743,7 +743,8 @@ nemo_bookmark_uri_get_exists (NemoBookmark *bookmark)
 
     path_name = g_file_get_path (bookmark->details->location);
 
-	if (g_file_is_native (bookmark->details->location) && g_file_test (path_name, G_FILE_TEST_EXISTS)) {
+    if (g_file_is_native (bookmark->details->location) && 
+        (!nemo_location_is_network_safe (bookmark->details->location)) && g_file_test (path_name, G_FILE_TEST_EXISTS)) {
 		exists = TRUE;
 	} else {
         g_signal_emit_by_name (bookmark, "location-mounted", bookmark->details->location, &exists);
@@ -829,7 +830,7 @@ nemo_bookmark_get_current_metadata (NemoBookmark *bookmark)
 NemoBookmarkMetadata *
 nemo_bookmark_metadata_new (void)
 {
-    NemoBookmarkMetadata *meta = g_slice_new0 (NemoBookmarkMetadata);
+    NemoBookmarkMetadata *meta = g_new0 (NemoBookmarkMetadata, 1);
 
     return meta;
 }
@@ -873,5 +874,5 @@ nemo_bookmark_metadata_free (NemoBookmarkMetadata *metadata)
     g_free (metadata->bookmark_name);
     g_strfreev (metadata->emblems);
 
-    g_slice_free (NemoBookmarkMetadata, metadata);
+    g_free (metadata);
 }

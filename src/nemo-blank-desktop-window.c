@@ -22,6 +22,7 @@
 #include <config.h>
 #include "nemo-blank-desktop-window.h"
 #include "nemo-desktop-manager.h"
+#include "nemo-application.h"
 
 #include <X11/Xatom.h>
 #include <gdk/gdk.h>
@@ -34,6 +35,7 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
+#include <libnemo-private/nemo-ui-utilities.h>
 
 #include <eel/eel-gtk-extensions.h>
 
@@ -51,124 +53,61 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 struct NemoBlankDesktopWindowDetails {
     gint monitor;
+    GtkWidget *event_box;
     GtkWidget *popup_menu;
     gulong actions_changed_id;
+    guint actions_changed_idle_id;
+
+    gboolean actions_need_update;
+
+    NemoActionManager *action_manager;
+    GtkUIManager *ui_manager;
+    GtkActionGroup *action_group;
+    guint actions_merge_id;
 };
 
 G_DEFINE_TYPE (NemoBlankDesktopWindow, nemo_blank_desktop_window, 
                GTK_TYPE_WINDOW);
 
+static void update_actions_visibility (NemoBlankDesktopWindow *window);
+static void update_actions_menu (NemoBlankDesktopWindow *window);
+static void actions_changed (gpointer user_data);
+
 static void
-customize_clicked_callback (GtkMenuItem            *item,
-                            NemoBlankDesktopWindow *window)
+action_show_overlay (GtkAction *action, gpointer user_data)
 {
-    g_return_if_fail (NEMO_IS_BLANK_DESKTOP_WINDOW (window));
+    g_return_if_fail (NEMO_IS_BLANK_DESKTOP_WINDOW (user_data));
+    NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (user_data);
 
     nemo_desktop_manager_show_desktop_overlay (nemo_desktop_manager_get (),
                                                window->details->monitor);
 }
 
-static void
-action_activated_callback (GtkMenuItem *item, NemoAction *action)
-{
-    GFile *desktop_location = nemo_get_desktop_location ();
-    NemoFile *desktop_file = nemo_file_get (desktop_location);
-    GtkWindow *window = g_object_get_data (G_OBJECT (item), "nemo-window");
-    g_object_unref (desktop_location);
-
-    nemo_action_activate (NEMO_ACTION (action), NULL, desktop_file, GTK_WINDOW (window));
-}
+static const GtkActionEntry entries[] = {
+    { "Desktop Overlay", NULL, N_("_Customize"), NULL, N_("Adjust the desktop layout for this monitor"), G_CALLBACK (action_show_overlay) }
+    //
+    //
+};
 
 static void
 reset_popup_menu (NemoBlankDesktopWindow *window)
 {
-    g_clear_pointer (&window->details->popup_menu, gtk_widget_destroy);
-}
-
-static void
-build_menu (NemoBlankDesktopWindow *window)
-{
-    if (window->details->popup_menu) {
-        return;
-    }
-
-    gboolean show_customize;
-    NemoActionManager *desktop_action_manager = nemo_desktop_manager_get_action_manager ();
-
-    if (window->details->actions_changed_id == 0) {
-        window->details->actions_changed_id = g_signal_connect_swapped (desktop_action_manager,
-                                                                        "changed",
-                                                                        G_CALLBACK (reset_popup_menu),
-                                                                        window);
-    }
-
-    show_customize = g_settings_get_boolean (nemo_menu_config_preferences, "desktop-menu-customize");
-    GList *action_list = nemo_action_manager_list_actions (desktop_action_manager);
-
-    if (g_list_length (action_list) == 0 && !show_customize)
-        return;
-
-    window->details->popup_menu = gtk_menu_new ();
-
-    gboolean show;
-    g_object_get (gtk_settings_get_default (), "gtk-menu-images", &show, NULL);
-
-    gtk_menu_attach_to_widget (GTK_MENU (window->details->popup_menu),
-                               GTK_WIDGET (window),
-                               NULL);
-
-    GtkWidget *item;
-    GList *l;
-    NemoAction *action;
-
-    for (l = action_list; l != NULL; l = l->next) {
-        action = l->data;
-
-        if (action->show_in_blank_desktop && action->dbus_satisfied && action->gsettings_satisfied) {
-            gchar *label = nemo_action_get_label (action, NULL, NULL, GTK_WINDOW (window));
-            item = gtk_image_menu_item_new_with_mnemonic (label);
-            g_free (label);
-
-            const gchar *stock_id = gtk_action_get_stock_id (GTK_ACTION (action));
-            const gchar *icon_name = gtk_action_get_icon_name (GTK_ACTION (action));
-
-            if (stock_id || icon_name) {
-                GtkWidget *image = stock_id ? gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU) :
-                                              gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
-
-                gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-                gtk_image_menu_item_set_always_show_image (GTK_IMAGE_MENU_ITEM (item), show);
-            }
-
-            gtk_widget_set_visible (item, TRUE);
-            g_object_set_data (G_OBJECT (item), "nemo-window", window);
-            g_signal_connect (item, "activate", G_CALLBACK (action_activated_callback), action);
-            gtk_menu_shell_append (GTK_MENU_SHELL (window->details->popup_menu), item);
-        }
-    }
-
-    if (!show_customize) {
-        return;
-    }
-
-    item = gtk_menu_item_new_with_label (_("Customize"));
-
-    gtk_widget_set_visible (item, TRUE);
-    g_signal_connect (item, "activate", G_CALLBACK (customize_clicked_callback), window);
-    gtk_menu_shell_append (GTK_MENU_SHELL (window->details->popup_menu), item);
+    window->details->actions_need_update = TRUE;
+    update_actions_menu (window);
 }
 
 static void
 do_popup_menu (NemoBlankDesktopWindow *window, GdkEventButton *event)
 {
-    build_menu (window);
-
     if (window->details->popup_menu == NULL) {
         return;
     }
 
+    update_actions_visibility (window);
+
     eel_pop_up_context_menu (GTK_MENU(window->details->popup_menu),
-                             event);
+                             (GdkEvent *) event,
+                             GTK_WIDGET (window));
 }
 
 static gboolean
@@ -194,15 +133,119 @@ on_button_press (GtkWidget *widget, GdkEventButton *event, NemoBlankDesktopWindo
 }
 
 static void
+run_action_callback (NemoAction *action, gpointer user_data)
+{
+    nemo_action_activate (action, NULL, NULL, GTK_WINDOW (user_data));
+}
+
+static void
+update_actions_visibility (NemoBlankDesktopWindow *window)
+{
+    nemo_action_manager_update_action_states (window->details->action_manager,
+                                              window->details->action_group,
+                                              NULL,
+                                              NULL,
+                                              FALSE,
+                                              FALSE,
+                                              GTK_WINDOW (window));
+}
+
+static void
+add_action_to_ui (NemoActionManager    *manager,
+                  GtkAction            *action,
+                  GtkUIManagerItemType  type,
+                  const gchar          *path,
+                  const gchar          *accelerator,
+                  gpointer              user_data)
+{
+    NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (user_data);
+
+    const gchar *roots[] = {
+        "/background/BlankDesktopActionsPlaceholder",
+        NULL
+    };
+
+    nemo_action_manager_add_action_ui (manager,
+                                       window->details->ui_manager,
+                                       action,
+                                       path,
+                                       accelerator,
+                                       window->details->action_group,
+                                       window->details->actions_merge_id,
+                                       roots,
+                                       type,
+                                       G_CALLBACK (run_action_callback),
+                                       window);
+}
+
+static void
+clear_ui (NemoBlankDesktopWindow *window)
+{
+    if (window->details->actions_merge_id > 0) {
+        gtk_ui_manager_remove_ui (window->details->ui_manager,
+                                  window->details->actions_merge_id);
+        window->details->actions_merge_id = 0;;
+
+        gtk_ui_manager_remove_action_group (window->details->ui_manager,
+                                            window->details->action_group);
+        g_object_unref (window->details->action_group);
+    }
+}
+
+static void
+update_actions_menu (NemoBlankDesktopWindow *window)
+{
+    if (!gtk_widget_get_realized (GTK_WIDGET (window))) {
+        return;
+    }
+
+    if (!window->details->actions_need_update) {
+        return;
+    }
+
+    clear_ui (window);
+
+    window->details->action_group = gtk_action_group_new ("NemoBlankDesktopActions");
+    gtk_action_group_set_translation_domain (window->details->action_group, GETTEXT_PACKAGE);
+    gtk_ui_manager_insert_action_group (window->details->ui_manager, window->details->action_group, 0);
+
+    window->details->actions_merge_id =
+            gtk_ui_manager_add_ui_from_resource (window->details->ui_manager, "/org/nemo/nemo-blank-desktop-window-ui.xml", NULL);
+
+    nemo_action_manager_iterate_actions (window->details->action_manager,
+                                         (NemoActionManagerIterFunc) add_action_to_ui,
+                                         window);
+
+    gtk_action_group_add_actions (window->details->action_group,
+                                  entries,
+                                  G_N_ELEMENTS (entries),
+                                  window);
+
+    if (window->details->popup_menu == NULL) {
+        GtkWidget *menu = gtk_ui_manager_get_widget (window->details->ui_manager, "/background");
+        gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (window)));
+        window->details->popup_menu = menu;
+
+        gtk_widget_show (menu);
+    }
+
+    window->details->actions_need_update = FALSE;
+}
+
+static void
 nemo_blank_desktop_window_dispose (GObject *obj)
 {
     NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (obj);
+
+    g_clear_handle_id (&window->details->actions_changed_idle_id, g_source_remove);
 
     if (window->details->actions_changed_id > 0) {
         g_signal_handler_disconnect (nemo_desktop_manager_get_action_manager (),
                              window->details->actions_changed_id);
         window->details->actions_changed_id = 0;
     }
+
+    clear_ui (window);
 
     g_signal_handlers_disconnect_by_func (nemo_menu_config_preferences, reset_popup_menu, window);
 
@@ -212,16 +255,63 @@ nemo_blank_desktop_window_dispose (GObject *obj)
 static void
 nemo_blank_desktop_window_finalize (GObject *obj)
 {
+    NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (obj);
+
+    g_object_unref (window->details->ui_manager);
+
     G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->finalize (obj);
+}
+
+static gboolean
+actions_changed_idle_cb (gpointer user_data)
+{
+    NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (user_data);
+
+    reset_popup_menu (window);
+    update_actions_visibility (window);
+
+    window->details->actions_changed_idle_id = 0;
+    return G_SOURCE_REMOVE;
+}
+
+static void
+actions_changed (gpointer user_data)
+{
+    NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (user_data);
+
+    g_clear_handle_id (&window->details->actions_changed_idle_id, g_source_remove);
+    window->details->actions_changed_idle_id = g_idle_add (actions_changed_idle_cb, window);
+}
+
+/**
+ * nemo_window_show:
+ * @widget: GtkWidget
+ *
+ * Call parent and then show/hide window items
+ * base on user prefs.
+ */
+static void
+show (GtkWidget *widget)
+{
+    NemoBlankDesktopWindow *window;
+
+    window = NEMO_BLANK_DESKTOP_WINDOW (widget);
+
+    GTK_WIDGET_CLASS (nemo_blank_desktop_window_parent_class)->show (widget);
+    gtk_ui_manager_ensure_update (window->details->ui_manager);
 }
 
 static void
 nemo_blank_desktop_window_constructed (GObject *obj)
 {
 	AtkObject *accessible;
+    NemoApplication *application;
 	NemoBlankDesktopWindow *window = NEMO_BLANK_DESKTOP_WINDOW (obj);
 
 	G_OBJECT_CLASS (nemo_blank_desktop_window_parent_class)->constructed (obj);
+
+    application = nemo_application_get_singleton ();
+    gtk_window_set_application (GTK_WINDOW (window), GTK_APPLICATION (application));
 
 	/* Set the accessible name so that it doesn't inherit the cryptic desktop URI. */
 	accessible = gtk_widget_get_accessible (GTK_WIDGET (window));
@@ -230,11 +320,18 @@ nemo_blank_desktop_window_constructed (GObject *obj)
 		atk_object_set_name (accessible, _("Desktop"));
 	}
 
-    /* We don't want this extra action manager unless there's actually
-     * a blank desktop in use.  If so, however, we need to initialize it early here,
-     * as it populates itself with actions asynchronously, and would not be ready
-     * in build_menu().*/
-    nemo_desktop_manager_get_action_manager ();
+    window->details->ui_manager = gtk_ui_manager_new ();
+    gtk_window_add_accel_group (GTK_WINDOW (window),
+                                gtk_ui_manager_get_accel_group (window->details->ui_manager));
+
+    window->details->action_manager = nemo_action_manager_new ();
+
+    if (window->details->actions_changed_id == 0) {
+        window->details->actions_changed_id = g_signal_connect_swapped (window->details->action_manager,
+                                                                        "changed",
+                                                                        G_CALLBACK (actions_changed),
+                                                                        window);
+    }
 
     nemo_blank_desktop_window_update_geometry (window);
 
@@ -243,10 +340,14 @@ nemo_blank_desktop_window_constructed (GObject *obj)
     gtk_window_set_decorated (GTK_WINDOW (window),
                   FALSE);
 
+    window->details->event_box = gtk_event_box_new ();
+    gtk_event_box_set_visible_window (GTK_EVENT_BOX (window->details->event_box), FALSE);
+    gtk_container_add (GTK_CONTAINER (window), window->details->event_box);
+
     gtk_widget_show_all (GTK_WIDGET (window));
 
-    g_signal_connect (GTK_WIDGET (window), "button-press-event", G_CALLBACK (on_button_press), window);
-    g_signal_connect (GTK_WIDGET (window), "popup-menu", G_CALLBACK (on_popup_menu), window);
+    g_signal_connect (window->details->event_box, "button-press-event", G_CALLBACK (on_button_press), window);
+    g_signal_connect (window->details->event_box, "popup-menu", G_CALLBACK (on_popup_menu), window);
 
     g_signal_connect_swapped (nemo_menu_config_preferences,
                               "changed::desktop-menu-customize",
@@ -298,6 +399,7 @@ nemo_blank_desktop_window_init (NemoBlankDesktopWindow *window)
 
     window->details->popup_menu = NULL;
     window->details->actions_changed_id = 0;
+    gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DESKTOP);
 
     /* Make it easier for themes authors to style the desktop window separately */
     gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
@@ -347,19 +449,6 @@ unrealize (GtkWidget *widget)
 }
 
 static void
-set_wmspec_desktop_hint (GdkWindow *window)
-{
-	GdkAtom atom;
-
-	atom = gdk_atom_intern ("_NET_WM_WINDOW_TYPE_DESKTOP", FALSE);
-        
-	gdk_property_change (window,
-			     gdk_atom_intern ("_NET_WM_WINDOW_TYPE", FALSE),
-			     gdk_x11_xatom_to_atom (XA_ATOM), 32,
-			     GDK_PROP_MODE_REPLACE, (guchar *) &atom, 1);
-}
-
-static void
 realize (GtkWidget *widget)
 {
     GdkVisual *visual;
@@ -370,9 +459,6 @@ realize (GtkWidget *widget)
     }
 
 	GTK_WIDGET_CLASS (nemo_blank_desktop_window_parent_class)->realize (widget);
-
-	/* This is the new way to set up the desktop window */
-	set_wmspec_desktop_hint (gtk_widget_get_window (widget));
 }
 
 static void
@@ -390,6 +476,7 @@ nemo_blank_desktop_window_class_init (NemoBlankDesktopWindowClass *klass)
 	wclass->realize = realize;
 	wclass->unrealize = unrealize;
 	wclass->map = map;
+    wclass->show = show;
 	wclass->delete_event = nemo_blank_desktop_window_delete_event;
 
     properties[PROP_MONITOR] =

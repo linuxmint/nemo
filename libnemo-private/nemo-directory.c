@@ -595,7 +595,7 @@ add_to_hash_table (NemoDirectory *directory, NemoFile *file, GList *node)
 {
 	const char *name;
 
-	name = eel_ref_str_peek (file->details->name);
+	name = file->details->name;
 
 	g_assert (node != NULL);
 	g_assert (g_hash_table_lookup (directory->details->file_hash,
@@ -609,7 +609,7 @@ extract_from_hash_table (NemoDirectory *directory, NemoFile *file)
 	const char *name;
 	GList *node;
 
-	name = eel_ref_str_peek (file->details->name);
+	name = file->details->name;
 	if (name == NULL) {
 		return NULL;
 	}
@@ -1769,6 +1769,7 @@ nemo_directory_set_show_thumbnails (NemoDirectory         *directory,
   file = nemo_file_get(directory->details->location);
   nemo_file_set_boolean_metadata (file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, FALSE, show_thumbnails);
   nemo_directory_force_reload (directory);
+  nemo_file_unref (file);
 }
 
 #if !defined (NEMO_OMIT_SELF_CHECK)

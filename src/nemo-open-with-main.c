@@ -162,7 +162,7 @@ main (int argc, char *argv[])
 
     GtkWidget *chooser = nemo_mime_application_chooser_new (uri, NULL, mime_type, ok_button);
 
-    eel_ref_str_unref (mime_type);
+    g_free (mime_type);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 

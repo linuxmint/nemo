@@ -30,7 +30,7 @@
 #include <gtk/gtk.h>
 
 guint           action_for_view_id  (const char *view_id                           );
-void            toolbar_set_view_button     (guint action_id,      NemoWindowPane *pane);
+void            toolbar_set_view_button     (guint action_id,      NemoWindow *window);
 void            toolbar_set_show_thumbnails_button (gboolean value, NemoWindowPane *pane);
 void            menu_set_show_thumbnails_action (gboolean value, NemoWindow *window);
 void            toolbar_set_create_folder_button (gboolean value, NemoWindowPane *pane);

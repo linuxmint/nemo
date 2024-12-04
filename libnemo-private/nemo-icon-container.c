@@ -2781,7 +2781,7 @@ finalize (GObject *object)
 		g_source_remove (details->a11y_item_action_idle_handler);
 	}
 
-    g_slice_free (NemoViewLayoutConstants, details->view_constants);
+    g_free (details->view_constants);
 
     g_list_free (details->current_selection);
     g_free(details);
@@ -3216,10 +3216,9 @@ clicked_within_slow_click_interval_on_text (NemoIconContainer *container, NemoIc
                   "gtk-double-click-time", &double_click_interval,
                   NULL);
 
-    /* slow click interval is always 2 seconds longer than the system
-     * double-click interval. */
+    /* Cancel pending click-to-rename after double-click-time + 800ms */
 
-    interval = double_click_interval + 2000;
+    interval = double_click_interval + 800;
 
     current_time = g_get_monotonic_time ();
     if (current_time - last_slow_click_time < interval * 1000) {
@@ -4039,7 +4038,6 @@ nemo_icon_container_ensure_interactive_directory (NemoIconContainer *container)
     gtk_window_set_transient_for (GTK_WINDOW (container->details->search_window),
                                   GTK_WINDOW (toplevel));
 
-    gtk_window_set_destroy_with_parent (GTK_WINDOW (container->details->search_window), TRUE);
 	gtk_window_set_type_hint (GTK_WINDOW (container->details->search_window),
 				  GDK_WINDOW_TYPE_HINT_COMBO);
 
@@ -4921,7 +4919,7 @@ nemo_icon_container_init (NemoIconContainer *container)
 
     details->fixed_text_height = -1;
 
-    details->view_constants = g_slice_new0 (NemoViewLayoutConstants);
+    details->view_constants = g_new0 (NemoViewLayoutConstants, 1);
 
 	container->details = details;
 
@@ -5592,18 +5590,6 @@ nemo_icon_container_unfreeze_updates (NemoIconContainer *container)
 	klass->unfreeze_updates (container);
 }
 
-static void
-nemo_icon_container_prioritize_thumbnailing (NemoIconContainer *container,
-						 NemoIcon *icon)
-{
-	NemoIconContainerClass *klass;
-
-	klass = NEMO_ICON_CONTAINER_GET_CLASS (container);
-	g_assert (klass->prioritize_thumbnailing != NULL);
-
-	klass->prioritize_thumbnailing (container, icon->data);
-}
-
 static gboolean
 update_visible_icons_cb (NemoIconContainer *container)
 {
@@ -5663,9 +5649,9 @@ update_visible_icons_cb (NemoIconContainer *container)
 
 			if (visible) {
 				nemo_icon_canvas_item_set_is_visible (icon->item, TRUE);
+                NemoFile *file = NEMO_FILE (icon->data);
 
                 if (!icon->ok_to_show_thumb) {
-                    NemoFile *file = NEMO_FILE (icon->data);
 
                     icon->ok_to_show_thumb = TRUE;
 
@@ -5673,11 +5659,11 @@ update_visible_icons_cb (NemoIconContainer *container)
                         nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
                     }
 
-                    if (nemo_file_is_thumbnailing (file)) {
-                        nemo_icon_container_prioritize_thumbnailing (container, icon);
-                    } else {
-                        nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
-                    }
+                    nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
+                } else {
+                    gchar *uri = nemo_file_get_uri (file);
+                    nemo_thumbnail_prioritize (uri);
+                    g_free (uri);
                 }
 
                 nemo_icon_container_update_icon (container, icon);
@@ -6559,7 +6545,7 @@ nemo_icon_container_update_tooltip_text (NemoIconContainer  *container,
                    file,
                    &text);
 
-    gtk_widget_set_tooltip_text (GTK_WIDGET (container), text);
+    gtk_widget_set_tooltip_markup (GTK_WIDGET (container), text);
 
     g_free (text);
 }

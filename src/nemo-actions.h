@@ -36,13 +36,16 @@
 #define NEMO_ACTION_UP_ACCEL "UpAccel"
 #define NEMO_ACTION_UP_ACCEL "UpAccel"
 #define NEMO_ACTION_FORWARD "Forward"
-#define NEMO_ACTION_SHOW_HIDE_TOOLBAR "Show Hide Toolbar"
 #define NEMO_ACTION_SHOW_HIDE_SIDEBAR "Show Hide Sidebar"
+
+#define NEMO_ACTION_SHOW_HIDE_TOOLBAR "Show Hide Toolbar"
+#define NEMO_ACTION_TOOLBAR_ALWAYS_SHOW_PATHBAR "Toolbar Always Show Pathbar"
+#define NEMO_ACTION_TOOLBAR_ALWAYS_SHOW_ENTRY "Toolbar Always Show Entry"
+
 #define NEMO_ACTION_SHOW_HIDE_STATUSBAR "Show Hide Statusbar"
 #define NEMO_ACTION_SHOW_HIDE_MENUBAR "Show Hide Menubar"
 #define NEMO_ACTION_SHOW_HIDE_LOCATION_BAR "Show Hide Location Bar"
 #define NEMO_ACTION_SHOW_HIDE_EXTRA_PANE "Show Hide Extra Pane"
-#define NEMO_ACTION_SHOW_HIDE_LOCATION_ENTRY "Show Hide Location Entry"
 #define NEMO_ACTION_GO_TO_BURN_CD "Go to Burn CD"
 #define NEMO_ACTION_EDIT_LOCATION "Edit Location"
 #define NEMO_ACTION_COMPACT_VIEW "CompactView"
@@ -157,6 +160,9 @@
 #define NEMO_ACTION_FAVORITE_FILE        "Favorite File"
 #define NEMO_ACTION_UNFAVORITE_FILE      "Unfavorite File"
 #define NEMO_ACTION_DESKTOP_OVERLAY "Desktop Overlay"
+
+#define NEMO_ACTION_SIDEBAR_REMOVE "Remove Bookmark"
+#define NEMO_ACTION_SIDEBAR_DETECT_MEDIA "Detect Media"
 
 typedef struct
 {

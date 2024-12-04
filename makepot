@@ -2,7 +2,14 @@
 data/nemo-actions/extract_action_strings data/nemo-actions
 itstool -o nemo.pot data/nemo.xml.in
 xgettext -c --join-existing --from-code=UTF-8 --keyword=_ --keyword=N_ --output=nemo.pot \
-    src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c         \
-    data/nemo-actions/action_i18n_strings.py generate_additional_file
-xgettext -c --join-existing  -L Glade gresources/*.glade --output=nemo.pot
+    src/*.c libnemo-extension/*.c libnemo-private/*.c eel/*.c
+
+xgettext -c --join-existing  -L Python data/nemo-actions/action_i18n_strings.py generate_additional_file --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/nemo-bookmarks-window.glade --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/nemo-desktop-overlay.glade --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/nemo-desktop-preferences.glade --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/nemo-file-management-properties.glade --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/nemo-search-bar.glade --output=nemo.pot
 xgettext -c --join-existing  -L Glade gresources/*.ui --output=nemo.pot
+xgettext -c --join-existing  -L Glade gresources/nemo-action-layout-editor.glade --output=nemo.pot
+xgettext -c --join-existing  -L Python action-layout-editor/*.py --output=nemo.pot

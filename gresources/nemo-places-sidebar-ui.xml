@@ -1,0 +1,23 @@
+<ui>
+<popup name="selection">
+    <menuitem name="Open" action="Open"/>
+    <menuitem name="NewTab" action="OpenInNewTab"/>
+    <menuitem name="NewWindow" action="OpenAlternate"/>
+    <separator name="OpenNewSeparator"/>
+    <menuitem name="AddBookmark" action="Add Bookmark"/>
+    <menuitem name="Remove" action="Remove Bookmark"/>
+    <menuitem name="Rename" action="Rename"/>
+    <separator name="PreActionsSeparator"/>
+    <placeholder name="PlacesSidebarActionsPlaceholder"/>
+    <separator name="PostActionsSeparator"/>
+    <menuitem name="Mount" action="Mount Volume"/>
+    <menuitem name="Unmount" action="Unmount Volume"/>
+    <menuitem name="Eject" action="Eject Volume"/>
+    <menuitem name="Detect" action="Detect Media"/>
+    <menuitem name="Start" action="Start Volume"/>
+    <menuitem name="Stop" action="Stop Volume"/>
+    <menuitem name="EmptyTrash" action="Empty Trash Conditional"/>
+    <separator name="PropertiesSeparator"/>
+    <menuitem name="Properties" action="Properties"/>
+</popup>
+</ui>

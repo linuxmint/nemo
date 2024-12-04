@@ -174,17 +174,30 @@ cairo_rectangle_with_radius_corners (cairo_t *cr,
                                      gint y,
                                      gint w,
                                      gint h,
-                                     gint rad)
+                                     gint rad,
+                                     GtkTextDirection dir)
 {
-    cairo_move_to (cr, x+rad, y);
-    cairo_line_to (cr, x+w-rad, y);
-    cairo_arc (cr, x+w-rad, y+rad, rad, _270_DEG, _0_DEG);
-    cairo_line_to (cr, x+w, y+h-rad);
-    cairo_arc (cr, x+w-rad, y+h-rad, rad, _0_DEG, _90_DEG);
-    cairo_line_to (cr, x+rad, y+h);
-    cairo_arc (cr, x+rad, y+h-rad, rad, _90_DEG, _180_DEG);
-    cairo_line_to (cr, x, y-rad);
-    cairo_arc (cr, x+rad, y+rad, rad, _180_DEG, _270_DEG);
+    if (dir == GTK_TEXT_DIR_RTL) {
+        cairo_move_to (cr, x - w + rad, y);
+        cairo_line_to (cr, x - rad, y);
+        cairo_arc (cr, x - rad, y + rad, rad, _270_DEG, _0_DEG);
+        cairo_line_to (cr, x, y + h - rad);
+        cairo_arc (cr, x - rad, y + h - rad, rad, _0_DEG, _90_DEG);
+        cairo_line_to (cr, x - w + rad, y + h);
+        cairo_arc (cr, x - w + rad, y + h - rad, rad, _90_DEG, _180_DEG);
+        cairo_line_to (cr, x - w, y - rad);
+        cairo_arc (cr, x - w + rad, y + rad, rad, _180_DEG, _270_DEG);
+    } else {
+        cairo_move_to (cr, x + rad, y);
+        cairo_line_to (cr, x + w - rad, y);
+        cairo_arc (cr, x + w - rad, y + rad, rad, _270_DEG, _0_DEG);
+        cairo_line_to (cr, x + w, y + h - rad);
+        cairo_arc (cr, x + w - rad, y + h - rad, rad, _0_DEG, _90_DEG);
+        cairo_line_to (cr, x + rad, y + h);
+        cairo_arc (cr, x + rad, y + h - rad, rad, _90_DEG, _180_DEG);
+        cairo_line_to (cr, x, y - rad);
+        cairo_arc (cr, x + rad, y + rad, rad, _180_DEG, _270_DEG);
+    }
 }
 
 static void
@@ -231,7 +244,13 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
         }
 
         gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
-        x = cell_area->x + xpad;
+
+        if (cellprogress->direction == GTK_TEXT_DIR_RTL) {
+            x = cell_area->x + cell_area->width - xpad;
+        } else {
+            x = cell_area->x + xpad;
+        }
+
         y = cell_area->y + cell_area->height - bar_width - bottom_padding;
         w = cell_area->width - xpad * 2;
         w = w < max_length ? w : max_length;
@@ -242,14 +261,14 @@ nemo_cell_renderer_disk_render (GtkCellRenderer       *cell,
         cairo_save (cr);
 
         gdk_cairo_set_source_rgba (cr, &bg_color);
-        cairo_rectangle_with_radius_corners (cr, x, y, w, bar_width, bar_radius);
+        cairo_rectangle_with_radius_corners (cr, x, y, w, bar_width, bar_radius, cellprogress->direction);
         cairo_fill (cr);
 
         cairo_restore (cr);
         cairo_save (cr);
 
         gdk_cairo_set_source_rgba (cr, &fg_color);
-        cairo_rectangle_with_radius_corners (cr, x, y, full, bar_width, bar_radius);
+        cairo_rectangle_with_radius_corners (cr, x, y, full, bar_width, bar_radius, cellprogress->direction);
         cairo_fill (cr);
 
         cairo_restore (cr);

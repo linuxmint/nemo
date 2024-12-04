@@ -41,10 +41,11 @@ void                  eel_gtk_window_set_initial_geometry_from_string (GtkWindow
 								       gboolean		     ignore_position);
 char *                eel_gtk_window_get_geometry_string              (GtkWindow            *window);
 
-
+gboolean              eel_check_is_wayland (void);
 /* GtkMenu and GtkMenuItem */
 void                  eel_pop_up_context_menu                         (GtkMenu              *menu,
-								       GdkEventButton       *event);
+                                                                       GdkEvent             *event,
+                                                                       GtkWidget            *widget);
 GtkMenuItem *         eel_gtk_menu_append_separator                   (GtkMenu              *menu);
 GtkMenuItem *         eel_gtk_menu_insert_separator                   (GtkMenu              *menu,
 								       int                   index);
@@ -54,4 +55,7 @@ void                  eel_gtk_message_dialog_set_details_label        (GtkMessag
 								       const gchar               *details_text);
 
 XID                   eel_gtk_get_window_xid                          (GtkWindow *window);
+gboolean              eel_gtk_get_treeview_pointer_location           (GtkTreeView *treeview,
+                                                                       gint *x, gint *y);
+gboolean              eel_gtk_get_treeview_row_text_is_under_pointer  (GtkTreeView *tree_view);
 #endif /* EEL_GTK_EXTENSIONS_H */

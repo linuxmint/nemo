@@ -303,20 +303,22 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 
 static void
 nemo_window_prompt_for_location (NemoWindow *window,
-				     const char     *initial)
+                                 const char *initial)
 {
-	NemoWindowPane *pane;
+    NemoWindowPane *pane;
 
-	g_return_if_fail (NEMO_IS_WINDOW (window));
+    g_return_if_fail (NEMO_IS_WINDOW (window));
 
-	if (!NEMO_IS_DESKTOP_WINDOW (window)) {
-		if (initial) {
-			nemo_window_show_location_entry(window);
-			pane = window->details->active_pane;
-			nemo_location_bar_set_location (NEMO_LOCATION_BAR (pane->location_bar),
-							    initial);
-		}
-	}
+    if (!NEMO_IS_DESKTOP_WINDOW (window)) {
+        if (initial) {
+            NemoEntry *entry;
+            nemo_window_show_location_entry(window);
+            pane = window->details->active_pane;
+            entry = nemo_location_bar_get_entry (NEMO_LOCATION_BAR (pane->location_bar));
+            nemo_entry_set_text (entry, initial);
+            gtk_editable_set_position (GTK_EDITABLE (entry), -1);
+        }
+    }
 }
 
 /* Code should never force the window taller than this size.
@@ -954,9 +956,15 @@ nemo_window_save_geometry (NemoWindow *window)
 	g_assert (NEMO_IS_WINDOW (window));
 
 	if (gtk_widget_get_window (GTK_WIDGET (window)) && !nemo_window_is_desktop (window)) {
-		geometry_string = eel_gtk_window_get_geometry_string (GTK_WINDOW (window));
-		is_maximized = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)))
-				& GDK_WINDOW_STATE_MAXIMIZED;
+        GdkWindowState state = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)));
+
+        if (state & GDK_WINDOW_STATE_TILED) {
+            return;
+        }
+
+        geometry_string = eel_gtk_window_get_geometry_string (GTK_WINDOW (window));
+
+		is_maximized = state & GDK_WINDOW_STATE_MAXIMIZED;
 
 		if (!is_maximized) {
 			g_settings_set_string
@@ -1309,17 +1317,15 @@ sync_view_type_callback (NemoFile *file,
     window = nemo_window_slot_get_window (slot);
 
     if (slot == nemo_window_get_active_slot (window)) {
-        NemoWindowPane *pane;
         const gchar *view_id;
 
         if (slot->content_view == NULL) {
             return;
         }
 
-        pane = nemo_window_get_active_pane(window);
         view_id = nemo_window_slot_get_content_view_id (slot);
 
-        toolbar_set_view_button (action_for_view_id (view_id), pane);
+        toolbar_set_view_button (action_for_view_id (view_id), window);
         menu_set_view_selection (action_for_view_id (view_id), window);
     }
 }
@@ -1691,6 +1697,7 @@ nemo_window_slot_set_viewed_file (NemoWindowSlot *slot,
 	nemo_file_ref (file);
 
 	cancel_sync_view_type_callback (slot);
+    cancel_sync_show_thumbnail_callback (slot);
 
 	if (slot->viewed_file != NULL) {
 		nemo_file_monitor_remove (slot->viewed_file,
@@ -2319,58 +2326,17 @@ nemo_window_set_ignore_meta_zoom_level (NemoWindow *window, gint level)
     window->details->ignore_meta_zoom_level = level;
 }
 
-/* FIXME:
- *
- * Remove this and just use g_list_copy_deep
- * when we no longer need to support GLib < 2.34
- *
- */
-
-static GList *
-list_copy_deep (GList *list, GCopyFunc func, gpointer user_data)
-{
-  GList *new_list = NULL;
-
-  if (list)
-    {
-      GList *last;
-
-      new_list = g_slice_new (GList);
-      if (func)
-        new_list->data = func (list->data, user_data);
-      else
-        new_list->data = list->data;
-      new_list->prev = NULL;
-      last = new_list;
-      list = list->next;
-      while (list)
-    {
-      last->next = g_slice_new (GList);
-      last->next->prev = last;
-      last = last->next;
-      if (func)
-        last->data = func (list->data, user_data);
-      else
-        last->data = list->data;
-      list = list->next;
-    }
-      last->next = NULL;
-    }
-
-  return new_list;
-}
-
 GList *
 nemo_window_get_ignore_meta_visible_columns (NemoWindow *window)
 {
-    return list_copy_deep (window->details->ignore_meta_visible_columns, (GCopyFunc) g_strdup, NULL);
+    return g_list_copy_deep (window->details->ignore_meta_visible_columns, (GCopyFunc) g_strdup, NULL);
 }
 
 void
 nemo_window_set_ignore_meta_visible_columns (NemoWindow *window, GList *list)
 {
     GList *old = window->details->ignore_meta_visible_columns;
-    window->details->ignore_meta_visible_columns = list != NULL ? list_copy_deep (list, (GCopyFunc) g_strdup, NULL) :
+    window->details->ignore_meta_visible_columns = list != NULL ? g_list_copy_deep (list, (GCopyFunc) g_strdup, NULL) :
                                                                   NULL;
     if (old != NULL)
         g_list_free_full (old, g_free);
@@ -2379,14 +2345,14 @@ nemo_window_set_ignore_meta_visible_columns (NemoWindow *window, GList *list)
 GList *
 nemo_window_get_ignore_meta_column_order (NemoWindow *window)
 {
-    return list_copy_deep (window->details->ignore_meta_column_order, (GCopyFunc) g_strdup, NULL);
+    return g_list_copy_deep (window->details->ignore_meta_column_order, (GCopyFunc) g_strdup, NULL);
 }
 
 void
 nemo_window_set_ignore_meta_column_order (NemoWindow *window, GList *list)
 {
     GList *old = window->details->ignore_meta_column_order;
-    window->details->ignore_meta_column_order = list != NULL ? list_copy_deep (list, (GCopyFunc) g_strdup, NULL) :
+    window->details->ignore_meta_column_order = list != NULL ? g_list_copy_deep (list, (GCopyFunc) g_strdup, NULL) :
                                                                NULL;
     if (old != NULL)
         g_list_free_full (old, g_free);

@@ -134,3 +134,16 @@ nemo_ui_get_menu_icon (const char *icon_name,
 
 	return pixbuf;
 }
+
+gchar *
+nemo_make_action_uuid_for_path (const gchar *path)
+{
+    g_autofree gchar *copy = g_path_get_basename (path);
+    g_strdelimit (copy, " ", '_');
+
+    if (!g_str_has_suffix (copy, ".nemo_action")) {
+        return copy;
+    }
+
+    return g_strndup (copy, strlen (copy) - strlen (".nemo_action"));
+}

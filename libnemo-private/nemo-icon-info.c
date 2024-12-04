@@ -61,8 +61,7 @@ nemo_icon_info_free (NemoIconInfo *icon)
     }
 
     g_free (icon->icon_name);
-
-    g_slice_free (NemoIconInfo, icon);
+    g_free (icon);
 }
 
 NemoIconInfo *
@@ -106,7 +105,7 @@ nemo_icon_info_create (void)
 {
     NemoIconInfo *icon;
 
-    icon = g_slice_new0 (NemoIconInfo);
+    icon = g_new0 (NemoIconInfo, 1);
 
 	icon->last_use_time = g_get_monotonic_time ();
 	icon->sole_owner = TRUE;
@@ -270,7 +269,7 @@ icon_key_new (GIcon *icon, int size)
 {
 	IconKey *key;
 
-	key = g_slice_new (IconKey);
+	key = g_new0 (IconKey, 1);
 	key->icon = g_object_ref (icon);
 	key->size = size;
 
@@ -281,7 +280,7 @@ static void
 icon_key_free (IconKey *key)
 {
 	g_object_unref (key->icon);
-	g_slice_free (IconKey, key);
+	g_free (key);
 }
 
 NemoIconInfo *
@@ -340,6 +339,7 @@ nemo_icon_info_lookup (GIcon *icon,
                                                                  GTK_ICON_LOOKUP_FORCE_SIZE);
 
             pixbuf = gtk_icon_info_load_icon (gtkicon_info, NULL);
+            g_object_unref (gtkicon_info);
         }
 
         icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
@@ -665,17 +665,17 @@ nemo_get_list_icon_size_for_zoom_level (NemoZoomLevel zoom_level)
     case NEMO_ZOOM_LEVEL_SMALLEST:
         return NEMO_LIST_ICON_SIZE_SMALLEST;
     case NEMO_ZOOM_LEVEL_SMALLER:
-        return NEMO_LIST_ICON_SIZE_SMALLEST;
-    case NEMO_ZOOM_LEVEL_SMALL:
         return NEMO_LIST_ICON_SIZE_SMALLER;
-    case NEMO_ZOOM_LEVEL_STANDARD:
+    case NEMO_ZOOM_LEVEL_SMALL:
         return NEMO_LIST_ICON_SIZE_SMALL;
-    case NEMO_ZOOM_LEVEL_LARGE:
+    case NEMO_ZOOM_LEVEL_STANDARD:
         return NEMO_LIST_ICON_SIZE_STANDARD;
-    case NEMO_ZOOM_LEVEL_LARGER:
+    case NEMO_ZOOM_LEVEL_LARGE:
         return NEMO_LIST_ICON_SIZE_LARGE;
-    case NEMO_ZOOM_LEVEL_LARGEST:
+    case NEMO_ZOOM_LEVEL_LARGER:
         return NEMO_LIST_ICON_SIZE_LARGER;
+    case NEMO_ZOOM_LEVEL_LARGEST:
+        return NEMO_LIST_ICON_SIZE_LARGEST;
     case NEMO_ZOOM_LEVEL_NULL:
     default:
         g_return_val_if_reached (NEMO_ICON_SIZE_STANDARD);

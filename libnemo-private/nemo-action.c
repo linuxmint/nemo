@@ -18,6 +18,7 @@
 */
 
 #include "nemo-action.h"
+#include "nemo-action-symbols.h"
 #include <eel/eel-string.h>
 #include <eel/eel-vfs-extensions.h>
 #include <eel/eel-gtk-extensions.h>
@@ -25,6 +26,7 @@
 #include <gdk/gdk.h>
 #include "nemo-file-utilities.h"
 #include "nemo-program-choosing.h"
+#include "nemo-ui-utilities.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_ACTIONS
 #include <libnemo-private/nemo-debug.h>
@@ -33,8 +35,47 @@
 #define g_drive_is_removable g_drive_is_media_removable
 #endif
 
-G_DEFINE_TYPE (NemoAction, nemo_action,
-	       GTK_TYPE_ACTION);
+#ifndef GLIB_VERSION_2_70
+#define g_pattern_spec_match g_pattern_match
+#endif
+
+typedef struct {
+    SelectionType selection_type;
+    gchar **extensions;
+    gchar **mimetypes;
+    gchar *exec;
+    gchar **conditions;
+    gchar *separator;
+    QuoteType quote_type;
+    gchar *orig_label;
+    gchar *orig_tt;
+    gboolean use_parent_dir;
+    GList *dbus;
+    guint dbus_recalc_timeout_id;
+    GList *gsettings;
+    guint gsettings_recalc_timeout_id;
+    gboolean dbus_satisfied;
+    gboolean gsettings_satisfied;
+    gboolean escape_underscores;
+    gboolean escape_space;
+    gboolean show_in_blank_desktop;
+    gboolean run_in_terminal;
+    gchar *uri_scheme;
+
+    GList *allowed_location_patterns;
+    GList *forbidden_location_patterns;
+    GList *allowed_location_filenames;
+    GList *forbidden_location_filenames;
+
+    GList *allowed_patterns;
+    GList *forbidden_patterns;
+    GList *allowed_filenames;
+    GList *forbidden_filenames;
+
+    gboolean constructing;
+} NemoActionPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (NemoAction, nemo_action, GTK_TYPE_ACTION)
 
 static void     nemo_action_get_property  (GObject                    *object,
                                            guint                       param_id,
@@ -49,9 +90,7 @@ static void     nemo_action_finalize (GObject *gobject);
 
 static gchar   *find_token_type (const gchar *str, TokenType *token_type);
 
-static gpointer parent_class;
-
-enum 
+enum
 {
   PROP_0,
   PROP_KEY_FILE_PATH,
@@ -94,6 +133,11 @@ typedef struct {
     guint handler_id;
 } GSettingsCondition;
 
+typedef struct {
+    GPatternSpec *pattern;
+    gboolean      absolute;
+} MatchPattern;
+
 static void
 dbus_condition_free (gpointer data)
 {
@@ -118,41 +162,51 @@ gsettings_condition_free (gpointer data)
     g_free (cond);
 }
 
+static MatchPattern *
+new_match_pattern (const gchar *pattern)
+{
+    MatchPattern *mp = g_new0 (MatchPattern, 1);
+
+    mp->pattern = g_pattern_spec_new (pattern);
+
+    // A pattern with a leading * can be matched against a full path, whether it has
+    // any other path elements or not (*/foo/bar/* or *.foo)
+    mp->absolute = g_str_has_prefix (pattern, "/") || g_str_has_prefix (pattern, "*");
+
+    return mp;
+}
+
+static void
+free_match_pattern (gpointer data)
+{
+    MatchPattern *mp = (MatchPattern *) data;
+
+    g_pattern_spec_free (mp->pattern);
+    g_free (mp);
+}
+
 static void
 nemo_action_init (NemoAction *action)
 {
-    action->key_file_path = NULL;
-    action->selection_type = SELECTION_SINGLE;
-    action->extensions = NULL;
-    action->mimetypes = NULL;
-    action->exec = NULL;
-    action->parent_dir = NULL;
-    action->use_parent_dir = FALSE;
-    action->orig_label = NULL;
-    action->orig_tt = NULL;
-    action->quote_type = QUOTE_TYPE_NONE;
-    action->separator = NULL;
-    action->conditions = NULL;
-    action->dbus = NULL;
-    action->dbus_satisfied = TRUE;
-    action->dbus_recalc_timeout_id = 0;
-    action->gsettings = NULL;
-    action->gsettings_satisfied = TRUE;
-    action->gsettings_recalc_timeout_id = 0;
-    action->escape_underscores = FALSE;
-    action->escape_space = FALSE;
-    action->show_in_blank_desktop = FALSE;
-    action->run_in_terminal = FALSE;
-    action->uri_scheme = NULL;
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
 
-    action->constructing = TRUE;
+    action->key_file_path = NULL;
+    action->parent_dir = NULL;
+    action->uuid = NULL;
+
+    priv->selection_type = SELECTION_SINGLE;
+    priv->quote_type = QUOTE_TYPE_NONE;
+    priv->dbus_satisfied = TRUE;
+    priv->dbus_recalc_timeout_id = 0;
+    priv->gsettings_satisfied = TRUE;
+    priv->gsettings_recalc_timeout_id = 0;
+    priv->constructing = TRUE;
 }
 
 static void
 nemo_action_class_init (NemoActionClass *klass)
 {
     GObjectClass         *object_class = G_OBJECT_CLASS(klass);
-    parent_class           = g_type_class_peek_parent (klass);
     object_class->finalize = nemo_action_finalize;
     object_class->set_property = nemo_action_set_property;
     object_class->get_property = nemo_action_get_property;
@@ -167,128 +221,6 @@ nemo_action_class_init (NemoActionClass *klass)
                                                           G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
                                      );
 
-    g_object_class_install_property (object_class,
-                                     PROP_SELECTION_TYPE,
-                                     g_param_spec_int ("selection-type",
-                                                       "Selection Type",
-                                                       "The action selection type",
-                                                       0,
-                                                       SELECTION_NONE,
-                                                       SELECTION_SINGLE,
-                                                       G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_EXTENSIONS,
-                                     g_param_spec_pointer ("extensions",
-                                                           "Extensions",
-                                                           "String array of file extensions",
-                                                           G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_MIMES,
-                                     g_param_spec_pointer ("mimetypes",
-                                                           "Mimetypes",
-                                                           "String array of file mimetypes",
-                                                           G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_EXEC,
-                                     g_param_spec_string ("exec",
-                                                          "Executable String",
-                                                          "The command line to run",
-                                                          NULL,
-                                                          G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_PARENT_DIR,
-                                     g_param_spec_string ("parent-dir",
-                                                          "Parent directory",
-                                                          "The directory the action file resides in",
-                                                          NULL,
-                                                          G_PARAM_READWRITE)
-                                     );
-    g_object_class_install_property (object_class,
-                                     PROP_USE_PARENT_DIR,
-                                     g_param_spec_boolean ("use-parent-dir",
-                                                           "Use Parent Directory",
-                                                           "Execute using the full action path",
-                                                           FALSE,
-                                                           G_PARAM_READWRITE)
-                                     );
-    g_object_class_install_property (object_class,
-                                     PROP_ORIG_LABEL,
-                                     g_param_spec_string ("orig-label",
-                                                          "Original label string",
-                                                          "The starting label - with token",
-                                                          NULL,
-                                                          G_PARAM_READWRITE)
-                                     );
-    g_object_class_install_property (object_class,
-                                     PROP_ORIG_TT,
-                                     g_param_spec_string ("orig-tooltip",
-                                                          "Original tooltip string",
-                                                          "The starting tooltip - with token",
-                                                          NULL,
-                                                          G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_SEPARATOR,
-                                     g_param_spec_string ("separator",
-                                                          "Separator to insert between files in the exec line",
-                                                          "Separator to use between files, like comma, space, etc",
-                                                          NULL,
-                                                          G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_QUOTE_TYPE,
-                                     g_param_spec_int ("quote-type",
-                                                       "Type of quotes to use to enclose individual file names",
-                                                       "Type of quotes to use to enclose individual file names - none, single or double",
-                                                       QUOTE_TYPE_SINGLE,
-                                                       QUOTE_TYPE_NONE,
-                                                       QUOTE_TYPE_SINGLE,
-                                                       G_PARAM_READWRITE)
-                                     );
-
-    g_object_class_install_property (object_class,
-                                     PROP_CONDITIONS,
-                                     g_param_spec_pointer ("conditions",
-                                                           "Special show conditions",
-                                                           "Special conditions, like a bool gsettings key, or 'desktop'",
-                                                           G_PARAM_READWRITE)
-                                     );
-    g_object_class_install_property (object_class,
-                                     PROP_ESCAPE_SPACE,
-                                     g_param_spec_boolean ("escape-space",
-                                                           "Escape spaces in file paths",
-                                                           "Escape spaces in file paths",
-                                                           FALSE,
-                                                           G_PARAM_READWRITE)
-                                     );
-    g_object_class_install_property (object_class,
-                                     PROP_RUN_IN_TERMINAL,
-                                     g_param_spec_boolean ("run-in-terminal",
-                                                           "Run command in a terminal",
-                                                           "Run command in a terminal",
-                                                           FALSE,
-                                                           G_PARAM_READWRITE)
-                                 );
-
-    g_object_class_install_property (object_class,
-                                     PROP_URI_SCHEME,
-                                     g_param_spec_string ("uri-scheme",
-                                                          "Limit selection by uri scheme (like file, sftp, etc...)",
-                                                          "Limit selection by uri scheme (like file, sftp, etc...)",
-                                                          NULL,
-                                                          G_PARAM_READWRITE)
-                                     );
-
     signals[CONDITION_CHANGED] = g_signal_new ("condition-changed",
                                                G_TYPE_FROM_CLASS (object_class),
                                                G_SIGNAL_RUN_LAST,
@@ -300,6 +232,8 @@ nemo_action_class_init (NemoActionClass *klass)
 static gboolean
 recalc_dbus_conditions (NemoAction *action)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
     GList *l;
     DBusCondition *c;
     gboolean pass, old_satisfied;
@@ -308,7 +242,7 @@ recalc_dbus_conditions (NemoAction *action)
 
     pass = TRUE;
 
-    for (l = action->dbus; l != NULL; l = l->next) {
+    for (l = priv->dbus; l != NULL; l = l->next) {
         c = (DBusCondition *) l->data;
 
         DEBUG ("Checking dbus name for an owner: '%s' - evaluated to %s",
@@ -321,8 +255,8 @@ recalc_dbus_conditions (NemoAction *action)
         }
     }
 
-    old_satisfied = action->dbus_satisfied;
-    action->dbus_satisfied = pass;
+    old_satisfied = priv->dbus_satisfied;
+    priv->dbus_satisfied = pass;
 
     DEBUG ("DBus satisfied: %s",
            pass ? "TRUE" : "FALSE");
@@ -331,22 +265,24 @@ recalc_dbus_conditions (NemoAction *action)
         g_signal_emit (action, signals[CONDITION_CHANGED], 0);
     }
 
-    action->dbus_recalc_timeout_id = 0;
+    priv->dbus_recalc_timeout_id = 0;
     return FALSE;
 }
 
 static void
 queue_recalc_dbus_conditions (NemoAction *action)
 {
-    if (action->constructing) {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    if (priv->constructing) {
         return;
     }
 
-    if (action->dbus_recalc_timeout_id != 0) {
-        g_source_remove (action->dbus_recalc_timeout_id);
-        action->dbus_recalc_timeout_id = 0;
+    if (priv->dbus_recalc_timeout_id != 0) {
+        g_source_remove (priv->dbus_recalc_timeout_id);
+        priv->dbus_recalc_timeout_id = 0;
     }
-    action->dbus_recalc_timeout_id = g_idle_add ((GSourceFunc) recalc_dbus_conditions,
+    priv->dbus_recalc_timeout_id = g_idle_add ((GSourceFunc) recalc_dbus_conditions,
                                                  action);
 }
 
@@ -376,6 +312,8 @@ on_dbus_disappeared (GDBusConnection *connection,
 static void
 setup_dbus_condition (NemoAction *action, const gchar *condition)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
     gchar **split = g_strsplit (condition, " ", 2);
 
     if (g_strv_length (split) != 2) {
@@ -393,7 +331,7 @@ setup_dbus_condition (NemoAction *action, const gchar *condition)
     cond->name = g_strdup (split[1]);
     cond->exists = FALSE;
     cond->action = action;
-    action->dbus = g_list_append (action->dbus, cond);
+    priv->dbus = g_list_append (priv->dbus, cond);
     cond->watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                        cond->name,
                                        0,
@@ -446,6 +384,8 @@ try_vector (const gchar *op, gint vector)
 static gboolean
 recalc_gsettings_conditions (NemoAction *action)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
     GList *l;
     gboolean pass, old_satisfied;
 
@@ -453,7 +393,7 @@ recalc_gsettings_conditions (NemoAction *action)
 
     pass = TRUE;
 
-    for (l = action->gsettings; l != NULL; l = l->next) {
+    for (l = priv->gsettings; l != NULL; l = l->next) {
         GSettingsCondition *cond;
         const GVariantType *target_type, *setting_type;
         gchar **split;
@@ -525,30 +465,32 @@ recalc_gsettings_conditions (NemoAction *action)
     DEBUG ("GSettings satisfied: %s",
            pass ? "TRUE" : "FALSE");
 
-    old_satisfied = action->gsettings_satisfied;
-    action->gsettings_satisfied = pass;
+    old_satisfied = priv->gsettings_satisfied;
+    priv->gsettings_satisfied = pass;
 
     if (pass != old_satisfied) {
         g_signal_emit (action, signals[CONDITION_CHANGED], 0);
     }
 
-    action->gsettings_recalc_timeout_id = 0;
+    priv->gsettings_recalc_timeout_id = 0;
     return FALSE;
 }
 
 static void
 queue_recalc_gsettings_conditions (NemoAction *action)
 {
-    if (action->constructing) {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    if (priv->constructing) {
         return;
     }
 
-    if (action->gsettings_recalc_timeout_id != 0) {
-        g_source_remove (action->gsettings_recalc_timeout_id);
-        action->gsettings_recalc_timeout_id = 0;
+    if (priv->gsettings_recalc_timeout_id != 0) {
+        g_source_remove (priv->gsettings_recalc_timeout_id);
+        priv->gsettings_recalc_timeout_id = 0;
     }
 
-    action->gsettings_recalc_timeout_id = g_idle_add ((GSourceFunc) recalc_gsettings_conditions,
+    priv->gsettings_recalc_timeout_id = g_idle_add ((GSourceFunc) recalc_gsettings_conditions,
                                                       action);
 }
 
@@ -556,6 +498,8 @@ static void
 setup_gsettings_condition (NemoAction *action,
                            const gchar *condition)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
     GSettingsSchemaSource *schema_source;
     GSettingsSchema *schema;
     gchar **split;
@@ -614,7 +558,7 @@ setup_gsettings_condition (NemoAction *action,
                                                              G_CALLBACK (queue_recalc_gsettings_conditions),
                                                              action);
 
-                action->gsettings = g_list_prepend (action->gsettings, cond);
+                priv->gsettings = g_list_prepend (priv->gsettings, cond);
 
                 g_free (signal_string);
 
@@ -644,12 +588,62 @@ strip_custom_modifier (const gchar *raw, gboolean *custom, gchar **out)
     }
 }
 
+static void
+populate_patterns_and_filenames (NemoAction   *action,
+                                 gchar       **array,
+                                 GList       **allowed_patterns,
+                                 GList       **forbidden_patterns,
+                                 GList       **allowed_filenames,
+                                 GList       **forbidden_filenames)
+{
+    *allowed_patterns = NULL;
+    *forbidden_patterns = NULL;
+    *allowed_filenames = NULL;
+    *forbidden_filenames = NULL;
+
+    if (array == NULL) {
+        return;
+    }
+
+    gint i;
+
+    for (i = 0; i < g_strv_length (array); i++) {
+        GString *str = g_string_new (array[i]);
+
+        g_string_replace (str, "~", g_get_home_dir (), 1);
+
+        if (g_strstr_len (str->str, -1, "?") || g_strstr_len (str->str, -1, "*")) {
+            if (g_str_has_prefix (str->str, "!")) {
+                *forbidden_patterns = g_list_prepend (*forbidden_patterns, new_match_pattern (str->str + 1));
+            } else {
+                *allowed_patterns = g_list_prepend (*allowed_patterns, new_match_pattern (str->str));
+            }
+        }
+        else
+        {
+            if (g_str_has_prefix (str->str, "!")) {
+                *forbidden_filenames = g_list_prepend (*forbidden_filenames, g_strdup (str->str + 1));
+            } else {
+                *allowed_filenames = g_list_prepend (*allowed_filenames, g_strdup (str->str));
+            }
+        }
+
+        g_string_free (str, TRUE);
+    }
+
+    *allowed_patterns = g_list_reverse (*allowed_patterns);
+    *forbidden_patterns = g_list_reverse (*forbidden_patterns);
+    *allowed_filenames = g_list_reverse (*allowed_filenames);
+    *forbidden_filenames = g_list_reverse (*forbidden_filenames);
+}
+
 void
 nemo_action_constructed (GObject *object)
 {
-    G_OBJECT_CLASS (parent_class)->constructed (object);
-
     NemoAction *action = NEMO_ACTION (object);
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    G_OBJECT_CLASS (nemo_action_parent_class)->constructed (object);
 
     GKeyFile *key_file = g_key_file_new();
 
@@ -775,6 +769,32 @@ nemo_action_constructed (GObject *object)
                                               KEY_TERMINAL,
                                               NULL);
 
+    gchar **locations = g_key_file_get_string_list (key_file,
+                                                    ACTION_FILE_GROUP,
+                                                    KEY_LOCATIONS,
+                                                    NULL,
+                                                    NULL);
+
+    populate_patterns_and_filenames (action, locations,
+                                     &priv->allowed_location_patterns,
+                                     &priv->forbidden_location_patterns,
+                                     &priv->allowed_location_filenames,
+                                     &priv->forbidden_location_filenames);
+    g_strfreev (locations);
+
+    gchar **files = g_key_file_get_string_list (key_file,
+                                                ACTION_FILE_GROUP,
+                                                KEY_FILES,
+                                                NULL,
+                                                NULL);
+
+    populate_patterns_and_filenames (action, files,
+                                     &priv->allowed_patterns,
+                                     &priv->forbidden_patterns,
+                                     &priv->allowed_filenames,
+                                     &priv->forbidden_filenames);
+    g_strfreev (files);
+
     gboolean is_desktop = FALSE;
 
     if (conditions && condition_count > 0) {
@@ -816,7 +836,7 @@ nemo_action_constructed (GObject *object)
 
     TokenType token_type;
 
-    action->show_in_blank_desktop = is_desktop &&
+    priv->show_in_blank_desktop = is_desktop &&
                                     type == SELECTION_NONE &&
                                     find_token_type (exec, &token_type) == NULL;
 
@@ -833,41 +853,33 @@ nemo_action_constructed (GObject *object)
                    "tooltip", orig_tt,
                    "icon-name", icon_name,
                    "stock-id", stock_id,
-                   "exec", exec,
-                   "selection-type", type,
-                   "extensions", ext,
-                   "mimetypes", mimes,
-                   "parent-dir", parent_dir,
-                   "use-parent-dir", use_parent_dir,
-                   "orig-label", orig_label,
-                   "orig-tooltip", orig_tt,
-                   "quote-type", quote_type,
-                   "separator", separator,
-                   "conditions", conditions,
-                   "escape-space", escape_space,
-                   "run-in-terminal", run_in_terminal,
-                   "uri-scheme", uri_scheme,
                     NULL);
 
-    action->constructing = FALSE;
+    priv->orig_label = orig_label;
+    priv->orig_tt = orig_tt;
+    priv->exec = exec;
+    priv->selection_type = type;
+    priv->extensions = ext;
+    priv->mimetypes = mimes;
+    action->parent_dir = parent_dir;
+    priv->use_parent_dir = use_parent_dir;
+    priv->quote_type = quote_type;
+    priv->separator = separator;
+    priv->conditions = conditions;
+    priv->escape_space = escape_space;
+    priv->run_in_terminal = run_in_terminal;
+    priv->uri_scheme = uri_scheme;
+
+    priv->constructing = FALSE;
 
     DEBUG ("Initial action gsettings and dbus update (%s)", action->key_file_path);
     queue_recalc_dbus_conditions (action);
     queue_recalc_gsettings_conditions (action);
     DEBUG ("Initial action gsettings and dbus complete (%s)", action->key_file_path);
 
-    g_free (orig_label);
-    g_free (orig_tt);
     g_free (icon_name);
     g_free (stock_id);
-    g_free (exec);
-    g_free (parent_dir);
     g_free (quote_type_string);
-    g_free (separator);
-    g_free (uri_scheme);
-    g_strfreev (ext);
-    g_strfreev (mimes);
-    g_strfreev (conditions);
     g_key_file_free (key_file);
 }
 
@@ -880,12 +892,14 @@ nemo_action_new (const gchar *name,
     g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL);
 
     if (!g_key_file_has_group (key_file, ACTION_FILE_GROUP)) {
+        DEBUG ("Action file '%s' is missing [Nemo Action] group, skipping.", path);
         g_key_file_free (key_file);
         return NULL;
     }
 
     if (g_key_file_has_key (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
         if (!g_key_file_get_boolean (key_file, ACTION_FILE_GROUP, KEY_ACTIVE, NULL)) {
+            DEBUG ("Action file '%s' is marked inactive, skipping.", path);
             g_key_file_free (key_file);
             return NULL;
         }
@@ -938,7 +952,7 @@ nemo_action_new (const gchar *name,
             const gchar *prg_name = reverse ? deps[i] + 1 : deps[i];
 
             if (g_path_is_absolute (prg_name)) {
-                if (g_file_test (prg_name, G_FILE_TEST_EXISTS)) {
+                if ((!nemo_path_is_network_safe (prg_name)) && g_file_test (prg_name, G_FILE_TEST_EXISTS)) {
                     found = TRUE;
                 }
             } else {
@@ -952,13 +966,15 @@ nemo_action_new (const gchar *name,
             if (reverse) {
                 if (found) {
                     finish = FALSE;
-                    DEBUG ("Missing action reverse dependency: %s", deps[i]);
+                    g_autofree gchar *base = g_path_get_basename (path);
+                    g_warning_once ("Action '%s' is missing reverse dependency: %s", base, deps[i]);
                     break;
                 }
             } else {
                 if (!found) {
                     finish = FALSE;
-                    DEBUG ("Missing action dependency: %s", deps[i]);
+                    g_autofree gchar *base = g_path_get_basename (path);
+                    g_warning_once ("Action '%s' is missing dependency: %s", base, deps[i]);
                     break;
                 }
             }
@@ -967,7 +983,7 @@ nemo_action_new (const gchar *name,
 
     if (orig_label == NULL || exec_raw == NULL || (ext == NULL && mimes == NULL) || selection_string == NULL) {
         g_warning ("An action definition requires, at minimum, "
-                   "a Label field, an Exec field, a Selection field, and an either an Extensions or Mimetypes field.\n"
+                   "Name, Exec and Selection fields, and either an Extensions or Mimetypes field.\n"
                    "Check the %s file for missing fields.", path);
         finish = FALSE;
     }
@@ -990,41 +1006,37 @@ static void
 nemo_action_finalize (GObject *object)
 {
     NemoAction *action = NEMO_ACTION (object);
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
 
     g_free (action->key_file_path);
-    g_strfreev (action->extensions);
-    g_strfreev (action->mimetypes);
-    g_strfreev (action->conditions);
-    g_free (action->exec);
+    g_strfreev (priv->extensions);
+    g_strfreev (priv->mimetypes);
+    g_strfreev (priv->conditions);
+    g_free (priv->exec);
     g_free (action->parent_dir);
-    g_free (action->orig_label);
-    g_free (action->orig_tt);
-    g_free (action->separator);
-    g_free (action->uri_scheme);
+    g_free (priv->orig_label);
+    g_free (priv->orig_tt);
+    g_free (priv->separator);
+    g_free (priv->uri_scheme);
+    g_free (action->uuid);
 
-    if (action->dbus) {
-        g_list_free_full (action->dbus, (GDestroyNotify) dbus_condition_free);
-        action->dbus = NULL;
-    }
+    g_list_free_full (priv->dbus, (GDestroyNotify) dbus_condition_free);
+    g_list_free_full (priv->gsettings, (GDestroyNotify) gsettings_condition_free);
 
-    if (action->gsettings) {
-        g_list_free_full (action->gsettings, (GDestroyNotify) gsettings_condition_free);
-        action->gsettings = NULL;
-    }
+    g_list_free_full (priv->allowed_location_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->forbidden_location_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->allowed_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->forbidden_patterns, (GDestroyNotify) free_match_pattern);
+    g_list_free_full (priv->allowed_location_filenames, (GDestroyNotify) g_free);
+    g_list_free_full (priv->forbidden_location_filenames, (GDestroyNotify) g_free);
+    g_list_free_full (priv->allowed_filenames, (GDestroyNotify) g_free);
+    g_list_free_full (priv->forbidden_filenames, (GDestroyNotify) g_free);
 
-    if (action->dbus_recalc_timeout_id != 0) {
-        g_source_remove (action->dbus_recalc_timeout_id);
-        action->dbus_recalc_timeout_id = 0;
-    }
+    g_clear_handle_id (&priv->dbus_recalc_timeout_id, g_source_remove);
+    g_clear_handle_id (&priv->gsettings_recalc_timeout_id, g_source_remove);
 
-    if (action->gsettings_recalc_timeout_id != 0) {
-        g_source_remove (action->gsettings_recalc_timeout_id);
-        action->gsettings_recalc_timeout_id = 0;
-    }
-
-    G_OBJECT_CLASS (parent_class)->finalize (object);
+    G_OBJECT_CLASS (nemo_action_parent_class)->finalize (object);
 }
-
 
 static void
 nemo_action_set_property (GObject         *object,
@@ -1032,56 +1044,15 @@ nemo_action_set_property (GObject         *object,
                           const GValue    *value,
                           GParamSpec      *pspec)
 {
-  NemoAction *action;
+    NemoAction *action;
   
-  action = NEMO_ACTION (object);
+    action = NEMO_ACTION (object);
 
-  switch (prop_id)
+    switch (prop_id)
     {
     case PROP_KEY_FILE_PATH:
       action->key_file_path = g_strdup (g_value_get_string (value));
-      break;
-    case PROP_SELECTION_TYPE:
-      action->selection_type = g_value_get_int (value);
-      break;
-    case PROP_EXTENSIONS:
-      action->extensions = g_strdupv (g_value_get_pointer (value));
-      break;
-    case PROP_MIMES:
-      action->mimetypes = g_strdupv (g_value_get_pointer (value));
-      break;
-    case PROP_EXEC:
-      action->exec = g_strdup (g_value_get_string (value));
-      break;
-    case PROP_PARENT_DIR:
-      action->parent_dir = g_strdup (g_value_get_string (value));
-      break;
-    case PROP_USE_PARENT_DIR:
-      action->use_parent_dir = g_value_get_boolean (value);
-      break;
-    case PROP_ORIG_LABEL:
-      action->orig_label = g_strdup (g_value_get_string (value));
-      break;
-    case PROP_ORIG_TT:
-      action->orig_tt = g_strdup (g_value_get_string (value));
-      break;
-    case PROP_QUOTE_TYPE:
-      action->quote_type = g_value_get_int (value);
-      break;
-    case PROP_SEPARATOR:
-      action->separator = g_strdup (g_value_get_string (value));
-      break;
-    case PROP_CONDITIONS:
-      action->conditions = g_strdupv (g_value_get_pointer (value));
-      break;
-    case PROP_ESCAPE_SPACE:
-      action->escape_space = g_value_get_boolean (value);
-      break;
-    case PROP_RUN_IN_TERMINAL:
-      action->run_in_terminal = g_value_get_boolean (value);
-      break;
-    case PROP_URI_SCHEME:
-      action->uri_scheme = g_strdup (g_value_get_string (value));
+      action->uuid = nemo_make_action_uuid_for_path (action->key_file_path);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1095,56 +1066,14 @@ nemo_action_get_property (GObject    *object,
              GValue     *value,
              GParamSpec *pspec)
 {
-  NemoAction *action;
+    NemoAction *action;
 
-  action = NEMO_ACTION (object);
+    action = NEMO_ACTION (object);
 
-  switch (prop_id)
+    switch (prop_id)
     {
     case PROP_KEY_FILE_PATH:
       g_value_set_string (value, action->key_file_path);
-      break;
-    case PROP_SELECTION_TYPE:
-      g_value_set_int (value, action->selection_type);
-      break;
-    case PROP_EXTENSIONS:
-      g_value_set_pointer (value, action->extensions);
-      break;
-    case PROP_MIMES:
-      g_value_set_pointer (value, action->mimetypes);
-      break;
-    case PROP_EXEC:
-      g_value_set_string (value, action->exec);
-      break;
-    case PROP_PARENT_DIR:
-      g_value_set_string (value, action->parent_dir);
-      break;
-    case PROP_USE_PARENT_DIR:
-      g_value_set_boolean (value, action->use_parent_dir);
-      break;
-    case PROP_ORIG_LABEL:
-      g_value_set_string (value, action->orig_label);
-      break;
-    case PROP_ORIG_TT:
-      g_value_set_string (value, action->orig_tt);
-      break;
-    case PROP_QUOTE_TYPE:
-      g_value_set_int (value, action->quote_type);
-      break;
-    case PROP_SEPARATOR:
-      g_value_set_string (value, action->separator);
-      break;
-    case PROP_CONDITIONS:
-      g_value_set_pointer (value, action->conditions);
-      break;
-    case PROP_ESCAPE_SPACE:
-      g_value_set_boolean (value, action->escape_space);
-      break;
-    case PROP_RUN_IN_TERMINAL:
-      g_value_set_boolean (value, action->run_in_terminal);
-      break;
-    case PROP_URI_SCHEME:
-      g_value_set_string (value, action->uri_scheme);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1213,13 +1142,14 @@ find_token_type (const gchar *str, TokenType *token_type)
 static gchar *
 get_path (NemoAction *action, NemoFile *file)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     gchar *ret, *orig;
 
     orig = nemo_file_get_path (file);
 
-    if (action->quote_type == QUOTE_TYPE_DOUBLE) {
+    if (priv->quote_type == QUOTE_TYPE_DOUBLE) {
         ret = eel_str_escape_double_quoted_content (orig);
-    } else if (action->quote_type == QUOTE_TYPE_SINGLE) {
+    } else if (priv->quote_type == QUOTE_TYPE_SINGLE) {
         // Replace literal ' with a close ', a \', and an open '
         ret = eel_str_replace_substring (orig, "'", "'\\''");
     } else {
@@ -1234,7 +1164,9 @@ get_path (NemoAction *action, NemoFile *file)
 static GString *
 score_append (NemoAction *action, GString *str, const gchar *c)
 {
-    if (action->escape_underscores) {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    if (priv->escape_underscores) {
         gchar *escaped = eel_str_double_underscores (c);
         str = g_string_append (str, escaped);
         g_free (escaped);
@@ -1247,10 +1179,12 @@ score_append (NemoAction *action, GString *str, const gchar *c)
 static GString *
 insert_separator (NemoAction *action, GString *str)
 {
-    if (action->separator == NULL)
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    if (priv->separator == NULL)
         str = g_string_append (str, " ");
     else
-        str = score_append (action, str, action->separator);
+        str = score_append (action, str, priv->separator);
 
     return str;
 }
@@ -1258,7 +1192,9 @@ insert_separator (NemoAction *action, GString *str)
 static GString *
 insert_quote (NemoAction *action, GString *str)
 {
-    switch (action->quote_type) {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    switch (priv->quote_type) {
         case QUOTE_TYPE_SINGLE:
             str = g_string_append (str, "'");
             break;
@@ -1280,6 +1216,7 @@ insert_quote (NemoAction *action, GString *str)
 static gchar *
 get_device_path (NemoAction *action, NemoFile *file)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     GMount *mount = nemo_file_get_mount (file);
 
     g_return_val_if_fail (mount != NULL, NULL);
@@ -1289,9 +1226,9 @@ get_device_path (NemoAction *action, NemoFile *file)
 
     id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
 
-    if (action->quote_type == QUOTE_TYPE_DOUBLE) {
+    if (priv->quote_type == QUOTE_TYPE_DOUBLE) {
         ret = eel_str_escape_double_quoted_content (id);
-    } else if (action->quote_type == QUOTE_TYPE_SINGLE) {
+    } else if (priv->quote_type == QUOTE_TYPE_SINGLE) {
         // Replace literal ' with a close ', a \', and an open '
         ret = eel_str_replace_substring (id, "'", "'\\''");
     } else {
@@ -1507,23 +1444,24 @@ nemo_action_activate (NemoAction *action,
                       NemoFile   *parent,
                       GtkWindow  *window)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     GError *error;
-    GString *exec = g_string_new (action->exec);
+    GString *exec = g_string_new (priv->exec);
 
     error = NULL;
 
-    action->escape_underscores = FALSE;
+    priv->escape_underscores = FALSE;
 
     exec = expand_action_string (action, selection, parent, exec, window);
 
-    if (action->use_parent_dir) {
+    if (priv->use_parent_dir) {
         exec = g_string_prepend (exec, G_DIR_SEPARATOR_S);
         exec = g_string_prepend (exec, action->parent_dir);
     }
 
     DEBUG ("Action Spawning: %s", exec->str);
 
-    if (action->run_in_terminal) {
+    if (priv->run_in_terminal) {
         gint argcp;
         gchar **argvp;
 
@@ -1552,28 +1490,46 @@ nemo_action_activate (NemoAction *action,
 const gchar *
 nemo_action_get_orig_label (NemoAction *action)
 {
-    return action->orig_label;
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+    return priv->orig_label;
+}
+
+void
+nemo_action_override_label (NemoAction  *action,
+                            const gchar *label)
+{
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+    g_free (priv->orig_label);
+    priv->orig_label = g_strdup (label);
+}
+
+void
+nemo_action_override_icon (NemoAction  *action,
+                           const gchar *icon)
+{
+    gtk_action_set_icon_name (GTK_ACTION (action), icon);
 }
 
 const gchar *
 nemo_action_get_orig_tt (NemoAction *action)
 {
-    return action->orig_tt;
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+    return priv->orig_tt;
 }
 
-
-gchar *
-nemo_action_get_label (NemoAction *action,
-                       GList      *selection,
-                       NemoFile   *parent,
-                       GtkWindow  *window)
+static gchar *
+get_final_label (NemoAction *action,
+                 GList      *selection,
+                 NemoFile   *parent,
+                 GtkWindow  *window)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     const gchar *orig_label = nemo_action_get_orig_label (action);
 
     if (orig_label == NULL)
         return NULL;
 
-    action->escape_underscores = TRUE;
+    priv->escape_underscores = TRUE;
 
     GString *str = g_string_new (orig_label);
 
@@ -1586,18 +1542,19 @@ nemo_action_get_label (NemoAction *action,
     return ret;
 }
 
-gchar *
-nemo_action_get_tt (NemoAction *action,
-                    GList      *selection,
-                    NemoFile   *parent,
-                    GtkWindow  *window)
+static gchar *
+get_final_tt (NemoAction *action,
+              GList      *selection,
+              NemoFile   *parent,
+              GtkWindow  *window)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     const gchar *orig_tt = nemo_action_get_orig_tt (action);
 
     if (orig_tt == NULL)
         return NULL;
 
-    action->escape_underscores = FALSE;
+    priv->escape_underscores = FALSE;
 
     GString *str = g_string_new (orig_tt);
 
@@ -1610,6 +1567,24 @@ nemo_action_get_tt (NemoAction *action,
     return ret;
 }
 
+static void
+finalize_strings (NemoAction *action,
+                  GList      *selection,
+                  NemoFile   *parent,
+                  GtkWindow  *window)
+{
+    gchar *label, *tt;
+
+    label = get_final_label (action, selection, parent, window);
+    tt = get_final_tt (action, selection, parent, window);
+
+    gtk_action_set_label (GTK_ACTION (action), label);
+    gtk_action_set_tooltip (GTK_ACTION (action), tt);
+
+    g_free (label);
+    g_free (tt);
+}
+
 static gboolean
 check_exec_condition (NemoAction  *action,
                       const gchar *condition,
@@ -1617,6 +1592,7 @@ check_exec_condition (NemoAction  *action,
                       NemoFile    *parent,
                       GtkWindow   *window)
 {
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     GString *exec;
     GError *error;
     gint return_code;
@@ -1646,7 +1622,7 @@ check_exec_condition (NemoAction  *action,
 
     error = NULL;
 
-    action->escape_underscores = FALSE;
+    priv->escape_underscores = FALSE;
 
     exec = expand_action_string (action, selection, parent, exec, window);
 
@@ -1681,7 +1657,7 @@ get_is_dir (NemoFile *file)
 
     GFile *f = nemo_file_get_location (file);
 
-    if (g_file_is_native (f)) {
+    if (g_file_is_native (f) && (!nemo_location_is_network_safe (f))) {
         gchar *path;
 
         path = g_file_get_path (f);
@@ -1696,21 +1672,151 @@ get_is_dir (NemoFile *file)
     return ret;
 }
 
-gboolean
-nemo_action_get_visibility (NemoAction *action,
-                            GList      *selection,
-                            NemoFile   *parent,
-                            gboolean    for_places,
-                            GtkWindow  *window)
+static gboolean
+check_is_allowed (NemoAction *action,
+                  NemoFile   *parent,
+                  GList      *selection,
+                  GList      *allowed_patterns,
+                  GList      *forbidden_patterns,
+                  GList      *allowed_names,
+                  GList      *forbidden_names)
 {
+    // If there are no pattern/name specs, always allow the location..
+    if ((allowed_patterns == NULL && forbidden_patterns == NULL && allowed_names == NULL && forbidden_names == NULL)) {
+        return TRUE;
+    }
+
+    GList *l, *files;
+
+    if (parent != NULL) {
+        DEBUG ("Checking pattern/name matching for location: %s", nemo_file_peek_name (parent));
+        files = g_list_prepend (NULL, parent);
+    }
+    else {
+        DEBUG ("Checking pattern/name matching for selected files");
+        files = selection;
+    }
+
+    gboolean allowed = TRUE;
+
+    for (l = files; l != NULL; l = l->next) {
+        NemoFile *file = NEMO_FILE (l->data);
+
+        g_autofree gchar *path = nemo_file_get_path (file);
+        // If the first file (or the single parent) isn't native, no need to
+        // check all selected items, just exit early.
+        if (path == NULL) {
+            goto check_allowed_done;
+        }
+
+        const gchar *name = nemo_file_peek_name (file);
+        gboolean allowed_allowed = TRUE;
+        gboolean forbidden_allowed = TRUE;
+        GList *ll;
+
+        if (allowed_patterns != NULL || allowed_names != NULL) {
+            allowed_allowed = FALSE;
+
+            for (ll = allowed_patterns; ll != NULL; ll = ll->next) {
+                MatchPattern *mp = (MatchPattern *) ll->data;
+                const gchar *test_str = mp->absolute ? path : name;
+
+                if (g_pattern_spec_match (mp->pattern, strlen (test_str), test_str, NULL)) {
+                    allowed_allowed = TRUE;
+                    break;
+                }
+            }
+
+            for (ll = allowed_names; ll != NULL; ll = ll->next) {
+                gchar *aname = (gchar *) ll->data;
+
+                if (name[0] == '/' && g_strcmp0 (path, aname) == 0) {
+                        allowed_allowed = TRUE;
+                        break;
+                }
+                else
+                if (g_str_has_suffix (name, aname)) {
+                    allowed_allowed = TRUE;
+                    break;
+                }
+            }
+        }
+
+        if (forbidden_patterns != NULL || forbidden_names != NULL) {
+            // (forbidden_allowed = TRUE;)
+
+            for (ll = forbidden_patterns; ll != NULL; ll = ll->next) {
+                MatchPattern *mp = (MatchPattern *) ll->data;
+                const gchar *test_str = mp->absolute ? path : name;
+
+                if (g_pattern_spec_match (mp->pattern, strlen (test_str), test_str, NULL)) {
+                    forbidden_allowed = FALSE;
+                    break;
+                }
+            }
+
+            for (ll = forbidden_names; ll != NULL; ll = ll->next) {
+                gchar *fname = (gchar *) ll->data;
+                if (name[0] == '/' && g_strcmp0 (path, fname) == 0) {
+                    forbidden_allowed = FALSE;
+                    break;
+                }
+                else
+                if (g_str_has_suffix (name, fname)) {
+                    forbidden_allowed = FALSE;
+                    break;
+                }
+            }
+        }
+
+        DEBUG ("Final result - allowed pass: %d, forbidden pass: %d", allowed_allowed, forbidden_allowed);
+        if (!(allowed_allowed && forbidden_allowed)) {
+            allowed = FALSE;
+            break;
+        }
+    }
+
+check_allowed_done:
+    if (parent != NULL) {
+        g_list_free (files);
+    }
+
+    return allowed;
+}
+
+
+static gboolean
+get_visibility (NemoAction *action,
+                GList      *selection,
+                NemoFile   *parent,
+                gboolean    for_places,
+                GtkWindow  *window)
+{
+    NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     // Check DBUS
-    if (!action->dbus_satisfied)
+    if (!priv->dbus_satisfied)
         return FALSE;
 
-    if (!action->gsettings_satisfied)
+    if (!priv->gsettings_satisfied)
         return FALSE;
 
-    if ((action->uri_scheme != NULL) && !nemo_file_has_uri_scheme (parent, action->uri_scheme)) {
+    if ((priv->uri_scheme != NULL) && !nemo_file_has_uri_scheme (parent, priv->uri_scheme)) {
+        return FALSE;
+    }
+
+    if (!check_is_allowed (action, parent, NULL,
+                           priv->allowed_location_patterns,
+                           priv->forbidden_location_patterns,
+                           priv->allowed_location_filenames,
+                           priv->forbidden_location_filenames)) {
+        return FALSE;
+    }
+
+    if (!check_is_allowed (action, NULL, selection,
+                           priv->allowed_patterns,
+                           priv->forbidden_patterns,
+                           priv->allowed_filenames,
+                           priv->forbidden_filenames)) {
         return FALSE;
     }
 
@@ -1718,7 +1824,7 @@ nemo_action_get_visibility (NemoAction *action,
     gboolean selection_type_show = FALSE;
     guint selected_count = g_list_length (selection);
 
-    switch (action->selection_type) {
+    switch (priv->selection_type) {
         case SELECTION_SINGLE:
             selection_type_show = selected_count == 1;
             break;
@@ -1735,7 +1841,7 @@ nemo_action_get_visibility (NemoAction *action,
             selection_type_show = TRUE;
             break;
         default:
-            selection_type_show = selected_count == action->selection_type;
+            selection_type_show = selected_count == priv->selection_type;
             break;
     }
 
@@ -1744,8 +1850,8 @@ nemo_action_get_visibility (NemoAction *action,
 
     // Check extensions and mimetypes
     gboolean extension_type_show = TRUE;
-    gchar **extensions = action->extensions;
-    gchar **mimetypes = action->mimetypes;
+    gchar **extensions = priv->extensions;
+    gchar **mimetypes = priv->mimetypes;
 
     guint ext_count = extensions != NULL ? g_strv_length (extensions) : 0;
     guint mime_count = mimetypes != NULL ? g_strv_length (mimetypes) : 0;
@@ -1820,7 +1926,7 @@ nemo_action_get_visibility (NemoAction *action,
 
     // Check conditions
     gboolean condition_type_show = TRUE;
-    gchar **conditions = action->conditions;
+    gchar **conditions = priv->conditions;
     guint condition_count = conditions != NULL ? g_strv_length (conditions) : 0;
 
     if (condition_count > 0) {
@@ -1830,7 +1936,7 @@ nemo_action_get_visibility (NemoAction *action,
             condition = conditions[j];
             if (g_strcmp0 (condition, "desktop") == 0) {
                 gchar *name = nemo_file_get_display_name (parent);
-                if (g_strcmp0 (name, "x-nemo-desktop") != 0)
+                if (g_strcmp0 (name, "x-nemo-desktop") != 0 && !(parent == NULL && priv->show_in_blank_desktop))
                     condition_type_show = FALSE;
                 g_free (name);
             } else if (g_strcmp0 (condition, "removable") == 0) {
@@ -1852,7 +1958,7 @@ nemo_action_get_visibility (NemoAction *action,
                         f = nemo_file_get_location (file);
 
                         if (g_file_is_native (f)) {
-                            mount = g_file_find_enclosing_mount (f, NULL, NULL);
+                            mount = nemo_get_mount_for_location_safe (f);
                             nemo_file_set_mount (file, mount);
                         }
 
@@ -1887,8 +1993,29 @@ nemo_action_get_visibility (NemoAction *action,
         }
     }
 
-    if (!condition_type_show)
+    if (!condition_type_show) {
         return FALSE;
+    }
 
     return TRUE;
+}
+
+void
+nemo_action_update_display_state (NemoAction *action,
+                                  GList      *selection,
+                                  NemoFile   *parent,
+                                  gboolean    for_places,
+                                  GtkWindow  *window)
+{
+    if (get_visibility (action, selection, parent, for_places, window)) {
+        DEBUG ("Action '%s' determined VISIBLE", action->uuid);
+
+        finalize_strings (action, selection, parent, window);
+        gtk_action_set_visible (GTK_ACTION (action), TRUE);
+
+        return;
+    }
+
+    DEBUG ("Action '%s' determined HIDDEN", action->uuid);
+    gtk_action_set_visible (GTK_ACTION (action), FALSE);
 }

@@ -1,0 +1,2 @@
+#!/bin/sh
+exec @PKG_DATADIR@/layout-editor/nemo_action_layout_editor.py

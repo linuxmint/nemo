@@ -224,7 +224,7 @@ editable_event_after_callback (GtkEntry *entry,
 	 * typing when the directory is large. Only trigger the expand
 	 * when we type a key that would have inserted characters.
 	 */
-	if (position_and_selection_are_at_end (editable)) {
+	if (position_and_selection_are_at_end (editable) && keyevent->keyval != GDK_KEY_Escape) {
 		if (entry_would_have_inserted_characters (keyevent)) {
 			if (location_entry->details->idle_id == 0) {
 				location_entry->details->idle_id = g_idle_add (try_to_expand_path, location_entry);

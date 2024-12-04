@@ -11,7 +11,7 @@
 #include "nemo-file.h"
 #include <glib.h>
 #include <libnemo-private/nemo-action-manager.h>
-#include <libnemo-private/nemo-action.h>
+#include <libnemo-private/nemo-action-symbols.h>
 #include "nemo-global-preferences.h"
 
 G_DEFINE_TYPE (NemoActionConfigWidget, nemo_action_config_widget, NEMO_TYPE_CONFIG_BASE_WIDGET);
@@ -35,6 +35,7 @@ action_proxy_free (ActionProxy *proxy)
     g_clear_pointer (&proxy->stock_id, g_free);
     g_clear_pointer (&proxy->icon_name, g_free);
     g_clear_pointer (&proxy->filename, g_free);
+    g_free (proxy);
 }
 
 static GtkWidget *
@@ -113,7 +114,7 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
         }
     }
 
-    ActionProxy *proxy = g_slice_new0 (ActionProxy);
+    ActionProxy *proxy = g_new0 (ActionProxy, 1);
 
     gchar *name = g_key_file_get_locale_string (key_file,
                                                 ACTION_FILE_GROUP,
@@ -150,6 +151,7 @@ make_action_proxy (const gchar *filename, const gchar *fullpath)
     proxy->filename = g_strdup (filename);
 
     g_free (name);
+    g_free (comment);
     g_free (icon_name);
     g_free (stock_id);
     g_key_file_free (key_file);
@@ -221,7 +223,7 @@ refresh_widget (NemoActionConfigWidget *widget)
     data_dirs = (gchar **) g_get_system_data_dirs ();
 
     for (i = 0; i < g_strv_length (data_dirs); i++) {
-        path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
+        path = nemo_action_manager_get_system_directory_path (data_dirs[i]);
         populate_from_directory (widget, path);
         g_clear_pointer (&path, g_free);
     }
@@ -356,6 +358,12 @@ on_open_folder_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
 }
 
 static void
+on_layout_editor_clicked (GtkWidget *button, NemoActionConfigWidget *widget)
+{
+    g_spawn_command_line_async ("nemo-action-layout-editor", NULL);
+}
+
+static void
 on_dir_changed (GFileMonitor     *monitor,
                 GFile            *file,
                 GFile            *other_file,
@@ -390,7 +398,7 @@ static void setup_dir_monitors (NemoActionConfigWidget *widget)
 
     guint i;
     for (i = 0; i < g_strv_length (data_dirs); i++) {
-        gchar *path = g_build_filename (data_dirs[i], "nemo", "actions", NULL);
+        gchar *path = nemo_action_manager_get_system_directory_path (data_dirs[i]);
         try_monitor_path (widget, path);
         g_free (path);
     }
@@ -452,15 +460,23 @@ nemo_action_config_widget_init (NemoActionConfigWidget *self)
     g_free (title);
     g_free (markup);
 
-    GtkWidget *widget = gtk_button_new_from_icon_name ("folder", GTK_ICON_SIZE_BUTTON);
+    GtkWidget *widget = gtk_button_new_from_icon_name ("folder-symbolic", GTK_ICON_SIZE_BUTTON);
 
     GtkWidget *bb = nemo_config_base_widget_get_buttonbox (NEMO_CONFIG_BASE_WIDGET (self));
     gtk_box_pack_end (GTK_BOX (bb),
                       widget,
                       FALSE, FALSE, 0);
     gtk_widget_show (widget);
-
     g_signal_connect (widget, "clicked", G_CALLBACK (on_open_folder_clicked), self);
+
+    widget = gtk_button_new_from_icon_name ("view-list-symbolic", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_set_tooltip_text (widget, _("Edit layout"));
+
+    gtk_box_pack_end (GTK_BOX (bb),
+                      widget,
+                      FALSE, FALSE, 0);
+    gtk_widget_show (widget);
+    g_signal_connect (widget, "clicked", G_CALLBACK (on_layout_editor_clicked), self);
 
     g_signal_connect (nemo_config_base_widget_get_enable_button (NEMO_CONFIG_BASE_WIDGET (self)), "clicked",
                                                                  G_CALLBACK (on_enable_clicked), self);

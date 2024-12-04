@@ -108,6 +108,7 @@ struct NemoPropertiesWindowDetails {
 
 	GtkLabel *directory_contents_title_field;
 	GtkLabel *directory_contents_value_field;
+	GtkLabel *size_value_field;
 	guint update_directory_contents_timeout_id;
 	guint update_files_timeout_id;
 
@@ -194,6 +195,9 @@ static const GtkTargetEntry target_table[] = {
  */
 #define CHOWN_CHGRP_TIMEOUT			300 /* milliseconds */
 
+static gboolean is_computer_directory             (NemoFile *file);
+static gboolean is_network_directory              (NemoFile *file);
+static gboolean is_burn_directory                 (NemoFile *file);
 static void directory_contents_value_field_update (NemoPropertiesWindow *window);
 static void file_changed_callback                 (NemoFile       *file,
 						   gpointer            user_data);
@@ -205,6 +209,7 @@ static void value_field_update                    (NemoPropertiesWindow *window,
 						   GtkLabel           *field);
 static void properties_window_update              (NemoPropertiesWindow *window,
 						   GList              *files);
+static void size_field_update                     (NemoPropertiesWindow *window);
 static void is_directory_ready_callback           (NemoFile       *file,
 						   gpointer            data);
 static void cancel_group_change_callback          (NemoPropertiesWindow *window);
@@ -927,6 +932,9 @@ remove_from_dialog (NemoPropertiesWindow *window,
 
 }
 
+
+
+
 static gboolean
 mime_list_equal (GList *a, GList *b)
 {
@@ -1005,6 +1013,8 @@ properties_window_update (NemoPropertiesWindow *window,
 	}
 
 	if (dirty_target) {
+		size_field_update (window);
+
 		for (l = window->details->permission_buttons; l != NULL; l = l->next) {
 			permission_button_update (window, GTK_TOGGLE_BUTTON (l->data));
 		}
@@ -2016,11 +2026,24 @@ file_has_prefix (NemoFile *file,
 	return FALSE;
 }
 
+static gchar *
+file_size_for_display (goffset size)
+{
+	int size_prefix;
+	gchar *text;
+
+	/* always use the long format for this. */
+	size_prefix = nemo_global_preferences_get_size_prefix_preference ();
+	text = g_format_size_full (size, (size_prefix | G_FORMAT_SIZE_LONG_FORMAT));
+
+	return text;
+}
+
 static void
 directory_contents_value_field_update (NemoPropertiesWindow *window)
 {
 	NemoRequestStatus file_status, status;
-	char *text, *temp;
+	gchar *text, *temp;
 	guint directory_count;
 	guint file_count;
 	guint total_count;
@@ -2102,21 +2125,14 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 			text = g_strdup ("...");
 		}
 	} else {
-		char *size_str;
-		int prefix;
-		prefix = nemo_global_preferences_get_size_prefix_preference ();
-		size_str = g_format_size_full (total_size, prefix);
-        if (total_hidden > 0) {
-        	text = g_strdup_printf (ngettext("%1$s item (and %2$s hidden), with size %3$s", "%1$s items (and %2$s hidden), totalling %3$s", total_count),
-        		g_strdup_printf("%'d", total_count),
-        		g_strdup_printf("%'d", total_hidden),
-        		size_str);
-        } else {
-        	text = g_strdup_printf (ngettext("%1$s item, with size %2$s", "%1$s items, totalling %2$s", total_count),
-        		g_strdup_printf("%'d", total_count),
-        		size_str);
-        }
-		g_free (size_str);
+		if (total_hidden > 0) {
+			text = g_strdup_printf (ngettext("%1$s item (and %2$s hidden)", "%1$s items (and %2$s hidden)", total_count),
+						g_strdup_printf("%'d", total_count),
+						g_strdup_printf("%'d", total_hidden));
+		} else {
+			text = g_strdup_printf (ngettext("%1$s item", "%1$s items", total_count),
+						g_strdup_printf("%'d", total_count));
+		}
 
 		if (unreadable_directory_count != 0) {
 			temp = text;
@@ -2146,6 +2162,24 @@ directory_contents_value_field_update (NemoPropertiesWindow *window)
 	}
 	gtk_label_set_text (window->details->directory_contents_title_field,
 			    text);
+	g_free (text);
+
+	/* Update the file size field with the selection or directory's total file size. */
+	file = get_target_file (window);
+
+	if (!is_multi_file_window (window)
+	    && (is_computer_directory (file) ||
+	        is_network_directory (file))) {
+		temp = g_object_get_data (G_OBJECT (window->details->size_value_field),
+		                          "inconsistent_string");
+		text = g_strdup (temp);
+	} else {
+		text = file_size_for_display (total_size);
+	}
+
+	gtk_label_set_text (window->details->size_value_field, text);
+	gtk_widget_set_tooltip_text (GTK_WIDGET (window->details->size_value_field), text);
+
 	g_free (text);
 
 	if (status == NEMO_REQUEST_DONE) {
@@ -2194,9 +2228,6 @@ attach_directory_contents_value_field (NemoPropertiesWindow *window,
 	window->details->directory_contents_value_field = value_field;
 
 	gtk_label_set_line_wrap (value_field, TRUE);
-
-	/* Fill in the initial value. */
-	directory_contents_value_field_update (window);
 
 	for (l = window->details->target_files; l; l = l->next) {
 		file = NEMO_FILE (l->data);
@@ -2276,6 +2307,29 @@ append_directory_contents_fields (NemoPropertiesWindow *window,
 		(window, grid, GTK_WIDGET (title_field));
 
 	gtk_label_set_mnemonic_widget (title_field, GTK_WIDGET(value_field));
+}
+
+/* append_size_field ()
+ * Manually add field pair for file sizes to always show them in long format,
+ * i.e. including the number of bytes.
+ * This still respects the user's preference for base (decimal/binary)
+ */
+static void
+append_size_field (NemoPropertiesWindow *window,
+		   GtkGrid *grid)
+{
+	GtkLabel *title_field, *value_field;
+
+	title_field = attach_title_field (grid, _("Size:"));
+	value_field = attach_value_label (grid, GTK_WIDGET (title_field), NULL);
+
+	g_assert (window->details->size_value_field == NULL);
+	window->details->size_value_field = GTK_LABEL (value_field);
+
+	g_object_set_data_full (G_OBJECT (value_field), "inconsistent_string",
+				g_strdup (INCONSISTENT_STATE_STRING), g_free);
+
+	gtk_label_set_mnemonic_widget (title_field, GTK_WIDGET (value_field));
 }
 
 static GtkWidget *
@@ -3103,11 +3157,16 @@ create_basic_page (NemoPropertiesWindow *window)
 	if (is_multi_file_window (window) ||
 	    nemo_file_is_directory (get_target_file (window))) {
 		append_directory_contents_fields (window, grid);
-	} else {
-		append_title_value_pair (window, grid, _("Size:"),
-					 "size_detail",
-					 INCONSISTENT_STATE_STRING,
-					 FALSE);
+	}
+
+	append_size_field (window, grid);
+
+	/* Fill in the initial values for directory element counts
+	 * and (total) file size.
+	 */
+	if (is_multi_file_window (window) ||
+	    nemo_file_is_directory (get_target_file (window))) {
+		directory_contents_value_field_update (window);
 	}
 
 	append_blank_row (grid);
@@ -3245,6 +3304,29 @@ end_long_operation (NemoPropertiesWindow *window)
 		gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
 	}
 	window->details->long_operation_underway--;
+}
+
+static void
+size_field_update (NemoPropertiesWindow *window)
+{
+	NemoFile *file;
+	goffset size;
+	g_autofree gchar *size_str = NULL;
+
+	file = get_target_file (window);
+
+	/* Only update the field in case properties of a single file are shown.
+	 * Otherwise directory_contents_value_field_update() will handle this.
+	 */
+	if (is_multi_file_window (window) || nemo_file_is_directory (file)) {
+		return;
+	}
+
+	size = nemo_file_get_size (file);
+	size_str = file_size_for_display (size);
+
+	gtk_label_set_text (window->details->size_value_field, size_str);
+	gtk_widget_set_tooltip_text (GTK_WIDGET (window->details->size_value_field), size_str);
 }
 
 static void

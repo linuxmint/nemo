@@ -30,6 +30,7 @@
 #include <pango/pango.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-icon-info.h>
+#include <libnemo-private/nemo-search-engine.h>
 
 /* NemoFile is an object used to represent a single element of a
  * NemoDirectory. It's lightweight and relies on NemoDirectory
@@ -198,6 +199,7 @@ const char *         	nemo_file_peek_extension_name               (NemoFile     
 GFile *                 nemo_file_get_location                      (NemoFile                   *file);
 char *					nemo_file_get_description			 		(NemoFile			 		*file);
 char *                  nemo_file_get_uri                           (NemoFile                   *file);
+char *                  nemo_file_get_local_uri                     (NemoFile                   *file);
 char *                  nemo_file_get_path                          (NemoFile                   *file);
 char *                  nemo_file_get_uri_scheme                    (NemoFile                   *file);
 gboolean                nemo_file_has_uri_scheme                    (NemoFile *file, const gchar *scheme);
@@ -547,8 +549,9 @@ void     nemo_file_set_load_deferred_attrs        (NemoFile *file,
                                                    NemoFileLoadDeferredAttrs load_deferred_attrs);
 NemoFileLoadDeferredAttrs nemo_file_get_load_deferred_attrs (NemoFile *file);
 
-void nemo_file_add_search_result_data             (NemoFile *file, gpointer search_dir, GPtrArray *search_hits);
+gboolean nemo_file_add_search_result_data             (NemoFile *file, gpointer search_dir, FileSearchResult *result);
 void nemo_file_clear_search_result_data           (NemoFile *file, gpointer search_dir);
+gboolean nemo_file_has_search_result              (NemoFile *file, gpointer search_dir);
 gint nemo_file_get_search_result_count            (NemoFile *file, gpointer search_dir);
 gchar *nemo_file_get_search_result_count_as_string (NemoFile *file, gpointer search_dir);
 gchar *nemo_file_get_search_result_snippet        (NemoFile *file, gpointer search_dir);

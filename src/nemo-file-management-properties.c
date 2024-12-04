@@ -50,6 +50,8 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SORT_ORDER_WIDGET "sort_order_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET "date_format_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET "date_font_choice_combobox"
+
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET "preview_image_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SIZE_PREFIXES_WIDGET "size_prefixes_combobox"
@@ -112,6 +114,7 @@
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_SKIP_FILE_OP_QUEUE_WIDGET "skip_file_op_queue_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET "click_double_parent_folder_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL_WIDGET "expand_row_on_dnd_dwell_checkbutton"
 
 /* int enums */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_THUMBNAIL_LIMIT_WIDGET "preview_image_size_combobox"
@@ -155,6 +158,13 @@ static const char * const date_format_values[] = {
 	"iso",
 	"informal",
 	NULL
+};
+
+static const char * const date_font_choice_values[] = {
+    "auto-mono",
+    "system-mono",
+    "no-mono",
+    NULL
 };
 
 static const char * const preview_image_values[] = {
@@ -813,6 +823,25 @@ on_dialog_destroy (GtkWidget *widget,
 }
 
 static void
+on_date_format_combo_changed (GtkComboBox *widget,
+                              gpointer     user_data)
+{
+    GtkBuilder *builder = GTK_BUILDER (user_data);
+    gint active = gtk_combo_box_get_active (widget);
+
+    switch (active) {
+        case NEMO_DATE_FORMAT_LOCALE:
+        case NEMO_DATE_FORMAT_ISO:
+            gtk_widget_set_sensitive (GTK_WIDGET (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET)), TRUE);
+            break;
+        case NEMO_DATE_FORMAT_INFORMAL:
+        default:
+            gtk_widget_set_sensitive (GTK_WIDGET (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET)), FALSE);
+            break;
+    }
+}
+
+static void
 set_gtk_filechooser_sort_first (GObject *object,
 				GParamSpec *pspec)
 {
@@ -970,8 +999,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 			   NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET,
 			   NEMO_PREFERENCES_DATE_FORMAT,
 			   (const char **) date_format_values);
-
-
+    bind_builder_enum (builder, nemo_preferences,
+               NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET,
+               NEMO_PREFERENCES_DATE_FONT_CHOICE,
+               (const char **) date_font_choice_values);
 	bind_builder_radio (builder, nemo_preferences,
 			    (const char **) click_behavior_components,
 			    NEMO_PREFERENCES_CLICK_POLICY,
@@ -1071,12 +1102,22 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET,
                        NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER);
 
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL_WIDGET,
+                       NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL);
+
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);
 
     /* to make checkbox for quickrenames get disabled when single click is selected */ 
     setup_quick_renames(builder);
     connect_quick_renames(builder);
+
+    g_signal_connect (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET), "changed",
+                      G_CALLBACK (on_date_format_combo_changed), builder);
+
+    on_date_format_combo_changed (GTK_COMBO_BOX (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET)),
+                                  builder);
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);

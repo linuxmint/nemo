@@ -42,7 +42,9 @@ G_BEGIN_DECLS
 /* Display  */
 #define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
-#define NEMO_PREFERENCES_DATE_FORMAT			"date-format"
+#define NEMO_PREFERENCES_DATE_FORMAT            "date-format"
+#define NEMO_PREFERENCES_DATE_FONT_CHOICE  "date-font-choice"
+#define NEMO_PREFERENCES_MONO_FONT_NAME "monospace-font-name"
 
 /* Mouse */
 #define NEMO_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS		"mouse-use-extra-buttons"
@@ -55,6 +57,13 @@ typedef enum
 	NEMO_DATE_FORMAT_ISO,
 	NEMO_DATE_FORMAT_INFORMAL
 } NemoDateFormat;
+
+typedef enum
+{
+    NEMO_DATE_FONT_CHOICE_AUTO,
+    NEMO_DATE_FONT_CHOICE_SYSTEM,
+    NEMO_DATE_FONT_CHOICE_NONE
+} NemoDateFontChoice;
 
 typedef enum
 {
@@ -173,6 +182,8 @@ enum
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS		"default-visible-columns"
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER		"default-column-order"
 
+#define NEMO_PREFERENCES_MAX_THUMBNAIL_THREADS "thumbnail-threads"
+
 enum
 {
 	NEMO_CLICK_POLICY_SINGLE,
@@ -258,6 +269,7 @@ typedef enum
 #define NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS          "never-queue-file-ops"
 
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
+#define NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL       "expand-row-on-dnd-dwell"
 
 #define NEMO_PREFERENCES_SHOW_MIME_MAKE_EXECUTABLE     "enable-mime-actions-make-executable"
 #define NEMO_PREFERENCES_DEFERRED_ATTR_PRELOAD_LIMIT   "deferred-attribute-preload-limit"
@@ -270,6 +282,8 @@ typedef enum
 #define NEMO_PREFERENCES_SEARCH_SKIP_FOLDERS           "search-skip-folders"
 #define NEMO_PREFERENCES_SEARCH_FILES_RECURSIVELY      "search-files-recursively"
 #define NEMO_PREFERENCES_SEARCH_VISIBLE_COLUMNS        "search-visible-columns"
+#define NEMO_PREFERENCES_SEARCH_SORT_COLUMN            "search-sort-column"
+#define NEMO_PREFERENCES_SEARCH_REVERSE_SORT           "search-reverse-sort"
 #define NEMO_PREFERENCES_SEARCH_FILE_HISTORY           "search-file-history"
 #define NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY        "search-content-history"
 #define NEMO_PREFERENCES_SEARCH_CONTENT_HISTORY_LENGTH "search-content-history-length"
@@ -285,6 +299,9 @@ char *nemo_global_preferences_get_desktop_iid (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 gboolean nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key);
 gchar **nemo_global_preferences_get_fileroller_mimetypes (void);
+
+gchar *nemo_global_preferences_get_mono_system_font (void);
+gchar *nemo_global_preferences_get_mono_font_family_match (const gchar *in_family);
 
 extern GSettings *nemo_preferences;
 extern GSettings *nemo_icon_view_preferences;
@@ -303,6 +320,7 @@ extern GSettings *gnome_media_handling_preferences;
 extern GSettings *gnome_terminal_preferences;
 extern GSettings *cinnamon_privacy_preferences;
 extern GSettings *cinnamon_interface_preferences;
+extern GSettings *gnome_interface_preferences;
 
 /* Cached for fast access and used in nemo-file.c for constructing date/time strings */
 extern GTimeZone      *prefs_current_timezone;

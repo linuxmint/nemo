@@ -123,3 +123,38 @@ Extensions=any;
 # file:///home/joe/.bashrc does not
 
 #UriScheme=file
+
+# Locations and Files - semicolon-separated arrays of globs, filenames and paths to be tested
+# against the current location or selection, respectively.
+#
+# - Globs and paths can be relative or absolute.
+# - ~ will be expanded at runtime to the user's home directory.
+# - Absolute paths will be tested against the file/location's full path. Otherwise it is tested
+#   against the filename only.
+# - A glob with a leading * will be matched against the full path, whether it contains additional
+#   path parts or is just a partial filename.
+# - If a condition is prefixed with a ! it will be considered an opposing condition (If the file
+#   passes this test, action is forbidden).
+# - Allowed patterns are considered before forbidden ones. This allows behaviors such as:
+#
+#     # Allow any dot-file except .config
+#     Locations=.*;!.config
+#
+
+# Locations - semicolon-separated array of globs to check against the currently location.
+#
+# The current location must match at least one 'allowed' pattern, path or name for the action
+# to be considered valid.
+#
+# Optional
+
+#Locations=.*;!.config;
+
+# Files - semicolon-separated array of globs to check against the currently selected files.
+#
+# All files in the selection must match at least one 'allowed' pattern, path or name for
+# the action to be considered valid.
+#
+# Optional
+
+#Files=.bash*;!.bashrc;

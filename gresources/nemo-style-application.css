@@ -69,3 +69,16 @@ NemoDesktopWindow GtkPaned {
     color: @theme_selected_fg_color;
     text-shadow: none;
 }
+
+#drop-bar:drop(active) {
+    box-shadow: none;
+}
+
+#drop-bar > revealer > box {
+    background-color: @theme_bg_color;
+    border-bottom: 1px solid @borders;
+}
+
+#drop-bar {
+    opacity: 1.0;
+}

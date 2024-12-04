@@ -139,8 +139,8 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
         if (s < size)
             size = s;
 
-        bad_ratio = (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > w ||
-                    (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > h;
+        bad_ratio = (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > (int)(w * 0.75) ||
+                    (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > (int)(h * 0.75);
 
         if (bad_ratio)
             goto skip_emblem; /* Would prefer to not use goto, but
@@ -195,21 +195,6 @@ nemo_icon_view_container_get_icon_description (NemoIconContainer *container,
 	description = g_content_type_get_description (mime_type);
 	g_free (mime_type);
 	return g_strdup (description);
-}
-
-static void
-nemo_icon_view_container_prioritize_thumbnailing (NemoIconContainer *container,
-						      NemoIconData      *data)
-{
-	NemoFile *file;
-
-	file = (NemoFile *) data;
-
-	g_assert (NEMO_IS_FILE (file));
-
-    if (nemo_can_thumbnail (file) && !nemo_file_has_loaded_thumbnail (file)) {
-        nemo_create_thumbnail (file, 0, TRUE);
-    }
 }
 
 static void
@@ -2105,7 +2090,6 @@ nemo_icon_view_container_class_init (NemoIconViewContainerClass *klass)
 	ic_class->get_icon_text = nemo_icon_view_container_get_icon_text;
 	ic_class->get_icon_images = nemo_icon_view_container_get_icon_images;
 	ic_class->get_icon_description = nemo_icon_view_container_get_icon_description;
-	ic_class->prioritize_thumbnailing = nemo_icon_view_container_prioritize_thumbnailing;
     ic_class->get_max_layout_lines_for_pango = nemo_icon_view_container_get_max_layout_lines_for_pango;
     ic_class->get_max_layout_lines = nemo_icon_view_container_get_max_layout_lines;
 

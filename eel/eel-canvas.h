@@ -171,7 +171,7 @@ struct _EelCanvasItemClass {
 	 */
 	void (* bounds) (EelCanvasItem *item, double *x1, double *y1, double *x2, double *y2);
 
-	/* Signal: an event ocurred for an item of this type.  The (x, y)
+	/* Signal: an event occurred for an item of this type.  The (x, y)
 	 * coordinates are in the canvas world coordinate system.
 	 */
 	gboolean (* event)                (EelCanvasItem *item, GdkEvent *event);

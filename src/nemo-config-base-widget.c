@@ -21,6 +21,8 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
     GtkStyleContext *context;
     GtkWidget *box;
     GtkWidget *w;
+    GtkWidget *tb;
+    GtkWidget *label;
     GtkWidget *toolbar_item;
 
     GtkWidget *frame = gtk_frame_new (NULL);
@@ -34,13 +36,13 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
 
     gtk_container_add (GTK_CONTAINER (frame), box);
 
-    w = gtk_toolbar_new ();
-    context = gtk_widget_get_style_context (w);
+    tb = gtk_toolbar_new ();
+    context = gtk_widget_get_style_context (tb);
     gtk_style_context_add_class (context, "primary-toolbar");
-    gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (box), tb, FALSE, FALSE, 0);
 
     toolbar_item = GTK_WIDGET (gtk_tool_item_new ());
-    gtk_container_add (GTK_CONTAINER (w), toolbar_item);
+    gtk_container_add (GTK_CONTAINER (tb), toolbar_item);
 
     w = gtk_label_new (NULL);
     gtk_container_add (GTK_CONTAINER (toolbar_item), w);
@@ -54,24 +56,43 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
     gtk_list_box_set_selection_mode (GTK_LIST_BOX (self->listbox), GTK_SELECTION_NONE);
     gtk_container_add (GTK_CONTAINER (w), self->listbox);
 
-    w = gtk_toolbar_new ();
-    context = gtk_widget_get_style_context (w);
+    tb = gtk_toolbar_new ();
+    context = gtk_widget_get_style_context (tb);
     gtk_style_context_add_class (context, GTK_STYLE_CLASS_TOOLBAR);
-    gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (box), tb, FALSE, FALSE, 0);
 
     toolbar_item = GTK_WIDGET (gtk_tool_item_new ());
     gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolbar_item), TRUE);
-    gtk_container_add (GTK_CONTAINER (w), toolbar_item);
+    gtk_container_add (GTK_CONTAINER (tb), toolbar_item);
 
-    w = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+    w = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add (GTK_CONTAINER (toolbar_item), w);
-    self->buttonbox = w;
+    context = gtk_widget_get_style_context(w);
+    gtk_style_context_add_class (context, "linked");
 
-    self->disable_button = gtk_button_new_with_label (_("Disable all"));
+    label = gtk_label_new (_("Disable all"));
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+
+    self->disable_button = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (w), self->disable_button);
+    gtk_container_add (GTK_CONTAINER (self->disable_button), label);
 
-    self->enable_button = gtk_button_new_with_label (_("Enable all"));
+    label = gtk_label_new (_("Enable all"));
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+
+    self->enable_button = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (w), self->enable_button);
+    gtk_container_add (GTK_CONTAINER (self->enable_button), label);
+
+    toolbar_item = GTK_WIDGET (gtk_tool_item_new ());
+    gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolbar_item), FALSE);
+    gtk_container_add (GTK_CONTAINER (tb), toolbar_item);
+
+    w = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_container_add (GTK_CONTAINER (toolbar_item), w);
+    context = gtk_widget_get_style_context(w);
+    gtk_style_context_add_class (context, "linked");
+    self->buttonbox = w;
 
     gtk_widget_show_all (GTK_WIDGET (self));
 }

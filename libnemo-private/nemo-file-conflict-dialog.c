@@ -489,8 +489,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 	/* Setup the dialog image */
-	widget = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
-					   GTK_ICON_SIZE_DIALOG);
+    widget = gtk_image_new_from_icon_name ("dialog-warning-symbolic", GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 0);
 	gtk_misc_set_alignment (GTK_MISC (widget), 0.5, 0.0);
 
@@ -535,7 +534,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 
 	widget = gtk_button_new_with_label (_("Reset"));
 	gtk_button_set_image (GTK_BUTTON (widget),
-			      gtk_image_new_from_stock (GTK_STOCK_UNDO,
+			      gtk_image_new_from_icon_name ("edit-undo-symbolic",
 							GTK_ICON_SIZE_MENU));
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 6);
 	g_signal_connect (widget, "clicked",
@@ -553,12 +552,9 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 			  G_CALLBACK (checkbox_toggled_cb), dialog);
 
 	/* Add buttons */
-	gtk_dialog_add_buttons (dialog,
-				GTK_STOCK_CANCEL,
-				GTK_RESPONSE_CANCEL,
-				_("_Skip"),
-				CONFLICT_RESPONSE_SKIP,
-				NULL);
+
+    gtk_dialog_add_button (dialog, _("_Cancel"),  GTK_RESPONSE_CANCEL);
+    gtk_dialog_add_button (dialog, _("_Skip"),  CONFLICT_RESPONSE_SKIP);
 
 	details->auto_rename_button =
 		gtk_dialog_add_button (dialog,
@@ -581,6 +577,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 	gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
 	gtk_box_set_spacing (GTK_BOX (gtk_dialog_get_content_area (dialog)), 14);
 	gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
+    gtk_button_box_set_layout (GTK_BUTTON_BOX (gtk_dialog_get_action_area (dialog)), GTK_BUTTONBOX_SPREAD);
 
 	gtk_widget_show_all (dialog_area);
 }

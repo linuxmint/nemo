@@ -30,6 +30,7 @@ extension_proxy_free (ExtensionProxy *proxy)
     g_clear_pointer (&proxy->display_name, g_free);
     g_clear_pointer (&proxy->desc, g_free);
     g_clear_pointer (&proxy->config_exec, g_free);
+    g_free (proxy);
 }
 
 static void
@@ -159,7 +160,7 @@ detect_extensions (NemoExtensionConfigWidget *widget)
             guint i;
             for (i = 0; i < g_strv_length (lines); i++) {
                 if (g_str_has_prefix (lines[i], LINE_PREFIX)) {
-                    ExtensionProxy *p = g_slice_new0 (ExtensionProxy);
+                    ExtensionProxy *p = g_new0 (ExtensionProxy, 1);
 
                     gchar **split = g_strsplit (lines[i] + LINE_PREFIX_LEN, ":::", -1);
                     gint len = g_strv_length (split);
@@ -302,6 +303,8 @@ refresh_widget (NemoExtensionConfigWidget *widget)
         }
 
         g_strfreev (blacklist);
+        g_object_unref (row_group);
+        g_object_unref (name_group);
     }
 
     update_restart_visiblity (widget);

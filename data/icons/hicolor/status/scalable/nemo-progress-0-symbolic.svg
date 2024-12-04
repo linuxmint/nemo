@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   version="1.0"
+   sodipodi:docname="nemo-progress-0-symbolic.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/matt/.icons/Sirocco/scalable/mimetypes/text-plain.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   sodipodi:modified="true"
+   style="display:inline"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="32"
+     inkscape:cx="4.765625"
+     inkscape:cy="7.5625"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="128px"
+     height="128px"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="981"
+     inkscape:window-x="1920"
+     inkscape:window-y="27"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     showgrid="true"
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:pagecheckerboard="0">
+    <sodipodi:guide
+       id="guide2226"
+       position="32.637397,117.99844"
+       orientation="horizontal" />
+    <sodipodi:guide
+       id="guide2230"
+       position="110,57.402344"
+       orientation="vertical" />
+    <sodipodi:guide
+       id="guide2232"
+       position="33.760911"
+       orientation="horizontal" />
+    <sodipodi:guide
+       id="guide2231"
+       position="46.774696"
+       orientation="horizontal" />
+    <inkscape:grid
+       enabled="true"
+       visible="true"
+       id="grid3231"
+       type="xygrid" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="100,67.625"
+       id="guide2713" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <inkscape:path-effect
+       effect="copy_rotate"
+       starting_point="0,0"
+       origin="8,8"
+       id="path-effect2814"
+       is_visible="true"
+       lpeversion="1"
+       method="normal"
+       num_copies="10"
+       starting_angle="0"
+       rotation_angle="60"
+       gap="-0.01"
+       copies_to_360="true"
+       mirror_copies="false"
+       split_items="false" />
+    <inkscape:path-effect
+       effect="copy_rotate"
+       starting_point="0,0"
+       origin="8,8"
+       id="path-effect2812"
+       is_visible="true"
+       lpeversion="1"
+       method="normal"
+       num_copies="6"
+       starting_angle="0"
+       rotation_angle="60"
+       gap="0"
+       copies_to_360="true"
+       mirror_copies="false"
+       split_items="false" />
+    <linearGradient
+       id="linearGradient5606"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5608" />
+    </linearGradient>
+    <filter
+       id="filter7554"
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always">
+      <feBlend
+         mode="darken"
+         in2="BackgroundImage"
+         id="feBlend7556"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="display:inline"
+     inkscape:label="Calque 1"
+     id="layer1"
+     inkscape:groupmode="layer">
+    <path
+       style="display:inline;fill:#bebebe;fill-opacity:1;stroke:none;stroke-width:0.569666"
+       d="m 5.1875,3.75 c -0.311625,0 -0.5625,0.2573076 -0.5625,0.5769231 -0.311625,0 -0.5625,0.2573077 -0.5625,0.5769231 h 0.5625 7.3125 c 0,-0.3196154 -0.250875,-0.5769231 -0.5625,-0.5769231 H 7.4375 C 7.4375,4.0073076 7.186625,3.75 6.875,3.75 Z"
+       id="path3028"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="sccccscss" />
+    <path
+       style="display:inline;fill:#bebebe;fill-opacity:1;stroke:none;stroke-width:0.569666"
+       d="M 4.34375,5.4807692 C 3.8763125,5.4807692 3.5,5.8381411 3.5,6.2820513 V 10.448718 C 3.5,10.892629 3.8763125,11.25 4.34375,11.25 h 7.3125 C 12.123688,11.25 12.5,10.892629 12.5,10.448718 V 6.2820513 c 0,-0.4439102 -0.376312,-0.8012821 -0.84375,-0.8012821 z"
+       id="path3040"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="sssssssss" />
+    <g
+       id="layer9"
+       inkscape:label="status"
+       style="display:inline"
+       transform="translate(-840.0002,470.00693)" />
+    <g
+       id="layer10"
+       inkscape:label="devices"
+       style="display:inline;filter:url(#filter7554)"
+       transform="translate(-840.0002,470.00693)" />
+    <g
+       id="layer14"
+       inkscape:label="mimetypes"
+       style="display:inline"
+       transform="translate(-840.0002,470.00693)" />
+    <g
+       id="layer15"
+       inkscape:label="emblems"
+       style="display:inline"
+       transform="translate(-840.0002,470.00693)" />
+    <g
+       id="g71291"
+       inkscape:label="emotes"
+       style="display:inline"
+       transform="translate(-840.0002,470.00693)" />
+    <g
+       id="layer2"
+       inkscape:label="categories"
+       style="display:inline"
+       transform="translate(-599,3.006937)" />
+    <g
+       id="g6058"
+       inkscape:label="apps"
+       style="display:inline"
+       transform="translate(-599,3.006937)" />
+    <g
+       id="layer12"
+       inkscape:label="actions"
+       style="display:inline"
+       transform="translate(-840.0002,470.00693)" />
+  </g>
+</svg>

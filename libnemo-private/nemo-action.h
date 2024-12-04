@@ -24,125 +24,25 @@
 #include <glib.h>
 #include "nemo-file.h"
 
+// GtkAction were deprecated before auto-free functionality was added.
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GtkAction, g_object_unref)
+
 #define NEMO_TYPE_ACTION nemo_action_get_type()
-#define NEMO_ACTION(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_ACTION, NemoAction))
-#define NEMO_ACTION_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_ACTION, NemoActionClass))
-#define NEMO_IS_ACTION(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_ACTION))
-#define NEMO_IS_ACTION_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_ACTION))
-#define NEMO_ACTION_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_ACTION, NemoActionClass))
-
-
-#define SELECTION_SINGLE_KEY "s"
-#define SELECTION_MULTIPLE_KEY "m"
-#define SELECTION_ANY_KEY "any"
-#define SELECTION_NONE_KEY "none"
-#define SELECTION_NOT_NONE_KEY "notnone"
-
-#define TOKEN_EXEC_URI_LIST "%U"
-#define TOKEN_EXEC_FILE_LIST "%F"
-#define TOKEN_EXEC_LOCATION_PATH "%P" // also parent path
-#define TOKEN_EXEC_LOCATION_URI "%R" //  and uri
-#define TOKEN_EXEC_FILE_NAME "%f"
-#define TOKEN_EXEC_PARENT_NAME "%p"
-#define TOKEN_EXEC_DEVICE "%D"
-#define TOKEN_EXEC_FILE_NO_EXT "%e"
-#define TOKEN_EXEC_LITERAL_PERCENT "%%"
-#define TOKEN_EXEC_XID "%X"
-
-#define TOKEN_LABEL_FILE_NAME "%N" // Leave in for compatibility, same as TOKEN_EXEC_FILE_NAME
-
-
-#define ACTION_FILE_GROUP "Nemo Action"
-
-#define KEY_ACTIVE "Active"
-#define KEY_NAME "Name"
-#define KEY_COMMENT "Comment"
-#define KEY_EXEC "Exec"
-#define KEY_ICON_NAME "Icon-Name"
-#define KEY_STOCK_ID "Stock-Id"
-#define KEY_SELECTION "Selection"
-#define KEY_EXTENSIONS "Extensions"
-#define KEY_MIME_TYPES "Mimetypes"
-#define KEY_SEPARATOR "Separator"
-#define KEY_QUOTE_TYPE "Quote"
-#define KEY_DEPENDENCIES "Dependencies"
-#define KEY_CONDITIONS "Conditions"
-#define KEY_WHITESPACE "EscapeSpaces"
-#define KEY_DOUBLE_ESCAPE_QUOTES "DoubleEscapeQuotes"
-#define KEY_TERMINAL "Terminal"
-#define KEY_URI_SCHEME "UriScheme"
-
-typedef struct _NemoAction NemoAction;
-typedef struct _NemoActionClass NemoActionClass;
-
-typedef enum {
-    SELECTION_SINGLE = G_MAXINT - 10,
-    SELECTION_MULTIPLE,
-    SELECTION_NOT_NONE,
-    SELECTION_ANY,
-    SELECTION_NONE
-} SelectionType;
-
-typedef enum {
-    QUOTE_TYPE_SINGLE = 0,
-    QUOTE_TYPE_DOUBLE,
-    QUOTE_TYPE_BACKTICK,
-    QUOTE_TYPE_NONE
-} QuoteType;
-
-typedef enum {
-    TOKEN_NONE = 0,
-    TOKEN_PATH_LIST,
-    TOKEN_URI_LIST,
-    TOKEN_FILE_DISPLAY_NAME,
-    TOKEN_PARENT_DISPLAY_NAME,
-    TOKEN_PARENT_PATH,
-    TOKEN_PARENT_URI,
-    TOKEN_DEVICE,
-    TOKEN_FILE_DISPLAY_NAME_NO_EXT,
-    TOKEN_LITERAL_PERCENT,
-    TOKEN_XID
-} TokenType;
+G_DECLARE_FINAL_TYPE (NemoAction, nemo_action, NEMO, ACTION, GtkAction)
 
 struct _NemoAction {
-    GtkAction parent;
-    gchar *key_file_path;
-    SelectionType selection_type;
-    gchar **extensions;
-    gchar **mimetypes;
-    gchar *exec;
-    gchar *parent_dir;
-    gchar **conditions;
-    gchar *separator;
-    QuoteType quote_type;
-    gchar *orig_label;
-    gchar *orig_tt;
-    gboolean use_parent_dir;
-    GList *dbus;
-    guint dbus_recalc_timeout_id;
-    GList *gsettings;
-    guint gsettings_recalc_timeout_id;
-    gboolean dbus_satisfied;
-    gboolean gsettings_satisfied;
-    gboolean escape_underscores;
-    gboolean escape_space;
-    gboolean show_in_blank_desktop;
-    gboolean run_in_terminal;
-    gchar *uri_scheme;
+    GtkAction parent_instance;
 
-    gboolean constructing;
+    gchar *uuid; // basename of key_file_path
+    gchar *key_file_path;
+    gchar *parent_dir;
+    gboolean has_accel;
 };
 
 struct _NemoActionClass {
-	GtkActionClass parent_class;
+    GtkActionClass parent_class;
 };
 
-GType         nemo_action_get_type             (void);
 NemoAction   *nemo_action_new                  (const gchar *name, const gchar *path);
 void          nemo_action_activate             (NemoAction *action, GList *selection, NemoFile *parent, GtkWindow *window);
 
@@ -150,6 +50,9 @@ const gchar  *nemo_action_get_orig_label       (NemoAction *action);
 const gchar  *nemo_action_get_orig_tt          (NemoAction *action);
 gchar        *nemo_action_get_label            (NemoAction *action, GList *selection, NemoFile *parent, GtkWindow *window);
 gchar        *nemo_action_get_tt               (NemoAction *action, GList *selection, NemoFile *parent, GtkWindow *window);
-gboolean      nemo_action_get_visibility       (NemoAction *action, GList *selection, NemoFile *parent, gboolean for_places, GtkWindow *window);
+void          nemo_action_update_display_state (NemoAction *action, GList *selection, NemoFile *parent, gboolean for_places, GtkWindow *window);
 
+// Layout model overrides
+void          nemo_action_override_label       (NemoAction *action, const gchar *label);
+void          nemo_action_override_icon        (NemoAction *action, const gchar *icon_name);
 #endif /* NEMO_ACTION_H */

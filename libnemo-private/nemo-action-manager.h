@@ -21,38 +21,50 @@
 #define NEMO_ACTION_MANAGER_H
 
 #include <glib.h>
-#include "nemo-file.h"
+#include <json-glib/json-glib.h>
+
+#include "nemo-action.h"
 
 #define NEMO_TYPE_ACTION_MANAGER nemo_action_manager_get_type()
-#define NEMO_ACTION_MANAGER(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), NEMO_TYPE_ACTION_MANAGER, NemoActionManager))
-#define NEMO_ACTION_MANAGER_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), NEMO_TYPE_ACTION_MANAGER, NemoActionManagerClass))
-#define NEMO_IS_ACTION_MANAGER(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), NEMO_TYPE_ACTION_MANAGER))
-#define NEMO_IS_ACTION_MANAGER_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE ((klass), NEMO_TYPE_ACTION_MANAGER))
-#define NEMO_ACTION_MANAGER_GET_CLASS(obj) \
-  (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_ACTION_MANAGER, NemoActionManagerClass))
 
-typedef struct _NemoActionManager NemoActionManager;
-typedef struct _NemoActionManagerClass NemoActionManagerClass;
+G_DECLARE_FINAL_TYPE (NemoActionManager, nemo_action_manager, NEMO, ACTION_MANAGER, GObject)
 
-struct _NemoActionManager {
-    GObject parent;
-    GList *actions;
-    GList *actions_directory_list;
-    gboolean action_list_dirty;
-};
+typedef void (* NemoActionManagerIterFunc) (NemoActionManager    *manager,
+                                            GtkAction            *action,
+                                            GtkUIManagerItemType  type,
+                                            const gchar          *path,
+                                            const gchar          *accelerator,
+                                            gpointer              user_data);
 
-struct _NemoActionManagerClass {
-    GObjectClass parent_class;
-    void (* changed) (NemoActionManager *action_manager);
-};
+NemoActionManager   * nemo_action_manager_new                       (void);
+GList               * nemo_action_manager_list_actions              (NemoActionManager *action_manager);
+JsonReader          * nemo_action_manager_get_layout_reader         (NemoActionManager *action_manager);
+gchar               * nemo_action_manager_get_system_directory_path (const gchar *data_dir);
+gchar               * nemo_action_manager_get_user_directory_path   (void);
+NemoAction          * nemo_action_manager_get_action                (NemoActionManager *action_manager,
+                                                                     const gchar       *uuid);
+void                  nemo_action_manager_iterate_actions           (NemoActionManager                *action_manager,
+                                                                     NemoActionManagerIterFunc         callback,
+                                                                     gpointer                          user_data);
+void                  nemo_action_manager_update_action_states      (NemoActionManager *action_manager,
+                                                                     GtkActionGroup    *action_group,
+                                                                     GList             *selection,
+                                                                     NemoFile          *parent,
+                                                                     gboolean           for_places,
+                                                                     gboolean           for_accelerators,
+                                                                     GtkWindow         *window);
 
-GType         nemo_action_manager_get_type             (void);
-NemoActionManager   *nemo_action_manager_new           (void);
-GList *       nemo_action_manager_list_actions (NemoActionManager *action_manager);
-gchar *       nemo_action_manager_get_user_directory_path (void);
+void                  nemo_action_manager_add_action_ui             (NemoActionManager   *manager,
+                                                                     GtkUIManager        *ui_manager,
+                                                                     GtkAction           *action,
+                                                                     const gchar         *action_path,
+                                                                     const gchar         *accelerator,
+                                                                     GtkActionGroup      *action_group,
+                                                                     guint                merge_id,
+                                                                     const gchar        **placeholder_paths,
+                                                                     GtkUIManagerItemType type,
+                                                                     GCallback            activate_callback,
+                                                                     gpointer             user_data);
 
 #endif /* NEMO_ACTION_MANAGER_H */
+

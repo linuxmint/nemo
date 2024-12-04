@@ -73,3 +73,17 @@ eel_gdk_parse_geometry (const char *string, int *x_return, int *y_return,
 
 	return gdk_flags;
 }
+
+GdkDevice *
+eel_gdk_get_pointer_device (void)
+{
+    GdkSeat *seat;
+
+    seat = gdk_display_get_default_seat (gdk_display_get_default ());
+
+    if (seat != NULL) {
+        return gdk_seat_get_pointer (seat);
+    }
+
+    return NULL;
+}

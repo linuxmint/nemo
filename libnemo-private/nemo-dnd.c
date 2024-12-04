@@ -662,7 +662,7 @@ nemo_drag_default_drop_action_for_uri_list (GdkDragContext *context,
    the location and size of each icon relative to the cursor.
 */
 static void
-add_one_gnome_icon (const char *uri, int x, int y, int w, int h, 
+add_one_gnome_icon (const char *uri, const char *path_str, int x, int y, int w, int h,
 		    gpointer data)
 {
 	GString *result;
@@ -747,7 +747,7 @@ add_one_compatible_uri (const char *uri, int x, int y, int w, int h, gpointer da
 #endif
 
 static void
-add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
+add_one_uri (const char *uri, const char *path_str, int x, int y, int w, int h, gpointer data)
 {
 	GString *result;
 	
@@ -755,6 +755,17 @@ add_one_uri (const char *uri, int x, int y, int w, int h, gpointer data)
 
 	g_string_append (result, uri);
 	g_string_append (result, "\r\n");
+}
+
+static void
+add_one_path (const char *uri, const char *path_str, int x, int y, int w, int h, gpointer data)
+{
+    GString *result;
+
+    result = (GString *) data;
+
+    g_string_append (result, path_str);
+    g_string_append (result, "\r\n");
 }
 
 /* Common function for drag_data_get_callback calls.
@@ -777,11 +788,13 @@ nemo_drag_drag_data_get (GtkWidget *widget,
 		break;
 		
 	case NEMO_ICON_DND_URI_LIST:
-	case NEMO_ICON_DND_TEXT:
 		result = g_string_new (NULL);
 		(* each_selected_item_iterator) (add_one_uri, container_context, result);
 		break;
-
+    case NEMO_ICON_DND_TEXT:
+        result = g_string_new (NULL);
+        (* each_selected_item_iterator) (add_one_path, container_context, result);
+        break;
 	default:
 		return FALSE;
 	}

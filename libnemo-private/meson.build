@@ -1,6 +1,6 @@
 
 dbusBuiltSources = gnome.gdbus_codegen('nemo-generated',
-  join_paths(meson.source_root(), 'data', 'dbus-interfaces.xml'),
+  join_paths(meson.project_source_root(), 'data', 'dbus-interfaces.xml'),
   interface_prefix: 'org.Nemo.',
   namespace: 'NemoDBus',
   object_manager: true
@@ -67,7 +67,6 @@ nemo_private_sources = [
   'nemo-selection-canvas-item.c',
   'nemo-separator-action.c',
   'nemo-signaller.c',
-  'nemo-statx.c',
   'nemo-thumbnails.c',
   'nemo-trash-monitor.c',
   'nemo-tree-view-drag-dest.c',
@@ -83,7 +82,7 @@ nemo_private_sources = [
 ]
 
 nemo_private_deps = [
-  cinnamon, eel, gail, gio_unix, glib, gmodule, gtk, libxml, math, nemo_extension, x11, xapp
+  cinnamon, eel, gail, gio_unix, glib, gmodule, gtk, json, math, nemo_extension, x11, xapp
 ]
 
 if libexif_enabled

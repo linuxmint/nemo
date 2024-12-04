@@ -32,7 +32,6 @@
 #include "nemo-file-operations.h"
 #include "nemo-search-directory.h"
 #include "nemo-signaller.h"
-#include "nemo-statx.h"
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-stock-dialogs.h>
 #include <eel/eel-string.h>
@@ -1107,7 +1106,7 @@ nemo_inhibit_power_manager (const char *message)
 					      GSM_INTERFACE,
 					      "Inhibit",
 					      g_variant_new ("(susu)",
-							     "Nemo",
+							     "nemo",
 							     (guint) 0,
 							     message,
 							     (guint) (INHIBIT_LOGOUT | INHIBIT_SUSPEND)),
@@ -1319,7 +1318,7 @@ ensure_dirs_task_ready_cb (GObject *_source,
 	g_list_free (original_dirs);
 
 	g_hash_table_unref (data->original_dirs_hash);
-	g_slice_free (RestoreFilesData, data);
+	g_free (data);
 }
 
 static void
@@ -1352,7 +1351,7 @@ restore_files_ensure_parent_directories (GHashTable *original_dirs_hash,
 	RestoreFilesData *data;
 	GTask *ensure_dirs_task;
 
-	data = g_slice_new0 (RestoreFilesData);
+	data = g_new0 (RestoreFilesData, 1);
 	data->parent_window = parent_window;
 	data->original_dirs_hash = g_hash_table_ref (original_dirs_hash);
 
@@ -1418,7 +1417,7 @@ get_types_cb (GObject *source_object,
 		data->callback ((const char **) types, data->user_data);
 	}
 	g_strfreev (types);
-	g_slice_free (GetContentTypesData, data);
+	g_free (data);
 }
 
 void
@@ -1445,7 +1444,7 @@ nemo_get_x_content_types_for_mount_async (GMount *mount,
 		return;
 	}
 
-	data = g_slice_new0 (GetContentTypesData);
+	data = g_new0 (GetContentTypesData, 1);
 	data->callback = callback;
 	data->user_data = user_data;
 
@@ -1495,85 +1494,70 @@ debug_icon_names (const gchar *format, ...)
     va_end(args);
 }
 
-static gboolean
-icon_name_is_non_specific (const gchar *icon_name)
+static gchar *
+get_best_name (GtkIconTheme *icon_theme,
+                        GIcon        *gicon,
+                        const gchar  *dev_name,
+                        const gchar  *type_name)
 {
-    gint i;
+    gchar *icon_name = NULL;
 
-    static const char * non_specific_icon_names[] = { "drive-harddisk-usb-symbolic" };
+    if (G_IS_THEMED_ICON (gicon)) {
+        const gchar * const *names;
+        gint i;
 
-    for (i = 0; i < G_N_ELEMENTS (non_specific_icon_names); i++) {
-        if (g_strcmp0 (icon_name, non_specific_icon_names[i]) == 0) {
-            return TRUE;
+        // TODO: We should just use what gicon Gio gives us and let the theme deal with it.
+        // but currently everywhere nemo needs this is looking for icon names, so this function
+        // emulates using fallbacks to avoid a lot of refactoring elsewhere.
+
+        names = g_themed_icon_get_names (G_THEMED_ICON (gicon));
+        for (i = 0; i != g_strv_length ((gchar **) names); i++) {
+            const gchar *name = names[i];
+            if (gtk_icon_theme_has_icon (icon_theme, name)) {
+                icon_name = g_strdup (name);
+                break;
+            }
         }
     }
 
-    return FALSE;
+    // Don't ever allow a non-symbolic icon
+    // drawn from Gio gunixmounts.c
+
+    if (icon_name == NULL || !g_str_has_suffix (icon_name, "symbolic")) {
+        g_free (icon_name);
+
+        if (g_strcmp0 (type_name, "volume") == 0 ||
+            g_strcmp0 (type_name, "drive") == 0) {
+            icon_name = g_strdup ("drive-removable-media-symbolic");
+        }
+        else {
+            icon_name = g_strdup ("drive-harddisk-symbolic");
+        }
+    }
+
+    return icon_name;
 }
 
 gchar *
 nemo_get_mount_icon_name (GMount *mount)
 {
-    GDrive *drive;
+    GtkIconTheme *icon_theme;
     GIcon *gicon;
     gchar *icon_name;
-    gchar *mount_icon_name;
     gchar *dev_name;
 
     g_return_val_if_fail (mount != NULL, NULL);
 
     dev_name = g_mount_get_name (mount);
     icon_name = NULL;
-    mount_icon_name = NULL;
 
     gicon = g_mount_get_symbolic_icon (mount);
-
-    if (G_IS_THEMED_ICON (gicon)) {
-        mount_icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-
-        if (icon_name_is_non_specific (mount_icon_name)) {
-            debug_icon_names ("mount %s: icon name '%s' too non-specific", dev_name, mount_icon_name);
-        } else {
-            icon_name = g_strdup (mount_icon_name);
-        }
-    }
-
+    icon_theme = gtk_icon_theme_get_default ();
+    icon_name = get_best_name (icon_theme, gicon, dev_name, "mount");
     g_clear_object (&gicon);
 
-    if (icon_name != NULL) {
-        debug_icon_names ("mount %s: icon name '%s' is being used", dev_name, icon_name);
-
-        g_free (dev_name);
-        g_free (mount_icon_name);
-
-        return icon_name;
-    }
-
-    drive = g_mount_get_drive (mount);
-
-    if (drive != NULL) {
-        gicon = g_drive_get_symbolic_icon (drive);
-        g_object_unref (drive);
-
-        if (G_IS_THEMED_ICON (gicon)) {
-            icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-        }
-
-        g_object_unref (gicon);
-    }
-
-    if (icon_name == NULL) {
-        if (mount_icon_name) {
-            icon_name = g_strdup (mount_icon_name);
-        } else {
-            icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
-        }
-
-        debug_icon_names ("mount %s: no other good icon name found, using fallback of '%s'", dev_name, icon_name);
-    }
-
+    debug_icon_names ("mount %s: using icon name '%s'", dev_name, icon_name);
     g_free (dev_name);
-    g_free (mount_icon_name);
 
     return icon_name;
 }
@@ -1581,67 +1565,23 @@ nemo_get_mount_icon_name (GMount *mount)
 gchar *
 nemo_get_volume_icon_name (GVolume *volume)
 {
-    GDrive *drive;
+    GtkIconTheme *icon_theme;
     GIcon *gicon;
     gchar *icon_name;
     gchar *dev_name;
-    gchar *volume_icon_name;
 
     g_return_val_if_fail (volume != NULL, NULL);
 
     dev_name = g_volume_get_name (volume);
     icon_name = NULL;
-    volume_icon_name = NULL;
 
     gicon = g_volume_get_symbolic_icon (volume);
-
-    if (G_IS_THEMED_ICON (gicon)) {
-        volume_icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-
-        if (icon_name_is_non_specific (volume_icon_name)) {
-            debug_icon_names ("volume %s: icon name '%s' too non-specific", dev_name, volume_icon_name);
-        } else {
-            icon_name = g_strdup (volume_icon_name);
-        }
-    }
-
+    icon_theme = gtk_icon_theme_get_default ();
+    icon_name = get_best_name (icon_theme, gicon, dev_name, "volume");
     g_clear_object (&gicon);
 
-    if (icon_name != NULL) {
-        debug_icon_names ("volume %s: icon name '%s' is being used", dev_name, icon_name);
-
-        g_free (dev_name);
-        g_free (volume_icon_name);
-
-        return icon_name;
-    }
-
-    drive = g_volume_get_drive (volume);
-
-    if (drive != NULL) {
-        gicon = g_drive_get_symbolic_icon (drive);
-        g_object_unref (drive);
-
-        if (G_IS_THEMED_ICON (gicon)) {
-            icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-        }
-
-        g_object_unref (gicon);
-    }
-
-    if (icon_name == NULL) {
-        if (volume_icon_name) {
-            icon_name = g_strdup (volume_icon_name);
-        } else {
-            icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
-
-        }
-
-        debug_icon_names ("volume %s: no good icon name found, using fallback of '%s'", dev_name, icon_name);
-    }
-
+    debug_icon_names ("volume %s: using icon name '%s'", dev_name, icon_name);
     g_free (dev_name);
-    g_free (volume_icon_name);
 
     return icon_name;
 }
@@ -1649,6 +1589,7 @@ nemo_get_volume_icon_name (GVolume *volume)
 gchar *
 nemo_get_drive_icon_name (GDrive *drive)
 {
+    GtkIconTheme *icon_theme;
     GIcon *gicon;
     gchar *icon_name;
     gchar *dev_name;
@@ -1658,17 +1599,11 @@ nemo_get_drive_icon_name (GDrive *drive)
     dev_name = g_drive_get_name (drive);
 
     gicon = g_drive_get_symbolic_icon (drive);
+    icon_theme = gtk_icon_theme_get_default ();
+    icon_name = get_best_name (icon_theme, gicon, dev_name, "drive");
+    g_clear_object (&gicon);
 
-    if (G_IS_THEMED_ICON (gicon)) {
-        icon_name = g_strdup (g_themed_icon_get_names (G_THEMED_ICON (gicon))[0]);
-    } else {
-        icon_name = g_strdup ("folder-symbolic"); // any theme will have at least this?...
-    }
-
-    g_object_unref (gicon);
-
-    debug_icon_names ("drive %s: returning icon '%s'", dev_name, icon_name);
-
+    debug_icon_names ("drive %s: using icon name '%s'", dev_name, icon_name);
     g_free (dev_name);
 
     return icon_name;
@@ -1715,7 +1650,11 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
 
     if (size > 0) {
         /* Default behavior */
-        mime_type = eel_ref_str_get_unique (g_file_info_get_content_type (info));
+        mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+
+        if (mime_type == NULL) {
+            mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE));
+        }
     } else {
         gboolean uncertain;
         gchar *guessed_type = NULL;
@@ -1729,68 +1668,14 @@ nemo_get_best_guess_file_mimetype (const gchar *filename,
         /* Uncertain means, it's not a registered extension, so we fall back to our (gio's)
          * normal behavior - text/plain (currently at least.) */
         if (!uncertain) {
-            mime_type = eel_ref_str_get_unique (guessed_type);
+            mime_type = guessed_type;
         } else {
-            mime_type = eel_ref_str_get_unique (g_file_info_get_content_type (info));
+            mime_type = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
+            g_free (guessed_type);
         }
-
-        g_free (guessed_type);
     }
 
     return mime_type;
-}
-
-static void
-query_btime_async_thread (GTask         *task,
-                          gpointer       object,
-                          gpointer       task_data,
-                          GCancellable  *cancellable)
-{
-    gchar *path;
-    time_t btime;
-
-    btime = 0;
-
-    path = g_file_get_path (G_FILE (object));
-
-    if (path != NULL) {
-        btime = get_file_btime (path);
-        g_free (path);
-    }
-
-    if (btime > 0) {
-        /* Conveniently, gssize is the same as time_t */
-        g_task_return_int (task, (gssize) btime);
-    } else {
-        g_task_return_error (task,
-                             g_error_new (G_FILE_ERROR,
-                                          G_FILE_ERROR_FAILED,
-                                          "statx failed or not supported"));
-    }
-}
-
-void
-nemo_query_btime_async (GFile               *file,
-                        GCancellable        *cancellable,
-                        GAsyncReadyCallback  callback,
-                        gpointer             user_data)
-{
-  GTask *task;
-
-  task = g_task_new (file, cancellable, callback, user_data);
-  g_task_set_priority (task, G_PRIORITY_DEFAULT);
-  g_task_run_in_thread (task, query_btime_async_thread);
-  g_object_unref (task);
-}
-
-time_t
-nemo_query_btime_finish (GFile         *file,
-                             GAsyncResult  *res,
-                             GError       **error)
-{
-  g_return_val_if_fail (g_task_is_valid (res, file), -1);
-
-  return (time_t) g_task_propagate_int (G_TASK (res), error);
 }
 
 gboolean
@@ -1829,7 +1714,91 @@ nemo_user_is_root (void)
     return elevated;
 }
 
-/* End copied section */
+static gint
+sort_by_length (GMount *a, GMount *b)
+{
+    g_autoptr(GFile) a_root = g_mount_get_root (a);
+    g_autoptr(GFile) b_root = g_mount_get_root (b);
+    g_autofree gchar *a_uri = g_file_get_uri (a_root);
+    g_autofree gchar *b_uri = g_file_get_uri (b_root);
+    gint a_len = g_utf8_strlen (a_uri, -1);
+    gint b_len = g_utf8_strlen (b_uri, -1);
+
+    return b_len - a_len;
+}
+
+GMount *
+nemo_get_mount_for_location_safe (GFile *location)
+{
+    GVolumeMonitor *monitor;
+    GList *mounts = NULL;
+    GList *mount_iter;
+    GMount *ret = NULL;
+
+
+    monitor = g_volume_monitor_get ();
+    mounts = g_volume_monitor_get_mounts (monitor);
+
+    mounts = g_list_sort (mounts, (GCompareFunc) sort_by_length);
+
+    for (mount_iter = mounts; mount_iter != NULL; mount_iter = mount_iter->next) {
+        GMount *mount = G_MOUNT (mount_iter->data);
+        GFile *mount_location = g_mount_get_root (mount);
+        gchar *mount_root_uri = g_file_get_uri (mount_location);
+        gchar *location_uri = g_file_get_uri (location);
+
+        if (g_str_has_prefix (location_uri, mount_root_uri)) {
+            // Add a ref for our match, as it will lose one when the list is freed.
+            ret = g_object_ref (mount);
+        }
+
+        g_free (mount_root_uri);
+        g_free (location_uri);
+        g_object_unref (mount_location);
+
+        if (ret != NULL)
+            break;
+    }
+
+    g_list_free_full (mounts, (GDestroyNotify) g_object_unref);
+    g_object_unref (monitor);
+
+    return ret;
+}
+
+gboolean
+nemo_location_is_network_safe (GFile *location)
+{
+    GVolume *volume;
+    GMount *mount;
+    gboolean is_network = FALSE;
+
+    mount = nemo_get_mount_for_location_safe (location);
+    if (mount != NULL) {
+        volume = g_mount_get_volume (mount);
+        if (volume != NULL) {
+            g_autofree gchar *identifier = g_volume_get_identifier (volume, "class");
+
+            if (g_strcmp0 (identifier, "network") == 0) {
+                is_network = TRUE;
+            }
+
+            g_object_unref (volume);
+        }
+
+        g_object_unref (mount);
+    }
+
+    return is_network;
+}
+
+gboolean
+nemo_path_is_network_safe (const gchar *path)
+{
+    g_autoptr(GFile) location = g_file_new_for_path (path);
+
+    return nemo_location_is_network_safe (location);
+}
 
 #if !defined (NEMO_OMIT_SELF_CHECK)
 

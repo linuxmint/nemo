@@ -638,7 +638,7 @@ compute_text_rectangle (const NemoIconCanvasItem *item,
         } else if (usage == BOUNDS_USAGE_FOR_ENTIRE_ITEM) {
             real_text_height = text_height_for_entire_text;
         } else if (usage == BOUNDS_USAGE_FOR_DISPLAY) {
-            real_text_height = text_height;
+            real_text_height = text_height_for_layout;
         } else {
             g_assert_not_reached ();
         }
@@ -982,14 +982,18 @@ measure_label_text (NemoIconCanvasItem *item)
 
 	/* add some extra space for highlighting even when we don't highlight so things won't move */
 
-	/* extra slop for nicer highlighting */
-	details->text_height += TEXT_BACK_PADDING_Y*2;
-	details->text_height_for_layout += TEXT_BACK_PADDING_Y*2;
-	details->text_height_for_entire_text += TEXT_BACK_PADDING_Y*2;
-	details->editable_text_height += TEXT_BACK_PADDING_Y*2;
-
-	/* extra to make it look nicer */
-	details->text_width += TEXT_BACK_PADDING_X*2;
+    if (IS_COMPACT_VIEW (container)) {
+        details->text_width += TEXT_BACK_PADDING_X;
+        details->text_height_for_layout += TEXT_BACK_PADDING_Y*2;
+    } else {
+        /* extra slop for nicer highlighting */
+        details->text_height += TEXT_BACK_PADDING_Y*2;
+        details->text_height_for_layout += TEXT_BACK_PADDING_Y*2;
+        details->text_height_for_entire_text += TEXT_BACK_PADDING_Y*2;
+        details->editable_text_height += TEXT_BACK_PADDING_Y*2;
+        /* extra to make it look nicer */
+        details->text_width += TEXT_BACK_PADDING_X*2;
+    }
 
 	if (editable_layout) {
 		g_object_unref (editable_layout);
@@ -1014,7 +1018,7 @@ draw_label_text (NemoIconCanvasItem *item,
 	gboolean have_editable, have_additional;
 	gboolean needs_highlight, prelight_label, is_rtl_label_beside;
 	EelIRect text_rect;
-	int x;
+	int x, y;
 	int max_text_width;
 	gdouble frame_w, frame_h, frame_x, frame_y;
 	gboolean draw_frame = TRUE;
@@ -1096,8 +1100,10 @@ draw_label_text (NemoIconCanvasItem *item,
 
 	if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
 		x = text_rect.x0 + 2;
+        y = text_rect.y0;
 	} else {
 		x = text_rect.x0 + ((text_rect.x1 - text_rect.x0) - max_text_width) / 2;
+        y = text_rect.y0 + TEXT_TOP_GAP;
 	}
 
 	if (have_editable &&
@@ -1119,7 +1125,7 @@ draw_label_text (NemoIconCanvasItem *item,
 		gtk_style_context_set_state (context, state);
 
 		gtk_render_layout (context, cr,
-				   x, text_rect.y0 + TEXT_TOP_GAP,
+				   x, y,
 				   editable_layout);
 
 		gtk_style_context_restore (context);
@@ -1141,7 +1147,7 @@ draw_label_text (NemoIconCanvasItem *item,
 		gtk_style_context_add_class (context, "dim-label");
 
 		gtk_render_layout (context, cr,
-				   x, text_rect.y0 + details->editable_text_height + LABEL_LINE_SPACING + TEXT_TOP_GAP,
+				   x, y + details->editable_text_height + LABEL_LINE_SPACING,
 				   additional_layout);
         gtk_style_context_restore (context);
 	}
@@ -1287,8 +1293,6 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 {
 	EelCanvas *canvas;
 	GdkPixbuf *temp_pixbuf, *old_pixbuf;
-	GtkStyleContext *style;
-	GdkRGBA color;
     cairo_surface_t *surface;
 
 	temp_pixbuf = icon_item->details->pixbuf;
@@ -1304,22 +1308,6 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 		g_object_unref (old_pixbuf);
 	}
 
-	if (icon_item->details->is_highlighted_for_selection
-	    || icon_item->details->is_highlighted_for_drop) {
-		style = gtk_widget_get_style_context (GTK_WIDGET (canvas));
-
-		if (gtk_widget_has_focus (GTK_WIDGET (canvas))) {
-			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_SELECTED, &color);
-		} else {
-			gtk_style_context_get_background_color (style, GTK_STATE_FLAG_ACTIVE, &color);
-		}
-
-		old_pixbuf = temp_pixbuf;
-		temp_pixbuf = eel_create_colorized_pixbuf (temp_pixbuf, &color);
-
-		g_object_unref (old_pixbuf);
-	}
-
     surface = gdk_cairo_surface_create_from_pixbuf (temp_pixbuf,
                                                     gtk_widget_get_scale_factor (GTK_WIDGET (canvas)),
                                                     gtk_widget_get_window (GTK_WIDGET (canvas)));
@@ -1331,12 +1319,22 @@ real_map_surface (NemoIconCanvasItem *icon_item)
 static cairo_surface_t *
 map_surface (NemoIconCanvasItem *icon_item)
 {
+#if 0
+    g_printerr ("%p prelit: %d->%d, high sel: %d->%d, high drop: %d->%d, high clip: %d->%d, focus:%d+%d->%d\n",
+            icon_item->details->rendered_surface,
+            icon_item->details->rendered_is_prelit, icon_item->details->is_prelit,
+            icon_item->details->rendered_is_highlighted_for_selection, icon_item->details->is_highlighted_for_selection,
+            icon_item->details->rendered_is_highlighted_for_drop, icon_item->details->is_highlighted_for_drop,
+            icon_item->details->rendered_is_highlighted_for_clipboard, icon_item->details->is_highlighted_for_clipboard,
+            icon_item->details->is_highlighted_for_selection, icon_item->details->rendered_is_focused, gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas)));
+#endif
+
 	if (!(icon_item->details->rendered_surface != NULL
 	      && icon_item->details->rendered_is_prelit == icon_item->details->is_prelit
 	      && icon_item->details->rendered_is_highlighted_for_selection == icon_item->details->is_highlighted_for_selection
 	      && icon_item->details->rendered_is_highlighted_for_drop == icon_item->details->is_highlighted_for_drop
 	      && icon_item->details->rendered_is_highlighted_for_clipboard == icon_item->details->is_highlighted_for_clipboard
-	      && (icon_item->details->is_highlighted_for_selection && icon_item->details->rendered_is_focused == gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas))))) {
+	      && icon_item->details->rendered_is_focused == gtk_widget_has_focus (GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas)))) {
 		if (icon_item->details->rendered_surface != NULL) {
             cairo_surface_destroy (icon_item->details->rendered_surface);
 		}

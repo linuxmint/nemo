@@ -5,14 +5,14 @@ export LC_ALL=C.UTF-8
 
 CONFIGURE_EXTRA_FLAGS = \
 	--libexecdir=/usr/lib/$(DEB_HOST_MULTIARCH)/nemo \
-	--buildtype=debug \
+	--buildtype=debugoptimized \
 	-D deprecated_warnings=false \
 	-D gtk_doc=true \
 	-D selinux=false
 
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,-z,defs -Wl,-O1 -Wl,--as-needed
 export DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow
-
+export DPKG_GENSYMBOLS_CHECK_LEVEL = 2
 
 %:
 	dh $@ --with gir

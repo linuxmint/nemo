@@ -54,14 +54,14 @@ struct NemoFileDetails
 {
 	NemoDirectory *directory;
 	
-	eel_ref_str name;
+	GRefString *name;
 
 	/* File info: */
 	GFileType type;
 
-	eel_ref_str display_name;
+	GRefString *display_name;
 	char *display_name_collation_key;
-	eel_ref_str edit_name;
+	GRefString *edit_name;
 
 	goffset size; /* -1 is unknown */
 	
@@ -71,9 +71,9 @@ struct NemoFileDetails
 	int uid; /* -1 is none */
 	int gid; /* -1 is none */
 
-	eel_ref_str owner;
-	eel_ref_str owner_real;
-	eel_ref_str group;
+	GRefString *owner;
+	GRefString *owner_real;
+	GRefString *group;
 	
 	time_t atime; /* 0 is unknown */
 	time_t mtime; /* 0 is unknown */
@@ -82,7 +82,7 @@ struct NemoFileDetails
 	
 	char *symlink_name;
 	
-	eel_ref_str mime_type;
+	GRefString *mime_type;
 	
 	char *selinux_context;
 	char *description;
@@ -117,7 +117,7 @@ struct NemoFileDetails
 	/* used during DND, for checking whether source and destination are on
 	 * the same file system.
 	 */
-	eel_ref_str filesystem_id;
+	GRefString *filesystem_id;
 
 	char *trash_orig_path;
 
@@ -160,10 +160,6 @@ struct NemoFileDetails
 	eel_boolean_bit get_info_failed               : 1;
 	eel_boolean_bit file_info_is_up_to_date       : 1;
 	
-    eel_boolean_bit got_btime                     : 1;
-    eel_boolean_bit get_btime_failed              : 1;
-    eel_boolean_bit btime_is_up_to_date           : 1;
-
 	eel_boolean_bit got_directory_count           : 1;
 	eel_boolean_bit directory_count_failed        : 1;
 	eel_boolean_bit directory_count_is_up_to_date : 1;

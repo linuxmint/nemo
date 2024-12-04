@@ -8,6 +8,12 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Start an SSH server on failure.'
+        required: false
+        default: false
 
 jobs:
   build:
@@ -16,5 +22,7 @@ jobs:
       commit_id: master
       ############################## Comma separated list - like 'linuxmint/xapp, linuxmint/cinnamon-desktop'
       dependencies: linuxmint/xapp, linuxmint/cinnamon-desktop, linuxmint/cinnamon-translations
+      codespell_ignore_words_list: nd
+      codespell_ignore_files_list:
       ##############################
 

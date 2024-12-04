@@ -286,6 +286,7 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 	root = g_mount_get_root (mount);
 	uri = g_file_get_uri (root);
+    g_object_unref (root);
 
 	DEBUG ("Removed mount at uri %s", uri);
 	g_free (uri);
@@ -444,8 +445,12 @@ open_tabs_in_existing_window (NemoMainApplication *application,
 
             /* Don't use `gtk_window_present()`, as the window manager will ignore this window's focus request and try
              * to just mark it urgent instead (flashing in the window list for example). */
-            gtk_window_present_with_time (GTK_WINDOW (window),
-                                          gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
+            if (eel_check_is_wayland ()) {
+                gtk_window_present (GTK_WINDOW (window));
+            } else {
+                gtk_window_present_with_time (GTK_WINDOW (window),
+                                              gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
+            }
 
           break;
         }
@@ -716,7 +721,12 @@ nemo_main_application_local_command_line (GApplication *application,
 	}
 
     if (debug) {
+#if (GLIB_CHECK_VERSION(2,80,0))
+        const gchar* const domains[] = { "Nemo", NULL };
+        g_log_writer_default_set_debug_domains (domains);
+#else
         g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
+#endif
     }
 
 	if (!do_cmdline_sanity_checks (self, perform_self_check,

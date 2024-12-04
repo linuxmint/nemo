@@ -28,6 +28,12 @@
     <value nick="informal" value="2"/>
   </enum>
 
+  <enum id="org.nemo.DateFontChoice">
+    <value nick="auto-mono" value="0"/>
+    <value nick="system-mono" value="1"/>
+    <value nick="no-mono" value="2"/>
+  </enum>
+
   <enum id="org.nemo.SortOrder">
     <value nick="manually" value="0"/>
     <value nick="name" value="1"/>
@@ -91,6 +97,10 @@
       <default>false</default>
       <summary>Enables renaming of icons by two times clicking with pause between clicks</summary>
       <description>If set to true, then icons in all Nemo windows will be able to get renamed quickly. Users should click two times on icons with a pause time more than double-click time of their system.</description>
+    </key>
+    <key name="expand-row-on-dnd-dwell" type="b">
+      <default>true</default>
+      <summary>During drag-and-drop operations, automatically expand rows when hovering them briefly</summary>
     </key>
     <key name="show-location-entry" type="b">
       <default>false</default>
@@ -297,6 +307,11 @@
       <summary>Date Format</summary>
       <description>The format of file dates. Possible values are "locale", "iso", and "informal".</description>
     </key>
+    <key name="date-font-choice" enum="org.nemo.DateFontChoice">
+      <default>'auto-mono'</default>
+      <summary>The font to use for the date/time columns.</summary>
+      <description>The format of file dates. Possible values are "auto-mono" (best effort to match the application font), "system-mono" (use the current system mono font), and "no-mono" (use a normal font).</description>
+    </key>
     <key name="show-hidden-files" type="b">
       <default>false</default>
       <summary>Whether to show hidden files</summary>
@@ -419,6 +434,10 @@
     <key name="detect-content" type="b">
       <default>true</default>
       <summary>If true, enable detection of the type of content of a mounted media and display a suggested application to open the media.</summary>
+    </key>
+    <key name="thumbnail-threads" type="i">
+      <default>-1</default>
+      <summary>Number of threads to dedicate to thumbnailing. -1 to let the program decide. The maximum allowed threads is half the number of logical processors, regardless of what is set here. If you change this setting you must restart Nemo for it to take effect.</summary>
     </key>
   </schema>
 
@@ -585,7 +604,7 @@
       <description>An integer specifying how parts of overlong file names should be replaced by ellipses on the desktop. If the number is larger than 0, the file name will not exceed the given number of lines. If the number is 0 or smaller, no limit is imposed on the number of displayed lines.</description>
     </key>
     <key name="ignored-desktop-handlers" type="as">
-      <default>['conky']</default>
+      <default>['conky', 'csd-background']</default>
       <summary>List of desktop-handling to ignore when determining whether or not to manager the desktop.</summary>
       <description>Nemo checks for _NET_WM_WINDOW_TYPE_DESKTOP-type windows, and skips managing the desktop if any others are detected.  Add potential names to this list to ignore when performing this check.  This means that you want nemo to create its own desktop window(s) even though something else already seems to.  The check is based on a program's WM_CLASS.</description>
     </key>
@@ -839,7 +858,7 @@
       <summary>Stores the most recent state of the content search case toggle</summary>
     </key>
     <key name="search-skip-folders" type="as">
-      <default>['/dev', '/proc', '/run', '/sys']</default>
+      <default>['/dev', '/proc', '/sys', 'dosdevices', '.git']</default>
       <summary>Paths or folder names to never recurse into when searching</summary>
       <description>List of locations that the search engine will never enter when looking for matches. These can be absolute or simply folder names (like .git). You can still enter those folders and search inside of them, however.</description>
     </key>
@@ -850,6 +869,14 @@
     <key name="search-visible-columns" type="as">
       <default>[]</default>
       <summary>Saved list of columns visible in the search view.</summary>
+    </key>
+    <key name="search-sort-column" type="s">
+      <default>''</default>
+      <summary>Column to sort on when viewing search results</summary>
+    </key>
+    <key name="search-reverse-sort" type="b">
+      <default>false</default>
+      <summary>Reverse the direction of the sort when viewing search results</summary>
     </key>
     <key name="search-file-history" type="as">
       <default>[]</default>
