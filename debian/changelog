@@ -1,3 +1,9 @@
+nemo (6.4.3) xia; urgency=medium
+
+  * l10n: generate additional files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 05 Dec 2024 11:51:27 +0000
+
 nemo (6.4.2) xia; urgency=medium
 
   [ ltsdw ]
