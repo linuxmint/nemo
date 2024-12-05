@@ -13,10 +13,12 @@ Extensions=any;
 Conditions=desktop;dbus org.Cinnamon;gsettings org.cinnamon number-workspaces i gt 1;
 
 Active=false
+
 Name[am]=የ ስራ ቦታ ማስወገጃ
 Name[ar]=إزالة مساحة العمل
 Name[be]=Выдаліць працоўную прастору
 Name[bg]=Премахване на работно място
+Name[br]=Dilemel an dachenn-labour
 Name[ca]=Elimina espai de treball
 Name[cs]=Odstranit pracovní plochu
 Name[cy]=Dileu gweithle
@@ -49,6 +51,7 @@ Name[ko]=작업 공간 제거
 Name[la]=Aream laboris remove
 Name[lt]=Šalinti darbo sritį
 Name[ms]=Hapus kawasan kerja
+Name[nb]=Fjern arbeidsområde
 Name[nl]=Werkblad verwijderen
 Name[pl]=Usuń przestrzeń roboczą
 Name[pt]=Remover área de trabalho
@@ -105,6 +108,7 @@ Comment[ko]=현재 사용 중인 작업 공간을 제거합니다
 Comment[la]=Hanc aream laboris remove
 Comment[lt]=Šalinti esamą aktyvią darbo sritį
 Comment[ms]=Hapus kawasan kerja semasa
+Comment[nb]=Fjern det gjeldende aktive arbeidsområdet
 Comment[nl]=Verwijder het thans actieve werkblad
 Comment[pl]=Usuń obecnie aktywną przestrzeń roboczą
 Comment[pt]=Remover a área de trabalho ativa no momento
@@ -125,4 +129,3 @@ Comment[vi]=Bỏ vùng làm việc hiện hoạt
 Comment[zh_CN]=移除当前活跃的工作区
 Comment[zh_HK]=移除目前作用中的工作區
 Comment[zh_TW]=移除目前使用中的工作區
-

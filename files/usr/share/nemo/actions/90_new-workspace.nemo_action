@@ -13,6 +13,7 @@ Extensions=any;
 Conditions=desktop;dbus org.Cinnamon;
 
 Active=false
+
 Name[am]=ወደ አዲስ የ ስራ ቦታ መዝለያ
 Name[ar]=اذهب إلى مساحة العمل الجديدة
 Name[be]=Перайсці на новую прастору
@@ -49,6 +50,7 @@ Name[ko]=새 작업 공간으로 가기
 Name[la]=I ad novam aream laboris
 Name[lt]=Pereiti į naują darbo sritį
 Name[ms]=Lompat ke kawasan kerja baru
+Name[nb]=Hopp til nytt arbeidsområde
 Name[nl]=Spring naar nieuw werkblad
 Name[pl]=Przejdź do nowej przestrzeni roboczej
 Name[pt]=Ir para nova área de trabalho
@@ -106,6 +108,7 @@ Comment[ko]=새로운 작업 공간을 만들고 사용합니다
 Comment[la]=Novam aream laboris crea atque utere
 Comment[lt]=Sukurti naują darbo sritį ir ją aktyvuoti
 Comment[ms]=Cipta kawasan kerja baru dan aktifkan ia.
+Comment[nb]=Opprett et nytt arbeidsområde og aktiver det
 Comment[nl]=Maak een nieuw werkblad en activeer het
 Comment[pl]=Utwórz nową przestrzeń roboczą i aktywuj ją
 Comment[pt]=Criar uma nova área de trabalho e ativá-la
@@ -127,4 +130,3 @@ Comment[vi]=Tạo và kích hoạt vùng làm việc mới
 Comment[zh_CN]=创建新的工作区并激活它
 Comment[zh_HK]=建立新工作區並將其啟動
 Comment[zh_TW]=建立新工作區並啟用
-
