@@ -3329,13 +3329,6 @@ bookmarks_key_press_event_cb (GtkWidget             *widget,
       return TRUE;
   }
 
-  if ((event->keyval == GDK_KEY_Delete
-      || event->keyval == GDK_KEY_KP_Delete)
-      && (event->state & modifiers) == 0) {
-      remove_selected_bookmarks (sidebar);
-      return TRUE;
-  }
-
   if ((event->keyval == GDK_KEY_F2)
       && (event->state & modifiers) == 0) {
       rename_selected_bookmark (sidebar);
