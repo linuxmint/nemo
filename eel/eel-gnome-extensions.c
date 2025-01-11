@@ -37,7 +37,7 @@
 static const struct {
     const char *exec;
     const char *exec_arg;
-    gboolean escape_command;
+    const gboolean escape_command;
 } known_terminals[] = {
     { "alacritty", "-e", TRUE },
     { "color-xterm", "-e", TRUE },
