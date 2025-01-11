@@ -2,7 +2,7 @@
 
 /* eel-gnome-extensions.c - implementation of new functions that operate on
                             gnome classes. Perhaps some of these should be
-  			    rolled into gnome someday.
+                            rolled into gnome someday.
 
    Copyright (C) 1999, 2000, 2001 Eazel, Inc.
 
@@ -29,6 +29,7 @@
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 
 #include "eel-gnome-extensions.h"
+#include "eel-stock-dialogs.h"
 
 #include <gtk/gtk.h>
 
@@ -36,28 +37,37 @@
 static const struct {
     const char *exec;
     const char *exec_arg;
-    const gboolean escape_command;
+    gboolean escape_command;
 } known_terminals[] = {
     { "alacritty", "-e", TRUE },
     { "color-xterm", "-e", TRUE },
+    { "cool-retro-term", "-e", TRUE },
+    { "deepin-terminal", "-e", TRUE },
     { "dtterm", "-e", TRUE },
+    { "eterm", "-e", TRUE },
     { "foot", "--", FALSE },
     { "gnome-terminal", "--", FALSE },
+    { "guake", "-e", TRUE },
+    { "hyper", "-e", TRUE },
     { "kgx", "-e", TRUE },
     { "kitty", "--", FALSE },
     { "konsole", "-e", TRUE },
     { "lxterminal", "-e", TRUE },
     { "mate-terminal", "-x", TRUE },
+    { "nvim", "-c", TRUE },
     { "nxterm", "-e", TRUE },
+    { "qterminal", "-e", TRUE },
     { "rxvt", "-e", TRUE },
     { "sakura", "-x", TRUE },
     { "st", "-e", TRUE },
     { "terminator", "-x", TRUE },
     { "terminology", "-e", TRUE },
+    { "tilda", "-e", TRUE },
     { "tilix", "-e", TRUE },
+    { "urxvt", "-e", TRUE },
     { "wezterm", "--", TRUE },
     { "xfce4-terminal", "-x", FALSE },
-    { "xterm", "-e", TRUE },
+    { "xterm", "-e", TRUE }
 };
 
 static char *
@@ -66,23 +76,37 @@ prepend_terminal_to_command_line (const char *command_line)
     GSettings *settings;
     GString *prefix = NULL;
     gchar *terminal = NULL;
-    gchar *ret = NULL;
+    gchar *exec_arg = NULL;
+    gboolean requires_escape = TRUE;
     GString *escaped_command_line = NULL;
+    gchar *ret = NULL;
     gint i;
 
     g_return_val_if_fail (command_line != NULL, g_strdup (command_line));
 
     settings = g_settings_new ("org.cinnamon.desktop.default-applications.terminal");
     terminal = g_settings_get_string (settings, "exec");
+    exec_arg = g_settings_get_string (settings, "exec-arg");
 
     if (terminal != NULL) {
         for (i = 0; i < G_N_ELEMENTS (known_terminals); i++) {
             if (g_strcmp0 (known_terminals[i].exec, terminal) == 0) {
-                gchar *tmp = g_strdup_printf ("%s %s", known_terminals[i].exec, known_terminals[i].exec_arg);
+                requires_escape = known_terminals[i].escape_command;
+                gchar *tmp = g_strdup_printf(
+                    "%s %s", terminal, (exec_arg == NULL)
+                        ? known_terminals[i].exec_arg
+                        : exec_arg
+                );
                 prefix = g_string_new (tmp);
                 g_free (tmp);
                 break;
             }
+        }
+        if (prefix == NULL && exec_arg != NULL) {
+            gchar *tmp = g_strdup_printf ("%s %s", terminal, exec_arg);
+            prefix = g_string_new (tmp);
+            g_free (tmp);
+            g_free (exec_arg);
         }
     }
 
@@ -92,17 +116,28 @@ prepend_terminal_to_command_line (const char *command_line)
         for (i = 0; i < G_N_ELEMENTS (known_terminals); i++) {
             term_path = g_find_program_in_path (known_terminals[i].exec);
             if (term_path != NULL) {
+                requires_escape = known_terminals[i].escape_command;
                 gchar *tmp = g_strdup_printf ("%s %s", known_terminals[i].exec, known_terminals[i].exec_arg);
                 prefix = g_string_new (tmp);
                 g_free (tmp);
+                g_free (term_path);
                 break;
             }
         }
-        g_free (term_path);
     }
 
-    // Escape space characters in the command line if needed
-    if (prefix != NULL && known_terminals[i].escape_command) {
+    if (prefix == NULL) {
+        g_object_unref(settings);
+        eel_show_error_dialog(
+            _("No known terminal emulator found."),
+            _("Please install a terminal emulator or specify one via gsettings."),
+            NULL
+        );
+        return NULL;
+    }
+
+    if (requires_escape) {
+        // Escape space characters in the command line
         escaped_command_line = g_string_new("");
         for (const gchar *p = command_line; *p != '\0'; p++) {
             if (*p == ' ') {
@@ -111,10 +146,8 @@ prepend_terminal_to_command_line (const char *command_line)
                 g_string_append_c(escaped_command_line, *p);
             }
         }
-    }
-
-    if (escaped_command_line == NULL) {
-        escaped_command_line = g_string_new (command_line);
+    } else {
+        escaped_command_line = g_string_new(command_line);
     }
 
     g_object_unref (settings);
@@ -143,22 +176,21 @@ eel_gnome_open_terminal_on_screen (const gchar *command,
 
     app = g_app_info_create_from_commandline (command_line, NULL, 0, &error);
 
-	if (app != NULL && screen != NULL) {
-		display = gdk_screen_get_display (screen);
-		ctx = gdk_display_get_app_launch_context (display);
-		gdk_app_launch_context_set_screen (ctx, screen);
+    if (app != NULL && screen != NULL) {
+        display = gdk_screen_get_display (screen);
+        ctx = gdk_display_get_app_launch_context (display);
+        gdk_app_launch_context_set_screen (ctx, screen);
 
-		g_app_info_launch (app, NULL, G_APP_LAUNCH_CONTEXT (ctx), &error);
+        g_app_info_launch (app, NULL, G_APP_LAUNCH_CONTEXT (ctx), &error);
 
-		g_object_unref (app);
-		g_object_unref (ctx);
-	}
+        g_object_unref (app);
+        g_object_unref (ctx);
+    }
 
-	if (error != NULL) {
-		g_message ("Could not start application on terminal: %s", error->message);
-
-		g_error_free (error);
-	}
+    if (error != NULL) {
+        g_message ("Could not start application on terminal: %s", error->message);
+        g_error_free (error);
+    }
 
     g_free (command_line);
 }
