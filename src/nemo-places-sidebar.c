@@ -86,6 +86,7 @@ typedef struct {
 	GtkTreeView        *tree_view;
     GtkTreeViewColumn  *eject_column;
     GtkCellRenderer    *eject_icon_cell_renderer;
+    GtkCellRenderer    *editable_renderer;
 	char 	           *uri;
 	GtkTreeStore       *store;
     GtkTreeModel       *store_filter;
@@ -2620,8 +2621,6 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	GtkTreeViewColumn *column;
-	GtkCellRenderer *cell;
-	GList *renderers;
 	PlaceType type;
 
 	if (get_selected_iter (sidebar, &iter)) {
@@ -2635,12 +2634,9 @@ rename_selected_bookmark (NemoPlacesSidebar *sidebar)
 
 		path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store_filter), &iter);
 		column = gtk_tree_view_get_column (GTK_TREE_VIEW (sidebar->tree_view), 2);
-		renderers = gtk_cell_layout_get_cells (GTK_CELL_LAYOUT (column));
-		cell = g_list_nth_data (renderers, 5);
-		g_list_free (renderers);
-		g_object_set (cell, "editable", TRUE, NULL);
+		g_object_set (sidebar->editable_renderer, "editable", TRUE, NULL);
 		gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (sidebar->tree_view),
-						path, column, cell, TRUE);
+						path, column, sidebar->editable_renderer, TRUE);
 		gtk_tree_path_free (path);
 	}
 }
@@ -3708,9 +3704,15 @@ motion_notify_cb (GtkWidget         *widget,
     GtkTreeModel *model;
     GtkTreePath *path = NULL;
     GtkTreePath *store_path = NULL;
+    gboolean editing;
 
     if (event->type != GDK_MOTION_NOTIFY) {
         return TRUE;
+    }
+
+    g_object_get (sidebar->editable_renderer, "editing", &editing, NULL);
+    if (editing) {
+        return GDK_EVENT_PROPAGATE;
     }
 
     model = gtk_tree_view_get_model (GTK_TREE_VIEW (sidebar->tree_view));
@@ -3736,8 +3738,15 @@ leave_notify_cb (GtkWidget         *widget,
                  GdkEventCrossing  *event,
                  NemoPlacesSidebar *sidebar)
 {
+    gboolean editing;
+
     if (event->type != GDK_LEAVE_NOTIFY) {
         return TRUE;
+    }
+
+    g_object_get (sidebar->editable_renderer, "editing", &editing, NULL);
+    if (editing) {
+        return GDK_EVENT_PROPAGATE;
     }
 
     ClearHoverData data = { sidebar, NULL };
@@ -4194,7 +4203,7 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 						 sidebar, NULL);
 
     /* normal text renderer */
-    cell = nemo_cell_renderer_disk_new ();
+    cell = sidebar->editable_renderer = nemo_cell_renderer_disk_new ();
     NEMO_CELL_RENDERER_DISK (cell)->direction = gtk_widget_get_direction (GTK_WIDGET (tree_view));
     gtk_tree_view_column_pack_start (primary_column, cell, TRUE);
     g_object_set (G_OBJECT (cell), "editable", FALSE, NULL);
