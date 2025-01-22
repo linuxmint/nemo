@@ -39,6 +39,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
+#include <libxapp/xapp-icon-chooser-dialog.h>
 
 /* Static variables to keep track of window state. If there were
  * more than one bookmark-editing window, these would be struct or
@@ -57,9 +58,11 @@ static GtkWidget	    *remove_button = NULL;
 static GtkWidget            *jump_button = NULL;
 static GtkWidget            *sort_button = NULL;
 static GtkWidget            *close_button = NULL;
-static gboolean		     text_changed = FALSE;
+static gboolean		     changed = FALSE;
 static gboolean		     name_text_changed = FALSE;
 static GtkWidget	    *uri_field = NULL;
+static GtkWidget		*icon_button = NULL;
+static GtkWidget		*icon_button_image = NULL;
 static int		     uri_field_changed_signal_id;
 static int		     row_deleted_signal_id;
 static int                   row_activated_signal_id;
@@ -102,6 +105,9 @@ static void     on_selection_changed                        (GtkTreeSelection   
 static gboolean on_text_field_focus_out_event               (GtkWidget            *widget,
 							     GdkEventFocus        *event,
 							     gpointer              user_data);
+static gboolean on_icon_button_focus_out_event               (GtkWidget            *widget,
+								 GdkEventFocus        *event,
+								 gpointer              user_data);
 static void     on_uri_field_changed                        (GtkEditable          *editable,
 							     gpointer              user_data);
 static gboolean on_window_delete_event                      (GtkWidget            *widget,
@@ -114,8 +120,9 @@ static void     on_window_destroy_event                     (GtkWidget          
 static void     repopulate_now                                  (void);
 static void     queue_repopulate                                  (void);
 static void     set_up_close_accelerator                    (GtkWidget            *window);
-static void	open_selected_bookmark 			    (gpointer   user_data, GdkScreen *screen);
-static void	update_bookmark_from_text		    (void);
+static void		open_selected_bookmark 			    (gpointer   user_data, GdkScreen *screen);
+static void		update_bookmark_from_text		    (void);
+static void		on_icon_button_clicked				(GtkWidget	*widget);
 
 /* We store a pointer to the bookmark in a column so when an item is moved
    with DnD we know which item it is. However we have to be careful to keep
@@ -248,6 +255,8 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 
 	window = (GtkWidget *)gtk_builder_get_object (builder, "bookmarks_dialog");
 	bookmark_list_widget = (GtkTreeView *)gtk_builder_get_object (builder, "bookmark_tree_view");
+	icon_button = (GtkWidget *)gtk_builder_get_object(builder, "icon_choose_button");
+	icon_button_image = (GtkWidget *)gtk_builder_get_object(builder, "icon_choose_button_image");
 	remove_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_delete_button");
 	jump_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_jump_button");
     sort_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_sort_button");
@@ -376,6 +385,12 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
 	sort_button_signal_id =
 		g_signal_connect (sort_button, "clicked",
 				  G_CALLBACK (on_sort_button_clicked), NULL);
+
+	g_signal_connect (icon_button, "clicked",
+				  G_CALLBACK(on_icon_button_clicked), NULL);
+
+	g_signal_connect (icon_button, "focus_out_event",
+				  G_CALLBACK(on_icon_button_focus_out_event), NULL);
 
 	gtk_tree_selection_set_mode (bookmark_selection, GTK_SELECTION_BROWSE);
 	
@@ -546,7 +561,7 @@ on_name_field_changed (GtkEditable *editable,
 			    &iter, BOOKMARK_LIST_COLUMN_NAME, 
 			    gtk_entry_get_text (GTK_ENTRY (name_field)),
 			    -1);
-	text_changed = TRUE;
+	changed = TRUE;
 	name_text_changed = TRUE;
 }
 
@@ -739,6 +754,9 @@ on_selection_changed (GtkTreeSelection *treeselection,
 		location = nemo_bookmark_get_location (selected);
 		entry_text = g_file_get_parse_name (location);
 
+		gchar *icon_name = nemo_bookmark_get_icon_name(selected);
+		gtk_image_set_from_icon_name(GTK_IMAGE(icon_button_image), icon_name, GTK_ICON_SIZE_MENU);
+
 		g_object_unref (location);
 	}
 	
@@ -748,6 +766,8 @@ on_selection_changed (GtkTreeSelection *treeselection,
     gtk_widget_set_sensitive (sort_button, selected != NULL);
 	gtk_widget_set_sensitive (name_field, selected != NULL);
 	gtk_widget_set_sensitive (uri_field, selected != NULL);
+	gtk_widget_set_sensitive (icon_button, selected != NULL);
+	gtk_widget_set_visible	 (icon_button_image, selected != NULL);
 
 	g_signal_handler_block (name_field, name_field_changed_signal_id);
 	nemo_entry_set_text (NEMO_ENTRY (name_field),
@@ -759,7 +779,7 @@ on_selection_changed (GtkTreeSelection *treeselection,
 				 entry_text ? entry_text : "");
 	g_signal_handler_unblock (uri_field, uri_field_changed_signal_id);
 
-	text_changed = FALSE;
+	changed = FALSE;
 	name_text_changed = FALSE;
 
 	g_free (entry_text);
@@ -769,7 +789,7 @@ on_selection_changed (GtkTreeSelection *treeselection,
 static void
 update_bookmark_from_text (void)
 {
-	if (text_changed) {
+	if (changed) {
 		NemoBookmark *bookmark, *bookmark_in_list;
 		const char *name;
 		gchar *icon_name;
@@ -786,10 +806,14 @@ update_bookmark_from_text (void)
 
 		location = g_file_parse_name 
 			(gtk_entry_get_text (GTK_ENTRY (uri_field)));
-		
+
+		gchar *new_icon_name = NULL;
+
+		gtk_image_get_icon_name(GTK_IMAGE(icon_button_image), &new_icon_name, NULL);
+
 		bookmark = nemo_bookmark_new (location,
 						  name_text_changed ? gtk_entry_get_text (GTK_ENTRY (name_field)) : NULL,
-						  NULL, NULL);
+						  new_icon_name, NULL);
 		
 		g_object_unref (location);
 
@@ -836,6 +860,17 @@ update_bookmark_from_text (void)
 }
 
 static gboolean
+on_icon_button_focus_out_event (GtkWidget *widget,
+				   GdkEventFocus *event,
+				   gpointer user_data)
+{
+	g_assert (GTK_IS_BUTTON (widget));
+
+	update_bookmark_from_text ();
+	return FALSE;
+}
+
+static gboolean
 on_text_field_focus_out_event (GtkWidget *widget,
 			       GdkEventFocus *event,
 			       gpointer user_data)
@@ -862,7 +897,7 @@ on_uri_field_changed (GtkEditable *editable,
 	/* Remember that user has changed text so we 
 	 * update real bookmark later. 
 	 */
-	text_changed = TRUE;
+	changed = TRUE;
 }
 
 static gboolean
@@ -1093,4 +1128,47 @@ set_up_close_accelerator (GtkWidget *window)
 	 */
 	g_signal_connect (window, "key_press_event",
 			  G_CALLBACK (handle_close_accelerator), NULL);
+}
+
+static void
+set_bookmark_icon_name (gchar *icon_name)
+{
+	GtkTreeIter   iter;
+	g_return_if_fail(GTK_IS_TREE_VIEW(bookmark_list_widget));
+	g_return_if_fail(GTK_IS_ENTRY(name_field));
+
+	if (!get_selection_exists())
+		return;
+
+	/* Update icon displayed in list instantly. Also remember that
+	 * user has changed icon so we update real bookmark later.
+	 */
+	gtk_tree_selection_get_selected (bookmark_selection,
+					 NULL,
+					 &iter);
+
+	gtk_list_store_set (bookmark_list_store,
+				&iter, BOOKMARK_LIST_COLUMN_ICON,
+				icon_name,
+				-1);
+	changed = TRUE;
+	gtk_image_set_from_icon_name(GTK_IMAGE(icon_button_image), icon_name, GTK_ICON_SIZE_MENU);
+}
+
+static void
+on_icon_button_clicked (GtkWidget *widget)
+{
+	XAppIconChooserDialog *dialog = xapp_icon_chooser_dialog_new();
+	gchar *icon_name = NULL;
+
+	switch (xapp_icon_chooser_dialog_run(XAPP_ICON_CHOOSER_DIALOG(dialog))) {
+		case GTK_RESPONSE_OK:
+			icon_name = xapp_icon_chooser_dialog_get_icon_string (XAPP_ICON_CHOOSER_DIALOG (dialog));
+			set_bookmark_icon_name(icon_name);
+			break;
+		default:
+			break;
+	}
+
+	g_free (icon_name);
 }

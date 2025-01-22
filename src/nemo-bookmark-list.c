@@ -90,11 +90,30 @@ new_bookmark_from_uri (const char *uri, const char *label, NemoBookmarkMetadata 
 	if (uri) {
 		location = g_file_new_for_uri (uri);
 	}
-	
+
 	new_bookmark = NULL;
 
 	if (location) {
-		new_bookmark = nemo_bookmark_new (location, label, NULL, md);
+		gchar *icon_name = NULL;
+		GError *error = NULL;
+		GFileInfo *location_file_info = NULL;
+
+		if ((location_file_info = g_file_query_info	(location,
+		                                             "metadata::*",
+		                                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+		                                             NULL,
+		                                             &error))) {
+			icon_name = g_file_info_get_attribute_as_string(
+				location_file_info,
+				"metadata::custom-symbolic-icon-name"
+			);
+
+			g_object_unref(location_file_info);
+		} else {
+			g_object_unref(error);
+		}
+
+		new_bookmark = nemo_bookmark_new (location, label, icon_name, md);
 		g_object_unref (location);
 	}
 
@@ -128,7 +147,6 @@ nemo_bookmark_list_get_file (void)
                                  "bookmarks",
                                  NULL);
     file = g_file_new_for_path (filename);
-
     g_free (filename);
 
     return file;
@@ -223,7 +241,7 @@ stop_monitoring_one (gpointer data, gpointer user_data)
 	g_assert (NEMO_IS_BOOKMARK (data));
 	g_assert (NEMO_IS_BOOKMARK_LIST (user_data));
 
-	stop_monitoring_bookmark (NEMO_BOOKMARK_LIST (user_data), 
+	stop_monitoring_bookmark (NEMO_BOOKMARK_LIST (user_data),
 				  NEMO_BOOKMARK (data));
 }
 
@@ -296,7 +314,7 @@ nemo_bookmark_list_class_init (NemoBookmarkListClass *class)
 		g_signal_new ("changed",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_LAST,
-		              G_STRUCT_OFFSET (NemoBookmarkListClass, 
+		              G_STRUCT_OFFSET (NemoBookmarkListClass,
 					       changed),
 		              NULL, NULL,
 		              g_cclosure_marshal_VOID__VOID,
@@ -389,14 +407,14 @@ insert_bookmark_internal (NemoBookmarkList *bookmarks,
  * @bookmark: Bookmark to append a copy of.
  **/
 void
-nemo_bookmark_list_append (NemoBookmarkList *bookmarks, 
+nemo_bookmark_list_append (NemoBookmarkList *bookmarks,
 			       NemoBookmark     *bookmark)
 {
 	g_return_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks));
 	g_return_if_fail (NEMO_IS_BOOKMARK (bookmark));
 
-	insert_bookmark_internal (bookmarks, 
-				  nemo_bookmark_copy (bookmark), 
+	insert_bookmark_internal (bookmarks,
+				  nemo_bookmark_copy (bookmark),
 				  -1);
 
 	nemo_bookmark_list_save_file (bookmarks);
@@ -408,31 +426,31 @@ nemo_bookmark_list_append (NemoBookmarkList *bookmarks,
  * Check whether a bookmark with matching name and url is already in the list.
  * @bookmarks: NemoBookmarkList to check contents of.
  * @bookmark: NemoBookmark to match against.
- * 
+ *
  * Return value: TRUE if matching bookmark is in list, FALSE otherwise
  **/
 gboolean
-nemo_bookmark_list_contains (NemoBookmarkList *bookmarks, 
+nemo_bookmark_list_contains (NemoBookmarkList *bookmarks,
 				 NemoBookmark     *bookmark)
 {
 	g_return_val_if_fail (NEMO_IS_BOOKMARK_LIST (bookmarks), FALSE);
 	g_return_val_if_fail (NEMO_IS_BOOKMARK (bookmark), FALSE);
 
 	return g_list_find_custom (bookmarks->list,
-				   (gpointer)bookmark, 
-				   nemo_bookmark_compare_with) 
+				   (gpointer)bookmark,
+				   nemo_bookmark_compare_with)
 		!= NULL;
 }
 
 /**
  * nemo_bookmark_list_delete_item_at:
- * 
+ *
  * Delete the bookmark at the specified position.
  * @bookmarks: the list of bookmarks.
  * @index: index, must be less than length of list.
  **/
 void
-nemo_bookmark_list_delete_item_at (NemoBookmarkList *bookmarks, 
+nemo_bookmark_list_delete_item_at (NemoBookmarkList *bookmarks,
 				       guint                 index)
 {
 	GList *doomed;
@@ -523,13 +541,13 @@ nemo_bookmark_list_sort_ascending (NemoBookmarkList *bookmarks)
 
 /**
  * nemo_bookmark_list_delete_items_with_uri:
- * 
+ *
  * Delete all bookmarks with the given uri.
  * @bookmarks: the list of bookmarks.
  * @uri: The uri to match.
  **/
 void
-nemo_bookmark_list_delete_items_with_uri (NemoBookmarkList *bookmarks, 
+nemo_bookmark_list_delete_items_with_uri (NemoBookmarkList *bookmarks,
 				      	      const char           *uri)
 {
 	GList *node, *next;
@@ -562,7 +580,7 @@ nemo_bookmark_list_delete_items_with_uri (NemoBookmarkList *bookmarks,
 
 /**
  * nemo_bookmark_list_get_window_geometry:
- * 
+ *
  * Get a string representing the bookmark_list's window's geometry.
  * This is the value set earlier by nemo_bookmark_list_set_window_geometry.
  * @bookmarks: the list of bookmarks associated with the window.
@@ -578,7 +596,7 @@ nemo_bookmark_list_get_window_geometry (NemoBookmarkList *bookmarks)
 
 /**
  * nemo_bookmark_list_insert_item:
- * 
+ *
  * Insert a bookmark at a specified position.
  * @bookmarks: the list of bookmarks.
  * @index: the position to insert the bookmark at.
@@ -593,8 +611,10 @@ nemo_bookmark_list_insert_item (NemoBookmarkList *bookmarks,
 	g_return_if_fail (index <= g_list_length (bookmarks->list));
 
 	insert_bookmark_internal (bookmarks,
-				  nemo_bookmark_copy (new_bookmark), 
+				  nemo_bookmark_copy (new_bookmark),
 				  index);
+
+
 
 	nemo_bookmark_list_save_file (bookmarks);
 }
@@ -623,11 +643,11 @@ nemo_bookmark_list_get_for_uri (NemoBookmarkList   *bookmarks,
 
 /**
  * nemo_bookmark_list_item_at:
- * 
+ *
  * Get the bookmark at the specified position.
  * @bookmarks: the list of bookmarks.
  * @index: index, must be less than length of list.
- * 
+ *
  * Return value: the bookmark at position @index in @bookmarks.
  **/
 NemoBookmark *
@@ -641,10 +661,10 @@ nemo_bookmark_list_item_at (NemoBookmarkList *bookmarks, guint index)
 
 /**
  * nemo_bookmark_list_length:
- * 
+ *
  * Get the number of bookmarks in the list.
  * @bookmarks: the list of bookmarks.
- * 
+ *
  * Return value: the length of the bookmark list.
  **/
 guint
@@ -922,6 +942,7 @@ save_files_thread (GTask        *task,
     GFile *file;
     GList *l;
     GString *bookmark_string;
+	gchar *symbolic_icon_name;
     GFile *parent;
     char *path;
 
@@ -934,6 +955,7 @@ save_files_thread (GTask        *task,
     file = nemo_bookmark_list_get_file ();
 
     bookmark_string = g_string_new (NULL);
+	symbolic_icon_name = NULL;
 
     for (l = bookmarks->list; l; l = l->next) {
         NemoBookmark *bookmark;
@@ -941,11 +963,25 @@ save_files_thread (GTask        *task,
         bookmark = NEMO_BOOKMARK (l->data);
 
         const char *label;
+    	const char *icon_name;
         char *uri;
+    	GFile *file_from_uri;
+		GError *error = NULL;
+
         label = nemo_bookmark_get_name (bookmark);
         uri = nemo_bookmark_get_uri (bookmark);
+    	icon_name = nemo_bookmark_get_icon_name (bookmark);
         g_string_append_printf (bookmark_string,
                     "%s %s\n", uri, label);
+
+		file_from_uri = g_file_new_for_uri(uri);
+    	if(!g_file_set_attribute(file_from_uri,
+							 "metadata::custom-symbolic-icon-name", G_FILE_ATTRIBUTE_TYPE_STRING,
+							 icon_name, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, &error)) {
+    		g_free(error);
+    	}
+
+    	g_free (file_from_uri);
         g_free (uri);
     }
 
@@ -1035,7 +1071,7 @@ process_next_op (NemoBookmarkList *bookmarks)
 
 /**
  * nemo_bookmark_list_load_file:
- * 
+ *
  * Reads bookmarks from file, clobbering contents in memory.
  * @bookmarks: the list of bookmarks to fill with file contents.
  **/
@@ -1051,7 +1087,7 @@ nemo_bookmark_list_load_file (NemoBookmarkList *bookmarks)
 
 /**
  * nemo_bookmark_list_save_file:
- * 
+ *
  * Save bookmarks to disk.
  * @bookmarks: the list of bookmarks to save.
  **/
@@ -1071,9 +1107,9 @@ static NemoBookmarkList *list = NULL;
 
 /**
  * nemo_bookmark_list_get_default:
- * 
+ *
  * Retrieves the bookmark list singleton, with contents read from disk.
- * 
+ *
  * Return value: A pointer to the object
  **/
 NemoBookmarkList *
@@ -1088,7 +1124,7 @@ nemo_bookmark_list_get_default (void)
 
 /**
  * nemo_bookmark_list_set_window_geometry:
- * 
+ *
  * Set a bookmarks window's geometry (position & size), in string form. This is
  * stored to disk by this class, and can be retrieved later in
  * the same session or in a future session.

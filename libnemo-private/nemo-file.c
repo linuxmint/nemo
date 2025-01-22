@@ -4674,10 +4674,34 @@ nemo_file_get_gicon (NemoFile *file,
 	return g_themed_icon_new ("text-x-generic");
 }
 
-
 static const gchar *
 get_symbolic_icon_name_for_file (NemoFile *file)
 {
+	/* Check metadata */
+	GFile *gio_file = g_file_new_for_path(nemo_file_get_path(file));
+	gchar *icon_name = NULL;
+	GError *error = NULL;
+	GFileInfo *location_file_info = NULL;
+
+	if ((location_file_info = g_file_query_info(gio_file,
+	                                           "metadata::*",
+	                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+	                                           NULL,
+	                                           &error))) {
+		icon_name = g_file_info_get_attribute_as_string(
+			location_file_info,
+			"metadata::custom-symbolic-icon-name"
+		);
+
+		g_object_unref(location_file_info);
+	} else {
+		g_object_unref(error);
+	}
+	if(icon_name != NULL) {
+		return icon_name;
+	}
+	g_object_unref(gio_file);
+
     if (nemo_file_is_home (file)) {
         return NEMO_ICON_SYMBOLIC_HOME;
     }

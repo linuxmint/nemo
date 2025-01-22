@@ -324,8 +324,6 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
                                  bookmark, 0);
 	}
 
-	/* Set icon based on available information. */
-	nemo_bookmark_update_icon (bookmark);
 
 	if (bookmark->details->icon_name == NULL) {
 		nemo_bookmark_set_icon_to_default (bookmark);
