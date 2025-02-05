@@ -7208,6 +7208,12 @@ action_follow_symlink_callback (GtkAction *action,
 
     view = NEMO_VIEW (callback_data);
     selection = nemo_view_get_selection (view);
+
+    if (g_list_length (selection) != 1) {
+        nemo_file_list_free (selection);
+        return;
+    }
+
     if (nemo_file_is_symbolic_link (selection->data)) {
         gchar *uri = nemo_file_get_symbolic_link_target_uri (selection->data);
         gchar *view_uri = nemo_view_get_uri (view);
@@ -7252,6 +7258,11 @@ action_open_containing_folder_callback (GtkAction *action,
 
     view = NEMO_VIEW (callback_data);
     selection = nemo_view_get_selection (view);
+
+    if (g_list_length (selection) != 1) {
+        nemo_file_list_free (selection);
+        return;
+    }
 
     item = NEMO_FILE (selection->data);
     activation_location = nemo_file_get_activation_location (item);
