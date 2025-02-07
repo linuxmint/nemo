@@ -1,3 +1,11 @@
+nemo (6.4.4) xia; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Remove delete key action for removing bookmarks.
+  * nemo-places-sidebar.c: Fix bookmark renaming.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 07 Feb 2025 18:33:25 +0000
+
 nemo (6.4.3) xia; urgency=medium
 
   * l10n: generate additional files
