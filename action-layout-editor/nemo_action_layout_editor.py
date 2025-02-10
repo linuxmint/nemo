@@ -9,12 +9,16 @@ import json
 from pathlib import Path
 import uuid
 import gettext
+import locale
 import subprocess
 import os
 
 import leconfig
 
-gettext.install(leconfig.PACKAGE, leconfig.LOCALE_DIR)
+locale.bindtextdomain("nemo", leconfig.LOCALE_DIR)
+gettext.bindtextdomain("nemo", leconfig.LOCALE_DIR)
+gettext.textdomain("nemo")
+_ = gettext.gettext
 
 gresources = Gio.Resource.load(os.path.join(leconfig.PKG_DATADIR, "nemo-action-layout-editor-resources.gresource"))
 gresources._register()
