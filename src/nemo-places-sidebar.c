@@ -3822,11 +3822,12 @@ query_tooltip_callback (GtkWidget *widget,
 
         gtk_tooltip_set_markup (tooltip, tooltip_markup);
         gtk_tree_view_set_tooltip_cell (GTK_TREE_VIEW (widget), tooltip, path, NULL, NULL);
+
+        gtk_tree_path_free (path);
+        return TRUE;
     }
 
-    gtk_tree_path_free (path);
-
-    return TRUE;
+    return FALSE;
 }
 
 
