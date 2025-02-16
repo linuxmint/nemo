@@ -255,6 +255,7 @@ nemo_floating_bar_init (NemoFloatingBar *self)
 
 	context = gtk_widget_get_style_context (GTK_WIDGET (self));
 	gtk_style_context_add_class (context, "floating-bar");
+	gtk_style_context_add_class (context, "background");
 }
 
 static void
