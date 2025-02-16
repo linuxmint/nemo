@@ -24,3 +24,13 @@
     border-color: @theme_selected_bg_color;
     background-color: @theme_selected_bg_color;
 }
+
+/* Floating bar in the bottom of a file view, used when the 'status bar' is turned off */
+
+.floating-bar {
+  border: 1px solid;
+  border-radius: 3px 3px 0 0;
+  border-bottom-width: 0;
+  color: @theme_selected_fg_color;
+  background-color: @theme_selected_bg_color;
+}
