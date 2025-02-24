@@ -1,3 +1,12 @@
+nemo (6.4.5) xia; urgency=medium
+
+  [ Michael Webster ]
+  * layout editor: Don't use gettext.install to set up the locale.
+  * nemo-places-sidebar.c: Fix query-tooltip callback.
+  * nemo-style-fallback-mandatory.css: Add fallback support for the floating status bar.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 24 Feb 2025 15:23:49 +0000
+
 nemo (6.4.4) xia; urgency=medium
 
   [ Michael Webster ]
