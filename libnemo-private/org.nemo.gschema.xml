@@ -877,17 +877,5 @@
       <default>false</default>
       <summary>Reverse the direction of the sort when viewing search results</summary>
     </key>
-    <key name="search-file-history" type="as">
-      <default>[]</default>
-      <summary>List of previous file searches</summary>
-    </key>
-    <key name="search-content-history" type="as">
-      <default>[]</default>
-      <summary>Not currently used</summary>
-    </key>
-    <key name="search-content-history-length" type="i">
-      <default>10</default>
-      <summary>Not currently used</summary>
-    </key>
   </schema>
 </schemalist>
