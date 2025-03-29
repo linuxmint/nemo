@@ -275,6 +275,7 @@ typedef enum
 #define NEMO_PREFERENCES_DEFERRED_ATTR_PRELOAD_LIMIT   "deferred-attribute-preload-limit"
 
 #define NEMO_PREFERENCES_SEARCH_CONTENT_REGEX          "search-content-use-regex"
+#define NEMO_PREFERENCES_SEARCH_FILES_REGEX            "search-files-use-regex"
 #define NEMO_PREFERENCES_SEARCH_REGEX_FORMAT           "search-regex-format"
 #define NEMO_PREFERENCES_SEARCH_USE_RAW                "search-content-use-raw"
 #define NEMO_PREFERENCES_SEARCH_FILE_CASE              "search-file-case-sensitive"

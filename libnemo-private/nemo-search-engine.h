@@ -80,5 +80,10 @@ FileSearchResult *file_search_result_new     (gchar *uri, gchar *snippet);
 void              file_search_result_free    (FileSearchResult *result);
 void              file_search_result_add_hit (FileSearchResult *result);
 
+gboolean       nemo_search_engine_check_filename_pattern (NemoQuery   *query,
+                                                          GError     **error);
+gboolean       nemo_search_engine_check_content_pattern  (NemoQuery   *query,
+                                                          GError     **error);
+
 void              nemo_search_engine_report_accounting (void);
 #endif /* NEMO_SEARCH_ENGINE_H */

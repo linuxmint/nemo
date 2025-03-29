@@ -36,8 +36,9 @@ struct NemoQueryDetails {
     GList *mime_types;
     gboolean show_hidden;
     gboolean file_case_sensitive;
+    gboolean file_use_regex;
     gboolean content_case_sensitive;
-    gboolean use_regex;
+    gboolean content_use_regex;
     gboolean count_hits;
     gboolean recurse;
 };
@@ -116,6 +117,14 @@ nemo_query_set_content_pattern (NemoQuery *query, const char *text)
     if (text && text[0] != '\0') {
         query->details->content_pattern = g_strstrip (g_strdup (text));
     }
+}
+
+gboolean
+nemo_query_has_content_pattern (NemoQuery *query)
+{
+    g_return_val_if_fail (NEMO_IS_QUERY (query), FALSE);
+
+    return query->details->content_pattern != NULL;
 }
 
 char *
@@ -232,18 +241,33 @@ nemo_query_set_content_case_sensitive (NemoQuery *query, gboolean case_sensitive
 }
 
 gboolean
-nemo_query_get_use_regex (NemoQuery *query)
+nemo_query_get_use_file_regex (NemoQuery *query)
 {
     g_return_val_if_fail (NEMO_IS_QUERY (query), FALSE);
-    return query->details->use_regex;
+    return query->details->file_use_regex;
 }
 
 void
-nemo_query_set_use_regex (NemoQuery *query, gboolean use_regex)
+nemo_query_set_use_file_regex (NemoQuery *query, gboolean file_use_regex)
 {
     g_return_if_fail (NEMO_IS_QUERY (query));
 
-    query->details->use_regex = use_regex;
+    query->details->file_use_regex = file_use_regex;
+}
+
+gboolean
+nemo_query_get_use_content_regex (NemoQuery *query)
+{
+    g_return_val_if_fail (NEMO_IS_QUERY (query), FALSE);
+    return query->details->content_use_regex;
+}
+
+void
+nemo_query_set_use_content_regex (NemoQuery *query, gboolean content_use_regex)
+{
+    g_return_if_fail (NEMO_IS_QUERY (query));
+
+    query->details->content_use_regex = content_use_regex;
 }
 
 gboolean

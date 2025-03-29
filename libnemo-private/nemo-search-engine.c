@@ -238,3 +238,29 @@ nemo_search_engine_report_accounting (void)
     g_hash_table_unref (fsr_accounting_table);
 #endif
 }
+
+gboolean
+nemo_search_engine_check_filename_pattern (NemoQuery   *query,
+                                           GError     **error)
+{
+    g_return_val_if_fail (NEMO_IS_QUERY (query), FALSE);
+
+#ifdef ENABLE_TRACKER
+    return TRUE;
+#else
+    return nemo_search_engine_advanced_check_filename_pattern (query, error);
+#endif
+}
+
+gboolean
+nemo_search_engine_check_content_pattern (NemoQuery   *query,
+                                          GError     **error)
+{
+    g_return_val_if_fail (NEMO_IS_QUERY (query), FALSE);
+
+#ifdef ENABLE_TRACKER
+    return TRUE;
+#else
+    return nemo_search_engine_advanced_check_content_pattern (query, error);
+#endif
+}

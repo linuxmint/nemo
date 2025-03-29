@@ -836,9 +836,13 @@
   </schema>
 
   <schema id="org.nemo.search" path="/org/nemo/search/" gettext-domain="nemo">
+    <key name="search-files-use-regex" type="b">
+      <default>false</default>
+      <summary>Stores the most recent state of the file search regex toggle</summary>
+    </key>
     <key name="search-content-use-regex" type="b">
       <default>false</default>
-      <summary>Stores the most recent state of the search regex toggle</summary>
+      <summary>Stores the most recent state of the content search regex toggle</summary>
     </key>
     <key name="search-regex-format" type="s">
       <default>'pcre'</default>

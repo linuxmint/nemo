@@ -33,6 +33,10 @@
 #define DEBUG_FLAG NEMO_DEBUG_SEARCH
 #include "nemo-debug.h"
 
+#ifndef GLIB_VERSION_2_70
+#define g_pattern_spec_match g_pattern_match
+#endif
+
 #define SEARCH_HELPER_GROUP "Nemo Search Helper"
 
 #define FILE_SEARCH_ONLY_BATCH_SIZE 500
@@ -52,9 +56,6 @@ typedef struct {
 	GCancellable *cancellable;
 
 	GList *mime_types;
-	gchar **words;
-	gboolean *word_strstr;
-	gboolean words_and;
 
 	GQueue *directories; /* GFiles */
 
@@ -62,8 +63,11 @@ typedef struct {
     GHashTable *skip_folders;
 
 	gint n_processed_files;
-    GRegex *match_re;
+    GRegex *content_re;
     GRegex *newline_re;
+
+    GRegex *filename_re;
+    GPatternSpec *filename_glob_pattern;
 
     GMutex hit_list_lock;
     GList *hit_list; // holds FileSearchResults
@@ -72,6 +76,7 @@ typedef struct {
     gboolean count_hits;
     gboolean recurse;
     gboolean file_case_sensitive;
+    gboolean file_use_regex;
     gboolean location_supports_content_search;
 
     GTimer *timer;
@@ -311,87 +316,95 @@ finalize (GObject *object)
 	G_OBJECT_CLASS (nemo_search_engine_advanced_parent_class)->finalize (object);
 }
 
-/**
- * function modified taken from glib2 / gstrfuncs.c
- */
-static gchar**
-strsplit_esc_n (const gchar *string,
-				const gchar delimiter,
-				const gchar escape,
-				gint max_tokens,
-				gint *n_tokens)
+static GRegex *
+nemo_search_engine_advanced_create_filename_regex (NemoQuery  *query,
+                                                   GError    **error)
 {
-	GSList *string_list = NULL, *slist;
-	gchar **str_array;
-	guint n = 0;
-	const gchar *remainder, *s;
+    GRegexCompileFlags flags;
+    g_autofree gchar *text = NULL;
+    g_autofree gchar *normalized = NULL;
+    g_autofree gchar *format = NULL;
 
-	g_return_val_if_fail (string != NULL, NULL);
-	g_return_val_if_fail (delimiter != '\0', NULL);
+    if (!nemo_query_get_use_file_regex (query)) {
+        // No regex, but no error, only needed for nemo_search_engine_advanced_check_filename_pattern()
+        return NULL;
+    }
 
-	if (max_tokens < 1)
-	max_tokens = G_MAXINT;
+    text = nemo_query_get_file_pattern (query);
+    normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
 
-	remainder = string;
-	s = remainder;
-	while (s && *s) {
-		if (*s == delimiter) break;
-		else if (*s == escape) {
-			s++;
-			if (*s == 0) break;
-		}
-		s++;
-	}
-	if (*s == 0) s = NULL;
-	if (s) {
-		while (--max_tokens && s) {
-			gsize len;
+    flags = G_REGEX_OPTIMIZE;
 
-			len = s - remainder;
-			string_list = g_slist_prepend (string_list,
-										 g_strndup (remainder, len));
-			n++;
-			remainder = s + 1;
+    format = g_settings_get_string (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_REGEX_FORMAT);
+    if (g_strcmp0 (format, "javascript") == 0) {
+        flags |= G_REGEX_JAVASCRIPT_COMPAT;
+    }
 
-			s = remainder;
-			while (s && *s) {
-				if (*s == delimiter) break;
-				else if (*s == escape) {
-					s++;
-					if (*s == 0) break;
-				}
-				s++;
-			}
-			if (*s == 0) s = NULL;
-		}
-	}
-	if (*string) {
-		n++;
-		string_list = g_slist_prepend (string_list, g_strdup (remainder));
-	}
-	*n_tokens = n;
-	str_array = g_new (gchar*, n + 1);
+    if (g_settings_get_boolean (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_USE_RAW)) {
+        flags |= G_REGEX_RAW;
+    }
 
-	str_array[n--] = NULL;
-	for (slist = string_list; slist; slist = slist->next)
-		str_array[n--] = slist->data;
+    if (!nemo_query_get_file_case_sensitive (query)) {
+        flags |= G_REGEX_CASELESS;
+    }
 
-	g_slist_free (string_list);
+    return g_regex_new (normalized,
+                        flags,
+                        0,
+                        error);
+}
 
-	return str_array;
+static GRegex *
+nemo_search_engine_advanced_create_content_regex (NemoQuery  *query,
+                                                  GError    **error)
+{
+    GRegexCompileFlags flags;
+    g_autofree gchar *text = NULL;
+    g_autofree gchar *normalized = NULL;
+    g_autofree gchar *escaped = NULL;
+    g_autofree gchar *format = NULL;
+
+    text = nemo_query_get_content_pattern (query);
+    normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
+
+    if (nemo_query_get_use_content_regex (query)) {
+        escaped = g_strdup (normalized);
+    } else {
+        escaped = g_regex_escape_string (normalized, -1);
+    }
+
+    flags = G_REGEX_MULTILINE |
+            G_REGEX_OPTIMIZE;
+
+    format = g_settings_get_string (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_REGEX_FORMAT);
+
+    if (g_strcmp0 (format, "javascript") == 0) {
+        flags |= G_REGEX_JAVASCRIPT_COMPAT;
+    }
+
+    if (g_settings_get_boolean (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_USE_RAW)) {
+        flags |= G_REGEX_RAW;
+    }
+
+    if (!nemo_query_get_content_case_sensitive (query)) {
+        flags |= G_REGEX_CASELESS;
+    }
+
+    return g_regex_new (escaped,
+                        flags,
+                        0,
+                        error);
 }
 
 static SearchThreadData *
 search_thread_data_new (NemoSearchEngineAdvanced *engine,
 			NemoQuery *query)
 {
-    GRegexCompileFlags flags;
-    GError *error;
+    GError *error = NULL;
     SearchThreadData *data;
-    char *text, *cased, *normalized, *uri;
+    char *uri;
     GFile *location;
-    gint n = 1, i;
-    gchar *format;
+    gint i;
 
 	data = g_new0 (SearchThreadData, 1);
 
@@ -411,36 +424,38 @@ search_thread_data_new (NemoSearchEngineAdvanced *engine,
 	}
 	g_queue_push_tail (data->directories, location);
 
-	text = nemo_query_get_file_pattern (query);
-	normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
-
     data->file_case_sensitive = nemo_query_get_file_case_sensitive (query);
+    data->file_use_regex = nemo_query_get_use_file_regex (query);
 
-    if (!data->file_case_sensitive) {
-        cased = g_utf8_strdown (normalized, -1);
+    if (data->file_use_regex) {
+        data->filename_re = nemo_search_engine_advanced_create_filename_regex (query, &error);
+
+        if (data->filename_re == NULL) {
+            if (error != NULL) {
+                g_warning ("Filename pattern is invalid: code %d - %s", error->code, error->message);
+            }
+            g_clear_error (&error);
+        } else {
+            DEBUG ("regex is '%s'", g_regex_get_pattern (data->filename_re));
+        }
     } else {
-        cased = g_strdup (normalized);
+        gchar *text, *normalized, *cased;
+
+        text = nemo_query_get_file_pattern (query);
+        normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
+
+        if (!data->file_case_sensitive) {
+            cased = g_utf8_strdown (normalized, -1);
+        } else {
+            cased = g_strdup (normalized);
+        }
+
+        data->filename_glob_pattern = g_pattern_spec_new (cased);
+
+        g_free (text);
+        g_free (normalized);
+        g_free (cased);
     }
-
-	data->words = strsplit_esc_n (cased, ' ', '\\', -1, &n);
-    g_free (text);
-	g_free (cased);
-	g_free (normalized);
-
-	data->word_strstr = g_malloc(sizeof(gboolean)*n);
-	data->words_and = TRUE;
-	for (i = 0; data->words[i] != NULL; i++) {
-		data->word_strstr[i]=TRUE;
-		text = data->words[i];
-		while(*text!=0) {
-			if(*text=='\\' || *text=='?' || *text=='*') {
-				data->word_strstr[i]=FALSE;
-				break;
-			}
-			text++;
-		}
-		if (!data->word_strstr[i]) data->words_and = FALSE;
-	}
 
     data->skip_folders = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
     gchar **folders_array = g_settings_get_strv (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_SKIP_FOLDERS);
@@ -476,54 +491,18 @@ search_thread_data_new (NemoSearchEngineAdvanced *engine,
 
     g_mutex_init (&data->hit_list_lock);
 
-    gchar *content_pattern = nemo_query_get_content_pattern (query);
+    if (nemo_query_has_content_pattern (query)) {
+        data->content_re = nemo_search_engine_advanced_create_content_regex (query, &error);
 
-    if (content_pattern != NULL) {
-        gchar *escaped;
-
-        if (nemo_query_get_use_regex (query)) {
-            escaped = g_strdup (content_pattern);
-        } else {
-            escaped = g_regex_escape_string (content_pattern, -1);
-        }
-
-        flags = G_REGEX_MULTILINE |
-                G_REGEX_OPTIMIZE;
-
-        format = g_settings_get_string (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_REGEX_FORMAT);
-
-        if (g_strcmp0 (format, "javascript") == 0) {
-            flags |= G_REGEX_JAVASCRIPT_COMPAT;
-        }
-
-        if (g_settings_get_boolean (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_USE_RAW)) {
-            flags |= G_REGEX_RAW;
-        }
-
-        if (!nemo_query_get_content_case_sensitive (query)) {
-            flags |= G_REGEX_CASELESS;
-        }
-
-        g_free (format);
-
-        error = NULL;
-
-        data->match_re= g_regex_new (escaped,
-                                    flags,
-                                    0,
-                                    &error);
-
-        if (data->match_re == NULL) {
+        if (data->content_re == NULL) {
             if (error != NULL) {
                 // TODO: Maybe do something in the ui, make the info bar red?
-                g_warning ("Pattern /%s/ is invalid: code %d - %s", escaped, error->code, error->message);
+                g_warning ("Content pattern is invalid: code %d - %s", error->code, error->message);
             }
             g_clear_error (&error);
         } else {
-            DEBUG ("regex is '%s'", g_regex_get_pattern (data->match_re));
+            DEBUG ("regex is '%s'", g_regex_get_pattern (data->content_re));
         }
-
-        g_free (escaped);
 
         data->newline_re = g_regex_new ("[\\n\\r]{2,}",
                                            G_REGEX_OPTIMIZE,
@@ -539,8 +518,6 @@ search_thread_data_new (NemoSearchEngineAdvanced *engine,
         }
     }
 
-    g_free (content_pattern);
-
 	return data;
 }
 
@@ -553,12 +530,12 @@ search_thread_data_free (SearchThreadData *data)
 	g_hash_table_destroy (data->visited);
     g_hash_table_destroy (data->skip_folders);
 	g_object_unref (data->cancellable);
-	g_strfreev (data->words);
-	g_free (data->word_strstr);
 	g_list_free_full (data->mime_types, g_free);
 	g_list_free_full (data->hit_list, (GDestroyNotify) file_search_result_free);
-    g_clear_pointer (&data->match_re, g_regex_unref);
+    g_clear_pointer (&data->content_re, g_regex_unref);
     g_clear_pointer (&data->newline_re, g_regex_unref);
+    g_clear_pointer (&data->filename_re, g_regex_unref);
+    g_clear_pointer (&data->filename_glob_pattern, g_pattern_spec_free);
     g_timer_destroy (data->timer);
     g_mutex_clear (&data->hit_list_lock);
 
@@ -626,31 +603,6 @@ send_batch (SearchThreadData *data)
 	}
 	data->hit_list = NULL;
     g_mutex_unlock (&data->hit_list_lock);
-}
-
-static gboolean
-strwildcardcmp(char *a, char *b)
-{
-    if (*a == 0 && *b == 0)  return TRUE;
-    while(*a!=0 && *b!=0) {
-		if(*a=='\\') { // escaped character
-			a++;
-			if (*a != *b) return FALSE;
-		}
-		else {
-			if (*a=='*') {
-				if(*(a+1)==0) return TRUE;
-				if(*b==0) return FALSE;
-				if (strwildcardcmp(a+1, b) || strwildcardcmp(a, b+1)) return TRUE;
-				else return FALSE;
-			}
-			else if (*a!='?' && (*a != *b)) return FALSE;
-		}
-		a++;
-		b++;
-	}
-	if ((*a == 0 && *b == 0) || (*a=='*' && *(a+1)==0))  return TRUE;
-	return FALSE;
 }
 
 #define STD_ATTRIBUTES \
@@ -877,7 +829,7 @@ search_for_content_hits (SearchThreadData *data,
 
     FileSearchResult *fsr = NULL;
 
-    g_regex_match (data->match_re, stripped, 0, &match_info);
+    g_regex_match (data->content_re, stripped, 0, &match_info);
 
     while (g_match_info_matches (match_info) && !g_cancellable_is_cancelled (data->cancellable)) {
         if (fsr == NULL) {
@@ -892,7 +844,7 @@ search_for_content_hits (SearchThreadData *data,
 
         if (!g_match_info_next (match_info, &error) && error) {
             g_warning ("Error iterating thru pattern matches (/%s/): code %d - %s",
-                       g_regex_get_pattern (data->match_re), error->code, error->message);
+                       g_regex_get_pattern (data->content_re), error->code, error->message);
             g_error_free (error);
             break;
         }
@@ -973,13 +925,12 @@ visit_directory (GFile *dir, SearchThreadData *data)
 	GFileInfo *info;
     GFile *child;
 	const char *display_name;
-	char *cased, *normalized;
+	char *normalized;
 	gboolean hit, is_dir, skip_child;
-	int i;
 
     const gchar *attrs;
 
-    if (data->match_re)
+    if (data->content_re)
         attrs = STD_ATTRIBUTES "," CONTENT_SEARCH_ATTRIBUTES;
     else
         attrs = STD_ATTRIBUTES;
@@ -1004,28 +955,26 @@ visit_directory (GFile *dir, SearchThreadData *data)
 
 		normalized = g_utf8_normalize (display_name, -1, G_NORMALIZE_NFD);
 
-        if (!data->file_case_sensitive) {
-            cased = g_utf8_strdown (normalized, -1);
+        if (data->file_use_regex) {
+            GMatchInfo *match_info;
+            hit = g_regex_match (data->filename_re, normalized, 0, &match_info);
+            g_match_info_unref (match_info);
         } else {
-            cased = g_strdup (normalized);
+            gchar *cased;
+
+            if (!data->file_case_sensitive) {
+                cased = g_utf8_strdown (normalized, -1);
+            } else {
+                cased = g_strdup (normalized);
+            }
+
+            gchar *cased_reversed = g_utf8_strreverse (cased, -1);
+            hit = g_pattern_spec_match (data->filename_glob_pattern, strlen (cased), cased, cased_reversed);
+            g_free (cased);
+            g_free (cased_reversed);
         }
 
-		g_free (normalized);
-
-		hit = data->words_and;
-		for (i = 0; data->words[i] != NULL; i++) {
-			if (data->word_strstr[i]) {
-				if ((strstr (cased, data->words[i]) != NULL)^data->words_and) {
-					hit = !data->words_and;
-					break;
-				}
-			}
-			else if (strwildcardcmp (data->words[i], cased)^data->words_and) {
-				hit = !data->words_and;
-				break;
-			}
-		}
-		g_free (cased);
+        g_free (normalized);
 
         child = g_file_get_child (dir, g_file_info_get_name (info));
         is_dir = g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY;
@@ -1071,7 +1020,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
             // Our helpers don't currently support uris, so we shouldn't at all -
             // probably best, as search would transfer the contents of every file
             // to our machines.
-            if (data->match_re && data->location_supports_content_search) {
+            if (data->content_re && data->location_supports_content_search) {
                 if (!skip_child) {
                     SearchHelper *helper = NULL;
 
@@ -1096,7 +1045,7 @@ visit_directory (GFile *dir, SearchThreadData *data)
 
 		data->n_processed_files++;
 
-        if (data->n_processed_files > (data->match_re ? CONTENT_SEARCH_BATCH_SIZE :
+        if (data->n_processed_files > (data->content_re ? CONTENT_SEARCH_BATCH_SIZE :
                                                         FILE_SEARCH_ONLY_BATCH_SIZE)) {
             send_batch (data);
         }
@@ -1255,4 +1204,37 @@ nemo_search_engine_advanced_new (void)
 	engine = g_object_new (NEMO_TYPE_SEARCH_ENGINE_ADVANCED, NULL);
 
 	return engine;
+}
+
+gboolean
+nemo_search_engine_advanced_check_filename_pattern (NemoQuery   *query,
+                                                    GError     **error)
+{
+    GRegex *regex;
+    gboolean ret = FALSE;
+
+    regex = nemo_search_engine_advanced_create_filename_regex (query, error);
+
+    if (regex != NULL) {
+        ret = TRUE;
+    }
+    g_clear_pointer (&regex, g_regex_unref);
+    return ret;
+}
+
+gboolean
+nemo_search_engine_advanced_check_content_pattern (NemoQuery *query,
+                                                   GError   **error)
+{
+    GRegex *regex;
+    gboolean ret = FALSE;
+
+    regex = nemo_search_engine_advanced_create_content_regex (query, error);
+
+    if (regex != NULL) {
+        ret = TRUE;
+    }
+
+    g_clear_pointer (&regex, g_regex_unref);
+    return ret;
 }

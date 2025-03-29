@@ -54,6 +54,7 @@ void           nemo_query_set_file_pattern (NemoQuery *query, const char *text);
 
 char *         nemo_query_get_content_pattern (NemoQuery *query);
 void           nemo_query_set_content_pattern (NemoQuery *query, const char *text);
+gboolean       nemo_query_has_content_pattern (NemoQuery *query);
 
 char *         nemo_query_get_location       (NemoQuery *query);
 void           nemo_query_set_location       (NemoQuery *query, const char *uri);
@@ -71,8 +72,11 @@ void           nemo_query_set_file_case_sensitive (NemoQuery *query, gboolean ca
 gboolean       nemo_query_get_content_case_sensitive (NemoQuery *query);
 void           nemo_query_set_content_case_sensitive (NemoQuery *query, gboolean case_sensitive);
 
-gboolean       nemo_query_get_use_regex      (NemoQuery *query);
-void           nemo_query_set_use_regex      (NemoQuery *query, gboolean use_regex);
+gboolean       nemo_query_get_use_file_regex      (NemoQuery *query);
+void           nemo_query_set_use_file_regex      (NemoQuery *query, gboolean file_use_regex);
+
+gboolean       nemo_query_get_use_content_regex      (NemoQuery *query);
+void           nemo_query_set_use_content_regex      (NemoQuery *query, gboolean content_use_regex);
 
 gboolean       nemo_query_get_recurse         (NemoQuery *query);
 void           nemo_query_set_recurse         (NemoQuery *query, gboolean recurse);

@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkEntryCompletion"/>
   <object class="GtkInfoBar" id="search_bar">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="no_show_all">True</property>
-    <property name="message_type">other</property>
+    <property name="can-focus">False</property>
+    <property name="no-show-all">True</property>
+    <property name="message-type">other</property>
     <child internal-child="action_area">
       <object class="GtkButtonBox" id="button_box">
-        <property name="can_focus">False</property>
-        <property name="no_show_all">True</property>
-        <property name="spacing">6</property>
-        <property name="layout_style">end</property>
+        <property name="can-focus">False</property>
+        <property name="no-show-all">True</property>
+        <property name="layout-style">end</property>
         <child>
           <placeholder/>
         </child>
@@ -26,23 +25,23 @@
     </child>
     <child internal-child="content_area">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="find_files_label">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="label" translatable="yes">Search for files:</property>
                     <property name="xalign">1</property>
                   </object>
@@ -55,32 +54,55 @@
                 <child>
                   <object class="GtkBox" id="file_entry_box">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkEntry" id="file_search_entry">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="caps_lock_warning">False</property>
-                        <property name="secondary_icon_name">system-search-symbolic</property>
+                        <property name="can-focus">True</property>
+                        <property name="caps-lock-warning">False</property>
+                        <property name="secondary-icon-name">system-search-symbolic</property>
+                        <property name="primary-icon-activatable">False</property>
+                        <property name="primary-icon-sensitive">False</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkToggleButton" id="file_search_case_toggle">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="focus_on_click">False</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Case sensitive</property>
+                        <property name="can-focus">True</property>
+                        <property name="focus-on-click">False</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Case sensitive</property>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">xapp-text-case-symbolic</property>
+                            <property name="can-focus">False</property>
+                            <property name="icon-name">xapp-text-case-symbolic</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToggleButton" id="file_search_regex_toggle">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="focus-on-click">False</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Regular expression</property>
+                        <child>
+                          <object class="GtkImage">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="icon-name">xapp-use-regex-symbolic</property>
                           </object>
                         </child>
                       </object>
@@ -88,27 +110,6 @@
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToggleButton" id="file_search_recurse_toggle">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="focus_on_click">False</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Search folders recursively</property>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">nemo-recursive-search-symbolic</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
                       </packing>
                     </child>
                     <style>
@@ -119,6 +120,27 @@
                     <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="file_search_recurse_toggle">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="focus-on-click">False</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Search folders recursively</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">nemo-recursive-search-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -131,13 +153,13 @@
             <child>
               <object class="GtkBox" id="content_main_box">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkLabel" id="find_content_label">
+                  <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Search content:</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Containing:</property>
                     <property name="xalign">1</property>
                   </object>
                   <packing>
@@ -149,32 +171,57 @@
                 <child>
                   <object class="GtkBox" id="content_entry_box">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkEntry" id="content_search_entry">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="caps_lock_warning">False</property>
-                        <property name="secondary_icon_name">system-search-symbolic</property>
+                        <property name="can-focus">True</property>
+                        <property name="caps-lock-warning">False</property>
+                        <property name="primary-icon-activatable">False</property>
+                        <property name="secondary-icon-activatable">False</property>
+                        <property name="primary-icon-sensitive">False</property>
+                        <property name="secondary-icon-sensitive">False</property>
+                        <property name="placeholder-text" translatable="yes">anything</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkToggleButton" id="content_search_case_toggle">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="focus_on_click">False</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Case sensitive</property>
+                        <property name="can-focus">True</property>
+                        <property name="focus-on-click">False</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Case sensitive</property>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">xapp-text-case-symbolic</property>
+                            <property name="can-focus">False</property>
+                            <property name="icon-name">xapp-text-case-symbolic</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToggleButton" id="content_search_regex_toggle">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="focus-on-click">False</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Regular expression</property>
+                        <child>
+                          <object class="GtkImage">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="icon-name">xapp-use-regex-symbolic</property>
                           </object>
                         </child>
                       </object>
@@ -182,27 +229,6 @@
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToggleButton" id="content_search_regex_toggle">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="focus_on_click">False</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Regular expression</property>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="icon_name">xapp-use-regex-symbolic</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
                       </packing>
                     </child>
                     <style>
@@ -213,6 +239,17 @@
                     <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="align_dummy_label">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -239,8 +276,20 @@
   </object>
   <object class="GtkSizeGroup">
     <widgets>
-      <widget name="find_content_label"/>
+      <widget name="file_search_recurse_toggle"/>
+      <widget name="align_dummy_label"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup">
+    <widgets>
       <widget name="find_files_label"/>
+      <widget name="label1"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup">
+    <widgets>
+      <widget name="file_search_entry"/>
+      <widget name="content_search_entry"/>
     </widgets>
   </object>
 </interface>

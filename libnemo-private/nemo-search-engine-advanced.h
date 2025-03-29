@@ -45,4 +45,8 @@ GType          nemo_search_engine_advanced_get_type  (void);
 NemoSearchEngine* nemo_search_engine_advanced_new       (void);
 void           free_search_helpers (void);
 
+gboolean nemo_search_engine_advanced_check_filename_pattern (NemoQuery   *query,
+                                                             GError     **error);
+gboolean nemo_search_engine_advanced_check_content_pattern  (NemoQuery *query,
+                                                             GError   **error);
 #endif /* NEMO_SEARCH_ENGINE_ADVANCED_H */
