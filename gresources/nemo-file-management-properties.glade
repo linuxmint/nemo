@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 
+<!-- Generated with glade 3.40.0 
 
 Copyright (C) 
 
@@ -2716,7 +2716,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                                 <property name="spacing">6</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="tt_show_file_type_checkbutton">
-                                                    <property name="label" translatable="yes">Detailed file type</property>
+                                                    <property name="label" translatable="yes" comments="Preferences - optional display for tooltips, *not* related to list view columns.">Detailed file type</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
@@ -2731,7 +2731,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="tt_show_modified_date_checkbutton">
-                                                    <property name="label" translatable="yes">Modified date</property>
+                                                    <property name="label" translatable="yes" comments="Preferences - optional display for tooltips, *not* related to list view columns.">Modified date</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
@@ -2746,7 +2746,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="tt_show_created_date_checkbutton">
-                                                    <property name="label" translatable="yes">Created date</property>
+                                                    <property name="label" translatable="yes" comments="Preferences - optional display for tooltips, *not* related to list view columns.">Created date</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
@@ -2762,7 +2762,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="tt_show_accessed_date_checkbutton">
-                                                    <property name="label" translatable="yes">Accessed date</property>
+                                                    <property name="label" translatable="yes" comments="Preferences - optional display for tooltips, *not* related to list view columns.">Accessed date</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
