@@ -33,6 +33,7 @@
 #include "nemo-window-manage-views.h"
 #include "nemo-window-types.h"
 #include "nemo-window-slot-dnd.h"
+#include "nemo-terminal-widget.h"
 
 #include <glib/gi18n.h>
 
@@ -44,6 +45,8 @@
 #include <libnemo-private/nemo-debug.h>
 
 #include <eel/eel-string.h>
+
+void nemo_window_slot_ensure_terminal_state(NemoWindowSlot *slot);
 
 G_DEFINE_TYPE (NemoWindowSlot, nemo_window_slot, GTK_TYPE_BOX);
 
@@ -345,6 +348,9 @@ nemo_window_slot_init (NemoWindowSlot *slot)
     slot->cache_bar = NULL;
 
 	slot->title = g_strdup (_("Loading..."));
+
+    slot->terminal_visible = g_settings_get_boolean (nemo_window_state, "terminal-visible");
+
 }
 
 static void
@@ -653,6 +659,12 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);
+
+        /* If terminal-visible is enabled in config, ensure terminal is initialized and visible */
+        gboolean terminal_should_be_visible = g_settings_get_boolean(nemo_window_state, "terminal-visible");
+        if (terminal_should_be_visible) {
+            g_idle_add((GSourceFunc)nemo_window_slot_ensure_terminal_state, slot);
+        }
 	}
 }
 
@@ -958,4 +970,114 @@ nemo_window_slot_new (NemoWindowPane *pane)
 	slot->pane = pane;
 
 	return slot;
+}
+
+static void
+on_terminal_visibility_changed(NemoTerminalWidget *terminal,
+                              gboolean visible,
+                              NemoWindowSlot *slot)
+{
+    // Update slot visibility state
+    slot->terminal_visible = visible;
+}
+
+static void
+on_terminal_directory_changed(NemoTerminalWidget *terminal,
+                             GFile *location,
+                             NemoWindowSlot *slot)
+{
+    // Skip updating file manager location if the terminal is exiting SSH
+    if (terminal->is_exiting_ssh) {
+        return;
+    }
+    
+    // When terminal's directory changes, update the file browser location
+    if (location != NULL) {
+        nemo_window_slot_open_location(slot, location, 0);
+    }
+}
+
+/* nemo_window_slot_init_terminal:
+ * @slot: a #NemoWindowSlot
+ *
+ * Initializes the terminal pane for the window slot.
+ */
+void
+nemo_window_slot_init_terminal (NemoWindowSlot *slot)
+{
+    if (slot->terminal_widget != NULL) {
+        return;
+    }
+    
+    // Create the terminal widget with the current location
+    slot->terminal_widget = nemo_terminal_widget_new_with_location (slot->location);
+    
+    // Connect signals
+    g_signal_connect (slot->terminal_widget, "toggle-visibility",
+                     G_CALLBACK (on_terminal_visibility_changed), slot);
+    g_signal_connect (slot->terminal_widget, "change-directory",
+                     G_CALLBACK (on_terminal_directory_changed), slot);
+    
+	nemo_terminal_widget_initialize_in_paned(
+					slot->terminal_widget,
+					GTK_WIDGET(slot->content_view),
+					slot->view_overlay);
+}
+
+/* nemo_window_slot_toggle_terminal:
+ * @slot: a #NemoWindowSlot
+ * @is_manual_toggle: whether this is a user-initiated toggle (TRUE) or an automatic one (FALSE)
+ *
+ * Toggles the visibility of the terminal pane for the window slot.
+ */
+void
+nemo_window_slot_toggle_terminal (NemoWindowSlot *slot, gboolean is_manual_toggle)
+{
+    if (slot->terminal_widget == NULL) {
+        nemo_window_slot_init_terminal(slot);
+    }
+    
+    // Delegate toggle to the terminal widget
+    if (slot->terminal_widget != NULL) {
+        nemo_terminal_widget_toggle_visible_with_save(slot->terminal_widget, is_manual_toggle);
+        slot->terminal_visible = nemo_terminal_widget_get_visible(slot->terminal_widget);
+
+        // If terminal is now visible, ensure it's at the same location as file manager
+        if (slot->terminal_visible && slot->location != NULL) {
+            nemo_terminal_widget_set_current_location(slot->terminal_widget, slot->location);
+        }
+    }
+}
+
+/* nemo_window_slot_update_terminal_location:
+ * @slot: a #NemoWindowSlot
+ * 
+ * Updates the terminal's working directory to match the current location
+ */
+void
+nemo_window_slot_update_terminal_location (NemoWindowSlot *slot)
+{
+    if (slot->terminal_widget != NULL && slot->location != NULL) {
+        nemo_terminal_widget_set_current_location(slot->terminal_widget, slot->location);
+    }
+}
+
+/* nemo_window_slot_ensure_terminal_state:
+ * @slot: a #NemoWindowSlot
+ *
+ * Ensures the terminal is properly positioned if it's already visible
+ * This function is called after the content view is initialized
+ */
+void
+nemo_window_slot_ensure_terminal_state (NemoWindowSlot *slot)
+{
+    gboolean terminal_visible = g_settings_get_boolean (nemo_window_state, "terminal-visible");
+
+    if (terminal_visible && slot->terminal_widget == NULL) {
+        nemo_window_slot_init_terminal(slot);
+    }
+    else if (slot->terminal_widget != NULL) {
+        // Let the terminal widget handle state consistency
+        nemo_terminal_widget_ensure_state(slot->terminal_widget);
+    }
 }

@@ -59,12 +59,27 @@
     <value nick="after-current-tab" value="0"/>
     <value nick="end" value="1"/>
   </enum>
-  
+
   <enum id="org.nemo.SizePrefixes">
     <value value="0" nick="base-10"/>
     <value value="1" nick="base-10-full"/>
     <value value="2" nick="base-2"/>
     <value value="3" nick="base-2-full"/>
+  </enum>
+
+  <enum id="org.nemo.TerminalSyncMode">
+    <value nick="none" value="0"/>
+    <value nick="fm-to-term" value="1"/>
+    <value nick="term-to-fm" value="2"/>
+    <value nick="both" value="3"/>
+  </enum>
+
+  <enum id="org.nemo.TerminalSshAutoConnectMode">
+    <value nick="off" value="0"/>
+    <value nick="sync-both" value="1"/>
+    <value nick="sync-fm-to-term" value="2"/>
+    <value nick="sync-term-to-fm" value="3"/>
+    <value nick="sync-none" value="4"/>
   </enum>
 
   <schema id="org.nemo" path="/org/nemo/" gettext-domain="nemo">
@@ -624,6 +639,36 @@
       <default>false</default>
       <summary>Whether the navigation window should be maximized.</summary>
       <description>Whether the navigation window should be maximized by default.</description>
+    </key>
+    <key name="local-terminal-sync-mode" enum="org.nemo.TerminalSyncMode">
+      <default>'both'</default>
+      <summary>Local terminal folder synchronization mode</summary>
+      <description>Determines how the embedded terminal synchronizes its current directory with the file manager when navigating local folders. 'none': No synchronization. 'fm-to-term': File manager navigation changes terminal directory. 'term-to-fm': Terminal navigation changes file manager location. 'both': Synchronization works in both directions.</description>
+    </key>
+    <key name="ssh-terminal-auto-connect-mode" enum="org.nemo.TerminalSshAutoConnectMode">
+      <default>'off'</default>
+      <summary>SSH terminal auto-connection and synchronization mode preference</summary>
+      <description>Determines behavior when an SFTP location is active. 'off': Do not connect automatically. 'sync-both': Connect and sync both ways. 'sync-fm-to-term': Connect and sync File Manager to Terminal. 'sync-term-to-fm': Connect and sync Terminal to File Manager. 'sync-none': Connect without folder synchronization.</description>
+    </key>
+    <key name="terminal-height" type="i">
+        <default>300</default>
+        <summary>Terminal panel height</summary>
+        <description>Height of the terminal panel in pixels.</description>
+    </key>
+    <key name="terminal-visible" type="b">
+      <default>false</default>
+      <summary>Terminal pane visibility</summary>
+      <description>Whether the terminal pane should be visible.</description>
+    </key>
+    <key name="terminal-color-scheme" type="s">
+      <default>'system'</default>
+      <summary>Terminal color scheme</summary>
+      <description>The color scheme to use for the embedded terminal. Available values: 'system', 'dark', 'light', 'solarized-dark', 'solarized-light', 'matrix', 'one-half-dark', 'one-half-light', 'monokai', 'custom'.</description>
+    </key>
+    <key name="terminal-font-size" type="i">
+      <default>12</default>
+      <summary>Terminal font size</summary>
+      <description>The font size to use for the embedded terminal in point units.</description>
     </key>
     <key name="sidebar-width" type="i">
       <default>170</default>

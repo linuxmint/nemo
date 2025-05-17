@@ -1557,6 +1557,11 @@ update_for_new_location (NemoWindowSlot *slot)
 
 	nemo_window_slot_update_title (slot);
 	nemo_window_slot_update_icon (slot);
+	
+	/* Update terminal location if it exists and is visible */
+	if (slot->terminal_widget != NULL && slot->terminal_visible) {
+		nemo_window_slot_update_terminal_location (slot);
+	}
 
 	if (slot == slot->pane->active_slot) {
 		nemo_window_pane_sync_location_widgets (slot->pane);

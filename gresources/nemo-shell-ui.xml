@@ -71,6 +71,7 @@
             </menu>
             <menuitem name="Show Hide Menubar" action="Show Hide Menubar"/>
 			<menuitem name="Show Hide Statusbar" action="Show Hide Statusbar"/>
+            <menuitem name="Show Hide Terminal" action="Show Hide Terminal"/>
             <separator/>
 			<menuitem name="Show Hide Extra Pane" action="Show Hide Extra Pane"/>
             <menuitem name="Edit Location" action="Edit Location"/>

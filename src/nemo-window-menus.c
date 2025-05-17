@@ -70,6 +70,7 @@
 #define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
 #define POPUP_PATH_EXTENSION_ACTIONS                     "/background/Before Zoom Items/Extension Actions"
 #define MENU_BAR_PATH                                    "/MenuBar"
+#define NEMO_ACTION_SHOW_HIDE_TERMINAL                  "Show Hide Terminal"
 
 #define NETWORK_URI          "network:"
 #define COMPUTER_URI         "computer:"
@@ -1329,6 +1330,16 @@ open_in_terminal_other (const gchar *path)
     g_free (argv);
 }
 
+void
+action_toggle_terminal_callback (GtkAction *action, gpointer callback_data)
+{
+    NemoWindow *window;
+    NemoWindowSlot *slot;
+
+    window = NEMO_WINDOW (callback_data);
+    slot = nemo_window_get_active_slot (window);
+    nemo_window_slot_toggle_terminal (slot, TRUE);
+}
 
 static void
 action_open_terminal_callback(GtkAction *action, gpointer callback_data)
@@ -1547,6 +1558,11 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Change the default visibility of the menubar"),
                              NULL,
   /* is_active */            TRUE },
+  /* name, stock id */     { NEMO_ACTION_SHOW_HIDE_TERMINAL, NULL,
+  /* label, accelerator */   N_("Show Hide _Terminal"), "F4",
+  /* tooltip */              N_("Toggle the visibility of the embedded terminal"),
+  /* callback */             G_CALLBACK (action_toggle_terminal_callback),
+  /* default */              FALSE },
   /* name, stock id */     { "Search", "edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders"),
@@ -1941,6 +1957,14 @@ nemo_window_initialize_menus (NemoWindow *window)
                                       NEMO_PREFERENCES_SHOW_HIDDEN_FILES));
         g_signal_handlers_unblock_by_func (action, action_show_hidden_files_callback, window);
     }
+
+    /* Initialize Show Embedded Terminal toggle state */
+    action = gtk_action_group_get_action (action_group, NEMO_ACTION_SHOW_HIDE_TERMINAL);
+    g_signal_handlers_block_by_func (action, action_toggle_terminal_callback, window);
+    gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+                                  g_settings_get_boolean (nemo_window_state,
+                                                       "terminal-visible"));
+    g_signal_handlers_unblock_by_func (action, action_toggle_terminal_callback, window);
 
     g_signal_connect_object ( NEMO_WINDOW (window), "notify::sidebar-view-id",
                              G_CALLBACK (update_side_bar_radio_buttons), window, 0);
