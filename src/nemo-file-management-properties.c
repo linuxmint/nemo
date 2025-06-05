@@ -72,6 +72,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SWAP_TRASH_DELETE "swap_trash_binding_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_EXPANDERS_WIDGET "list_view_show_expanders_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_PREVIOUS_ICON_TOOLBAR_WIDGET "show_previous_icon_toolbar_togglebutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEXT_ICON_TOOLBAR_WIDGET "show_next_icon_toolbar_togglebutton"
@@ -1104,6 +1105,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL_WIDGET,
                        NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL);
+
+    bind_builder_bool (builder, nemo_list_view_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_EXPANDERS_WIDGET,
+                       NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION);
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);
