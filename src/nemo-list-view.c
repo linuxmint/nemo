@@ -281,6 +281,18 @@ tooltip_prefs_changed_callback (NemoListView *view)
 }
 
 static void
+expanders_enabled_changed_cb (NemoListView *view)
+{
+    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
+    g_return_if_fail (GTK_IS_TREE_VIEW (view->details->tree_view) && view->details->tree_view != NULL);
+
+    gtk_tree_view_collapse_all (view->details->tree_view);
+    gtk_tree_view_set_show_expanders (view->details->tree_view,
+                                      g_settings_get_boolean (nemo_list_view_preferences,
+                                                             NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION));
+}
+
+static void
 list_selection_changed_callback (GtkTreeSelection *selection, gpointer user_data)
 {
 	NemoView *view;
@@ -1466,6 +1478,9 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 		}
 		break;
 	case GDK_KEY_Right:
+        if (!g_settings_get_boolean (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION))
+            break;
+
 		gtk_tree_view_get_cursor (tree_view, &path, NULL);
 		if (path) {
 			gtk_tree_view_expand_row (tree_view, path, FALSE);
@@ -1474,6 +1489,9 @@ key_press_callback (GtkWidget *widget, GdkEventKey *event, gpointer callback_dat
 		handled = TRUE;
 		break;
 	case GDK_KEY_Left:
+        if (!g_settings_get_boolean (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION))
+            break;
+
 		gtk_tree_view_get_cursor (tree_view, &path, NULL);
 		if (path) {
 			if (!gtk_tree_view_collapse_row (tree_view, path)) {
@@ -2502,6 +2520,14 @@ create_and_set_up_tree_view (NemoListView *view)
 	view->details->tree_view = GTK_TREE_VIEW (gtk_tree_view_new ());
 
     gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (view->details->tree_view), TRUE);
+
+    gtk_tree_view_set_show_expanders (view->details->tree_view,
+                                      g_settings_get_boolean (nemo_list_view_preferences,
+                                                              NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION));
+    g_signal_connect_swapped (nemo_list_view_preferences,
+                              "changed::" NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION,
+                              G_CALLBACK (expanders_enabled_changed_cb),
+                              view);
 
 	view->details->columns = g_hash_table_new_full (g_str_hash,
 							g_str_equal,

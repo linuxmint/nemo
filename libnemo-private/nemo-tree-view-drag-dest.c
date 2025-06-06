@@ -523,7 +523,8 @@ drag_motion_callback (GtkWidget *widget,
 		    gtk_tree_path_compare (old_drop_path, drop_path) != 0)) {
 			remove_expand_timeout (dest);
 		}
-        if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL)) {
+        if (g_settings_get_boolean (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION) &&
+            g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL)) {
             if (dest->details->expand_id == 0 && drop_path != NULL) {
                 gtk_tree_model_get_iter (model, &drop_iter, drop_path);
                 if (gtk_tree_model_iter_has_child (model, &drop_iter)) {

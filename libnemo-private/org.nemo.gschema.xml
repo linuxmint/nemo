@@ -538,6 +538,10 @@
       <summary>Default column order in the list view</summary>
       <description>Default column order in the list view.</description>
     </key>
+    <key name="enable-folder-expansion" type="b">
+      <default>false</default>
+      <summary>If true, allow folders with content to be expanded in the current view.</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.sidebar-panels" path="/org/nemo/sidebar-panels/" gettext-domain="nemo">
