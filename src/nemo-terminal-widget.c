@@ -2426,7 +2426,7 @@ static const NemoTerminalColorPalette one_half_light_palette = {
 // Monokai theme (classic approximation)
 static const NemoTerminalColorPalette monokai_palette = {
     .foreground = {.red = 0.929, .green = 0.925, .blue = 0.910, .alpha = 1.0}, // f8f8f2
-    .background = {.red = 0.153, .green = 0.157, .blue = 0.149, .alpha = 1.0}, // 272822
+    .background = {.red = 0, .green = 0, .blue = 0, .alpha = 1.0}, // 000000
     .palette = {
         {.red = 0.153, .green = 0.157, .blue = 0.149, .alpha = 1.0}, /* Black (bg) 272822 */
         {.red = 0.980, .green = 0.149, .blue = 0.450, .alpha = 1.0}, /* Red f92672 */
@@ -2681,7 +2681,7 @@ build_ssh_command_string(const gchar *hostname, const gchar *username, const gch
 
     // GString struct itself is managed by the g_string_free call at the end when stealing the buffer.
     // Do NOT use g_autofree on cmd_builder here, as g_string_free(..., FALSE) frees the struct.
-    GString *cmd_builder = g_string_new("ssh ");
+    GString *cmd_builder = g_string_new(" ssh ");
 
     // Append username if provided
     if (username != NULL && *username != '\0')
@@ -2957,7 +2957,7 @@ feed_cd_command(VteTerminal *terminal, const char *path)
 
     g_autofree gchar *quoted_path = g_shell_quote(path);
     // Use \r (carriage return) to execute, some shells might prefer \n. \r is common.
-    g_autofree gchar *cd_command_str = g_strdup_printf("cd %s\r", quoted_path);
+    g_autofree gchar *cd_command_str = g_strdup_printf(" cd %s\r", quoted_path);
 
     if (!cd_command_str) {
         g_warning("feed_cd_command: Failed to create cd command string for path: %s", path);
