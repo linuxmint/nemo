@@ -88,6 +88,7 @@ Depends:
  gsettings-desktop-schemas,
  gvfs (>= 1.3.2),
  libglib2.0-data,
+ libjemalloc2,
  libnemo-extension1 (= ${binary:Version}),
  nemo-data (= ${source:Version}),
  shared-mime-info (>= 0.50),

@@ -82,6 +82,7 @@ cinnamon= dependency('cinnamon-desktop',            version: '>=4.8.0')
 gail    = dependency('gail-3.0')
 x11     = dependency('x11')
 xapp    = dependency('xapp',                        version: '>=2.0.0')
+jemalloc = dependency('jemalloc', required: true)
 
 # Facultative dependencies
 
@@ -171,7 +172,8 @@ nemo_definitions =  [
   '-DNEMO_DATADIR="@0@"'.format(nemoDataPath),
   '-DNEMO_EXTENSIONDIR="@0@"'.format(nemoExtensionPath),
   '-DLIBEXECDIR="@0@"'.format(libExecPath),
-  '-DG_LOG_DOMAIN="Nemo"'
+  '-DG_LOG_DOMAIN="Nemo"',
+  '-DUSE_JEMALLOC'
 ]
 
 po_subdir = join_paths(meson.project_source_root(), 'po')
