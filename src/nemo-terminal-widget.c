@@ -204,14 +204,14 @@ _initiate_ssh_connection(NemoTerminalWidget *self,
     {
         // Remove trailing '\n' from ssh_command_line_nl and append "; exit\n"
         GString *str_builder = g_string_new_len(ssh_command_line_nl, strlen(ssh_command_line_nl) - 1);
-        g_string_append(str_builder, "; exit\n");
+        g_string_append(str_builder, ";  exit\n");
         final_command_to_feed = g_string_free(str_builder, FALSE);
     }
     else
     {
         // Fallback: Should not happen if build_ssh_command_string is consistent
         g_warning("_initiate_ssh_connection: ssh_command_line_nl did not end with newline as expected.");
-        final_command_to_feed = g_strconcat(ssh_command_line_nl, "; exit\n", NULL);
+        final_command_to_feed = g_strconcat(ssh_command_line_nl, ";  exit\n", NULL);
     }
     g_free(ssh_command_line_nl); // Free the original command string
 
@@ -344,7 +344,7 @@ on_ssh_exit_activate(GtkWidget *widget, gpointer user_data)
     // Send "exit\n" to the terminal. This should terminate the remote shell.
     // The "; exit" part of the original ssh command will then cause the local
     // child process (that ran ssh) to exit, triggering on_terminal_child_exited.
-    vte_terminal_feed_child(self->terminal, "exit\n", -1);
+    vte_terminal_feed_child(self->terminal, " exit\n", -1);
 
     // Proactively reset the terminal state. on_terminal_child_exited will see
     // is_exiting_ssh = TRUE and will not attempt another reset.
@@ -2917,7 +2917,7 @@ on_terminal_contents_changed(VteTerminal *terminal,
                     self->pending_ssh_sync_mode == NEMO_TERMINAL_SYNC_TERM_TO_FM)
                 {
                     // Simple PROMPT_COMMAND for OSC7.
-                    const char *osc7_export_cmd = "export PROMPT_COMMAND='echo -en \"\\033]7;file://$PWD\\007\"'\n";
+                    const char *osc7_export_cmd = " export PROMPT_COMMAND='echo -en \"\\033]7;file://$PWD\\007\"'\n";
                     vte_terminal_feed_child(self->terminal, osc7_export_cmd, -1);
                 }
 
