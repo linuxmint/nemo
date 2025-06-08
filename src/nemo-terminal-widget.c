@@ -131,8 +131,9 @@ static GtkWidget *_add_radio_menu_item_with_data(GtkMenuShell *menu_shell,
                                                  gpointer user_data);
 
 /* GObject Lifecycle */
+static void nemo_terminal_widget_set_property(GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void nemo_terminal_widget_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void nemo_terminal_widget_finalize(GObject *object);
-
 
 /**
  * on_ssh_connect_activate:
@@ -1292,8 +1293,7 @@ on_terminal_button_press(GtkWidget *widget,
     if (event->button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS)
     {
         GtkWidget *menu = create_terminal_popup_menu(self);
-        gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-                       event->button, event->time);
+        gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)event);
         return TRUE;
     }
     return FALSE;
@@ -1514,42 +1514,79 @@ nemo_terminal_widget_class_init(NemoTerminalWidgetClass *klass)
     GObjectClass *object_class = G_OBJECT_CLASS(klass);
     GParamFlags flags;
 
-    /* Signals */
+    object_class->set_property = nemo_terminal_widget_set_property;
+    object_class->get_property = nemo_terminal_widget_get_property;
+    object_class->finalize = nemo_terminal_widget_finalize;
+
+    flags = G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY;
+
+    properties[PROP_CURRENT_LOCATION] =
+        g_param_spec_object("current-location",
+                            "Current Location",
+                            "The GFile representing the current directory.",
+                            G_TYPE_FILE,
+                            flags);
+
+    g_object_class_install_property(object_class, PROP_CURRENT_LOCATION, properties[PROP_CURRENT_LOCATION]);
+
     signals[CHANGE_DIRECTORY] =
-        g_signal_new("change-directory",         // Signal name
-                     G_TYPE_FROM_CLASS(klass),   // Owner class type
-                     G_SIGNAL_RUN_LAST,          // Default emission stage
-                     0,                          // Class offset (0 for default)
-                     NULL, NULL,                 // Accumulator and marshaller data
-                     g_cclosure_marshal_VOID__OBJECT, // Default C marshaller (void function, object param)
-                     G_TYPE_NONE,                // Return type
-                     1,                          // Number of parameters
-                     G_TYPE_FILE);               // Parameter 1 type: GFile*
+        g_signal_new("change-directory",
+                     G_TYPE_FROM_CLASS(klass),
+                     G_SIGNAL_RUN_LAST,
+                     0,
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__OBJECT,
+                     G_TYPE_NONE,
+                     1,
+                     G_TYPE_FILE);
 
     signals[TOGGLE_VISIBILITY] =
         g_signal_new("toggle-visibility",
                      G_TYPE_FROM_CLASS(klass),
                      G_SIGNAL_RUN_LAST,
                      0, NULL, NULL,
-                     g_cclosure_marshal_VOID__BOOLEAN, // Default C marshaller (void function, boolean param)
+                     g_cclosure_marshal_VOID__BOOLEAN,
                      G_TYPE_NONE,
                      1,
-                     G_TYPE_BOOLEAN);            // Parameter 1 type: gboolean
+                     G_TYPE_BOOLEAN);
+}
 
-    /* Properties */
-    flags = G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY;
+static void
+nemo_terminal_widget_set_property(GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
+{
+    NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(object);
 
-    properties[PROP_CURRENT_LOCATION] =
-        g_param_spec_object("current-location",     // Property name
-                            "Current Location",       // Nickname
-                            "The GFile representing the current directory.", // Blurb
-                            G_TYPE_FILE,              // Property type
-                            flags);                   // Property flags
+    switch (prop_id)
+    {
+        case PROP_CURRENT_LOCATION:
+            nemo_terminal_widget_set_current_location(self, g_value_get_object(value));
+            break;
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+            break;
+    }
+}
 
-    g_object_class_install_property(object_class, PROP_CURRENT_LOCATION, properties[PROP_CURRENT_LOCATION]);
+static void
+nemo_terminal_widget_get_property(GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
+{
+    NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(object);
 
-    /* Override finalize method */
-    object_class->finalize = nemo_terminal_widget_finalize;
+    switch (prop_id)
+    {
+        case PROP_CURRENT_LOCATION:
+            g_value_set_object(value, self->current_location);
+            break;
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+            break;
+    }
 }
 
 /**
@@ -1750,7 +1787,7 @@ spawn_terminal_in_widget(NemoTerminalWidget *self)
                            working_directory,     // Working directory (can be NULL for default)
                            argv,                  // Command and arguments
                            (char **)env,          // Environment variables (can be NULL for current)
-                           G_SPAWN_SEARCH_PATH | G_SPAWN_CHILD_INHERITS_STDIN, // Spawn flags
+                           G_SPAWN_SEARCH_PATH, // Spawn flags
                            NULL, NULL,            // Child setup function and data (unused)
                            &child_pid,            // Returns child PID (unused by us directly)
                            NULL,                  // Cancellable (unused)
