@@ -1520,6 +1520,7 @@ update_for_new_location (NemoWindowSlot *slot)
 	}
 
 	if (location_really_changed) {
+        nemo_window_clear_secondary_pane_location (window);
 		nemo_window_slot_remove_extra_location_widgets (slot);
 
 		directory = nemo_directory_get (slot->location);
