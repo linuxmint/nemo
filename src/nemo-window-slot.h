@@ -28,6 +28,7 @@
 #include "nemo-view.h"
 #include "nemo-window-types.h"
 #include "nemo-query-editor.h"
+#include "nemo-terminal-widget.h"
 
 #define NEMO_TYPE_WINDOW_SLOT	 (nemo_window_slot_get_type())
 #define NEMO_WINDOW_SLOT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), NEMO_TYPE_WINDOW_SLOT, NemoWindowSlotClass))
@@ -70,6 +71,13 @@ struct NemoWindowSlot {
 	GtkWidget *floating_bar;
     GtkWidget *cache_bar;
     GtkWidget *no_search_results_box;
+
+    /* Terminal pane */
+    GtkWidget *terminal_pane;
+    NemoTerminalWidget *terminal_widget;
+    GtkWidget *terminal_vpaned;
+    gboolean terminal_visible;
+    int terminal_height;
 
 	guint set_status_timeout_id;
 	guint loading_timeout_id;
@@ -191,4 +199,8 @@ void nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot);
 
 void nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
                                            gboolean show_thumbnails);
+
+void nemo_window_slot_toggle_terminal (NemoWindowSlot *slot, gboolean is_manual_toggle);
+void nemo_window_slot_update_terminal_location (NemoWindowSlot *slot);
+
 #endif /* NEMO_WINDOW_SLOT_H */
