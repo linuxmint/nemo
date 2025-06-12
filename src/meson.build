@@ -103,7 +103,10 @@ if enableEmptyView
 endif
 
 nemo_deps = [ cinnamon, gail, glib, gtk, math,
-  egg, nemo_extension, nemo_private, xapp, jemalloc ]
+  egg, nemo_extension, nemo_private, xapp ]
+if use_jemalloc
+  nemo_deps += jemalloc
+endif
 
 if exempi_enabled
   nemo_deps += exempi
@@ -113,29 +116,45 @@ if libexif_enabled
   nemo_deps += libexif
 endif
 
+
+nemo_link_args = []
+if use_jemalloc
+  nemo_link_args += ['-Wl,--no-as-needed', '-ljemalloc', '-Wl,--as-needed']
+endif
 nemo = executable('nemo',
   nemoCommon_sources + nemoWindow_sources,
   include_directories: [ rootInclude ],
   c_args: nemo_definitions,
   dependencies: nemo_deps,
-  link_args: ['-Wl,--no-as-needed', '-ljemalloc', '-Wl,--as-needed'],
+  link_args: nemo_link_args,
   install: true
 )
 
+
+nemoDesktop_link_args = []
+if use_jemalloc
+  nemoDesktop_link_args += ['-Wl,--no-as-needed', '-ljemalloc', '-Wl,--as-needed']
+endif
 nemoDesktop = executable('nemo-desktop',
   nemoCommon_sources + nemoDesktop_sources,
   include_directories: [ rootInclude],
   c_args: nemo_definitions,
   dependencies: nemo_deps,
-  link_args: ['-Wl,--no-as-needed', '-ljemalloc', '-Wl,--as-needed'],
+  link_args: nemoDesktop_link_args,
   install: true
 )
 
+
+nemo_autorun_software_link_args = []
+if use_jemalloc
+  nemo_autorun_software_link_args += ['-Wl,--no-as-needed', '-ljemalloc', '-Wl,--as-needed']
+endif
 nemo_autorun_software = executable('nemo-autorun-software',
   [ 'nemo-autorun-software.c' ],
   include_directories: [ rootInclude, ],
   c_args: nemo_definitions,
   dependencies: nemo_deps,
+  link_args: nemo_autorun_software_link_args,
   install: true
 )
 

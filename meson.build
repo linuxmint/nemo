@@ -82,7 +82,15 @@ cinnamon= dependency('cinnamon-desktop',            version: '>=4.8.0')
 gail    = dependency('gail-3.0')
 x11     = dependency('x11')
 xapp    = dependency('xapp',                        version: '>=2.0.0')
-jemalloc = dependency('jemalloc', required: true)
+
+jemalloc_opt = get_option('jemalloc')
+if jemalloc_opt
+  jemalloc = dependency('jemalloc', required: false)
+  use_jemalloc = jemalloc.found()
+else
+  jemalloc = dependency('', required: false)
+  use_jemalloc = false
+endif
 
 # Facultative dependencies
 
@@ -173,8 +181,10 @@ nemo_definitions =  [
   '-DNEMO_EXTENSIONDIR="@0@"'.format(nemoExtensionPath),
   '-DLIBEXECDIR="@0@"'.format(libExecPath),
   '-DG_LOG_DOMAIN="Nemo"',
-  '-DUSE_JEMALLOC'
 ]
+if use_jemalloc
+  nemo_definitions += '-DUSE_JEMALLOC'
+endif
 
 po_subdir = join_paths(meson.project_source_root(), 'po')
 
@@ -203,6 +213,7 @@ message('\n'.join(['',
 '    exempi  support:        @0@'.format(exempi_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
 '    Wayland support:        @0@'.format(cc.has_header('gdk/gdkwayland.h', dependencies: gtk)),
+'    Jemalloc support:       @0@'.format(use_jemalloc),
 '',
 '    nemo-extension documentation: @0@'.format(gtkdoc_enabled),
 '    nemo-extension introspection: @0@'.format(true),

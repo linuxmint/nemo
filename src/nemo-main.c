@@ -53,6 +53,20 @@
 #include <exempi/xmp.h>
 #endif
 
+#ifdef USE_JEMALLOC
+	static void
+	nemo_jemalloc_configure(void) __attribute__((constructor));
+
+	static void
+	nemo_jemalloc_configure(void)
+	{
+		if (getenv("MALLOC_CONF") != NULL)
+			return;
+		const char *conf = "narenas:1,metadata_thp:auto,percpu_arena:phycpu";
+		setenv("MALLOC_CONF", conf, 0);
+	}
+#endif
+
 int
 main (int argc, char *argv[])
 {
