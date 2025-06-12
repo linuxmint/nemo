@@ -12,5 +12,5 @@ option('empty_view', type : 'boolean', value : false,
        description: 'Enable empty view')
 option('tracker',type : 'combo', choices : ['true', 'false', 'auto'], value : 'false',
        description: 'Tracker support')
-option('jemalloc', type : 'boolean', value : false,
-       description: 'Use jemalloc memory allocator if available')
+option('jemalloc', type : 'combo', choices : ['true', 'false', 'auto'], value : 'auto',
+       description: 'Use jemalloc memory allocator if available (auto = enable if found)')

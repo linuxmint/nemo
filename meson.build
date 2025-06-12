@@ -84,7 +84,10 @@ x11     = dependency('x11')
 xapp    = dependency('xapp',                        version: '>=2.0.0')
 
 jemalloc_opt = get_option('jemalloc')
-if jemalloc_opt
+if jemalloc_opt == 'true'
+  jemalloc = dependency('jemalloc', required: true)
+  use_jemalloc = true
+elif jemalloc_opt == 'auto'
   jemalloc = dependency('jemalloc', required: false)
   use_jemalloc = jemalloc.found()
 else
