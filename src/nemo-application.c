@@ -243,7 +243,8 @@ out:
 static const char *supported_theme_hints[] = {
         "mint",
         "arc",
-        "numix"
+        "numix",
+        "matcha"
 };
 
 static gboolean
