@@ -19,10 +19,9 @@ gsettings set org.nemo.sidebar-panels.custom-icons use-custom-sidebar-icons true
 gsettings get org.nemo.sidebar-panels.custom-icons use-custom-sidebar-icons
 ```
 
-[![Screenshot from 2025-07-08 13-39-09](https://i.ibb.co/2Y7M0M4Z/Screenshot-from-2025-07-08-13-39-09.png)](https://ibb.co/zHh2W2v6)
-
 [![Screenshot from 2025-07-08 13-38-59](https://i.ibb.co/RG7HCLWj/Screenshot-from-2025-07-08-13-38-59.png)](https://ibb.co/CpW0nxFP)
 
+[![Screenshot from 2025-07-08 13-39-09](https://i.ibb.co/2Y7M0M4Z/Screenshot-from-2025-07-08-13-39-09.png)](https://ibb.co/zHh2W2v6)
 
 
 History
