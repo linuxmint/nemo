@@ -541,6 +541,23 @@
     </key>
   </schema>
 
+  <schema id="org.nemo.sidebar-panels.custom-icons" path="/org/nemo/sidebar-panels/custom-icons/">
+    <key name="use-custom-sidebar-icons" type="b">
+      <default>false</default>
+      <summary>Enable custom icons for sidebar items</summary>
+      <description>
+        If true, Nemo will allow custom icons to be assigned to sidebar entries.
+      </description>
+    </key>
+    <key name="custom-sidebar-icons" type="a{ss}">
+      <default>{}</default>
+      <summary>Sidebar icon overrides</summary>
+      <description>
+        A mapping of sidebar bookmark URIs to icon names.
+      </description>
+    </key>
+  </schema>
+
   <schema id="org.nemo.desktop" path="/org/nemo/desktop/" gettext-domain="nemo">
     <key name="font" type="s">
       <default l10n="messages" context="desktop-font">'Noto Sans 10'</default>
