@@ -8,6 +8,17 @@ It is a fork of GNOME Files (formerly named Nautilus).
 Nemo also manages the Cinnamon desktop.
 Since Cinnamon 6.0 (Mint 21.3), users can enhance their own Nemo with Spices named Actions.
 
+Forked Changes: Allows setting of icons in places-sidebar but you must allow it via gsettings.schema
+```
+sudo cp ~/Documents/nemo-master/libnemo-private/org.nemo.gschema.xml /usr/share/glib-2.0/schemas/
+
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+gsettings set org.nemo.sidebar-panels.custom-icons use-custom-sidebar-icons true
+
+gsettings get org.nemo.sidebar-panels.custom-icons use-custom-sidebar-icons
+```
+
 
 History
 ====
