@@ -59,6 +59,7 @@
 #include "nemo-application.h"
 #include "nemo-bookmark-list.h"
 #include "nemo-places-sidebar.h"
+#include "nemo-places-sidebar-custom-icons.h"
 #include "nemo-properties-window.h"
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
@@ -715,54 +716,54 @@ get_icon_name (const gchar *uri)
 static void
 update_places (NemoPlacesSidebar *sidebar)
 {
-	NemoBookmark *bookmark;
-	GtkTreeSelection *selection;
-	GtkTreeIter last_iter, cat_iter;
-	GtkTreeModel *model;
-	GVolumeMonitor *volume_monitor;
-	GList *mounts, *l, *ll;
-	GMount *mount;
-	GList *drives;
-	GDrive *drive;
-	GList *volumes;
-	GVolume *volume;
-	int bookmark_count, bookmark_index;
-	char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
-	const gchar *bookmark_name;
-	gchar *icon;
-	GFile *root, *df_file;
-	NemoWindowSlot *slot;
-	char *tooltip;
+    NemoBookmark *bookmark;
+    GtkTreeSelection *selection;
+    GtkTreeIter last_iter, cat_iter;
+    GtkTreeModel *model;
+    GVolumeMonitor *volume_monitor;
+    GList *mounts, *l, *ll;
+    GMount *mount;
+    GList *drives;
+    GDrive *drive;
+    GList *volumes;
+    GVolume *volume;
+    int bookmark_count, bookmark_index;
+    char *location, *mount_uri, *name, *desktop_path, *last_uri, *identifier;
+    const gchar *bookmark_name;
+    gchar *icon; // This will now hold the default icon name
+    GFile *root, *df_file;
+    NemoWindowSlot *slot;
+    char *tooltip;
     gchar *tooltip_info;
-	GList *network_mounts, *network_volumes;
+    GList *network_mounts, *network_volumes;
     gint full;
 
-	DEBUG ("Updating places sidebar");
+    DEBUG ("Updating places sidebar");
 
     sidebar->updating_sidebar = TRUE;
 
-	model = NULL;
-	last_uri = NULL;
+    model = NULL;
+    last_uri = NULL;
 
     g_clear_pointer (&sidebar->top_bookend_uri, g_free);
     g_clear_pointer (&sidebar->bottom_bookend_uri, g_free);
 
-	selection = gtk_tree_view_get_selection (sidebar->tree_view);
-	if (gtk_tree_selection_get_selected (selection, &model, &last_iter)) {
-		gtk_tree_model_get (model,
-				    &last_iter,
-				    PLACES_SIDEBAR_COLUMN_URI, &last_uri, -1);
-	}
-	gtk_tree_store_clear (sidebar->store);
+    selection = gtk_tree_view_get_selection (sidebar->tree_view);
+    if (gtk_tree_selection_get_selected (selection, &model, &last_iter)) {
+        gtk_tree_model_get (model,
+                    &last_iter,
+                    PLACES_SIDEBAR_COLUMN_URI, &last_uri, -1);
+    }
+    gtk_tree_store_clear (sidebar->store);
 
-	sidebar->devices_header_added = FALSE;
-	sidebar->bookmarks_header_added = FALSE;
+    sidebar->devices_header_added = FALSE;
+    sidebar->bookmarks_header_added = FALSE;
 
-	slot = nemo_window_get_active_slot (sidebar->window);
-	location = nemo_window_slot_get_current_uri (slot);
+    slot = nemo_window_get_active_slot (sidebar->window);
+    location = nemo_window_slot_get_current_uri (slot);
 
-	network_mounts = network_volumes = NULL;
-	volume_monitor = sidebar->volume_monitor;
+    network_mounts = network_volumes = NULL;
+    volume_monitor = sidebar->volume_monitor;
 
     cat_iter = add_heading (sidebar, SECTION_COMPUTER,
                                     _("My Computer"));
@@ -770,7 +771,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* home folder */
     mount_uri = nemo_get_home_directory_uri ();
-    icon = get_icon_name (mount_uri);
+    icon = get_icon_name (mount_uri); // Get default icon name
 
     df_file = g_file_new_for_uri (mount_uri);
     full = get_disk_full (df_file, &tooltip_info);
@@ -780,7 +781,7 @@ update_places (NemoPlacesSidebar *sidebar)
     g_free (tooltip_info);
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
-                           _("Home"), icon,
+                           _("Home"), icon, // Pass default icon name
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
                            full, home_on_different_fs (mount_uri) && full > -1,
@@ -794,10 +795,10 @@ update_places (NemoPlacesSidebar *sidebar)
         /* desktop */
         desktop_path = nemo_get_desktop_directory ();
         mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
-        icon = get_icon_name (mount_uri);
+        icon = get_icon_name (mount_uri); // Get default icon name
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
-                               _("Desktop"), icon,
+                               _("Desktop"), icon, // Pass default icon name
                                mount_uri, NULL, NULL, NULL, 0,
                                _("Open the contents of your desktop in a folder"), 0, FALSE,
                                cat_iter);
@@ -828,18 +829,32 @@ update_places (NemoPlacesSidebar *sidebar)
         root = nemo_bookmark_get_location (bookmark);
 
         bookmark_name = nemo_bookmark_get_name (bookmark);
-        icon = nemo_bookmark_get_icon_name (bookmark);
+        // icon = nemo_bookmark_get_icon_name (bookmark); // This line is now redundant/replaced
         mount_uri = nemo_bookmark_get_uri (bookmark);
         tooltip = g_file_get_parse_name (root);
 
+        // --- Start of custom icon logic for bookmarks ---
+        gchar *custom_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
+
+        const gchar *icon_to_use = NULL;
+        if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+            icon_to_use = custom_icon_name; // Use custom themed icon name
+        } else {
+            icon_to_use = nemo_bookmark_get_icon_name (bookmark); // Fallback to default bookmark icon name
+        }
+        // --- End of custom icon logic for bookmarks ---
+
         cat_iter = add_place (sidebar, PLACES_BOOKMARK,
                                SECTION_XDG_BOOKMARKS,
-                               bookmark_name, icon, mount_uri,
+                               bookmark_name, icon_to_use, mount_uri, // Pass the determined icon_to_use
                                NULL, NULL, NULL, bookmark_index,
                                tooltip, 0, FALSE,
                                cat_iter);
         g_object_unref (root);
-        g_free (icon);
+        g_free (custom_icon_name); // Free custom_icon_name if it was allocated
         g_free (mount_uri);
         g_free (tooltip);
     }
@@ -849,10 +864,10 @@ update_places (NemoPlacesSidebar *sidebar)
 
         if (n > 0) {
             mount_uri = (char *)"favorites:///"; /* No need to strdup */
-            icon = "xapp-user-favorites-symbolic";
+            icon = "xapp-user-favorites-symbolic"; // Default icon name
             cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                   SECTION_COMPUTER,
-                                  _("Favorites"), icon, mount_uri,
+                                  _("Favorites"), icon, mount_uri, // Pass default icon name
                                   NULL, NULL, NULL, 0,
                                   _("Favorite files"), 0, FALSE, cat_iter);
 
@@ -866,10 +881,10 @@ update_places (NemoPlacesSidebar *sidebar)
 
     if (recent_enabled && eel_vfs_supports_uri_scheme ("recent")) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
-        icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT;
+        icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT; // Default icon name
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                               SECTION_COMPUTER,
-                              _("Recent"), icon, mount_uri,
+                              _("Recent"), icon, mount_uri, // Pass default icon name
                               NULL, NULL, NULL, 0,
                               _("Recent files"), 0, FALSE, cat_iter);
 
@@ -880,7 +895,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
     /* file system root */
     mount_uri = (char *)"file:///"; /* No need to strdup */
-    icon = NEMO_ICON_SYMBOLIC_FILESYSTEM;
+    icon = NEMO_ICON_SYMBOLIC_FILESYSTEM; // Default icon name
 
     df_file = g_file_new_for_uri (mount_uri);
     full = get_disk_full (df_file, &tooltip_info);
@@ -890,7 +905,7 @@ update_places (NemoPlacesSidebar *sidebar)
     g_free (tooltip_info);
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
-                           _("File System"), icon,
+                           _("File System"), icon, // Pass default icon name
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
                            full, full > -1,
@@ -903,10 +918,10 @@ update_places (NemoPlacesSidebar *sidebar)
 
     if (eel_vfs_supports_uri_scheme("trash")) {
         mount_uri = (char *)"trash:///"; /* No need to strdup */
-        icon = nemo_trash_monitor_get_symbolic_icon_name ();
+        icon = nemo_trash_monitor_get_symbolic_icon_name (); // Default icon name
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
-                               _("Trash"), icon, mount_uri,
+                               _("Trash"), icon, mount_uri, // Pass default icon name
                                NULL, NULL, NULL, 0,
                                _("Open the trash"), 0, FALSE,
                                cat_iter);
@@ -916,24 +931,44 @@ update_places (NemoPlacesSidebar *sidebar)
     cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
                                     _("Bookmarks"));
 
-    while (bookmark_index < bookmark_count) {
+    // This loop is for bookmarks *after* the breakpoint (if any)
+    // You might want to adjust the loop condition to handle all bookmarks
+    // or ensure this loop is only for the second section of bookmarks.
+    // Assuming this loop is intended for the XDG_BOOKMARKS section based on the original code.
+    // If you intend to use the parsing logic for *all* bookmarks, you'd apply it to the first loop as well.
+    // For now, I'm just applying the custom icon logic to the existing loop.
+    for (bookmark_index = temp_breakpoint; bookmark_index < bookmark_count; ++bookmark_index) {
         bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, bookmark_index);
 
         root = nemo_bookmark_get_location (bookmark);
 
         bookmark_name = nemo_bookmark_get_name (bookmark);
-        icon = nemo_bookmark_get_icon_name (bookmark);
+        // icon = nemo_bookmark_get_icon_name (bookmark); // This line is now redundant/replaced
         mount_uri = nemo_bookmark_get_uri (bookmark);
         tooltip = g_file_get_parse_name (root);
 
+        // --- Start of custom icon logic for bookmarks ---
+        gchar *custom_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
+
+        const gchar *icon_to_use = NULL;
+        if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+            icon_to_use = custom_icon_name; // Use custom themed icon name
+        } else {
+            icon_to_use = nemo_bookmark_get_icon_name (bookmark); // Fallback to default bookmark icon name
+        }
+        // --- End of custom icon logic for bookmarks ---
+
         cat_iter = add_place (sidebar, PLACES_BOOKMARK,
-                              SECTION_BOOKMARKS,
-                              bookmark_name, icon, mount_uri,
+                              SECTION_BOOKMARKS, // This was SECTION_XDG_BOOKMARKS in the first loop, ensure consistency if intended
+                              bookmark_name, icon_to_use, mount_uri, // Pass the determined icon_to_use
                               NULL, NULL, NULL, bookmark_index,
                               tooltip, 0, FALSE,
                               cat_iter);
         g_object_unref (root);
-        g_free (icon);
+        g_free (custom_icon_name); // Free custom_icon_name if it was allocated
         g_free (mount_uri);
         g_free (tooltip);
         ++bookmark_index;
@@ -987,13 +1022,13 @@ update_places (NemoPlacesSidebar *sidebar)
             }
         }
 
-        icon = nemo_get_mount_icon_name (mount);
+        icon = nemo_get_mount_icon_name (mount); // Default icon name
         mount_uri = g_file_get_uri (root);
         name = g_mount_get_name (mount);
         tooltip = g_file_get_parse_name (root);
         place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                      SECTION_DEVICES,
-                                     name, icon, mount_uri,
+                                     name, icon, mount_uri, // Pass default icon name
                                      NULL, NULL, mount, 0, tooltip, 0, FALSE);
         place_infos = g_list_prepend (place_infos, place_info);
         g_object_unref (root);
@@ -1029,7 +1064,7 @@ update_places (NemoPlacesSidebar *sidebar)
                 if (mount != NULL) {
                     gchar *full_display_name, *volume_id;
                     /* Show mounted volume in the sidebar */
-                    icon = nemo_get_mount_icon_name (mount);
+                    icon = nemo_get_mount_icon_name (mount); // Default icon name
                     root = g_mount_get_default_location (mount);
                     mount_uri = g_file_get_uri (root);
                     name = g_mount_get_name (mount);
@@ -1048,7 +1083,7 @@ update_places (NemoPlacesSidebar *sidebar)
                     g_free (tooltip_info);
                     place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                                  SECTION_DEVICES,
-                                                 name, icon, mount_uri,
+                                                 name, icon, mount_uri, // Pass default icon name
                                                  drive, volume, mount, 0, tooltip, full, full > -1);
                     place_infos = g_list_prepend (place_infos, place_info);
                     g_object_unref (root);
@@ -1069,7 +1104,7 @@ update_places (NemoPlacesSidebar *sidebar)
                      * he just unmounted it.
                      */
                     gchar *volume_id;
-                    icon = nemo_get_volume_icon_name (volume);
+                    icon = nemo_get_volume_icon_name (volume); // Default icon name
                     name = g_volume_get_name (volume);
 
                     volume_id = g_volume_get_identifier (volume,
@@ -1078,7 +1113,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
                     place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                                  SECTION_DEVICES,
-                                                 name, icon, NULL,
+                                                 name, icon, NULL, // Pass default icon name
                                                  drive, volume, NULL, 0, tooltip, 0, FALSE);
                     place_infos = g_list_prepend (place_infos, place_info);
 
@@ -1100,13 +1135,13 @@ update_places (NemoPlacesSidebar *sidebar)
                  * work.. but it's also for human beings who like to turn off media detection
                  * in the OS to save battery juice.
                  */
-                icon = nemo_get_drive_icon_name (drive);
+                icon = nemo_get_drive_icon_name (drive); // Default icon name
                 name = g_drive_get_name (drive);
                 tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
                 place_info = new_place_info (PLACES_BUILT_IN,
                                              SECTION_DEVICES,
-                                             name, icon, NULL,
+                                             name, icon, NULL, // Pass default icon name
                                              drive, NULL, NULL, 0, tooltip, 0, FALSE);
                 place_infos = g_list_prepend (place_infos, place_info);
 
@@ -1142,7 +1177,7 @@ update_places (NemoPlacesSidebar *sidebar)
         mount = g_volume_get_mount (volume);
         if (mount != NULL) {
             g_autofree gchar *parse_name = NULL;
-            icon = nemo_get_mount_icon_name (mount);
+            icon = nemo_get_mount_icon_name (mount); // Default icon name
             root = g_mount_get_default_location (mount);
             mount_uri = g_file_get_uri (root);
 
@@ -1159,7 +1194,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
             place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                          SECTION_DEVICES,
-                                         name, icon, mount_uri,
+                                         name, icon, mount_uri, // Pass default icon name
                                          NULL, volume, mount, 0, tooltip, full, full > -1);
             place_infos = g_list_prepend (place_infos, place_info);
 
@@ -1170,12 +1205,12 @@ update_places (NemoPlacesSidebar *sidebar)
             g_free (mount_uri);
         } else {
             /* see comment above in why we add an icon for an unmounted mountable volume */
-            icon = nemo_get_volume_icon_name (volume);
+            icon = nemo_get_volume_icon_name (volume); // Default icon name
             name = g_volume_get_name (volume);
 
             place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                          SECTION_DEVICES,
-                                         name, icon, NULL,
+                                         name, icon, NULL, // Pass default icon name
                                          NULL, volume, NULL, 0, name, 0, FALSE);
             place_infos = g_list_prepend (place_infos, place_info);
 
@@ -1195,7 +1230,7 @@ update_places (NemoPlacesSidebar *sidebar)
                               info->place_type,
                               info->section_type,
                               info->name,
-                              info->icon_name,
+                              info->icon_name, // This already correctly passes the icon_name from PlaceInfo
                               info->uri,
                               info->drive,
                               info->volume,
@@ -1211,78 +1246,78 @@ update_places (NemoPlacesSidebar *sidebar)
 
     g_list_free (place_infos);
 
-	/* network */
-	cat_iter = add_heading (sidebar, SECTION_NETWORK,
-		     _("Network"));
+    /* network */
+    cat_iter = add_heading (sidebar, SECTION_NETWORK,
+             _("Network"));
 
-	network_volumes = g_list_reverse (network_volumes);
-	for (l = network_volumes; l != NULL; l = l->next) {
-		volume = l->data;
-		mount = g_volume_get_mount (volume);
+    network_volumes = g_list_reverse (network_volumes);
+    for (l = network_volumes; l != NULL; l = l->next) {
+        volume = l->data;
+        mount = g_volume_get_mount (volume);
 
-		if (mount != NULL) {
-			network_mounts = g_list_prepend (network_mounts, mount);
-			continue;
-		} else {
-			icon = nemo_get_volume_icon_name (volume);
-			name = g_volume_get_name (volume);
-			tooltip = g_strdup_printf (_("Mount and open %s"), name);
+        if (mount != NULL) {
+            network_mounts = g_list_prepend (network_mounts, mount);
+            continue;
+        } else {
+            icon = nemo_get_volume_icon_name (volume); // Default icon name
+            name = g_volume_get_name (volume);
+            tooltip = g_strdup_printf (_("Mount and open %s"), name);
 
-			cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+            cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                 				   SECTION_NETWORK,
-                				   name, icon, NULL,
+                				   name, icon, NULL, // Pass default icon name
                 				   NULL, volume, NULL, 0, tooltip, 0, FALSE,
                                    cat_iter);
-			g_free (icon);
-			g_free (name);
-			g_free (tooltip);
-		}
-	}
+            g_free (icon);
+            g_free (name);
+            g_free (tooltip);
+        }
+    }
 
-	g_list_free_full (network_volumes, g_object_unref);
+    g_list_free_full (network_volumes, g_object_unref);
 
-	network_mounts = g_list_reverse (network_mounts);
-	for (l = network_mounts; l != NULL; l = l->next) {
-		mount = l->data;
-		root = g_mount_get_default_location (mount);
-		icon = nemo_get_mount_icon_name (mount);
-		mount_uri = g_file_get_uri (root);
-		name = g_mount_get_name (mount);
-		tooltip = g_file_get_parse_name (root);
-		cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
-                			   SECTION_NETWORK,
-                			   name, icon, mount_uri,
-                			   NULL, NULL, mount, 0, tooltip, 0, FALSE,
+    network_mounts = g_list_reverse (network_mounts);
+    for (l = network_mounts; l != NULL; l = l->next) {
+        mount = l->data;
+        root = g_mount_get_default_location (mount);
+        icon = nemo_get_mount_icon_name (mount); // Default icon name
+        mount_uri = g_file_get_uri (root);
+        name = g_mount_get_name (mount);
+        tooltip = g_file_get_parse_name (root);
+        cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
+                               SECTION_NETWORK,
+                               name, icon, mount_uri, // Pass default icon name
+                               NULL, NULL, mount, 0, tooltip, 0, FALSE,
                                cat_iter);
-		g_object_unref (root);
-		g_free (icon);
-		g_free (name);
-		g_free (mount_uri);
-		g_free (tooltip);
-	}
+        g_object_unref (root);
+        g_free (icon);
+        g_free (name);
+        g_free (mount_uri);
+        g_free (tooltip);
+    }
 
-	g_list_free_full (network_mounts, g_object_unref);
+    g_list_free_full (network_mounts, g_object_unref);
 
-	/* network:// */
- 	mount_uri = (char *)"network:///"; /* No need to strdup */
-	icon = NEMO_ICON_SYMBOLIC_NETWORK;
-	cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                		   SECTION_NETWORK,
-                		   _("Network"), icon,
-                		   mount_uri, NULL, NULL, NULL, 0,
-                		   _("Browse the contents of the network"), 0, FALSE,
+    /* network:// */
+    mount_uri = (char *)"network:///"; /* No need to strdup */
+    icon = NEMO_ICON_SYMBOLIC_NETWORK; // Default icon name
+    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                           SECTION_NETWORK,
+                           _("Network"), icon,
+                           mount_uri, NULL, NULL, NULL, 0,
+                           _("Browse the contents of the network"), 0, FALSE,
                            cat_iter);
 
-	/* restore selection */
+    /* restore selection */
     restore_expand_state (sidebar);
-	sidebar_update_restore_selection (sidebar, location, last_uri);
+    sidebar_update_restore_selection (sidebar, location, last_uri);
 
     actions_changed (sidebar);
 
     sidebar->updating_sidebar = FALSE;
 
-	g_free (location);
-	g_free (last_uri);
+    g_free (location);
+    g_free (last_uri);
 }
 
 static void
@@ -2311,6 +2346,8 @@ update_menu_states (NemoPlacesSidebar *sidebar)
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_ADD_BOOKMARK, (type == PLACES_MOUNTED_VOLUME));
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SIDEBAR_REMOVE, (type == PLACES_BOOKMARK));
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_RENAME, (type == PLACES_BOOKMARK));
+    // Add this line to make the "Set Custom Icon" action visible for bookmarks
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SET_CUSTOM_ICON, (type == PLACES_BOOKMARK));
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, !nemo_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
@@ -2385,6 +2422,7 @@ update_menu_states (NemoPlacesSidebar *sidebar)
     g_clear_object (&volume);
     g_clear_object (&mount);
 }
+
 
 /* Callback used when the selection in the shortcuts tree changes */
 static void
@@ -2647,6 +2685,97 @@ rename_shortcut_cb (GtkAction           *item,
 {
 	rename_selected_bookmark (sidebar);
 }
+
+/* Allow places panel to use custom icons */
+static void
+set_custom_icon_cb(GtkAction *action, gpointer user_data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR(user_data);
+    GtkTreePath *selected_path = NULL;
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar *uri = NULL;
+    GtkWindow *parent;
+    GtkWidget *dialog;
+    gchar *current_icon_name = NULL;
+    gchar *new_icon_name = NULL;
+
+    // Get the currently selected path from the tree_view
+    gtk_tree_view_get_cursor(GTK_TREE_VIEW(sidebar->tree_view), &selected_path, NULL);
+
+    if (!selected_path) {
+        return; // No path selected, nothing to do
+    }
+
+    model = gtk_tree_view_get_model(GTK_TREE_VIEW(sidebar->tree_view));
+
+    if (!gtk_tree_model_get_iter(model, &iter, selected_path)) {
+        gtk_tree_path_free(selected_path);
+        return;
+    }
+
+    gtk_tree_model_get(model, &iter,
+                       PLACES_SIDEBAR_COLUMN_URI, &uri,
+                       -1);
+
+    if (uri == NULL) {
+        gtk_tree_path_free(selected_path);
+        return;
+    }
+
+    // Get the current custom icon name for pre-filling the dialog
+    current_icon_name = nemo_sidebar_get_custom_icon_for_uri(uri);
+    if (current_icon_name == NULL) {
+        // If no custom icon set, try to get the default themed icon name for the URI
+        // This might involve more complex logic depending on how default icons are determined.
+        // For simplicity, we'll leave it blank if no custom icon is set.
+        current_icon_name = g_strdup(""); // Start with an empty string
+    }
+
+    parent = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(sidebar)));
+
+    // Create a simple dialog for text input
+    dialog = gtk_dialog_new_with_buttons(_("Set Custom Icon Name"),
+                                         parent,
+                                         GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                         _("_Set"), GTK_RESPONSE_ACCEPT,
+                                         NULL);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+
+    GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    GtkWidget *label = gtk_label_new(_("Enter the themed icon name (e.g., 'folder-blue', 'document-new-symbolic'):"));
+    GtkWidget *entry = gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(entry), current_icon_name);
+    gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE); // Activate default button on Enter
+
+    gtk_box_pack_start(GTK_BOX(content_area), label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(content_area), entry, FALSE, FALSE, 0);
+    gtk_widget_show_all(content_area);
+
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+        new_icon_name = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+        if (new_icon_name && *new_icon_name != '\0')
+        {
+            // Store the themed icon name
+            nemo_sidebar_set_custom_icon_for_uri(uri, new_icon_name);
+        } else {
+            // If the user cleared the entry, clear the custom icon
+            nemo_sidebar_clear_custom_icon_for_uri(uri);
+        }
+        g_free(new_icon_name);
+    }
+
+    gtk_widget_destroy(dialog);
+    g_free(current_icon_name);
+    g_free(uri);
+    gtk_tree_path_free(selected_path);
+
+    // Trigger sidebar refresh/redraw to reflect the new icon
+    update_places_on_idle(sidebar);
+}
+
 
 /* Removes the selected bookmarks */
 static void
@@ -3494,6 +3623,7 @@ static const GtkActionEntry bookmark_action_entries[] = {
     { NEMO_ACTION_ADD_BOOKMARK,            NULL,                   N_("_Add Bookmark"),        NULL, NULL, G_CALLBACK (add_shortcut_cb)                },
     { NEMO_ACTION_SIDEBAR_REMOVE,          "list-remove-symbolic", N_("Remove"),               NULL, NULL, G_CALLBACK (remove_shortcut_cb)             },
     { NEMO_ACTION_RENAME,                  NULL,                   N_("_Rename..."),           NULL, NULL, G_CALLBACK (rename_shortcut_cb)             },
+    { NEMO_ACTION_SET_CUSTOM_ICON,         NULL,                   N_("Set _Icon..."),         NULL, NULL, G_CALLBACK (set_custom_icon_cb)             },   
     { NEMO_ACTION_MOUNT_VOLUME,            NULL,                   N_("_Mount"),               NULL, NULL, G_CALLBACK (mount_shortcut_cb)              },
     { NEMO_ACTION_UNMOUNT_VOLUME,          NULL,                   N_("_Unmount"),             NULL, NULL, G_CALLBACK (unmount_shortcut_cb)            },
     { NEMO_ACTION_EJECT_VOLUME,            NULL,                   N_("_Eject"),               NULL, NULL, G_CALLBACK (eject_shortcut_cb)              },

@@ -95,6 +95,7 @@
 #define NEMO_ACTION_MOVE_TO_MENU "MoveToMenu"
 #define NEMO_ACTION_LOCATION_PASTE_FILES_INTO "LocationPasteFilesInto"
 #define NEMO_ACTION_RENAME "Rename"
+#define NEMO_ACTION_SET_CUSTOM_ICON "Set Custom Icon"
 #define NEMO_ACTION_DUPLICATE "Duplicate"
 #define NEMO_ACTION_CREATE_LINK "Create Link"
 #define NEMO_ACTION_SELECT_ALL "Select All"
