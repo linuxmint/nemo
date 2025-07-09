@@ -20,6 +20,7 @@ gsettings set org.nemo.sidebar-panels.custom-icons use-custom-sidebar-icons true
 
 gsettings get org.nemo.sidebar-panels.custom-icons use-custom-sidebar-icons
 ```
+[![Screenshot from 2025-07-08 21-51-07](https://i.ibb.co/Lzf0kKwB/Screenshot-from-2025-07-08-21-51-07.png)](https://ibb.co/1fx0vcVB)
 
 [![Screenshot from 2025-07-08 13-38-59](https://i.ibb.co/RG7HCLWj/Screenshot-from-2025-07-08-13-38-59.png)](https://ibb.co/CpW0nxFP)
 
