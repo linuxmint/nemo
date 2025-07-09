@@ -772,6 +772,19 @@ update_places (NemoPlacesSidebar *sidebar)
     /* home folder */
     mount_uri = nemo_get_home_directory_uri ();
     icon = get_icon_name (mount_uri); // Get default icon name
+        // --- Start of custom icon logic ---
+        gchar *custom_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
+
+        const gchar *icon_to_use = NULL;
+        if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+            icon_to_use = custom_icon_name; // Use custom themed icon name
+        } else {
+            icon_to_use = get_icon_name (mount_uri); // Fallback to default bookmark icon name
+        }
+        // --- End of custom icon logic ---
 
     df_file = g_file_new_for_uri (mount_uri);
     full = get_disk_full (df_file, &tooltip_info);
@@ -781,7 +794,7 @@ update_places (NemoPlacesSidebar *sidebar)
     g_free (tooltip_info);
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
-                           _("Home"), icon, // Pass default icon name
+                           _("Home"), icon_to_use, // Pass default icon name
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
                            full, home_on_different_fs (mount_uri) && full > -1,
@@ -796,9 +809,22 @@ update_places (NemoPlacesSidebar *sidebar)
         desktop_path = nemo_get_desktop_directory ();
         mount_uri = g_filename_to_uri (desktop_path, NULL, NULL);
         icon = get_icon_name (mount_uri); // Get default icon name
+        // --- Start of custom icon logic ---
+        gchar *custom_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
+
+        const gchar *icon_to_use = NULL;
+        if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+            icon_to_use = custom_icon_name; // Use custom themed icon name
+        } else {
+            icon_to_use = get_icon_name (mount_uri); // Fallback to default bookmark icon name
+        }
+        // --- End of custom icon logic ---
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
-                               _("Desktop"), icon, // Pass default icon name
+                               _("Desktop"), icon_to_use, // Pass default icon name
                                mount_uri, NULL, NULL, NULL, 0,
                                _("Open the contents of your desktop in a folder"), 0, FALSE,
                                cat_iter);
@@ -865,9 +891,22 @@ update_places (NemoPlacesSidebar *sidebar)
         if (n > 0) {
             mount_uri = (char *)"favorites:///"; /* No need to strdup */
             icon = "xapp-user-favorites-symbolic"; // Default icon name
+            // --- Start of custom icon logic ---
+            gchar *custom_icon_name = NULL;
+            if (nemo_sidebar_custom_icons_enabled()) {
+                custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+            }
+
+            const gchar *icon_to_use = NULL;
+            if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+                icon_to_use = custom_icon_name; // Use custom themed icon name
+            } else {
+                icon_to_use = "xapp-user-favorites-symbolic"; // Fallback to default bookmark icon name
+            }
+            // --- End of custom icon logic ---
             cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                   SECTION_COMPUTER,
-                                  _("Favorites"), icon, mount_uri, // Pass default icon name
+                                  _("Favorites"), icon_to_use, mount_uri, // Pass default icon name
                                   NULL, NULL, NULL, 0,
                                   _("Favorite files"), 0, FALSE, cat_iter);
 
@@ -882,9 +921,22 @@ update_places (NemoPlacesSidebar *sidebar)
     if (recent_enabled && eel_vfs_supports_uri_scheme ("recent")) {
         mount_uri = (char *)"recent:///"; /* No need to strdup */
         icon = NEMO_ICON_SYMBOLIC_FOLDER_RECENT; // Default icon name
+        // --- Start of custom icon logic ---
+        gchar *custom_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
+
+        const gchar *icon_to_use = NULL;
+        if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+            icon_to_use = custom_icon_name; // Use custom themed icon name
+        } else {
+            icon_to_use = NEMO_ICON_SYMBOLIC_FOLDER_RECENT; // Fallback to default bookmark icon name
+        }
+        // --- End of custom icon logic ---
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                               SECTION_COMPUTER,
-                              _("Recent"), icon, mount_uri, // Pass default icon name
+                              _("Recent"), icon_to_use, mount_uri, // Pass default icon name
                               NULL, NULL, NULL, 0,
                               _("Recent files"), 0, FALSE, cat_iter);
 
@@ -896,7 +948,19 @@ update_places (NemoPlacesSidebar *sidebar)
     /* file system root */
     mount_uri = (char *)"file:///"; /* No need to strdup */
     icon = NEMO_ICON_SYMBOLIC_FILESYSTEM; // Default icon name
+    // --- Start of custom icon logic ---
+        gchar *custom_system_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_system_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
 
+        const gchar *system_icon_to_use = NULL;
+        if (custom_system_icon_name != NULL && *custom_system_icon_name != '\0') {
+            system_icon_to_use = custom_system_icon_name; // Use custom themed icon name
+        } else {
+            system_icon_to_use = NEMO_ICON_SYMBOLIC_FILESYSTEM; // Fallback to default bookmark icon name
+        }
+    // --- End of custom icon logic ---
     df_file = g_file_new_for_uri (mount_uri);
     full = get_disk_full (df_file, &tooltip_info);
     g_clear_object (&df_file);
@@ -905,7 +969,7 @@ update_places (NemoPlacesSidebar *sidebar)
     g_free (tooltip_info);
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
-                           _("File System"), icon, // Pass default icon name
+                           _("File System"), system_icon_to_use, // Pass default icon name
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
                            full, full > -1,
@@ -919,13 +983,27 @@ update_places (NemoPlacesSidebar *sidebar)
     if (eel_vfs_supports_uri_scheme("trash")) {
         mount_uri = (char *)"trash:///"; /* No need to strdup */
         icon = nemo_trash_monitor_get_symbolic_icon_name (); // Default icon name
+        // --- Start of custom icon logic ---
+        gchar *custom_icon_name = NULL;
+        if (nemo_sidebar_custom_icons_enabled()) {
+            custom_icon_name = nemo_sidebar_get_custom_icon_for_uri(mount_uri);
+        }
+
+        const gchar *icon_to_use = NULL;
+        if (custom_icon_name != NULL && *custom_icon_name != '\0') {
+            icon_to_use = custom_icon_name; // Use custom themed icon name
+        } else {
+            icon_to_use = nemo_trash_monitor_get_symbolic_icon_name (); // Fallback to default bookmark icon name
+        }
+        // --- End of custom icon logic ---
         cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                SECTION_COMPUTER,
-                               _("Trash"), icon, mount_uri, // Pass default icon name
+                               _("Trash"), icon_to_use, mount_uri, // Pass default icon name
                                NULL, NULL, NULL, 0,
                                _("Open the trash"), 0, FALSE,
                                cat_iter);
         g_free (icon);
+        g_free (custom_icon_name); // Free custom_icon_name if it was allocated
     }
 
     cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
@@ -2310,7 +2388,7 @@ update_menu_states (NemoPlacesSidebar *sidebar)
 	gboolean show_properties;
 	char *uri = NULL;
 
-	type = PLACES_BUILT_IN;
+	type = PLACES_BUILT_IN; // Initialize to a default type
 
 	if (sidebar->popup_menu == NULL) {
 		return;
@@ -2346,8 +2424,11 @@ update_menu_states (NemoPlacesSidebar *sidebar)
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_ADD_BOOKMARK, (type == PLACES_MOUNTED_VOLUME));
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SIDEBAR_REMOVE, (type == PLACES_BOOKMARK));
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_RENAME, (type == PLACES_BOOKMARK));
-    // Add this line to make the "Set Custom Icon" action visible for bookmarks
-    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SET_CUSTOM_ICON, (type == PLACES_BOOKMARK));
+
+    // MODIFIED LINE: Make "Set Custom Icon" visible for Bookmarks AND Built-In places
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SET_CUSTOM_ICON,
+                        (type == PLACES_BOOKMARK || type == PLACES_BUILT_IN));
+
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, !nemo_trash_monitor_is_empty ());
 
  	check_visibility (mount, volume, drive,
@@ -2422,6 +2503,7 @@ update_menu_states (NemoPlacesSidebar *sidebar)
     g_clear_object (&volume);
     g_clear_object (&mount);
 }
+
 
 
 /* Callback used when the selection in the shortcuts tree changes */
