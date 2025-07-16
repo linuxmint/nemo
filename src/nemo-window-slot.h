@@ -73,11 +73,8 @@ struct NemoWindowSlot {
     GtkWidget *no_search_results_box;
 
     /* Terminal pane */
-    GtkWidget *terminal_pane;
     NemoTerminalWidget *terminal_widget;
-    GtkWidget *terminal_vpaned;
     gboolean terminal_visible;
-    int terminal_height;
 
 	guint set_status_timeout_id;
 	guint loading_timeout_id;
@@ -200,7 +197,8 @@ void nemo_window_slot_check_bad_cache_bar (NemoWindowSlot *slot);
 void nemo_window_slot_set_show_thumbnails (NemoWindowSlot *slot,
                                            gboolean show_thumbnails);
 
-void nemo_window_slot_toggle_terminal (NemoWindowSlot *slot, gboolean is_manual_toggle);
+void nemo_window_slot_toggle_terminal (NemoWindowSlot *slot);
 void nemo_window_slot_update_terminal_location (NemoWindowSlot *slot);
+gboolean nemo_window_slot_ensure_terminal_state (gpointer user_data);
 
 #endif /* NEMO_WINDOW_SLOT_H */

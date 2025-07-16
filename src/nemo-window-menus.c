@@ -1338,7 +1338,7 @@ action_toggle_terminal_callback (GtkAction *action, gpointer callback_data)
 
     window = NEMO_WINDOW (callback_data);
     slot = nemo_window_get_active_slot (window);
-    nemo_window_slot_toggle_terminal (slot, TRUE);
+    nemo_window_slot_toggle_terminal (slot);
 }
 
 static void

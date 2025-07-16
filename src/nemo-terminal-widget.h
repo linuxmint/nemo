@@ -27,6 +27,15 @@
 
 G_BEGIN_DECLS
 
+/**
+ * NemoTerminalSyncMode:
+ * @NEMO_TERMINAL_SYNC_NONE: No synchronization between file manager and terminal.
+ * @NEMO_TERMINAL_SYNC_FM_TO_TERM: File manager navigation changes the terminal's directory.
+ * @NEMO_TERMINAL_SYNC_TERM_TO_FM: Terminal `cd` commands change the file manager's location.
+ * @NEMO_TERMINAL_SYNC_BOTH: Synchronization is bidirectional.
+ *
+ * Defines the synchronization behavior for the terminal's current directory.
+ */
 typedef enum
 {
     NEMO_TERMINAL_SYNC_NONE,
@@ -35,6 +44,16 @@ typedef enum
     NEMO_TERMINAL_SYNC_BOTH
 } NemoTerminalSyncMode;
 
+/**
+ * NemoTerminalSshAutoConnectMode:
+ * @NEMO_TERMINAL_SSH_AUTOCONNECT_OFF: Do not automatically connect to SSH when navigating to an SFTP location.
+ * @NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH: Automatically connect and sync both ways.
+ * @NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM: Automatically connect and sync from file manager to terminal.
+ * @NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM: Automatically connect and sync from terminal to file manager.
+ * @NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_NONE: Automatically connect but do not sync directories.
+ *
+ * Defines the auto-connection behavior when the file manager navigates to an SFTP location.
+ */
 typedef enum
 {
     NEMO_TERMINAL_SSH_AUTOCONNECT_OFF,
@@ -53,45 +72,12 @@ typedef enum
 
 typedef struct _NemoTerminalWidget NemoTerminalWidget;
 typedef struct _NemoTerminalWidgetClass NemoTerminalWidgetClass;
-typedef struct _NemoWindowPane NemoWindowPane;
+typedef struct _NemoTerminalWidgetPrivate NemoTerminalWidgetPrivate;
 
 struct _NemoTerminalWidget
 {
     GtkBox parent_instance;
-
-    GtkWidget *scrolled_window;
-    VteTerminal *terminal;
-    GtkWidget *ssh_indicator;
-    GtkWidget *container_paned;
-    NemoWindowPane *pane;
-
-    GSimpleActionGroup *action_group;
-
-    gboolean is_visible;
-    gboolean maintain_focus;
-    gboolean in_toggling;
-    gboolean needs_respawn;
-    gboolean is_exiting_ssh;
-    gboolean ssh_connecting;
-    gboolean ignore_next_terminal_cd_signal;
-
-    int height;
-    guint focus_timeout_id;
-
-    GFile *current_location;
-
-    gchar *color_scheme;
-
-    gboolean in_ssh_mode;
-    NemoTerminalSyncMode ssh_sync_mode;
-    NemoTerminalSyncMode pending_ssh_sync_mode;
-    NemoTerminalSshAutoConnectMode ssh_auto_connect_mode;
-    gchar *ssh_hostname;
-    gchar *ssh_username;
-    gchar *ssh_port;
-    gchar *ssh_remote_path;
-
-    NemoTerminalSyncMode local_sync_mode;
+    NemoTerminalWidgetPrivate *priv;
 };
 
 struct _NemoTerminalWidgetClass
@@ -99,33 +85,24 @@ struct _NemoTerminalWidgetClass
     GtkBoxClass parent_class;
 };
 
-GType nemo_terminal_widget_get_type(void);
+GType nemo_terminal_widget_get_type(void) G_GNUC_CONST;
 
 NemoTerminalWidget *nemo_terminal_widget_new(void);
 NemoTerminalWidget *nemo_terminal_widget_new_with_location(GFile *location);
 
-void spawn_terminal_in_widget(NemoTerminalWidget *self);
-void nemo_terminal_widget_set_current_location(NemoTerminalWidget *self, GFile *location);
-void nemo_terminal_widget_ensure_terminal_focus(NemoTerminalWidget *self);
-
-gboolean nemo_terminal_widget_initialize_in_paned(NemoTerminalWidget *self,
-                                                  GtkWidget *unused_view_content,
-                                                  GtkWidget *view_overlay);
+void nemo_terminal_widget_set_current_location(NemoTerminalWidget *self,
+                                               GFile *location);
+void nemo_terminal_widget_set_container_paned(NemoTerminalWidget *self,
+                                              GtkWidget *paned);
 
 void nemo_terminal_widget_toggle_visible(NemoTerminalWidget *self);
-void nemo_terminal_widget_toggle_visible_with_save(NemoTerminalWidget *self,
-                                                   gboolean is_manual_toggle);
-gboolean nemo_terminal_widget_get_visible(NemoTerminalWidget *self);
 void nemo_terminal_widget_ensure_state(NemoTerminalWidget *self);
+void nemo_terminal_widget_ensure_terminal_focus(NemoTerminalWidget *self);
+
+gboolean nemo_terminal_widget_get_visible(NemoTerminalWidget *self);
 
 void nemo_terminal_widget_apply_new_size(NemoTerminalWidget *self);
-int nemo_terminal_widget_get_default_height(void);
-void nemo_terminal_widget_save_height(NemoTerminalWidget *self, int height);
-
-const gchar *nemo_terminal_widget_get_color_scheme(NemoTerminalWidget *self);
-void nemo_terminal_widget_set_color_scheme(NemoTerminalWidget *self, const gchar *scheme);
-void nemo_terminal_widget_apply_color_scheme(NemoTerminalWidget *self);
 
 G_END_DECLS
 
-#endif
+#endif /* __NEMO_TERMINAL_WIDGET_H__ */
