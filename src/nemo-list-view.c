@@ -901,13 +901,17 @@ clicked_on_text_in_name_cell (NemoListView *view, GtkTreePath *path, GdkEventBut
                                             GTK_CELL_RENDERER (details->file_name_cell),
                                             &x_cell_offset, &width);
 
-    gtk_widget_style_get (GTK_WIDGET (details->tree_view),
-                                      "expander-size", &expander_size,
-                                      "horizontal-separator", &horizontal_separator,
-                                      NULL);
+    if (g_settings_get_boolean (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION)) {
+        gtk_widget_style_get (GTK_WIDGET (details->tree_view),
+                                          "expander-size", &expander_size,
+                                          "horizontal-separator", &horizontal_separator,
+                                          NULL);
 
-    expander_size += 4;
-    expansion_offset = ((horizontal_separator / 2) + gtk_tree_path_get_depth (path) * expander_size);
+        expander_size += 4;
+        expansion_offset = ((horizontal_separator / 2) + gtk_tree_path_get_depth (path) * expander_size);
+    } else {
+        expansion_offset = 0;
+    }
 
     ret = (event->x > (expansion_offset + x_col_offset + x_cell_offset) &&
            event->x < (x_col_offset + x_cell_offset + width)) &&
@@ -1129,17 +1133,21 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	call_parent = TRUE;
 	if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
 					   &path, NULL, NULL, NULL)) {
-		gtk_widget_style_get (widget,
-				      "expander-size", &expander_size,
-				      "horizontal-separator", &horizontal_separator,
-				      NULL);
-		/* TODO we should not hardcode this extra padding. It is
-		 * EXPANDER_EXTRA_PADDING from GtkTreeView.
-		 */
-		expander_size += 4;
-		on_expander = (event->x <= horizontal_separator / 2 +
-			       gtk_tree_path_get_depth (path) * expander_size);
-
+        if (g_settings_get_boolean (nemo_list_view_preferences,
+                                      NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION)) {
+    		gtk_widget_style_get (widget,
+    				      "expander-size", &expander_size,
+    				      "horizontal-separator", &horizontal_separator,
+    				      NULL);
+    		/* TODO we should not hardcode this extra padding. It is
+    		 * EXPANDER_EXTRA_PADDING from GtkTreeView.
+    		 */
+    		expander_size += 4;
+    		on_expander = (event->x <= horizontal_separator / 2 +
+    			       gtk_tree_path_get_depth (path) * expander_size);
+        } else {
+            on_expander = FALSE;
+        }
 		/* Keep track of path of last click so double clicks only happen
 		 * on the same item */
 		if ((event->button == 1 || event->button == 2)  &&

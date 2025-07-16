@@ -492,6 +492,7 @@ NemoQuery *
 nemo_query_editor_get_query (NemoQueryEditor *editor)
 {
     NemoQuery *query;
+    gchar *sanitized = NULL;
     const gchar *content_search_text = NULL;
 
 	if (editor == NULL || editor->priv == NULL || editor->priv->file_entry == NULL) {
@@ -509,7 +510,10 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
     nemo_query_set_recurse (query, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (editor->priv->file_recurse_toggle)));
     nemo_query_set_location (query, editor->priv->current_uri);
 
-    GString *file_string = g_string_new_take (get_sanitized_file_search_string (editor));
+    sanitized = get_sanitized_file_search_string (editor);
+    GString *file_string = g_string_new (sanitized);
+    g_free (sanitized);
+
     /* - Search for 'all' needs to be different depending on whether regex is enabled for files.
        - Our non-regex search traditionally implied '*words*', not 'words'. Now that we're using
          GPatternSpec, we need to add those ourselves. */

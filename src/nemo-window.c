@@ -873,6 +873,7 @@ nemo_window_finalize (GObject *object)
 	nemo_window_finalize_menus (window);
 
 	g_clear_object (&window->details->nav_state);
+    g_clear_object (&window->details->secondary_pane_last_location);
 
 	g_clear_object (&window->details->ui_manager);
 
@@ -2195,8 +2196,9 @@ nemo_window_split_view_on (NemoWindow *window)
 	old_active_slot = nemo_window_get_active_slot (window);
 	slot = create_extra_pane (window);
 
-	location = NULL;
-	if (old_active_slot != NULL) {
+    location = window->details->secondary_pane_last_location;
+
+	if (location == NULL && old_active_slot != NULL) {
 		location = nemo_window_slot_get_location (old_active_slot);
 		if (location != NULL) {
 			if (g_file_has_uri_scheme (location, "x-nemo-search")) {
@@ -2228,6 +2230,8 @@ nemo_window_split_view_off (NemoWindow *window)
 		next = l->next;
 		pane = l->data;
 		if (pane != active_pane) {
+            g_clear_object (&window->details->secondary_pane_last_location);
+            window->details->secondary_pane_last_location = nemo_window_slot_get_location (pane->active_slot);
 			nemo_window_close_pane (window, pane);
 		}
 	}
@@ -2250,6 +2254,13 @@ gboolean
 nemo_window_split_view_showing (NemoWindow *window)
 {
 	return g_list_length (NEMO_WINDOW (window)->details->panes) > 1;
+}
+
+void
+nemo_window_clear_secondary_pane_location (NemoWindow *window)
+{
+    g_return_if_fail (NEMO_IS_WINDOW (window));
+    g_clear_object (&window->details->secondary_pane_last_location);
 }
 
 void

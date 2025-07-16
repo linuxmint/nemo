@@ -95,6 +95,10 @@ struct NemoWindowDetails
         /* split view */
         GtkWidget *split_view_hpane;
 
+        // A closed pane's location, valid until the remaining pane
+        // location changes.
+        GFile *secondary_pane_last_location;
+
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;

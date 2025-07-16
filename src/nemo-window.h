@@ -184,6 +184,7 @@ void         nemo_window_set_ignore_meta_sort_column (NemoWindow *window, const 
 gint         nemo_window_get_ignore_meta_sort_direction (NemoWindow *window);
 void         nemo_window_set_ignore_meta_sort_direction (NemoWindow *window, gint direction);
 
+void         nemo_window_clear_secondary_pane_location (NemoWindow *window);
 NemoWindowOpenFlags nemo_event_get_window_open_flags   (void);
 
 void nemo_window_slot_added (NemoWindow *window,  NemoWindowSlot *slot);
