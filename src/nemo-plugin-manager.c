@@ -7,7 +7,6 @@
 #include <config.h>
 #include "nemo-plugin-manager.h"
 #include "nemo-action-config-widget.h"
-#include "nemo-script-config-widget.h"
 #include "nemo-extension-config-widget.h"
 #include <glib.h>
 
@@ -40,10 +39,7 @@ nemo_plugin_manager_init (NemoPluginManager *self)
     gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
 
     widget = nemo_action_config_widget_new ();
-    gtk_grid_attach (GTK_GRID (grid), widget, 0, 0, 1, 1);
-
-    widget = nemo_script_config_widget_new ();
-    gtk_grid_attach (GTK_GRID (grid), widget, 1, 0, 1, 1);
+    gtk_grid_attach (GTK_GRID (grid), widget, 0, 0, 2, 1);
 
     widget = nemo_extension_config_widget_new ();
     gtk_grid_attach (GTK_GRID (grid), widget, 0, 1, 2, 1);
