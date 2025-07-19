@@ -132,6 +132,12 @@ nemo_global_preferences_get_size_prefix_preference (void)
     return 0;
 }
 
+gboolean
+nemo_global_preferences_get_always_show_folder_expander (void)
+{
+    return g_settings_get_boolean (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ALWAYS_SHOW_EXPANDER);
+}
+
 char *
 nemo_global_preferences_get_desktop_iid (void)
 {
