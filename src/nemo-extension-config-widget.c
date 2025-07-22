@@ -408,7 +408,7 @@ nemo_extension_config_widget_init (NemoExtensionConfigWidget *self)
 
     self->restart_button = gtk_button_new_with_label (_("Extensions changed.  Restart required."));
 
-    GtkWidget *bb = nemo_config_base_widget_get_buttonbox (NEMO_CONFIG_BASE_WIDGET (self));
+    GtkWidget *bb = NEMO_CONFIG_BASE_WIDGET (self)->rbuttonbox;
     gtk_box_pack_end (GTK_BOX (bb),
                       self->restart_button,
                       FALSE, FALSE, 0);

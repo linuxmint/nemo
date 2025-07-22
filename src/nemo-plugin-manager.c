@@ -7,6 +7,7 @@
 #include <config.h>
 #include "nemo-plugin-manager.h"
 #include "nemo-action-config-widget.h"
+#include "nemo-template-config-widget.h"
 #include "nemo-extension-config-widget.h"
 #include <glib.h>
 
@@ -29,20 +30,23 @@ nemo_plugin_manager_init (NemoPluginManager *self)
 
     grid = gtk_grid_new ();
 
-    gtk_widget_set_margin_left (grid, 10);
-    gtk_widget_set_margin_right (grid, 10);
-    gtk_widget_set_margin_top (grid, 10);
-    gtk_widget_set_margin_bottom (grid, 10);
-    gtk_grid_set_row_spacing (GTK_GRID (grid), 10);
-    gtk_grid_set_column_spacing (GTK_GRID (grid), 10);
+    gtk_widget_set_margin_left (grid, 4);
+    gtk_widget_set_margin_right (grid, 4);
+    gtk_widget_set_margin_top (grid, 4);
+    gtk_widget_set_margin_bottom (grid, 4);
+    gtk_grid_set_row_spacing (GTK_GRID (grid), 4);
+    gtk_grid_set_column_spacing (GTK_GRID (grid), 4);
     gtk_grid_set_row_homogeneous (GTK_GRID (grid), TRUE);
     gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
 
-    widget = nemo_action_config_widget_new ();
+    widget = nemo_template_config_widget_new ();
     gtk_grid_attach (GTK_GRID (grid), widget, 0, 0, 2, 1);
 
-    widget = nemo_extension_config_widget_new ();
+    widget = nemo_action_config_widget_new ();
     gtk_grid_attach (GTK_GRID (grid), widget, 0, 1, 2, 1);
+
+    widget = nemo_extension_config_widget_new ();
+    gtk_grid_attach (GTK_GRID (grid), widget, 0, 2, 2, 1);
 
     gtk_container_add (GTK_CONTAINER (self), grid);
 

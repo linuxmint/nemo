@@ -69,6 +69,7 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
     gtk_container_add (GTK_CONTAINER (toolbar_item), w);
     context = gtk_widget_get_style_context(w);
     gtk_style_context_add_class (context, "linked");
+    self->lbuttonbox = w;
 
     label = gtk_label_new (_("Disable all"));
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
@@ -76,6 +77,8 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
     self->disable_button = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (w), self->disable_button);
     gtk_container_add (GTK_CONTAINER (self->disable_button), label);
+    gtk_widget_show_all (self->disable_button);
+    gtk_widget_set_no_show_all (self->disable_button, TRUE);
 
     label = gtk_label_new (_("Enable all"));
     gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
@@ -83,6 +86,8 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
     self->enable_button = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (w), self->enable_button);
     gtk_container_add (GTK_CONTAINER (self->enable_button), label);
+    gtk_widget_show_all (self->enable_button);
+    gtk_widget_set_no_show_all (self->enable_button, TRUE);
 
     toolbar_item = GTK_WIDGET (gtk_tool_item_new ());
     gtk_tool_item_set_expand (GTK_TOOL_ITEM (toolbar_item), FALSE);
@@ -92,7 +97,7 @@ nemo_config_base_widget_init (NemoConfigBaseWidget *self)
     gtk_container_add (GTK_CONTAINER (toolbar_item), w);
     context = gtk_widget_get_style_context(w);
     gtk_style_context_add_class (context, "linked");
-    self->buttonbox = w;
+    self->rbuttonbox = w;
 
     gtk_widget_show_all (GTK_WIDGET (self));
 }
@@ -121,19 +126,6 @@ GtkWidget *
 nemo_config_base_widget_get_listbox (NemoConfigBaseWidget *widget)
 {
     return widget->listbox;
-}
-
-/**
- * nemo_config_base_widget_get_buttonbox:
- * @widget: a #NemoConfigBaseWidget
- *
- * Returns: (transfer none): the buttonbox #GtkWidget
- */
-
-GtkWidget *
-nemo_config_base_widget_get_buttonbox (NemoConfigBaseWidget *widget)
-{
-    return widget->buttonbox;
 }
 
 /**
