@@ -35,6 +35,7 @@ struct _NemoTemplateConfigWidget
   GList *dir_monitors;
   GtkWidget *remove_button;
   GtkWidget *rename_button;
+  GtkWidget *edit_button;
 };
 
 struct _NemoTemplateConfigWidgetClass

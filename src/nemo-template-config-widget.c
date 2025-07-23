@@ -101,6 +101,7 @@ on_row_selected (GtkWidget *box,
 
     gtk_widget_set_sensitive (widget->remove_button, row != NULL);
     gtk_widget_set_sensitive (widget->rename_button, row != NULL);
+    gtk_widget_set_sensitive (widget->edit_button, row != NULL);
 }
 
 static void
@@ -228,7 +229,7 @@ refresh_widget (NemoTemplateConfigWidget *widget)
         GtkWidget *empty_label = gtk_label_new (NULL);
         gchar *markup = NULL;
 
-        markup = g_strdup_printf ("<i>%s</i>", _("No templates found"));
+        markup = g_strdup_printf ("<i>%s</i>", _("No templates found. Click New or drag a file here to create one."));
 
         gtk_label_set_markup (GTK_LABEL (empty_label), markup);
         g_free (markup);
@@ -453,6 +454,29 @@ on_rename_row_clicked (GtkWidget *button, gpointer user_data)
 }
 
 static void
+on_edit_template_clicked (GtkWidget *button, gpointer user_data)
+{
+    NemoTemplateConfigWidget *widget = NEMO_TEMPLATE_CONFIG_WIDGET (user_data);
+    GtkWidget *row = GTK_WIDGET (gtk_list_box_get_selected_row (GTK_LIST_BOX (NEMO_CONFIG_BASE_WIDGET (widget)->listbox)));
+
+    if (row == NULL) {
+        return;
+    }
+
+    TemplateInfo *info = g_object_get_data (G_OBJECT (row), "template-info");
+    GFile *file = g_file_new_for_path (info->path);
+    gchar *uri = g_file_get_uri (file);
+    g_object_unref (file);
+
+    GAppLaunchContext *context = G_APP_LAUNCH_CONTEXT (gdk_display_get_app_launch_context (gdk_display_get_default ()));
+
+    g_app_info_launch_default_for_uri_async (uri, context, NULL, NULL, NULL);
+    g_object_unref (context);
+
+    g_free (uri);
+}
+
+static void
 on_open_folder_clicked (GtkWidget *button, NemoTemplateConfigWidget *widget)
 {
     gchar *path = NULL;
@@ -602,6 +626,16 @@ nemo_template_config_widget_init (NemoTemplateConfigWidget *self)
     gtk_widget_show (widget);
     g_signal_connect (widget, "clicked", G_CALLBACK (on_rename_row_clicked), self);
     self->rename_button = widget;
+
+    widget = gtk_button_new_with_label (_("Edit"));
+    gtk_widget_set_tooltip_text (widget, _("Modify the selected template's contents"));
+
+    gtk_box_pack_start (GTK_BOX (bb),
+                      widget,
+                      FALSE, FALSE, 0);
+    gtk_widget_show (widget);
+    g_signal_connect (widget, "clicked", G_CALLBACK (on_edit_template_clicked), self);
+    self->edit_button = widget;
 
     gtk_widget_hide (nemo_config_base_widget_get_enable_button (NEMO_CONFIG_BASE_WIDGET (self)));
     gtk_widget_hide (nemo_config_base_widget_get_disable_button (NEMO_CONFIG_BASE_WIDGET (self)));
