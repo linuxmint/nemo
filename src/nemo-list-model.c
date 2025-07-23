@@ -510,22 +510,22 @@ nemo_list_model_iter_children (GtkTreeModel *tree_model, GtkTreeIter *iter, GtkT
 static gboolean
 nemo_list_model_iter_has_child (GtkTreeModel *tree_model, GtkTreeIter *iter)
 {
-    FileEntry *file_entry;
+	FileEntry *file_entry;
 
-    if (iter == NULL) {
-        return !nemo_list_model_is_empty (NEMO_LIST_MODEL (tree_model));
-    }
+	if (iter == NULL) {
+		return !nemo_list_model_is_empty (NEMO_LIST_MODEL (tree_model));
+	}
 
-    file_entry = g_sequence_get (iter->user_data);
+	file_entry = g_sequence_get (iter->user_data);
 
-    /* If the file is a directory and always-show-expander is enabled, always return TRUE */
-    if (file_entry->file && nemo_file_is_directory (file_entry->file)) {
-        if (nemo_global_preferences_get_always_show_folder_expander()) {
-            return TRUE;
-        }
-    }
+	/* If the file is a directory and always-show-expander is enabled, always return TRUE */
+	if (file_entry->file && nemo_file_is_directory (file_entry->file)) {
+		if (nemo_global_preferences_get_always_show_folder_expander()) {
+			return TRUE;
+		}
+	}
 
-    return (file_entry->files != NULL && g_sequence_get_length (file_entry->files) > 0);
+	return (file_entry->files != NULL && g_sequence_get_length (file_entry->files) > 0);
 }
 
 static int
