@@ -129,7 +129,9 @@ get_filename_tuple (const gchar *path)
     ptr = g_strrstr (basename, ".");
 
     if (ptr != NULL) {
-        g_strv_builder_take (builder, g_strndup (basename, ptr - basename));
+        gchar *stem = g_strndup (basename, ptr - basename);
+        g_strv_builder_add (builder, stem);
+        g_free (stem);
         g_strv_builder_add (builder, ptr + 1);
     } else {
         g_strv_builder_add (builder, basename);
