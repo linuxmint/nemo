@@ -49,7 +49,8 @@ typedef struct
 typedef enum {
     TYPE_NONE_FOLDER = 1,
     TYPE_ACTIONS_FOLDER,
-    TYPE_SCRIPTS_FOLDER
+    TYPE_SCRIPTS_FOLDER,
+    TYPE_TEMPLATES_FOLDER
 } InterestingFolderType;
 
 GType		 nemo_interesting_folder_bar_get_type	(void) G_GNUC_CONST;

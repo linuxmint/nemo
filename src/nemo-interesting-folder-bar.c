@@ -42,7 +42,8 @@ enum {
 
 enum {
     INTERESTING_FOLDER_BAR_ACTION_OPEN_DOC = 1,
-    INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC
+    INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC,
+    INTERESTING_FOLDER_BAR_TEMPLATE_OPEN_DOC
 };
 
 struct NemoInterestingFolderBarPrivate
@@ -137,6 +138,10 @@ nemo_interesting_folder_bar_constructed (GObject *obj)
                                          INTERESTING_FOLDER_BAR_SCRIPT_OPEN_DOC);
             gtk_widget_set_tooltip_text (w, _("View additional information about creating scripts"));
             break;
+        case TYPE_TEMPLATES_FOLDER:
+            label = gtk_label_new (_("Templates: Files in this folder will appear in the Create New Document "
+                                     "submenu."));
+            break;
         case TYPE_NONE_FOLDER:
         default:
             label = gtk_label_new ("undefined");
@@ -179,7 +184,7 @@ nemo_interesting_folder_bar_class_init (NemoInterestingFolderBarClass *klass)
                                   "type",
                                   "the InterestingFolderType",
                                   TYPE_NONE_FOLDER,
-                                  TYPE_SCRIPTS_FOLDER,
+                                  TYPE_TEMPLATES_FOLDER,
                                   TYPE_NONE_FOLDER,
                                   G_PARAM_WRITABLE |
                                   G_PARAM_CONSTRUCT_ONLY |
@@ -213,24 +218,34 @@ nemo_interesting_folder_bar_new_for_location (NemoView *view, GFile *location)
 
     path = nemo_action_manager_get_user_directory_path ();
     tmp_loc = g_file_new_for_path (path);
+    g_free (path);
 
     if (g_file_equal (location, tmp_loc)) {
         type = TYPE_ACTIONS_FOLDER;
-        goto out;
+    }
+    g_object_unref (tmp_loc);
+
+    if (type == TYPE_NONE_FOLDER) {
+        path = nemo_get_scripts_directory_path ();
+        tmp_loc = g_file_new_for_path (path);
+        g_free (path);
+
+        if (g_file_equal (location, tmp_loc)) {
+            type = TYPE_SCRIPTS_FOLDER;
+        }
+        g_object_unref (tmp_loc);
     }
 
-    g_free (path);
-    g_object_unref (tmp_loc);
+    if (type == TYPE_NONE_FOLDER) {
+        path = nemo_get_templates_directory ();
+        tmp_loc = g_file_new_for_path (path);
+        g_free (path);
 
-    path = nemo_get_scripts_directory_path ();
-    tmp_loc = g_file_new_for_path (path);
-
-    if (g_file_equal (location, tmp_loc))
-        type = TYPE_SCRIPTS_FOLDER;
-
-out:
-    g_free (path);
-    g_object_unref (tmp_loc);
+        if (g_file_equal (location, tmp_loc)) {
+            type = TYPE_TEMPLATES_FOLDER;
+        }
+        g_object_unref (tmp_loc);
+    }
 
     return type == TYPE_NONE_FOLDER ? NULL : nemo_interesting_folder_bar_new (view, type);
 }
