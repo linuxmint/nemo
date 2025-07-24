@@ -286,6 +286,7 @@ static void _clear_ssh_connection_data(NemoTerminalWidgetPrivate *priv);
 static void _reset_to_local_state(NemoTerminalWidget *self);
 static const gchar * nemo_terminal_widget_get_color_scheme(NemoTerminalWidget *self);
 static void nemo_terminal_widget_set_color_scheme(NemoTerminalWidget *self, const gchar *scheme);
+static void _sync_terminal_to_fm (NemoTerminalWidget *self, const gchar *cwd_uri);
 
 static GParamSpec *properties[N_PROPS];
 static guint       signals[LAST_SIGNAL];
@@ -424,7 +425,7 @@ nemo_terminal_widget_init(NemoTerminalWidget *self)
     gtk_label_set_xalign(GTK_LABEL(priv->ssh_indicator), 0.5);
 
     provider = gtk_css_provider_new();
-    gtk_css_provider_load_from_data(provider, "label#ssh-indicator { background-color: #3465a4; color: white; padding: 2px 5px; margin: 0; font-weight: bold; }", -1, NULL);
+    gtk_css_provider_load_from_data(provider, "label#ssh-indicator { background-color: @theme_selected_bg_color; color: @theme_selected_fg_color; padding: 2px 5px; margin: 0; font-weight: bold; }", -1, NULL);
     context = gtk_widget_get_style_context(priv->ssh_indicator);
     gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
@@ -458,6 +459,11 @@ spawn_async_callback(VteTerminal *terminal, GPid pid, GError *error, gpointer us
     NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(user_data);
     NemoTerminalWidgetPrivate *priv = self->priv;
 
+    if (gtk_widget_in_destruction(GTK_WIDGET(self)))
+    {
+        return;
+    }
+
     if (pid == -1)
     {
         g_warning("Failed to spawn terminal: %s", error ? error->message : "Unknown error");
@@ -475,12 +481,6 @@ spawn_async_callback(VteTerminal *terminal, GPid pid, GError *error, gpointer us
             g_clear_pointer(&priv->pending_ssh_username, g_free);
             g_clear_pointer(&priv->pending_ssh_port, g_free);
         }
-        else if (priv->current_location)
-        {
-            /* If a local shell just spawned, sync its directory to the current location.
-             * This is crucial for new tabs/windows where the terminal starts visible. */
-            change_directory_in_terminal(self, priv->current_location);
-        }
     }
 }
 
@@ -490,13 +490,8 @@ spawn_terminal_async(NemoTerminalWidget *self)
     NemoTerminalWidgetPrivate *priv = self->priv;
     g_autofree gchar *working_directory = NULL;
     const gchar *shell_executable;
-    gchar *argv[2];
-    gchar *envp[] = {
-        "TERM=xterm-256color",
-        "LC_ALL=C.UTF-8",
-        "COLORTERM=truecolor",
-        NULL
-    };
+    gchar **argv = NULL;
+    gchar **envp = NULL;
 
     g_return_if_fail(NEMO_IS_TERMINAL_WIDGET(self));
 
@@ -513,16 +508,57 @@ spawn_terminal_async(NemoTerminalWidget *self)
     if (!shell_executable || *shell_executable == '\0')
         shell_executable = "/bin/sh";
 
-    argv[0] = (gchar *)shell_executable;
-    argv[1] = NULL;
-
     if (priv->pending_ssh_hostname != NULL)
     {
         working_directory = NULL;
     }
-    else if (priv->current_location && g_file_query_exists(priv->current_location, NULL))
+    else if (priv->current_location)
     {
-        working_directory = g_file_get_path(priv->current_location);
+        g_autoptr(GFile) dir_location = NULL;
+        g_autoptr(GFileInfo) info = g_file_query_info(priv->current_location, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, NULL);
+        if (info && g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY) {
+            dir_location = g_object_ref(priv->current_location);
+        } else {
+            dir_location = g_file_get_parent(priv->current_location);
+        }
+        if (dir_location) {
+            working_directory = g_file_get_path(dir_location);
+        }
+    }
+
+    if (g_str_has_suffix(shell_executable, "zsh"))
+    {
+        g_autofree gchar *config_dir = g_build_filename(g_get_user_config_dir(), "nemo", NULL);
+        g_autofree gchar *zshrc_path = g_build_filename(config_dir, ".zshrc", NULL);
+        g_autofree gchar *zshrc_content = NULL;
+        g_autofree gchar *zdotdir_env = NULL;
+
+        g_mkdir_with_parents(config_dir, 0700);
+
+        zshrc_content = g_strdup_printf("_nemo_vte_update_cwd() { echo -en \"\\033]7;file://$PWD\\007\"; };\n"
+                                      "typeset -a precmd_functions;\n"
+                                      "if [[ -z \"$precmd_functions[(r)_nemo_vte_update_cwd]\" ]]; then\n"
+                                      "  precmd_functions+=(_nemo_vte_update_cwd);\n"
+                                      "fi;\n"
+                                      "[ -f \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\";\n");
+
+        g_file_set_contents(zshrc_path, zshrc_content, -1, NULL);
+
+        zdotdir_env = g_strdup_printf("ZDOTDIR=%s", config_dir);
+        gchar *zsh_envp[] = { "TERM=xterm-256color", "COLORTERM=truecolor", zdotdir_env, NULL };
+        envp = g_strdupv(zsh_envp);
+        argv = g_strsplit(shell_executable, " ", -1);
+    }
+    else /* Assume bash or other compatible shells */
+    {
+        argv = g_strsplit(shell_executable, " ", -1);
+        gchar *bash_envp[] = {
+            "TERM=xterm-256color",
+            "COLORTERM=truecolor",
+            "PROMPT_COMMAND=echo -en \"\\033]7;file://$PWD\\007\"",
+            NULL
+        };
+        envp = g_strdupv(bash_envp);
     }
 
     vte_terminal_spawn_async(priv->terminal,
@@ -536,6 +572,9 @@ spawn_terminal_async(NemoTerminalWidget *self)
                              priv->spawn_cancellable,
                              (VteTerminalSpawnAsyncCallback)spawn_async_callback,
                              self);
+
+    g_strfreev(argv);
+    g_strfreev(envp);
 }
 
 static void
@@ -580,14 +619,18 @@ on_terminal_child_exited(VteTerminal *terminal, gint status, gpointer user_data)
     if (priv->state == NEMO_TERMINAL_STATE_IN_SSH)
     {
         _reset_to_local_state(self);
-    }
-
-    if (gtk_widget_get_ancestor(GTK_WIDGET(self), GTK_TYPE_WINDOW))
-    {
         if (priv->is_visible)
+        {
             spawn_terminal_async(self);
-        else
-            priv->needs_respawn = TRUE;
+        }
+    }
+    else if (priv->state == NEMO_TERMINAL_STATE_LOCAL)
+    {
+        priv->needs_respawn = TRUE;
+        if (priv->is_visible)
+        {
+            nemo_terminal_widget_toggle_visible(self);
+        }
     }
 }
 
@@ -618,15 +661,16 @@ on_terminal_preference_changed(GSettings *settings, const gchar *key, gpointer u
 }
 
 static void
-on_terminal_directory_changed(VteTerminal *terminal, gpointer user_data)
+_sync_terminal_to_fm (NemoTerminalWidget *self, const gchar *cwd_uri)
 {
-    NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(user_data);
     NemoTerminalWidgetPrivate *priv = self->priv;
     g_autoptr(GFile) new_gfile_location = NULL;
     gboolean should_sync_to_fm = FALSE;
-    const gchar *cwd_uri = vte_terminal_get_current_directory_uri(terminal);
 
-    if (!cwd_uri) return;
+    if (!cwd_uri)
+    {
+        return;
+    }
 
     if (priv->ignore_next_terminal_cd_signal)
     {
@@ -673,17 +717,13 @@ on_terminal_directory_changed(VteTerminal *terminal, gpointer user_data)
     }
 }
 
-/*
- * feed_cd_command:
- * @terminal: The VteTerminal to send the command to.
- * @path: The directory path to change to.
- *
- * This function programmatically sends a 'cd' command to the terminal's
- * child process. It uses a sequence of shell control characters (CTRL+A,
- * CTRL+K, etc.) to insert the command at the beginning of the line,
- * execute it, and then restore any text the user might have been typing.
- * This provides a less disruptive user experience.
- */
+static void
+on_terminal_directory_changed(VteTerminal *terminal, gpointer user_data)
+{
+    const gchar *cwd_uri_str = vte_terminal_get_current_directory_uri(terminal);
+    _sync_terminal_to_fm(NEMO_TERMINAL_WIDGET(user_data), cwd_uri_str);
+}
+
 static void
 feed_cd_command(VteTerminal *terminal, const char *path)
 {
@@ -804,21 +844,6 @@ _build_font_size_submenu(NemoTerminalWidget *self)
     return submenu;
 }
 
-/*
- * _build_enum_pref_submenu:
- * @self: The #NemoTerminalWidget instance.
- * @entries: A static array of menu entry data.
- * @count: The number of entries in the array.
- * @current_value: The current value of the preference to check against.
- * @settings_key: The GSettings key name for this preference.
- *
- * A helper function to reduce code duplication when building radio-button
- * submenus for enum-based preferences. It iterates over the provided
- * entries, creates a radio menu item for each, and connects it to the
- * generic `on_enum_pref_changed` callback.
- *
- * Returns: (transfer full): A new GtkMenu widget containing the radio items.
- */
 static GtkWidget *
 _build_enum_pref_submenu(NemoTerminalWidget *self, const MenuSyncModeEntry *entries, gsize count, gint current_value, const gchar *settings_key)
 {
@@ -849,7 +874,6 @@ static GtkWidget *
 _build_sftp_auto_connect_submenu(NemoTerminalWidget *self)
 {
     NemoTerminalWidgetPrivate *priv = self->priv;
-    /* We can reuse the helper here, but need to cast the array type as the structs are compatible. */
     return _build_enum_pref_submenu(self, (const MenuSyncModeEntry*)SFTP_AUTO_CONNECT_ENTRIES, G_N_ELEMENTS(SFTP_AUTO_CONNECT_ENTRIES), priv->ssh_auto_connect_mode, "ssh-terminal-auto-connect-mode");
 }
 
@@ -871,10 +895,32 @@ _build_manual_ssh_connect_submenu(NemoTerminalWidget *self, const gchar *hostnam
 }
 
 static void
-_append_menu_item(GtkMenuShell *menu, const gchar *label, GCallback callback, gpointer user_data)
+on_copy_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+    NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(user_data);
+    vte_terminal_copy_clipboard_format(self->priv->terminal, VTE_FORMAT_TEXT);
+}
+
+static void
+on_paste_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+    NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(user_data);
+    vte_terminal_paste_clipboard(self->priv->terminal);
+}
+
+static void
+on_select_all_activate(GtkMenuItem *menuitem, gpointer user_data)
+{
+    NemoTerminalWidget *self = NEMO_TERMINAL_WIDGET(user_data);
+    vte_terminal_select_all(self->priv->terminal);
+}
+
+static void
+_append_menu_item(GtkMenuShell *menu, const gchar *label, GCallback callback, gpointer user_data, gboolean sensitive)
 {
     GtkWidget *item = gtk_menu_item_new_with_label(label);
     g_signal_connect(item, "activate", callback, user_data);
+    gtk_widget_set_sensitive(item, sensitive);
     gtk_menu_shell_append(menu, item);
 }
 
@@ -893,10 +939,10 @@ create_terminal_popup_menu(NemoTerminalWidget *self)
     GtkWidget *menu = gtk_menu_new();
     gboolean is_sftp_location = FALSE;
 
-    _append_menu_item(GTK_MENU_SHELL(menu), _("Copy"), G_CALLBACK(vte_terminal_copy_clipboard_format), priv->terminal);
-    _append_menu_item(GTK_MENU_SHELL(menu), _("Paste"), G_CALLBACK(vte_terminal_paste_clipboard), priv->terminal);
+    _append_menu_item(GTK_MENU_SHELL(menu), _("Copy"), G_CALLBACK(on_copy_activate), self, vte_terminal_get_has_selection(priv->terminal));
+    _append_menu_item(GTK_MENU_SHELL(menu), _("Paste"), G_CALLBACK(on_paste_activate), self, TRUE);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-    _append_menu_item(GTK_MENU_SHELL(menu), _("Select All"), G_CALLBACK(vte_terminal_select_all), priv->terminal);
+    _append_menu_item(GTK_MENU_SHELL(menu), _("Select All"), G_CALLBACK(on_select_all_activate), self, TRUE);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
     _append_menu_item_with_submenu(GTK_MENU_SHELL(menu), _("Color Scheme"), _build_color_scheme_submenu(self));
@@ -913,7 +959,7 @@ create_terminal_popup_menu(NemoTerminalWidget *self)
 
     if (priv->state == NEMO_TERMINAL_STATE_IN_SSH)
     {
-        _append_menu_item(GTK_MENU_SHELL(menu), _("Disconnect from SSH"), G_CALLBACK(on_ssh_exit_activate), self);
+        _append_menu_item(GTK_MENU_SHELL(menu), _("Disconnect from SSH"), G_CALLBACK(on_ssh_exit_activate), self, TRUE);
     }
     else
     {
@@ -964,30 +1010,42 @@ get_remote_path_from_sftp_gfile(GFile *location)
 }
 
 static void
-change_directory_in_terminal(NemoTerminalWidget *self, GFile *location)
+change_directory_in_terminal (NemoTerminalWidget *self, GFile *location)
 {
     NemoTerminalWidgetPrivate *priv = self->priv;
     g_autofree gchar *target_path = NULL;
     gboolean should_sync = FALSE;
+    g_autoptr(GFile) dir_location = NULL;
 
-    if (!priv->is_visible || priv->child_pid == -1)
+    if (!priv->is_visible || priv->child_pid == -1 || !location)
         return;
+
+    g_autoptr(GFileInfo) info = g_file_query_info(location, G_FILE_ATTRIBUTE_STANDARD_TYPE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, NULL);
+    if (info && g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY) {
+        dir_location = g_object_ref(location);
+    } else {
+        dir_location = g_file_get_parent(location);
+    }
+
+    if (!dir_location) {
+        return;
+    }
 
     if (priv->state == NEMO_TERMINAL_STATE_IN_SSH)
     {
         if (priv->ssh_sync_mode == NEMO_TERMINAL_SYNC_BOTH || priv->ssh_sync_mode == NEMO_TERMINAL_SYNC_FM_TO_TERM)
         {
             should_sync = TRUE;
-            target_path = get_remote_path_from_sftp_gfile(location);
+            target_path = get_remote_path_from_sftp_gfile(dir_location);
         }
     }
     else
     {
         if (priv->local_sync_mode == NEMO_TERMINAL_SYNC_BOTH || priv->local_sync_mode == NEMO_TERMINAL_SYNC_FM_TO_TERM)
         {
-            if (g_file_query_exists(location, NULL))
+            if (g_file_query_exists(dir_location, NULL))
             {
-                target_path = g_file_get_path(location);
+                target_path = g_file_get_path(dir_location);
                 if (target_path != NULL)
                 {
                     should_sync = TRUE;
@@ -998,8 +1056,8 @@ change_directory_in_terminal(NemoTerminalWidget *self, GFile *location)
 
     if (should_sync && target_path)
     {
-        const gchar *term_uri = vte_terminal_get_current_directory_uri(priv->terminal);
-        g_autoptr(GFile) term_gfile = term_uri ? g_file_new_for_uri(term_uri) : NULL;
+        const gchar *term_uri_str = vte_terminal_get_current_directory_uri(priv->terminal);
+        g_autoptr(GFile) term_gfile = term_uri_str ? g_file_new_for_uri(term_uri_str) : NULL;
         g_autofree gchar *term_path = term_gfile ? g_file_get_path(term_gfile) : NULL;
 
         if (term_path == NULL || g_strcmp0(term_path, target_path) != 0)
@@ -1037,19 +1095,6 @@ parse_gvfs_ssh_path(GFile *location, gchar **hostname, gchar **username, gchar *
     return FALSE;
 }
 
-/*
- * _initiate_ssh_connection:
- * @self: The #NemoTerminalWidget instance.
- * @hostname: The hostname to connect to.
- * @username: The username for the connection (can be %NULL).
- * @port: The port for the connection (can be %NULL).
- * @sync_mode: The synchronization mode for this SSH session.
- *
- * The command executed on the remote host is carefully constructed to first
- * change to the target directory and then start a new interactive shell.
- * It also injects a `PROMPT_COMMAND` to enable directory tracking via OSC 7
- * escape sequences, which is necessary for Terminal -> File Manager sync.
- */
 static void
 _initiate_ssh_connection(NemoTerminalWidget *self, const gchar *hostname, const gchar *username, const gchar *port, NemoTerminalSyncMode sync_mode)
 {
@@ -1262,57 +1307,66 @@ void
 nemo_terminal_widget_set_current_location(NemoTerminalWidget *self, GFile *location)
 {
     NemoTerminalWidgetPrivate *priv;
-    g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
-    g_autofree gchar *scheme = NULL;
 
     g_return_if_fail(NEMO_IS_TERMINAL_WIDGET(self));
     priv = self->priv;
 
-    if (location != NULL && (priv->current_location == NULL || !g_file_equal(location, priv->current_location)))
+    if ((priv->current_location == location) || (priv->current_location && location && g_file_equal(priv->current_location, location)))
     {
-        g_set_object(&priv->current_location, location);
-        g_object_notify_by_pspec(G_OBJECT(self), properties[PROP_CURRENT_LOCATION]);
+        return;
     }
 
-    if (location) {
-        scheme = g_file_get_uri_scheme(location);
+    g_set_object(&priv->current_location, location);
+    g_object_notify_by_pspec(G_OBJECT(self), properties[PROP_CURRENT_LOCATION]);
+
+    if (!location)
+    {
+        return;
     }
 
-    if (priv->state == NEMO_TERMINAL_STATE_IN_SSH) {
-        if (scheme && g_strcmp0(scheme, "sftp") == 0) {
+    g_autofree gchar *scheme = g_file_get_uri_scheme(location);
+    gboolean is_sftp = (scheme && g_strcmp0(scheme, "sftp") == 0);
+
+    if (priv->state == NEMO_TERMINAL_STATE_IN_SSH)
+    {
+        if (is_sftp)
+        {
+            g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
             if (parse_gvfs_ssh_path(location, &hostname, &username, &port) &&
-                g_strcmp0(hostname, priv->ssh_hostname) == 0) {
+                priv->ssh_hostname && g_strcmp0(hostname, priv->ssh_hostname) == 0)
+            {
                 change_directory_in_terminal(self, location);
-            } else {
-                _reset_to_local_state(self);
-                spawn_terminal_async(self);
             }
-        } else {
-            _reset_to_local_state(self);
-            spawn_terminal_async(self);
         }
-    } else { /* Local state */
-        if (scheme && g_strcmp0(scheme, "sftp") == 0 &&
-            priv->ssh_auto_connect_mode != NEMO_TERMINAL_SSH_AUTOCONNECT_OFF &&
-            parse_gvfs_ssh_path(location, &hostname, &username, &port)) {
+        /* If not SFTP or different host, do nothing. Keep the current SSH session. */
+    }
+    else /* Local state */
+    {
+        if (is_sftp && priv->ssh_auto_connect_mode != NEMO_TERMINAL_SSH_AUTOCONNECT_OFF)
+        {
+            g_autofree gchar *hostname = NULL, *username = NULL, *port = NULL;
+            if (parse_gvfs_ssh_path(location, &hostname, &username, &port))
+            {
+                NemoTerminalSyncMode sync_mode;
+                switch (priv->ssh_auto_connect_mode) {
+                    case NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH: sync_mode = NEMO_TERMINAL_SYNC_BOTH; break;
+                    case NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM: sync_mode = NEMO_TERMINAL_SYNC_FM_TO_TERM; break;
+                    case NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM: sync_mode = NEMO_TERMINAL_SYNC_TERM_TO_FM; break;
+                    default: sync_mode = NEMO_TERMINAL_SYNC_NONE; break;
+                }
 
-            NemoTerminalSyncMode sync_mode;
-            switch (priv->ssh_auto_connect_mode) {
-                case NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_BOTH: sync_mode = NEMO_TERMINAL_SYNC_BOTH; break;
-                case NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_FM_TO_TERM: sync_mode = NEMO_TERMINAL_SYNC_FM_TO_TERM; break;
-                case NEMO_TERMINAL_SSH_AUTOCONNECT_SYNC_TERM_TO_FM: sync_mode = NEMO_TERMINAL_SYNC_TERM_TO_FM; break;
-                default: sync_mode = NEMO_TERMINAL_SYNC_NONE; break;
+                if (priv->child_pid != -1) {
+                    _initiate_ssh_connection(self, hostname, username, port, sync_mode);
+                } else {
+                    priv->pending_ssh_hostname = g_strdup(hostname);
+                    priv->pending_ssh_username = g_strdup(username);
+                    priv->pending_ssh_port = g_strdup(port);
+                    priv->pending_ssh_sync_mode = sync_mode;
+                }
             }
-
-            if (priv->child_pid != -1) {
-                _initiate_ssh_connection(self, hostname, username, port, sync_mode);
-            } else {
-                priv->pending_ssh_hostname = g_strdup(hostname);
-                priv->pending_ssh_username = g_strdup(username);
-                priv->pending_ssh_port = g_strdup(port);
-                priv->pending_ssh_sync_mode = sync_mode;
-            }
-        } else {
+        }
+        else
+        {
             change_directory_in_terminal(self, location);
         }
     }
@@ -1334,10 +1388,28 @@ nemo_terminal_widget_toggle_visible(NemoTerminalWidget *self)
     g_return_if_fail(NEMO_IS_TERMINAL_WIDGET(self));
     priv = self->priv;
 
-    priv->is_visible = !priv->is_visible;
-    g_settings_set_boolean(nemo_window_state, "terminal-visible", priv->is_visible);
+    if (priv->in_toggling)
+        return;
+    priv->in_toggling = TRUE;
 
-    if (!priv->is_visible) {
+    priv->is_visible = !priv->is_visible;
+
+    if (priv->is_visible)
+    {
+        gtk_widget_show(GTK_WIDGET(self));
+        if (priv->needs_respawn)
+        {
+            spawn_terminal_async(self);
+        }
+        else if (priv->current_location)
+        {
+            change_directory_in_terminal(self, priv->current_location);
+        }
+        nemo_terminal_widget_apply_new_size(self);
+        nemo_terminal_widget_ensure_terminal_focus(self);
+    }
+    else
+    {
         g_autoptr(GtkWidget) paned = g_weak_ref_get(&priv->paned_weak_ref);
         if (paned && GTK_IS_PANED(paned)) {
             int position = gtk_paned_get_position(GTK_PANED(paned));
@@ -1346,27 +1418,36 @@ nemo_terminal_widget_toggle_visible(NemoTerminalWidget *self)
                 g_settings_set_int(nemo_window_state, "terminal-pane-size", total_height - position);
             }
         }
+        gtk_widget_hide(GTK_WIDGET(self));
     }
 
-    nemo_terminal_widget_ensure_state(self);
+    g_settings_set_boolean(nemo_window_state, "terminal-visible", priv->is_visible);
     g_signal_emit(self, signals[TOGGLE_VISIBILITY], 0, priv->is_visible);
+    priv->in_toggling = FALSE;
 }
 
 void
 nemo_terminal_widget_ensure_state(NemoTerminalWidget *self)
 {
     NemoTerminalWidgetPrivate *priv;
+    gboolean should_be_visible;
+
     g_return_if_fail(NEMO_IS_TERMINAL_WIDGET(self));
     priv = self->priv;
 
-    priv->is_visible = g_settings_get_boolean(nemo_window_state, "terminal-visible");
+    should_be_visible = g_settings_get_boolean(nemo_window_state, "terminal-visible");
 
-    if (priv->is_visible) {
+    if (priv->is_visible != should_be_visible)
+    {
+        priv->is_visible = should_be_visible;
+        g_signal_emit(self, signals[TOGGLE_VISIBILITY], 0, priv->is_visible);
+    }
+
+    if (should_be_visible) {
+        gtk_widget_show(GTK_WIDGET(self));
         if (priv->needs_respawn) {
             spawn_terminal_async(self);
         }
-        gtk_widget_show(GTK_WIDGET(self));
-        nemo_terminal_widget_ensure_terminal_focus(self);
     } else {
         gtk_widget_hide(GTK_WIDGET(self));
     }
@@ -1377,9 +1458,11 @@ _ensure_focus_timeout(gpointer user_data)
 {
     NemoTerminalWidget *self = user_data;
     NemoTerminalWidgetPrivate *priv = self->priv;
-    priv->focus_timeout_id = 0;
-    if (priv->is_visible) {
+
+    if (priv && gtk_widget_get_window(GTK_WIDGET(priv->terminal)))
+    {
         gtk_widget_grab_focus(GTK_WIDGET(priv->terminal));
+        priv->focus_timeout_id = 0;
     }
     return G_SOURCE_REMOVE;
 }
@@ -1422,9 +1505,13 @@ nemo_terminal_widget_apply_new_size(NemoTerminalWidget *self)
     if (priv->is_visible) {
         gint total_height = gtk_widget_get_allocated_height(paned);
         term_size = g_settings_get_int(nemo_window_state, "terminal-pane-size");
-        if (term_size <= 0) {
+        if (term_size <= MIN_TERMINAL_HEIGHT) {
             term_size = 200; /* Default fallback */
         }
-        gtk_paned_set_position(GTK_PANED(paned), total_height - term_size);
+
+        gint max_allowed_height = MAX(total_height - MIN_MAIN_VIEW_HEIGHT, MIN_TERMINAL_HEIGHT);
+        gint terminal_height = CLAMP(term_size, MIN_TERMINAL_HEIGHT, max_allowed_height);
+
+        gtk_paned_set_position(GTK_PANED(paned), total_height - terminal_height);
     }
 }
