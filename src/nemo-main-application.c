@@ -656,6 +656,7 @@ nemo_main_application_local_command_line (GApplication *application,
 	gboolean kill_shell = FALSE;
 	gboolean no_default_window = FALSE;
     gboolean no_desktop_ignored = FALSE;
+    gboolean select_ignored = FALSE;
 	gboolean fix_cache = FALSE;
     gboolean debug = FALSE;
 	gchar **remaining = NULL;
@@ -678,6 +679,8 @@ nemo_main_application_local_command_line (GApplication *application,
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
 		  N_("Only create windows for explicitly specified URIs."), NULL },
         { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop_ignored,
+          N_("Ignored argument - left for compatibility only."), NULL },
+        { "select", 's', 0, G_OPTION_ARG_NONE, &select_ignored,
           N_("Ignored argument - left for compatibility only."), NULL },
 		{ "tabs", 't', 0, G_OPTION_ARG_NONE, &open_in_tabs,
 		  N_("Open URIs in tabs."), NULL },
