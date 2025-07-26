@@ -670,8 +670,23 @@ nemo_action_constructed (GObject *object)
     gicon = NULL;
 
     if (icon_name != NULL) {
-        if (g_path_is_absolute (icon_name)) {
-            GFile *icon_file = g_file_new_for_path (icon_name);
+        gboolean prepend_action_dir = FALSE;
+        gchar *real_icon_name;
+
+        strip_custom_modifier (icon_name, &prepend_action_dir, &real_icon_name);
+
+        if (prepend_action_dir) {
+            gchar *action_dir = g_path_get_dirname (action->key_file_path);
+            gchar *icon_path = g_build_filename (action_dir, real_icon_name, NULL);
+
+            g_free (action_dir);
+            g_free (real_icon_name);
+
+            real_icon_name = icon_path;
+        }
+
+        if (g_path_is_absolute (real_icon_name)) {
+            GFile *icon_file = g_file_new_for_path (real_icon_name);
             if (g_file_is_native (icon_file)) {
                 gicon = g_file_icon_new (icon_file);
             }
@@ -679,8 +694,10 @@ nemo_action_constructed (GObject *object)
         }
 
         if (gicon == NULL) {
-            gicon = g_themed_icon_new (icon_name);
+            gicon = g_themed_icon_new (real_icon_name);
         }
+
+        g_free (real_icon_name);
     }
     g_free (icon_name);
 

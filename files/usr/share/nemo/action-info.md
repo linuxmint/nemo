@@ -106,11 +106,13 @@ Displays the action if all selected files have a mimetype included in this semic
 Comment=If you click this menu entry, %F will be acted upon!
 `
 
-**Icon-Name** (optional): The name of the icon to display in Nemo's context menu next to the action entry. This must be an icon that is part of the GtkIconTheme. Symbolic icons are supported.
+**Icon-Name** (optional): The name of the icon to display in Nemo's context menu next to the action entry. This must be an icon that is part of the GtkIconTheme, or an absolute path.  Symbolic icons are supported.
 
 `
 Icon-Name=folder
 `
+
+If you have a custom icon, you can enclose the filename in `<...>` to have it loaded from the action's directory. For instance, with `<my-action-icon.png>` nemo will look for an icon by that name in the same directory as the action file. If your action is a Spice and has its own subfolder, that can be included as a relative path (`my-action@me/my-action-icon.png`).
 
 **Separator** (optional): Character(s) to separate multiple filenames if more than a single file is selected. By default a space is used.
 

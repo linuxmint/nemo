@@ -80,7 +80,11 @@ class Row():
         if icon_string is None:
             return None
 
-        if icon_string.startswith("/"):
+        if icon_string.startswith("<") and icon_string.endswith(">"):
+            real_string = icon_string[1:-1]
+            icon_string = str(self.path.parent / real_string)
+
+        if GLib.path_is_absolute(icon_string):
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(icon_string, 16, 16)
             surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale_factor, None)
             return ("surface", surface)
