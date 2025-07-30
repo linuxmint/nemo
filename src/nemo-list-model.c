@@ -1289,7 +1289,9 @@ nemo_list_model_remove (NemoListModel *model, GtkTreeIter *iter)
 
         got_count = nemo_file_get_directory_item_count (parent_file_entry->file, &count, &unreadable);
 
-        if ((!got_count && !unreadable) || count > 0) {
+        /* Always add dummy row if always-show-expander is enabled, or if directory has items */
+        if (nemo_global_preferences_get_always_show_folder_expander() ||
+            (!got_count && !unreadable) || count > 0) {
             add_dummy_row (model, parent_file_entry);
         }
     }
