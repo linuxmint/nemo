@@ -298,7 +298,14 @@ always_show_expander_changed_cb (NemoListView *view)
     g_return_if_fail (NEMO_IS_LIST_VIEW (view));
     g_return_if_fail (GTK_IS_TREE_VIEW (view->details->tree_view) && view->details->tree_view != NULL);
 
-    /* Force a refresh of the tree view to update expander arrows */
+    /* Force a complete refresh of the view to update dummy rows and expander arrows */
+    if (view->details->model != NULL) {
+        /* Trigger a model refresh by invalidating the model */
+        gtk_tree_model_rows_reordered (GTK_TREE_MODEL (view->details->model),
+                                      NULL, NULL, NULL);
+    }
+    
+    /* Force a redraw of the tree view to update expander arrows */
     gtk_widget_queue_draw (GTK_WIDGET(view->details->tree_view));
 }
 
