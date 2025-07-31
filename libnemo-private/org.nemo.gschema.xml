@@ -530,6 +530,7 @@
     <key name="always-show-folder-expander" type="b">
       <default>false</default>
       <summary>If true, also allow folders without content to be expanded.</summary>
+      <description>If true, show expander arrows for all folders, even empty ones. Note: reload once to see changes.</description>
     </key>
   </schema>
 
