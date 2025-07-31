@@ -38,6 +38,7 @@
 #include <eel/eel-graphic-effects.h>
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-global-preferences.h>
 
 enum {
 	SUBDIRECTORY_UNLOADED,

@@ -1,3 +1,9 @@
+nemo (6.4.5+empty-expanders-1) UNRELEASED; urgency=medium
+
+  * Add empty folder expanders feature and fix crash bug
+
+ -- Jorge <jorge@bio-hpc-Precision-3550>  Wed, 30 Jul 2025 23:21:41 +0200
+
 nemo (6.4.5) xia; urgency=medium
 
   [ Michael Webster ]
