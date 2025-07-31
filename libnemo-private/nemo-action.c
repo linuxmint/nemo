@@ -642,6 +642,7 @@ nemo_action_constructed (GObject *object)
 {
     NemoAction *action = NEMO_ACTION (object);
     NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+    GIcon *gicon;
 
     G_OBJECT_CLASS (nemo_action_parent_class)->constructed (object);
 
@@ -665,6 +666,40 @@ nemo_action_constructed (GObject *object)
                                               ACTION_FILE_GROUP,
                                               KEY_ICON_NAME,
                                               NULL);
+
+    gicon = NULL;
+
+    if (icon_name != NULL) {
+        gboolean prepend_action_dir = FALSE;
+        gchar *real_icon_name;
+
+        strip_custom_modifier (icon_name, &prepend_action_dir, &real_icon_name);
+
+        if (prepend_action_dir) {
+            gchar *action_dir = g_path_get_dirname (action->key_file_path);
+            gchar *icon_path = g_build_filename (action_dir, real_icon_name, NULL);
+
+            g_free (action_dir);
+            g_free (real_icon_name);
+
+            real_icon_name = icon_path;
+        }
+
+        if (g_path_is_absolute (real_icon_name)) {
+            GFile *icon_file = g_file_new_for_path (real_icon_name);
+            if (g_file_is_native (icon_file)) {
+                gicon = g_file_icon_new (icon_file);
+            }
+            g_object_unref (icon_file);
+        }
+
+        if (gicon == NULL) {
+            gicon = g_themed_icon_new (real_icon_name);
+        }
+
+        g_free (real_icon_name);
+    }
+    g_free (icon_name);
 
     gchar *stock_id = g_key_file_get_string (key_file,
                                              ACTION_FILE_GROUP,
@@ -851,7 +886,7 @@ nemo_action_constructed (GObject *object)
     g_object_set  (action,
                    "label", orig_label,
                    "tooltip", orig_tt,
-                   "icon-name", icon_name,
+                   "gicon", gicon,
                    "stock-id", stock_id,
                     NULL);
 
@@ -877,7 +912,7 @@ nemo_action_constructed (GObject *object)
     queue_recalc_gsettings_conditions (action);
     DEBUG ("Initial action gsettings and dbus complete (%s)", action->key_file_path);
 
-    g_free (icon_name);
+    g_clear_object (&gicon);
     g_free (stock_id);
     g_free (quote_type_string);
     g_key_file_free (key_file);
@@ -1505,9 +1540,28 @@ nemo_action_override_label (NemoAction  *action,
 
 void
 nemo_action_override_icon (NemoAction  *action,
-                           const gchar *icon)
+                           const gchar *icon_name)
 {
-    gtk_action_set_icon_name (GTK_ACTION (action), icon);
+    GIcon *gicon = NULL;
+
+    if (icon_name != NULL && *icon_name != '\0') {
+        if (g_path_is_absolute (icon_name)) {
+            GFile *icon_file = g_file_new_for_path (icon_name);
+            if (g_file_is_native (icon_file)) {
+                gicon = g_file_icon_new (icon_file);
+            }
+            g_object_unref (icon_file);
+        }
+
+        if (gicon == NULL) {
+            gicon = g_themed_icon_new (icon_name);
+        }
+
+        gtk_action_set_gicon (GTK_ACTION (action), gicon);
+        g_clear_object (&gicon);
+    } else {
+        gtk_action_set_gicon(GTK_ACTION (action), NULL);
+    }
 }
 
 const gchar *

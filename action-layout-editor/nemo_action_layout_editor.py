@@ -47,10 +47,11 @@ class BuiltinShortcut():
         self.label = _(label)
 
 class Row():
-    def __init__(self, row_meta=None, keyfile=None, path=None, enabled=True):
+    def __init__(self, row_meta=None, keyfile=None, path=None, enabled=True, scale_factor=1):
         self.keyfile = keyfile
         self.row_meta = row_meta
         self.enabled = enabled
+        self.scale_factor = scale_factor
         self.path = path  # PosixPath
 
     def get_icon_string(self, original=False):
@@ -79,9 +80,13 @@ class Row():
         if icon_string is None:
             return None
 
-        if icon_string.startswith("/"):
+        if icon_string.startswith("<") and icon_string.endswith(">"):
+            real_string = icon_string[1:-1]
+            icon_string = str(self.path.parent / real_string)
+
+        if GLib.path_is_absolute(icon_string):
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(icon_string, 16, 16)
-            surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.main_window.get_scale_factor(), None)
+            surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale_factor, None)
             return ("surface", surface)
 
         return ("icon-name", icon_string)
@@ -501,6 +506,7 @@ class NemoActionsOrganizer(Gtk.Box):
 
     def fill_model(self, model, parent, items, installed_actions):
         disabled_actions = self.nemo_plugin_settings.get_strv("disabled-actions")
+        scale_factor = self.main_window.get_scale_factor()
 
         for item in items:
             row_type = item.get("type")
@@ -514,7 +520,7 @@ class NemoActionsOrganizer(Gtk.Box):
                     print("Ignoring missing installed action %s" % uuid)
                     continue
 
-                iter = model.append(parent, [new_hash(), uuid, row_type, Row(item, kf, path, path.name not in disabled_actions)])
+                iter = model.append(parent, [new_hash(), uuid, row_type, Row(item, kf, path, path.name not in disabled_actions, scale_factor)])
 
                 del installed_actions[uuid]
             elif row_type == ROW_TYPE_SEPARATOR:
@@ -537,7 +543,7 @@ class NemoActionsOrganizer(Gtk.Box):
 
         for uuid, (path, kf) in sorted_actions.items():
             enabled = path.name not in disabled_actions
-            model.append(parent, [new_hash(), uuid, ROW_TYPE_ACTION, Row(None, kf, path, enabled)])
+            model.append(parent, [new_hash(), uuid, ROW_TYPE_ACTION, Row(None, kf, path, enabled, scale_factor)])
 
     def save_disabled_list(self):
         disabled = []

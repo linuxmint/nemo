@@ -32,7 +32,8 @@ struct _NemoConfigBaseWidget
 
   GtkWidget *label;
   GtkWidget *listbox;
-  GtkWidget *buttonbox;
+  GtkWidget *lbuttonbox;
+  GtkWidget *rbuttonbox;
   GtkWidget *enable_button;
   GtkWidget *disable_button;
 };
@@ -46,7 +47,6 @@ GType nemo_config_base_widget_get_type (void);
 
 GtkWidget *nemo_config_base_widget_get_label          (NemoConfigBaseWidget *widget);
 GtkWidget *nemo_config_base_widget_get_listbox        (NemoConfigBaseWidget *widget);
-GtkWidget *nemo_config_base_widget_get_buttonbox      (NemoConfigBaseWidget *widget);
 GtkWidget *nemo_config_base_widget_get_enable_button  (NemoConfigBaseWidget *widget);
 GtkWidget *nemo_config_base_widget_get_disable_button (NemoConfigBaseWidget *widget);
 
