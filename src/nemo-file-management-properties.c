@@ -146,6 +146,7 @@ static const char * const sort_order_values[] = {
 	"name",
 	"size",
 	"type",
+	"extension",
     "detailed_type",
 	"mtime",
 	"atime",

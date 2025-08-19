@@ -58,6 +58,13 @@ get_builtin_columns (void)
 					       "label", _("Type"),
 					       "description", _("The general type of the file."),
 					       NULL));
+	columns = g_list_append (columns,                           
+				 g_object_new (NEMO_TYPE_COLUMN,
+					       "name", "extension",
+					       "attribute", "extension",
+					       "label", _("Extension"),
+					       "description", _("The extension of the file."),
+					       NULL));
     columns = g_list_append (columns,
                  g_object_new (NEMO_TYPE_COLUMN,
                            "name", "detailed_type",
@@ -72,6 +79,7 @@ get_builtin_columns (void)
 					       "label", _("Date Modified"),
 					       "description", _("The date the file was modified."),
 					       NULL));
+	
     columns = g_list_append (columns,
                  g_object_new (NEMO_TYPE_COLUMN,
                            "name", "date_modified_with_time",
