@@ -918,6 +918,15 @@ should_skip_child (SearchThreadData *data, GFileInfo *info, GFile *file, gboolea
     return TRUE;
 }
 
+static gboolean
+find_wildcard_mime_type (gpointer key, gpointer value, gpointer user_data)
+{
+    const gchar *helper_mime_type = key;
+    const gchar *file_content_type = user_data;
+
+    return g_content_type_is_mime_type (file_content_type, helper_mime_type);
+}
+
 static void
 visit_directory (GFile *dir, SearchThreadData *data)
 {
@@ -1009,13 +1018,15 @@ visit_directory (GFile *dir, SearchThreadData *data)
         skip_child = should_skip_child (data, info, child, is_dir);
 
         if (hit) {
-            const gchar *mime_type;
+            const gchar *content_type;
 
-            mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+            content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 
-            if (mime_type == NULL) {
-                mime_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+            if (content_type == NULL) {
+                content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
             }
+
+            g_autofree gchar *mime_type = g_content_type_get_mime_type (content_type);
 
             // Our helpers don't currently support uris, so we shouldn't at all -
             // probably best, as search would transfer the contents of every file
@@ -1025,8 +1036,11 @@ visit_directory (GFile *dir, SearchThreadData *data)
                     SearchHelper *helper = NULL;
 
                     helper = g_hash_table_lookup (search_helpers, mime_type);
+                    if (helper == NULL) {
+                        helper = g_hash_table_find (search_helpers, find_wildcard_mime_type, (gpointer) content_type);
+                    }
 
-                    if (helper != NULL || g_content_type_is_a (mime_type, "text/plain")) {
+                    if (helper != NULL || g_content_type_is_a (content_type, "text/plain")) {
                         if (DEBUGGING) {
                             g_message ("Evaluating '%s'", g_file_peek_path (child));
                         }
