@@ -96,11 +96,19 @@ G_DEFINE_TYPE (NemoSearchEngineAdvanced, nemo_search_engine_advanced,
 static GHashTable *search_helpers = NULL;
 
 static void
-search_helper_free (SearchHelper *helper)
+search_helper_free (gpointer data)
 {
+    SearchHelper *helper = (SearchHelper *) data;
     g_free (helper->def_path);
     g_free (helper->exec_format);
+    g_free (helper->filename);
     g_free (helper);
+}
+
+static void
+search_helper_list_free (GList *helper_list)
+{
+    g_list_free_full (helper_list, (GDestroyNotify) search_helper_free);
 }
 
 static GList *
@@ -144,7 +152,6 @@ process_search_helper_file (const gchar *path)
     gchar **try_exec_list = NULL;
     gchar *abs_try_path = NULL;
     gchar **mime_types = NULL;
-    gint priority = 100;
     gsize n_types;
     gint i;
 
@@ -203,39 +210,28 @@ process_search_helper_file (const gchar *path)
         goto done;
     }
 
-    if (g_key_file_has_key (key_file, SEARCH_HELPER_GROUP, "Priority", NULL)) {
-        priority = g_key_file_get_integer (key_file, SEARCH_HELPER_GROUP, "Priority", NULL);
-
-        // Failure sets the return to 0, make it 100 for the default when there's no key.
-        if (priority == 0) {
-            priority = 100;
-        }
-    }
-
     /* The helper table is keyed to mimetype strings, which will point to the same value */
 
     for (i = 0; i < n_types; i++) {
-        SearchHelper *helper, *existing;
+        SearchHelper *helper;
+        GList *existing;
         const gchar *mime_type;
 
         mime_type = mime_types[i];
 
-        existing = g_hash_table_lookup (search_helpers, mime_type);
-        if (existing && existing->priority > priority) {
-            DEBUG ("Existing nemo search_helper for '%s' (%s) has higher priority than a new one (%s), ignoring the new one.",
-                   mime_type, existing->def_path, path);
-            continue;
-        } else if (existing) {
-            DEBUG ("Replacing existing nemo search_helper for '%s' (%s) with %s based on priority.",
-                   mime_type, existing->def_path, path);
-        }
-
         helper = g_new0 (SearchHelper, 1);
+        helper->filename = g_path_get_basename (path);
         helper->def_path = g_strdup (path);
         helper->exec_format = g_strdup (exec_format);
-        helper->priority = priority;
 
-        g_hash_table_replace (search_helpers, g_strdup (mime_type), helper);
+        existing = g_hash_table_lookup (search_helpers, mime_type);
+
+        if (!existing) {
+            existing = g_list_append (NULL, helper);
+            g_hash_table_replace (search_helpers, g_strdup (mime_type), existing);
+        } else {
+            existing = g_list_append (existing, helper);
+        }
     }
 
 done:
@@ -253,7 +249,7 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
     GList *dir_list, *d_iter;
 
     search_helpers = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                            g_free, (GDestroyNotify) search_helper_free);
+                                            g_free, (GDestroyNotify) search_helper_list_free);
 
     dir_list = get_cat_helper_directories ();
 
@@ -918,13 +914,41 @@ should_skip_child (SearchThreadData *data, GFileInfo *info, GFile *file, gboolea
     return TRUE;
 }
 
-static gboolean
-find_wildcard_mime_type (gpointer key, gpointer value, gpointer user_data)
+typedef struct
 {
-    const gchar *helper_mime_type = key;
-    const gchar *file_content_type = user_data;
+    GList *helpers;
+    const gchar *content_type;
+} SearchHelperFindData;
 
-    return g_content_type_is_mime_type (file_content_type, helper_mime_type);
+static void
+find_matching_helper (gpointer key,
+                      gpointer value,
+                      gpointer user_data)
+{
+    SearchHelperFindData *data = user_data;
+
+    const gchar *file_content_type = data->content_type;
+    const gchar *helper_mime_type = key;
+    if (g_content_type_is_mime_type (file_content_type, helper_mime_type)) {
+        GList *i;
+        GList *helper_list = value;
+
+        for (i = helper_list; i != NULL; i = i->next) {
+            data->helpers = g_list_prepend (data->helpers, i->data);
+        }
+    }
+}
+
+static GList *
+lookup_helpers_for_content_type (const gchar *content_type)
+{
+    SearchHelperFindData find_data = { NULL, content_type };
+
+    g_hash_table_foreach (search_helpers,
+                          (GHFunc) find_matching_helper,
+                          (gpointer) &find_data);
+
+    return find_data.helpers;
 }
 
 static void
@@ -1026,25 +1050,26 @@ visit_directory (GFile *dir, SearchThreadData *data)
                 content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
             }
 
-            g_autofree gchar *mime_type = g_content_type_get_mime_type (content_type);
-
-            // Our helpers don't currently support uris, so we shouldn't at all -
-            // probably best, as search would transfer the contents of every file
-            // to our machines.
             if (data->content_re && data->location_supports_content_search) {
                 if (!skip_child) {
-                    SearchHelper *helper = NULL;
-
-                    helper = g_hash_table_lookup (search_helpers, mime_type);
-                    if (helper == NULL) {
-                        helper = g_hash_table_find (search_helpers, find_wildcard_mime_type, (gpointer) content_type);
+                    if (DEBUGGING) {
+                        g_message ("Evaluating '%s'", g_file_peek_path (child));
                     }
 
-                    if (helper != NULL || g_content_type_is_a (content_type, "text/plain")) {
-                        if (DEBUGGING) {
-                            g_message ("Evaluating '%s'", g_file_peek_path (child));
+                    if (g_content_type_is_a (content_type, "text/plain")) {
+                        search_for_content_hits (data, child, NULL);
+                    } else {
+                        GList *helpers = lookup_helpers_for_content_type (content_type);
+                        if (helpers != NULL) {
+                            GList *i;
+
+                            for (i = helpers; i != NULL; i = i->next) {
+                                SearchHelper *helper = i->data;
+                                search_for_content_hits (data, child, helper);
+                            }
+
+                            g_list_free (helpers);
                         }
-                        search_for_content_hits (data, child, helper);
                     }
                 }
             } else {
