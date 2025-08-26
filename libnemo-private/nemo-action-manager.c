@@ -36,6 +36,7 @@ typedef struct {
 
     GList *actions_directory_list;
     gboolean action_list_dirty;
+    gint layout_timestamp;
 } NemoActionManagerPrivate;
 
 struct _NemoActionManager 
@@ -246,8 +247,10 @@ set_up_actions_directories (NemoActionManager *action_manager)
 }
 
 static char *
-create_action_name (const char *uri)
+create_action_name (NemoActionManager *manager,
+                    const char        *uri)
 {
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (manager);
     GString *s;
     g_autofree gchar *prefix = NULL;
 
@@ -255,7 +258,7 @@ create_action_name (const char *uri)
         return NULL;
     }
 
-    prefix = g_strdup_printf ("action_%d_", g_random_int_range (0, 9999));
+    prefix = g_strdup_printf ("action_%d_", priv->layout_timestamp);
     s = g_string_new (prefix);
 
     while (*uri != 0) {
@@ -301,7 +304,7 @@ add_action_to_action_list (NemoActionManager *action_manager, NemoFile *file)
 
     uri = nemo_file_get_uri (file);
 
-    action_name = create_action_name (uri);
+    action_name = create_action_name (action_manager, uri);
     gchar *path = g_filename_from_uri (uri, NULL, NULL);
 
     action = nemo_action_new (action_name, path);
@@ -361,6 +364,9 @@ static void
 reload_actions_layout (NemoActionManager *action_manager)
 {
     NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+    GFile *file;
+    GFileInfo *info;
+    guint64 timestamp;
 
     GError *error = NULL;
     g_autofree gchar *path = NULL;
@@ -380,10 +386,22 @@ reload_actions_layout (NemoActionManager *action_manager)
             }
         }
 
+        priv->layout_timestamp = 0;
         g_clear_error (&error);
         g_clear_object (&parser);
         return;
     }
+
+    file = g_file_new_for_path (path);
+    info = g_file_query_info (file, G_FILE_ATTRIBUTE_TIME_MODIFIED, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+    if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_TIME_MODIFIED)) {
+        timestamp = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+    } else {
+        timestamp = (guint64) (ABS (g_get_monotonic_time ()));
+    }
+    priv->layout_timestamp = (gint) (timestamp % 10000);
+    g_object_unref (info);
+    g_object_unref (file);
 
     priv->json_parser = parser;
     DEBUG ("Loaded action layout file: %s\n", path);
