@@ -10,6 +10,7 @@ from pathlib import Path
 import uuid
 import gettext
 import locale
+from collections import OrderedDict
 import subprocess
 import os
 
@@ -481,7 +482,7 @@ class NemoActionsOrganizer(Gtk.Box):
 
     def load_installed_actions(self):
         # Load installed actions from the system
-        actions = {}
+        action_list = []
 
         data_dirs = GLib.get_system_data_dirs() + [GLib.get_user_data_dir()]
 
@@ -497,10 +498,13 @@ class NemoActionsOrganizer(Gtk.Box):
                             kf = GLib.KeyFile()
                             kf.load_from_file(str(file), GLib.KeyFileFlags.NONE)
 
-                            actions[uuid] = (file, kf)
+                            action_list.append((uuid, file, kf))
                         except GLib.Error as e:
                             print("Error loading action file '%s': %s" % (str(file), e.message))
                             continue
+
+
+        actions = OrderedDict(sorted((t[0], t[1:]) for t in action_list))
 
         return actions
 

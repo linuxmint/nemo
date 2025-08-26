@@ -206,6 +206,15 @@ strip_accel (const gchar *input)
     return ret;
 }
 
+static gint
+sort_actions (gconstpointer a, gconstpointer b)
+{
+    ActionProxy *action_a = (ActionProxy *) a;
+    ActionProxy *action_b = (ActionProxy *) b;
+
+    return g_strcmp0 (action_a->filename, action_b->filename);
+}
+
 static void
 refresh_widget (NemoActionConfigWidget *widget)
 {
@@ -251,6 +260,8 @@ refresh_widget (NemoActionConfigWidget *widget)
         GList *l;
         gchar **blacklist = g_settings_get_strv (nemo_plugin_preferences,
         		                                 NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS);
+
+        widget->actions = g_list_sort (widget->actions, (GCompareFunc) sort_actions);
 
         for (l = widget->actions; l != NULL; l=l->next) {
             ActionProxy *proxy = l->data;
