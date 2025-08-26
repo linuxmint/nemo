@@ -885,5 +885,9 @@
       <default>false</default>
       <summary>Reverse the direction of the sort when viewing search results</summary>
     </key>
+    <key name="disabled-search-helpers" type="as">
+      <default>[]</default>
+      <summary>List of search helper filenames to skip when using content search.</summary>
+    </key>
   </schema>
 </schemalist>

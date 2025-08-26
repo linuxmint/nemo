@@ -262,6 +262,7 @@ typedef enum
 #define NEMO_PLUGIN_PREFERENCES_DISABLED_EXTENSIONS    "disabled-extensions"
 #define NEMO_PLUGIN_PREFERENCES_DISABLED_ACTIONS       "disabled-actions"
 #define NEMO_PLUGIN_PREFERENCES_DISABLED_SCRIPTS       "disabled-scripts"
+#define NEMO_PLUGIN_PREFERENCES_DISABLED_SEARCH_HELPERS "disabled-search-helpers"
 
 /* Connect-to server dialog last-used method */
 #define NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD "last-server-connect-method"

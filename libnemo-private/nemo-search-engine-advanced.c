@@ -44,10 +44,9 @@
 #define SNIPPET_EXTEND_SIZE 100
 
 typedef struct {
+    gchar *filename;
     gchar *def_path;
     gchar *exec_format;
-
-    gint priority;
     /* future? */
 } SearchHelper;
 
@@ -258,6 +257,7 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
         GDir *dir;
         const gchar *filename;
         const gchar *path;
+        gchar **disabled_helpers;
 
         path = (const gchar *) d_iter->data;
         DEBUG ("Checking location '%s' for search helpers", path);
@@ -271,10 +271,18 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
             continue;
         }
 
+        disabled_helpers = g_settings_get_strv (nemo_search_preferences,
+                                                NEMO_PLUGIN_PREFERENCES_DISABLED_SEARCH_HELPERS);
+
         while ((filename = g_dir_read_name (dir)) != NULL) {
             gchar *file_path;
 
             if (!g_str_has_suffix (filename, ".nemo_search_helper")) {
+                continue;
+            }
+
+            if (g_strv_contains ((const gchar* const*) disabled_helpers, filename)) {
+                DEBUG ("Skipping disabled search helper: '%s'", filename);
                 continue;
             }
 
@@ -284,6 +292,7 @@ initialize_search_helpers (NemoSearchEngineAdvanced *engine)
         }
 
         g_dir_close (dir);
+        g_strfreev (disabled_helpers);
     }
 
     g_list_free_full (dir_list, g_free);
