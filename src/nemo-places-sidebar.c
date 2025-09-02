@@ -26,6 +26,7 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkwayland.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <math.h>
@@ -148,6 +149,7 @@ typedef struct {
     guint expand_timeout_source;
     guint popup_menu_action_index;
     guint update_places_on_idle_id;
+    gboolean unmount_dialog_active;
 
 } NemoPlacesSidebar;
 
@@ -217,6 +219,7 @@ static void  nemo_places_sidebar_style_set         (GtkWidget                   
 static gboolean eject_or_unmount_bookmark              (NemoPlacesSidebar *sidebar,
 							GtkTreePath *path);
 static gboolean eject_or_unmount_selection             (NemoPlacesSidebar *sidebar);
+static gboolean idle_unmount_dialog                    (gpointer user_data);
 static void  check_unmount_and_eject                   (GMount *mount,
 							GVolume *volume,
 							GDrive *drive,
@@ -227,6 +230,7 @@ static void update_places                              (NemoPlacesSidebar *sideb
 static void update_places_on_idle                      (NemoPlacesSidebar *sidebar);
 static void rebuild_menu                               (NemoPlacesSidebar *sidebar);
 static void actions_changed                            (gpointer user_data);
+
 /* Identifiers for target types */
 enum {
   GTK_TREE_MODEL_ROW,
@@ -2739,6 +2743,211 @@ show_unmount_progress_aborted_cb (GMountOperation *op,
     nemo_application_notify_unmount_done (app, NULL);
 }
 
+// Start code for unmount dialog on Wayland
+typedef struct {
+    GtkMountOperation *op;
+    GtkWindow *parent_window;
+    NemoPlacesSidebar *sidebar_ref;
+    gboolean cancelled;
+    gchar *primary_text;
+    gchar *secondary_text;
+    GArray *processes;
+    gint ref_count;
+} UnmountDialogData;
+
+static UnmountDialogData*
+unmount_dialog_data_ref (UnmountDialogData *data)
+{
+    if (data) {
+        data->ref_count++;
+    }
+    return data;
+}
+
+static void
+unmount_dialog_data_unref (UnmountDialogData *data)
+{
+    if (data == NULL) {
+        return;
+    }
+
+    data->ref_count--;
+    if (data->ref_count == 0) {
+        if (data->op) {
+            g_object_unref (G_OBJECT (data->op));
+        }
+        if (data->processes) {
+            g_array_free (data->processes, TRUE);
+        }
+        if (data->sidebar_ref) {
+            g_object_unref (data->sidebar_ref);
+        }
+        g_free (data->primary_text);
+        g_free (data->secondary_text);
+        g_free (data);
+    }
+}
+
+static void
+mount_op_finalized_cb (gpointer      user_data,
+                       GObject      *where_the_object_was)
+{
+    UnmountDialogData *data = (UnmountDialogData *)user_data;
+    if (data && data->sidebar_ref) {
+        NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR(data->sidebar_ref);
+        if (NEMO_IS_PLACES_SIDEBAR(sidebar)) {
+            sidebar->unmount_dialog_active = FALSE;
+        }
+    }
+
+    if (data) {
+        data->cancelled = TRUE;
+        if (data->op == GTK_MOUNT_OPERATION(where_the_object_was)) {
+            data->op = NULL;
+        } else {
+             g_warning("mount_op_finalized_cb: Finalized GtkMountOperation (0x%p) is not the one stored in UnmountDialogData (0x%p). This is unexpected.",
+                       where_the_object_was, data->op);
+              if (data->op != NULL) {
+                 data->op = NULL;
+             }
+        }
+    }
+    unmount_dialog_data_unref(data);
+}
+
+static void
+on_show_processes_wayland_workaround (GtkMountOperation *op,
+                                     const gchar       *message,
+                                     GArray            *processes,
+                                     GArray            *choices,
+                                     gpointer           user_data)
+{
+    NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR(user_data);
+
+    if (sidebar->unmount_dialog_active) {
+        g_signal_stop_emission_by_name(op, "show-processes");
+        return;
+    }
+    sidebar->unmount_dialog_active = TRUE;
+
+    /* Schedule unmount dialog in main loop to avoid Wayland reentrancy */
+    UnmountDialogData *data = g_new0 (UnmountDialogData, 1);
+    data->op = GTK_MOUNT_OPERATION (op);
+    g_object_ref (G_OBJECT (op));
+    data->cancelled = FALSE;
+    data->sidebar_ref = g_object_ref (sidebar);
+    data->parent_window = GTK_WINDOW (sidebar->window);
+    /* Split message into first line and rest */
+    char *newline_pos = strchr(message, '\n');
+    if (newline_pos != NULL) {
+        /* Found a newline - split the message */
+        int first_line_len = newline_pos - message;
+        data->primary_text = g_strndup(message, first_line_len);
+        data->secondary_text = g_strdup(newline_pos);
+    } else {
+        /* No newline found - use whole message as primary text */
+        data->primary_text = g_strdup(message);
+    }
+    /* Process using volume */
+    if (processes && processes->len > 0) {
+        GArray *filtered = g_array_new (FALSE, FALSE, sizeof (GPid));
+        for (guint i = 0; i < processes->len; ++i) {
+            GPid pid = g_array_index (processes, GPid, i);
+            g_array_append_val (filtered, pid);
+        }
+        data->processes = filtered;
+    } else {
+        data->processes = NULL;
+    }
+
+    /* Set a weak reference on the mount operation to know if it gets destroyed */
+    g_object_weak_ref (G_OBJECT (op), mount_op_finalized_cb, unmount_dialog_data_ref(data));
+    g_signal_stop_emission_by_name (op, "show-processes");
+    g_idle_add_full (G_PRIORITY_HIGH_IDLE, idle_unmount_dialog, unmount_dialog_data_ref(data), NULL);
+}
+
+static gboolean
+idle_unmount_dialog (gpointer user_data)
+{
+    UnmountDialogData *data = user_data;
+    gint response = GTK_RESPONSE_NONE;
+
+     /* If data->op is NULL, it means mount_op_finalized_cb was called and nulled it.
+     * If data->cancelled is TRUE, it also means mount_op_finalized_cb was called.
+     */
+    if (data->op == NULL || data->cancelled) {
+        if (data->sidebar_ref) { // Reset flag if sidebar still exists
+            NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR(data->sidebar_ref);
+            if (NEMO_IS_PLACES_SIDEBAR(sidebar)) {
+                sidebar->unmount_dialog_active = FALSE;
+            }
+        }
+        return G_SOURCE_REMOVE;
+    }
+
+    if (data->processes && data->processes->len > 0) {
+        GString *plist = g_string_new ("");
+        g_string_append (plist, "\n");
+        for (guint i = 0; i < data->processes->len; i++) {
+            GPid pid = g_array_index (data->processes, GPid, i);
+            gchar *comm = NULL;
+            gchar procfile[64];
+            g_snprintf (procfile, sizeof(procfile), "/proc/%d/comm", pid);
+            if (!g_file_get_contents (procfile, &comm, NULL, NULL)) {
+                g_free (comm);
+                comm = g_strdup_printf ("%d", pid);
+            } else {
+                g_strchomp (comm);
+            }
+            g_string_append_printf (plist, "%s\n", comm);
+            g_free (comm);
+        }
+        gchar *plist_text = g_string_free (plist, FALSE);
+        gchar *new_secondary = g_strdup_printf ("%s\n%s", data->secondary_text, plist_text);
+        g_free (plist_text);
+        g_free (data->secondary_text);
+        data->secondary_text = new_secondary;
+    }
+
+    GtkWindow *parent = data->parent_window;
+    GtkWidget *dialog = gtk_message_dialog_new (parent,
+                                               GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                               GTK_MESSAGE_WARNING,
+                                               GTK_BUTTONS_NONE,
+                                               "%s", data->primary_text);
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", data->secondary_text);
+    gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+                            _("_Unmount"), GTK_RESPONSE_YES,
+                            _("_Cancel"), GTK_RESPONSE_NO,
+                            NULL);
+    gtk_widget_show_all (dialog);
+    response = gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
+    if (data->sidebar_ref) { // Reset flag now that dialog is done
+        NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR(data->sidebar_ref);
+        if (NEMO_IS_PLACES_SIDEBAR(sidebar)) {
+            sidebar->unmount_dialog_active = FALSE;
+        }
+    }
+
+     /* data->op could have become NULL if mount_op_finalized_cb was called
+     * while gtk_dialog_run() was blocking.
+     */
+    if (data->op == NULL || data->cancelled) {
+        g_warning("Mount operation was cancelled or finalized while dialog was open. Not replying.");
+    } else {
+        /* data->op is still valid here, and data->cancelled is false */
+        GMountOperation *mount_op = G_MOUNT_OPERATION(data->op);
+        if (response == GTK_RESPONSE_YES)
+            g_mount_operation_reply (mount_op, G_MOUNT_OPERATION_HANDLED);
+        else
+            g_mount_operation_reply (mount_op, G_MOUNT_OPERATION_ABORTED);
+    }
+
+    // End wayland code for umount dialog
+    return G_SOURCE_REMOVE;
+}
+
 static GMountOperation *
 get_unmount_operation (NemoPlacesSidebar *sidebar)
 {
@@ -2749,7 +2958,11 @@ get_unmount_operation (NemoPlacesSidebar *sidebar)
                       G_CALLBACK (show_unmount_progress_cb), sidebar);
     g_signal_connect (mount_op, "aborted",
                       G_CALLBACK (show_unmount_progress_aborted_cb), sidebar);
-
+    GdkDisplay *display = gtk_widget_get_display(GTK_WIDGET(sidebar));
+    if (GDK_IS_WAYLAND_DISPLAY (display)) {
+        g_signal_connect (mount_op, "show-processes",
+                          G_CALLBACK (on_show_processes_wayland_workaround), sidebar);
+    }
     return mount_op;
 }
 
@@ -4129,6 +4342,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	sidebar->volume_monitor = g_volume_monitor_get ();
 
     sidebar->update_places_on_idle_id = 0;
+
+    sidebar->unmount_dialog_active = FALSE;
 
     sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
                                                             NEMO_WINDOW_STATE_MY_COMPUTER_EXPANDED);
