@@ -37,6 +37,7 @@ enum {
 
 #define START_ICON "media-playback-start-symbolic"
 #define STOP_ICON "media-playback-stop-symbolic"
+#define PAUSE_ICON "media-playback-pause-symbolic"
 
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL };
 
@@ -97,11 +98,21 @@ cancel_clicked (GtkWidget *button,
 }
 
 static void
-start_clicked (GtkWidget *button,
+start_pause_clicked (GtkWidget *button,
                NemoProgressInfoWidget *self)
 {
     NemoJobQueue *queue = nemo_job_queue_get ();
-    nemo_job_queue_start_job_by_info (queue, self->priv->info);
+
+    if (nemo_progress_info_get_is_paused (self->priv->info)) {
+        nemo_progress_info_resume (self->priv->info);
+        gtk_image_set_from_icon_name (GTK_IMAGE (gtk_button_get_image (GTK_BUTTON (button))), PAUSE_ICON, GTK_ICON_SIZE_BUTTON);
+    } else
+    if (nemo_progress_info_get_is_started (self->priv->info)) {
+        nemo_progress_info_pause (self->priv->info);
+        gtk_image_set_from_icon_name (GTK_IMAGE (gtk_button_get_image (GTK_BUTTON (button))), START_ICON, GTK_ICON_SIZE_BUTTON);
+    } else {
+        nemo_job_queue_start_job_by_info (queue, self->priv->info);
+    }
 }
 
 static void
@@ -162,7 +173,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
     button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
     gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
-    g_signal_connect (button, "clicked", G_CALLBACK (start_clicked), self);
+    g_signal_connect (button, "clicked", G_CALLBACK (start_pause_clicked), self);
 
     button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
@@ -208,10 +219,10 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_widget_set_valign (bb, GTK_ALIGN_CENTER);
     gtk_box_pack_end (GTK_BOX (hbox), bb, FALSE, FALSE, 0);
 
-    button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
+    button = gtk_button_new_from_icon_name (PAUSE_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
-    gtk_widget_set_sensitive (button, FALSE);
     gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
+    g_signal_connect (button, "clicked", G_CALLBACK (start_pause_clicked), self);
 
 	button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);

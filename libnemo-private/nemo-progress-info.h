@@ -84,6 +84,7 @@ void          nemo_progress_info_set_progress    (NemoProgressInfo *info,
 						      double                total);
 void          nemo_progress_info_pulse_progress  (NemoProgressInfo *info);
 
+gdouble       nemo_progress_info_get_elapsed_time (NemoProgressInfo *info);
 
 
 #endif /* NEMO_PROGRESS_INFO_H */

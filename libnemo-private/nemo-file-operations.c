@@ -88,7 +88,6 @@ typedef enum {
 
 typedef struct {
 	GIOSchedulerJob *io_job;
-	GTimer *time;
 	GtkWindow *parent_window;
     int monitor_num;
 	int inhibit_cookie;
@@ -1149,7 +1148,6 @@ init_common (gsize job_size,
 	}
 	common->progress = nemo_progress_info_new ();
 	common->cancellable = nemo_progress_info_get_cancellable (common->progress);
-	common->time = g_timer_new ();
 	common->inhibit_cookie = -1;
     common->monitor_num = 0;
 	if (parent_window) {
@@ -1169,7 +1167,6 @@ finalize_common (CommonJob *common)
 	}
 
 	common->inhibit_cookie = -1;
-	g_timer_destroy (common->time);
 
 	if (common->parent_window) {
 		g_object_remove_weak_pointer (G_OBJECT (common->parent_window),
@@ -1355,7 +1352,7 @@ run_simple_dialog_va (CommonJob *job,
 	const char *button_title;
 	GPtrArray *ptr_array;
 
-	g_timer_stop (job->time);
+    nemo_progress_info_pause (job->progress);
 
 	data = g_new0 (RunSimpleDialogData, 1);
 	data->parent_window = &job->parent_window;
@@ -1373,18 +1370,16 @@ run_simple_dialog_va (CommonJob *job,
 	g_ptr_array_add (ptr_array, NULL);
 	data->button_titles = (const char **)g_ptr_array_free (ptr_array, FALSE);
 
-	nemo_progress_info_pause (job->progress);
 	g_io_scheduler_job_send_to_mainloop (job->io_job,
 					     do_run_simple_dialog,
 					     data,
 					     NULL);
-	nemo_progress_info_resume (job->progress);
 	res = data->result;
 
 	g_free (data->button_titles);
 	g_free (data);
 
-	g_timer_continue (job->time);
+    nemo_progress_info_resume (job->progress);
 
 	g_free (primary_text);
 	g_free (secondary_text);
@@ -1709,23 +1704,30 @@ report_delete_progress (CommonJob *job,
 	nemo_progress_info_take_status (job->progress,
 					    f (_("Deleting files")));
 
-	elapsed = g_timer_elapsed (job->time, NULL);
+	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
 	if (elapsed < SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE) {
-
-		nemo_progress_info_set_details (job->progress, files_left_s);
+        if (nemo_progress_info_get_is_paused (job->progress)) {
+            nemo_progress_info_set_details (job->progress, _("Paused"));
+        } else {
+            nemo_progress_info_set_details (job->progress, files_left_s);
+        }
 	} else {
-		char *details, *time_left_s;
-		transfer_rate = transfer_info->num_files / elapsed;
-		remaining_time = files_left / transfer_rate;
+        char *details, *time_left_s;
 
-		/* To translators: %T will expand to a time like "2 minutes".
- 		 * The singular/plural form will be used depending on the remaining time (i.e. the %T argument).
- 		 */
-		time_left_s = f (ngettext ("%T left",
-					   "%T left",
-					   seconds_count_format_time_units (remaining_time)),
-				 remaining_time);
+        if (nemo_progress_info_get_is_paused (job->progress)) {
+            time_left_s = g_strdup (_("Paused"));
+        } else {
+            transfer_rate = transfer_info->num_files / elapsed;
+            remaining_time = files_left / transfer_rate;
 
+            /* To translators: %T will expand to a time like "2 minutes".
+                 * The singular/plural form will be used depending on the remaining time (i.e. the %T argument).
+                 */
+            time_left_s = f (ngettext ("%T left",
+                           "%T left",
+                           seconds_count_format_time_units (remaining_time)),
+                     remaining_time);
+        }
 		details = g_strconcat (files_left_s, "\xE2\x80\x94", time_left_s, NULL);
 		nemo_progress_info_take_details (job->progress, details);
 
@@ -2004,7 +2006,7 @@ delete_files (CommonJob *job, GList *files, guint *files_skipped)
 		return;
 	}
 
-	g_timer_start (job->time);
+	nemo_progress_info_start (job->progress);
 
 	memset (&transfer_info, 0, sizeof (transfer_info));
 	report_delete_progress (job, &source_info, &transfer_info);
@@ -2762,7 +2764,7 @@ static void
 report_count_progress (CommonJob *job,
 		       SourceInfo *source_info)
 {
-	char *s;
+	char *s, *details;
 
 	switch (source_info->op) {
 
@@ -2799,7 +2801,14 @@ report_count_progress (CommonJob *job,
 		break;
 	}
 
-	nemo_progress_info_take_details (job->progress, s);
+    if (nemo_progress_info_get_is_paused (job->progress)) {
+        details = g_strconcat (s, "\xE2\x80\x94", _("Paused"), NULL);
+        g_free (s);
+    } else {
+        details = s;
+    }
+
+	nemo_progress_info_take_details (job->progress, details);
 	nemo_progress_info_pulse_progress (job->progress);
 }
 
@@ -3329,7 +3338,7 @@ report_copy_progress (CopyMoveJob *copy_job,
 
 	total_size = MAX (source_info->num_bytes, transfer_info->num_bytes);
 
-	elapsed = g_timer_elapsed (job->time, NULL);
+	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
 	transfer_rate = 0;
 	if (elapsed > 0) {
 		transfer_rate = transfer_info->num_bytes / elapsed;
@@ -3338,26 +3347,36 @@ report_copy_progress (CopyMoveJob *copy_job,
 	if (elapsed < SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE &&
 	    transfer_rate > 0) {
 		char *s;
-		/* To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB" */
-		s = f (_("%S of %S"), transfer_info->num_bytes, total_size);
-		nemo_progress_info_take_details (job->progress, s);
-	} else {
-		char *s;
-		remaining_time = (total_size - transfer_info->num_bytes) / transfer_rate;
 
-		/* To translators: %S will expand to a size like "2 bytes" or "3 MB", %T to a time duration like
-		 * "2 minutes". So the whole thing will be something like "2 kb of 4 MB -- 2 hours left (4kb/sec)"
-		 *
-		 * The singular/plural form will be used depending on the remaining time (i.e. the %T argument).
-		 */
-		s = f (ngettext ("%S of %S \xE2\x80\x94 %T left (%S/sec)",
-				 "%S of %S \xE2\x80\x94 %T left (%S/sec)",
-				 seconds_count_format_time_units (remaining_time)),
-		       transfer_info->num_bytes, total_size,
-		       remaining_time,
-		       (goffset)transfer_rate);
-		nemo_progress_info_take_details (job->progress, s);
-	}
+        if (nemo_progress_info_get_is_paused (job->progress)) {
+            s = g_strdup (_("Paused"));
+        } else {
+            /* To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB" */
+            s = f (_("%S of %S"), transfer_info->num_bytes, total_size);
+        }
+
+        nemo_progress_info_take_details (job->progress, s);
+	} else {
+        if (nemo_progress_info_get_is_paused (job->progress)) {
+            nemo_progress_info_take_details (job->progress, g_strdup (_("Paused")));
+        } else {
+            char *s;
+            remaining_time = (total_size - transfer_info->num_bytes) / transfer_rate;
+
+            /* To translators: %S will expand to a size like "2 bytes" or "3 MB", %T to a time duration like
+             * "2 minutes". So the whole thing will be something like "2 kb of 4 MB -- 2 hours left (4kb/sec)"
+             *
+             * The singular/plural form will be used depending on the remaining time (i.e. the %T argument).
+             */
+            s = f (ngettext ("%S of %S \xE2\x80\x94 %T left (%S/sec)",
+                     "%S of %S \xE2\x80\x94 %T left (%S/sec)",
+                     seconds_count_format_time_units (remaining_time)),
+                   transfer_info->num_bytes, total_size,
+                   remaining_time,
+                   (goffset)transfer_rate);
+            nemo_progress_info_take_details (job->progress, s);
+        }
+    }
 
 	nemo_progress_info_set_progress (job->progress, transfer_info->num_bytes, total_size);
 }
@@ -4326,7 +4345,7 @@ run_conflict_dialog (CommonJob *job,
 	ConflictDialogData *data;
 	ConflictResponseData *resp_data;
 
-	g_timer_stop (job->time);
+    nemo_progress_info_pause (job->progress);
 
 	data = g_new0 (ConflictDialogData, 1);
 	data->parent = job->parent_window;
@@ -4338,16 +4357,14 @@ run_conflict_dialog (CommonJob *job,
 	resp_data->new_name = NULL;
 	data->resp_data = resp_data;
 
-	nemo_progress_info_pause (job->progress);
 	g_io_scheduler_job_send_to_mainloop (job->io_job,
 					     do_run_conflict_dialog,
 					     data,
 					     NULL);
-	nemo_progress_info_resume (job->progress);
 
 	g_free (data);
 
-	g_timer_continue (job->time);
+    nemo_progress_info_resume (job->progress);
 
 	return resp_data;
 }
@@ -4978,7 +4995,7 @@ copy_job (GIOSchedulerJob *io_job,
 		goto aborted;
 	}
 
-	g_timer_start (job->common.time);
+	nemo_progress_info_start (common->progress);
 
 	memset (&transfer_info, 0, sizeof (transfer_info));
 	copy_files (job,
@@ -5086,10 +5103,14 @@ report_move_progress (CopyMoveJob *move_job, int total, int left)
 					    f (_("Preparing to Move to \"%B\""),
 					       move_job->destination));
 
-	nemo_progress_info_take_details (job->progress,
-					     f (ngettext ("Preparing to move %'d file",
-							  "Preparing to move %'d files",
-							  left), left));
+    if (nemo_progress_info_get_is_paused (job->progress)) {
+        nemo_progress_info_set_details (job->progress, _("Paused"));
+    } else {
+    	nemo_progress_info_take_details (job->progress,
+    					     f (ngettext ("Preparing to move %'d file",
+    							  "Preparing to move %'d files",
+    							  left), left));
+    }
 
 	nemo_progress_info_pulse_progress (job->progress);
 }

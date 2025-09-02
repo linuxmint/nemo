@@ -48,7 +48,10 @@ struct _NemoProgressInfo
 	GObject parent_instance;
 	
 	GCancellable *cancellable;
-	
+    GCond *cond;
+    GMutex info_lock;
+    GTimer *time;
+
 	char *status;
 	char *details;
     char *initial_details;
@@ -74,8 +77,6 @@ struct _NemoProgressInfoClass
 	GObjectClass parent_class;
 };
 
-G_LOCK_DEFINE_STATIC(progress_info);
-
 G_DEFINE_TYPE (NemoProgressInfo, nemo_progress_info, G_TYPE_OBJECT)
 
 static void
@@ -89,6 +90,7 @@ nemo_progress_info_finalize (GObject *object)
 	g_free (info->details);
     g_free (info->initial_details);
 	g_object_unref (info->cancellable);
+    g_timer_destroy (info->time);
 	
 	if (G_OBJECT_CLASS (nemo_progress_info_parent_class)->finalize) {
 		(*G_OBJECT_CLASS (nemo_progress_info_parent_class)->finalize) (object);
@@ -102,7 +104,7 @@ nemo_progress_info_dispose (GObject *object)
 	
 	info = NEMO_PROGRESS_INFO (object);
 
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 
 	/* Destroy source in dispose, because the callback
 	   could come here before the destroy, which should
@@ -112,7 +114,7 @@ nemo_progress_info_dispose (GObject *object)
 		g_source_unref (info->idle_source);
 		info->idle_source = NULL;
 	}
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 static void
@@ -176,6 +178,9 @@ nemo_progress_info_init (NemoProgressInfo *info)
 	NemoProgressInfoManager *manager;
 
 	info->cancellable = g_cancellable_new ();
+    info->cond = g_cond_new ();
+    info->time = g_timer_new ();
+    g_mutex_init (&info->info_lock);
 
 	manager = nemo_progress_info_manager_new ();
 	nemo_progress_info_manager_add_new_info (manager, info);
@@ -197,7 +202,7 @@ nemo_progress_info_get_status (NemoProgressInfo *info)
 {
 	char *res;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (info->status) {
 		res = g_strdup (info->status);
@@ -205,7 +210,7 @@ nemo_progress_info_get_status (NemoProgressInfo *info)
 		res = g_strdup (_("Preparing"));
 	}
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 	
 	return res;
 }
@@ -215,7 +220,7 @@ nemo_progress_info_get_details (NemoProgressInfo *info)
 {
 	char *res;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (info->details) {
 		res = g_strdup (info->details);
@@ -223,7 +228,7 @@ nemo_progress_info_get_details (NemoProgressInfo *info)
 		res = g_strdup (_("Preparing"));
 	}
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 
 	return res;
 }
@@ -233,7 +238,7 @@ nemo_progress_info_get_initial_details (NemoProgressInfo *info)
 {
     char *res;
     
-    G_LOCK (progress_info);
+    g_mutex_lock (&info->info_lock);
     
     if (info->initial_details) {
         res = g_strdup (info->initial_details);
@@ -241,7 +246,7 @@ nemo_progress_info_get_initial_details (NemoProgressInfo *info)
         res = g_strdup (_("Preparing"));
     }
     
-    G_UNLOCK (progress_info);
+    g_mutex_unlock (&info->info_lock);
 
     return res;
 }
@@ -251,7 +256,7 @@ nemo_progress_info_get_progress (NemoProgressInfo *info)
 {
 	double res;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 
 	if (info->activity_mode) {
 		res = -1.0;
@@ -259,7 +264,7 @@ nemo_progress_info_get_progress (NemoProgressInfo *info)
 		res = info->progress;
 	}
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 	
 	return res;
 }
@@ -267,11 +272,14 @@ nemo_progress_info_get_progress (NemoProgressInfo *info)
 void
 nemo_progress_info_cancel (NemoProgressInfo *info)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	g_cancellable_cancel (info->cancellable);
-	
-	G_UNLOCK (progress_info);
+
+    info->paused = FALSE;
+    g_cond_signal (info->cond);
+
+	g_mutex_unlock (&info->info_lock);
 }
 
 GCancellable *
@@ -279,11 +287,11 @@ nemo_progress_info_get_cancellable (NemoProgressInfo *info)
 {
 	GCancellable *c;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	c = g_object_ref (info->cancellable);
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 	
 	return c;
 }
@@ -293,11 +301,11 @@ nemo_progress_info_get_is_started (NemoProgressInfo *info)
 {
 	gboolean res;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	res = info->started;
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 	
 	return res;
 }
@@ -307,11 +315,11 @@ nemo_progress_info_get_is_finished (NemoProgressInfo *info)
 {
 	gboolean res;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	res = info->finished;
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 	
 	return res;
 }
@@ -321,11 +329,11 @@ nemo_progress_info_get_is_paused (NemoProgressInfo *info)
 {
 	gboolean res;
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	res = info->paused;
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 	
 	return res;
 }
@@ -343,7 +351,7 @@ idle_callback (gpointer data)
 
 	source = g_main_current_source ();
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 
 	/* Protect agains races where the source has
 	   been destroyed on another thread while it
@@ -351,7 +359,7 @@ idle_callback (gpointer data)
 	   Similar to what gdk_threads_add_idle does.
 	*/
 	if (g_source_is_destroyed (source)) {
-		G_UNLOCK (progress_info);
+		g_mutex_unlock (&info->info_lock);
 		return FALSE;
 	}
 
@@ -378,7 +386,7 @@ idle_callback (gpointer data)
 	info->progress_at_idle = FALSE;
     info->queue_at_idle = FALSE;
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 
     if (queue_at_idle) {
         g_signal_emit (info,
@@ -441,7 +449,7 @@ queue_idle (NemoProgressInfo *info, gboolean now)
 void
 nemo_progress_info_queue (NemoProgressInfo *info)
 {
-    G_LOCK (progress_info);
+    g_mutex_lock (&info->info_lock);
     
     if (!info->queued) {
         info->queued = TRUE;
@@ -450,37 +458,43 @@ nemo_progress_info_queue (NemoProgressInfo *info)
         queue_idle (info, TRUE);
     }
     
-    G_UNLOCK (progress_info);
+    g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_pause (NemoProgressInfo *info)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 
 	if (!info->paused) {
 		info->paused = TRUE;
+        g_timer_stop (info->time);
 	}
 
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_resume (NemoProgressInfo *info)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 
 	if (info->paused) {
 		info->paused = FALSE;
+        if (!g_timer_is_active (info->time)) {
+            g_timer_continue (info->time);
+        }
 	}
 
-	G_UNLOCK (progress_info);
+    g_cond_signal (info->cond);
+
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_start (NemoProgressInfo *info)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (!info->started) {
 		info->started = TRUE;
@@ -488,14 +502,16 @@ nemo_progress_info_start (NemoProgressInfo *info)
 		info->start_at_idle = TRUE;
 		queue_idle (info, TRUE);
 	}
-	
-	G_UNLOCK (progress_info);
+
+    g_timer_start (info->time);
+
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_finish (NemoProgressInfo *info)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (!info->finished) {
 		info->finished = TRUE;
@@ -504,14 +520,14 @@ nemo_progress_info_finish (NemoProgressInfo *info)
 		queue_idle (info, TRUE);
 	}
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_take_status (NemoProgressInfo *info,
 				    char *status)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (g_strcmp0 (info->status, status) != 0) {
 		g_free (info->status);
@@ -523,14 +539,14 @@ nemo_progress_info_take_status (NemoProgressInfo *info,
 		g_free (status);
 	}
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_set_status (NemoProgressInfo *info,
 				   const char *status)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (g_strcmp0 (info->status, status) != 0) {
 		g_free (info->status);
@@ -540,7 +556,7 @@ nemo_progress_info_set_status (NemoProgressInfo *info,
 		queue_idle (info, FALSE);
 	}
 	
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 
@@ -548,7 +564,7 @@ void
 nemo_progress_info_take_details (NemoProgressInfo *info,
 				     char           *details)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (g_strcmp0 (info->details, details) != 0) {
 		g_free (info->details);
@@ -560,14 +576,14 @@ nemo_progress_info_take_details (NemoProgressInfo *info,
 		g_free (details);
 	}
   
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_set_details (NemoProgressInfo *info,
 				    const char           *details)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (g_strcmp0 (info->details, details) != 0) {
 		g_free (info->details);
@@ -577,14 +593,14 @@ nemo_progress_info_set_details (NemoProgressInfo *info,
 		queue_idle (info, FALSE);
 	}
   
-	G_UNLOCK (progress_info);
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_take_initial_details (NemoProgressInfo *info,
                                                      char *initial_details)
 {
-    G_LOCK (progress_info);
+    g_mutex_lock (&info->info_lock);
     
     if (g_strcmp0 (info->initial_details, initial_details) != 0) {
         g_free (info->initial_details);
@@ -596,20 +612,25 @@ nemo_progress_info_take_initial_details (NemoProgressInfo *info,
         g_free (initial_details);
     }
   
-    G_UNLOCK (progress_info);
+    g_mutex_unlock (&info->info_lock);
 }
 
 void
 nemo_progress_info_pulse_progress (NemoProgressInfo *info)
 {
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 
 	info->activity_mode = TRUE;
 	info->progress = 0.0;
 	info->progress_at_idle = TRUE;
 	queue_idle (info, FALSE);
 	
-	G_UNLOCK (progress_info);
+
+    while (info->paused) {
+        g_cond_wait (info->cond, &info->info_lock);
+    }
+
+	g_mutex_unlock (&info->info_lock);
 }
 
 void
@@ -633,7 +654,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 		}
 	}
 	
-	G_LOCK (progress_info);
+	g_mutex_lock (&info->info_lock);
 	
 	if (info->activity_mode || /* emit on switch from activity mode */
 	    fabs (current_percent - info->progress) > 0
@@ -643,6 +664,23 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 		info->progress_at_idle = TRUE;
 		queue_idle (info, FALSE);
 	}
-	
-	G_UNLOCK (progress_info);
+
+    while (info->paused) {
+        g_cond_wait (info->cond, &info->info_lock);
+    }
+
+	g_mutex_unlock (&info->info_lock);
+
+}
+
+gdouble
+nemo_progress_info_get_elapsed_time (NemoProgressInfo *info)
+{
+    gdouble elapsed;
+
+    g_mutex_lock (&info->info_lock);
+    elapsed = g_timer_elapsed (info->time, NULL);
+    g_mutex_unlock (&info->info_lock);
+
+    return elapsed;
 }
