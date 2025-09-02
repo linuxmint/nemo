@@ -1045,7 +1045,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                   <object class="GtkLabel" id="label10">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes">&lt;b&gt;Behavior&lt;/b&gt;</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Navigation&lt;/b&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="xalign">0</property>
                                   </object>
@@ -1089,7 +1089,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="use-underline">True</property>
-                                            <property name="xalign">0</property>
+                                            <property name="xalign">0.5</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">single_click_radiobutton</property>
                                           </object>
@@ -1101,8 +1101,8 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="quick_renames_with_pause_in_between">
-                                            <property name="label" translatable="yes">Click on a file's name twice to rename it</property>
+                                          <object class="GtkCheckButton" id="click_double_parent_folder_checkbutton">
+                                            <property name="label" translatable="yes">Double-click on a blank area to go to the parent folder</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -1131,91 +1131,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="padding">3</property>
-                                            <property name="position">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="start_with_dual_pane_checkbutton">
-                                            <property name="label" translatable="yes">Always start in dual-pane view</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="use-underline">True</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw-indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="padding">3</property>
                                             <property name="position">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="ignore_view_metadata_checkbutton">
-                                            <property name="label" translatable="yes">Ignore per-folder view preferences</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="use-underline">True</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw-indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="padding">3</property>
-                                            <property name="position">5</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="skip_file_op_queue_checkbutton">
-                                            <property name="label" translatable="yes">Disable file operation queueing</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="use-underline">True</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw-indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="padding">3</property>
-                                            <property name="position">6</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="click_double_parent_folder_checkbutton">
-                                            <property name="label" translatable="yes">Double-click on a blank area to go to the parent folder</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="use-underline">True</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw-indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="padding">3</property>
-                                            <property name="position">7</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="expand_row_on_dnd_dwell_checkbutton">
-                                            <property name="label" translatable="yes">Automatically expand rows during drag-and-drop</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="use-underline">True</property>
-                                            <property name="xalign">0</property>
-                                            <property name="draw-indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">8</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1232,6 +1148,135 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="vbox20">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="border-width">6</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel" id="label2">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Behavior&lt;/b&gt;</property>
+                                    <property name="use-markup">True</property>
+                                    <property name="xalign">0</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment19">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="left-padding">40</property>
+                                    <child>
+                                      <object class="GtkBox" id="vbox39">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">6</property>
+                                        <child>
+                                          <object class="GtkCheckButton" id="quick_renames_with_pause_in_between">
+                                            <property name="label" translatable="yes">Click on a file's name twice to rename it</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="ignore_view_metadata_checkbutton">
+                                            <property name="label" translatable="yes">Ignore per-folder view preferences</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="skip_file_op_queue_checkbutton">
+                                            <property name="label" translatable="yes">Disable file operation queueing</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="start_with_dual_pane_checkbutton">
+                                            <property name="label" translatable="yes">Always start in dual-pane view</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="padding">3</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="expand_row_on_dnd_dwell_checkbutton">
+                                            <property name="label" translatable="yes">Automatically expand rows during drag-and-drop</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
@@ -1330,7 +1375,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                             <child>
@@ -1441,7 +1486,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">2</property>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                             <child>
@@ -1569,7 +1614,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">3</property>
+                                <property name="position">4</property>
                               </packing>
                             </child>
                             <child>
@@ -1656,7 +1701,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">4</property>
+                                <property name="position">5</property>
                               </packing>
                             </child>
                           </object>
