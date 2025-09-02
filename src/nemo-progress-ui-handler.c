@@ -310,6 +310,7 @@ progress_info_changed_cb (NemoProgressInfo *info,
 	if (g_list_length(self->priv->infos) > 0) {
         NemoProgressInfo *first_info = (NemoProgressInfo *) g_list_first(self->priv->infos)->data;
         GList *l;
+        g_autofree gchar *status = nemo_progress_info_get_status (first_info);
         double progress = 0.0;
         int i = 0;
         for (l = self->priv->infos; l != NULL; l = l->next) {
@@ -317,7 +318,7 @@ progress_info_changed_cb (NemoProgressInfo *info,
         }
         if (progress > 0) {
             int iprogress = progress * 100;
-            gchar *str = g_strdup_printf (_("%d%% %s"), iprogress, nemo_progress_info_get_status(first_info));
+            gchar *str = g_strdup_printf (_("%d%% %s"), iprogress, status);
             gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), str);
             xapp_gtk_window_set_progress (XAPP_GTK_WINDOW (self->priv->progress_window), iprogress);
             g_free (str);
@@ -327,7 +328,7 @@ progress_info_changed_cb (NemoProgressInfo *info,
             }
         }
         else {
-            gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_status(first_info)); 
+            gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), status);
             xapp_gtk_window_set_progress (XAPP_GTK_WINDOW (self->priv->progress_window), 0);
         }
     } 
@@ -361,7 +362,9 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 		/* this is the only active operation, present the window */
 		progress_ui_handler_add_to_window (self, info);
         gtk_window_present (GTK_WINDOW (self->priv->progress_window));
-		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), nemo_progress_info_get_details(info));
+        gchar *details = nemo_progress_info_get_details (info);
+		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), details);
+        g_free (details);
         xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (self->priv->progress_window), "system-run");
 	} else {
 		progress_ui_handler_add_to_window (self, info);

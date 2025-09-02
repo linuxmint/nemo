@@ -4436,8 +4436,10 @@ copy_move_file (CopyMoveJob *copy_job,
     if (src != NULL) {
         GFile *parent = g_file_get_parent (src);
 
-        if (parent != NULL && g_file_equal (copy_job->desktop_location, parent)) {
-            source_is_desktop = TRUE;
+        if (parent != NULL) {
+            if (g_file_equal (copy_job->desktop_location, parent)) {
+                source_is_desktop = TRUE;
+            }
             g_object_unref (parent);
         }
     }
