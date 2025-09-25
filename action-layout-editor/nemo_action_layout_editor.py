@@ -182,7 +182,6 @@ class NemoActionsOrganizer(Gtk.Box):
         self.clear_icon_button = self.builder.get_object("clear_icon_button")
         self.icon_selector_menu_button = self.builder.get_object("icon_selector_menu_button")
         self.icon_selector_image = self.builder.get_object("icon_selector_image")
-        self.action_enabled_switch = self.builder.get_object("action_enabled_switch")
         self.selected_item_widgets_group = XApp.VisibilityGroup.new(True, True, [
             self.icon_selector_menu_button,
             self.name_entry
@@ -244,11 +243,16 @@ class NemoActionsOrganizer(Gtk.Box):
             visible=True
         )
 
-        # Icon and label
+        # Checkbox, Icon and label
         column = Gtk.TreeViewColumn()
         self.treeview.append_column(column)
         column.set_expand(True)
+        column.set_spacing(2)
 
+        cell = Gtk.CellRendererToggle(activatable=True)
+        cell.connect("toggled", self.on_action_row_toggled)
+        column.pack_start(cell, False)
+        column.set_cell_data_func(cell, self.toggle_render_func)
         cell = Gtk.CellRendererPixbuf()
         column.pack_start(cell, False)
         column.set_cell_data_func(cell, self.menu_icon_render_func)
@@ -286,7 +290,7 @@ class NemoActionsOrganizer(Gtk.Box):
         self.name_entry.connect("changed", self.on_name_entry_changed)
         self.name_entry.connect("icon-press", self.on_name_entry_icon_clicked)
         self.remove_submenu_button.connect("clicked", self.on_remove_submenu_clicked)
-        self.action_enabled_switch.connect("notify::active", self.on_action_enabled_switch_notify)
+
         self.treeview.connect("row-activated", self.on_row_activated)
 
         # DND
@@ -686,8 +690,6 @@ class NemoActionsOrganizer(Gtk.Box):
             orig_icon = row.get_icon_string(original=True)
             self.original_icon_menu_item.set_sensitive(orig_icon is not None and orig_icon != row.get_icon_string())
             self.selected_item_widgets_group.set_sensitive(row.enabled and row_type != ROW_TYPE_SEPARATOR)
-            self.action_enabled_switch.set_active(row.enabled)
-            self.action_enabled_switch.set_sensitive(row_type == ROW_TYPE_ACTION)
             self.remove_submenu_button.set_sensitive(row_type in (ROW_TYPE_SUBMENU, ROW_TYPE_SEPARATOR))
 
             if row_type == ROW_TYPE_ACTION and row.get_custom_label() is not None:
@@ -699,12 +701,25 @@ class NemoActionsOrganizer(Gtk.Box):
 
         self.updating_row_edit_fields = False
 
-    def on_row_activated(self, path, column, data=None):
-        row_type = self.get_selected_row_field(ROW_TYPE)
-        if row_type != ROW_TYPE_ACTION:
+    def _toggle_row_enabled(self, row):
+        row.enabled = not row.enabled
+        self.selected_row_changed(needs_saved=False)
+        self.save_disabled_list()
+
+    def on_row_activated(self, treeview, path, column, data=None):
+        if self.updating_row_edit_fields:
             return
 
-        self.action_enabled_switch.set_active(not self.action_enabled_switch.get_active())
+        row = self.get_selected_row_field(ROW_OBJ)
+        if row is not None:
+            self._toggle_row_enabled(row)
+
+    def on_action_row_toggled(self, renderer, path, data=None):
+        iter = self.model.get_iter(path)
+        row = self.model.get_value(iter, ROW_OBJ)
+
+        if row is not None:
+            self._toggle_row_enabled(row)
 
     def set_icon_button(self, row):
         for image, use_orig in ([self.icon_selector_image, False], [self.original_icon_menu_image, True]):
@@ -890,18 +905,6 @@ class NemoActionsOrganizer(Gtk.Box):
             row.set_custom_label(None)
             self.selected_row_changed()
 
-    def on_action_enabled_switch_notify(self, switch, pspec):
-        if self.updating_row_edit_fields:
-            return
-
-        row = self.get_selected_row_field(ROW_OBJ)
-        if row is not None:
-            row.enabled = switch.get_active()
-            # The layout file does not track active/inactive actions,
-            # so this shouldn't prompt a layout save.
-            self.selected_row_changed(needs_saved=False)
-            self.save_disabled_list()
-
     def on_accel_edited(self, accel, path, key, mods, kc, data=None):
         if not self.validate_accelerator(key, mods):
             return
@@ -988,6 +991,15 @@ class NemoActionsOrganizer(Gtk.Box):
         return not conflict
 
     # Cell render functions
+    def toggle_render_func(self, column, cell, model, iter, data):
+        row_type = model.get_value(iter, ROW_TYPE)
+        row = model.get_value(iter, ROW_OBJ)
+
+        if row_type in (ROW_TYPE_SUBMENU, ROW_TYPE_SEPARATOR):
+            cell.set_property("visible", False)
+        else:
+            cell.set_property("visible", True)
+            cell.set_property("active", row.enabled)
 
     def menu_icon_render_func(self, column, cell, model, iter, data):
         row = model.get_value(iter, ROW_OBJ)
@@ -1009,6 +1021,7 @@ class NemoActionsOrganizer(Gtk.Box):
         else:
             cell.set_property("markup", row.get_label())
             cell.set_property("weight", Pango.Weight.NORMAL if row.enabled else Pango.Weight.ULTRALIGHT)
+            cell.set_property("style", Pango.Style.NORMAL if row.enabled else Pango.Style.ITALIC)
 
     def accel_render_func(self, column, cell, model, iter, data):
         row_type = model.get_value(iter, ROW_TYPE)
