@@ -2675,6 +2675,11 @@ update_info_internal (NemoFile *file,
 		file->details->trash_orig_path = g_strdup (trash_orig_path);
 	}
 
+    if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_PREVIEW_ICON))
+    {
+        file->details->has_preview_icon = TRUE;
+    }
+
 	changed |=
 		nemo_file_update_metadata_from_info (file, info);
 
@@ -4388,7 +4393,7 @@ nemo_file_should_show_thumbnail (NemoFile *file)
     }
 
 	use_preview = nemo_file_get_filesystem_use_preview (file);
-    if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER) {
+    if (use_preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER && !file->details->has_preview_icon) {
         /* file system says to never thumbnail anything */
 		return FALSE;
 	}

@@ -33,7 +33,7 @@
 #include <eel/eel-string.h>
 
 #define NEMO_FILE_DEFAULT_ATTRIBUTES				\
-	"standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*"
+	"standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*,preview::icon"
 
 /* These are in the typical sort order. Known things come first, then
  * things where we can't know, finally things where we don't yet know.
@@ -180,6 +180,7 @@ struct NemoFileDetails
 	eel_boolean_bit got_custom_display_name       : 1;
 	eel_boolean_bit got_custom_activation_uri     : 1;
 
+    eel_boolean_bit has_preview_icon              : 1;
 	eel_boolean_bit thumbnail_is_up_to_date       : 1;
 	eel_boolean_bit thumbnail_wants_original      : 1;
 	eel_boolean_bit thumbnail_tried_original      : 1;
