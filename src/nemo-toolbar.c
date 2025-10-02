@@ -358,54 +358,8 @@ nemo_toolbar_constructed (GObject *obj)
     gtk_widget_show_all (GTK_WIDGET (tool_box));
     gtk_widget_set_margin_left (GTK_WIDGET (tool_box), 6);
 
-    /* nemo patch */
     g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_PREVIOUS_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_NEXT_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_UP_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_EDIT_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_RELOAD_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_HOME_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_COMPUTER_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_SEARCH_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_NEW_FOLDER_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_OPEN_IN_TERMINAL_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_ICON_VIEW_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_LIST_VIEW_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_COMPACT_VIEW_ICON_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_IMAGE_FILE_THUMBNAILS,
-                  G_CALLBACK (toolbar_update_appearance), self);
-    g_signal_connect_swapped (nemo_preferences,
-                  "changed::" NEMO_PREFERENCES_SHOW_LOCATION_ENTRY,
+                  "changed",
                   G_CALLBACK (toolbar_update_appearance), self);
 
 	toolbar_update_appearance (self);
