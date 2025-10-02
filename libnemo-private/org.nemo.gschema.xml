@@ -176,6 +176,11 @@
       <summary>Show Thumbnails button in nemo toolbar</summary>
       <description>If set to true, then Nemo browser windows will show the button.</description>
     </key>
+    <key type="b" name="show-toggle-extra-pane-toolbar">
+      <default>false</default>
+      <summary>Show Extra Pane button in nemo toolbar</summary>
+      <description>If set to true, then Nemo browser windows will show the button.</description>
+    </key>
     <key type="b" name="show-root-warning">
       <default>true</default>
       <summary>Show warning when opening as root</summary>

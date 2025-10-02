@@ -478,7 +478,7 @@ nemo_window_hide_sidebar (NemoWindow *window)
 	}
 
 	nemo_window_tear_down_sidebar (window);
-	nemo_window_update_show_hide_menu_items (window);
+	nemo_window_update_show_hide_ui_elements (window);
 
     nemo_window_set_show_sidebar (window, FALSE);
 }
@@ -497,7 +497,7 @@ nemo_window_show_sidebar (NemoWindow *window)
 	}
 
 	nemo_window_set_up_sidebar (window);
-	nemo_window_update_show_hide_menu_items (window);
+	nemo_window_update_show_hide_ui_elements (window);
 
     nemo_window_set_show_sidebar (window, TRUE);
 }
@@ -2247,7 +2247,7 @@ nemo_window_split_view_off (NemoWindow *window)
 	nemo_navigation_state_set_master (window->details->nav_state,
 					      active_pane->action_group);
 
-	nemo_window_update_show_hide_menu_items (window);
+	nemo_window_update_show_hide_ui_elements (window);
 }
 
 gboolean

@@ -173,7 +173,7 @@ void               nemo_window_initialize_actions                    (NemoWindow
 void               nemo_window_initialize_menus                      (NemoWindow    *window);
 void               nemo_window_finalize_menus                        (NemoWindow    *window);
 
-void               nemo_window_update_show_hide_menu_items           (NemoWindow     *window);
+void               nemo_window_update_show_hide_ui_elements           (NemoWindow     *window);
 
 /* window toolbar */
 void               nemo_window_close_pane                            (NemoWindow    *window,

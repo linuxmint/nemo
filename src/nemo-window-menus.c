@@ -658,7 +658,7 @@ action_split_view_callback (GtkAction *action,
 		}
 	}
 
-    nemo_window_update_split_view_actions_sensitivity (window);
+    nemo_window_update_show_hide_ui_elements (window);
 }
 
 static void
@@ -778,8 +778,9 @@ update_side_bar_radio_buttons (NemoWindow *window)
 }
 
 void
-nemo_window_update_show_hide_menu_items (NemoWindow *window)
+nemo_window_update_show_hide_ui_elements (NemoWindow *window)
 {
+    NemoWindowPane *pane;
 	GtkActionGroup *action_group;
 	GtkAction *action;
 
@@ -787,11 +788,26 @@ nemo_window_update_show_hide_menu_items (NemoWindow *window)
 
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
+    gtk_action_block_activate (action);
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
 				      nemo_window_split_view_showing (window));
+    gtk_action_unblock_activate (action);
+
 	nemo_window_update_split_view_actions_sensitivity (window);
 
     update_side_bar_radio_buttons (window);
+
+    pane = nemo_window_get_active_pane (window);
+    if (pane != NULL) {
+        action_group = nemo_window_pane_get_toolbar_action_group (pane);
+
+        action = gtk_action_group_get_action (action_group,
+                                              NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
+        gtk_action_block_activate (action);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+                                      nemo_window_split_view_showing (window));
+        gtk_action_unblock_activate (action);
+    }
 }
 
 static void
@@ -1788,6 +1804,19 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 
    	g_object_unref (action);
 
+    action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_SHOW_HIDE_EXTRA_PANE,
+                         NULL,
+                         _("Open an extra folder view side-by-side"),
+                         NULL));
+    g_signal_connect (action, "activate",
+                      G_CALLBACK (action_split_view_callback),
+                      window);
+
+    gtk_action_group_add_action (action_group, action);
+    gtk_action_set_icon_name (GTK_ACTION (action), "view-dual-symbolic");
+
+    g_object_unref (action);
+
 	navigation_state = nemo_window_get_navigation_state (window);
 	nemo_navigation_state_add_group (navigation_state, action_group);
 
@@ -1853,7 +1882,7 @@ nemo_window_initialize_actions (NemoWindow *window)
 								    nav_state_actions);
 
 	window_menus_set_bindings (window);
-	nemo_window_update_show_hide_menu_items (window);
+	nemo_window_update_show_hide_ui_elements (window);
 
 	g_signal_connect (window, "loading_uri",
 			  G_CALLBACK (nemo_window_update_split_view_actions_sensitivity),

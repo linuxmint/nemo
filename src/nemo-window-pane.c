@@ -1282,7 +1282,7 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 
 			DEBUG ("Calling set_active_pane, new slot %p", new_pane->active_slot);
 			nemo_window_set_active_pane (window, new_pane);
-			nemo_window_update_show_hide_menu_items (window);
+			nemo_window_update_show_hide_ui_elements (window);
 		} else {
 			DEBUG ("Last slot removed from the last pane, close the window");
 			nemo_window_close (window);
