@@ -1096,7 +1096,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 
 	/* Don't handle extra mouse buttons here */
 	if (event->button > 5) {
-		return FALSE;
+		return GDK_EVENT_PROPAGATE;
 	}
 
     if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
@@ -1110,17 +1110,17 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
             }
         }
 
-        return TRUE;
+        return GDK_EVENT_STOP;
     }
 
 	if (event->window != gtk_tree_view_get_bin_window (tree_view)) {
-		return FALSE;
+		return GDK_EVENT_PROPAGATE;
 	}
 
-    if (!nemo_view_get_active (NEMO_VIEW (view))) {
+    if (!nemo_view_get_active (NEMO_VIEW (view)) && gtk_tree_selection_count_selected_rows (selection) > 0) {
         NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
         nemo_window_slot_make_hosting_pane_active (slot);
-        return TRUE;
+        return GDK_EVENT_STOP;
     }
 
 	nemo_list_model_set_drag_view
@@ -1280,7 +1280,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 
 	/* We chained to the default handler in this method, so never
 	 * let the default handler run */
-	return TRUE;
+	return GDK_EVENT_STOP;
 }
 
 static gboolean
