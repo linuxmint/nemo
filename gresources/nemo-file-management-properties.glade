@@ -190,7 +190,10 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
       </row>
       <row>
         <col id="0" translatable="yes">By Type</col>
-      </row>
+      <row>
+      <row>
+        <col id="0" translatable="yes">By Extension</col>
+      <row>
       <row>
         <col id="0" translatable="yes">By Detailed Type</col>
       </row>
