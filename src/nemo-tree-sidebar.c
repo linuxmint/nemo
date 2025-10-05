@@ -1818,10 +1818,10 @@ fm_tree_view_dispose (GObject *object)
 					      G_CALLBACK(filtering_changed_callback),
 					      view);
 
-    g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
                           G_CALLBACK(sort_directories_first_changed_callback),
                           view);
-    g_signal_handlers_disconnect_by_func (nemo_tree_sidebar_preferences,
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
                           G_CALLBACK(sort_favorites_first_changed_callback),
                           view);
         
