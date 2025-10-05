@@ -156,15 +156,6 @@ fm_tree_model_get_icon_scale (GtkTreeModel *model)
     return retval;
 }
 
-static void
-object_unref_if_not_NULL (gpointer object)
-{
-	if (object == NULL) {
-		return;
-	}
-	g_object_unref (object);
-}
-
 static FMTreeModelRoot *
 tree_model_root_new (FMTreeModel *model)
 {
@@ -231,9 +222,9 @@ tree_node_destroy (FMTreeModel *model, TreeNode *node)
 
 	g_object_unref (node->file);
 	g_free (node->display_name);
-	object_unref_if_not_NULL (node->icon);
-	object_unref_if_not_NULL (node->closed_icon);
-	object_unref_if_not_NULL (node->open_icon);
+    g_clear_object (&node->icon);
+    g_clear_object (&node->closed_icon);
+    g_clear_object (&node->open_icon);
 
 	g_assert (node->done_loading_id == 0);
 	g_assert (node->files_added_id == 0);
