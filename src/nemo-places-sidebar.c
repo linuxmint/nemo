@@ -4399,6 +4399,9 @@ nemo_places_sidebar_dispose (GObject *object)
 	g_free (sidebar->uri);
 	sidebar->uri = NULL;
 
+	g_clear_object (&sidebar->ui_manager);
+	sidebar->ui_manager = NULL;
+
 	free_drag_data (sidebar);
 
     g_clear_handle_id (&sidebar->actions_changed_idle_id, g_source_remove);
@@ -4438,10 +4441,14 @@ nemo_places_sidebar_dispose (GObject *object)
                                           sidebar);
 
 	g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          reset_menu,
+                                          sidebar);
+
+	g_signal_handlers_disconnect_by_func (nemo_preferences,
 					      desktop_setting_changed_callback,
 					      sidebar);
 
-	g_signal_handlers_disconnect_by_func (gnome_background_preferences,
+	g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
 					      desktop_setting_changed_callback,
 					      sidebar);
 

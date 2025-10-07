@@ -61,7 +61,7 @@ process_file (GString   *collective,
 
         gsf_input_read (GSF_INPUT (file), size, chunk);
 
-        if (chunk != NULL)
+ //       if (chunk != NULL) always true
         {
             remaining -= size;
             contents = g_string_append_len (contents, (const gchar *) chunk, size);
