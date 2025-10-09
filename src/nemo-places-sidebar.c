@@ -953,7 +953,7 @@ update_places (NemoPlacesSidebar *sidebar)
         }
         volume = g_mount_get_volume (mount);
         if (volume != NULL) {
-                g_object_unref (volume);
+            g_object_unref (volume);
             g_object_unref (mount);
             continue;
         }
@@ -987,22 +987,8 @@ update_places (NemoPlacesSidebar *sidebar)
             }
         }
 
-        icon = nemo_get_mount_icon_name (mount);
-        mount_uri = g_file_get_uri (root);
-        name = g_mount_get_name (mount);
-        tooltip = g_file_get_parse_name (root);
-        place_info = new_place_info (PLACES_MOUNTED_VOLUME,
-                                     SECTION_DEVICES,
-                                     name, icon, mount_uri,
-                                     NULL, NULL, mount, 0, tooltip, 0, FALSE);
-        place_infos = g_list_prepend (place_infos, place_info);
         g_object_unref (root);
         g_object_unref (mount);
-        g_free (icon);
-        g_free (name);
-        g_free (mount_uri);
-        g_free (tooltip);
-
     }
     g_list_free (mounts);
 
@@ -1027,6 +1013,12 @@ update_places (NemoPlacesSidebar *sidebar)
 
                 mount = g_volume_get_mount (volume);
                 if (mount != NULL) {
+                    if (g_mount_is_shadowed (mount)) {
+                        g_object_unref (mount);
+                        g_object_unref (volume);
+                        continue;
+                    }
+
                     gchar *full_display_name, *volume_id;
                     /* Show mounted volume in the sidebar */
                     icon = nemo_get_mount_icon_name (mount);
@@ -1141,6 +1133,12 @@ update_places (NemoPlacesSidebar *sidebar)
 
         mount = g_volume_get_mount (volume);
         if (mount != NULL) {
+            if (g_mount_is_shadowed (mount)) {
+                g_object_unref (mount);
+                g_object_unref (volume);
+                continue;
+            }
+
             g_autofree gchar *parse_name = NULL;
             icon = nemo_get_mount_icon_name (mount);
             root = g_mount_get_default_location (mount);
