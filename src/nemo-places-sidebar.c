@@ -630,7 +630,6 @@ test_expand_row_cb(GtkTreeView *tree_view,
 
     gtk_tree_model_get(filter_model, iter, PLACES_SIDEBAR_COLUMN_URI, &uri, -1);
     if (!uri) {
-        g_warning("[expand_cb] No URI found for expanded row");
         return;
     }
     LazyLoadData *load_data = g_new0(LazyLoadData, 1);
@@ -646,10 +645,8 @@ test_expand_row_cb(GtkTreeView *tree_view,
                                                          &store_iter,
                                                          iter);
         store_path = gtk_tree_model_get_path(GTK_TREE_MODEL(sidebar->store), &store_iter);
-        g_debug("[expand_cb] iter converted to store path via filter");
     } else {
         store_path = gtk_tree_path_copy(path);
-        g_debug("[expand_cb] model is direct store, path copied");
     }
 
     load_data->parent_path = store_path;
@@ -1723,22 +1720,22 @@ find_uri_recursive (GtkTreeModel *model,
                     &child
                 );
 
-                /* Lädt synchron echte Kinder in sidebar->store */
+                /* load synchron real childr in sidebar->store */
                 add_directory_children(sidebar, &store_iter, uri);
 
-                /* Jetzt kann die Kindliste aktualisiert werden */
+                /* now the children list could be updated */
                 g_free(tree_name);
                 g_free(uri);
                 uri = NULL;
                 tree_name = NULL;
 
-                /* Neu starten der Kinderliste für dieses Parent */
+                /* New start for chlidren list for this parent */
                 valid_child = gtk_tree_model_iter_children (model, &child, parent);
                 continue;
             }
         }
 
-        /* Treffer gefunden? */
+        /* found hit? */
         if (uri && g_strcmp0(uri, location) == 0) {
             *out_path = gtk_tree_model_get_path(model, &child);
             g_free(tree_name);
@@ -1746,7 +1743,7 @@ find_uri_recursive (GtkTreeModel *model,
             return TRUE;
         }
 
-        /* Rekursiv tiefer gehen */
+        /* go recursively deeper */
         GtkTreePath *subpath = NULL;
         if (find_uri_recursive(model, &child, location, &subpath, sidebar)) {
             *out_path = subpath;
@@ -1755,7 +1752,7 @@ find_uri_recursive (GtkTreeModel *model,
             return TRUE;
         }
 
-        /* Aufräumen */
+        /* clean up */
         g_free(tree_name);
         g_free(uri);
         uri = NULL;
@@ -4448,7 +4445,7 @@ text_cell_renderer_func(GtkTreeViewColumn *column,
                        -1);
 
     if (row_type == PLACES_HEADING) {
-        /* Für Headings benutze HEADING_TEXT (bold) */
+        /* For Headings use HEADING_TEXT (bold) */
         g_free(tree_text);
         g_free(name_text);
 
@@ -4490,17 +4487,17 @@ nemo_places_tree_sidebar_renderer_init(NemoPlacesSidebar *sidebar, GtkTreeView *
     GtkCellRenderer *cell;
     GtkTreeViewColumn *primary_column;
 
-    /* === Primäre Spalte === */
+    /* === primary row === */
     primary_column = gtk_tree_view_column_new();
     gtk_tree_view_column_set_expand(primary_column, TRUE);
 
-    /* --- Padding Cell Renderer --- */
+    /* --- padding Cell renderer --- */
     cell = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(primary_column, cell, FALSE);
     gtk_tree_view_column_set_cell_data_func(primary_column, cell, padding_cell_renderer_func, sidebar, NULL);
     sidebar->padding_cell_renderer = cell;
 
-    /* --- Icon Cell Renderer --- */
+    /* --- icon cell renderer --- */
     cell = gtk_cell_renderer_pixbuf_new();
     g_object_set(cell,
                  "xalign", 0.0,
@@ -4510,20 +4507,20 @@ nemo_places_tree_sidebar_renderer_init(NemoPlacesSidebar *sidebar, GtkTreeView *
     gtk_tree_view_column_set_cell_data_func(primary_column, cell, icon_cell_renderer_func, sidebar, NULL);
     sidebar->icon_cell_renderer = cell;
 
-    /* --- Text Renderer --- */
+    /* --- text renderer --- */
 	cell = sidebar->editable_renderer = nemo_cell_renderer_disk_new();
 	NEMO_CELL_RENDERER_DISK(cell)->direction = gtk_widget_get_direction(GTK_WIDGET(tree_view));
 	gtk_tree_view_column_pack_start(primary_column, cell, TRUE);
 	g_object_set(cell, "editable", FALSE, NULL);
 
-	/* Entferne 'text' hier — wir setzen Text ausschließlich in text_cell_renderer_func */
+	/* remove 'text' here — we set text exclusively in text_cell_renderer_func */
 	gtk_tree_view_column_set_attributes(primary_column, cell,
 		                                "editable-set", PLACES_SIDEBAR_COLUMN_BOOKMARK,
 		                                "disk-full-percent", PLACES_SIDEBAR_COLUMN_DF_PERCENT,
 		                                "show-disk-full-percent", PLACES_SIDEBAR_COLUMN_SHOW_DF,
 		                                NULL);
 
-	/* Setze cell data func, die jetzt TREE_NAME und NAME berücksichtigt */
+	/* set cell data func, which considers TREE_NAME and NAME  */
 	gtk_tree_view_column_set_cell_data_func(primary_column, cell, text_cell_renderer_func, sidebar, NULL);
 
 	g_signal_connect(cell, "edited", G_CALLBACK(bookmarks_edited), sidebar);
@@ -4554,7 +4551,7 @@ nemo_places_tree_sidebar_renderer_init(NemoPlacesSidebar *sidebar, GtkTreeView *
     gtk_tree_view_append_column(tree_view, sidebar->eject_column);
 
 
-    /* === Expander Column entfällt, GTK rendert automatisch in der ersten Spalte === */
+    /* === Expander Column contains, GTK rendert automaticaly in first row === */
 }
 
 static void
@@ -4581,12 +4578,12 @@ row_visibility_function (GtkTreeModel *model,
                         -1);
     if (type == PLACES_TREE_FOLDER) {
 	   NemoWindowShowHiddenFilesMode mode = nemo_window_get_hidden_files_mode (sidebar->window);
-	// --- 2. Versteckte Verzeichnisse ausblenden ---
+	// --- 2. hide hidden folders ---
 		if ((mode == NEMO_WINDOW_SHOW_HIDDEN_FILES_ENABLE)) return TRUE;
         gchar *name = NULL;
 		gboolean visible = TRUE;
         gtk_tree_model_get(model, iter, PLACES_SIDEBAR_COLUMN_TREE_NAME, &name, -1);
-        if (name && name[0] == '.')  // beginnt mit Punkt → versteckt
+        if (name && name[0] == '.')  // starts with dot character → hide
             visible = FALSE;
         g_free(name);
         return visible;
