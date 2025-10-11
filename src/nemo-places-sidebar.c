@@ -605,6 +605,8 @@ add_children_idle(gpointer user_data)
         return FALSE;
     }
 
+	gtk_tree_view_expand_row(data->sidebar->tree_view, data->parent_path, FALSE);
+
     add_directory_children(data->sidebar, &parent_iter, data->uri);
 
     g_free(data->uri);
