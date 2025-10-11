@@ -597,6 +597,8 @@ add_children_idle(gpointer user_data)
 
     GtkTreeModel *store = GTK_TREE_MODEL(data->sidebar->store);
 
+	gtk_tree_view_expand_row(data->sidebar->tree_view, data->parent_path, TRUE);
+
 	if (!gtk_tree_model_get_iter(store, &parent_iter, data->parent_path)) {
         g_warning("nemo-places-sidebar.c->[add_children_idle] Could not get iter for path (node may have been removed)");
         g_free(data->uri);
@@ -605,7 +607,6 @@ add_children_idle(gpointer user_data)
         return FALSE;
     }
 
-	gtk_tree_view_expand_row(data->sidebar->tree_view, data->parent_path, FALSE);
 
     add_directory_children(data->sidebar, &parent_iter, data->uri);
 
@@ -1737,6 +1738,7 @@ find_uri_recursive (GtkTreeModel *model,
         /* Treffer gefunden? */
         if (uri && g_strcmp0(uri, location) == 0) {
             *out_path = gtk_tree_model_get_path(model, &child);
+			gtk_tree_view_expand_row(sidebar->tree_view, *out_path, TRUE);
             g_free(tree_name);
             g_free(uri);
             return TRUE;
