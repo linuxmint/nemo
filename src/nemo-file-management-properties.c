@@ -557,8 +557,13 @@ bind_builder_bool (GtkBuilder *builder,
 		   const char *widget_name,
 		   const char *prefs)
 {
+	GObject *object = gtk_builder_get_object (builder, widget_name);
+	if (!object) {
+           g_warning ("⚠️  bind_builder_bool: object '%s' not found in builder!", widget_name);
+           return;
+        }
 	g_settings_bind (settings, prefs,
-			 gtk_builder_get_object (builder, widget_name),
+			 object,
 			 "active", G_SETTINGS_BIND_DEFAULT);
 }
 

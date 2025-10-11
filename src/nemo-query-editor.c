@@ -398,15 +398,17 @@ nemo_query_editor_init (NemoQueryEditor *editor)
                       editor);
 
     priv->file_regex_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "file_search_regex_toggle"));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->file_regex_toggle),
-                                  g_settings_get_boolean (nemo_search_preferences,
-                                                          NEMO_PREFERENCES_SEARCH_FILES_REGEX));
+	if(priv->file_regex_toggle != NULL)
+    {
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->file_regex_toggle),
+		                              g_settings_get_boolean (nemo_search_preferences,
+		                                                      NEMO_PREFERENCES_SEARCH_FILES_REGEX));
 
-    g_signal_connect (priv->file_regex_toggle,
-                      "toggled",
-                      G_CALLBACK (file_regex_button_toggled_cb),
-                      editor);
-
+		g_signal_connect (priv->file_regex_toggle,
+		                  "toggled",
+		                  G_CALLBACK (file_regex_button_toggled_cb),
+		                  editor);
+	}
     priv->content_entry = GTK_WIDGET (gtk_builder_get_object (builder, "content_search_entry"));
     g_signal_connect (priv->content_entry,
                       "activate",
