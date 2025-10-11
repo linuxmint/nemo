@@ -46,3 +46,4 @@ debian/files
 *.debhelper
 
 obj-x86_64-linux-gnu
+nemo-places-treeview/
