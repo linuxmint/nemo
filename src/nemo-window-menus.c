@@ -1723,7 +1723,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), show_location_entry_initially);
     g_signal_connect (action, "activate",
                       G_CALLBACK (action_toggle_location_entry_callback), window);
-    gtk_action_set_icon_name (GTK_ACTION (action), "location-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "nemo-location-symbolic");
 
     g_object_unref (action);
 
