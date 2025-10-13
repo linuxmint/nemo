@@ -891,7 +891,7 @@
               </object>
               <packing>
                 <property name="name">view</property>
-                <property name="icon_name">preferences-desktop-display-symbolic</property>
+                <property name="icon_name">xapp-display-symbolic</property>
               </packing>
             </child>
           </object>

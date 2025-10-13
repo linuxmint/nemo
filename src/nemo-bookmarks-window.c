@@ -253,10 +253,10 @@ create_bookmarks_window (NemoBookmarkList *list, GObject *undo_manager_source)
     sort_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_sort_button");
 	close_button = (GtkWidget *)gtk_builder_get_object (builder, "bookmark_close_button");
 
-    gtk_button_set_image (GTK_BUTTON (remove_button), gtk_image_new_from_icon_name ("list-remove-symbolic", GTK_ICON_SIZE_BUTTON));
-    gtk_button_set_image (GTK_BUTTON (jump_button), gtk_image_new_from_icon_name ("go-jump-symbolic", GTK_ICON_SIZE_BUTTON));
-    gtk_button_set_image (GTK_BUTTON (sort_button), gtk_image_new_from_icon_name ("view-sort-ascending-symbolic", GTK_ICON_SIZE_BUTTON));
-    gtk_button_set_image (GTK_BUTTON (close_button), gtk_image_new_from_icon_name ("window-close-symbolic", GTK_ICON_SIZE_BUTTON));
+    gtk_button_set_image (GTK_BUTTON (remove_button), gtk_image_new_from_icon_name ("xapp-list-remove-symbolic", GTK_ICON_SIZE_BUTTON));
+    gtk_button_set_image (GTK_BUTTON (jump_button), gtk_image_new_from_icon_name ("xapp-go-jump-symbolic", GTK_ICON_SIZE_BUTTON));
+    gtk_button_set_image (GTK_BUTTON (sort_button), gtk_image_new_from_icon_name ("xapp-view-sort-ascending-symbolic", GTK_ICON_SIZE_BUTTON));
+    gtk_button_set_image (GTK_BUTTON (close_button), gtk_image_new_from_icon_name ("xapp-window-close-symbolic", GTK_ICON_SIZE_BUTTON));
 
 	set_up_close_accelerator (window);
 	nemo_undo_share_undo_manager (G_OBJECT (window), undo_manager_source);

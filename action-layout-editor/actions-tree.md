@@ -46,7 +46,7 @@
       "type": "action",
       "position": 2,
       "user-label": "Manage workspaces",
-      "user-icon": "address-book-new-symbolic"
+      "user-icon": "xapp-address-book-new-symbolic"
     },
     {
       "uuid": "Test category",

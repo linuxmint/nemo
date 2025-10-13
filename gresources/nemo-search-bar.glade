@@ -60,7 +60,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="caps-lock-warning">False</property>
-                        <property name="secondary-icon-name">system-search-symbolic</property>
+                        <property name="secondary-icon-name">xapp-search-symbolic</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
                       </object>

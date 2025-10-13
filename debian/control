@@ -24,7 +24,7 @@ Build-Depends:
  libjson-glib-dev (>= 1.6),
  libpango1.0-dev,
  libx11-dev,
- libxapp-dev (>= 2.0.0),
+ libxapp-dev (>= 3.0.0),
  libxext-dev,
  libxrender-dev,
  meson,

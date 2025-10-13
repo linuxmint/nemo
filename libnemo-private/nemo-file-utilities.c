@@ -1528,10 +1528,10 @@ get_best_name (GtkIconTheme *icon_theme,
 
         if (g_strcmp0 (type_name, "volume") == 0 ||
             g_strcmp0 (type_name, "drive") == 0) {
-            icon_name = g_strdup ("drive-removable-media-symbolic");
+            icon_name = g_strdup ("xapp-drive-removable-media-symbolic");
         }
         else {
-            icon_name = g_strdup ("drive-harddisk-symbolic");
+            icon_name = g_strdup ("xapp-drive-harddisk-symbolic");
         }
     }
 

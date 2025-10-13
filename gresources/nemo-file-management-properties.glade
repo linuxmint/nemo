@@ -33,27 +33,27 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-previous-symbolic</property>
+    <property name="icon-name">xapp-go-previous-symbolic</property>
   </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">edit-find-symbolic</property>
+    <property name="icon-name">xapp-edit-find-symbolic</property>
   </object>
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-grid-symbolic</property>
+    <property name="icon-name">xapp-view-grid-symbolic</property>
   </object>
   <object class="GtkImage" id="image12">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-list-symbolic</property>
+    <property name="icon-name">xapp-view-list-symbolic</property>
   </object>
   <object class="GtkImage" id="image13">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-compact-symbolic</property>
+    <property name="icon-name">xapp-view-compact-symbolic</property>
   </object>
   <object class="GtkImage" id="image14">
     <property name="visible">True</property>
@@ -63,32 +63,32 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="image15">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-dual-symbolic</property>
+    <property name="icon-name">xapp-view-dual-symbolic</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-next-symbolic</property>
+    <property name="icon-name">xapp-go-next-symbolic</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-up-symbolic</property>
+    <property name="icon-name">xapp-go-up-symbolic</property>
   </object>
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-refresh-symbolic</property>
+    <property name="icon-name">xapp-view-refresh-symbolic</property>
   </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">computer-symbolic</property>
+    <property name="icon-name">xapp-computer-symbolic</property>
   </object>
   <object class="GtkImage" id="image6">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-home-symbolic</property>
+    <property name="icon-name">xapp-go-home-symbolic</property>
   </object>
   <object class="GtkImage" id="image7">
     <property name="visible">True</property>
@@ -98,12 +98,12 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">utilities-terminal-symbolic</property>
+    <property name="icon-name">xapp-utilities-terminal-symbolic</property>
   </object>
   <object class="GtkImage" id="image9">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">folder-new-symbolic</property>
+    <property name="icon-name">xapp-folder-new-symbolic</property>
   </object>
   <object class="GtkListStore" id="liststore1">
     <columns>
@@ -1023,7 +1023,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">views</property>
                     <property name="title" translatable="yes">Views</property>
-                    <property name="icon-name">view-grid-symbolic</property>
+                    <property name="icon-name">xapp-view-grid-symbolic</property>
                   </packing>
                 </child>
                 <child>
@@ -2406,7 +2406,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">list-columns</property>
                     <property name="title" translatable="yes">List Columns</property>
-                    <property name="icon-name">view-list-symbolic</property>
+                    <property name="icon-name">xapp-view-list-symbolic</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
@@ -4311,7 +4311,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">page0</property>
                     <property name="title" translatable="yes">Context Menus</property>
-                    <property name="icon-name">open-menu-symbolic</property>
+                    <property name="icon-name">xapp-open-menu-symbolic</property>
                     <property name="position">6</property>
                   </packing>
                 </child>
