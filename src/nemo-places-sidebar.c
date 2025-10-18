@@ -220,12 +220,20 @@ enum {
     POSITION_LOWER
 };
 
+// Polling-Intervall for network filesystems (ms)
+#define POLL_INTERVAL 5000
+
 typedef struct {
 	NemoPlacesSidebar  *sidebar;
+	GtkTreeRowReference *tree_ref;
 	char *uri;
 	NemoFile *file; 				  //
 	GFileMonitor *monitor;
 	ulong dir_changed_handler;
+	GIcon *icon;
+    GFile *dir;
+    guint poll_id;
+    GList *last_snapshot;
 } TreeNodeData;
 
 static void  open_selected_bookmark                    (NemoPlacesSidebar        *sidebar,
@@ -248,10 +256,11 @@ static void update_places_on_idle                      (NemoPlacesSidebar *sideb
 static void rebuild_menu                               (NemoPlacesSidebar *sidebar);
 static void actions_changed                            (gpointer user_data);
 static void nemo_places_sidebar_cleanup				   (GtkTreeStore *store);
-static TreeNodeData* create_tree_node_data			   (NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel *model);
+static TreeNodeData* create_tree_node_data			   (NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel *model, GtkTreeIter *iter);
 static void tree_node_data_free						   (TreeNodeData *node_data);
 static gboolean children_loaded 					   (GtkTreeModel *model, GtkTreeIter *iter);
 static gchar *get_icon_name 						   (const gchar *uri);
+static void free_node_recursive(GtkTreeModel *model, GtkTreeIter *iter);
 
 /* Identifiers for target types */
 enum {
@@ -458,41 +467,6 @@ add_children_lazy (NemoPlacesSidebar *sidebar,
                        -1);
 }
 
-static gboolean
-find_iter_by_uri_recursive(GtkTreeModel *model, GtkTreeIter *iter, const char *uri, GtkTreeIter *out_iter)
-{
-    do {
-        char *this_uri = NULL;
-        gtk_tree_model_get(model, iter, PLACES_SIDEBAR_COLUMN_URI, &this_uri, -1);
-
-        if (this_uri && g_strcmp0(this_uri, uri) == 0) {
-            if (out_iter)
-                *out_iter = *iter;
-            g_free(this_uri);
-            return TRUE;
-        }
-        g_free(this_uri);
-
-        GtkTreeIter child;
-        if (gtk_tree_model_iter_children(model, &child, iter)) {
-            if (find_iter_by_uri_recursive(model, &child, uri, out_iter))
-                return TRUE;
-        }
-
-    } while (gtk_tree_model_iter_next(model, iter));
-
-    return FALSE;
-}
-
-gboolean
-find_iter_by_uri(GtkTreeModel *model, const char *uri, GtkTreeIter *out_iter)
-{
-    GtkTreeIter iter;
-    if (!gtk_tree_model_get_iter_first(model, &iter))
-        return FALSE;
-    return find_iter_by_uri_recursive(model, &iter, uri, out_iter);
-}
-
 static void
 add_directory_children_lazy(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter,
                             const char *uri);
@@ -527,6 +501,26 @@ find_child_iter_by_uri_under_parent(GtkTreeModel *model,
 }
 
 static void
+add_new_child_node(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, const char *name, const char *child_uri)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(sidebar->store);
+    GtkTreeIter child_iter;
+    gtk_tree_store_append(GTK_TREE_STORE(model), &child_iter, parent_iter);
+	TreeNodeData *node_data = create_tree_node_data(sidebar, child_uri, model, &child_iter);
+
+    gtk_tree_store_set(GTK_TREE_STORE(model), &child_iter,
+                       PLACES_SIDEBAR_COLUMN_TREE_NAME, name,
+                       PLACES_SIDEBAR_COLUMN_URI, child_uri,
+                       PLACES_SIDEBAR_COLUMN_ROW_TYPE, PLACES_TREE_FOLDER,
+                       PLACES_SIDEBAR_COLUMN_GICON, g_themed_icon_new("folder"),
+                       PLACES_SIDEBAR_COLUMN_CHILDREN_LOADED, FALSE,
+                       PLACES_SIDEBAR_COLUMN_NODE_DATA, node_data,
+                       -1);
+
+    add_directory_children_lazy(sidebar, &child_iter, child_uri);
+}
+
+static void
 on_gfile_monitor_changed(GFileMonitor *monitor,
                          GFile *file,
                          GFile *other_file,
@@ -538,8 +532,16 @@ on_gfile_monitor_changed(GFileMonitor *monitor,
     GtkTreeModel *model = GTK_TREE_MODEL(store);
     GtkTreeIter parent_iter;
 
-    if (!find_iter_by_uri(model, node_data->uri, &parent_iter))
-        return;
+	if (!gtk_tree_row_reference_valid(node_data->tree_ref)) {
+		g_message("on_gfile_monitor_changed: node does not exist any more!");
+		return;
+	}
+	GtkTreePath *path = gtk_tree_row_reference_get_path(node_data->tree_ref);
+	if (!gtk_tree_model_get_iter(model, &parent_iter, path)) {
+		g_warning("on_gfile_monitor_changed: could not extract node from path!");
+		gtk_tree_path_free(path);
+		return;
+	}
 
     char *uri = g_file_get_uri(file);
     char *other_uri = other_file ? g_file_get_uri(other_file) : NULL;
@@ -548,20 +550,7 @@ on_gfile_monitor_changed(GFileMonitor *monitor,
         case G_FILE_MONITOR_EVENT_CREATED:
         case G_FILE_MONITOR_EVENT_MOVED_IN:
             if (g_file_query_file_type(file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL) == G_FILE_TYPE_DIRECTORY) {
-                GtkTreeIter new_iter;
-                gtk_tree_store_append(store, &new_iter, &parent_iter);
-
-                TreeNodeData *new_data = create_tree_node_data(node_data->sidebar, uri, model);
-                gtk_tree_store_set(store, &new_iter,
-                                   PLACES_SIDEBAR_COLUMN_TREE_NAME, g_file_get_basename(file),
-                                   PLACES_SIDEBAR_COLUMN_URI, uri,
-		                           PLACES_SIDEBAR_COLUMN_ROW_TYPE, PLACES_TREE_FOLDER,
-		                           PLACES_SIDEBAR_COLUMN_GICON, g_themed_icon_new("folder"),
-		                           PLACES_SIDEBAR_COLUMN_CHILDREN_LOADED, FALSE,
-                                   PLACES_SIDEBAR_COLUMN_NODE_DATA, new_data,
-                                   -1);
-                add_directory_children_lazy(node_data->sidebar, &new_iter, uri);
-                g_message("Folder created: %s", uri);
+				add_new_child_node(node_data->sidebar, &parent_iter, g_file_get_basename(file), uri);
             }
             break;
 
@@ -569,15 +558,13 @@ on_gfile_monitor_changed(GFileMonitor *monitor,
         case G_FILE_MONITOR_EVENT_MOVED_OUT: {
             GtkTreeIter child_iter;
             if (find_child_iter_by_uri_under_parent(model, &parent_iter, uri, &child_iter)) {
-                TreeNodeData *child_data = NULL;
-                gtk_tree_model_get(model, &child_iter, PLACES_SIDEBAR_COLUMN_NODE_DATA, &child_data, -1);
-                if (child_data)
-                    tree_node_data_free(child_data);
+				free_node_recursive(model, &child_iter);
                 gtk_tree_store_remove(store, &child_iter);
             }
             break;
         }
-
+/*
+* no need for this code becase events G_FILE_MONITOR_EVENT_DELETED and G_FILE_MONITOR_EVENT_CREATED are triggered later...
         case G_FILE_MONITOR_EVENT_MOVED:
         case G_FILE_MONITOR_EVENT_RENAMED:
         case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
@@ -592,7 +579,7 @@ on_gfile_monitor_changed(GFileMonitor *monitor,
                 }
             }
             break;
-
+*/
         default:
             break;
     }
@@ -613,7 +600,13 @@ tree_node_data_free(TreeNodeData *node_data)
 		g_object_unref(node_data->monitor);
 		node_data->monitor = NULL;
 	}
-
+	if (node_data->poll_id) {
+		g_source_remove(node_data->poll_id);
+		node_data->poll_id = 0;
+	}
+	if (node_data->dir) {
+	    g_object_unref(node_data->dir);
+	}
     if (node_data->file) {
         g_object_unref(node_data->file);
     }
@@ -622,14 +615,101 @@ tree_node_data_free(TreeNodeData *node_data)
 		g_free(node_data->uri);
 	}
 
+	if (node_data->tree_ref) {
+		gtk_tree_row_reference_free(node_data->tree_ref);
+		node_data->tree_ref = NULL;
+	}
+	g_list_free_full(node_data->last_snapshot, g_free);
     node_data->sidebar = NULL;
 
     g_free(node_data);
 }
 
+static GList* snapshot_directory(GFile *dir) {
+    GError *error = NULL;
+    GList *files = NULL;
+    GFileEnumerator *enumerator = g_file_enumerate_children(
+        dir,
+        G_FILE_ATTRIBUTE_STANDARD_NAME,
+        G_FILE_QUERY_INFO_NONE,
+        NULL,
+        &error
+    );
+    if (!enumerator) {
+		if (error) {
+            g_warning("Snapshot failed for %s: %s",
+                      g_file_get_uri(dir), error->message);
+            g_clear_error(&error);
+        }
+        return NULL;
+	}
+
+    GFileInfo *info;
+    while ((info = g_file_enumerator_next_file(enumerator, NULL, &error)) != NULL) {
+        const char *name = g_file_info_get_name(info);
+        files = g_list_prepend(files, g_strdup(name));
+        g_object_unref(info);
+    }
+    g_file_enumerator_close(enumerator, NULL, NULL);
+    g_object_unref(enumerator);
+
+    return g_list_reverse(files);  // optional: sortiert
+}
+
+static gboolean
+poll_directory_changes(gpointer user_data)
+{
+	TreeNodeData *node_data = (TreeNodeData  *)user_data;
+	if(!node_data->dir) {
+		return FALSE;
+	}
+    GList *current = snapshot_directory(node_data->dir);
+
+    GList *added = NULL, *removed = NULL;
+
+    for (GList *l = current; l; l = l->next) {
+        if (!g_list_find_custom(node_data->last_snapshot, l->data, (GCompareFunc)g_strcmp0))
+            added = g_list_prepend(added, g_strdup(l->data));
+	}
+    for (GList *l = node_data->last_snapshot; l; l = l->next)
+	{
+        if (!g_list_find_custom(current, l->data, (GCompareFunc)g_strcmp0))
+            removed = g_list_prepend(removed, g_strdup(l->data));
+	}
+	for (GList *l = added; l; l = l->next) {
+        GFile *child = g_file_get_child(node_data->dir, l->data);
+        on_gfile_monitor_changed(
+            NULL,                 // kein echter Monitor
+            child,                // file
+            NULL,                 // other_file
+            G_FILE_MONITOR_EVENT_CREATED,
+            node_data);  // user_data
+        g_object_unref(child);
+    }
+
+    for (GList *l = removed; l; l = l->next) {
+        GFile *child = g_file_get_child(node_data->dir, l->data);
+        on_gfile_monitor_changed(
+            NULL,
+            child,
+            NULL,
+            G_FILE_MONITOR_EVENT_DELETED,
+            node_data);
+        g_object_unref(child);
+    }
+
+    // Alte Snapshot freigeben
+    g_list_free_full(node_data->last_snapshot, g_free);
+    node_data->last_snapshot = current;
+
+    g_list_free_full(added, g_free);
+    g_list_free_full(removed, g_free);
+
+    return TRUE; // Wiederholen
+}
 
 static TreeNodeData*
-create_tree_node_data(NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel *model)
+create_tree_node_data (NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel *model, GtkTreeIter *iter)
 {
 	if(!uri)
 		return NULL;
@@ -643,6 +723,11 @@ create_tree_node_data(NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel 
     GFile *gfile = g_file_new_for_uri(uri);
     NemoFile *nemo_file = nemo_file_get(gfile);
 
+	node_data->dir = g_file_new_for_uri(node_data->uri);
+
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(sidebar->store), iter);
+	node_data->tree_ref = gtk_tree_row_reference_new(GTK_TREE_MODEL(sidebar->store), path);
+	gtk_tree_path_free(path);
 
     if (!nemo_file) {
         g_warning("Konnte NemoFile für URI '%s' nicht erstellen!", uri);
@@ -653,6 +738,8 @@ create_tree_node_data(NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel 
 
     node_data->file = g_object_ref(nemo_file);
 
+	node_data->poll_id = 0;
+	node_data->last_snapshot = NULL;
 	GError *error = NULL;
 	GFileMonitor *monitor = g_file_monitor_directory(gfile, G_FILE_MONITOR_NONE, NULL, &error);
 
@@ -662,7 +749,10 @@ create_tree_node_data(NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel 
 	} else {
 		node_data->monitor = NULL;
 		g_clear_error(&error);
+		node_data->last_snapshot = snapshot_directory(node_data->dir);
+		node_data->poll_id = g_timeout_add(POLL_INTERVAL, poll_directory_changes, node_data);
 	}
+
 
 	g_object_unref(gfile);
 
@@ -763,7 +853,7 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
                        PLACES_SIDEBAR_COLUMN_NODE_DATA, &parent_node_data,
                        -1);
 	if(!parent_node_data) {
-		parent_node_data = create_tree_node_data(sidebar, parent_uri, model);
+		parent_node_data = create_tree_node_data(sidebar, parent_uri, model, parent_iter);
         gtk_tree_store_set(GTK_TREE_STORE(model), &parent_iter_copy,
                 PLACES_SIDEBAR_COLUMN_NODE_DATA, parent_node_data,
                 -1);
@@ -804,24 +894,8 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
             }
 
             if (child_uri) {
-		        GtkTreeIter child_iter;
-				gchar *icon=get_icon_name(child_uri);
-		        gtk_tree_store_append(GTK_TREE_STORE(model), &child_iter, parent_iter);
-				TreeNodeData *node_data = create_tree_node_data(sidebar, child_uri, model);
-
-		        gtk_tree_store_set(GTK_TREE_STORE(model), &child_iter,
-		                           PLACES_SIDEBAR_COLUMN_TREE_NAME, name,
-		                           PLACES_SIDEBAR_COLUMN_URI, child_uri,
-		                           PLACES_SIDEBAR_COLUMN_ROW_TYPE, PLACES_TREE_FOLDER,
-		                           PLACES_SIDEBAR_COLUMN_GICON, g_themed_icon_new("folder"),
-		                           PLACES_SIDEBAR_COLUMN_CHILDREN_LOADED, FALSE,
-		                           PLACES_SIDEBAR_COLUMN_NODE_DATA, node_data,
-		                           -1);
-
-		        add_directory_children_lazy(sidebar, &child_iter, child_uri);
-
+				add_new_child_node(sidebar, parent_iter, name, child_uri);
 		        g_free(child_uri);
-				g_free(icon);
 			}
             if (child_file)
                 g_object_unref(child_file);
