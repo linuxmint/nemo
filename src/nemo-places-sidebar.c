@@ -229,7 +229,6 @@ typedef struct {
 	char *uri;
 	NemoFile *file; 				  //
 	GFileMonitor *monitor;
-	ulong dir_changed_handler;
 	GIcon *icon;
     GFile *dir;
     guint poll_id;
@@ -596,7 +595,7 @@ tree_node_data_free(TreeNodeData *node_data)
 	}
 
 	if (node_data->monitor) {
-		g_signal_handlers_disconnect_by_func(node_data->monitor, on_gfile_monitor_changed, node_data);
+		g_file_monitor_cancel(node_data->monitor);
 		g_object_unref(node_data->monitor);
 		node_data->monitor = NULL;
 	}
@@ -620,6 +619,8 @@ tree_node_data_free(TreeNodeData *node_data)
 		node_data->tree_ref = NULL;
 	}
 	g_list_free_full(node_data->last_snapshot, g_free);
+	node_data->last_snapshot =NULL;
+
     node_data->sidebar = NULL;
 
     g_free(node_data);
@@ -642,13 +643,19 @@ static GList* snapshot_directory(GFile *dir) {
             g_clear_error(&error);
         }
         return NULL;
-	}
+    }
 
     GFileInfo *info;
     while ((info = g_file_enumerator_next_file(enumerator, NULL, &error)) != NULL) {
         const char *name = g_file_info_get_name(info);
         files = g_list_prepend(files, g_strdup(name));
         g_object_unref(info);
+    }
+
+    if (error) {
+        g_warning("enumerator failed for %s: %s",
+                      g_file_get_uri(dir), error->message);
+        g_clear_error(&error);
     }
     g_file_enumerator_close(enumerator, NULL, NULL);
     g_object_unref(enumerator);
@@ -894,9 +901,9 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
             }
 
             if (child_uri) {
-				add_new_child_node(sidebar, parent_iter, name, child_uri);
-		        g_free(child_uri);
-			}
+                add_new_child_node(sidebar, parent_iter, name, child_uri);
+                g_free(child_uri);
+            }
             if (child_file)
                 g_object_unref(child_file);
             if (child_dir)
