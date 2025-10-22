@@ -453,7 +453,7 @@ free_place_info (PlaceInfo *info)
     g_free (info);
 }
 
-// insert dummy node "Loading..."
+// Insert dummy node "Loading..."
 static void
 add_children_lazy (NemoPlacesSidebar *sidebar,
                                     GtkTreeIter *parent_iter)
@@ -660,7 +660,7 @@ static GList* snapshot_directory(GFile *dir) {
     g_file_enumerator_close(enumerator, NULL, NULL);
     g_object_unref(enumerator);
 
-    return g_list_reverse(files);  // optional: sortiert
+    return g_list_reverse(files);  // Optional: sorted
 }
 
 static gboolean
@@ -686,7 +686,7 @@ poll_directory_changes(gpointer user_data)
 	for (GList *l = added; l; l = l->next) {
         GFile *child = g_file_get_child(node_data->dir, l->data);
         on_gfile_monitor_changed(
-            NULL,                 // kein echter Monitor
+            NULL,                 // not a real monitor
             child,                // file
             NULL,                 // other_file
             G_FILE_MONITOR_EVENT_CREATED,
@@ -705,7 +705,7 @@ poll_directory_changes(gpointer user_data)
         g_object_unref(child);
     }
 
-    // Alte Snapshot freigeben
+    // Free old snapshot
     g_list_free_full(node_data->last_snapshot, g_free);
     node_data->last_snapshot = current;
 
@@ -720,13 +720,13 @@ create_tree_node_data (NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel
 {
 	if(!uri)
 		return NULL;
-    // Erstelle ein neues TreeNodeData-Objekt
+    // Create a new TreeNodeData object
     TreeNodeData *node_data = g_new0(TreeNodeData, 1);
 	node_data->sidebar = sidebar;
 
 	node_data->uri = g_strdup(uri);
 
-    // Erstelle ein NemoFile für die gegebene URI
+    // Create a NemoFile for the given URI
     GFile *gfile = g_file_new_for_uri(uri);
     NemoFile *nemo_file = nemo_file_get(gfile);
 
@@ -737,7 +737,7 @@ create_tree_node_data (NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel
 	gtk_tree_path_free(path);
 
     if (!nemo_file) {
-        g_warning("Konnte NemoFile für URI '%s' nicht erstellen!", uri);
+        g_warning("// Could not create NemoFile for URI '%s'!", uri);
         g_free(node_data);
 		g_object_unref(gfile);
         return NULL;
@@ -766,7 +766,7 @@ create_tree_node_data (NemoPlacesSidebar *sidebar, const char *uri, GtkTreeModel
     return node_data;
 }
 
-// insert dummy childr node if a foulder exists
+// Insert dummy child node if a folder exists
 static void
 add_directory_children_lazy(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter,
                             const char *uri)
@@ -794,7 +794,7 @@ add_directory_children_lazy(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter
         if (g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY) {
             add_children_lazy(sidebar, parent_iter);
             g_object_unref(info);
-            break; // insert only one dummy
+            break; // Insert only one dummy
         }
         g_object_unref(info);
     }
@@ -810,7 +810,7 @@ add_directory_children_lazy(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter
 
 }
 
-// check if childrean are already loaded
+// Check if children are already loaded
 static gboolean
 children_loaded (GtkTreeModel *model, GtkTreeIter *iter)
 {
@@ -822,7 +822,7 @@ children_loaded (GtkTreeModel *model, GtkTreeIter *iter)
 }
 
 
-// insert real children nodes
+// Insert real children nodes
 static void
 add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, const char *parent_uri)
 {
@@ -835,7 +835,7 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
     if (children_loaded(model, parent_iter))
         return;
 
-	// prove if dummy nodes exist
+	// Check if dummy nodes exist
     if (gtk_tree_model_iter_children(model, &child, parent_iter)) {
         do {
             gboolean is_lazy = FALSE;
@@ -844,10 +844,10 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
                                -1);
             if (is_lazy) {
                 has_dummy = TRUE;
-                break; //found a summy node
+                break; // Found a dummy node
             }
         } while (gtk_tree_model_iter_next(model, &child));
-        // if already real children exist -> nothing to do
+        // If real children already exist → nothing to do
         if (!has_dummy) {
             return;
         }
@@ -889,13 +889,13 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
             GFile *child_dir = g_file_get_child(dir, name);
             NemoFile *child_file = nemo_file_get(child_dir);
 
-            /* child_uri aus child_file holen */
+            // Get child_uri from child_file
             char *child_uri = NULL;
             if (child_file) {
                 const char *u = nemo_file_get_uri(child_file);
                 if (u) child_uri = g_strdup(u);
             }
-            /* Wenn nemo_file_get fehlschlägt, fallback auf child_dir URI */
+            // If nemo_file_get fails, fall back to child_dir URI
             if (!child_uri && child_dir) {
                 child_uri = g_file_get_uri(child_dir);
             }
@@ -913,7 +913,7 @@ add_directory_children(NemoPlacesSidebar *sidebar, GtkTreeIter *parent_iter, con
 	}
 
 
-	// remove summy child node
+	// Remove dummy child node
     if (gtk_tree_model_iter_children(model, &child, parent_iter)) {
         do {
             gboolean is_lazy = FALSE;
@@ -2066,7 +2066,7 @@ find_uri_recursive (GtkTreeModel *model,
 							PLACES_SIDEBAR_COLUMN_TREE_LAZY, &is_lazy,
                             -1);
 
-        /* Lazy-Loading / "(loading)"-Dummy prüfen */
+        // Check for lazy-loading / "(loading)" dummy
         if (is_lazy) {
             if (uri) {
                 /* -> Direkt echte Kinder laden */
@@ -2091,7 +2091,7 @@ find_uri_recursive (GtkTreeModel *model,
             }
         }
 
-        /* found hit? */
+        // Found a match?
         if (uri && g_strcmp0(uri, location) == 0) {
             *out_path = gtk_tree_model_get_path(model, &child);
             g_free(tree_name);
@@ -2099,7 +2099,7 @@ find_uri_recursive (GtkTreeModel *model,
             return TRUE;
         }
 
-        /* go recursively deeper */
+        // Go recursively deeper
         GtkTreePath *subpath = NULL;
         if (find_uri_recursive(model, &child, location, &subpath, sidebar)) {
             *out_path = subpath;
@@ -2108,7 +2108,7 @@ find_uri_recursive (GtkTreeModel *model,
             return TRUE;
         }
 
-        /* clean up */
+        // Clean up
         g_free(tree_name);
         g_free(uri);
         uri = NULL;
@@ -3145,7 +3145,7 @@ update_menu_states (NemoPlacesSidebar *sidebar)
 
 		default:
 		case G_DRIVE_START_STOP_TYPE_UNKNOWN:
-			/* uses defaults set above */
+			// Uses defaults set above
 			break;
 		}
 	}
@@ -4050,18 +4050,20 @@ goto_first_child_if_expanded (NemoPlacesSidebar *sidebar, GtkTreeIter *iter)
     *iter = child_iter;
     return TRUE;
 }
+
+
 static gboolean
 goto_prev_row_or_last_child_if_expanded (NemoPlacesSidebar *sidebar, GtkTreeIter *iter)
 {
     GtkTreeModel *model = GTK_TREE_MODEL(sidebar->store_filter);
     GtkTreeIter prev_iter;
+    GtkTreeIter current_iter;
+    GtkTreeIter deepest_iter;
 
     // Try to move to the previous sibling row
-    // Try to move to the previous sibling row
-
     if (!gtk_tree_model_iter_previous(model, iter)) {
         return FALSE; // No previous sibling → nothing to do
-	}
+    }
     prev_iter = *iter;
 
     // Get the GtkTreePath for the new current row (the previous one)
@@ -4071,32 +4073,63 @@ goto_prev_row_or_last_child_if_expanded (NemoPlacesSidebar *sidebar, GtkTreeIter
 
     // Check if the previous row is expanded in the tree view
     gboolean expanded = gtk_tree_view_row_expanded(sidebar->tree_view, path);
+    gtk_tree_path_free(path);
 
     if (!expanded) {
         // Not expanded → we stop here (iter already points to it)
-        gtk_tree_path_free(path);
         return TRUE;
     }
 
-    //  The previous row is expanded → go down to its last visible child
-    GtkTreeIter child_iter;
-
-    // Start with the first child
-    if (!gtk_tree_model_iter_children(model, &child_iter, &prev_iter)) {
-        gtk_tree_path_free(path);
+    // The previous row is expanded → go down to its last visible child (recursively)
+    if (!gtk_tree_model_iter_children(model, &current_iter, &prev_iter)) {
         return TRUE; // Expanded but has no children
     }
-    prev_iter = child_iter;
-    // Walk through all children until the last one
-    while (gtk_tree_model_iter_next(model, &child_iter)) {
-        prev_iter = child_iter;
+
+    // Start with the first child
+    deepest_iter = current_iter;
+
+    // Iterate through all children to find the last one
+    GtkTreeIter next_iter = current_iter;
+    while (gtk_tree_model_iter_next(model, &next_iter)) {
+        deepest_iter = next_iter;
     }
 
-    // Replace current iter with the last child
-    *iter = prev_iter;
-    gtk_tree_path_free(path);
+    // Now check if the deepest_iter has children and is expanded
+    GtkTreePath *deepest_path = gtk_tree_model_get_path(model, &deepest_iter);
+    if (deepest_path) {
+        gboolean deepest_expanded = gtk_tree_view_row_expanded(sidebar->tree_view, deepest_path);
+        gtk_tree_path_free(deepest_path);
+
+        // If the deepest child is expanded, recursively find its last child
+        while (deepest_expanded) {
+            GtkTreeIter child_iter;
+            if (!gtk_tree_model_iter_children(model, &child_iter, &deepest_iter)) {
+                break; // No more children
+            }
+
+            // Find the last child of the current deepest_iter
+            deepest_iter = child_iter;
+            GtkTreeIter temp_iter = child_iter;
+            while (gtk_tree_model_iter_next(model, &temp_iter)) {
+                deepest_iter = temp_iter;
+            }
+
+            // Check if the new deepest_iter is expanded
+            deepest_path = gtk_tree_model_get_path(model, &deepest_iter);
+            if (deepest_path) {
+                deepest_expanded = gtk_tree_view_row_expanded(sidebar->tree_view, deepest_path);
+                gtk_tree_path_free(deepest_path);
+            } else {
+                deepest_expanded = FALSE;
+            }
+        }
+    }
+
+    // Replace current iter with the deepest child
+    *iter = deepest_iter;
     return TRUE;
 }
+
 
 static gboolean
 iter_equal(const GtkTreeIter *a, const GtkTreeIter *b)
@@ -4122,16 +4155,16 @@ find_parent_or_next_sibling_row(NemoPlacesSidebar *sidebar, GtkTreeIter *iter)
             return FALSE;
         }
 
-        // search for the next visible sibling beside the parent
+        // Search for the next visible sibling beside the parent
         GtkTreeIter child_iter;
         if (!gtk_tree_model_iter_children(model, &child_iter, &parent_iter)) {
             current_iter = parent_iter;
-            continue; // keine Kinder → eine Ebene nach oben
+            continue; // No children → one level up
         }
 
         do {
             if (iter_equal(&child_iter, &current_iter)) {
-                // Wir sind am aktuellen Iter → nächstes Kind prüfen
+                // We are at the current iterator → check next child
                 if (gtk_tree_model_iter_next(model, &child_iter)) {
                     *iter = child_iter;
                     return TRUE;
@@ -4141,7 +4174,7 @@ find_parent_or_next_sibling_row(NemoPlacesSidebar *sidebar, GtkTreeIter *iter)
             }
         } while (gtk_tree_model_iter_next(model, &child_iter));
 
-        // next sibling not found on this level→ one level higher
+        // Next sibling not found on this level → one level higher
         current_iter = parent_iter;
     }
 }
@@ -4168,7 +4201,7 @@ select_prev_or_next_node (NemoPlacesSidebar *sidebar,
 	} else {
 		res = goto_first_child_if_expanded (sidebar, &iterCopy);
 		if(!res) {
-			/* go to next child in same row*/
+			// go to next child in same row
 			iterCopy = *iter;
 			res = gtk_tree_model_iter_next (model, &iterCopy);
 			if(!res) {
@@ -4191,6 +4224,7 @@ select_prev_or_next_node (NemoPlacesSidebar *sidebar,
 	return res;
 
 }
+
 
 static gboolean
 find_next_row (NemoPlacesSidebar *sidebar, GtkTreeIter *iter)
