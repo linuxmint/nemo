@@ -201,7 +201,7 @@ connect_dialog_gvfs_error (NemoConnectServerDialog *dialog)
 	gtk_container_add (GTK_CONTAINER (content_area), hbox);
 	gtk_widget_show (hbox);
 
-	image = gtk_image_new_from_icon_name ("xapp-dialog-error-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
+	image = gtk_image_new_from_icon_name ("xsi-dialog-error-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 6);
 	gtk_widget_show (image);
 
@@ -255,7 +255,7 @@ iconize_entry (NemoConnectServerDialog *dialog,
 
 		gtk_entry_set_icon_from_icon_name (GTK_ENTRY (entry),
 					                       GTK_ENTRY_ICON_SECONDARY,
-					                       "xapp-dialog-warning-symbolic");
+					                       "xsi-dialog-warning-symbolic");
 
 		gtk_widget_grab_focus (entry);
 
@@ -313,7 +313,7 @@ connect_dialog_set_info_bar_error (NemoConnectServerDialog *dialog,
 	gtk_box_pack_start (GTK_BOX (content_area), hbox, FALSE, FALSE, 6);
 	gtk_widget_show (hbox);
 
-	icon = gtk_image_new_from_icon_name ("xapp-dialog-warning-symbolic",
+	icon = gtk_image_new_from_icon_name ("xsi-dialog-warning-symbolic",
 					 GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), icon, FALSE, FALSE, 6);
 	gtk_widget_show (icon);
@@ -388,7 +388,7 @@ connect_dialog_request_additional_details (NemoConnectServerDialog *self,
 	gtk_box_pack_start (GTK_BOX (content_area), hbox, FALSE, FALSE, 6);
 	gtk_widget_show (hbox);
 
-	icon = gtk_image_new_from_icon_name ("xapp-dialog-warning-symbolic",
+	icon = gtk_image_new_from_icon_name ("xsi-dialog-warning-symbolic",
 					 GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_box_pack_start (GTK_BOX (hbox), icon, FALSE, FALSE, 6);
 	gtk_widget_show (icon);

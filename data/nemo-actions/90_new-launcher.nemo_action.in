@@ -8,7 +8,7 @@ Exec=cinnamon-desktop-editor -mnemo-launcher -d"%P"
 
 Selection=None
 
-Icon-Name=xapp-list-add-symbolic
+Icon-Name=xsi-list-add-symbolic
 
 Extensions=any;
 

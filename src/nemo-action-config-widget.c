@@ -471,7 +471,7 @@ nemo_action_config_widget_init (NemoActionConfigWidget *self)
     g_free (title);
     g_free (markup);
 
-    GtkWidget *widget = gtk_button_new_from_icon_name ("xapp-folder-symbolic", GTK_ICON_SIZE_BUTTON);
+    GtkWidget *widget = gtk_button_new_from_icon_name ("xsi-folder-symbolic", GTK_ICON_SIZE_BUTTON);
 
     GtkWidget *bb = NEMO_CONFIG_BASE_WIDGET (self)->rbuttonbox;
     gtk_box_pack_end (GTK_BOX (bb),

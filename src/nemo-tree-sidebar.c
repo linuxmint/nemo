@@ -1348,20 +1348,20 @@ clear_ui (FMTreeView *view)
 }
 
 static const GtkActionEntry tree_sidebar_menu_entries[] = {
-    { NEMO_ACTION_OPEN,                    "xapp-folder-open-symbolic",        N_("_Open"),                NULL, NULL, G_CALLBACK (fm_tree_view_open_cb)               },
+    { NEMO_ACTION_OPEN,                    "xsi-folder-open-symbolic",        N_("_Open"),                NULL, NULL, G_CALLBACK (fm_tree_view_open_cb)               },
     { NEMO_ACTION_OPEN_IN_NEW_TAB,         NULL,                          N_("Open in New _Tab"),     NULL, NULL, G_CALLBACK (fm_tree_view_open_in_new_tab_cb)    },
     { NEMO_ACTION_OPEN_ALTERNATE,          NULL,                          N_("Open in New _Window"),  NULL, NULL, G_CALLBACK (fm_tree_view_open_in_new_window_cb) },
     { NEMO_ACTION_NEW_FOLDER,              NULL,                          N_("Create New _Folder"),   NULL, NULL, G_CALLBACK (fm_tree_view_create_folder_cb)      },
-    { NEMO_ACTION_CUT,                     "xapp-edit-cut-symbolic",           N_("Cu_t"),                 NULL, NULL, G_CALLBACK (fm_tree_view_cut_cb)                },
-    { NEMO_ACTION_COPY,                    "xapp-edit-copy-symbolic",          N_("_Copy"),                NULL, NULL, G_CALLBACK (fm_tree_view_copy_cb)               },
-    { NEMO_ACTION_PASTE,                   "xapp-edit-paste-symbolic",         N_("_Paste Into Folder"),   NULL, NULL, G_CALLBACK (fm_tree_view_paste_cb)              },
-    { NEMO_ACTION_PIN_FILE,                "xapp-pin-symbolic",           N_("P_in"),                 NULL, NULL, G_CALLBACK (fm_tree_view_pin_unpin_cb)          },
-    { NEMO_ACTION_UNPIN_FILE,              "xapp-unpin-symbolic",         N_("Unp_in"),               NULL, NULL, G_CALLBACK (fm_tree_view_pin_unpin_cb)          },
-    { NEMO_ACTION_TRASH,                   "xapp-user-trash-full-symbolic",    N_("Mo_ve to Trash"),       NULL, NULL, G_CALLBACK (fm_tree_view_trash_cb)              },
-    { NEMO_ACTION_DELETE,                  "xapp-edit-delete-symbolic",        N_("_Delete"),              NULL, NULL, G_CALLBACK (fm_tree_view_delete_cb)             },
+    { NEMO_ACTION_CUT,                     "xsi-edit-cut-symbolic",           N_("Cu_t"),                 NULL, NULL, G_CALLBACK (fm_tree_view_cut_cb)                },
+    { NEMO_ACTION_COPY,                    "xsi-edit-copy-symbolic",          N_("_Copy"),                NULL, NULL, G_CALLBACK (fm_tree_view_copy_cb)               },
+    { NEMO_ACTION_PASTE,                   "xsi-edit-paste-symbolic",         N_("_Paste Into Folder"),   NULL, NULL, G_CALLBACK (fm_tree_view_paste_cb)              },
+    { NEMO_ACTION_PIN_FILE,                "xsi-pin-symbolic",           N_("P_in"),                 NULL, NULL, G_CALLBACK (fm_tree_view_pin_unpin_cb)          },
+    { NEMO_ACTION_UNPIN_FILE,              "xsi-unpin-symbolic",         N_("Unp_in"),               NULL, NULL, G_CALLBACK (fm_tree_view_pin_unpin_cb)          },
+    { NEMO_ACTION_TRASH,                   "xsi-user-trash-full-symbolic",    N_("Mo_ve to Trash"),       NULL, NULL, G_CALLBACK (fm_tree_view_trash_cb)              },
+    { NEMO_ACTION_DELETE,                  "xsi-edit-delete-symbolic",        N_("_Delete"),              NULL, NULL, G_CALLBACK (fm_tree_view_delete_cb)             },
     { NEMO_ACTION_UNMOUNT_VOLUME,          NULL,                          N_("_Unmount"),             NULL, NULL, G_CALLBACK (fm_tree_view_unmount_cb)            },
     { NEMO_ACTION_EJECT_VOLUME,            NULL,                          N_("_Eject"),               NULL, NULL, G_CALLBACK (fm_tree_view_eject_cb)              },
-    { NEMO_ACTION_PROPERTIES,             "xapp-document-properties-symbolic", N_("_Properties"),          NULL, NULL, G_CALLBACK (fm_tree_view_properties_cb)         },
+    { NEMO_ACTION_PROPERTIES,             "xsi-document-properties-symbolic", N_("_Properties"),          NULL, NULL, G_CALLBACK (fm_tree_view_properties_cb)         },
 };
 
 static void

@@ -1385,11 +1385,11 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Edit", NULL, N_("_Edit") },
   /* name, stock id, label */  { "View", NULL, N_("_View") },
   /* name, stock id, label */  { "Help", NULL, N_("_Help") },
-  /* name, stock id */         { "Close", "xapp-window-close-symbolic",
+  /* name, stock id */         { "Close", "xsi-window-close-symbolic",
   /* label, accelerator */       N_("_Close"), "<control>W",
   /* tooltip */                  N_("Close this folder"),
                                  G_CALLBACK (action_close_window_slot_callback) },
-                               { "Preferences", "xapp-toolbox-symbolic",
+                               { "Preferences", "xsi-toolbox-symbolic",
                                  N_("Prefere_nces"),
                                  NULL, N_("Edit Nemo preferences"),
                                  G_CALLBACK (action_preferences_callback) },
@@ -1398,25 +1398,25 @@ static const GtkActionEntry main_entries[] = {
                                  "<control>Z", N_("Undo the last text change"),
                                  G_CALLBACK (action_undo_callback) },
 #endif
-  /* name, stock id, label */  { "Up", "xapp-go-up-symbolic", N_("Open _Parent"),
+  /* name, stock id, label */  { "Up", "xsi-go-up-symbolic", N_("Open _Parent"),
                                  "<alt>Up", N_("Open the parent folder"),
                                  G_CALLBACK (action_up_callback) },
   /* name, stock id, label */  { "UpAccel", NULL, "UpAccel",
                                  "", NULL,
                                  G_CALLBACK (action_up_callback) },
-  /* name, stock id */         { "Stop", "xapp-process-stop-symbolic",
+  /* name, stock id */         { "Stop", "xsi-process-stop-symbolic",
   /* label, accelerator */       N_("_Stop"), NULL,
   /* tooltip */                  N_("Stop loading the current location"),
                                  G_CALLBACK (action_stop_callback) },
-  /* name, stock id */         { "Reload", "xapp-view-refresh-symbolic",
+  /* name, stock id */         { "Reload", "xsi-view-refresh-symbolic",
   /* label, accelerator */       N_("_Reload"), "<control>R",
   /* tooltip */                  N_("Reload the current location"),
                                  G_CALLBACK (action_reload_callback) },
-  /* name, stock id */         { "NemoHelp", "xapp-help-contents-symbolic",
+  /* name, stock id */         { "NemoHelp", "xsi-help-contents-symbolic",
   /* label, accelerator */       N_("_All Topics"), "F1",
   /* tooltip */                  N_("Display Nemo help"),
                                  G_CALLBACK (action_nemo_manual_callback) },
-                               { "NemoShortcuts", "xapp-keyboard-shortcuts-symbolic",
+                               { "NemoShortcuts", "xsi-keyboard-shortcuts-symbolic",
                                  N_("_Keyboard Shortcuts"), "<control>F1",
                                  N_("Display keyboard shortcuts"),
                                  G_CALLBACK (action_show_shortcuts_window) },
@@ -1436,11 +1436,11 @@ static const GtkActionEntry main_entries[] = {
      label, accelerator        N_("Share and transfer files"), NULL,
      tooltip                   N_("Easily transfer files to your contacts and devices from the file manager."),
                                  G_CALLBACK (action_nemo_manual_callback) }, **/
-  /* name, stock id */         { "About Nemo", "xapp-help-about-symbolic",
+  /* name, stock id */         { "About Nemo", "xsi-help-about-symbolic",
   /* label, accelerator */       N_("_About"), NULL,
   /* tooltip */                  N_("Display credits for the creators of Nemo"),
                                  G_CALLBACK (action_about_nemo_callback) },
-  /* name, stock id */         { "Zoom In", "xapp-zoom-in-symbolic",
+  /* name, stock id */         { "Zoom In", "xsi-zoom-in-symbolic",
   /* label, accelerator */       N_("Zoom _In"), "<control>plus",
   /* tooltip */                  N_("Increase the view size"),
                                  G_CALLBACK (action_zoom_in_callback) },
@@ -1452,7 +1452,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       "ZoomInAccel2", "<control>KP_Add",
   /* tooltip */                  NULL,
                                  G_CALLBACK (action_zoom_in_callback) },
-  /* name, stock id */         { "Zoom Out", "xapp-zoom-out-symbolic",
+  /* name, stock id */         { "Zoom Out", "xsi-zoom-out-symbolic",
   /* label, accelerator */       N_("Zoom _Out"), "<control>minus",
   /* tooltip */                  N_("Decrease the view size"),
                                  G_CALLBACK (action_zoom_out_callback) },
@@ -1460,7 +1460,7 @@ static const GtkActionEntry main_entries[] = {
   /* label, accelerator */       "ZoomOutAccel", "<control>KP_Subtract",
   /* tooltip */                  NULL,
                                  G_CALLBACK (action_zoom_out_callback) },
-  /* name, stock id */         { "Zoom Normal", "xapp-zoom-original-symbolic",
+  /* name, stock id */         { "Zoom Normal", "xsi-zoom-original-symbolic",
   /* label, accelerator */       N_("Normal Si_ze"), "<control>0",
   /* tooltip */                  N_("Use the normal view size"),
                                  G_CALLBACK (action_zoom_normal_callback) },
@@ -1494,16 +1494,16 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "New Window", NULL, N_("New _Window"),
                                  "<control>N", N_("Open another Nemo window for the displayed location"),
                                  G_CALLBACK (action_new_window_callback) },
-  /* name, stock id, label */  { "New Tab", "xapp-tab-new-symbolic", N_("New _Tab"),
+  /* name, stock id, label */  { "New Tab", "xsi-tab-new-symbolic", N_("New _Tab"),
                                  "<control>T", N_("Open another tab for the displayed location"),
                                  G_CALLBACK (action_new_tab_callback) },
   /* name, stock id, label */  { "Close All Windows", NULL, N_("Close _All Windows"),
                                  "<control>Q", N_("Close all Navigation windows"),
                                  G_CALLBACK (action_close_all_windows_callback) },
-  /* name, stock id, label */  { NEMO_ACTION_BACK, "xapp-go-previous-symbolic", N_("_Back"),
+  /* name, stock id, label */  { NEMO_ACTION_BACK, "xsi-go-previous-symbolic", N_("_Back"),
 				 "<alt>Left", N_("Go to the previous visited location"),
 				 G_CALLBACK (action_back_callback) },
-  /* name, stock id, label */  { NEMO_ACTION_FORWARD, "xapp-go-next-symbolic", N_("_Forward"),
+  /* name, stock id, label */  { NEMO_ACTION_FORWARD, "xsi-go-next-symbolic", N_("_Forward"),
 				 "<alt>Right", N_("Go to the next visited location"),
 				 G_CALLBACK (action_forward_callback) },
   /* name, stock id, label */  { NEMO_ACTION_EDIT_LOCATION, NULL, N_("Toggle _Location Entry"),
@@ -1515,7 +1515,7 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "SplitViewSameLocation", NULL, N_("Sa_me Location as Other Pane"),
 				 "<alt>S", N_("Go to the same location as in the extra pane"),
 				 G_CALLBACK (action_split_view_same_location_callback) },
-  /* name, stock id, label */  { "Add Bookmark", "xapp-bookmark-new-symbolic", N_("_Add Bookmark"),
+  /* name, stock id, label */  { "Add Bookmark", "xsi-bookmark-new-symbolic", N_("_Add Bookmark"),
                                  "<control>d", N_("Add a bookmark for the current location to this menu"),
                                  G_CALLBACK (action_add_bookmark_callback) },
   /* name, stock id, label */  { "Edit Bookmarks", NULL, N_("_Edit Bookmarks..."),
@@ -1563,7 +1563,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* tooltip */              N_("Change the default visibility of the menubar"),
                              NULL,
   /* is_active */            TRUE },
-  /* name, stock id */     { "Search", "xapp-edit-find-symbolic",
+  /* name, stock id */     { "Search", "xsi-edit-find-symbolic",
   /* label, accelerator */   N_("_Search for Files..."), "<control>f",
   /* tooltip */              N_("Search documents and folders"),
 			     NULL,
@@ -1625,7 +1625,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_BACK,
 			       "label", _("_Back"),
-			       "icon_name", "xapp-go-previous-symbolic",
+			       "icon_name", "xsi-go-previous-symbolic",
 			       "tooltip", _("Go to the previous visited location"),
 			       "arrow-tooltip", _("Back history"),
 			       "window", window,
@@ -1641,7 +1641,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
 			       "name", NEMO_ACTION_FORWARD,
 			       "label", _("_Forward"),
-			       "icon_name", "xapp-go-next-symbolic",
+			       "icon_name", "xsi-go-next-symbolic",
 			       "tooltip", _("Go to the next visited location"),
 			       "arrow-tooltip", _("Forward history"),
 			       "window", window,
@@ -1660,7 +1660,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_UP,
    			       "label", _("_Up"),
-   			       "icon_name", "xapp-go-up-symbolic",
+   			       "icon_name", "xsi-go-up-symbolic",
    			       "tooltip", _("Go to parent folder"),
    			       "arrow-tooltip", _("Forward history"),
    			       "window", window,
@@ -1675,7 +1675,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_RELOAD,
    			       "label", _("_Reload"),
-   			       "icon_name", "xapp-view-refresh-symbolic",
+   			       "icon_name", "xsi-view-refresh-symbolic",
    			       "tooltip", _("Reload the current location"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_RELOAD,
@@ -1689,7 +1689,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_HOME,
    			       "label", _("_Home"),
-   			       "icon_name", "xapp-go-home-symbolic",
+   			       "icon_name", "xsi-go-home-symbolic",
    			       "tooltip", _("Go to home directory"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_HOME,
@@ -1703,7 +1703,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
    	action = g_object_new (NEMO_TYPE_NAVIGATION_ACTION,
    			       "name", NEMO_ACTION_COMPUTER,
    			       "label", _("_Computer"),
-   			       "icon_name", "xapp-computer-symbolic",
+   			       "icon_name", "xsi-computer-symbolic",
    			       "tooltip", _("Go to Computer"),
    			       "window", window,
    			       "direction", NEMO_NAVIGATION_DIRECTION_COMPUTER,
@@ -1734,7 +1734,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     g_signal_connect (action, "activate",
                       G_CALLBACK (action_new_folder_callback), window);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-folder-new-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-folder-new-symbolic");
     g_object_unref (action);
 
     action = GTK_ACTION (gtk_action_new (NEMO_ACTION_OPEN_IN_TERMINAL,
@@ -1744,7 +1744,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
     gtk_action_group_add_action (action_group, GTK_ACTION (action));
     g_signal_connect (action, "activate",
                       G_CALLBACK (action_open_terminal_callback), window);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-utilities-terminal-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-utilities-terminal-symbolic");
     g_object_unref (action);
 
 
@@ -1756,7 +1756,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_icon_view_callback),
                       window);
    	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-view-grid-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-view-grid-symbolic");
    	g_object_unref (action);
 
     action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_LIST_VIEW,
@@ -1767,7 +1767,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_list_view_callback),
                       window);
    	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-view-list-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-view-list-symbolic");
 
    	g_object_unref (action);
 
@@ -1779,7 +1779,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_compact_view_callback),
                       window);
    	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-view-compact-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-view-compact-symbolic");
 
    	g_object_unref (action);
 
@@ -1788,7 +1788,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
  				NULL));
 
   	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-edit-find-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-edit-find-symbolic");
 
   	g_object_unref (action);
     
@@ -1800,7 +1800,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_show_thumbnails_callback),
                       window);
    	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-prefs-preview-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-prefs-preview-symbolic");
 
    	g_object_unref (action);
 
@@ -1813,7 +1813,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       window);
 
     gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xapp-view-dual-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-view-dual-symbolic");
 
     g_object_unref (action);
 

@@ -471,7 +471,7 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
                 PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-                PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "xapp-media-eject-symbolic" : NULL,
+                PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "xsi-media-eject-symbolic" : NULL,
 			    PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, EJECT_ICON_SIZE_NOT_HOVERED,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
@@ -849,7 +849,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
         if (n > 0) {
             mount_uri = (char *)"favorites:///"; /* No need to strdup */
-            icon = "xapp-user-favorites-symbolic";
+            icon = "xsi-user-favorites-symbolic";
             cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                                   SECTION_COMPUTER,
                                   _("Favorites"), icon, mount_uri,
@@ -3486,11 +3486,11 @@ clear_ui (NemoPlacesSidebar *sidebar)
 }
 
 static const GtkActionEntry bookmark_action_entries[] = {
-    { NEMO_ACTION_OPEN,                    "xapp-folder-open-symbolic", N_("_Open"),                NULL, NULL, G_CALLBACK (open_shortcut_cb)               },
+    { NEMO_ACTION_OPEN,                    "xsi-folder-open-symbolic", N_("_Open"),                NULL, NULL, G_CALLBACK (open_shortcut_cb)               },
     { NEMO_ACTION_OPEN_IN_NEW_TAB,         NULL,                   N_("Open in New _Tab"),     NULL, NULL, G_CALLBACK (open_shortcut_in_new_tab_cb)    },
     { NEMO_ACTION_OPEN_ALTERNATE,          NULL,                   N_("Open in New _Window"),  NULL, NULL, G_CALLBACK (open_shortcut_in_new_window_cb) },
     { NEMO_ACTION_ADD_BOOKMARK,            NULL,                   N_("_Add Bookmark"),        NULL, NULL, G_CALLBACK (add_shortcut_cb)                },
-    { NEMO_ACTION_SIDEBAR_REMOVE,          "xapp-list-remove-symbolic", N_("Remove"),               NULL, NULL, G_CALLBACK (remove_shortcut_cb)             },
+    { NEMO_ACTION_SIDEBAR_REMOVE,          "xsi-list-remove-symbolic", N_("Remove"),               NULL, NULL, G_CALLBACK (remove_shortcut_cb)             },
     { NEMO_ACTION_RENAME,                  NULL,                   N_("_Rename..."),           NULL, NULL, G_CALLBACK (rename_shortcut_cb)             },
     { NEMO_ACTION_MOUNT_VOLUME,            NULL,                   N_("_Mount"),               NULL, NULL, G_CALLBACK (mount_shortcut_cb)              },
     { NEMO_ACTION_UNMOUNT_VOLUME,          NULL,                   N_("_Unmount"),             NULL, NULL, G_CALLBACK (unmount_shortcut_cb)            },
