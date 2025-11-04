@@ -1800,7 +1800,7 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
                       G_CALLBACK (action_show_thumbnails_callback),
                       window);
    	gtk_action_group_add_action (action_group, action);
-    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-prefs-preview-symbolic");
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-preview-symbolic");
 
    	g_object_unref (action);
 
