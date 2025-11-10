@@ -332,7 +332,7 @@
       <description>If set, Nemo will append URIs of selected files and treat the result as a command line for bulk renaming. Bulk rename applications can register themselves in this key by setting the key to a space-separated string of their executable name and any command line options. If the executable name is not set to a full path, it will be searched for in the search path.</description>
     </key>
     <key name="size-prefixes" enum="org.nemo.SizePrefixes">
-        <default>'base-10'</default>
+        <default>'base-2'</default>
         <summary>Prefixes used for file sizes</summary>
         <description>Determines whether Nemo uses base-10, base-10 long, base-2 or base-2 long file size prefixes</description>
     </key>
