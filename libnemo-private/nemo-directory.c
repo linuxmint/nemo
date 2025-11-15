@@ -214,7 +214,27 @@ filtering_changed_callback (gpointer callback_data)
 	/* Preference about which items to show has changed, so we
 	 * can't trust any of our precomputed directory counts.
 	 */
-	g_hash_table_foreach (directories, invalidate_one_count, NULL);
+	//g_hash_table_foreach (directories, invalidate_one_count, NULL);
+	// the hash table was changed during g_hash_table_foreach call so the following code checks for
+	// non existig keys cwhile processing the list
+	GList *keys = g_hash_table_get_keys(directories);
+
+	for (GList *l = keys; l != NULL; l = l->next) {
+	    gpointer key = l->data;
+
+	    // Prüfen ob der Key noch existiert
+	    if (!g_hash_table_contains(directories, key))
+		continue;
+
+	    gpointer value = g_hash_table_lookup(directories, key);
+	    if (value == NULL)
+		continue;  // Value bereits gelöscht
+
+	    invalidate_one_count(key, value, NULL);
+	}
+
+	g_list_free(keys);
+
 }
 
 void
