@@ -553,6 +553,16 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 }
 
 static void
+disable_expander_child_setting (GSettings   *settings,
+                                const gchar *key,
+                                gpointer     user_data)
+{
+    if (!g_settings_get_boolean (settings, key)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (user_data), FALSE);
+    }
+}
+
+static void
 bind_builder_bool (GtkBuilder *builder,
 		   GSettings *settings,
 		   const char *widget_name,
@@ -1118,6 +1128,16 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_list_view_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET,
                        NEMO_PREFERENCES_LIST_VIEW_ALWAYS_SHOW_EXPANDER);
+
+    g_settings_bind (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION,
+                     gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET),
+                     "sensitive",
+                     G_SETTINGS_BIND_GET);
+
+    g_signal_connect (nemo_list_view_preferences,
+                      "changed::" NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION,
+                      G_CALLBACK (disable_expander_child_setting),
+                      gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET));
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);

@@ -298,7 +298,7 @@ always_show_expander_changed_cb (NemoListView *view)
     g_return_if_fail (NEMO_IS_LIST_VIEW (view));
     g_return_if_fail (GTK_IS_TREE_VIEW (view->details->tree_view) && view->details->tree_view != NULL);
 
-    /* Note: Changes require a manual refresh to take effect */
+    nemo_window_slot_queue_reload (nemo_view_get_nemo_window_slot (NEMO_VIEW (view)), FALSE);
 }
 
 static void
