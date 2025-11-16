@@ -38,6 +38,7 @@
 #include <eel/eel-graphic-effects.h>
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-global-preferences.h>
 
 enum {
 	SUBDIRECTORY_UNLOADED,
@@ -517,6 +518,13 @@ nemo_list_model_iter_has_child (GtkTreeModel *tree_model, GtkTreeIter *iter)
 	}
 
 	file_entry = g_sequence_get (iter->user_data);
+
+	/* If the file is a directory and always-show-expander is enabled, always return TRUE */
+	if (file_entry->file && nemo_file_is_directory (file_entry->file)) {
+		if (nemo_global_preferences_get_always_show_folder_expander()) {
+			return TRUE;
+		}
+	}
 
 	return (file_entry->files != NULL && g_sequence_get_length (file_entry->files) > 0);
 }
@@ -1079,7 +1087,9 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 
         got_count = nemo_file_get_directory_item_count (file, &count, &unreadable);
 
-        if ((!got_count && !unreadable) || count > 0) {
+        /* Always add dummy row if always-show-expander is enabled, or if directory has items */
+        if (nemo_global_preferences_get_always_show_folder_expander() ||
+            (!got_count && !unreadable) || count > 0) {
             add_dummy_row (model, file_entry);
             gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
                                                   path, &iter);
@@ -1105,7 +1115,9 @@ update_dummy_row (NemoListModel *model,
 
     got_count = nemo_file_get_directory_item_count (file, &count, &unreadable);
 
-    if ((got_count && count == 0) || (!got_count && unreadable)) {
+    /* Only remove dummy row if always-show-expander is disabled and directory is empty */
+    if (!nemo_global_preferences_get_always_show_folder_expander() &&
+        ((got_count && count == 0) || (!got_count && unreadable))) {
         files = file_entry->files;
         if (g_sequence_get_length (files) == 1) {
             GSequenceIter *dummy_ptr = g_sequence_get_iter_at_pos (files, 0);
@@ -1278,7 +1290,9 @@ nemo_list_model_remove (NemoListModel *model, GtkTreeIter *iter)
 
         got_count = nemo_file_get_directory_item_count (parent_file_entry->file, &count, &unreadable);
 
-        if ((!got_count && !unreadable) || count > 0) {
+        /* Always add dummy row if always-show-expander is enabled, or if directory has items */
+        if (nemo_global_preferences_get_always_show_folder_expander() ||
+            (!got_count && !unreadable) || count > 0) {
             add_dummy_row (model, parent_file_entry);
         }
     }
