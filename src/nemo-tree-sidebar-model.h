@@ -24,8 +24,8 @@
 
 /* fm-tree-model.h - Model for the tree view */
 
-#ifndef FM_TREE_MODEL_H
-#define FM_TREE_MODEL_H
+#ifndef FM_TREE_SIDEBAR_MODEL_H
+#define FM_TREE_SIDEBAR_MODEL_H
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -79,7 +79,25 @@ void               fm_tree_model_add_root_uri              (FMTreeModel *model,
 							    const char        *root_uri,
 							    const char        *display_name,
 							    GIcon             *icon,
-							    GMount            *mount);
+							    GMount            *mount);  // optional else NULL
+gboolean  fm_tree_model_add_root_uri_head (FMTreeModel *model, const char *root_uri,
+				      GtkTreeIter *parent_iter, GtkTreeIter *child_iter,
+				      const char *display_name, GIcon *icon, GMount *mount);
+gboolean  fm_tree_model_append_head_root_node (FMTreeModel *model, const char *nodeName, GtkTreeIter *iter);
+void fm_tree_model_set (FMTreeModel *model, GtkTreeIter *iter, ...);
+void fm_tree_model_set_column_types (FMTreeModel *model, int new_count, const GType *types);
+void fm_tree_model_remove_all_nodes (FMTreeModel *model);
+gboolean fm_tree_model_path_get_iter (FMTreeModel *model, GtkTreePath *path, GtkTreeIter *iter);
+gboolean iter_is_valid (FMTreeModel *model, const GtkTreeIter *iter);
+gboolean fm_tree_model_append_child_node(FMTreeModel *model,
+                                GtkTreeIter *parent_iter,
+                                GtkTreeIter *iter);
+void fm_tree_model_set_custom_row_draggable_func(FMTreeModel *model,
+				            gboolean (*func)(GtkTreeDragSource *drag_source, GtkTreePath *path, gpointer user_data),
+					    gpointer user_data);
+gboolean fm_tree_model_drag_default_action (FMTreeModel *model,
+                                  const gchar *uri,
+                                  GdkDragAction *action);
 void               fm_tree_model_remove_root_uri           (FMTreeModel *model,
 							    const char        *root_uri);
 gboolean           fm_tree_model_iter_is_root              (FMTreeModel *model,
@@ -91,6 +109,7 @@ gboolean           fm_tree_model_file_get_iter             (FMTreeModel *model,
 							    GtkTreeIter *iter,
 							    NemoFile *file,
 							    GtkTreeIter *currentIter);
+gboolean      isDummyNode(GtkTreeIter *iter);
 
 GMount *         fm_tree_model_get_mount_for_root_node_file        
                                                            (FMTreeModel  *model, 
@@ -98,4 +117,5 @@ GMount *         fm_tree_model_get_mount_for_root_node_file
 void             fm_tree_model_set_highlight_for_files    (FMTreeModel *model,
                                                             GList *files);
 
-#endif /* FM_TREE_MODEL_H */
+#endif /* FM_TREE_SIDEBAR_MODEL_H */
+
