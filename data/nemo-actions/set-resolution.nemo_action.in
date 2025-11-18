@@ -8,7 +8,7 @@ Exec=cinnamon-settings display
 
 Selection=None
 
-Icon-Name=video-display-symbolic
+Icon-Name=xsi-video-display-symbolic
 
 Extensions=any;
 

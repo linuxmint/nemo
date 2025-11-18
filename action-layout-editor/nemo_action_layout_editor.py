@@ -199,7 +199,7 @@ class NemoActionsOrganizer(Gtk.Box):
         # Icon MenuButton
         menu = Gtk.Menu()
 
-        self.blank_icon_menu_item = Gtk.ImageMenuItem(label=_("No icon"), image=Gtk.Image(icon_name="checkbox-symbolic"))
+        self.blank_icon_menu_item = Gtk.ImageMenuItem(label=_("No icon"), image=Gtk.Image(icon_name="xsi-checkbox-symbolic"))
         self.blank_icon_menu_item.connect("activate", self.on_clear_icon_clicked)
         menu.add(self.blank_icon_menu_item)
 
@@ -219,11 +219,11 @@ class NemoActionsOrganizer(Gtk.Box):
 
         menu = Gtk.Menu()
 
-        item = Gtk.ImageMenuItem(label=_("New submenu"), image=Gtk.Image(icon_name="pan-end-symbolic"))
+        item = Gtk.ImageMenuItem(label=_("New submenu"), image=Gtk.Image(icon_name="xsi-pan-end-symbolic"))
         item.connect("activate", self.on_new_submenu_clicked)
         menu.add(item)
 
-        item = Gtk.ImageMenuItem(label=_("New separator"), image=Gtk.Image(icon_name="list-remove-symbolic"))
+        item = Gtk.ImageMenuItem(label=_("New separator"), image=Gtk.Image(icon_name="xsi-list-remove-symbolic"))
         item.connect("activate", self.on_new_separator_clicked)
         menu.add(item)
 
@@ -693,7 +693,7 @@ class NemoActionsOrganizer(Gtk.Box):
             self.remove_submenu_button.set_sensitive(row_type in (ROW_TYPE_SUBMENU, ROW_TYPE_SEPARATOR))
 
             if row_type == ROW_TYPE_ACTION and row.get_custom_label() is not None:
-                self.name_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-delete-symbolic")
+                self.name_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "xsi-edit-delete-symbolic")
                 self.name_entry.set_icon_sensitive(Gtk.EntryIconPosition.SECONDARY, True)
             else:
                 self.name_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, None)
@@ -1536,7 +1536,7 @@ class EditorWindow():
         # Hamburger menu
         menu = Gtk.Menu()
 
-        item = Gtk.ImageMenuItem(label=_("Open user actions folder"), image=Gtk.Image(icon_name="folder-symbolic", icon_size=Gtk.IconSize.MENU))
+        item = Gtk.ImageMenuItem(label=_("Open user actions folder"), image=Gtk.Image(icon_name="xsi-folder-symbolic", icon_size=Gtk.IconSize.MENU))
         item.connect("activate", self.open_actions_folder_clicked)
         menu.add(item)
 

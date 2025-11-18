@@ -183,6 +183,7 @@ enum
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_VISIBLE_COLUMNS		"default-visible-columns"
 #define NEMO_PREFERENCES_LIST_VIEW_DEFAULT_COLUMN_ORDER		"default-column-order"
 #define NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION         "enable-folder-expansion"
+#define NEMO_PREFERENCES_LIST_VIEW_ALWAYS_SHOW_EXPANDER     "always-show-folder-expander"
 
 #define NEMO_PREFERENCES_MAX_THUMBNAIL_THREADS "thumbnail-threads"
 
@@ -300,6 +301,8 @@ char *nemo_global_preferences_get_desktop_iid (void);
 gint nemo_global_preferences_get_tooltip_flags (void);
 gboolean nemo_global_preferences_should_load_plugin (const gchar *name, const gchar *key);
 gchar **nemo_global_preferences_get_fileroller_mimetypes (void);
+
+gboolean nemo_global_preferences_get_always_show_folder_expander (void);
 
 gchar *nemo_global_preferences_get_mono_system_font (void);
 gchar *nemo_global_preferences_get_mono_font_family_match (const gchar *in_family);

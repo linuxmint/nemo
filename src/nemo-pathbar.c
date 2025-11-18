@@ -175,11 +175,11 @@ get_slider_button (NemoPathBar     *path_bar,
 
     if (position == GTK_POS_LEFT)
     {
-        image = gtk_image_new_from_icon_name ("pan-start-symbolic", GTK_ICON_SIZE_MENU);
+        image = gtk_image_new_from_icon_name ("xsi-pan-start-symbolic", GTK_ICON_SIZE_MENU);
     }
     else
     {
-        image = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_MENU);
+        image = gtk_image_new_from_icon_name ("xsi-pan-end-symbolic", GTK_ICON_SIZE_MENU);
     }
 
     gtk_container_add (GTK_CONTAINER (button), image);
@@ -1507,7 +1507,7 @@ nemo_path_bar_update_button_appearance (ButtonData *button_data)
                 icon_name = g_strdup (NEMO_ICON_SYMBOLIC_FILESYSTEM);
                 break;
             case ADMIN_ROOT_BUTTON:
-                icon_name = g_strdup ("emblem-important-symbolic");
+                icon_name = g_strdup ("xsi-emblem-important-symbolic");
                 break;
             case HOME_BUTTON:
             case DESKTOP_BUTTON:

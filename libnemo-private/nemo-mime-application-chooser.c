@@ -564,7 +564,7 @@ nemo_mime_application_chooser_build_ui (NemoMimeApplicationChooser *chooser)
 
     chooser->details->custom_entry = entry;
 
-    button = gtk_button_new_from_icon_name ("document-open-symbolic", GTK_ICON_SIZE_BUTTON);
+    button = gtk_button_new_from_icon_name ("xsi-document-open-symbolic", GTK_ICON_SIZE_BUTTON);
 
     g_signal_connect (button, "clicked",
                       G_CALLBACK (on_file_chooser_button_clicked),

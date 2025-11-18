@@ -367,7 +367,7 @@ add_buttons (NemoColumnChooser *chooser)
 	box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 8);
 	gtk_widget_show (box);
 	
-	chooser->details->move_up_button = button_new_with_mnemonic ("go-up-symbolic",
+	chooser->details->move_up_button = button_new_with_mnemonic ("xsi-go-up-symbolic",
 								     _("Move _Up"));
 	g_signal_connect (chooser->details->move_up_button, 
 			  "clicked",  G_CALLBACK (move_up_clicked_callback),
@@ -377,7 +377,7 @@ add_buttons (NemoColumnChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (box), chooser->details->move_up_button,
 			    FALSE, FALSE, 0);
 
-	chooser->details->move_down_button = button_new_with_mnemonic ("go-down-symbolic",
+	chooser->details->move_down_button = button_new_with_mnemonic ("xsi-go-down-symbolic",
 								       _("Move Dow_n"));
 	g_signal_connect (chooser->details->move_down_button, 
 			  "clicked",  G_CALLBACK (move_down_clicked_callback),

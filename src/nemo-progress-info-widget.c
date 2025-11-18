@@ -35,9 +35,9 @@ enum {
 	NUM_PROPERTIES
 };
 
-#define START_ICON "media-playback-start-symbolic"
-#define STOP_ICON "media-playback-stop-symbolic"
-#define PAUSE_ICON "media-playback-pause-symbolic"
+#define START_ICON "xsi-media-playback-start-symbolic"
+#define STOP_ICON "xsi-media-playback-stop-symbolic"
+#define PAUSE_ICON "xsi-media-playback-pause-symbolic"
 
 static GParamSpec *properties[NUM_PROPERTIES] = { NULL };
 

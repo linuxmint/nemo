@@ -489,7 +489,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 	/* Setup the dialog image */
-    widget = gtk_image_new_from_icon_name ("dialog-warning-symbolic", GTK_ICON_SIZE_DIALOG);
+    widget = gtk_image_new_from_icon_name ("xsi-dialog-warning-symbolic", GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 0);
 	gtk_misc_set_alignment (GTK_MISC (widget), 0.5, 0.0);
 
@@ -534,7 +534,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 
 	widget = gtk_button_new_with_label (_("Reset"));
 	gtk_button_set_image (GTK_BUTTON (widget),
-			      gtk_image_new_from_icon_name ("edit-undo-symbolic",
+			      gtk_image_new_from_icon_name ("xsi-edit-undo-symbolic",
 							GTK_ICON_SIZE_MENU));
 	gtk_box_pack_start (GTK_BOX (hbox), widget, FALSE, FALSE, 6);
 	g_signal_connect (widget, "clicked",

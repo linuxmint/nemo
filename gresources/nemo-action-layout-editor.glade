@@ -5,17 +5,17 @@
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">list-remove-symbolic</property>
+    <property name="icon-name">xsi-list-remove-symbolic</property>
   </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-up-symbolic</property>
+    <property name="icon-name">xsi-go-up-symbolic</property>
   </object>
   <object class="GtkImage" id="image6">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-down-symbolic</property>
+    <property name="icon-name">xsi-go-down-symbolic</property>
   </object>
   <object class="GtkBox" id="layout_editor_box">
     <property name="visible">True</property>
@@ -94,7 +94,7 @@
                                   <object class="GtkImage" id="image1">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="icon-name">list-add-symbolic</property>
+                                    <property name="icon-name">xsi-list-add-symbolic</property>
                                   </object>
                                 </child>
                               </object>
@@ -207,7 +207,7 @@
                                     <property name="tooltip-text" translatable="yes">Label</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">36</property>
-                                    <property name="secondary-icon-name">edit-delete-symbolic</property>
+                                    <property name="secondary-icon-name">xsi-edit-delete-symbolic</property>
                                     <property name="primary-icon-activatable">False</property>
                                     <property name="primary-icon-sensitive">False</property>
                                     <property name="secondary-icon-tooltip-text" translatable="yes">Restore the original label</property>
@@ -374,7 +374,7 @@
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="icon-name">open-menu-symbolic</property>
+                <property name="icon-name">xsi-open-menu-symbolic</property>
               </object>
             </child>
           </object>

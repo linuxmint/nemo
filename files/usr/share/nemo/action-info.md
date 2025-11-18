@@ -234,7 +234,7 @@ Mimetypes=text/plain;
 
 # Optional fields
 Comment=If you click this menu entry, %F will be acted upon!
-Icon-Name=folder-symbolic
+Icon-Name=xsi-folder-symbolic
 Separator=,
 Quote=single|double|backtick
 Dependencies=notify-send;!zenity;

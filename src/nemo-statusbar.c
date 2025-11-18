@@ -171,7 +171,7 @@ nemo_status_bar_constructed (GObject *object)
     GtkWidget *button, *icon;
 
     button = gtk_toggle_button_new ();
-    icon = gtk_image_new_from_icon_name ("sidebar-places-symbolic", size);
+    icon = gtk_image_new_from_icon_name ("nemo-sidebar-places-symbolic", size);
     gtk_button_set_image (GTK_BUTTON (button), icon);
     gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Show Places"));
     bar->places_button = button;
@@ -180,7 +180,7 @@ nemo_status_bar_constructed (GObject *object)
                       G_CALLBACK (action_places_toggle_callback), bar);
 
     button = gtk_toggle_button_new ();
-    icon = gtk_image_new_from_icon_name ("sidebar-tree-symbolic", size);
+    icon = gtk_image_new_from_icon_name ("nemo-sidebar-tree-symbolic", size);
     gtk_button_set_image (GTK_BUTTON (button), icon);
     gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Show Treeview"));
     bar->tree_button = button;
@@ -194,7 +194,7 @@ nemo_status_bar_constructed (GObject *object)
     bar->separator = sep;
 
     button = gtk_button_new ();
-    icon = gtk_image_new_from_icon_name ("sidebar-hide-symbolic", size);
+    icon = gtk_image_new_from_icon_name ("nemo-sidebar-hide-symbolic", size);
     gtk_button_set_image (GTK_BUTTON (button), icon);
     gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Hide the Sidebar (F9)"));
     bar->hide_button = button;
@@ -203,7 +203,7 @@ nemo_status_bar_constructed (GObject *object)
                       G_CALLBACK (action_hide_sidebar_callback), bar);
 
     button = gtk_button_new ();
-    icon = gtk_image_new_from_icon_name ("sidebar-show-symbolic", size);
+    icon = gtk_image_new_from_icon_name ("nemo-sidebar-show-symbolic", size);
     gtk_button_set_image (GTK_BUTTON (button), icon);
     gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Show the Sidebar (F9)"));
     bar->show_button = button;

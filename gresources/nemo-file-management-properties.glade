@@ -33,77 +33,77 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-previous-symbolic</property>
+    <property name="icon-name">xsi-go-previous-symbolic</property>
   </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">edit-find-symbolic</property>
+    <property name="icon-name">xsi-edit-find-symbolic</property>
   </object>
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-grid-symbolic</property>
+    <property name="icon-name">xsi-view-grid-symbolic</property>
   </object>
   <object class="GtkImage" id="image12">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-list-symbolic</property>
+    <property name="icon-name">xsi-view-list-symbolic</property>
   </object>
   <object class="GtkImage" id="image13">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-compact-symbolic</property>
+    <property name="icon-name">xsi-view-compact-symbolic</property>
   </object>
   <object class="GtkImage" id="image14">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">xapp-prefs-preview-symbolic</property>
+    <property name="icon-name">xsi-prefs-preview-symbolic</property>
   </object>
   <object class="GtkImage" id="image15">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-dual-symbolic</property>
+    <property name="icon-name">xsi-view-dual-symbolic</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-next-symbolic</property>
+    <property name="icon-name">xsi-go-next-symbolic</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-up-symbolic</property>
+    <property name="icon-name">xsi-go-up-symbolic</property>
   </object>
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">view-refresh-symbolic</property>
+    <property name="icon-name">xsi-view-refresh-symbolic</property>
   </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">computer-symbolic</property>
+    <property name="icon-name">xsi-computer-symbolic</property>
   </object>
   <object class="GtkImage" id="image6">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">go-home-symbolic</property>
+    <property name="icon-name">xsi-go-home-symbolic</property>
   </object>
   <object class="GtkImage" id="image7">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">location-symbolic</property>
+    <property name="icon-name">nemo-location-symbolic</property>
   </object>
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">utilities-terminal-symbolic</property>
+    <property name="icon-name">xsi-utilities-terminal-symbolic</property>
   </object>
   <object class="GtkImage" id="image9">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">folder-new-symbolic</property>
+    <property name="icon-name">xsi-folder-new-symbolic</property>
   </object>
   <object class="GtkListStore" id="liststore1">
     <columns>
@@ -921,7 +921,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="list_view_show_expanders_checkbutton">
-                                            <property name="label" translatable="yes">Show expanders for folders with content</property>
+                                            <property name="label" translatable="yes">Show folder expanders</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -933,6 +933,22 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="list_view_show_empty_expanders_checkbutton">
+                                            <property name="label" translatable="yes">Show expanders for empty folders</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1023,7 +1039,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">views</property>
                     <property name="title" translatable="yes">Views</property>
-                    <property name="icon-name">view-grid-symbolic</property>
+                    <property name="icon-name">xsi-view-grid-symbolic</property>
                   </packing>
                 </child>
                 <child>
@@ -1717,7 +1733,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">behavior</property>
                     <property name="title" translatable="yes">Behavior</property>
-                    <property name="icon-name">xapp-prefs-behavior-symbolic</property>
+                    <property name="icon-name">xsi-prefs-behavior-symbolic</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -2316,7 +2332,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">display</property>
                     <property name="title" translatable="yes">Display</property>
-                    <property name="icon-name">xapp-prefs-display-symbolic</property>
+                    <property name="icon-name">xsi-prefs-display-symbolic</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
@@ -2406,7 +2422,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">list-columns</property>
                     <property name="title" translatable="yes">List Columns</property>
-                    <property name="icon-name">view-list-symbolic</property>
+                    <property name="icon-name">xsi-view-list-symbolic</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
@@ -2891,7 +2907,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">preview</property>
                     <property name="title" translatable="yes">Preview</property>
-                    <property name="icon-name">xapp-prefs-preview-symbolic</property>
+                    <property name="icon-name">xsi-prefs-preview-symbolic</property>
                     <property name="position">4</property>
                   </packing>
                 </child>
@@ -3522,7 +3538,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">toolbar</property>
                     <property name="title" translatable="yes">Toolbar</property>
-                    <property name="icon-name">xapp-prefs-toolbar-symbolic</property>
+                    <property name="icon-name">xsi-prefs-toolbar-symbolic</property>
                     <property name="position">5</property>
                   </packing>
                 </child>
@@ -4311,7 +4327,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">page0</property>
                     <property name="title" translatable="yes">Context Menus</property>
-                    <property name="icon-name">open-menu-symbolic</property>
+                    <property name="icon-name">xsi-open-menu-symbolic</property>
                     <property name="position">6</property>
                   </packing>
                 </child>
@@ -4339,7 +4355,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">plugins</property>
                     <property name="title" translatable="yes">Plugins</property>
-                    <property name="icon-name">xapp-prefs-plugins-symbolic</property>
+                    <property name="icon-name">xsi-prefs-plugins-symbolic</property>
                     <property name="position">7</property>
                   </packing>
                 </child>
