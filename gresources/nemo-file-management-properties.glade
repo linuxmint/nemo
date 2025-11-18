@@ -58,7 +58,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkImage" id="image14">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">xsi-prefs-preview-symbolic</property>
+    <property name="icon-name">xsi-preview-symbolic</property>
   </object>
   <object class="GtkImage" id="image15">
     <property name="visible">True</property>
@@ -1733,7 +1733,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">behavior</property>
                     <property name="title" translatable="yes">Behavior</property>
-                    <property name="icon-name">xsi-prefs-behavior-symbolic</property>
+                    <property name="icon-name">xapp-prefs-behavior-symbolic</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -2332,7 +2332,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">display</property>
                     <property name="title" translatable="yes">Display</property>
-                    <property name="icon-name">xsi-prefs-display-symbolic</property>
+                    <property name="icon-name">xapp-prefs-display-symbolic</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
@@ -2907,7 +2907,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">preview</property>
                     <property name="title" translatable="yes">Preview</property>
-                    <property name="icon-name">xsi-prefs-preview-symbolic</property>
+                    <property name="icon-name">xapp-prefs-preview-symbolic</property>
                     <property name="position">4</property>
                   </packing>
                 </child>
@@ -3538,7 +3538,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">toolbar</property>
                     <property name="title" translatable="yes">Toolbar</property>
-                    <property name="icon-name">xsi-prefs-toolbar-symbolic</property>
+                    <property name="icon-name">xapp-prefs-toolbar-symbolic</property>
                     <property name="position">5</property>
                   </packing>
                 </child>
@@ -4355,7 +4355,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <packing>
                     <property name="name">plugins</property>
                     <property name="title" translatable="yes">Plugins</property>
-                    <property name="icon-name">xsi-prefs-plugins-symbolic</property>
+                    <property name="icon-name">xapp-prefs-plugins-symbolic</property>
                     <property name="position">7</property>
                   </packing>
                 </child>
