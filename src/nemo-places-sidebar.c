@@ -359,14 +359,14 @@ get_fm_tree_model_iter (GtkTreeModel *model,
     GtkTreeIter tmp_iter = *iter;
     GtkTreeModel *child_model = model;
 
-    // Falls Filtermodell → zum Kindmodell weiterreichen
+    // If filter model → pass to child model
     if (GTK_IS_TREE_MODEL_FILTER (model)) {
         gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model),
                                                           &tmp_iter, iter);
         child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
     }
 
-    // Falls Sortmodell → noch einen Schritt tiefer
+    // If sort model → go one step deeper
     if (GTK_IS_TREE_MODEL_SORT (child_model)) {
         gtk_tree_model_sort_convert_iter_to_child_iter (GTK_TREE_MODEL_SORT (child_model),
                                                         fm_iter, &tmp_iter);
@@ -423,7 +423,7 @@ add_heading (NemoPlacesSidebar *sidebar,
 	if(sidebar->use_file_treeview) {
 		if (!fm_tree_model_append_head_root_node(sidebar->store, title, &cat_iter)) {
 		    g_warning("Failed to append head root node");
-		    return cat_iter; // Du musst eine ungültige Iter zurückgeben
+		    return cat_iter; // You must return an invalid iter
 		}
 		fm_tree_model_set (sidebar->store, &cat_iter,
 					PLACES_SIDEBAR_COLUMN_ROW_TYPE, PLACES_HEADING,
@@ -1564,7 +1564,7 @@ show_selection_idle_callback (gpointer callback_data)
 	    g_warning("Cannot get child path from iter");
 	    return FALSE;
 	}
-	/* Der leere Pfad [] bezieht sich auf top_root_node oder Dummy – überspringen */
+	// The empty path [] refers to top_root_node or dummy — skip
 	if (gtk_tree_path_get_depth(path) == 0) {
 	    g_debug("Skipping sort conversion for invisible top_root_node");
 	    gtk_tree_path_free(path);
@@ -5242,14 +5242,14 @@ static gboolean
 on_tree_focus_in(GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
     set_treeview_style(GTK_TREE_VIEW(widget), TRUE);
-    return FALSE; // Standardverhalten beibehalten
+    return FALSE; // Keep default behavior
 }
 
 static gboolean
 on_tree_focus_out(GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
 {
     set_treeview_style(GTK_TREE_VIEW(widget), FALSE);
-    return FALSE; // Standardverhalten beibehalten
+    return FALSE; // Keep default behavior
 }
 
 
@@ -5773,9 +5773,6 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
 	if(sidebar->use_file_treeview) {
 		fm_tree_model_set_custom_row_draggable_func (sidebar->store, nemo_places_sidebar_row_draggable, sidebar);
-
-	//	g_signal_connect_object (gtk_tree_view_get_selection (GTK_TREE_VIEW (sidebar->tree_view)), "changed",
-	//			 G_CALLBACK (selection_changed_callback), sidebar, 0);
 
 		g_signal_connect_object (sidebar->store, "row_loaded",
 		                     G_CALLBACK (row_loaded_callback),
