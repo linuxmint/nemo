@@ -5576,13 +5576,13 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
     sidebar->desktop_dnd_source_fs = NULL;
     sidebar->desktop_dnd_can_delete_source = TRUE;
 
-	sidebar->volume_monitor = g_volume_monitor_get ();
-
     sidebar->update_places_on_idle_id = 0;
 
     sidebar->bookmarks_changed_id = 0;
 
     sidebar-> hidden_files_changed_id = 0;
+
+	sidebar->volume_monitor = NULL;
 
 
     sidebar->my_computer_expanded = g_settings_get_boolean (nemo_window_state,
@@ -6003,7 +6003,7 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					  G_CALLBACK (update_places_on_idle),
 					  sidebar);
 
-	sidebar->volume_monitor = g_volume_monitor_get ();
+    if (sidebar->volume_monitor != NULL) sidebar->volume_monitor = g_volume_monitor_get ();
 
 	g_signal_connect_object (sidebar->volume_monitor, "volume_added",
 				 G_CALLBACK (volume_added_callback), sidebar, 0);
