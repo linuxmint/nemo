@@ -2573,58 +2573,6 @@ fm_tree_model_file_get_iter (FMTreeModel *model,
 	return FALSE;
 }
 
-gboolean
-fm_tree_model_path_get_iter (FMTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
-{
-    g_return_val_if_fail(FM_IS_TREE_MODEL(model), FALSE);
-    g_return_val_if_fail(path != NULL, FALSE);
-    g_return_val_if_fail(iter != NULL, FALSE);
-
-    // Get the indices from the path
-    gint *indices = gtk_tree_path_get_indices(path);
-    gint depth = gtk_tree_path_get_depth(path);
-
-    // Check if the path is valid
-    if (depth <= 0 || indices == NULL) {
-        return FALSE;
-    }
-
-    // Start with the root node
-    TreeNode *node = model->details->head_root_node;
-
-    // Check the path to find the desired node
-    for (gint i = 0; i < depth; i++) {
-        gint index = indices[i];
-
-        // Check if the index is valid
-        if (node == NULL) {
-            return FALSE;
-        }
-
-        // Check sibling nodes to find the correct node
-        for (gint j = 0; j < index; j++) {
-            if (node == NULL) {
-                return FALSE;
-            }
-            node = node->next;
-        }
-
-        // If we didn't find the node, return FALSE
-        if (node == NULL) {
-            return FALSE;
-        }
-
-        // Go to the child node if we are not at the end of the path
-        if (i < depth - 1) {
-            node = node->first_child;
-        }
-    }
-
-    // Create the GtkTreeIter for the found node
-    return make_iter_for_node(node, iter, model->details->stamp);
-}
-
-
 static void
 do_update_node (NemoFile *file,
                   FMTreeModel *model)

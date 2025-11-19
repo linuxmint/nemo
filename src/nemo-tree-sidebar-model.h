@@ -87,7 +87,6 @@ gboolean  fm_tree_model_append_head_root_node (FMTreeModel *model, const char *n
 void fm_tree_model_set (FMTreeModel *model, GtkTreeIter *iter, ...);
 void fm_tree_model_set_column_types (FMTreeModel *model, int new_count, const GType *types);
 void fm_tree_model_remove_all_nodes (FMTreeModel *model);
-gboolean fm_tree_model_path_get_iter (FMTreeModel *model, GtkTreePath *path, GtkTreeIter *iter);
 gboolean iter_is_valid (FMTreeModel *model, const GtkTreeIter *iter);
 gboolean fm_tree_model_append_child_node(FMTreeModel *model,
                                 GtkTreeIter *parent_iter,
