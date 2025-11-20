@@ -5807,12 +5807,6 @@ nemo_places_sidebar_dispose (GObject *object)
 	    sidebar->tree_view = NULL;
 	}
 
-    if(sidebar->hidden_files_changed_id != 0) {
-        g_signal_handler_disconnect (sidebar->window,
-			                         sidebar->hidden_files_changed_id);
-        sidebar->hidden_files_changed_id = 0;
-    }
-
 	g_clear_object (&sidebar->ui_manager);
 	sidebar->ui_manager = NULL;
 
@@ -6003,7 +5997,7 @@ nemo_places_sidebar_set_parent_window (NemoPlacesSidebar *sidebar,
 					  G_CALLBACK (update_places_on_idle),
 					  sidebar);
 
-    if (sidebar->volume_monitor != NULL) sidebar->volume_monitor = g_volume_monitor_get ();
+    if (sidebar->volume_monitor == NULL) sidebar->volume_monitor = g_volume_monitor_get ();
 
 	g_signal_connect_object (sidebar->volume_monitor, "volume_added",
 				 G_CALLBACK (volume_added_callback), sidebar, 0);
