@@ -1357,7 +1357,7 @@ action_open_terminal_callback(GtkAction *action, gpointer callback_data)
     view = get_current_view (window);
 
     gchar *path;
-    gchar *uri = nemo_view_get_uri (view);
+    gchar *uri = nemo_view_get_backing_uri (view);
     GFile *gfile = g_file_new_for_uri (uri);
     path = g_file_get_path (gfile);
     open_in_terminal_other (path);
