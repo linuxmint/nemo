@@ -54,7 +54,7 @@
 #define NEMO_ICON_SYMBOLIC_FOLDER_RECENT "xsi-document-open-recent-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER_FAVORITES "xsi-user-favorites-symbolic"
 
-#define NEMO_ICON_SYMBOLIC_MISSING_BOOKMARK "nemo-bookmark-not-found-symbolic"
+#define NEMO_ICON_SYMBOLIC_MISSING_BOOKMARK "xsi-folder-warning-symbolic"
 
 
 

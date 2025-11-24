@@ -44,7 +44,6 @@ publicIcons = [
   'hicolor/status/scalable/nemo-progress-80-symbolic.svg',
   'hicolor/status/scalable/nemo-progress-90-symbolic.svg',
   'hicolor/status/scalable/nemo-progress-100-symbolic.svg',
-  'hicolor/status/scalable/nemo-bookmark-not-found-symbolic.svg',
 ]
 privateIcons = [
   'hicolor/emblems/16x16/emblem-note.png',
