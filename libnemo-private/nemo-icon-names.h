@@ -51,7 +51,7 @@
 #define NEMO_ICON_SYMBOLIC_FOLDER_TEMPLATES  "xsi-folder-templates-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER_VIDEOS     "xsi-folder-videos-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER_SAVED_SEARCH "xsi-folder-saved-search-symbolic"
-#define NEMO_ICON_SYMBOLIC_FOLDER_RECENT "xsi-document-open-recent-symbolic"
+#define NEMO_ICON_SYMBOLIC_FOLDER_RECENT "xsi-folder-recent-symbolic"
 #define NEMO_ICON_SYMBOLIC_FOLDER_FAVORITES "xsi-user-favorites-symbolic"
 
 #define NEMO_ICON_SYMBOLIC_MISSING_BOOKMARK "xsi-folder-warning-symbolic"
