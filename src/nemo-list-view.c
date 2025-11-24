@@ -4210,6 +4210,12 @@ nemo_list_view_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
 					      default_column_order_changed_callback,
 					      list_view);
+    g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
+                                          expanders_enabled_changed_cb,
+                                          list_view);
+    g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
+                                          always_show_expander_changed_cb,
+                                          list_view);
 
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                                           tooltip_prefs_changed_callback,
