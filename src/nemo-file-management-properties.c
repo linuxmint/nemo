@@ -73,7 +73,6 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_OPEN_NEW_WINDOW_WIDGET "new_window_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TREE_VIEW_FOLDERS_WIDGET "treeview_folders_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_EXPANDERS_WIDGET "list_view_show_expanders_checkbutton"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET "list_view_show_empty_expanders_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_PREVIOUS_ICON_TOOLBAR_WIDGET "show_previous_icon_toolbar_togglebutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_NEXT_ICON_TOOLBAR_WIDGET "show_next_icon_toolbar_togglebutton"
@@ -550,16 +549,6 @@ nemo_file_management_properties_dialog_setup_list_column_page (GtkBuilder *build
 	box = GTK_WIDGET (gtk_builder_get_object (builder, "list_columns_vbox"));
 
 	gtk_box_pack_start (GTK_BOX (box), chooser, TRUE, TRUE, 0);
-}
-
-static void
-disable_expander_child_setting (GSettings   *settings,
-                                const gchar *key,
-                                gpointer     user_data)
-{
-    if (!g_settings_get_boolean (settings, key)) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (user_data), FALSE);
-    }
 }
 
 static void
@@ -1124,20 +1113,6 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_list_view_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_EXPANDERS_WIDGET,
                        NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION);
-
-    bind_builder_bool (builder, nemo_list_view_preferences,
-                       NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET,
-                       NEMO_PREFERENCES_LIST_VIEW_ALWAYS_SHOW_EXPANDER);
-
-    g_settings_bind (nemo_list_view_preferences, NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION,
-                     gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET),
-                     "sensitive",
-                     G_SETTINGS_BIND_GET);
-
-    g_signal_connect (nemo_list_view_preferences,
-                      "changed::" NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION,
-                      G_CALLBACK (disable_expander_child_setting),
-                      gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_EMPTY_FOLDER_EXPANDERS_WIDGET));
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);

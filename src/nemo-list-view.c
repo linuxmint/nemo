@@ -293,15 +293,6 @@ expanders_enabled_changed_cb (NemoListView *view)
 }
 
 static void
-always_show_expander_changed_cb (NemoListView *view)
-{
-    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
-    g_return_if_fail (GTK_IS_TREE_VIEW (view->details->tree_view) && view->details->tree_view != NULL);
-
-    nemo_window_slot_queue_reload (nemo_view_get_nemo_window_slot (NEMO_VIEW (view)), FALSE);
-}
-
-static void
 list_selection_changed_callback (GtkTreeSelection *selection, gpointer user_data)
 {
 	NemoView *view;
@@ -2546,11 +2537,6 @@ create_and_set_up_tree_view (NemoListView *view)
                               G_CALLBACK (expanders_enabled_changed_cb),
                               view);
 
-    g_signal_connect_swapped (nemo_list_view_preferences,
-                              "changed::" NEMO_PREFERENCES_LIST_VIEW_ALWAYS_SHOW_EXPANDER,
-                              G_CALLBACK (always_show_expander_changed_cb),
-                              view);
-
 	view->details->columns = g_hash_table_new_full (g_str_hash,
 							g_str_equal,
 							(GDestroyNotify) g_free,
@@ -4213,10 +4199,6 @@ nemo_list_view_finalize (GObject *object)
     g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
                                           expanders_enabled_changed_cb,
                                           list_view);
-    g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
-                                          always_show_expander_changed_cb,
-                                          list_view);
-
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                                           tooltip_prefs_changed_callback,
                                           list_view);
