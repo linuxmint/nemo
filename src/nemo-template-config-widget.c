@@ -267,6 +267,11 @@ refresh_widget (NemoTemplateConfigWidget *widget)
             gtk_box_pack_start (GTK_BOX (box), w, TRUE, TRUE, 0);
 
             GtkWidget *row = gtk_list_box_row_new ();
+            g_object_set(G_OBJECT (row),
+                         "margin-top", 4,
+                         "margin-bottom", 4,
+                         NULL);
+
             gtk_container_add (GTK_CONTAINER (row), box);
 
             g_object_set_data (G_OBJECT (row), "template-info", info);

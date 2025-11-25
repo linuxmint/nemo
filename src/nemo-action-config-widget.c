@@ -301,6 +301,10 @@ refresh_widget (NemoActionConfigWidget *widget)
             gtk_box_pack_start (GTK_BOX (box), w, FALSE, FALSE, 2);
 
             GtkWidget *row = gtk_list_box_row_new ();
+            g_object_set(G_OBJECT (row),
+                         "margin-top", 4,
+                         "margin-bottom", 4,
+                         NULL);
             gtk_container_add (GTK_CONTAINER (row), box);
 
             gtk_widget_show_all (row);
