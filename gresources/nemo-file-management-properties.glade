@@ -413,6 +413,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport2">
                         <property name="visible">True</property>
@@ -1030,6 +1031,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow1">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport1">
                         <property name="visible">True</property>
@@ -1727,6 +1729,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow3">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport3">
                         <property name="visible">True</property>
@@ -2326,6 +2329,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow4">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport4">
                         <property name="visible">True</property>
@@ -2416,6 +2420,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow5">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport5">
                         <property name="visible">True</property>
@@ -2901,6 +2906,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow6">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport6">
                         <property name="visible">True</property>
@@ -3532,6 +3538,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow8">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport8">
                         <property name="visible">True</property>
@@ -4321,6 +4328,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>
@@ -4350,6 +4358,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkScrolledWindow" id="scrolledwindow7">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
                     <child>
                       <object class="GtkViewport" id="viewport7">
                         <property name="visible">True</property>
