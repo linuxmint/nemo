@@ -139,8 +139,7 @@ nemo_interesting_folder_bar_constructed (GObject *obj)
             gtk_widget_set_tooltip_text (w, _("View additional information about creating scripts"));
             break;
         case TYPE_TEMPLATES_FOLDER:
-            label = gtk_label_new (_("Templates: Files in this folder will appear in the Create New Document "
-                                     "submenu."));
+            label = gtk_label_new (_("The files in this folder are used as templates in the 'Create New Document' section of your context menu."));
             break;
         case TYPE_NONE_FOLDER:
         default:
