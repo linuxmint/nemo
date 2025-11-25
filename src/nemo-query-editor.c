@@ -623,7 +623,7 @@ nemo_query_editor_set_active (NemoQueryEditor *editor,
 
         if (g_file_is_native (location) && !g_strv_contains (content_forbidden_dirs, editor->priv->base_uri)) {
             gtk_widget_set_sensitive (editor->priv->content_main_box, TRUE);
-            gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry), _("anything"));
+            gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry), _(""));
         } else {
             gtk_widget_set_sensitive (editor->priv->content_main_box, FALSE);
             gtk_entry_set_placeholder_text (GTK_ENTRY (editor->priv->content_entry),
