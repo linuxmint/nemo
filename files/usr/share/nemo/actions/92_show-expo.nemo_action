@@ -13,7 +13,6 @@ Extensions=any;
 Conditions=desktop;dbus org.Cinnamon;
 
 Active=false
-
 Name[am]=የ ስራ ቦታ አስተዳዳሪ (Expo)
 Name[ar]=إدارة مساحات العمل (Expo)
 Name[be]=Кіраваць працоўнымі прасторамі (экспазіцыя)
@@ -129,3 +128,4 @@ Comment[vi]=Mở Expo để thêm, bỏ, quản lý vùng làm việc
 Comment[zh_CN]=打开 Expo 以添加，移除或整理工作区
 Comment[zh_HK]=開啟 Expo 以新增、移除或組織工作區
 Comment[zh_TW]=開啟工作區管理 (Expo) 以加入，移除，或組織工作區
+

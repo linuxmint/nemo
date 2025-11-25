@@ -13,7 +13,6 @@ Extensions=any;
 Conditions=desktop;dbus org.Cinnamon;
 
 Active=false
-
 Name[am]=ወደ አዲስ የ ስራ ቦታ መዝለያ
 Name[ar]=اذهب إلى مساحة العمل الجديدة
 Name[be]=Перайсці на новую прастору
@@ -130,3 +129,4 @@ Comment[vi]=Tạo và kích hoạt vùng làm việc mới
 Comment[zh_CN]=创建新的工作区并激活它
 Comment[zh_HK]=建立新工作區並將其啟動
 Comment[zh_TW]=建立新工作區並啟用
+

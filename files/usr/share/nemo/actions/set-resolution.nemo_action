@@ -15,7 +15,6 @@ Extensions=any;
 Dependencies=cinnamon-settings;
 
 Conditions=desktop;dbus org.Cinnamon;
-
 Name[be]=Налады дысплэя
 Name[br]=Arventennoù ar skrammañ
 Name[ca]=Configuració de la pantalla
@@ -46,6 +45,7 @@ Name[ka]=ეკრანის მორგება
 Name[ko]=디스플레이 설정
 Name[nb]=Innstillinger for visning
 Name[nl]=Scherminstellingen
+Name[oc]=Paramètres d'afichatge
 Name[pl]=Ustawienia ekranu
 Name[pt]=Definições de ecrã
 Name[pt_BR]=Configurações de exibição
@@ -89,6 +89,7 @@ Comment[ja]=解像度を変更します
 Comment[ko]=해상도 변경
 Comment[nb]=Endre oppløsningen
 Comment[nl]=Wijzig de beeldverhouding
+Comment[oc]=Cambiar la resolucion
 Comment[pl]=Zmień rozdzielczość
 Comment[pt]=Alterar a resolução
 Comment[pt_BR]=Defina a resolução
@@ -104,3 +105,4 @@ Comment[uz]=Rezolyutsiyani o'zgartirish
 Comment[vi]=Thay đổi độ phân giải
 Comment[zh_CN]=更改分辨率
 Comment[zh_TW]=更改解析度
+

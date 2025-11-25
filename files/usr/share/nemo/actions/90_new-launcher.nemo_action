@@ -15,7 +15,6 @@ Extensions=any;
 Dependencies=cinnamon-desktop-editor;
 
 Conditions=desktop;
-
 Name[am]=አዲስ ማ_ስነሻ እዚህ መፍጠሪያ...
 Name[ar]=إنشاء منصة _إطلاق جديدة هنا ...
 Name[ast]=Crear un ll_anzador nuevu equí...
@@ -116,6 +115,7 @@ Comment[lt]=Sukurti šiame aplanke naują leistuką
 Comment[ms]=Cipta pelancar baru dalam folder ini
 Comment[nb]=Lag en ny programstarter i denne mappen
 Comment[nl]=Maak een nieuwe starter in deze map
+Comment[oc]=Crear un aviador novèl dins aqueste dorsièr
 Comment[pl]=Utwórz nowy aktywator w tym katalogu
 Comment[pt]=Criar um novo lançador neste diretório
 Comment[pt_BR]=Criar um novo lançador nesta pasta
@@ -136,3 +136,4 @@ Comment[vi]=Tạo trình khởi chạy mới trong thư mục này
 Comment[zh_CN]=在此文件夹新建启动器
 Comment[zh_HK]=在此資料夾裏建立新啟動器
 Comment[zh_TW]=在此資料夾建立新啟動器
+

@@ -13,7 +13,6 @@ Extensions=any;
 Conditions=desktop;dbus org.Cinnamon;gsettings org.cinnamon number-workspaces i gt 1;
 
 Active=false
-
 Name[am]=የ ስራ ቦታ ማስወገጃ
 Name[ar]=إزالة مساحة العمل
 Name[be]=Выдаліць працоўную прастору
@@ -129,3 +128,4 @@ Comment[vi]=Bỏ vùng làm việc hiện hoạt
 Comment[zh_CN]=移除当前活跃的工作区
 Comment[zh_HK]=移除目前作用中的工作區
 Comment[zh_TW]=移除目前使用中的工作區
+

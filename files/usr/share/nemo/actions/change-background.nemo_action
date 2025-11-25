@@ -15,7 +15,6 @@ Extensions=any;
 Dependencies=cinnamon-settings;
 
 Conditions=desktop;dbus org.Cinnamon;
-
 Name[af]=Verander Werkskerm Agtergrond
 Name[am]=የዴስክቶፕ _መደብ መቀየሪያ
 Name[ar]=تغيير خلفية _سطح المكتب
@@ -66,7 +65,7 @@ Name[ms]=Tukar Latar _Belakang Desktop
 Name[nb]=Endre skrivebords_bakgrunn
 Name[nds]=Desktop_Hintergrund ändern
 Name[nl]=Werk_bladachtergrond wijzigen
-Name[oc]=Modificar lo _rèire plan del burèu
+Name[oc]=Modificar lo _rèireplan del burèu
 Name[pl]=Zmień _tło pulpitu
 Name[pt]=Alterar fundo do am_biente de trabalho
 Name[pt_BR]=Alterar _plano de fundo
@@ -146,3 +145,4 @@ Comment[vi]=Thay đổi hình nền màn hình chính Cinnamon
 Comment[zh_CN]=更改 Cinnamon 桌面背景
 Comment[zh_HK]=變更 Cinnamon 桌面背景
 Comment[zh_TW]=變更 Cinnamon 桌面背景
+
