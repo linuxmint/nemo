@@ -39,14 +39,11 @@ nemo_plugin_manager_init (NemoPluginManager *self)
     gtk_grid_set_row_homogeneous (GTK_GRID (grid), TRUE);
     gtk_grid_set_column_homogeneous (GTK_GRID (grid), TRUE);
 
-    widget = nemo_template_config_widget_new ();
+    widget = nemo_action_config_widget_new ();
     gtk_grid_attach (GTK_GRID (grid), widget, 0, 0, 2, 1);
 
-    widget = nemo_action_config_widget_new ();
-    gtk_grid_attach (GTK_GRID (grid), widget, 0, 1, 2, 1);
-
     widget = nemo_extension_config_widget_new ();
-    gtk_grid_attach (GTK_GRID (grid), widget, 0, 2, 2, 1);
+    gtk_grid_attach (GTK_GRID (grid), widget, 0, 1, 2, 1);
 
     gtk_container_add (GTK_CONTAINER (self), grid);
 

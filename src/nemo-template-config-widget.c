@@ -578,7 +578,7 @@ nemo_template_config_widget_init (NemoTemplateConfigWidget *self)
     gtk_list_box_set_selection_mode (GTK_LIST_BOX (NEMO_CONFIG_BASE_WIDGET (self)->listbox), GTK_SELECTION_SINGLE);
     gtk_list_box_set_activate_on_single_click (GTK_LIST_BOX (NEMO_CONFIG_BASE_WIDGET (self)->listbox), FALSE);
 
-    gchar *title = g_strdup (_("New Document templates"));
+    gchar *title = g_strdup (_("Templates"));
     gchar *markup = g_strdup_printf ("<b>%s</b>", title);
 
     gtk_label_set_markup (GTK_LABEL (label), markup);
@@ -627,7 +627,7 @@ nemo_template_config_widget_init (NemoTemplateConfigWidget *self)
     g_signal_connect (widget, "clicked", G_CALLBACK (on_rename_row_clicked), self);
     self->rename_button = widget;
 
-    widget = gtk_button_new_with_label (_("Edit"));
+    widget = gtk_button_new_with_label (_("Edit content"));
     gtk_widget_set_tooltip_text (widget, _("Modify the selected template's contents"));
 
     gtk_box_pack_start (GTK_BOX (bb),
