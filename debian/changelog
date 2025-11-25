@@ -1,3 +1,95 @@
+nemo (6.6.0) zena; urgency=medium
+
+  [ Jeffrey Knockel ]
+  * nemo-view.c: fix crash after some shortcuts (#3525)
+
+  [ Michael Webster ]
+  * search: Remove unused search history code.
+  * search: Allow regular expression filename matching, improve editor.
+  * nemo-file-management-properties.glade: Add translation comments for tooltip options.
+  * list-view: Don't show folder expanders by default.
+  * nemo-list-view.c: Ignore expander size for click position calculations if expanders are disabled.
+  * nemo-window.c: Remember the second pane's location until the remaining pane's location changes.
+  * nemo-query-editor.c: Don't use new glib function.
+
+  [ Josh Ellithorpe ]
+  * Add Matcha to Supported Theme Hints (#3573)
+
+  [ Michael Webster ]
+  * preferences: Remove scripts widget from Plugins.
+  * preferences: Add templates to plugins tab.
+  * Action layout editor: put direction buttons in a more traditional location, make the editor launcher button more prominent in Nemo's preferences.
+  * nemo-template-config-widget.c: Don't use g_strv_builder_take().
+  * nemo-template-config-widget: Allow editing of a template.
+
+  [ Zariep ]
+  * add --select compatibility flag (#3589)
+
+  [ Michael Webster ]
+  * nemo-action.c: Fix loading of absolute icon paths.
+  * nemo-action.c: Support icons provided by Spices.
+  * nemo-search-engine-advanced.c: Support wildcard mimetypes.
+  * nemo-search-engine-advanced.c: Allow multiple helpers to run on the same file type.
+  * Search: Allow disabling of search helpers via gsettings.
+  * nemo-action-manager.c: Don't randomize action names when rebuilding.
+  * nemo-action-menager.c: Use a basic Gio file monitor to watch for action directory changes.
+  * actions: Sort actions consistently.
+  * file operations: Implement pause/resume.
+  * nemo-file-management-properties.glade: Improve behavior tab layout.
+  * file operations: Fix some memory leaks.
+  * nemo-action-layout-editor: UI improvement for enabling/disabling actions.
+  * nemo-file.c: Allow files with backend-provided previews to be thumbnailed, even if their filesystem forbids it.
+  * nemo-toolbar.c: Just use a single change handler for toolbar settings.
+  * toolbar: Add 'toggle-extra-pane' button.
+  * navigation: Allow click event handling into an inactive pane if that pane has no selected files.
+  * nemo-tree-sidebar.c: disconnect handlers from the correct instance.
+    (Closes: #3615)
+  * nemo-tree-sidebar-model.c: Use g_clear_object instead of custom function.
+  * nemo-places-sidebar.c: Don't show shadowed mounts, or mounts without volumes.
+
+  [ Clement Lefebvre ]
+  * Prefix symbolic icons
+  * Switch to XApp symbolic icons
+  * Switch to xapp-symbolic-icons (XSI)
+
+  [ Cobinja ]
+  * Fix an icon name (#3635)
+
+  [ jralo7 ]
+  * Add option to allow expanders in empty folders (#3593)
+
+  [ Michael Webster ]
+  * list-view: Fix change handler, improve preferences description and behavior.
+  * nemo-file-management-properties.glade: Fix icon names.
+
+  [ George Katevenis ]
+  * toolbar/terminal: Open in selected sub-folder, in expanded list-view (#3616)
+
+  [ Michael Webster ]
+  * icons: Drop nemo-bookmark-not-found-symbolic. Replace with xsi-folder-warning-symbolic.
+  * sidebar icons: Fix bookmark icons when creating a new bookmark, use a difference recent icon.
+  * nemo-list-view.c: Disconnect some leftover signal handlers.
+  * Fix some translation issues.
+  * nemo-query-editor.c: Don't translate an empty string.
+
+  [ Clement Lefebvre ]
+  * Revert "add --select compatibility flag (#3589)"
+  * Revert "Add option to allow expanders in empty folders (#3593)"
+  * templates: Rephrase hint in templates folder
+
+  [ Michael Webster ]
+  * preferences: Move document templates to its own tab.
+
+  [ Clement Lefebvre ]
+  * preferences: Add some borders to pages
+  * l10n: Update files
+  * l10n: Update POT
+
+  [ Michael Webster ]
+  * preferences: Add some spacing between rows of the actions and templates lists.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 25 Nov 2025 17:05:20 +0000
+
 nemo (6.4.5) xia; urgency=medium
 
   [ Michael Webster ]
