@@ -1179,8 +1179,16 @@ get_path (NemoAction *action, NemoFile *file)
 {
     NemoActionPrivate *priv = nemo_action_get_instance_private (action);
     gchar *ret, *orig;
+    GFile *location;
 
-    orig = nemo_file_get_path (file);
+    if (nemo_file_is_in_recent (file)) {
+        location = nemo_file_get_activation_location (file);
+    } else {
+        location = nemo_file_get_location (file);
+    }
+
+    orig = g_file_get_path (location);
+    g_object_unref (location);
 
     if (priv->quote_type == QUOTE_TYPE_DOUBLE) {
         ret = eel_str_escape_double_quoted_content (orig);
@@ -1320,7 +1328,14 @@ get_insertion_string (NemoAction *action,
                     if (!first)
                         str = insert_separator (action, str);
                     str = insert_quote (action, str);
-                    gchar *uri = nemo_file_get_uri (NEMO_FILE (l->data));
+                    gchar *uri;
+
+                    if (nemo_file_is_in_recent (NEMO_FILE (l->data))) {
+                        uri = nemo_file_get_activation_uri (NEMO_FILE (l->data));
+                    } else {
+                        uri = nemo_file_get_uri (NEMO_FILE (l->data));
+                    }
+
                     str = score_append (action, str, uri);
                     g_free (uri);
                     str = insert_quote (action, str);
@@ -1334,46 +1349,55 @@ get_insertion_string (NemoAction *action,
             ;
 default_parent_path:
             ;
-            gchar *path = get_path (action, parent);
-            if (path == NULL) {
-                gchar *name = nemo_file_get_display_name (parent);
-                if (g_strcmp0 (name, "x-nemo-desktop") == 0)
-                    path = nemo_get_desktop_directory ();
-                else
-                    path = g_strdup ("");
-                g_free (name);
+            if (parent != NULL) {
+                gchar *path = get_path (action, parent);
+                if (path == NULL) {
+                    gchar *name = nemo_file_get_display_name (parent);
+                    if (g_strcmp0 (name, "x-nemo-desktop") == 0)
+                        path = nemo_get_desktop_directory ();
+                    else
+                        path = g_strdup ("");
+                    g_free (name);
+                }
+
+                str = insert_quote (action, str);
+                str = score_append (action, str, path);
+                str = insert_quote (action, str);
+                g_free (path);
+            } else {
+                if (g_list_length (selection) > 0 && nemo_file_is_in_recent (NEMO_FILE (selection->data))) {
+                    g_warning_once ("The recent:// location does not support parent path (%%P) action tokens.");
+                }
             }
-            str = insert_quote (action, str);
-            str = score_append (action, str, path);
-            str = insert_quote (action, str);
-            g_free (path);
             break;
         case TOKEN_PARENT_URI:
             ;
 default_parent_uri:
             ;
-            gchar *uri;
-            gchar *name = nemo_file_get_display_name (parent);
-            if (g_strcmp0 (name, "x-nemo-desktop") == 0) {
-                gchar *real_desktop_path = nemo_get_desktop_directory ();
-                if (real_desktop_path) {
-                    GFile *file;
-                    file = g_file_new_for_path (real_desktop_path);
-                    uri = g_file_get_uri (file);
-                    g_object_unref (file);
-                    g_free (real_desktop_path);
+            if (parent != NULL) {
+                gchar *uri;
+                gchar *name = nemo_file_get_display_name (parent);
+                if (g_strcmp0 (name, "x-nemo-desktop") == 0) {
+                    gchar *real_desktop_path = nemo_get_desktop_directory ();
+                    if (real_desktop_path) {
+                        GFile *file;
+                        file = g_file_new_for_path (real_desktop_path);
+                        uri = g_file_get_uri (file);
+                        g_object_unref (file);
+                        g_free (real_desktop_path);
+                    } else {
+                        uri = NULL;
+                    }
                 } else {
-                    uri = NULL;
+                    uri = nemo_file_get_uri (parent);
                 }
-            } else {
-                uri = nemo_file_get_uri (parent);
-            }
 
-            str = insert_quote (action, str);
-            str = score_append (action, str, uri);
-            str = insert_quote (action, str);
-            g_free (name);
-            g_free (uri);
+                str = insert_quote (action, str);
+                str = score_append (action, str, uri);
+                str = insert_quote (action, str);
+                g_free (name);
+                g_free (uri);
+            }
             break;
         case TOKEN_FILE_DISPLAY_NAME:
             if (g_list_length (selection) > 0) {
@@ -1388,17 +1412,19 @@ default_parent_uri:
             ;
 default_parent_display_name:
             ;
-            gchar *parent_display_name;
-            gchar *real_display_name = nemo_file_get_display_name (parent);
-            if (g_strcmp0 (real_display_name, "x-nemo-desktop") == 0)
-                parent_display_name = g_strdup_printf (_("Desktop"));
-            else
-                parent_display_name = nemo_file_get_display_name (parent);
-            g_free (real_display_name);
-            str = insert_quote (action, str);
-            str = score_append (action, str, parent_display_name);
-            str = insert_quote (action, str);
-            g_free (parent_display_name);
+            if (parent != NULL) {
+                gchar *parent_display_name;
+                gchar *real_display_name = nemo_file_get_display_name (parent);
+                if (g_strcmp0 (real_display_name, "x-nemo-desktop") == 0)
+                    parent_display_name = g_strdup_printf (_("Desktop"));
+                else
+                    parent_display_name = nemo_file_get_display_name (parent);
+                g_free (real_display_name);
+                str = insert_quote (action, str);
+                str = score_append (action, str, parent_display_name);
+                str = insert_quote (action, str);
+                g_free (parent_display_name);
+            }
             break;
         case TOKEN_DEVICE:
             if (g_list_length (selection) > 0) {
