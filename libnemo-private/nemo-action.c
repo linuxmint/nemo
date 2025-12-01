@@ -1457,11 +1457,7 @@ default_parent_display_name:
             break; 
     }
 
-    gchar *ret = str->str;
-
-    g_string_free (str, FALSE);
-
-    return ret;
+    return g_string_free (str, FALSE);
 }
 
 static GString *
@@ -1617,9 +1613,7 @@ get_final_label (NemoAction *action,
 
     DEBUG ("Action Label: %s", str->str);
 
-    gchar *ret = str->str;
-    g_string_free (str, FALSE);
-    return ret;
+    return g_string_free (str, FALSE);
 }
 
 static gchar *
@@ -1642,9 +1636,7 @@ get_final_tt (NemoAction *action,
 
     DEBUG ("Action Tooltip: %s", str->str);
 
-    gchar *ret = str->str;
-    g_string_free (str, FALSE);
-    return ret;
+    return g_string_free (str, FALSE);
 }
 
 static void
