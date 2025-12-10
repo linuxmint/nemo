@@ -50,6 +50,7 @@ GSettings *gtk_filechooser_preferences;
 GSettings *nemo_plugin_preferences;
 GSettings *nemo_menu_config_preferences;
 GSettings *nemo_search_preferences;
+GSettings *nemo_preview_pane_preferences;
 GSettings *gnome_lockdown_preferences;
 GSettings *gnome_background_preferences;
 GSettings *gnome_media_handling_preferences;
@@ -473,6 +474,7 @@ nemo_global_preferences_init (void)
     nemo_plugin_preferences = g_settings_new("org.nemo.plugins");
     nemo_menu_config_preferences = g_settings_new("org.nemo.preferences.menu-config");
     nemo_search_preferences = g_settings_new("org.nemo.search");
+    nemo_preview_pane_preferences = g_settings_new("org.nemo.preview-pane");
 	gnome_lockdown_preferences = g_settings_new("org.cinnamon.desktop.lockdown");
 	gnome_background_preferences = g_settings_new("org.cinnamon.desktop.background");
 	gnome_media_handling_preferences = g_settings_new("org.cinnamon.desktop.media-handling");
@@ -506,6 +508,7 @@ nemo_global_preferences_finalize (void)
     g_object_unref (nemo_plugin_preferences);
     g_object_unref (nemo_menu_config_preferences);
     g_object_unref (nemo_search_preferences);
+    g_object_unref (nemo_preview_pane_preferences);
     g_object_unref (gnome_lockdown_preferences);
     g_object_unref (gnome_background_preferences);
     g_object_unref (gnome_media_handling_preferences);

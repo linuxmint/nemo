@@ -315,6 +315,7 @@ extern GSettings *gtk_filechooser_preferences;
 extern GSettings *nemo_plugin_preferences;
 extern GSettings *nemo_menu_config_preferences;
 extern GSettings *nemo_search_preferences;
+extern GSettings *nemo_preview_pane_preferences;
 extern GSettings *gnome_lockdown_preferences;
 extern GSettings *gnome_background_preferences;
 extern GSettings *gnome_media_handling_preferences;

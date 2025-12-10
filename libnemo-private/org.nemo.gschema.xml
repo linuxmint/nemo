@@ -76,6 +76,7 @@
     <child name="desktop" schema="org.nemo.desktop"/>
     <child name="window-state" schema="org.nemo.window-state"/>
     <child name="search" schema="org.nemo.search"/>
+    <child name="preview-pane" schema="org.nemo.preview-pane"/>
   </schema>
 
   <schema id="org.nemo.preferences" path="/org/nemo/preferences/" gettext-domain="nemo">
@@ -893,6 +894,19 @@
     <key name="disabled-search-helpers" type="as">
       <default>[]</default>
       <summary>List of search helper filenames to skip when using content search.</summary>
+    </key>
+  </schema>
+
+  <schema id="org.nemo.preview-pane" path="/org/nemo/preview-pane/" gettext-domain="nemo">
+    <key name="pane-width" type="i">
+      <default>400</default>
+      <summary>Width of the preview pane</summary>
+      <description>The width of the preview pane in logical pixels.</description>
+    </key>
+    <key name="details-height" type="i">
+      <default>200</default>
+      <summary>Height of the details pane within the preview pane</summary>
+      <description>The height of the NemoPreviewDetails pane in logical pixels. This is the lower part of the vertically-split preview pane showing file metadata.</description>
     </key>
   </schema>
 </schemalist>
