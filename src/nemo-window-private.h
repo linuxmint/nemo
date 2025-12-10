@@ -99,6 +99,10 @@ struct NemoWindowDetails
         // location changes.
         GFile *secondary_pane_last_location;
 
+        /* preview pane */
+        GtkWidget *preview_pane;        // NemoPreviewPane instance
+        gboolean show_preview_pane;     // State flag
+
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;

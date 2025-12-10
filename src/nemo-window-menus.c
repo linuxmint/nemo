@@ -658,6 +658,36 @@ action_split_view_callback (GtkAction *action,
 			nemo_view_update_menus (slot->content_view);
 		}
 	}
+}
+
+static void
+action_preview_pane_callback (GtkAction *action,
+			      gpointer user_data)
+{
+	NemoWindow *window;
+	gboolean is_active;
+
+	if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		return;
+	}
+
+	window = NEMO_WINDOW (user_data);
+
+	is_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+	if (is_active != nemo_window_preview_pane_showing (window)) {
+		NemoWindowSlot *slot;
+
+		if (is_active) {
+			nemo_window_preview_pane_on (window);
+		} else {
+			nemo_window_preview_pane_off (window);
+		}
+
+		slot = nemo_window_get_active_slot (window);
+		if (slot != NULL && slot->content_view != NULL) {
+			nemo_view_update_menus (slot->content_view);
+		}
+	}
 
     nemo_window_update_show_hide_ui_elements (window);
 }
@@ -1573,6 +1603,11 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* label, accelerator */   N_("E_xtra Pane"), "F3",
   /* tooltip */              N_("Open an extra folder view side-by-side"),
                              G_CALLBACK (action_split_view_callback),
+  /* is_active */            FALSE },
+  /* name, stock id */     { NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE, NULL,
+  /* label, accelerator */   N_("_Preview Pane"), "F7",
+  /* tooltip */              N_("Show or hide the preview pane"),
+                             G_CALLBACK (action_preview_pane_callback),
   /* is_active */            FALSE },
     /* name, stock id */         { NEMO_ACTION_SHOW_THUMBNAILS, NULL,
   /* label, accelerator */       N_("Show _Thumbnails"), NULL,
