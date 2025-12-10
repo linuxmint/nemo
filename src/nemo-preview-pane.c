@@ -168,8 +168,6 @@ nemo_preview_pane_init (NemoPreviewPane *pane)
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
 	                                 GTK_POLICY_NEVER,
 	                                 GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolled),
-	                                      GTK_SHADOW_IN);
 
 	priv->details_widget = nemo_preview_details_new ();
 	gtk_container_add (GTK_CONTAINER (scrolled), priv->details_widget);
