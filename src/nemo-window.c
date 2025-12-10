@@ -1546,6 +1546,9 @@ nemo_window_sync_create_folder_button (NemoWindow *window)
     toolbar_set_create_folder_button (allow, slot->pane);
 }
 
+/* Forward declaration for preview pane callback */
+static void preview_pane_selection_changed_callback (NemoView *view, NemoWindow *window);
+
 static void
 zoom_level_changed_callback (NemoView *view,
                              NemoWindow *window)
@@ -1584,6 +1587,13 @@ nemo_window_connect_content_view (NemoWindow *window,
 			  G_CALLBACK (zoom_level_changed_callback),
 			  window);
 
+	/* Connect preview pane selection updates if preview is showing */
+	if (window->details->preview_pane) {
+		g_signal_connect_object (view, "selection-changed",
+		                         G_CALLBACK (preview_pane_selection_changed_callback),
+		                         window, 0);
+	}
+
     /* Update displayed the selected view type in the toolbar and menu. */
     if (slot->pending_location == NULL) {
         nemo_window_sync_view_type (window);
@@ -1608,6 +1618,11 @@ nemo_window_disconnect_content_view (NemoWindow *window,
 	}
 
 	g_signal_handlers_disconnect_by_func (view, G_CALLBACK (zoom_level_changed_callback), window);
+
+	/* Disconnect preview pane selection updates if preview is showing */
+	if (window->details->preview_pane) {
+		g_signal_handlers_disconnect_by_func (view, G_CALLBACK (preview_pane_selection_changed_callback), window);
+	}
 }
 
 /**
@@ -2352,7 +2367,8 @@ nemo_window_preview_pane_on (NemoWindow *window)
 		nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), file);
 		nemo_file_list_free (selection);
 
-		/* Connect selection-changed signal */
+		/* Connect selection-changed signal for the current view */
+		/* This will be reconnected automatically when view changes via nemo_window_connect_content_view() */
 		g_signal_connect_object (slot->content_view, "selection-changed",
 		                         G_CALLBACK (preview_pane_selection_changed_callback),
 		                         window, 0);
