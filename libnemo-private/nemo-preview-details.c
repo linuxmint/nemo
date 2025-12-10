@@ -79,7 +79,6 @@ create_label_pair (GtkGrid *grid, const gchar *label_text, gint row)
 	gtk_widget_set_valign (value, GTK_ALIGN_START);
 	gtk_label_set_selectable (GTK_LABEL (value), TRUE);
 	gtk_label_set_ellipsize (GTK_LABEL (value), PANGO_ELLIPSIZE_MIDDLE);
-	gtk_label_set_max_width_chars (GTK_LABEL (value), 30);
 	gtk_grid_attach (grid, value, 1, row, 1, 1);
 	gtk_widget_show (value);
 
