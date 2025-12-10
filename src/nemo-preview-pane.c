@@ -247,9 +247,9 @@ nemo_preview_pane_set_file (NemoPreviewPane *pane,
 
 		/* Monitor file for changes */
 		priv->file_changed_id =
-			g_signal_connect_object (file, "changed",
-			                         G_CALLBACK (file_changed_callback),
-			                         pane, 0);
+			g_signal_connect (file, "changed",
+			                  G_CALLBACK (file_changed_callback),
+			                  pane);
 
 		/* Update child widgets */
 		nemo_preview_image_set_file (NEMO_PREVIEW_IMAGE (priv->image_widget), file);
