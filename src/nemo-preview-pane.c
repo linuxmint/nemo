@@ -24,6 +24,7 @@
 #include "nemo-preview-pane.h"
 #include <libnemo-private/nemo-preview-image.h>
 #include <libnemo-private/nemo-preview-details.h>
+#include <libnemo-private/nemo-global-preferences.h>
 #include <glib/gi18n.h>
 
 #define PREVIEW_IMAGE_HEIGHT 200
@@ -42,9 +43,61 @@ typedef struct {
 
 	NemoFile *current_file;
 	gulong file_changed_id;
+
+	gboolean initial_position_set;
 } NemoPreviewPanePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (NemoPreviewPane, nemo_preview_pane, GTK_TYPE_BOX)
+
+static void
+vpaned_size_allocate_callback (GtkWidget *widget, GtkAllocation *allocation, gpointer user_data)
+{
+	NemoPreviewPane *pane = NEMO_PREVIEW_PANE (user_data);
+	NemoPreviewPanePrivate *priv = nemo_preview_pane_get_instance_private (pane);
+	gint saved_height, position;
+
+	/* Only set initial position once */
+	if (priv->initial_position_set) {
+		return;
+	}
+
+	priv->initial_position_set = TRUE;
+
+	/* Set position based on saved details height */
+	saved_height = g_settings_get_int (nemo_preview_pane_preferences, "details-height");
+	if (saved_height > 50 && allocation->height > saved_height) {
+		/* Position is from top, so subtract details height from total */
+		position = allocation->height - saved_height;
+		gtk_paned_set_position (GTK_PANED (widget), position);
+	} else {
+		/* Fallback: make image section PREVIEW_IMAGE_HEIGHT */
+		gtk_paned_set_position (GTK_PANED (widget), PREVIEW_IMAGE_HEIGHT);
+	}
+}
+
+static void
+details_pane_position_changed_callback (GObject *paned, GParamSpec *pspec, gpointer user_data)
+{
+	NemoPreviewPane *pane = NEMO_PREVIEW_PANE (user_data);
+	NemoPreviewPanePrivate *priv = nemo_preview_pane_get_instance_private (pane);
+	gint position, total_height, details_height;
+
+	/* Don't save position until initial position has been set */
+	if (!priv->initial_position_set) {
+		return;
+	}
+
+	position = gtk_paned_get_position (GTK_PANED (paned));
+	total_height = gtk_widget_get_allocated_height (GTK_WIDGET (paned));
+
+	/* Calculate height of details pane (bottom side) */
+	details_height = total_height - position;
+
+	/* Only save if details height is reasonable */
+	if (details_height > 50 && total_height > 0) {
+		g_settings_set_int (nemo_preview_pane_preferences, "details-height", details_height);
+	}
+}
 
 static void
 file_changed_callback (NemoFile *file, gpointer user_data)
@@ -126,8 +179,18 @@ nemo_preview_pane_init (NemoPreviewPane *pane)
 	                 scrolled, TRUE, FALSE);
 	gtk_widget_show (scrolled);
 
-	/* Set initial position for the paned */
-	gtk_paned_set_position (GTK_PANED (priv->vpaned), PREVIEW_IMAGE_HEIGHT);
+	/* Initialize flag */
+	priv->initial_position_set = FALSE;
+
+	/* Connect size-allocate to set initial position from saved settings */
+	g_signal_connect (priv->vpaned, "size-allocate",
+	                  G_CALLBACK (vpaned_size_allocate_callback),
+	                  pane);
+
+	/* Connect signal to save position on resize */
+	g_signal_connect (priv->vpaned, "notify::position",
+	                  G_CALLBACK (details_pane_position_changed_callback),
+	                  pane);
 }
 
 static void

@@ -29,7 +29,7 @@
 
 #define NEMO_TYPE_PREVIEW_IMAGE (nemo_preview_image_get_type())
 
-G_DECLARE_FINAL_TYPE (NemoPreviewImage, nemo_preview_image, NEMO, PREVIEW_IMAGE, GtkBox);
+G_DECLARE_FINAL_TYPE (NemoPreviewImage, nemo_preview_image, NEMO, PREVIEW_IMAGE, GtkBox)
 GtkWidget *nemo_preview_image_new      (void);
 
 void       nemo_preview_image_set_file (NemoPreviewImage *widget,

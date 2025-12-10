@@ -29,7 +29,7 @@
 
 #define NEMO_TYPE_PREVIEW_DETAILS (nemo_preview_details_get_type())
 
-G_DECLARE_FINAL_TYPE (NemoPreviewDetails, nemo_preview_details, NEMO, PREVIEW_DETAILS, GtkBox);
+G_DECLARE_FINAL_TYPE (NemoPreviewDetails, nemo_preview_details, NEMO, PREVIEW_DETAILS, GtkBox)
 GtkWidget *nemo_preview_details_new      (void);
 
 void       nemo_preview_details_set_file (NemoPreviewDetails *widget,
