@@ -201,18 +201,36 @@ nemo_preview_details_set_file (NemoPreviewDetails *widget,
 			gtk_label_set_text (GTK_LABEL (priv->permissions_value_label), "—");
 		}
 
-		/* Location */
-		location = nemo_file_get_location (file);
-		parent = g_file_get_parent (location);
-		if (parent != NULL) {
-			parent_path = g_file_get_parse_name (parent);
-			gtk_label_set_text (GTK_LABEL (priv->location_value_label), parent_path);
-			g_free (parent_path);
-			g_object_unref (parent);
+		/* Location - use activation URI to get real location for virtual folders */
+		str = nemo_file_get_activation_uri (file);
+		if (str != NULL) {
+			location = g_file_new_for_uri (str);
+			g_free (str);
+
+			parent = g_file_get_parent (location);
+			if (parent != NULL) {
+				parent_path = g_file_get_parse_name (parent);
+				gtk_label_set_text (GTK_LABEL (priv->location_value_label), parent_path);
+				g_free (parent_path);
+				g_object_unref (parent);
+			} else {
+				gtk_label_set_text (GTK_LABEL (priv->location_value_label), "—");
+			}
+			g_object_unref (location);
 		} else {
-			gtk_label_set_text (GTK_LABEL (priv->location_value_label), "—");
+			/* Fallback to regular location if no activation URI */
+			location = nemo_file_get_location (file);
+			parent = g_file_get_parent (location);
+			if (parent != NULL) {
+				parent_path = g_file_get_parse_name (parent);
+				gtk_label_set_text (GTK_LABEL (priv->location_value_label), parent_path);
+				g_free (parent_path);
+				g_object_unref (parent);
+			} else {
+				gtk_label_set_text (GTK_LABEL (priv->location_value_label), "—");
+			}
+			g_object_unref (location);
 		}
-		g_object_unref (location);
 	}
 }
 

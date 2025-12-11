@@ -2242,9 +2242,47 @@ preview_pane_selection_changed_callback (NemoView *view, NemoWindow *window)
 }
 
 static void
+set_preview_pane_width_from_settings (NemoWindow *window)
+{
+	gint saved_width, position, total_width;
+
+	/* Only set initial position once */
+	if (window->details->preview_pane_width_set) {
+		return;
+	}
+
+	window->details->preview_pane_width_set = TRUE;
+
+	/* Set position based on saved preview pane width */
+	saved_width = g_settings_get_int (nemo_preview_pane_preferences, "pane-width");
+	total_width = gtk_widget_get_allocated_width (window->details->split_view_hpane);
+
+	if (saved_width > 100 && total_width > saved_width) {
+		/* Position is from left, so subtract preview width from total */
+		position = total_width - saved_width;
+		gtk_paned_set_position (GTK_PANED (window->details->split_view_hpane), position);
+	} else {
+		/* Fallback: 60/40 split */
+		gtk_paned_set_position (GTK_PANED (window->details->split_view_hpane), total_width * 0.6);
+	}
+}
+
+static void
+preview_pane_realize_callback (GtkWidget *widget, gpointer user_data)
+{
+	NemoWindow *window = NEMO_WINDOW (user_data);
+	set_preview_pane_width_from_settings (window);
+}
+
+static void
 preview_pane_position_changed_callback (GObject *paned, GParamSpec *pspec, NemoWindow *window)
 {
 	gint position, total_width, preview_width;
+
+	/* Don't save position until initial width has been set */
+	if (!window->details->preview_pane_width_set) {
+		return;
+	}
 
 	position = gtk_paned_get_position (GTK_PANED (paned));
 	total_width = gtk_widget_get_allocated_width (GTK_WIDGET (paned));
@@ -2344,6 +2382,9 @@ nemo_window_preview_pane_on (NemoWindow *window)
 		nemo_window_split_view_off (window);
 	}
 
+	/* Reset flag so position can be set */
+	window->details->preview_pane_width_set = FALSE;
+
 	/* Create preview pane */
 	window->details->preview_pane = nemo_preview_pane_new (window);
 
@@ -2354,19 +2395,15 @@ nemo_window_preview_pane_on (NemoWindow *window)
 
 	gtk_widget_show (window->details->preview_pane);
 
-	/* Set position from saved settings */
-	gint saved_width = g_settings_get_int (nemo_preview_pane_preferences, "pane-width");
-	gint total_width = gtk_widget_get_allocated_width (window->details->split_view_hpane);
-	gint position;
-
-	if (saved_width > 100 && total_width > saved_width) {
-		/* Position is measured from left, so subtract preview width from total */
-		position = total_width - saved_width;
-		gtk_paned_set_position (GTK_PANED (window->details->split_view_hpane), position);
+	/* Set position from settings - check if paned is already realized */
+	if (gtk_widget_get_realized (window->details->split_view_hpane)) {
+		/* Already realized, set position immediately */
+		set_preview_pane_width_from_settings (window);
 	} else {
-		/* Fallback to 60/40 split if no saved value */
-		gtk_paned_set_position (GTK_PANED (window->details->split_view_hpane),
-		                        total_width * 0.6);
+		/* Not realized yet, wait for realize signal */
+		g_signal_connect (window->details->split_view_hpane, "realize",
+		                  G_CALLBACK (preview_pane_realize_callback),
+		                  window);
 	}
 
 	/* Connect signal to save position on resize */
@@ -2418,7 +2455,10 @@ nemo_window_preview_pane_off (NemoWindow *window)
 		return;
 	}
 
-	/* Disconnect position signal */
+	/* Disconnect signals */
+	g_signal_handlers_disconnect_by_func (window->details->split_view_hpane,
+	                                      G_CALLBACK (preview_pane_realize_callback),
+	                                      window);
 	g_signal_handlers_disconnect_by_func (window->details->split_view_hpane,
 	                                      G_CALLBACK (preview_pane_position_changed_callback),
 	                                      window);

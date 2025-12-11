@@ -110,7 +110,7 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 
 	/* Create frame to hold drawing area */
 	priv->frame = gtk_frame_new (NULL);
-	gtk_frame_set_shadow_type (GTK_FRAME (priv->frame), GTK_SHADOW_IN);
+	gtk_frame_set_shadow_type (GTK_FRAME (priv->frame), GTK_SHADOW_NONE);
 	gtk_widget_set_halign (priv->frame, GTK_ALIGN_FILL);
 	gtk_widget_set_valign (priv->frame, GTK_ALIGN_FILL);
 	gtk_widget_set_hexpand (priv->frame, TRUE);

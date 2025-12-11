@@ -102,6 +102,7 @@ struct NemoWindowDetails
         /* preview pane */
         GtkWidget *preview_pane;        // NemoPreviewPane instance
         gboolean show_preview_pane;     // State flag
+        gboolean preview_pane_width_set; // Initial width has been set from settings
 
         gboolean disable_chrome;
 
