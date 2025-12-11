@@ -1573,6 +1573,8 @@ nemo_window_connect_content_view (NemoWindow *window,
 				      NemoView *view)
 {
 	NemoWindowSlot *slot;
+	NemoFile *directory_file;
+	gboolean show_preview;
 
 	g_assert (NEMO_IS_WINDOW (window));
 	g_assert (NEMO_IS_VIEW (view));
@@ -1586,6 +1588,21 @@ nemo_window_connect_content_view (NemoWindow *window,
 	g_signal_connect (view, "zoom-level-changed",
 			  G_CALLBACK (zoom_level_changed_callback),
 			  window);
+
+	/* Check if this directory has a saved preview pane state */
+	directory_file = nemo_view_get_directory_as_file (view);
+	if (directory_file != NULL) {
+		show_preview = nemo_file_get_boolean_metadata (directory_file,
+		                                                NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+		                                                FALSE);
+
+		/* Apply the saved state */
+		if (show_preview && !window->details->show_preview_pane) {
+			nemo_window_preview_pane_on (window);
+		} else if (!show_preview && window->details->show_preview_pane) {
+			nemo_window_preview_pane_off (window);
+		}
+	}
 
 	/* Connect preview pane selection updates if preview is showing */
 	if (window->details->preview_pane) {
@@ -2376,12 +2393,26 @@ nemo_window_preview_pane_on (NemoWindow *window)
 
 	window->details->show_preview_pane = TRUE;
 	nemo_window_update_show_hide_ui_elements (window);
+
+	/* Save preview pane state to directory metadata */
+	if (slot != NULL && slot->content_view != NULL) {
+		NemoFile *directory_file;
+
+		directory_file = nemo_view_get_directory_as_file (slot->content_view);
+		if (directory_file != NULL) {
+			nemo_file_set_boolean_metadata (directory_file,
+			                                 NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+			                                 FALSE,
+			                                 TRUE);
+		}
+	}
 }
 
 void
 nemo_window_preview_pane_off (NemoWindow *window)
 {
 	GtkPaned *paned;
+	NemoWindowSlot *slot;
 
 	if (window->details->preview_pane == NULL) {
 		return;
@@ -2407,6 +2438,20 @@ nemo_window_preview_pane_off (NemoWindow *window)
 	window->details->show_preview_pane = FALSE;
 
 	nemo_window_update_show_hide_ui_elements (window);
+
+	/* Save preview pane state to directory metadata */
+	slot = nemo_window_get_active_slot (window);
+	if (slot != NULL && slot->content_view != NULL) {
+		NemoFile *directory_file;
+
+		directory_file = nemo_view_get_directory_as_file (slot->content_view);
+		if (directory_file != NULL) {
+			nemo_file_set_boolean_metadata (directory_file,
+			                                 NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+			                                 FALSE,
+			                                 FALSE);
+		}
+	}
 }
 
 gboolean

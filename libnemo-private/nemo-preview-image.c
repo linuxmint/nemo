@@ -23,6 +23,7 @@
 
 #include "nemo-preview-image.h"
 #include "nemo-file-attributes.h"
+#include "nemo-icon-info.h"
 #include <glib/gi18n.h>
 
 #define RESIZE_DEBOUNCE_MS 150
@@ -34,6 +35,7 @@ struct _NemoPreviewImage {
 };
 
 typedef struct {
+	GtkWidget *frame;
 	GtkWidget *drawing_area;
 	GtkWidget *message_label;
 	NemoFile *file;
@@ -48,6 +50,9 @@ typedef struct {
 
 	/* Current surface to draw */
 	cairo_surface_t *current_surface;
+
+	/* Track if showing an icon vs image */
+	gboolean showing_icon;
 } NemoPreviewImagePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (NemoPreviewImage, nemo_preview_image, GTK_TYPE_BOX)
@@ -101,6 +106,17 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 	priv->current_height = 0;
 	priv->current_pixbuf = NULL;
 	priv->current_surface = NULL;
+	priv->showing_icon = FALSE;
+
+	/* Create frame to hold drawing area */
+	priv->frame = gtk_frame_new (NULL);
+	gtk_frame_set_shadow_type (GTK_FRAME (priv->frame), GTK_SHADOW_IN);
+	gtk_widget_set_halign (priv->frame, GTK_ALIGN_FILL);
+	gtk_widget_set_valign (priv->frame, GTK_ALIGN_FILL);
+	gtk_widget_set_hexpand (priv->frame, TRUE);
+	gtk_widget_set_vexpand (priv->frame, TRUE);
+
+	gtk_box_pack_start (GTK_BOX (preview), priv->frame, TRUE, TRUE, 0);
 
 	/* Create drawing area widget */
 	priv->drawing_area = gtk_drawing_area_new ();
@@ -110,7 +126,7 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 	gtk_widget_set_vexpand (priv->drawing_area, TRUE);
 	g_signal_connect (priv->drawing_area, "draw",
 	                  G_CALLBACK (on_drawing_area_draw), preview);
-	gtk_box_pack_start (GTK_BOX (preview), priv->drawing_area, TRUE, TRUE, 0);
+	gtk_container_add (GTK_CONTAINER (priv->frame), priv->drawing_area);
 
 	/* Create message label (hidden by default) */
 	priv->message_label = gtk_label_new ("");
@@ -120,6 +136,8 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 	                              "dim-label");
 	gtk_box_pack_start (GTK_BOX (preview), priv->message_label, TRUE, TRUE, 0);
 
+    gtk_container_set_border_width (GTK_CONTAINER (preview), 4);
+    gtk_widget_show_all (GTK_WIDGET (preview));
 	/* Connect size-allocate signal for resize handling */
 	g_signal_connect (preview, "size-allocate",
 	                  G_CALLBACK (on_size_allocate), NULL);
@@ -173,8 +191,29 @@ on_drawing_area_draw (GtkWidget *widget,
 	x_offset = (widget_width - surface_width) / 2.0;
 	y_offset = (widget_height - surface_height) / 2.0;
 
+	/* Draw the image first */
 	cairo_set_source_surface (cr, priv->current_surface, x_offset, y_offset);
 	cairo_paint (cr);
+
+	/* If showing an image (not an icon), draw a border on top of it */
+	if (!priv->showing_icon) {
+		GtkStyleContext *style_context;
+		GdkRGBA border_color;
+		gdouble border_width = 1.0;
+		gdouble inset = 0.5;  /* Inset border slightly inside image bounds */
+
+		/* Get the border color from the frame's style context */
+		style_context = gtk_widget_get_style_context (priv->frame);
+		gtk_style_context_get_border_color (style_context, GTK_STATE_FLAG_NORMAL, &border_color);
+
+		/* Draw border rectangle inset from the image edge */
+		cairo_set_source_rgba (cr, border_color.red, border_color.green,
+		                       border_color.blue, border_color.alpha);
+		cairo_set_line_width (cr, border_width);
+		cairo_rectangle (cr, x_offset + inset, y_offset + inset,
+		                 surface_width - (inset * 2), surface_height - (inset * 2));
+		cairo_stroke (cr);
+	}
 
 	return TRUE;
 }
@@ -194,6 +233,100 @@ is_image_file (NemoFile *file)
 	g_free (mime_type);
 
 	return is_image;
+}
+
+static void
+load_icon_at_size (NemoPreviewImage *widget,
+                   gint              width,
+                   gint              height)
+{
+	NemoPreviewImagePrivate *priv;
+	NemoIconInfo *icon_info = NULL;
+	GtkIconTheme *icon_theme;
+	GdkPixbuf *icon_pixbuf = NULL;
+	cairo_surface_t *surface = NULL;
+	gint ui_scale;
+	gint icon_size;
+	const char *icon_name;
+	GError *error = NULL;
+
+	priv = nemo_preview_image_get_instance_private (widget);
+
+	if (priv->file == NULL) {
+		return;
+	}
+
+	if (width <= 1 || height <= 1) {
+		return;
+	}
+
+	ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
+
+	/* Calculate icon size - use the smaller dimension to fit in the space */
+	icon_size = MIN (width, height) * ui_scale;
+
+	/* Get the icon info from the file */
+	icon_info = nemo_file_get_icon (priv->file, icon_size, 0, ui_scale, 0);
+
+	if (icon_info != NULL && icon_info->icon_name != NULL) {
+		icon_name = icon_info->icon_name;
+		icon_theme = gtk_icon_theme_get_default ();
+
+		/* Load the icon at the exact size we need */
+		icon_pixbuf = gtk_icon_theme_load_icon_for_scale (icon_theme,
+		                                                   icon_name,
+		                                                   icon_size / ui_scale,
+		                                                   ui_scale,
+		                                                   GTK_ICON_LOOKUP_FORCE_SIZE,
+		                                                   &error);
+
+		if (icon_pixbuf != NULL) {
+			/* Save pixbuf for quick scaling during resize */
+			if (priv->current_pixbuf != NULL) {
+				g_object_unref (priv->current_pixbuf);
+			}
+			priv->current_pixbuf = g_object_ref (icon_pixbuf);
+
+			surface = gdk_cairo_surface_create_from_pixbuf (icon_pixbuf, ui_scale, NULL);
+
+			if (surface != NULL) {
+				/* Replace old surface with new one */
+				if (priv->current_surface != NULL) {
+					cairo_surface_destroy (priv->current_surface);
+				}
+				priv->current_surface = surface;
+				gtk_widget_show (priv->drawing_area);
+				gtk_widget_queue_draw (priv->drawing_area);
+			}
+
+			g_object_unref (icon_pixbuf);
+			gtk_widget_hide (priv->message_label);
+		} else {
+			/* Failed to load icon */
+			if (error != NULL) {
+				g_warning ("Failed to load icon '%s': %s", icon_name, error->message);
+				g_error_free (error);
+			}
+			gtk_label_set_text (GTK_LABEL (priv->message_label),
+			                    _("(Failed to load icon)"));
+			gtk_widget_show (priv->message_label);
+			gtk_widget_hide (priv->drawing_area);
+		}
+
+		nemo_icon_info_unref (icon_info);
+	} else {
+		/* No icon info available */
+		if (icon_info != NULL) {
+			nemo_icon_info_unref (icon_info);
+		}
+		gtk_label_set_text (GTK_LABEL (priv->message_label),
+		                    _("(No icon available)"));
+		gtk_widget_show (priv->message_label);
+		gtk_widget_hide (priv->drawing_area);
+	}
+
+	priv->current_width = width;
+	priv->current_height = height;
 }
 
 static void
@@ -342,7 +475,12 @@ on_resize_timeout (gpointer user_data)
 	priv->resize_timeout_id = 0;
 
 	gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
-	load_image_at_size (widget, allocation.width, allocation.height);
+
+	if (priv->showing_icon) {
+		load_icon_at_size (widget, allocation.width, allocation.height);
+	} else {
+		load_image_at_size (widget, allocation.width, allocation.height);
+	}
 
 	return G_SOURCE_REMOVE;
 }
@@ -434,53 +572,14 @@ nemo_preview_image_set_file (NemoPreviewImage *widget,
 
 		if (is_image_file (file)) {
 			/* Load the image at current widget size */
+			priv->showing_icon = FALSE;
 			gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
 			load_image_at_size (widget, allocation.width, allocation.height);
-		} else if (nemo_file_is_directory (file)) {
-			/* Show folder icon via nemo_file API */
-			GdkPixbuf *icon_pixbuf;
-			cairo_surface_t *surface;
-			gint ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
-
-			icon_pixbuf = nemo_file_get_icon_pixbuf (file, 64, TRUE, ui_scale, 0);
-			if (icon_pixbuf != NULL) {
-				surface = gdk_cairo_surface_create_from_pixbuf (icon_pixbuf, ui_scale, NULL);
-				if (surface != NULL) {
-					if (priv->current_surface != NULL) {
-						cairo_surface_destroy (priv->current_surface);
-					}
-					priv->current_surface = surface;
-				}
-				g_object_unref (icon_pixbuf);
-			}
-
-			gtk_label_set_text (GTK_LABEL (priv->message_label), _("(Folder)"));
-			gtk_widget_show (priv->drawing_area);
-			gtk_widget_queue_draw (priv->drawing_area);
-			gtk_widget_show (priv->message_label);
 		} else {
-			/* Non-image file: show file icon */
-			GdkPixbuf *icon_pixbuf;
-			cairo_surface_t *surface;
-			gint ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
-
-			icon_pixbuf = nemo_file_get_icon_pixbuf (file, 64, TRUE, ui_scale, 0);
-			if (icon_pixbuf != NULL) {
-				surface = gdk_cairo_surface_create_from_pixbuf (icon_pixbuf, ui_scale, NULL);
-				if (surface != NULL) {
-					if (priv->current_surface != NULL) {
-						cairo_surface_destroy (priv->current_surface);
-					}
-					priv->current_surface = surface;
-				}
-				g_object_unref (icon_pixbuf);
-			}
-
-			gtk_label_set_text (GTK_LABEL (priv->message_label),
-			                    _("(Not an image file)"));
-			gtk_widget_show (priv->drawing_area);
-			gtk_widget_queue_draw (priv->drawing_area);
-			gtk_widget_show (priv->message_label);
+			/* Load folder or file icon at current widget size */
+			priv->showing_icon = TRUE;
+			gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
+			load_icon_at_size (widget, allocation.width, allocation.height);
 		}
 	}
 }
@@ -519,4 +618,5 @@ nemo_preview_image_clear (NemoPreviewImage *widget)
 	gtk_widget_hide (priv->message_label);
 	priv->current_width = 0;
 	priv->current_height = 0;
+	priv->showing_icon = FALSE;
 }
