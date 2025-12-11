@@ -314,6 +314,9 @@ progress_info_changed_cb (NemoProgressInfo *info,
         double progress = 0.0;
         int i = 0;
         for (l = self->priv->infos; l != NULL; l = l->next) {
+            if (nemo_progress_info_get_is_finished (l->data)) {
+                continue;
+            }
             progress = (progress + nemo_progress_info_get_progress (l->data)) / (double) ++i;
         }
         if (progress > 0) {
