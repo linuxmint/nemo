@@ -1054,6 +1054,10 @@ nemo_window_set_active_pane (NemoWindow *window,
 	}
 }
 
+/* Forward declarations for preview pane callbacks */
+static void preview_pane_selection_changed_callback (NemoView *view, NemoWindow *window);
+static void slot_location_changed_callback (NemoWindowSlot *slot, const char *from_uri, const char *to_uri, NemoWindow *window);
+
 /* Make both, the given slot the active slot and its corresponding
  * pane the active pane of the associated window.
  * new_slot may be NULL. */
@@ -1083,6 +1087,10 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		if (old_slot->content_view != NULL) {
 			nemo_window_disconnect_content_view (window, old_slot->content_view);
 		}
+		/* Disconnect from slot's location-changed signal */
+		g_signal_handlers_disconnect_by_func (old_slot,
+		                                      G_CALLBACK (slot_location_changed_callback),
+		                                      window);
 		gtk_widget_hide (GTK_WIDGET (old_slot->pane->tool_bar));
 		/* inform slot & view */
 		g_signal_emit_by_name (old_slot, "inactive");
@@ -1106,6 +1114,11 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
                         /* inform window */
                         nemo_window_connect_content_view (window, new_slot->content_view);
                 }
+
+		/* Connect to slot's location-changed signal for preview pane updates */
+		g_signal_connect (new_slot, "location-changed",
+		                  G_CALLBACK (slot_location_changed_callback),
+		                  window);
 
 		// Show active toolbar
 		gboolean show_toolbar;
@@ -1545,9 +1558,6 @@ nemo_window_sync_create_folder_button (NemoWindow *window)
 
     toolbar_set_create_folder_button (allow, slot->pane);
 }
-
-/* Forward declaration for preview pane callback */
-static void preview_pane_selection_changed_callback (NemoView *view, NemoWindow *window);
 
 static void
 zoom_level_changed_callback (NemoView *view,
@@ -2218,6 +2228,32 @@ nemo_window_new (GtkApplication *application,
 			     "application", application,
 			     "screen", screen,
 			     NULL);
+}
+
+static void
+slot_location_changed_callback (NemoWindowSlot *slot,
+                                 const char     *from_uri,
+                                 const char     *to_uri,
+                                 NemoWindow     *window)
+{
+	GList *selection;
+	NemoFile *file = NULL;
+
+	/* Update preview pane when location changes */
+	if (window->details->preview_pane != NULL) {
+		/* Clear selection first since we're in a new location */
+		nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), NULL);
+
+		/* If the new location has a selection, show it */
+		if (slot->content_view != NULL) {
+			selection = nemo_view_get_selection (slot->content_view);
+			if (selection != NULL && selection->data != NULL) {
+				file = NEMO_FILE (selection->data);
+				nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), file);
+			}
+			nemo_file_list_free (selection);
+		}
+	}
 }
 
 static void
