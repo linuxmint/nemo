@@ -72,6 +72,9 @@ struct NemoWindowDetails
         NemoWindowPane *active_pane;
 
         GtkWidget *content_paned;
+        GtkWidget *base_paned;
+        GtkWidget *secondary_paned;
+
         NemoNavigationState *nav_state;
         
         /* Side Pane */
@@ -91,9 +94,6 @@ struct NemoWindowDetails
         GtkActionGroup *extensions_toolbar_action_group;
 
         guint menu_hide_delay_id;
-
-        /* split view */
-        GtkWidget *split_view_hpane;
 
         // A closed pane's location, valid until the remaining pane
         // location changes.
