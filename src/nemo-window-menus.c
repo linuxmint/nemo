@@ -648,6 +648,9 @@ action_split_view_callback (GtkAction *action,
 		NemoWindowSlot *slot;
 
 		if (is_active) {
+            if (nemo_window_preview_pane_showing (window)) {
+                nemo_window_preview_pane_off (window);
+            }
 			nemo_window_split_view_on (window);
 		} else {
 			nemo_window_split_view_off (window);
@@ -658,6 +661,7 @@ action_split_view_callback (GtkAction *action,
 			nemo_view_update_menus (slot->content_view);
 		}
 	}
+    nemo_window_update_show_hide_ui_elements (window);
 }
 
 static void
@@ -678,6 +682,9 @@ action_preview_pane_callback (GtkAction *action,
 		NemoWindowSlot *slot;
 
 		if (is_active) {
+            if (nemo_window_split_view_showing (window)) {
+                nemo_window_split_view_off (window);
+            }
 			nemo_window_preview_pane_on (window);
 		} else {
 			nemo_window_preview_pane_off (window);
@@ -688,7 +695,6 @@ action_preview_pane_callback (GtkAction *action,
 			nemo_view_update_menus (slot->content_view);
 		}
 	}
-
     nemo_window_update_show_hide_ui_elements (window);
 }
 
@@ -814,18 +820,33 @@ nemo_window_update_show_hide_ui_elements (NemoWindow *window)
     NemoWindowPane *pane;
 	GtkActionGroup *action_group;
 	GtkAction *action;
+    gboolean active, split_view_showing, preview_showing;
 
+    split_view_showing = nemo_window_split_view_showing (window);
+    preview_showing = nemo_window_preview_pane_showing (window);
 	action_group = nemo_window_get_main_action_group (window);
 
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
-    gtk_action_block_activate (action);
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      nemo_window_split_view_showing (window));
-    gtk_action_unblock_activate (action);
+    active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+    if (active != split_view_showing) {
+        gtk_action_block_activate (action);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), split_view_showing);
+        gtk_action_unblock_activate (action);
+    }
+
+    action = gtk_action_group_get_action (action_group,
+                          NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE);
+    active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+    if (active != preview_showing) {
+        gtk_action_block_activate (action);
+        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), preview_showing);
+        gtk_action_unblock_activate (action);
+    }
 
 	nemo_window_update_split_view_actions_sensitivity (window);
-
     update_side_bar_radio_buttons (window);
 
     pane = nemo_window_get_active_pane (window);
@@ -834,10 +855,13 @@ nemo_window_update_show_hide_ui_elements (NemoWindow *window)
 
         action = gtk_action_group_get_action (action_group,
                                               NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
-        gtk_action_block_activate (action);
-        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-                                      nemo_window_split_view_showing (window));
-        gtk_action_unblock_activate (action);
+        active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+        if (active != split_view_showing) {
+            gtk_action_block_activate (action);
+            gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), split_view_showing);
+            gtk_action_unblock_activate (action);
+        }
     }
 }
 
@@ -1966,7 +1990,7 @@ nemo_window_initialize_menus (NemoWindow *window)
     gtk_action_set_visible (action_to_hide, eel_vfs_supports_uri_scheme ("trash"));
     action_to_hide = gtk_action_group_get_action (action_group, "Go to Network");
     gtk_action_set_visible (action_to_hide, eel_vfs_supports_uri_scheme ("network"));
-
+g_printerr ("FUCKKKKKK\n");
 	gtk_action_group_add_toggle_actions (action_group,
 					     main_toggle_entries, G_N_ELEMENTS (main_toggle_entries),
 					     window);

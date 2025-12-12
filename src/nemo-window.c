@@ -2338,13 +2338,9 @@ nemo_window_split_view_on (NemoWindow *window)
 	NemoWindowSlot *slot, *old_active_slot;
 	GFile *location;
 
-	/* Disable preview pane if it's showing */
-	if (nemo_window_preview_pane_showing (window)) {
-		nemo_window_preview_pane_off (window);
-	}
-
 	old_active_slot = nemo_window_get_active_slot (window);
 	slot = create_extra_pane (window);
+    gtk_widget_show_all (GTK_WIDGET (slot));
 
     location = window->details->secondary_pane_last_location;
 
@@ -2386,8 +2382,6 @@ nemo_window_split_view_off (NemoWindow *window)
 		}
 	}
 
-    /* Reset split view pane's position so the position can be
-     * caught again later */
     g_object_set (G_OBJECT (window->details->split_view_hpane),
                   "position", 0,
                   "position-set", FALSE,
@@ -2396,8 +2390,6 @@ nemo_window_split_view_off (NemoWindow *window)
 	nemo_window_set_active_pane (window, active_pane);
 	nemo_navigation_state_set_master (window->details->nav_state,
 					      active_pane->action_group);
-
-	nemo_window_update_show_hide_ui_elements (window);
 }
 
 gboolean
@@ -2409,125 +2401,107 @@ nemo_window_split_view_showing (NemoWindow *window)
 void
 nemo_window_preview_pane_on (NemoWindow *window)
 {
-	NemoWindowSlot *slot;
-	GList *selection;
-	NemoFile *file = NULL;
+    NemoWindowSlot *slot;
+    GList *selection;
+    NemoFile *file = NULL;
 
-	/* Disable split view if it's showing */
-	if (nemo_window_split_view_showing (window)) {
-		nemo_window_split_view_off (window);
-	}
+    window->details->preview_pane_width_set = FALSE;
+    window->details->preview_pane = nemo_preview_pane_new (window);
 
-	/* Reset flag so position can be set */
-	window->details->preview_pane_width_set = FALSE;
+    gtk_paned_pack2 (GTK_PANED (window->details->split_view_hpane),
+                     window->details->preview_pane,
+                     TRUE, FALSE);
 
-	/* Create preview pane */
-	window->details->preview_pane = nemo_preview_pane_new (window);
+    gtk_widget_show (window->details->preview_pane);
 
-	/* Pack into split view paned */
-	gtk_paned_pack2 (GTK_PANED (window->details->split_view_hpane),
-	                 window->details->preview_pane,
-	                 TRUE, FALSE);
+    if (gtk_widget_get_realized (window->details->split_view_hpane)) {
+        set_preview_pane_width_from_settings (window);
+    } else {
+        g_signal_connect (window->details->split_view_hpane, "realize",
+                          G_CALLBACK (preview_pane_realize_callback),
+                          window);
+    }
 
-	gtk_widget_show (window->details->preview_pane);
+    g_signal_connect (window->details->split_view_hpane, "notify::position",
+                      G_CALLBACK (preview_pane_position_changed_callback),
+                      window);
 
-	/* Set position from settings - check if paned is already realized */
-	if (gtk_widget_get_realized (window->details->split_view_hpane)) {
-		/* Already realized, set position immediately */
-		set_preview_pane_width_from_settings (window);
-	} else {
-		/* Not realized yet, wait for realize signal */
-		g_signal_connect (window->details->split_view_hpane, "realize",
-		                  G_CALLBACK (preview_pane_realize_callback),
-		                  window);
-	}
+    slot = nemo_window_get_active_slot (window);
+    if (slot != NULL && slot->content_view != NULL) {
+        selection = nemo_view_get_selection (slot->content_view);
+        if (selection != NULL && selection->data != NULL) {
+            file = NEMO_FILE (selection->data);
+        }
+        nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), file);
+        nemo_file_list_free (selection);
 
-	/* Connect signal to save position on resize */
-	g_signal_connect (window->details->split_view_hpane, "notify::position",
-	                  G_CALLBACK (preview_pane_position_changed_callback),
-	                  window);
+        g_signal_connect_object (slot->content_view, "selection-changed",
+                                 G_CALLBACK (preview_pane_selection_changed_callback),
+                                 window, 0);
+    }
 
-	/* Get current selection and update preview */
-	slot = nemo_window_get_active_slot (window);
-	if (slot != NULL && slot->content_view != NULL) {
-		selection = nemo_view_get_selection (slot->content_view);
-		if (selection != NULL && selection->data != NULL) {
-			file = NEMO_FILE (selection->data);
-		}
-		nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), file);
-		nemo_file_list_free (selection);
+    window->details->show_preview_pane = TRUE;
 
-		/* Connect selection-changed signal for the current view */
-		/* This will be reconnected automatically when view changes via nemo_window_connect_content_view() */
-		g_signal_connect_object (slot->content_view, "selection-changed",
-		                         G_CALLBACK (preview_pane_selection_changed_callback),
-		                         window, 0);
-	}
+    if (slot != NULL && slot->content_view != NULL) {
+        NemoFile *directory_file;
 
-	window->details->show_preview_pane = TRUE;
-	nemo_window_update_show_hide_ui_elements (window);
+        directory_file = nemo_view_get_directory_as_file (slot->content_view);
+        if (directory_file != NULL) {
+            nemo_file_set_boolean_metadata (directory_file,
+                                             NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+                                             FALSE,
+                                             TRUE);
+        }
+    }
 
-	/* Save preview pane state to directory metadata */
-	if (slot != NULL && slot->content_view != NULL) {
-		NemoFile *directory_file;
-
-		directory_file = nemo_view_get_directory_as_file (slot->content_view);
-		if (directory_file != NULL) {
-			nemo_file_set_boolean_metadata (directory_file,
-			                                 NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
-			                                 FALSE,
-			                                 TRUE);
-		}
-	}
+    // nemo_window_update_show_hide_ui_elements (window);
 }
 
 void
 nemo_window_preview_pane_off (NemoWindow *window)
 {
-	GtkPaned *paned;
-	NemoWindowSlot *slot;
+    GtkPaned *paned;
+    NemoWindowSlot *slot;
 
-	if (window->details->preview_pane == NULL) {
-		return;
-	}
+    if (window->details->preview_pane == NULL) {
+        return;
+    }
 
-	/* Disconnect signals */
-	g_signal_handlers_disconnect_by_func (window->details->split_view_hpane,
-	                                      G_CALLBACK (preview_pane_realize_callback),
-	                                      window);
-	g_signal_handlers_disconnect_by_func (window->details->split_view_hpane,
-	                                      G_CALLBACK (preview_pane_position_changed_callback),
-	                                      window);
+    /* Disconnect signals */
+    g_signal_handlers_disconnect_by_func (window->details->split_view_hpane,
+                                          G_CALLBACK (preview_pane_realize_callback),
+                                          window);
+    g_signal_handlers_disconnect_by_func (window->details->split_view_hpane,
+                                          G_CALLBACK (preview_pane_position_changed_callback),
+                                          window);
 
-	paned = GTK_PANED (window->details->split_view_hpane);
+    paned = GTK_PANED (window->details->split_view_hpane);
 
-	/* Remove from paned */
-	gtk_container_remove (GTK_CONTAINER (paned), window->details->preview_pane);
+    /* Remove from paned */
+    gtk_container_remove (GTK_CONTAINER (paned), window->details->preview_pane);
 
-	/* Reset paned position */
-	g_object_set (G_OBJECT (paned),
-	              "position", 0,
-	              "position-set", FALSE,
-	              NULL);
+    /* Reset paned position */
+    g_object_set (G_OBJECT (paned),
+                  "position", 200,
+                  "position-set", FALSE,
+                  NULL);
 
-	window->details->preview_pane = NULL;
-	window->details->show_preview_pane = FALSE;
+    window->details->preview_pane = NULL;
+    window->details->show_preview_pane = FALSE;
 
-	nemo_window_update_show_hide_ui_elements (window);
+    /* Save preview pane state to directory metadata */
+    slot = nemo_window_get_active_slot (window);
+    if (slot != NULL && slot->content_view != NULL) {
+        NemoFile *directory_file;
 
-	/* Save preview pane state to directory metadata */
-	slot = nemo_window_get_active_slot (window);
-	if (slot != NULL && slot->content_view != NULL) {
-		NemoFile *directory_file;
-
-		directory_file = nemo_view_get_directory_as_file (slot->content_view);
-		if (directory_file != NULL) {
-			nemo_file_set_boolean_metadata (directory_file,
-			                                 NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
-			                                 FALSE,
-			                                 FALSE);
-		}
-	}
+        directory_file = nemo_view_get_directory_as_file (slot->content_view);
+        if (directory_file != NULL) {
+            nemo_file_set_boolean_metadata (directory_file,
+                                             NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+                                             FALSE,
+                                             FALSE);
+        }
+    }
 }
 
 gboolean
