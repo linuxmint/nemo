@@ -465,6 +465,29 @@ scale_current_pixbuf_to_size (NemoPreviewImage *widget,
 	}
 }
 
+static void
+reload_at_size (NemoPreviewImage *widget,
+                gint              width,
+                gint              height)
+{
+	NemoPreviewImagePrivate *priv;
+
+	priv = nemo_preview_image_get_instance_private (widget);
+
+	if (priv->file == NULL) {
+		return;
+	}
+
+	/* Determine whether to show image/thumbnail or generic icon */
+	if (nemo_can_thumbnail_internally (priv->file) || nemo_file_has_loaded_thumbnail (priv->file)) {
+		priv->showing_icon = FALSE;
+		load_image_at_size (widget, width, height);
+	} else {
+		priv->showing_icon = TRUE;
+		load_icon_at_size (widget, width, height);
+	}
+}
+
 static gboolean
 on_resize_timeout (gpointer user_data)
 {
@@ -476,12 +499,7 @@ on_resize_timeout (gpointer user_data)
 	priv->resize_timeout_id = 0;
 
 	gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
-
-	if (priv->showing_icon) {
-		load_icon_at_size (widget, allocation.width, allocation.height);
-	} else {
-		load_image_at_size (widget, allocation.width, allocation.height);
-	}
+	reload_at_size (widget, allocation.width, allocation.height);
 
 	return G_SOURCE_REMOVE;
 }
@@ -570,16 +588,8 @@ nemo_preview_image_set_file (NemoPreviewImage *widget,
 
 	if (file != NULL) {
 		nemo_file_ref (file);
-		if (nemo_can_thumbnail_internally (file) || nemo_file_has_loaded_thumbnail (file)) {
-			priv->showing_icon = FALSE;
-			gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
-			load_image_at_size (widget, allocation.width, allocation.height);
-		} else {
-			/* Load folder or file icon at current widget size */
-			priv->showing_icon = TRUE;
-			gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
-			load_icon_at_size (widget, allocation.width, allocation.height);
-		}
+		gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
+		reload_at_size (widget, allocation.width, allocation.height);
 	}
 }
 
