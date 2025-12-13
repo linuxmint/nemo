@@ -2566,6 +2566,10 @@ nemo_window_preview_pane_on_internal (NemoWindow *window,
 	GList *selection;
 	NemoFile *file = NULL;
 
+    if (nemo_window_is_desktop (window)) {
+        return;
+    }
+
 	/* Reset flag so position can be set */
 	window->details->preview_pane_width_set = FALSE;
 
