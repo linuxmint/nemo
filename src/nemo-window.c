@@ -1669,6 +1669,41 @@ any_other_slot_wants_preview_pane (NemoWindow *window,
 	return FALSE;
 }
 
+/* Synchronize the preview pane state based on a slot's directory metadata.
+ * This checks the slot's current directory's saved preference and applies it,
+ * taking into account whether other slots in the window want the preview pane.
+ */
+static void
+sync_preview_pane_from_slot_metadata (NemoWindow *window,
+                                       NemoWindowSlot *slot)
+{
+	NemoFile *directory_file;
+	gboolean show_preview;
+
+	if (slot == NULL || slot->content_view == NULL) {
+		return;
+	}
+
+	directory_file = nemo_view_get_directory_as_file (slot->content_view);
+	if (directory_file == NULL) {
+		return;
+	}
+
+	show_preview = nemo_file_get_boolean_metadata (directory_file,
+	                                                NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+	                                                FALSE);
+
+	/* Apply the saved state */
+	if (show_preview && !window->details->show_preview_pane) {
+		nemo_window_preview_pane_on (window);
+	} else if (!show_preview && window->details->show_preview_pane) {
+		/* Only close preview pane if no other slot wants it */
+		if (!any_other_slot_wants_preview_pane (window, slot)) {
+			nemo_window_preview_pane_off (window);
+		}
+	}
+}
+
 
 /* These are called
  *   A) when switching the view within the active slot
@@ -1680,8 +1715,6 @@ nemo_window_connect_content_view (NemoWindow *window,
 				      NemoView *view)
 {
 	NemoWindowSlot *slot;
-	NemoFile *directory_file;
-	gboolean show_preview;
 
 	g_assert (NEMO_IS_WINDOW (window));
 	g_assert (NEMO_IS_VIEW (view));
@@ -1697,22 +1730,7 @@ nemo_window_connect_content_view (NemoWindow *window,
 			  window);
 
 	/* Check if this directory has a saved preview pane state */
-	directory_file = nemo_view_get_directory_as_file (view);
-	if (directory_file != NULL) {
-		show_preview = nemo_file_get_boolean_metadata (directory_file,
-		                                                NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
-		                                                FALSE);
-
-		/* Apply the saved state */
-		if (show_preview && !window->details->show_preview_pane) {
-			nemo_window_preview_pane_on (window);
-		} else if (!show_preview && window->details->show_preview_pane) {
-			/* Only close preview pane if no other slot wants it */
-			if (!any_other_slot_wants_preview_pane (window, slot)) {
-				nemo_window_preview_pane_off (window);
-			}
-		}
-	}
+	sync_preview_pane_from_slot_metadata (window, slot);
 
 	/* Connect preview pane selection updates if preview is showing */
 	if (window->details->preview_pane) {
@@ -2352,28 +2370,9 @@ slot_location_changed_callback (NemoWindowSlot *slot,
 {
 	GList *selection;
 	NemoFile *file = NULL;
-	NemoFile *directory_file;
-	gboolean show_preview;
 
 	/* Check if this directory has a saved preview pane state */
-	if (slot->content_view != NULL) {
-		directory_file = nemo_view_get_directory_as_file (slot->content_view);
-		if (directory_file != NULL) {
-			show_preview = nemo_file_get_boolean_metadata (directory_file,
-			                                                NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
-			                                                FALSE);
-
-			/* Apply the saved state */
-			if (show_preview && !window->details->show_preview_pane) {
-				nemo_window_preview_pane_on (window);
-			} else if (!show_preview && window->details->show_preview_pane) {
-				/* Only close preview pane if no other slot wants it */
-				if (!any_other_slot_wants_preview_pane (window, slot)) {
-					nemo_window_preview_pane_off (window);
-				}
-			}
-		}
-	}
+	sync_preview_pane_from_slot_metadata (window, slot);
 
 	/* Update preview pane content when location changes */
 	if (window->details->preview_pane != NULL) {
@@ -2536,26 +2535,7 @@ nemo_window_split_view_off (NemoWindow *window)
 
 	/* After closing split view, check if the remaining active slot
 	 * wants the preview pane based on its directory metadata */
-	if (active_pane->active_slot != NULL && active_pane->active_slot->content_view != NULL) {
-		NemoFile *directory_file;
-		gboolean show_preview;
-
-		directory_file = nemo_view_get_directory_as_file (active_pane->active_slot->content_view);
-		if (directory_file != NULL) {
-			show_preview = nemo_file_get_boolean_metadata (directory_file,
-			                                                NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
-			                                                FALSE);
-
-			if (show_preview && !window->details->show_preview_pane) {
-				nemo_window_preview_pane_on (window);
-			} else if (!show_preview && window->details->show_preview_pane) {
-				/* Only close preview pane if no other slot wants it */
-				if (!any_other_slot_wants_preview_pane (window, active_pane->active_slot)) {
-					nemo_window_preview_pane_off (window);
-				}
-			}
-		}
-	}
+	sync_preview_pane_from_slot_metadata (window, active_pane->active_slot);
 
     g_object_notify_by_pspec (G_OBJECT (window), properties[PROP_SHOW_SPLIT_VIEW]);
 }
