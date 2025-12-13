@@ -104,6 +104,9 @@ struct NemoWindowDetails
         gboolean show_preview_pane;     // State flag
         gboolean preview_pane_width_set; // Initial width has been set from settings
 
+        /* split view */
+        gboolean show_split_view;       // State flag
+
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;

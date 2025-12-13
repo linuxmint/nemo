@@ -106,6 +106,8 @@ enum {
 	PROP_DISABLE_CHROME = 1,
     PROP_SIDEBAR_VIEW_TYPE,
     PROP_SHOW_SIDEBAR,
+    PROP_SHOW_PREVIEW_PANE,
+    PROP_SHOW_SPLIT_VIEW,
 	NUM_PROPERTIES,
 };
 
@@ -818,6 +820,20 @@ nemo_window_set_property (GObject *object,
     case PROP_SHOW_SIDEBAR:
         nemo_window_set_show_sidebar (window, g_value_get_boolean (value));
         break;
+    case PROP_SHOW_PREVIEW_PANE:
+        if (g_value_get_boolean (value)) {
+            nemo_window_preview_pane_on (window);
+        } else {
+            nemo_window_preview_pane_off (window);
+        }
+        break;
+    case PROP_SHOW_SPLIT_VIEW:
+        if (g_value_get_boolean (value)) {
+            nemo_window_split_view_on (window);
+        } else {
+            nemo_window_split_view_off (window);
+        }
+        break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
 		break;
@@ -843,6 +859,12 @@ nemo_window_get_property (GObject *object,
             break;
         case PROP_SHOW_SIDEBAR:
             g_value_set_boolean (value, window->details->show_sidebar);
+            break;
+        case PROP_SHOW_PREVIEW_PANE:
+            g_value_set_boolean (value, window->details->show_preview_pane);
+            break;
+        case PROP_SHOW_SPLIT_VIEW:
+            g_value_set_boolean (value, window->details->show_split_view);
             break;
         default:
         	g_assert_not_reached ();
@@ -2156,6 +2178,20 @@ nemo_window_class_init (NemoWindowClass *class)
                               FALSE,
                               G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+    properties[PROP_SHOW_PREVIEW_PANE] =
+        g_param_spec_boolean ("show-preview-pane",
+                              "Show the preview pane",
+                              "Show the preview pane",
+                              FALSE,
+                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+    properties[PROP_SHOW_SPLIT_VIEW] =
+        g_param_spec_boolean ("show-split-view",
+                              "Show split view",
+                              "Show split view",
+                              FALSE,
+                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
 	signals[GO_UP] =
 		g_signal_new ("go-up",
 			      G_TYPE_FROM_CLASS (class),
@@ -2411,8 +2447,11 @@ nemo_window_split_view_on (NemoWindow *window)
 	nemo_window_slot_open_location (slot, location, 0);
 	g_object_unref (location);
 
+	window->details->show_split_view = TRUE;
 	window_set_search_action_text (window, FALSE);
     nemo_window_update_show_hide_ui_elements (window);
+
+    g_object_notify_by_pspec (G_OBJECT (window), properties[PROP_SHOW_SPLIT_VIEW]);
 }
 
 void
@@ -2443,7 +2482,10 @@ nemo_window_split_view_off (NemoWindow *window)
 	nemo_navigation_state_set_master (window->details->nav_state,
 					      active_pane->action_group);
 
+	window->details->show_split_view = FALSE;
 	nemo_window_update_show_hide_ui_elements (window);
+
+    g_object_notify_by_pspec (G_OBJECT (window), properties[PROP_SHOW_SPLIT_VIEW]);
 }
 
 gboolean
@@ -2521,6 +2563,8 @@ nemo_window_preview_pane_on (NemoWindow *window)
 		}
 	}
     nemo_window_update_show_hide_ui_elements (window);
+
+    g_object_notify_by_pspec (G_OBJECT (window), properties[PROP_SHOW_PREVIEW_PANE]);
 }
 
 void
@@ -2571,6 +2615,8 @@ nemo_window_preview_pane_off (NemoWindow *window)
 		}
 	}
     nemo_window_update_show_hide_ui_elements (window);
+
+    g_object_notify_by_pspec (G_OBJECT (window), properties[PROP_SHOW_PREVIEW_PANE]);
 }
 
 gboolean
