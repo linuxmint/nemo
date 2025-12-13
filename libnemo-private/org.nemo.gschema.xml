@@ -274,6 +274,11 @@
       <summary>Show favorites first in windows</summary>
       <description>If set to true, then Nemo shows favorites prior to other files in the icon and list views.</description>
     </key>
+    <key name="show-preview-pane" type="b">
+      <default>false</default>
+      <summary>Show the preview pane by default in newly visited folders</summary>
+      <description>If set to true, then Nemo shows the preview pane when visiting new folders.</description>
+    </key>
     <key name="default-sort-order" enum="org.nemo.SortOrder">
       <aliases>
 	<alias value='modification_date' target='mtime'/>

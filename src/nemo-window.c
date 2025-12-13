@@ -1626,6 +1626,10 @@ zoom_level_changed_callback (NemoView *view,
 	nemo_window_sync_zoom_widgets (window);
 }
 
+/* Forward declarations */
+static void nemo_window_preview_pane_on_internal (NemoWindow *window, gboolean write_metadata);
+static void nemo_window_preview_pane_off_internal (NemoWindow *window, gboolean write_metadata);
+
 /* Check if any slot in the window (across all panes and tabs) has
  * preview pane enabled in its metadata, excluding the given slot.
  */
@@ -1672,6 +1676,7 @@ any_other_slot_wants_preview_pane (NemoWindow *window,
 /* Synchronize the preview pane state based on a slot's directory metadata.
  * This checks the slot's current directory's saved preference and applies it,
  * taking into account whether other slots in the window want the preview pane.
+ * If no metadata is saved for this directory, uses the default from GSettings.
  */
 static void
 sync_preview_pane_from_slot_metadata (NemoWindow *window,
@@ -1679,6 +1684,7 @@ sync_preview_pane_from_slot_metadata (NemoWindow *window,
 {
 	NemoFile *directory_file;
 	gboolean show_preview;
+	gboolean default_show_preview;
 
 	if (slot == NULL || slot->content_view == NULL) {
 		return;
@@ -1689,17 +1695,23 @@ sync_preview_pane_from_slot_metadata (NemoWindow *window,
 		return;
 	}
 
+	/* Get the default from GSettings - this is used when directory has no saved metadata */
+	default_show_preview = g_settings_get_boolean (nemo_preferences,
+	                                                NEMO_PREFERENCES_SHOW_PREVIEW_PANE);
+
+	/* Get the preview pane preference: uses directory metadata if saved,
+	 * otherwise falls back to the GSettings default */
 	show_preview = nemo_file_get_boolean_metadata (directory_file,
 	                                                NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
-	                                                FALSE);
+	                                                default_show_preview);
 
-	/* Apply the saved state */
+	/* Apply the saved state (don't write metadata - this is automatic sync, not user action) */
 	if (show_preview && !window->details->show_preview_pane) {
-		nemo_window_preview_pane_on (window);
+		nemo_window_preview_pane_on_internal (window, FALSE);
 	} else if (!show_preview && window->details->show_preview_pane) {
 		/* Only close preview pane if no other slot wants it */
 		if (!any_other_slot_wants_preview_pane (window, slot)) {
-			nemo_window_preview_pane_off (window);
+			nemo_window_preview_pane_off_internal (window, FALSE);
 		}
 	}
 }
@@ -2546,8 +2558,9 @@ nemo_window_split_view_showing (NemoWindow *window)
 	return g_list_length (NEMO_WINDOW (window)->details->panes) > 1;
 }
 
-void
-nemo_window_preview_pane_on (NemoWindow *window)
+static void
+nemo_window_preview_pane_on_internal (NemoWindow *window,
+                                       gboolean    write_metadata)
 {
 	NemoWindowSlot *slot;
 	GList *selection;
@@ -2602,8 +2615,8 @@ nemo_window_preview_pane_on (NemoWindow *window)
 	window->details->show_preview_pane = TRUE;
 	// nemo_window_update_show_hide_ui_elements (window);
 
-	/* Save preview pane state to directory metadata */
-	if (slot != NULL && slot->content_view != NULL) {
+	/* Save preview pane state to directory metadata (only if explicitly requested) */
+	if (write_metadata && slot != NULL && slot->content_view != NULL) {
 		NemoFile *directory_file;
 
 		directory_file = nemo_view_get_directory_as_file (slot->content_view);
@@ -2620,7 +2633,15 @@ nemo_window_preview_pane_on (NemoWindow *window)
 }
 
 void
-nemo_window_preview_pane_off (NemoWindow *window)
+nemo_window_preview_pane_on (NemoWindow *window)
+{
+	/* User-triggered action: write metadata to remember this choice */
+	nemo_window_preview_pane_on_internal (window, TRUE);
+}
+
+static void
+nemo_window_preview_pane_off_internal (NemoWindow *window,
+                                        gboolean    write_metadata)
 {
 	GtkPaned *paned;
 	NemoWindowSlot *slot;
@@ -2653,9 +2674,9 @@ nemo_window_preview_pane_off (NemoWindow *window)
 
 	// nemo_window_update_show_hide_ui_elements (window);
 
-	/* Save preview pane state to directory metadata */
+	/* Save preview pane state to directory metadata (only if explicitly requested) */
 	slot = nemo_window_get_active_slot (window);
-	if (slot != NULL && slot->content_view != NULL) {
+	if (write_metadata && slot != NULL && slot->content_view != NULL) {
 		NemoFile *directory_file;
 
 		directory_file = nemo_view_get_directory_as_file (slot->content_view);
@@ -2669,6 +2690,13 @@ nemo_window_preview_pane_off (NemoWindow *window)
     nemo_window_update_show_hide_ui_elements (window);
 
     g_object_notify_by_pspec (G_OBJECT (window), properties[PROP_SHOW_PREVIEW_PANE]);
+}
+
+void
+nemo_window_preview_pane_off (NemoWindow *window)
+{
+	/* User-triggered action: write metadata to remember this choice */
+	nemo_window_preview_pane_off_internal (window, TRUE);
 }
 
 gboolean
