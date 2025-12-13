@@ -24,6 +24,7 @@
 #include "nemo-preview-image.h"
 #include "nemo-file-attributes.h"
 #include "nemo-icon-info.h"
+#include "nemo-thumbnails.h"
 #include <glib/gi18n.h>
 
 #define RESIZE_DEBOUNCE_MS 150
@@ -218,23 +219,6 @@ on_drawing_area_draw (GtkWidget *widget,
 	return TRUE;
 }
 
-static gboolean
-is_image_file (NemoFile *file)
-{
-	gchar *mime_type;
-	gboolean is_image;
-
-	if (file == NULL || nemo_file_is_directory (file)) {
-		return FALSE;
-	}
-
-	mime_type = nemo_file_get_mime_type (file);
-	is_image = mime_type != NULL && g_str_has_prefix (mime_type, "image/");
-	g_free (mime_type);
-
-	return is_image;
-}
-
 static void
 load_icon_at_size (NemoPreviewImage *widget,
                    gint              width,
@@ -335,16 +319,15 @@ load_image_at_size (NemoPreviewImage *widget,
                     gint              height)
 {
 	NemoPreviewImagePrivate *priv;
-	GFile *location;
-	gchar *path;
 	GdkPixbuf *pixbuf = NULL;
 	cairo_surface_t *surface = NULL;
 	gint ui_scale;
 	GError *error = NULL;
 
 	priv = nemo_preview_image_get_instance_private (widget);
+    ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
 
-	if (priv->file == NULL || !is_image_file (priv->file)) {
+	if (priv->file == NULL) {
 		return;
 	}
 
@@ -352,22 +335,42 @@ load_image_at_size (NemoPreviewImage *widget,
 		return;
 	}
 
-	location = nemo_file_get_location (priv->file);
-	path = g_file_get_path (location);
-	g_object_unref (location);
+    if (nemo_can_thumbnail_internally (priv->file)) {
+        gchar *path = nemo_file_get_path (priv->file);
 
-	if (path == NULL) {
-		return;
+        if (path != NULL) {
+            pixbuf = gdk_pixbuf_new_from_file_at_scale (path,
+                                                        width * ui_scale,
+                                                        height * ui_scale,
+                                                        TRUE,
+                                                        &error);
+            if (error != NULL) {
+                g_warning ("Failed to load direct image preview: %s", error->message);
+                g_clear_error (&error);
+            }
+
+            g_free (path);
+        }
+    }
+
+	if (pixbuf == NULL && nemo_file_has_loaded_thumbnail (priv->file)) {
+		gchar *thumbnail_path = nemo_file_get_thumbnail_path (priv->file);
+
+		if (thumbnail_path != NULL) {
+			pixbuf = gdk_pixbuf_new_from_file_at_scale (thumbnail_path,
+			                                            width * ui_scale,
+			                                            height * ui_scale,
+			                                            TRUE,
+			                                            &error);
+
+            if (error != NULL) {
+                g_warning ("Failed to load file thumbnail for preview: %s", error->message);
+                g_clear_error (&error);
+            }
+
+            g_free (thumbnail_path);
+		}
 	}
-
-	ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
-
-	/* Load image directly at the exact size we need */
-	pixbuf = gdk_pixbuf_new_from_file_at_scale (path,
-	                                             width * ui_scale,
-	                                             height * ui_scale,
-	                                             TRUE,
-	                                             &error);
 
 	if (pixbuf != NULL) {
 		/* Save pixbuf for quick scaling during resize */
@@ -401,8 +404,6 @@ load_image_at_size (NemoPreviewImage *widget,
 		gtk_widget_show (priv->message_label);
 		gtk_widget_hide (priv->drawing_area);
 	}
-
-	g_free (path);
 
 	priv->current_width = width;
 	priv->current_height = height;
@@ -510,7 +511,7 @@ on_size_allocate (GtkWidget     *widget,
 	                   allocation->height < priv->current_height);
 
 	/* If getting smaller, immediately scale down the current pixbuf for responsive UI */
-	if (getting_smaller && priv->current_pixbuf != NULL) {
+	if (priv->current_pixbuf != NULL) {
 		scale_current_pixbuf_to_size (preview, allocation->width, allocation->height);
 	}
 
@@ -569,9 +570,7 @@ nemo_preview_image_set_file (NemoPreviewImage *widget,
 
 	if (file != NULL) {
 		nemo_file_ref (file);
-
-		if (is_image_file (file)) {
-			/* Load the image at current widget size */
+		if (nemo_can_thumbnail_internally (file) || nemo_file_has_loaded_thumbnail (file)) {
 			priv->showing_icon = FALSE;
 			gtk_widget_get_allocation (GTK_WIDGET (widget), &allocation);
 			load_image_at_size (widget, allocation.width, allocation.height);
