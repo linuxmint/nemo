@@ -221,9 +221,11 @@ refresh_widget (NemoTemplateConfigWidget *widget)
 
     gchar *path = NULL;
 
-    path = nemo_get_templates_directory ();
-    populate_from_directory (widget, path);
-    g_clear_pointer (&path, g_free);
+    if (nemo_should_use_templates_directory ()) {
+        path = nemo_get_templates_directory ();
+        populate_from_directory (widget, path);
+        g_clear_pointer (&path, g_free);
+    }
 
     if (widget->templates == NULL) {
         GtkWidget *empty_label = gtk_label_new (NULL);
@@ -362,7 +364,8 @@ start_renaming_selected_row (NemoTemplateConfigWidget *widget, GtkWidget *row)
 }
 
 static void
-import_template (const gchar *filename)
+import_template (NemoTemplateConfigWidget *widget,
+                 const gchar              *filename)
 {
     GFile *source, *dest;
     gchar *basename, *template_dir, *dest_path;
@@ -385,6 +388,7 @@ import_template (const gchar *filename)
     }
 
     basename = g_file_get_basename (source);
+    nemo_ensure_valid_templates_directory ();
     template_dir = nemo_get_templates_directory ();
     dest_path = g_build_filename (template_dir, basename, NULL);
     dest = g_file_new_for_path (dest_path);
@@ -396,6 +400,10 @@ import_template (const gchar *filename)
     g_free (dest_path);
     g_object_unref (source);
     g_object_unref (dest);
+
+    if (g_list_length (widget->dir_monitors) == 0) {
+        refresh_widget (widget);
+    }
 }
 
 static gboolean
@@ -436,7 +444,7 @@ on_new_template_clicked (GtkWidget *button, gpointer user_data)
         gchar *selected_filename = gtk_file_chooser_get_filename (file_chooser);
 
         if (selected_filename != NULL) {
-            import_template (selected_filename);
+            import_template (widget, selected_filename);
         }
 
         g_free (selected_filename);
@@ -485,6 +493,7 @@ static void
 on_open_folder_clicked (GtkWidget *button, NemoTemplateConfigWidget *widget)
 {
     gchar *path = NULL;
+    nemo_ensure_valid_templates_directory ();
     path = nemo_get_templates_directory ();
     GFile *location = g_file_new_for_path (path);
 
@@ -507,6 +516,7 @@ on_drag_data_received(GtkWidget *widget,
                       guint time,
                       gpointer user_data)
 {
+    NemoTemplateConfigWidget *self = NEMO_TEMPLATE_CONFIG_WIDGET (user_data);
     gboolean success = FALSE;
 
     if (data != NULL && gtk_selection_data_get_length(data) >= 0) {
@@ -517,14 +527,14 @@ on_drag_data_received(GtkWidget *widget,
 
             if (uris != NULL && uris[0] != NULL) {
                 for (int i = 0; uris[i] != NULL; i++) {
-                    import_template (uris[i]);
+                    import_template (self, uris[i]);
                 }
 
                 g_strfreev(uris);
                 success = TRUE;
             }
         } else if (target_type == TARGET_TEXT_PLAIN) {
-            import_template ((const gchar *) raw_data);
+            import_template (self, (const gchar *) raw_data);
             success = TRUE;
         }
     }
@@ -655,7 +665,7 @@ nemo_template_config_widget_init (NemoTemplateConfigWidget *self)
                       GDK_ACTION_COPY);
 
     g_signal_connect(NEMO_CONFIG_BASE_WIDGET (self)->listbox, "drag-data-received",
-                    G_CALLBACK(on_drag_data_received), label);
+                    G_CALLBACK(on_drag_data_received), self);
     g_signal_connect(NEMO_CONFIG_BASE_WIDGET (self)->listbox, "drag-motion",
                     G_CALLBACK(on_drag_motion), NULL);
 

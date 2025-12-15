@@ -200,6 +200,7 @@ action_go_to_templates_callback (GtkAction *action,
 	window = NEMO_WINDOW (user_data);
 	slot = nemo_window_get_active_slot (window);
 
+	nemo_ensure_valid_templates_directory ();
 	path = nemo_get_templates_directory ();
 	location = g_file_new_for_path (path);
 	g_free (path);

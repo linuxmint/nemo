@@ -51,6 +51,7 @@
 static void update_xdg_dir_cache (void);
 static void schedule_user_dirs_changed (void);
 static void desktop_dir_changed (void);
+static void update_xdg_user_dir (const char *type, const char *path);
 static GFile *nemo_find_file_insensitive_next (GFile *parent, const gchar *name);
 
 char *
@@ -306,6 +307,32 @@ static XdgDirEntry *cached_xdg_dirs = NULL;
 static GFileMonitor *cached_xdg_dirs_monitor = NULL;
 
 static void
+update_xdg_user_dir (const char *type, const char *path)
+{
+    char *argv[5];
+    int i;
+
+    i = 0;
+    argv[i++] = (char *)"xdg-user-dirs-update";
+    argv[i++] = (char *)"--set";
+    argv[i++] = (char *)type;
+    argv[i++] = (char *)path;
+    argv[i++] = NULL;
+
+    /* We do this sync, to avoid possible race-conditions
+       if multiple dirs change at the same time. Its
+       blocking the main thread, but these updates should
+       be very rare and very fast. */
+    g_spawn_sync (NULL,
+                  argv, NULL,
+                  G_SPAWN_SEARCH_PATH |
+                  G_SPAWN_STDOUT_TO_DEV_NULL |
+                  G_SPAWN_STDERR_TO_DEV_NULL,
+                  NULL, NULL,
+                  NULL, NULL, NULL, NULL);
+}
+
+static void
 xdg_dir_changed (NemoFile *file,
 		 XdgDirEntry *dir)
 {
@@ -318,30 +345,10 @@ xdg_dir_changed (NemoFile *file,
 		path = g_file_get_path (location);
 
 		if (path) {
-			char *argv[5];
-			int i;
-
 			g_free (dir->path);
 			dir->path = path;
 
-			i = 0;
-			argv[i++] = (char *)"xdg-user-dirs-update";
-			argv[i++] = (char *)"--set";
-			argv[i++] = dir->type;
-			argv[i++] = dir->path;
-			argv[i++] = NULL;
-
-			/* We do this sync, to avoid possible race-conditions
-			   if multiple dirs change at the same time. Its
-			   blocking the main thread, but these updates should
-			   be very rare and very fast. */
-			g_spawn_sync (NULL,
-				      argv, NULL,
-				      G_SPAWN_SEARCH_PATH |
-				      G_SPAWN_STDOUT_TO_DEV_NULL |
-				      G_SPAWN_STDERR_TO_DEV_NULL,
-				      NULL, NULL,
-				      NULL, NULL, NULL, NULL);
+			update_xdg_user_dir (dir->type, dir->path);
 			g_reload_user_special_dirs_cache ();
 			schedule_user_dirs_changed ();
 			desktop_dir_changed ();
@@ -608,15 +615,35 @@ nemo_get_templates_directory (void)
 }
 
 void
-nemo_create_templates_directory (void)
+nemo_ensure_valid_templates_directory (void)
 {
-	char *dir;
+    /* This is called only at points where the user would expect the Templates
+     * directory to exist:
+     * - Template prefs, adding a template via DND or the "New" button.
+     * - Template prefs - the Folder icon.
+     * - MenuBar->Go->Templates - navigating directly to the Templates dir.
+     *
+     * Otherwise, we're fine without it, if the user never intends to use templates.
+     */
+    g_autofree gchar *templates_dir = NULL;
+    const char *home_dir;
 
-	dir = nemo_get_templates_directory ();
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS)) {
-		g_mkdir (dir, DEFAULT_NEMO_DIRECTORY_MODE);
-	}
-	g_free (dir);
+    templates_dir = nemo_get_xdg_dir ("TEMPLATES");
+    home_dir = g_get_home_dir ();
+
+    if (g_strcmp0 (templates_dir, home_dir) == 0) {
+        // XDG_TEMPLATES_DIR is $HOME/, fix it.
+        g_autofree gchar *fixed_templates_dir = NULL;
+        fixed_templates_dir = g_build_filename (home_dir, "Templates", NULL);
+        g_mkdir (fixed_templates_dir, DEFAULT_NEMO_DIRECTORY_MODE);
+
+        update_xdg_user_dir ("TEMPLATES", fixed_templates_dir);
+        g_reload_user_special_dirs_cache ();
+        update_xdg_dir_cache ();
+    } else {
+        // XDG_TEMPLATES_DIR is reasonable, let's make sure it exists.
+        g_mkdir (templates_dir, DEFAULT_NEMO_DIRECTORY_MODE);
+    }
 }
 
 char *

@@ -57,8 +57,8 @@ char *   nemo_get_gmc_desktop_directory          (void);
 
 gboolean nemo_should_use_templates_directory     (void);
 char *   nemo_get_templates_directory            (void);
+void     nemo_ensure_valid_templates_directory   (void);
 char *   nemo_get_templates_directory_uri        (void);
-void     nemo_create_templates_directory         (void);
 
 char *   nemo_get_searches_directory             (void);
 

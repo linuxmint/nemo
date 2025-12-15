@@ -236,14 +236,16 @@ nemo_interesting_folder_bar_new_for_location (NemoView *view, GFile *location)
     }
 
     if (type == TYPE_NONE_FOLDER) {
-        path = nemo_get_templates_directory ();
-        tmp_loc = g_file_new_for_path (path);
-        g_free (path);
+        if (nemo_should_use_templates_directory ()) {
+            path = nemo_get_templates_directory ();
+            tmp_loc = g_file_new_for_path (path);
+            g_free (path);
 
-        if (g_file_equal (location, tmp_loc)) {
-            type = TYPE_TEMPLATES_FOLDER;
+            if (g_file_equal (location, tmp_loc)) {
+                type = TYPE_TEMPLATES_FOLDER;
+            }
+            g_object_unref (tmp_loc);
         }
-        g_object_unref (tmp_loc);
     }
 
     return type == TYPE_NONE_FOLDER ? NULL : nemo_interesting_folder_bar_new (view, type);
