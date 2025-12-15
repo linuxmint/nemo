@@ -301,7 +301,7 @@ action_preferences_callback (GtkAction *action,
 
 	window = GTK_WINDOW (user_data);
 
-	nemo_file_management_properties_dialog_show (window, NULL);
+	nemo_file_management_properties_dialog_show (NULL, NULL);
 }
 
 static void

@@ -379,6 +379,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
   <object class="GtkWindow" id="file_management_dialog">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">File Management Preferences</property>
+    <property name="modal">True</property>
     <property name="window-position">center</property>
     <property name="default-width">800</property>
     <property name="default-height">600</property>
@@ -4355,6 +4356,36 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="border-width">6</property>
+                    <child>
+                      <object class="GtkViewport">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkBox" id="actions_box">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="border-width">4</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="name">actions</property>
+                    <property name="title" translatable="yes">Actions</property>
+                    <property name="icon-name">xsi-open-menu-symbolic</property>
+                    <property name="position">8</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow7">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
@@ -4364,7 +4395,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <child>
-                          <object class="GtkBox" id="plugin_box">
+                          <object class="GtkBox" id="extensions_box">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="orientation">vertical</property>
@@ -4378,9 +4409,9 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                   </object>
                   <packing>
                     <property name="name">plugins</property>
-                    <property name="title" translatable="yes">Plugins</property>
+                    <property name="title" translatable="yes">Extensions</property>
                     <property name="icon-name">xapp-prefs-plugins-symbolic</property>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                   </packing>
                 </child>
               </object>
