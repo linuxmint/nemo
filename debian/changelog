@@ -1,3 +1,13 @@
+nemo (6.6.2) zena; urgency=medium
+
+  [ Cobinja ]
+  * Fix for progress handling (#3651)
+
+  [ Michael Webster ]
+  * templates: Improve invalid XDG_TEMPLATES_DIR handling.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 16 Dec 2025 15:23:49 +0000
+
 nemo (6.6.1) zena; urgency=medium
 
   [ Michael Webster ]
