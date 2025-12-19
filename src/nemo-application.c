@@ -535,13 +535,52 @@ nemo_application_quit (NemoApplication *self)
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
 
-	/* Save session state once, based on the active Nemo window, before we
-	 * destroy all windows. Destroying multiple windows can otherwise overwrite
-	 * the stored state with an arbitrary last-destroyed window. */
+	/* Save session state once, before we destroy all windows.
+	 *
+	 * We can't rely on gtk_application_get_active_window() here; depending on
+	 * timing/focus it can be NULL or point to non-browser dialogs.
+	 *
+	 * Instead, pick the "best" Nemo window to snapshot:
+	 * - prefer non-desktop windows
+	 * - prefer split-view windows
+	 * - prefer the window with the most tabs across panes
+	 *
+	 * Destroying multiple windows can otherwise overwrite stored state with an
+	 * arbitrary last-destroyed window. */
 	{
-		GtkWindow *active = gtk_application_get_active_window (GTK_APPLICATION (app));
-		if (active != NULL && NEMO_IS_WINDOW (active)) {
-			nemo_window_save_session_state_for_quit (NEMO_WINDOW (active));
+		NemoWindow *best = NULL;
+		gint best_pane_count = -1;
+		gint best_tab_count = -1;
+
+		for (GList *l = windows; l != NULL; l = l->next) {
+			GtkWindow *w = GTK_WINDOW (l->data);
+
+			if (!NEMO_IS_WINDOW (w) || NEMO_IS_DESKTOP_WINDOW (w)) {
+				continue;
+			}
+
+			NemoWindow *nw = NEMO_WINDOW (w);
+			gint pane_count = g_list_length (nw->details->panes);
+			gint tab_count = 0;
+
+			for (GList *p = nw->details->panes; p != NULL; p = p->next) {
+				NemoWindowPane *pane = p->data;
+				if (pane != NULL && pane->notebook != NULL) {
+					tab_count += gtk_notebook_get_n_pages (GTK_NOTEBOOK (pane->notebook));
+				}
+			}
+
+			/* Prefer more panes first (split view), then more tabs */
+			if (pane_count > best_pane_count ||
+			    (pane_count == best_pane_count && tab_count > best_tab_count)) {
+				best = nw;
+				best_pane_count = pane_count;
+				best_tab_count = tab_count;
+			}
+		}
+
+		if (best != NULL) {
+			nemo_window_save_session_state_for_quit (best);
 		}
 	}
 
