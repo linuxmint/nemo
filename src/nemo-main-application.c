@@ -844,15 +844,13 @@ post_registration:
 		g_strfreev (remaining);
 	}
 
-	if (files == NULL && !no_default_window) {
-		files = g_malloc0 (2 * sizeof (GFile *));
-		len = 1;
-
-		files[0] = g_file_new_for_path (g_get_home_dir ());
-		files[1] = NULL;
-	}
-	/* Invoke "Open" to open in existing window or create new windows */
-	if (len > 0) {
+	/* Invoke "Open" to open in existing window or create new windows.
+	 *
+	 * IMPORTANT: When no URIs are specified and a default window is desired,
+	 * call open() with 0 files instead of synthesizing the home directory.
+	 * This allows features (like session restore) to distinguish between
+	 * "no args" and an explicit request to open a location. */
+	if (len > 0 || (files == NULL && !no_default_window)) {
 		gchar* concatOptions = g_malloc0(64);
 		if (open_in_existing_window) {
 			g_stpcpy (concatOptions, "EXISTING_WINDOW");
@@ -867,10 +865,12 @@ post_registration:
 		g_free (concatOptions);
 	}
 
-	for (idx = 0; idx < len; idx++) {
-		g_object_unref (files[idx]);
+	if (files != NULL) {
+		for (idx = 0; idx < len; idx++) {
+			g_object_unref (files[idx]);
+		}
+		g_free (files);
 	}
-	g_free (files);
 
  out:
 	g_option_context_free (context);
