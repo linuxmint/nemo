@@ -30,10 +30,11 @@
 #define RESIZE_DEBOUNCE_MS 150
 #define MIN_SIZE_CHANGE 10
 
-/* Required for G_DECLARE_FINAL_TYPE */
 struct _NemoPreviewImage {
 	GtkBox parent;
 };
+
+typedef struct _LoadImageData LoadImageData;
 
 typedef struct {
 	GtkWidget *frame;
@@ -41,26 +42,69 @@ typedef struct {
 	GtkWidget *message_label;
 	NemoFile *file;
 
-	/* For resize handling */
 	guint resize_timeout_id;
 	gint current_width;
 	gint current_height;
 
-	/* Keep reference to current pixbuf for quick scaling */
-	GdkPixbuf *current_pixbuf;
-
-	/* Current surface to draw */
 	cairo_surface_t *current_surface;
+	gint surface_width;
+	gint surface_height;
 
-	/* Track if showing an icon vs image */
 	gboolean showing_icon;
+
+	LoadImageData *current_load_data;
 } NemoPreviewImagePrivate;
+
+struct _LoadImageData {
+	gchar *file_path;        /* For direct loading (can be NULL) */
+	gchar *thumbnail_path;   /* For thumbnail loading (can be NULL) */
+	gint width;
+	gint height;
+	gint ui_scale;
+	GCancellable *cancellable;
+};
 
 G_DEFINE_TYPE_WITH_PRIVATE (NemoPreviewImage, nemo_preview_image, GTK_TYPE_BOX)
 
-/* Forward declarations */
 static void on_size_allocate (GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
 static gboolean on_drawing_area_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data);
+
+static LoadImageData *
+load_image_data_new (const gchar *file_path,
+                     const gchar *thumbnail_path,
+                     gint         width,
+                     gint         height,
+                     gint         ui_scale)
+{
+	LoadImageData *data;
+
+	data = g_new0 (LoadImageData, 1);
+	data->file_path = g_strdup (file_path);
+	data->thumbnail_path = g_strdup (thumbnail_path);
+	data->width = width;
+	data->height = height;
+	data->ui_scale = ui_scale;
+	data->cancellable = g_cancellable_new ();
+
+	return data;
+}
+
+static void
+load_image_data_free (LoadImageData *data)
+{
+	if (data == NULL) {
+		return;
+	}
+
+	g_free (data->file_path);
+	g_free (data->thumbnail_path);
+
+	if (data->cancellable != NULL) {
+		g_object_unref (data->cancellable);
+	}
+
+	g_free (data);
+}
 
 static void
 nemo_preview_image_finalize (GObject *object)
@@ -71,14 +115,14 @@ nemo_preview_image_finalize (GObject *object)
 	preview = NEMO_PREVIEW_IMAGE (object);
 	priv = nemo_preview_image_get_instance_private (preview);
 
+	if (priv->current_load_data != NULL) {
+		g_cancellable_cancel (priv->current_load_data->cancellable);
+		priv->current_load_data = NULL;  // Forget about it, GTask will clean it up
+	}
+
 	if (priv->resize_timeout_id != 0) {
 		g_source_remove (priv->resize_timeout_id);
 		priv->resize_timeout_id = 0;
-	}
-
-	if (priv->current_pixbuf != NULL) {
-		g_object_unref (priv->current_pixbuf);
-		priv->current_pixbuf = NULL;
 	}
 
 	if (priv->current_surface != NULL) {
@@ -101,15 +145,15 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 
 	priv = nemo_preview_image_get_instance_private (preview);
 
-	/* Initialize resize tracking */
 	priv->resize_timeout_id = 0;
 	priv->current_width = 0;
 	priv->current_height = 0;
-	priv->current_pixbuf = NULL;
 	priv->current_surface = NULL;
+	priv->surface_width = 0;
+	priv->surface_height = 0;
 	priv->showing_icon = FALSE;
+	priv->current_load_data = NULL;
 
-	/* Create frame to hold drawing area */
 	priv->frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (priv->frame), GTK_SHADOW_NONE);
 	gtk_widget_set_halign (priv->frame, GTK_ALIGN_FILL);
@@ -119,7 +163,6 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 
 	gtk_box_pack_start (GTK_BOX (preview), priv->frame, TRUE, TRUE, 0);
 
-	/* Create drawing area widget */
 	priv->drawing_area = gtk_drawing_area_new ();
 	gtk_widget_set_halign (priv->drawing_area, GTK_ALIGN_FILL);
 	gtk_widget_set_valign (priv->drawing_area, GTK_ALIGN_FILL);
@@ -129,7 +172,6 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 	                  G_CALLBACK (on_drawing_area_draw), preview);
 	gtk_container_add (GTK_CONTAINER (priv->frame), priv->drawing_area);
 
-	/* Create message label (hidden by default) */
 	priv->message_label = gtk_label_new ("");
 	gtk_widget_set_halign (priv->message_label, GTK_ALIGN_CENTER);
 	gtk_widget_set_valign (priv->message_label, GTK_ALIGN_CENTER);
@@ -139,7 +181,6 @@ nemo_preview_image_init (NemoPreviewImage *preview)
 
     gtk_container_set_border_width (GTK_CONTAINER (preview), 4);
     gtk_widget_show_all (GTK_WIDGET (preview));
-	/* Connect size-allocate signal for resize handling */
 	g_signal_connect (preview, "size-allocate",
 	                  G_CALLBACK (on_size_allocate), NULL);
 }
@@ -170,9 +211,9 @@ on_drawing_area_draw (GtkWidget *widget,
 	NemoPreviewImage *preview = NEMO_PREVIEW_IMAGE (user_data);
 	NemoPreviewImagePrivate *priv;
 	gint widget_width, widget_height;
-	gint surface_width, surface_height;
+	gdouble scale_x, scale_y, scale;
+	gdouble scaled_width, scaled_height;
 	gdouble x_offset, y_offset;
-	gint scale_factor;
 
 	priv = nemo_preview_image_get_instance_private (preview);
 
@@ -183,40 +224,181 @@ on_drawing_area_draw (GtkWidget *widget,
 	widget_width = gtk_widget_get_allocated_width (widget);
 	widget_height = gtk_widget_get_allocated_height (widget);
 
-	/* Get surface dimensions - works for image surfaces created from pixbufs */
-	scale_factor = gtk_widget_get_scale_factor (widget);
-	surface_width = cairo_image_surface_get_width (priv->current_surface) / scale_factor;
-	surface_height = cairo_image_surface_get_height (priv->current_surface) / scale_factor;
+	scale_x = (gdouble)widget_width / priv->surface_width;
+	scale_y = (gdouble)widget_height / priv->surface_height;
+	scale = MIN (scale_x, scale_y);
 
-	/* Center the image in the drawing area */
-	x_offset = (widget_width - surface_width) / 2.0;
-	y_offset = (widget_height - surface_height) / 2.0;
+	scaled_width = priv->surface_width * scale;
+	scaled_height = priv->surface_height * scale;
 
-	/* Draw the image first */
-	cairo_set_source_surface (cr, priv->current_surface, x_offset, y_offset);
+	x_offset = (widget_width - scaled_width) / 2.0;
+	y_offset = (widget_height - scaled_height) / 2.0;
+
+	cairo_save (cr);
+	cairo_translate (cr, x_offset, y_offset);
+	cairo_scale (cr, scale, scale);
+	cairo_set_source_surface (cr, priv->current_surface, 0, 0);
 	cairo_paint (cr);
+	cairo_restore (cr);
 
 	/* If showing an image (not an icon), draw a border on top of it */
 	if (!priv->showing_icon) {
 		GtkStyleContext *style_context;
 		GdkRGBA border_color;
 		gdouble border_width = 1.0;
-		gdouble inset = 0.5;  /* Inset border slightly inside image bounds */
+		gdouble inset = 0.5;
 
-		/* Get the border color from the frame's style context */
 		style_context = gtk_widget_get_style_context (priv->frame);
 		gtk_style_context_get_border_color (style_context, GTK_STATE_FLAG_NORMAL, &border_color);
 
-		/* Draw border rectangle inset from the image edge */
 		cairo_set_source_rgba (cr, border_color.red, border_color.green,
 		                       border_color.blue, border_color.alpha);
 		cairo_set_line_width (cr, border_width);
 		cairo_rectangle (cr, x_offset + inset, y_offset + inset,
-		                 surface_width - (inset * 2), surface_height - (inset * 2));
+		                 scaled_width - (inset * 2), scaled_height - (inset * 2));
 		cairo_stroke (cr);
 	}
 
 	return TRUE;
+}
+
+static cairo_surface_t *
+create_surface_from_pixbuf (GdkPixbuf *pixbuf,
+                             gint       scale_factor)
+{
+    cairo_surface_t *surface;
+    cairo_t *cr;
+    gint width, height;
+
+    g_return_val_if_fail (pixbuf != NULL, NULL);
+
+    width = gdk_pixbuf_get_width (pixbuf);
+    height = gdk_pixbuf_get_height (pixbuf);
+
+    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
+    cairo_surface_set_device_scale (surface, scale_factor, scale_factor);
+
+    cr = cairo_create (surface);
+    gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
+    cairo_paint (cr);
+    cairo_destroy (cr);
+
+    return surface;
+}
+
+static void
+load_image_thread (GTask        *task,
+                   gpointer      source_object,
+                   gpointer      task_data,
+                   GCancellable *cancellable)
+{
+	LoadImageData *data = task_data;
+	GdkPixbuf *pixbuf = NULL;
+	GdkPixbuf *oriented_pixbuf = NULL;
+	cairo_surface_t *surface = NULL;
+	GError *error = NULL;
+
+	if (data->file_path != NULL) {
+		pixbuf = gdk_pixbuf_new_from_file_at_scale (data->file_path,
+		                                            data->width * data->ui_scale,
+		                                            data->height * data->ui_scale,
+		                                            TRUE,
+		                                            &error);
+		if (error != NULL) {
+			g_clear_error (&error);
+		}
+	}
+
+	if (g_cancellable_is_cancelled (cancellable)) {
+		if (pixbuf != NULL) {
+			g_object_unref (pixbuf);
+		}
+		g_task_return_error_if_cancelled (task);
+		return;
+	}
+
+	if (pixbuf == NULL && data->thumbnail_path != NULL) {
+		pixbuf = gdk_pixbuf_new_from_file_at_scale (data->thumbnail_path,
+		                                            data->width * data->ui_scale,
+		                                            data->height * data->ui_scale,
+		                                            TRUE,
+		                                            &error);
+		if (error != NULL) {
+			g_clear_error (&error);
+		}
+	}
+
+	if (pixbuf != NULL && !g_cancellable_is_cancelled (cancellable)) {
+		oriented_pixbuf = gdk_pixbuf_apply_embedded_orientation (pixbuf);
+		g_object_unref (pixbuf);
+		pixbuf = oriented_pixbuf;
+	}
+
+	if (pixbuf != NULL && !g_cancellable_is_cancelled (cancellable)) {
+		surface = create_surface_from_pixbuf (pixbuf, data->ui_scale);
+		g_object_unref (pixbuf);
+	}
+
+	if (!g_cancellable_is_cancelled (cancellable)) {
+		g_task_return_pointer (task, surface, surface ? (GDestroyNotify)cairo_surface_destroy : NULL);
+	} else {
+		if (surface != NULL) {
+			cairo_surface_destroy (surface);
+		}
+		g_task_return_error_if_cancelled (task);
+	}
+}
+
+static void
+load_image_callback (GObject      *source_object,
+                     GAsyncResult *result,
+                     gpointer      user_data)
+{
+	NemoPreviewImage *widget = NEMO_PREVIEW_IMAGE (source_object);
+	NemoPreviewImagePrivate *priv;
+	GTask *task;
+	LoadImageData *data;
+	cairo_surface_t *surface;
+	gint scale_factor;
+	GError *error = NULL;
+
+	priv = nemo_preview_image_get_instance_private (widget);
+	task = G_TASK (result);
+	data = g_task_get_task_data (task);
+
+	if (priv->current_load_data == data) {
+		priv->current_load_data = NULL;
+	}
+
+    if (g_cancellable_is_cancelled (data->cancellable))
+        return;
+
+    if (error != NULL) {
+        g_error_free (error);
+        return;
+    }
+
+	surface = g_task_propagate_pointer (task, &error);
+
+	if (surface != NULL) {
+		if (priv->current_surface != NULL) {
+			cairo_surface_destroy (priv->current_surface);
+		}
+		priv->current_surface = surface;
+
+		scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
+		priv->surface_width = cairo_image_surface_get_width (surface) / scale_factor;
+		priv->surface_height = cairo_image_surface_get_height (surface) / scale_factor;
+
+		gtk_widget_show (priv->drawing_area);
+		gtk_widget_queue_draw (priv->drawing_area);
+		gtk_widget_hide (priv->message_label);
+	} else {
+		gtk_label_set_text (GTK_LABEL (priv->message_label),
+		                    _("(Failed to load image)"));
+		gtk_widget_show (priv->message_label);
+		gtk_widget_hide (priv->drawing_area);
+	}
 }
 
 static void
@@ -246,17 +428,13 @@ load_icon_at_size (NemoPreviewImage *widget,
 
 	ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
 
-	/* Calculate icon size - use the smaller dimension to fit in the space */
 	icon_size = MIN (width, height) * ui_scale;
-
-	/* Get the icon info from the file */
 	icon_info = nemo_file_get_icon (priv->file, icon_size, 0, ui_scale, 0);
 
 	if (icon_info != NULL && icon_info->icon_name != NULL) {
 		icon_name = icon_info->icon_name;
 		icon_theme = gtk_icon_theme_get_default ();
 
-		/* Load the icon at the exact size we need */
 		icon_pixbuf = gtk_icon_theme_load_icon_for_scale (icon_theme,
 		                                                   icon_name,
 		                                                   icon_size / ui_scale,
@@ -265,20 +443,17 @@ load_icon_at_size (NemoPreviewImage *widget,
 		                                                   &error);
 
 		if (icon_pixbuf != NULL) {
-			/* Save pixbuf for quick scaling during resize */
-			if (priv->current_pixbuf != NULL) {
-				g_object_unref (priv->current_pixbuf);
-			}
-			priv->current_pixbuf = g_object_ref (icon_pixbuf);
-
-			surface = gdk_cairo_surface_create_from_pixbuf (icon_pixbuf, ui_scale, NULL);
+			surface = create_surface_from_pixbuf (icon_pixbuf, ui_scale);
 
 			if (surface != NULL) {
-				/* Replace old surface with new one */
 				if (priv->current_surface != NULL) {
 					cairo_surface_destroy (priv->current_surface);
 				}
 				priv->current_surface = surface;
+
+				priv->surface_width = cairo_image_surface_get_width (surface) / ui_scale;
+				priv->surface_height = cairo_image_surface_get_height (surface) / ui_scale;
+
 				gtk_widget_show (priv->drawing_area);
 				gtk_widget_queue_draw (priv->drawing_area);
 			}
@@ -286,7 +461,6 @@ load_icon_at_size (NemoPreviewImage *widget,
 			g_object_unref (icon_pixbuf);
 			gtk_widget_hide (priv->message_label);
 		} else {
-			/* Failed to load icon */
 			if (error != NULL) {
 				g_warning ("Failed to load icon '%s': %s", icon_name, error->message);
 				g_error_free (error);
@@ -299,7 +473,6 @@ load_icon_at_size (NemoPreviewImage *widget,
 
 		nemo_icon_info_unref (icon_info);
 	} else {
-		/* No icon info available */
 		if (icon_info != NULL) {
 			nemo_icon_info_unref (icon_info);
 		}
@@ -319,13 +492,13 @@ load_image_at_size (NemoPreviewImage *widget,
                     gint              height)
 {
 	NemoPreviewImagePrivate *priv;
-	GdkPixbuf *pixbuf = NULL;
-	cairo_surface_t *surface = NULL;
+	GTask *task;
+	LoadImageData *data;
+	gchar *file_path = NULL;
+	gchar *thumbnail_path = NULL;
 	gint ui_scale;
-	GError *error = NULL;
 
 	priv = nemo_preview_image_get_instance_private (widget);
-    ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
 
 	if (priv->file == NULL) {
 		return;
@@ -335,134 +508,42 @@ load_image_at_size (NemoPreviewImage *widget,
 		return;
 	}
 
-    if (nemo_can_thumbnail_internally (priv->file)) {
-        gchar *path = nemo_file_get_path (priv->file);
-
-        if (path != NULL) {
-            pixbuf = gdk_pixbuf_new_from_file_at_scale (path,
-                                                        width * ui_scale,
-                                                        height * ui_scale,
-                                                        TRUE,
-                                                        &error);
-            if (error != NULL) {
-                g_warning ("Failed to load direct image preview: %s", error->message);
-                g_clear_error (&error);
-            }
-
-            g_free (path);
-        }
-    }
-
-	if (pixbuf == NULL && nemo_file_has_loaded_thumbnail (priv->file)) {
-		gchar *thumbnail_path = nemo_file_get_thumbnail_path (priv->file);
-
-		if (thumbnail_path != NULL) {
-			pixbuf = gdk_pixbuf_new_from_file_at_scale (thumbnail_path,
-			                                            width * ui_scale,
-			                                            height * ui_scale,
-			                                            TRUE,
-			                                            &error);
-
-            if (error != NULL) {
-                g_warning ("Failed to load file thumbnail for preview: %s", error->message);
-                g_clear_error (&error);
-            }
-
-            g_free (thumbnail_path);
-		}
+	if (priv->current_load_data != NULL) {
+		g_cancellable_cancel (priv->current_load_data->cancellable);
+		priv->current_load_data = NULL;  /* Forget about it, callback will clean up */
 	}
 
-	if (pixbuf != NULL) {
-		/* Save pixbuf for quick scaling during resize */
-		if (priv->current_pixbuf != NULL) {
-			g_object_unref (priv->current_pixbuf);
-		}
-		priv->current_pixbuf = g_object_ref (pixbuf);
+	if (nemo_can_thumbnail_internally (priv->file)) {
+		file_path = nemo_file_get_path (priv->file);
+	}
 
-		surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, ui_scale, NULL);
+	if (nemo_file_has_loaded_thumbnail (priv->file)) {
+		thumbnail_path = nemo_file_get_thumbnail_path (priv->file);
+	}
 
-		if (surface != NULL) {
-			/* Replace old surface with new one */
-			if (priv->current_surface != NULL) {
-				cairo_surface_destroy (priv->current_surface);
-			}
-			priv->current_surface = surface;
-			gtk_widget_show (priv->drawing_area);
-			gtk_widget_queue_draw (priv->drawing_area);
-		}
-
-		g_object_unref (pixbuf);
-		gtk_widget_hide (priv->message_label);
-	} else {
-		/* Failed to load image */
-		if (error != NULL) {
-			g_warning ("Failed to load image: %s", error->message);
-			g_error_free (error);
-		}
+	if (file_path == NULL && thumbnail_path == NULL) {
 		gtk_label_set_text (GTK_LABEL (priv->message_label),
-		                    _("(Failed to load image)"));
+		                    _("(No preview available)"));
 		gtk_widget_show (priv->message_label);
 		gtk_widget_hide (priv->drawing_area);
-	}
-
-	priv->current_width = width;
-	priv->current_height = height;
-}
-
-static void
-scale_current_pixbuf_to_size (NemoPreviewImage *widget,
-                               gint              width,
-                               gint              height)
-{
-	NemoPreviewImagePrivate *priv;
-	GdkPixbuf *scaled_pixbuf;
-	cairo_surface_t *surface;
-	gint ui_scale;
-	gint orig_width, orig_height;
-	gint target_width, target_height;
-	gdouble scale_factor;
-
-	priv = nemo_preview_image_get_instance_private (widget);
-
-	if (priv->current_pixbuf == NULL) {
 		return;
 	}
 
 	ui_scale = gtk_widget_get_scale_factor (GTK_WIDGET (widget));
-	orig_width = gdk_pixbuf_get_width (priv->current_pixbuf);
-	orig_height = gdk_pixbuf_get_height (priv->current_pixbuf);
 
-	/* Calculate scaled dimensions maintaining aspect ratio */
-	scale_factor = MIN ((gdouble)(width * ui_scale) / orig_width,
-	                    (gdouble)(height * ui_scale) / orig_height);
+	data = load_image_data_new (file_path, thumbnail_path, width, height, ui_scale);
+	g_free (file_path);
+	g_free (thumbnail_path);
 
-	target_width = (gint)(orig_width * scale_factor);
-	target_height = (gint)(orig_height * scale_factor);
+	priv->current_load_data = data;
 
-	if (target_width < 1 || target_height < 1) {
-		return;
-	}
+	task = g_task_new (widget, data->cancellable, load_image_callback, NULL);
+	g_task_set_task_data (task, data, (GDestroyNotify) load_image_data_free);
+	g_task_run_in_thread (task, load_image_thread);
+	g_object_unref (task);
 
-	/* Scale pixbuf and display */
-	scaled_pixbuf = gdk_pixbuf_scale_simple (priv->current_pixbuf,
-	                                          target_width,
-	                                          target_height,
-	                                          GDK_INTERP_BILINEAR);
-
-	if (scaled_pixbuf != NULL) {
-		surface = gdk_cairo_surface_create_from_pixbuf (scaled_pixbuf, ui_scale, NULL);
-
-		if (surface != NULL) {
-			/* Replace old surface with new one */
-			if (priv->current_surface != NULL) {
-				cairo_surface_destroy (priv->current_surface);
-			}
-			priv->current_surface = surface;
-			gtk_widget_queue_draw (priv->drawing_area);
-		}
-
-		g_object_unref (scaled_pixbuf);
-	}
+	priv->current_width = width;
+	priv->current_height = height;
 }
 
 static void
@@ -478,7 +559,6 @@ reload_at_size (NemoPreviewImage *widget,
 		return;
 	}
 
-	/* Determine whether to show image/thumbnail or generic icon */
 	if (nemo_can_thumbnail_internally (priv->file) || nemo_file_has_loaded_thumbnail (priv->file)) {
 		priv->showing_icon = FALSE;
 		load_image_at_size (widget, width, height);
@@ -511,34 +591,17 @@ on_size_allocate (GtkWidget     *widget,
 {
 	NemoPreviewImage *preview = NEMO_PREVIEW_IMAGE (widget);
 	NemoPreviewImagePrivate *priv;
-	gint width_diff, height_diff;
-	gboolean getting_smaller;
 
 	priv = nemo_preview_image_get_instance_private (preview);
 
-	/* Check if size changed significantly */
-	width_diff = ABS (allocation->width - priv->current_width);
-	height_diff = ABS (allocation->height - priv->current_height);
-
-	if (width_diff < MIN_SIZE_CHANGE && height_diff < MIN_SIZE_CHANGE) {
-		return;
+	if (priv->current_surface != NULL) {
+		gtk_widget_queue_draw (priv->drawing_area);
 	}
 
-	/* Check if we're getting smaller */
-	getting_smaller = (allocation->width < priv->current_width ||
-	                   allocation->height < priv->current_height);
-
-	/* If getting smaller, immediately scale down the current pixbuf for responsive UI */
-	if (priv->current_pixbuf != NULL) {
-		scale_current_pixbuf_to_size (preview, allocation->width, allocation->height);
-	}
-
-	/* Clear existing timeout */
 	if (priv->resize_timeout_id != 0) {
 		g_source_remove (priv->resize_timeout_id);
 	}
 
-	/* Schedule reload with debouncing to get optimal quality */
 	priv->resize_timeout_id = g_timeout_add (RESIZE_DEBOUNCE_MS,
 	                                         on_resize_timeout,
 	                                         preview);
@@ -559,7 +622,11 @@ nemo_preview_image_set_file (NemoPreviewImage *widget,
 		return;
 	}
 
-	/* Clear any pending resize timeout */
+	if (priv->current_load_data != NULL) {
+		g_cancellable_cancel (priv->current_load_data->cancellable);
+		priv->current_load_data = NULL;
+	}
+
 	if (priv->resize_timeout_id != 0) {
 		g_source_remove (priv->resize_timeout_id);
 		priv->resize_timeout_id = 0;
@@ -571,7 +638,6 @@ nemo_preview_image_set_file (NemoPreviewImage *widget,
 
 	priv->file = file;
 
-	/* Clear current image */
 	if (priv->current_surface != NULL) {
 		cairo_surface_destroy (priv->current_surface);
 		priv->current_surface = NULL;
@@ -580,11 +646,8 @@ nemo_preview_image_set_file (NemoPreviewImage *widget,
 	gtk_widget_hide (priv->drawing_area);
 	priv->current_width = 0;
 	priv->current_height = 0;
-
-	if (priv->current_pixbuf != NULL) {
-		g_object_unref (priv->current_pixbuf);
-		priv->current_pixbuf = NULL;
-	}
+	priv->surface_width = 0;
+	priv->surface_height = 0;
 
 	if (file != NULL) {
 		nemo_file_ref (file);
@@ -602,15 +665,14 @@ nemo_preview_image_clear (NemoPreviewImage *widget)
 
 	priv = nemo_preview_image_get_instance_private (widget);
 
-	/* Clear any pending resize timeout */
+	if (priv->current_load_data != NULL) {
+		g_cancellable_cancel (priv->current_load_data->cancellable);
+		priv->current_load_data = NULL;
+	}
+
 	if (priv->resize_timeout_id != 0) {
 		g_source_remove (priv->resize_timeout_id);
 		priv->resize_timeout_id = 0;
-	}
-
-	if (priv->current_pixbuf != NULL) {
-		g_object_unref (priv->current_pixbuf);
-		priv->current_pixbuf = NULL;
 	}
 
 	if (priv->current_surface != NULL) {
@@ -627,5 +689,7 @@ nemo_preview_image_clear (NemoPreviewImage *widget)
 	gtk_widget_hide (priv->message_label);
 	priv->current_width = 0;
 	priv->current_height = 0;
+	priv->surface_width = 0;
+	priv->surface_height = 0;
 	priv->showing_icon = FALSE;
 }
