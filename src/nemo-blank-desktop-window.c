@@ -240,10 +240,12 @@ nemo_blank_desktop_window_dispose (GObject *obj)
     g_clear_handle_id (&window->details->actions_changed_idle_id, g_source_remove);
 
     if (window->details->actions_changed_id > 0) {
-        g_signal_handler_disconnect (nemo_desktop_manager_get_action_manager (),
+        g_signal_handler_disconnect (window->details->action_manager,
                              window->details->actions_changed_id);
         window->details->actions_changed_id = 0;
     }
+
+    g_clear_object (&window->details->action_manager);
 
     clear_ui (window);
 
