@@ -555,11 +555,17 @@ nemo_application_quit (NemoApplication *self)
 		for (GList *l = windows; l != NULL; l = l->next) {
 			GtkWindow *w = GTK_WINDOW (l->data);
 
-			if (!NEMO_IS_WINDOW (w) || NEMO_IS_DESKTOP_WINDOW (w)) {
+			if (!NEMO_IS_WINDOW (w)) {
 				continue;
 			}
 
 			NemoWindow *nw = NEMO_WINDOW (w);
+
+			/* Avoid saving the desktop window */
+			if (nw->details != NULL && nw->details->disable_chrome) {
+				continue;
+			}
+
 			gint pane_count = g_list_length (nw->details->panes);
 			gint tab_count = 0;
 
