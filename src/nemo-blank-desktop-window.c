@@ -301,6 +301,7 @@ show (GtkWidget *widget)
 
     GTK_WIDGET_CLASS (nemo_blank_desktop_window_parent_class)->show (widget);
     gtk_ui_manager_ensure_update (window->details->ui_manager);
+    actions_changed (window);
 }
 
 static void
