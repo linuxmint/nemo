@@ -2116,6 +2116,9 @@ nemo_window_save_session_state (NemoWindow *window)
 	gint left_active = 0;
 	gint right_active = 0;
 	gboolean split_view;
+	GtkPaned *paned;
+	GtkWidget *child1;
+	GtkWidget *child2;
 
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
@@ -2124,12 +2127,16 @@ nemo_window_save_session_state (NemoWindow *window)
 		return;
 	}
 
-	left_pane = g_list_nth_data (window->details->panes, 0);
-	right_pane = g_list_nth_data (window->details->panes, 1);
+	paned = GTK_PANED (window->details->split_view_hpane);
+	child1 = gtk_paned_get_child1 (paned);
+	child2 = gtk_paned_get_child2 (paned);
+
+	left_pane = child1 != NULL ? NEMO_WINDOW_PANE (child1) : NULL;
+	right_pane = child2 != NULL ? NEMO_WINDOW_PANE (child2) : NULL;
 
 	left_uris = collect_pane_saved_tab_uris (left_pane, &left_active);
 	right_uris = collect_pane_saved_tab_uris (right_pane, &right_active);
-	split_view = nemo_window_split_view_showing (window);
+	split_view = (right_pane != NULL);
 
 	g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW, split_view);
 	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT, (const gchar * const *) left_uris);
@@ -2275,8 +2282,14 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 		nemo_window_split_view_off (window);
 	}
 
-	left_pane = g_list_nth_data (window->details->panes, 0);
-	right_pane = want_split ? g_list_nth_data (window->details->panes, 1) : NULL;
+	{
+		GtkPaned *paned = GTK_PANED (window->details->split_view_hpane);
+		GtkWidget *child1 = gtk_paned_get_child1 (paned);
+		GtkWidget *child2 = gtk_paned_get_child2 (paned);
+
+		left_pane = child1 != NULL ? NEMO_WINDOW_PANE (child1) : NULL;
+		right_pane = (want_split && child2 != NULL) ? NEMO_WINDOW_PANE (child2) : NULL;
+	}
 
 	/* Reset panes to one tab each, then rebuild tabs in saved order */
 	clear_pane_to_single_slot (left_pane);
