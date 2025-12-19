@@ -702,6 +702,33 @@
       <summary>Side pane view</summary>
       <description>The side pane view to show in newly opened windows.</description>
     </key>
+
+    <!-- Saved session (last closed window) -->
+    <key name="saved-split-view" type="b">
+      <default>false</default>
+      <summary>Whether split view was enabled when the last window was closed</summary>
+      <description>Internal setting used to restore the last closed window's split view and tabs.</description>
+    </key>
+    <key name="saved-tabs-left" type="as">
+      <default>[]</default>
+      <summary>Saved tab URIs for the left pane</summary>
+      <description>Internal setting used to restore the last closed window's tabs for the left pane.</description>
+    </key>
+    <key name="saved-tabs-right" type="as">
+      <default>[]</default>
+      <summary>Saved tab URIs for the right pane</summary>
+      <description>Internal setting used to restore the last closed window's tabs for the right pane.</description>
+    </key>
+    <key name="saved-active-tab-left" type="i">
+      <default>0</default>
+      <summary>Index of the active tab in the left pane</summary>
+      <description>Internal setting used to restore which tab was active in the left pane.</description>
+    </key>
+    <key name="saved-active-tab-right" type="i">
+      <default>0</default>
+      <summary>Index of the active tab in the right pane</summary>
+      <description>Internal setting used to restore which tab was active in the right pane.</description>
+    </key>
   </schema>
 
   <schema id="org.nemo.plugins" path="/org/nemo/plugins/" gettext-domain="nemo">

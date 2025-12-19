@@ -2025,11 +2025,304 @@ real_get_icon (NemoWindow *window,
 				       NEMO_FILE_ICON_FLAGS_USE_MOUNT_ICON);
 }
 
+static gboolean
+uri_is_native_session_uri (const char *uri)
+{
+	GFile *file;
+	gboolean is_native;
+
+	if (uri == NULL || uri[0] == '\0') {
+		return FALSE;
+	}
+
+	file = g_file_new_for_uri (uri);
+
+	/* skip searches and non-native locations for this simple session restore */
+	if (g_file_has_uri_scheme (file, "x-nemo-search")) {
+		g_object_unref (file);
+		return FALSE;
+	}
+
+	is_native = g_file_is_native (file);
+	g_object_unref (file);
+
+	return is_native;
+}
+
+static char **
+collect_pane_saved_tab_uris (NemoWindowPane *pane, gint *active_index_out)
+{
+	GtkNotebook *notebook;
+	int n_pages, i;
+	int current_page;
+	int saved_index = 0;
+	int saved_active_index = 0;
+	GPtrArray *arr;
+
+	if (active_index_out != NULL) {
+		*active_index_out = 0;
+	}
+
+	if (pane == NULL || pane->notebook == NULL) {
+		return g_new0 (char *, 1);
+	}
+
+	notebook = GTK_NOTEBOOK (pane->notebook);
+	n_pages = gtk_notebook_get_n_pages (notebook);
+	current_page = gtk_notebook_get_current_page (notebook);
+
+	arr = g_ptr_array_new_with_free_func (g_free);
+
+	for (i = 0; i < n_pages; i++) {
+		GtkWidget *page;
+		NemoWindowSlot *slot;
+		char *uri;
+
+		page = gtk_notebook_get_nth_page (notebook, i);
+		if (page == NULL) {
+			continue;
+		}
+
+		slot = NEMO_WINDOW_SLOT (page);
+		uri = nemo_window_slot_get_location_uri (slot);
+
+		if (uri_is_native_session_uri (uri)) {
+			if (i == current_page) {
+				saved_active_index = saved_index;
+			}
+			g_ptr_array_add (arr, uri);
+			saved_index++;
+		} else {
+			g_free (uri);
+		}
+	}
+
+	g_ptr_array_add (arr, NULL);
+
+	if (active_index_out != NULL) {
+		*active_index_out = saved_active_index;
+	}
+
+	return (char **) g_ptr_array_free (arr, FALSE);
+}
+
+static void
+nemo_window_save_session_state (NemoWindow *window)
+{
+	NemoWindowPane *left_pane;
+	NemoWindowPane *right_pane;
+	char **left_uris;
+	char **right_uris;
+	gint left_active = 0;
+	gint right_active = 0;
+	gboolean split_view;
+
+	g_return_if_fail (NEMO_IS_WINDOW (window));
+
+	/* Do not store session state for the desktop window */
+	if (nemo_window_is_desktop (window)) {
+		return;
+	}
+
+	left_pane = g_list_nth_data (window->details->panes, 0);
+	right_pane = g_list_nth_data (window->details->panes, 1);
+
+	left_uris = collect_pane_saved_tab_uris (left_pane, &left_active);
+	right_uris = collect_pane_saved_tab_uris (right_pane, &right_active);
+	split_view = nemo_window_split_view_showing (window);
+
+	g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW, split_view);
+	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT, (const gchar * const *) left_uris);
+	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT, (const gchar * const *) right_uris);
+	g_settings_set_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT, left_active);
+	g_settings_set_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT, right_active);
+
+	g_strfreev (left_uris);
+	g_strfreev (right_uris);
+}
+
+static void
+clear_pane_to_single_slot (NemoWindowPane *pane)
+{
+	GtkNotebook *notebook;
+	int n_pages;
+
+	if (pane == NULL || pane->notebook == NULL) {
+		return;
+	}
+
+	notebook = GTK_NOTEBOOK (pane->notebook);
+	n_pages = gtk_notebook_get_n_pages (notebook);
+
+	/* Ensure there is a predictable active tab */
+	if (n_pages > 0) {
+		gtk_notebook_set_current_page (notebook, 0);
+	}
+
+	/* Close all tabs except the first one */
+	while (gtk_notebook_get_n_pages (notebook) > 1) {
+		GtkWidget *page;
+		NemoWindowSlot *slot;
+		int last = gtk_notebook_get_n_pages (notebook) - 1;
+
+		page = gtk_notebook_get_nth_page (notebook, last);
+		if (page == NULL) {
+			break;
+		}
+
+		slot = NEMO_WINDOW_SLOT (page);
+		nemo_window_pane_close_slot (pane, slot);
+	}
+}
+
+static void
+open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
+{
+	NemoWindow *window;
+	int i;
+
+	if (pane == NULL) {
+		return;
+	}
+
+	window = pane->window;
+
+	/* If no URIs were saved for this pane, leave its first tab alone */
+	if (uris == NULL || uris[0] == NULL) {
+		return;
+	}
+
+	for (i = 0; uris[i] != NULL; i++) {
+		NemoWindowSlot *slot;
+		GFile *location;
+
+		if (!uri_is_native_session_uri (uris[i])) {
+			continue;
+		}
+
+		if (i == 0) {
+			/* Reuse the existing first tab */
+			slot = pane->active_slot;
+			if (slot == NULL && pane->notebook != NULL) {
+				GtkWidget *page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (pane->notebook), 0);
+				if (page != NULL) {
+					slot = NEMO_WINDOW_SLOT (page);
+				}
+			}
+		} else {
+			slot = nemo_window_pane_open_slot (pane, NEMO_WINDOW_OPEN_SLOT_APPEND);
+		}
+
+		if (slot == NULL) {
+			continue;
+		}
+
+		location = g_file_new_for_uri (uris[i]);
+		nemo_window_slot_open_location (slot, location, 0);
+		g_object_unref (location);
+
+		/* Avoid leaving the window's active slot on the last tab we opened */
+		if (window != NULL && i == 0) {
+			nemo_window_set_active_slot (window, slot);
+		}
+	}
+}
+
+gboolean
+nemo_window_restore_saved_tabs (NemoWindow *window)
+{
+	NemoWindowPane *left_pane;
+	NemoWindowPane *right_pane;
+	char **left_uris;
+	char **right_uris;
+	gint left_active;
+	gint right_active;
+	gboolean want_split;
+	gboolean saved_split;
+
+	g_return_val_if_fail (NEMO_IS_WINDOW (window), FALSE);
+
+	/* Never restore tabs for the desktop window */
+	if (nemo_window_is_desktop (window)) {
+		return FALSE;
+	}
+
+	left_uris = g_settings_get_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT);
+	right_uris = g_settings_get_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT);
+	left_active = g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT);
+	right_active = g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT);
+	saved_split = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW);
+
+	if ((left_uris == NULL || left_uris[0] == NULL) &&
+	    (right_uris == NULL || right_uris[0] == NULL)) {
+		g_strfreev (left_uris);
+		g_strfreev (right_uris);
+		return FALSE;
+	}
+
+	/* Only create the extra pane if we actually have tabs to restore there */
+	want_split = saved_split && (right_uris != NULL && right_uris[0] != NULL);
+
+	if (want_split && !nemo_window_split_view_showing (window)) {
+		nemo_window_split_view_on (window);
+	} else if (!want_split && nemo_window_split_view_showing (window)) {
+		nemo_window_split_view_off (window);
+	}
+
+	left_pane = g_list_nth_data (window->details->panes, 0);
+	right_pane = want_split ? g_list_nth_data (window->details->panes, 1) : NULL;
+
+	/* Reset panes to one tab each, then rebuild tabs in saved order */
+	clear_pane_to_single_slot (left_pane);
+	clear_pane_to_single_slot (right_pane);
+
+	/* If nothing saved for the left pane, open Home as a minimal fallback */
+	if (left_uris == NULL || left_uris[0] == NULL) {
+		GFile *home = g_file_new_for_path (g_get_home_dir ());
+		if (left_pane != NULL && left_pane->active_slot != NULL) {
+			nemo_window_slot_open_location (left_pane->active_slot, home, 0);
+		}
+		g_object_unref (home);
+	} else {
+		open_uri_list_in_pane (left_pane, left_uris);
+	}
+
+	open_uri_list_in_pane (right_pane, right_uris);
+
+	/* Restore active tabs (clamp indices) */
+	if (left_pane != NULL && left_pane->notebook != NULL) {
+		GtkNotebook *nb = GTK_NOTEBOOK (left_pane->notebook);
+		int n = gtk_notebook_get_n_pages (nb);
+		if (n > 0) {
+			gtk_notebook_set_current_page (nb, CLAMP (left_active, 0, n - 1));
+		}
+	}
+
+	if (right_pane != NULL && right_pane->notebook != NULL) {
+		GtkNotebook *nb = GTK_NOTEBOOK (right_pane->notebook);
+		int n = gtk_notebook_get_n_pages (nb);
+		if (n > 0) {
+			gtk_notebook_set_current_page (nb, CLAMP (right_active, 0, n - 1));
+		}
+	}
+
+	/* Make the left pane active for a predictable starting point */
+	if (left_pane != NULL) {
+		nemo_window_set_active_pane (window, left_pane);
+	}
+
+	g_strfreev (left_uris);
+	g_strfreev (right_uris);
+
+	return TRUE;
+}
+
 static void
 real_window_close (NemoWindow *window)
 {
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
+	nemo_window_save_session_state (window);
 	nemo_window_save_geometry (window);
 
 	gtk_widget_destroy (GTK_WIDGET (window));

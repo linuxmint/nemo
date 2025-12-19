@@ -474,8 +474,31 @@ open_windows (NemoMainApplication *application,
 	gint i;
 
 	if (files == NULL || files[0] == NULL) {
-		/* Open a window pointing at the default location. */
-		open_window (application, NULL, screen, geometry);
+		/* No explicit locations requested: try restoring the last session. */
+		NemoWindow *window;
+		gboolean have_geometry;
+
+		window = nemo_main_application_create_window (NEMO_APPLICATION (application), screen);
+
+		have_geometry = geometry != NULL && strcmp (geometry, "") != 0;
+		if (have_geometry && !gtk_widget_get_visible (GTK_WIDGET (window))) {
+			/* never maximize windows opened from shell if a
+			 * custom geometry has been requested.
+			 */
+			gtk_window_unmaximize (GTK_WINDOW (window));
+			eel_gtk_window_set_initial_geometry_from_string (GTK_WINDOW (window),
+									 geometry,
+									 APPLICATION_WINDOW_MIN_WIDTH,
+									 APPLICATION_WINDOW_MIN_HEIGHT,
+									 FALSE);
+		}
+
+		if (!nemo_window_restore_saved_tabs (window)) {
+			/* Fall back to a safe default location */
+			GFile *home = g_file_new_for_path (g_get_home_dir ());
+			nemo_window_go_to (window, home);
+			g_object_unref (home);
+		}
 	} else {
 		if (open_in_existing_window) {
 			/* Open one tab at each requested location in an existing window */
