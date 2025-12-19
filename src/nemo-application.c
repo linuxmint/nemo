@@ -534,6 +534,17 @@ nemo_application_quit (NemoApplication *self)
 	GList *windows;
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
+
+	/* Save session state once, based on the active Nemo window, before we
+	 * destroy all windows. Destroying multiple windows can otherwise overwrite
+	 * the stored state with an arbitrary last-destroyed window. */
+	{
+		GtkWindow *active = gtk_application_get_active_window (GTK_APPLICATION (app));
+		if (active != NULL && NEMO_IS_WINDOW (active)) {
+			nemo_window_save_session_state_for_quit (NEMO_WINDOW (active));
+		}
+	}
+
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
 
     /* we have been asked to force quit */

@@ -155,6 +155,7 @@ void                 nemo_window_set_active_pane                     (NemoWindow
 NemoWindowPane * nemo_window_get_active_pane                     (NemoWindow *window);
 
 gboolean nemo_window_restore_saved_tabs                              (NemoWindow *window);
+void nemo_window_save_session_state_for_quit                         (NemoWindow *window);
 
 
 /* sync window GUI with current slot. Used when changing slots,

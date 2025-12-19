@@ -837,10 +837,6 @@ nemo_window_destroy (GtkWidget *object)
 
 	DEBUG ("Destroying window");
 
-	/* Ensure session state is saved even when the application quits by
-	 * destroying windows directly (bypassing delete-event/close). */
-	nemo_window_save_session_state (window);
-
 	/* close the sidebar first */
 	nemo_window_tear_down_sidebar (window);
 
@@ -2143,6 +2139,12 @@ nemo_window_save_session_state (NemoWindow *window)
 
 	g_strfreev (left_uris);
 	g_strfreev (right_uris);
+}
+
+void
+nemo_window_save_session_state_for_quit (NemoWindow *window)
+{
+	nemo_window_save_session_state (window);
 }
 
 static void
