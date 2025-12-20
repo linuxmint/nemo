@@ -586,7 +586,7 @@ nemo_application_quit (NemoApplication *self)
 		}
 
 		if (best != NULL) {
-			nemo_window_save_session_state_for_quit (best);
+			nemo_window_save_session_state (best);
 		}
 	}
 

@@ -2106,7 +2106,7 @@ collect_pane_saved_tab_uris (NemoWindowPane *pane, gint *active_index_out)
 	return (char **) g_ptr_array_free (arr, FALSE);
 }
 
-static void
+void
 nemo_window_save_session_state (NemoWindow *window)
 {
 	NemoWindowPane *left_pane;
@@ -2146,12 +2146,6 @@ nemo_window_save_session_state (NemoWindow *window)
 
 	g_strfreev (left_uris);
 	g_strfreev (right_uris);
-}
-
-void
-nemo_window_save_session_state_for_quit (NemoWindow *window)
-{
-	nemo_window_save_session_state (window);
 }
 
 static void
