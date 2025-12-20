@@ -346,6 +346,11 @@
       <summary>Whether to default to showing dual-pane view when a new window is opened</summary>
       <description>If set to true, new Nemo windows will default to showing two panes</description>
     </key>
+    <key name="restore-tabs-on-startup" type="b">
+      <default>false</default>
+      <summary>Restore the previous window tabs on startup</summary>
+      <description>If set to true, Nemo will restore the last saved window tab state when launched without explicit locations.</description>
+    </key>
     <key name="ignore-view-metadata" type="b">
       <default>false</default>
       <summary>Whether to ignore folder metadata for view zoom levels and layouts</summary>

@@ -566,12 +566,26 @@ nemo_application_quit (NemoApplication *self)
 				continue;
 			}
 
-			gint pane_count = g_list_length (nw->details->panes);
+			/* Prefer windows that are actually in split view and have more tabs. */
+			GtkPaned *paned = GTK_PANED (nw->details->split_view_hpane);
+			GtkWidget *child1 = gtk_paned_get_child1 (paned);
+			GtkWidget *child2 = gtk_paned_get_child2 (paned);
+
+			gint pane_count = 0;
 			gint tab_count = 0;
 
-			for (GList *p = nw->details->panes; p != NULL; p = p->next) {
-				NemoWindowPane *pane = p->data;
-				if (pane != NULL && pane->notebook != NULL) {
+			if (child1 != NULL) {
+				NemoWindowPane *pane = NEMO_WINDOW_PANE (child1);
+				pane_count++;
+				if (pane->notebook != NULL) {
+					tab_count += gtk_notebook_get_n_pages (GTK_NOTEBOOK (pane->notebook));
+				}
+			}
+
+			if (child2 != NULL) {
+				NemoWindowPane *pane = NEMO_WINDOW_PANE (child2);
+				pane_count++;
+				if (pane->notebook != NULL) {
 					tab_count += gtk_notebook_get_n_pages (GTK_NOTEBOOK (pane->notebook));
 				}
 			}

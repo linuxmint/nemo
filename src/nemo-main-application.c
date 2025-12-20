@@ -477,6 +477,7 @@ open_windows (NemoMainApplication *application,
 		/* No explicit locations requested: try restoring the last session. */
 		NemoWindow *window;
 		gboolean have_geometry;
+		gboolean do_restore;
 
 		window = nemo_main_application_create_window (NEMO_APPLICATION (application), screen);
 
@@ -493,7 +494,9 @@ open_windows (NemoMainApplication *application,
 									 FALSE);
 		}
 
-		if (!nemo_window_restore_saved_tabs (window)) {
+		do_restore = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_RESTORE_TABS_ON_STARTUP);
+
+		if (!do_restore || !nemo_window_restore_saved_tabs (window)) {
 			/* Fall back to a safe default location */
 			GFile *home = g_file_new_for_path (g_get_home_dir ());
 			nemo_window_go_to (window, home);

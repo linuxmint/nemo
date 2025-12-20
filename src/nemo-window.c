@@ -2185,14 +2185,11 @@ clear_pane_to_single_slot (NemoWindowPane *pane)
 static void
 open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
 {
-	NemoWindow *window;
 	int i;
 
 	if (pane == NULL) {
 		return;
 	}
-
-	window = pane->window;
 
 	/* If no URIs were saved for this pane, leave its first tab alone */
 	if (uris == NULL || uris[0] == NULL) {
@@ -2227,11 +2224,6 @@ open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
 		location = g_file_new_for_uri (uris[i]);
 		nemo_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
-
-		/* Avoid leaving the window's active slot on the last tab we opened */
-		if (window != NULL && i == 0) {
-			nemo_window_set_active_slot (window, slot);
-		}
 	}
 }
 
