@@ -536,21 +536,9 @@ nemo_application_quit (NemoApplication *self)
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
 
 	/* Save session state once, before we destroy all windows.
-	 *
-	 * We can't rely on gtk_application_get_active_window() here; depending on
-	 * timing/focus it can be NULL or point to non-browser dialogs.
-	 *
-	 * Instead, pick the "best" Nemo window to snapshot:
-	 * - prefer non-desktop windows
-	 * - prefer split-view windows
-	 * - prefer the window with the most tabs across panes
-	 *
-	 * Destroying multiple windows can otherwise overwrite stored state with an
-	 * arbitrary last-destroyed window. */
+	 * Save the last non-desktop window we find. */
 	{
-		NemoWindow *best = NULL;
-		gint best_pane_count = -1;
-		gint best_tab_count = -1;
+		NemoWindow *last_window = NULL;
 
 		for (GList *l = windows; l != NULL; l = l->next) {
 			GtkWindow *w = GTK_WINDOW (l->data);
@@ -566,41 +554,11 @@ nemo_application_quit (NemoApplication *self)
 				continue;
 			}
 
-			/* Prefer windows that are actually in split view and have more tabs. */
-			GtkPaned *paned = GTK_PANED (nw->details->split_view_hpane);
-			GtkWidget *child1 = gtk_paned_get_child1 (paned);
-			GtkWidget *child2 = gtk_paned_get_child2 (paned);
-
-			gint pane_count = 0;
-			gint tab_count = 0;
-
-			if (child1 != NULL) {
-				NemoWindowPane *pane = NEMO_WINDOW_PANE (child1);
-				pane_count++;
-				if (pane->notebook != NULL) {
-					tab_count += gtk_notebook_get_n_pages (GTK_NOTEBOOK (pane->notebook));
-				}
-			}
-
-			if (child2 != NULL) {
-				NemoWindowPane *pane = NEMO_WINDOW_PANE (child2);
-				pane_count++;
-				if (pane->notebook != NULL) {
-					tab_count += gtk_notebook_get_n_pages (GTK_NOTEBOOK (pane->notebook));
-				}
-			}
-
-			/* Prefer more panes first (split view), then more tabs */
-			if (pane_count > best_pane_count ||
-			    (pane_count == best_pane_count && tab_count > best_tab_count)) {
-				best = nw;
-				best_pane_count = pane_count;
-				best_tab_count = tab_count;
-			}
+			last_window = nw;
 		}
 
-		if (best != NULL) {
-			nemo_window_save_session_state (best);
+		if (last_window != NULL) {
+			nemo_window_save_session_state (last_window);
 		}
 	}
 
