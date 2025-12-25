@@ -511,31 +511,26 @@ nemo_query_editor_get_query (NemoQueryEditor *editor)
     nemo_query_set_location (query, editor->priv->current_uri);
 
     sanitized = get_sanitized_file_search_string (editor);
-    GString *file_string = g_string_new (sanitized);
-    g_free (sanitized);
 
     /* - Search for 'all' needs to be different depending on whether regex is enabled for files.
-       - Our non-regex search traditionally implied '*words*', not 'words'. Now that we're using
-         GPatternSpec, we need to add those ourselves. */
+       - For regex: use '.*' for empty search
+       - For non-regex: the search engine will handle splitting by whitespace and wrapping
+         each word with asterisks for user convenience. */
     if (nemo_query_get_use_file_regex (query)) {
-        if (g_strcmp0 (file_string->str, "") == 0) {
-            g_string_assign (file_string, ".*");
+        if (g_strcmp0 (sanitized, "") == 0) {
+            nemo_query_set_file_pattern (query, ".*");
+        } else {
+            nemo_query_set_file_pattern (query, sanitized);
         }
     } else {
-        if (g_strcmp0 (file_string->str, "") == 0) {
-            g_string_assign (file_string, "*");
+        if (g_strcmp0 (sanitized, "") == 0) {
+            nemo_query_set_file_pattern (query, "*");
         } else {
-            if (!g_str_has_prefix (file_string->str, "*")) {
-                g_string_insert_c (file_string, 0, '*');
-            }
-            if (!g_str_has_suffix (file_string->str, "*")) {
-                g_string_append_c (file_string, '*');
-            }
+            nemo_query_set_file_pattern (query, sanitized);
         }
     }
 
-    nemo_query_set_file_pattern (query, file_string->str);
-    g_string_free (file_string, TRUE);
+    g_free (sanitized);
 
     return query;
 }
