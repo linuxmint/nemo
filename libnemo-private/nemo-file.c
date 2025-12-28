@@ -163,9 +163,10 @@ static GQuark attribute_name_q,
 	attribute_where_q,
 	attribute_link_target_q,
 	attribute_volume_q,
-	    attribute_free_space_q,
-	    attribute_extension_q,
-	    attribute_search_result_snippet_q,    attribute_search_result_count_q;
+	attribute_free_space_q,
+	attribute_extension_q,
+	attribute_search_result_snippet_q,
+	attribute_search_result_count_q;
 
 static void     nemo_file_info_iface_init                (NemoFileInfoInterface *iface);
 
