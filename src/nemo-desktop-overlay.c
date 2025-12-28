@@ -207,6 +207,9 @@ sync_controls (NemoDesktopOverlay *overlay,
             case NEMO_FILE_SORT_BY_MTIME:
                 combo_id = "Desktop Sort by Date";
                 break;
+            case NEMO_FILE_SORT_BY_EXTENSION:
+                combo_id = "Desktop Sort by Extension";
+                break;
             case NEMO_FILE_SORT_BY_DISPLAY_NAME:
             default:
                 combo_id = "Desktop Sort by Name";

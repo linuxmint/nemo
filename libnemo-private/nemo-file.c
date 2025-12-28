@@ -163,9 +163,9 @@ static GQuark attribute_name_q,
 	attribute_where_q,
 	attribute_link_target_q,
 	attribute_volume_q,
-	attribute_free_space_q,
-    attribute_search_result_snippet_q,
-    attribute_search_result_count_q;
+	    attribute_free_space_q,
+	    attribute_extension_q,
+	    attribute_search_result_snippet_q,    attribute_search_result_count_q;
 
 static void     nemo_file_info_iface_init                (NemoFileInfoInterface *iface);
 
@@ -3227,6 +3227,48 @@ compare_by_type (NemoFile *file_1, NemoFile *file_2, gboolean detailed)
 }
 
 static int
+compare_by_extension (NemoFile *file_1, NemoFile *file_2)
+{
+    const char *name_1, *name_2;
+    char *ext_1, *ext_2;
+    char *ext_1_folded, *ext_2_folded;
+    int result;
+
+    name_1 = nemo_file_peek_display_name (file_1);
+    name_2 = nemo_file_peek_display_name (file_2);
+
+    ext_1 = eel_filename_get_extension_offset (name_1);
+    ext_2 = eel_filename_get_extension_offset (name_2);
+
+    if (ext_1 == NULL && ext_2 == NULL) {
+        return 0;
+    }
+
+    if (ext_1 == NULL) {
+        return -1;
+    }
+
+    if (ext_2 == NULL) {
+        return 1;
+    }
+
+    /* Skip the dot */
+    ext_1++;
+    ext_2++;
+
+    /* Case-insensitive comparison */
+    ext_1_folded = g_utf8_casefold (ext_1, -1);
+    ext_2_folded = g_utf8_casefold (ext_2, -1);
+
+    result = g_utf8_collate (ext_1_folded, ext_2_folded);
+
+    g_free (ext_1_folded);
+    g_free (ext_2_folded);
+
+    return result;
+}
+
+static int
 compare_by_time (NemoFile *file_1, NemoFile *file_2, NemoDateType type)
 {
 	/* Sort order:
@@ -3411,6 +3453,12 @@ nemo_file_compare_for_sort (NemoFile *file_1,
                 result = compare_by_full_path (file_1, file_2);
             }
             break;
+        case NEMO_FILE_SORT_BY_EXTENSION:
+            result = compare_by_extension (file_1, file_2);
+            if (result == 0) {
+                result = compare_by_full_path (file_1, file_2);
+            }
+            break;
 		case NEMO_FILE_SORT_BY_MTIME:
 			result = compare_by_time (file_1, file_2, NEMO_DATE_TYPE_MODIFIED);
 			if (result == 0) {
@@ -3496,6 +3544,13 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 	} else if (attribute == attribute_detailed_type_q) {
         return nemo_file_compare_for_sort (file_1, file_2,
                                NEMO_FILE_SORT_BY_DETAILED_TYPE,
+                               directories_first,
+                               favorites_first,
+                               reversed,
+                               search_dir);
+	} else if (attribute == attribute_extension_q) {
+        return nemo_file_compare_for_sort (file_1, file_2,
+                               NEMO_FILE_SORT_BY_EXTENSION,
                                directories_first,
                                favorites_first,
                                reversed,
@@ -6724,6 +6779,16 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
 	if (attribute_q == attribute_name_q) {
 		return nemo_file_get_display_name (file);
 	}
+    if (attribute_q == attribute_extension_q) {
+        const char *name;
+        char *ext;
+        name = nemo_file_peek_display_name (file);
+        ext = eel_filename_get_extension_offset (name);
+        if (ext) {
+            return g_strdup (ext + 1);
+        }
+        return NULL;
+    }
 	if (attribute_q == attribute_type_q) {
 		return nemo_file_get_type_as_string (file);
 	}
@@ -8959,6 +9024,7 @@ nemo_file_class_init (NemoFileClass *class)
 	attribute_link_target_q = g_quark_from_static_string ("link_target");
 	attribute_volume_q = g_quark_from_static_string ("volume");
 	attribute_free_space_q = g_quark_from_static_string ("free_space");
+    attribute_extension_q = g_quark_from_static_string ("extension");
     attribute_search_result_snippet_q = g_quark_from_string ("search_result_snippet");
     attribute_search_result_count_q = g_quark_from_string ("search_result_count");
 
