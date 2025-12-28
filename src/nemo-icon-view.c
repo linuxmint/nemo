@@ -166,18 +166,18 @@ static const SortCriterion sort_criteria[] = {
 		N_("Keep icons sorted by modification date in rows")
 	},
   {
-    NEMO_FILE_SORT_BY_TRASHED_TIME,
-    "trashed",
-    "Sort by Trash Time",
-    N_("by T_rash Time"),
-    N_("Keep icons sorted by trash time in rows")
+    	NEMO_FILE_SORT_BY_TRASHED_TIME,
+    	"trashed",
+    	"Sort by Trash Time",
+    	N_("by T_rash Time"),
+    	N_("Keep icons sorted by trash time in rows")
   },
   {
-    NEMO_FILE_SORT_BY_EXTENSION,
-    "extension",
-    "Sort by Extension",
-    N_("by _Extension"),
-    N_("Keep icons sorted by extension in rows")
+    	NEMO_FILE_SORT_BY_EXTENSION,
+    	"extension",
+    	"Sort by Extension",
+    	N_("by _Extension"),
+    	N_("Keep icons sorted by extension in rows")
   }
 };
 
