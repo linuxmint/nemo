@@ -36,6 +36,7 @@ typedef struct {
     GList *actions_directory_list;
     gboolean action_list_dirty;
     gint layout_timestamp;
+    guint refresh_timeout_id;
 } NemoActionManagerPrivate;
 
 struct _NemoActionManager 
@@ -46,6 +47,7 @@ struct _NemoActionManager
 G_DEFINE_TYPE_WITH_PRIVATE (NemoActionManager, nemo_action_manager, G_TYPE_OBJECT)
 
 static void     refresh_actions                 (NemoActionManager *action_manager, const gchar *directory);
+static void     queue_refresh_actions           (NemoActionManager *action_manager, const gchar *directory);
 static void     add_action_to_action_list       (NemoActionManager *action_manager, const gchar *path);
 
 enum 
@@ -75,7 +77,7 @@ actions_changed (GFileMonitor      *monitor,
     g_autofree gchar *dir = g_path_get_dirname (g_file_peek_path (file));
     DEBUG ("Action directory '%s' changed, refreshing its actions.", dir);
 
-    refresh_actions (action_manager, dir);
+    queue_refresh_actions (action_manager, dir);
 }
 
 static void
@@ -87,7 +89,7 @@ plugin_prefs_changed (GSettings *settings, gchar *key, gpointer user_data)
 
     DEBUG ("Enabled actions changed, refreshing all.");
 
-    refresh_actions (action_manager, NULL);
+    queue_refresh_actions (action_manager, NULL);
 }
 
 static void
@@ -350,16 +352,27 @@ nemo_config_dir_changed (GFileMonitor      *monitor,
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (user_data);
 
     g_autofree gchar *basename = g_file_get_basename (file);
+    g_autofree gchar *other_name = NULL;
 
-    if (g_strcmp0 (basename, LAYOUT_FILENAME) != 0) {
+    if (other_file != NULL) {
+        other_name = g_file_get_basename (other_file);
+    }
+
+    if (g_strcmp0 (basename, LAYOUT_FILENAME) != 0 && g_strcmp0 (other_name, LAYOUT_FILENAME) != 0) {
         return;
     }
 
-    if (event_type != G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT) {
+    switch (event_type) {
+    case G_FILE_MONITOR_EVENT_CREATED:
+    case G_FILE_MONITOR_EVENT_DELETED:
+    case G_FILE_MONITOR_EVENT_CHANGED:
+    case G_FILE_MONITOR_EVENT_RENAMED:
+    case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
+        queue_refresh_actions (action_manager, NULL);
+        break;
+    default:
         return;
     }
-
-    refresh_actions (action_manager, NULL);
 }
 
 static void
@@ -372,7 +385,7 @@ monitor_nemo_config_dir (NemoActionManager *action_manager)
     g_autofree gchar *path = g_build_filename (g_get_user_config_dir (), "nemo", NULL);
 
     file = g_file_new_for_path (path);
-    monitor = g_file_monitor_directory (file, G_FILE_MONITOR_WATCH_MOVES | G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+    monitor = g_file_monitor_directory (file, G_FILE_MONITOR_WATCH_MOVES, NULL, NULL);
     g_object_unref (file);
     g_signal_connect (monitor, "changed", G_CALLBACK (nemo_config_dir_changed), action_manager);
     priv->dir_monitors = g_list_prepend (priv->dir_monitors, monitor);
@@ -385,6 +398,31 @@ sort_actions (gconstpointer a, gconstpointer b)
     NemoAction *action_b = (NemoAction *) b;
 
     return g_strcmp0 (action_a->uuid, action_b->uuid);
+}
+
+static gboolean
+refresh_actions_timeout (gpointer user_data)
+{
+    NemoActionManager *action_manager = NEMO_ACTION_MANAGER (user_data);
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    priv->refresh_timeout_id = 0;
+    refresh_actions (action_manager, NULL);
+
+    return G_SOURCE_REMOVE;
+}
+
+static void
+queue_refresh_actions (NemoActionManager *action_manager,
+                       const gchar       *directory)
+{
+    NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    if (priv->refresh_timeout_id != 0) {
+        g_source_remove (priv->refresh_timeout_id);
+    }
+
+    priv->refresh_timeout_id = g_timeout_add (200, refresh_actions_timeout, action_manager);
 }
 
 static void
@@ -430,6 +468,7 @@ nemo_action_manager_constructed (GObject *object)
 
     priv->action_list_dirty = TRUE;
     priv->actions_by_uuid = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
+    priv->refresh_timeout_id = 0;
 
     set_up_actions_directories (action_manager);
     monitor_nemo_config_dir (action_manager);
@@ -452,6 +491,11 @@ nemo_action_manager_dispose (GObject *object)
 {
     NemoActionManager *action_manager = NEMO_ACTION_MANAGER (object);
     NemoActionManagerPrivate *priv = nemo_action_manager_get_instance_private (action_manager);
+
+    if (priv->refresh_timeout_id != 0) {
+        g_source_remove (priv->refresh_timeout_id);
+        priv->refresh_timeout_id = 0;
+    }
 
     if (priv->actions_directory_list != NULL) {
         g_list_free_full (priv->actions_directory_list, g_free);
