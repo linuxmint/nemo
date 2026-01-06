@@ -987,6 +987,21 @@ update_places (NemoPlacesSidebar *sidebar)
             }
         }
 
+        icon = nemo_get_mount_icon_name (mount);
+        mount_uri = g_file_get_uri (root);
+        name = g_mount_get_name (mount);
+        tooltip = g_file_get_parse_name (root);
+        place_info = new_place_info (PLACES_MOUNTED_VOLUME,
+                                     SECTION_DEVICES,
+                                     name, icon, mount_uri,
+                                     NULL, NULL, mount, 0, tooltip, 0, FALSE);
+        place_infos = g_list_prepend (place_infos, place_info);
+
+        g_free (icon);
+        g_free (name);
+        g_free (mount_uri);
+        g_free (tooltip);
+
         g_object_unref (root);
         g_object_unref (mount);
     }
