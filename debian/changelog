@@ -1,3 +1,13 @@
+nemo (6.6.3) zena; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-blank-desktop-window.c: Fix potential crash when actions are updates.
+  * nemo-blank-desktop-window.c: Make sure there's a menu available at startup.
+  * search: Restore implied 'AND' behavior in non-regex file match mode (#3659)
+  * nemo-places-sidebar.c: Restore visibility of mounts with no (#3670)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 08 Jan 2026 13:29:12 +0000
+
 nemo (6.6.2) zena; urgency=medium
 
   [ Cobinja ]
