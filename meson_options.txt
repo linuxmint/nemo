@@ -12,3 +12,5 @@ option('empty_view', type : 'boolean', value : false,
        description: 'Enable empty view')
 option('tracker',type : 'combo', choices : ['true', 'false', 'auto'], value : 'false',
        description: 'Tracker support')
+option('gtk_layer_shell', type : 'boolean', value : false,
+       description: 'Use gtk-layer-shell to draw desktop on wayland')
