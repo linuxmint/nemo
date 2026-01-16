@@ -91,7 +91,9 @@ main (int argc, char *argv[])
 
 	g_set_prgname ("nemo-desktop");
 
+#ifndef HAVE_GTK_LAYER_SHELL
 	gdk_set_allowed_backends ("x11");
+#endif
 
 #ifdef HAVE_EXEMPI
 	xmp_init();

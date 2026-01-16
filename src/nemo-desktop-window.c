@@ -36,6 +36,10 @@
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 
+#ifdef HAVE_GTK_LAYER_SHELL
+#include <gtk-layer-shell/gtk-layer-shell.h>
+#endif
+
 #include <eel/eel-vfs-extensions.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-icon-names.h>
@@ -177,12 +181,20 @@ nemo_desktop_window_init (NemoDesktopWindow *window)
 	window->details = G_TYPE_INSTANCE_GET_PRIVATE (window, NEMO_TYPE_DESKTOP_WINDOW,
 						       NemoDesktopWindowDetails);
 
-	g_object_set_data (G_OBJECT (window), "is_desktop_window", 
+	g_object_set_data (G_OBJECT (window), "is_desktop_window",
 			   GINT_TO_POINTER (1));
 
 	/* Make it easier for themes authors to style the desktop window separately */
 	gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
-    gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DESKTOP);
+
+#ifdef HAVE_GTK_LAYER_SHELL
+    if (gtk_layer_is_supported ()) {
+        gtk_layer_init_for_window (GTK_WINDOW (window));
+    } else
+#endif
+    {
+        gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DESKTOP);
+    }
 }
 
 NemoDesktopWindow *
@@ -230,7 +242,13 @@ map (GtkWidget *widget)
 {
 	/* Chain up to realize our children */
 	GTK_WIDGET_CLASS (nemo_desktop_window_parent_class)->map (widget);
-	gdk_window_lower (gtk_widget_get_window (widget));
+
+#ifdef HAVE_GTK_LAYER_SHELL
+    if (!gtk_layer_is_layer_window (GTK_WINDOW (widget)))
+#endif
+    {
+        gdk_window_lower (gtk_widget_get_window (widget));
+    }
 
     GdkWindow *window;
     GdkRGBA transparent = { 0, 0, 0, 0 };
@@ -334,6 +352,28 @@ void
 nemo_desktop_window_update_geometry (NemoDesktopWindow *window)
 {
     GdkRectangle rect;
+
+#ifdef HAVE_GTK_LAYER_SHELL
+    if (gtk_layer_is_layer_window (GTK_WINDOW (window))) {
+        GdkDisplay *display = gdk_display_get_default ();
+        GdkMonitor *monitor = gdk_display_get_monitor (display, window->details->monitor);
+
+        gtk_layer_set_layer (GTK_WINDOW (window), GTK_LAYER_SHELL_LAYER_BOTTOM);
+        gtk_layer_set_namespace (GTK_WINDOW (window), "nemo-desktop");
+        gtk_layer_set_keyboard_mode (GTK_WINDOW (window), GTK_LAYER_SHELL_KEYBOARD_MODE_ON_DEMAND);
+        gtk_layer_set_exclusive_zone (GTK_WINDOW (window), -1);
+        gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_TOP, TRUE);
+        gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_BOTTOM, TRUE);
+        gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_LEFT, TRUE);
+        gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_RIGHT, TRUE);
+
+        if (monitor) {
+            gtk_layer_set_monitor (GTK_WINDOW (window), monitor);
+        }
+
+        return;
+    }
+#endif
 
     nemo_desktop_manager_get_window_rect_for_monitor (nemo_desktop_manager_get (),
                                                       window->details->monitor,
