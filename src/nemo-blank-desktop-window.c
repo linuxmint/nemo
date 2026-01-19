@@ -522,10 +522,13 @@ nemo_blank_desktop_window_update_geometry (NemoBlankDesktopWindow *window)
         GdkDisplay *display = gdk_display_get_default ();
         GdkMonitor *monitor = gdk_display_get_monitor (display, window->details->monitor);
 
+        DEBUG ("NemoBlankDesktopWindow: using layer-shell for monitor %d",
+               window->details->monitor);
+
         gtk_layer_set_layer (GTK_WINDOW (window), GTK_LAYER_SHELL_LAYER_BOTTOM);
         gtk_layer_set_namespace (GTK_WINDOW (window), "nemo-desktop");
         gtk_layer_set_keyboard_mode (GTK_WINDOW (window), GTK_LAYER_SHELL_KEYBOARD_MODE_NONE);
-        gtk_layer_set_exclusive_zone (GTK_WINDOW (window), -1);
+        gtk_layer_set_exclusive_zone (GTK_WINDOW (window), 0);
         gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_TOP, TRUE);
         gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_BOTTOM, TRUE);
         gtk_layer_set_anchor (GTK_WINDOW (window), GTK_LAYER_SHELL_EDGE_LEFT, TRUE);
