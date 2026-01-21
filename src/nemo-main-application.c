@@ -286,7 +286,6 @@ mount_removed_callback (GVolumeMonitor *monitor,
 
 	root = g_mount_get_root (mount);
 	uri = g_file_get_uri (root);
-    g_object_unref (root);
 
 	DEBUG ("Removed mount at uri %s", uri);
 	g_free (uri);
@@ -297,6 +296,14 @@ mount_removed_callback (GVolumeMonitor *monitor,
 		if (window != NULL) {
 			GList *l;
 			GList *lp;
+			GFile *saved_location;
+
+			/* Clear the stored secondary pane location if it was on the removed mount */
+			saved_location = window->details->secondary_pane_last_location;
+			if (saved_location != NULL &&
+			    (g_file_has_prefix (saved_location, root) || g_file_equal (saved_location, root))) {
+				nemo_window_clear_secondary_pane_location (window);
+			}
 
 			for (lp = window->details->panes; lp != NULL; lp = lp->next) {
 				NemoWindowPane *pane;
@@ -311,6 +318,8 @@ mount_removed_callback (GVolumeMonitor *monitor,
 			} /* for all panes */
 		}
 	}
+
+	g_object_unref (root);
 
 	/* Handle the windows in the close list. */
 	for (node = close_list; node != NULL; node = node->next) {
