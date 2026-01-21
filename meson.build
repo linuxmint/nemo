@@ -134,9 +134,9 @@ endif
 conf.set('HAVE_SELINUX', libselinux_enabled)
 
 gtk_layer_shell_enabled = get_option('gtk_layer_shell')
-gtk_layer_shell = dependency('', required: false)
 if gtk_layer_shell_enabled
   gtk_layer_shell = dependency('gtk-layer-shell-0', version: '>=0.8', required: true)
+  wayland_client = dependency('wayland-client', required: true)
   conf.set('HAVE_GTK_LAYER_SHELL', gtk_layer_shell.found())
 endif
 
