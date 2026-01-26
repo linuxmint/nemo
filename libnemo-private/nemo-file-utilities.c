@@ -1533,13 +1533,17 @@ get_best_name (GtkIconTheme *icon_theme,
         const gchar * const *names;
         gint i;
 
-        // TODO: We should just use what gicon Gio gives us and let the theme deal with it.
-        // but currently everywhere nemo needs this is looking for icon names, so this function
-        // emulates using fallbacks to avoid a lot of refactoring elsewhere.
-
         names = g_themed_icon_get_names (G_THEMED_ICON (gicon));
         for (i = 0; i != g_strv_length ((gchar **) names); i++) {
             const gchar *name = names[i];
+
+            icon_name = g_strconcat ("xsi-", name, NULL);
+            if (gtk_icon_theme_has_icon (icon_theme, icon_name)) {
+                break;
+            }
+
+            g_clear_pointer (&icon_name, g_free);
+
             if (gtk_icon_theme_has_icon (icon_theme, name)) {
                 icon_name = g_strdup (name);
                 break;
