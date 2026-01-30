@@ -85,6 +85,7 @@ struct NemoListModelDetails {
 
 	GList *highlight_files;
     gboolean temp_unsorted;
+    gboolean expansion_enabled;
 };
 
 typedef struct {
@@ -1071,7 +1072,7 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 		gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
 	}
 
-    if (nemo_file_is_directory (file)) {
+    if (nemo_file_is_directory (file) && model->details->expansion_enabled) {
         guint count;
         gboolean got_count, unreadable;
 
@@ -1201,7 +1202,7 @@ nemo_list_model_file_changed (NemoListModel *model, NemoFile *file,
 
     gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
 
-    if (nemo_file_is_directory (file)) {
+    if (nemo_file_is_directory (file) && model->details->expansion_enabled) {
         if (update_dummy_row (model, file, g_sequence_get (ptr))) {
             gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model),
                                                   path, &iter);
@@ -1890,5 +1891,11 @@ void
 nemo_list_model_set_view_directory (NemoListModel *model, NemoDirectory *dir)
 {
     model->details->view_dir = dir;
+}
+
+void
+nemo_list_model_set_expansion_enabled (NemoListModel *model, gboolean enabled)
+{
+    model->details->expansion_enabled = enabled;
 }
 

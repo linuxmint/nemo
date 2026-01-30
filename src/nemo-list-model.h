@@ -140,4 +140,5 @@ void              nemo_list_model_set_temporarily_disable_sort (NemoListModel *m
 gboolean          nemo_list_model_get_temporarily_disable_sort (NemoListModel *model);
 void              nemo_list_model_set_expanding                (NemoListModel *model, NemoDirectory *directory);
 void              nemo_list_model_set_view_directory           (NemoListModel *model, NemoDirectory *dir);
+void              nemo_list_model_set_expansion_enabled        (NemoListModel *model, gboolean enabled);
 #endif /* NEMO_LIST_MODEL_H */

@@ -34,6 +34,7 @@
 #include "nemo-view-dnd.h"
 #include "nemo-view-factory.h"
 #include "nemo-window.h"
+#include "nemo-window-slot.h"
 
 #include <string.h>
 #include <eel/eel-vfs-extensions.h>
@@ -283,13 +284,23 @@ tooltip_prefs_changed_callback (NemoListView *view)
 static void
 expanders_enabled_changed_cb (NemoListView *view)
 {
+    gboolean enabled;
+    NemoWindowSlot *slot;
+
     g_return_if_fail (NEMO_IS_LIST_VIEW (view));
     g_return_if_fail (GTK_IS_TREE_VIEW (view->details->tree_view) && view->details->tree_view != NULL);
 
+    enabled = g_settings_get_boolean (nemo_list_view_preferences,
+                                      NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION);
+
     gtk_tree_view_collapse_all (view->details->tree_view);
-    gtk_tree_view_set_show_expanders (view->details->tree_view,
-                                      g_settings_get_boolean (nemo_list_view_preferences,
-                                                             NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION));
+    gtk_tree_view_set_show_expanders (view->details->tree_view, enabled);
+    nemo_list_model_set_expansion_enabled (view->details->model, enabled);
+
+    slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+    if (slot != NULL) {
+        nemo_window_slot_queue_reload (slot, FALSE);
+    }
 }
 
 static void
@@ -2599,6 +2610,10 @@ create_and_set_up_tree_view (NemoListView *view)
     g_signal_connect (view->details->tree_view, "size-allocate", G_CALLBACK (on_size_allocation_changed), view);
 
 	view->details->model = g_object_new (NEMO_TYPE_LIST_MODEL, NULL);
+    nemo_list_model_set_expansion_enabled (view->details->model,
+                                           g_settings_get_boolean (nemo_list_view_preferences,
+                                                                   NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION));
+
 	gtk_tree_view_set_model (view->details->tree_view, GTK_TREE_MODEL (view->details->model));
 	/* Need the model for the dnd drop icon "accept" change */
 	nemo_list_model_set_drag_view (NEMO_LIST_MODEL (view->details->model),
