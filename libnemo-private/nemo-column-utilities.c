@@ -216,6 +216,8 @@ get_search_columns (void)
                              g_object_new (NEMO_TYPE_COLUMN,
                                            "name", "search_result_count",
                                            "attribute", "search_result_count",
+                                           // TRANSLATORS: This column is only useful for content search results,
+                                           // and shows the number of occurrences of the search string within the file.
                                            "label", _("Hits"),
                                            "description", _("How many times the search string appeared in the file"),
                                            NULL));
@@ -234,6 +236,8 @@ get_mixed_file_list_columns (void)
                      g_object_new (NEMO_TYPE_COLUMN,
                                "name", "where",
                                "attribute", "where",
+                               // TRANSLATORS: The Location column displays the parent path of a given file. This
+                               // is useful in special file listings like search results, Recents or Favorites.
                                "label", _("Location"),
                                "description", _("The location of the file."),
                                "width-chars", 60,
