@@ -2023,49 +2023,31 @@ column_header_clicked (GtkWidget *column_button,
                        GdkEventButton *event,
                        NemoListView *list_view)
 {
-    GList *current_view_columns, *l;
+    GList *valid_columns, *l;
+    gchar **visible_columns;
     NemoFile *file;
     GtkWidget *menu;
     GtkWidget *menu_item;
 
-	if (event->button != GDK_BUTTON_SECONDARY) {
-		return FALSE;
-	}
+    if (event->button != GDK_BUTTON_SECONDARY) {
+        return FALSE;
+    }
 
     file = nemo_view_get_directory_as_file (NEMO_VIEW (list_view));
 
     menu = gtk_menu_new ();
 
-    current_view_columns = gtk_tree_view_get_columns (list_view->details->tree_view);
+    visible_columns = get_visible_columns (list_view);
+    valid_columns = nemo_get_columns_for_file (file);
 
-    for (l = current_view_columns; l != NULL; l = l->next) {
-        const char *name;
-        char *label;
-        char *lowercase;
-        gboolean visible;
+    for (l = valid_columns; l != NULL; l = l->next) {
+        gchar *name;
+        gchar *label;
 
-        GtkTreeViewColumn *c = GTK_TREE_VIEW_COLUMN (l->data);
-
-        name = g_object_get_data (G_OBJECT (c), "column-id");
-
-        if (!nemo_file_is_in_trash (file)) {
-            if (g_strcmp0 (name, "trashed_on") == 0 ||
-                g_strcmp0 (name, "trash_orig_path") == 0)
-                continue;
-        }
-
-        if (!nemo_file_is_in_search (file)) {
-            if (g_strcmp0 (name, "search_result_count") == 0 ||
-                g_strcmp0 (name, "search_result_snippet") == 0)
-                continue;
-        }
-
-        g_object_get (G_OBJECT (c),
-                      "title", &label,
-                      "visible", &visible,
+        g_object_get (G_OBJECT (l->data),
+                      "name", &name,
+                      "label", &label,
                       NULL);
-
-        lowercase = g_ascii_strdown (name, -1);
 
         menu_item = gtk_check_menu_item_new_with_label (label);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
@@ -2073,10 +2055,11 @@ column_header_clicked (GtkWidget *column_button,
         g_object_set_data_full (G_OBJECT (menu_item),
                                 "column-name", g_strdup (name), g_free);
 
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), visible);
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item),
+                                        g_strv_contains ((const gchar * const *) visible_columns, name));
 
         /* Don't allow hiding the filename */
-        if (g_strcmp0 (lowercase, "name") == 0) {
+        if (g_strcmp0 (name, "name") == 0) {
             gtk_widget_set_sensitive (GTK_WIDGET (menu_item), FALSE);
         }
 
@@ -2085,11 +2068,12 @@ column_header_clicked (GtkWidget *column_button,
                           G_CALLBACK (column_header_menu_toggled),
                           list_view);
 
-        g_clear_pointer (&lowercase, g_free);
-        g_clear_pointer (&label, g_free);
+        g_free (name);
+        g_free (label);
     }
 
-    g_list_free (current_view_columns);
+    g_strfreev (visible_columns);
+    nemo_column_list_free (valid_columns);
 
 	menu_item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);

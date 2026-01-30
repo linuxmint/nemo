@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <eel/eel-glib-extensions.h>
+#include <eel/eel-vfs-extensions.h>
 #include <glib/gi18n.h>
 #include <libnemo-extension/nemo-column-provider.h>
 #include <libnemo-private/nemo-module.h>
@@ -152,16 +153,6 @@ get_builtin_columns (void)
 					       "description", _("The SELinux security context of the file."),
 					       NULL));
 #endif
-	columns = g_list_append (columns,
-				 g_object_new (NEMO_TYPE_COLUMN,
-					       "name", "where",
-					       "attribute", "where",
-					       "label", _("Location"),
-					       "description", _("The location of the file."),
-                           "width-chars", 60,
-                           "ellipsize", PANGO_ELLIPSIZE_END,
-					       NULL));
-
 	return columns;
 }
 
@@ -221,13 +212,6 @@ get_search_columns (void)
     static GList *columns = NULL;
 
     if (columns == NULL) {
-        // columns = g_list_append (columns,
-        //              g_object_new (NEMO_TYPE_COLUMN,
-        //                        "name", "search-result-snippet",
-        //                        "attribute", "search_result_snippet",
-        //                        "label", _("Result"),
-        //                        "description", _("A portion of the contents where the string was found"),
-        //                        NULL));
         columns = g_list_append (columns,
                              g_object_new (NEMO_TYPE_COLUMN,
                                            "name", "search_result_count",
@@ -240,6 +224,25 @@ get_search_columns (void)
     return nemo_column_list_copy (columns);
 }
 
+static GList *
+get_mixed_file_list_columns (void)
+{
+    static GList *columns = NULL;
+
+    if (columns == NULL) {
+        columns = g_list_append (columns,
+                     g_object_new (NEMO_TYPE_COLUMN,
+                               "name", "where",
+                               "attribute", "where",
+                               "label", _("Location"),
+                               "description", _("The location of the file."),
+                               "width-chars", 60,
+                               "ellipsize", PANGO_ELLIPSIZE_END,
+                               NULL));
+    }
+
+    return nemo_column_list_copy (columns);
+}
 
 GList *
 nemo_get_common_columns (void)
@@ -258,33 +261,48 @@ GList *
 nemo_get_all_columns (void)
 {
     GList *columns = NULL;
-	GList *with_search_columns = NULL;
 
 	columns = g_list_concat (nemo_get_common_columns (),
 	                         get_trash_columns ());
+    columns = g_list_concat (columns, get_search_columns ());
+    columns = g_list_concat (columns, get_mixed_file_list_columns ());
 
-    with_search_columns = g_list_concat (columns, get_search_columns ());
-
-	return with_search_columns;
+    return columns;
 }
 
 GList *
 nemo_get_columns_for_file (NemoFile *file)
 {
-	GList *columns;
+    GList *columns;
+    gchar *uri;
 
-	columns = nemo_get_common_columns ();
+    columns = nemo_get_common_columns ();
 
-	if (file != NULL && nemo_file_is_in_trash (file)) {
-		columns = g_list_concat (columns,
-		                         get_trash_columns ());
-	} else
-    if (file != NULL && nemo_file_is_in_search (file)) {
-        columns = g_list_concat (columns,
-                                 get_search_columns ());
+    if (file == NULL) {
+        return columns;
     }
 
-	return columns;
+    uri = nemo_file_get_uri (file);
+
+    if (eel_uri_is_trash (uri)) {
+        columns = g_list_concat (columns,
+                                 get_trash_columns ());
+    } else if (eel_uri_is_search (uri)) {
+        columns = g_list_concat (columns,
+                                 get_search_columns ());
+        columns = g_list_concat (columns,
+                                 get_mixed_file_list_columns ());
+    } else if (eel_uri_is_favorite (uri)) {
+        columns = g_list_concat (columns,
+                                 get_mixed_file_list_columns ());
+    } else if (eel_uri_is_recent (uri)) {
+        columns = g_list_concat (columns,
+                                 get_mixed_file_list_columns ());
+    }
+
+    g_free (uri);
+
+    return columns;
 }
 
 GList *
