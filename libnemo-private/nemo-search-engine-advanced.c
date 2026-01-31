@@ -801,9 +801,7 @@ load_contents (SearchThreadData *data,
             break;
         }
 
-        if (chunk != NULL) {
-            g_string_append_len (str, chunk, len);
-        }
+        g_string_append_len (str, chunk, len);
     } while (!g_cancellable_is_cancelled (data->cancellable));
 
     g_input_stream_close (stream,
