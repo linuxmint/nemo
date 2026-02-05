@@ -122,6 +122,13 @@
                 <property name="accelerator">&lt;Primary&gt;&lt;alt&gt;O</property>
               </object>
             </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">True</property>
+                <property name="title" translatable="yes" context="shortcut window">Open in Terminal</property>
+                <property name="accelerator">&lt;shift&gt;F4</property>
+              </object>
+            </child>
 
           </object>
         </child>

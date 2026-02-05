@@ -8246,7 +8246,7 @@ static const GtkActionEntry directory_view_entries[] = {
   /* tooltip */                  N_("Open each selected item in a new tab"),
 				 G_CALLBACK (action_open_new_tab_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_IN_TERMINAL, "xsi-utilities-terminal-symbolic",
-  /* label, accelerator */       N_("Open in Terminal"), "",
+  /* label, accelerator */       N_("Open in Terminal"), "<shift>F4",
   /* tooltip */                  N_("Open terminal in the selected folder"),
 				 G_CALLBACK (action_open_in_terminal_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_AS_ROOT, "xsi-dialog-password-symbolic",
