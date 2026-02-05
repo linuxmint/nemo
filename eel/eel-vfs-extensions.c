@@ -77,6 +77,12 @@ eel_uri_is_network (const char *uri)
 }
 
 gboolean
+eel_uri_is_computer (const char *uri)
+{
+    return g_str_has_prefix (uri, "computer:");
+}
+
+gboolean
 eel_vfs_supports_uri_scheme (const gchar *scheme)
 {
    const gchar * const *supported;

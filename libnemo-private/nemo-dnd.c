@@ -492,6 +492,13 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
         return;
     }
 
+    // compuuter:// uris do not support DND, don't allow it.
+    if (eel_uri_is_computer (target_uri_string) ||
+        eel_uri_is_computer (dropped_uri)) {
+        *action = 0;
+        return;
+    }
+
 	actions = gdk_drag_context_get_actions (context) & (GDK_ACTION_MOVE | GDK_ACTION_COPY);
 	if (actions == 0) {
 		 /* We can't use copy or move, just go with the suggested action. */
