@@ -4,7 +4,7 @@ _This documentation is available online at https://github.com/linuxmint/nemo/wik
 ### About
 Nemo actions allow the user to add custom menu actions to apply to selected files. These can be one-shot commands or call their own scripts, and can be restricted to specific files by defining various conditions for the action.
 
-Action files are just text files that end in `.nemo_action` and are stored in system and user data locations - `/usr/share/nemo/actions`, `~/.local/usr/share/nemo/actions` (all of your environment's `XDG_DATA_DIRS` are scanned, though typically only the aforementioned are used).
+Action files are just text files that end in `.nemo_action` and are stored in system and user data locations - `/usr/share/nemo/actions`, `~/.local/share/nemo/actions` (all of your environment's `XDG_DATA_DIRS` are scanned, though typically only the aforementioned are used).
 
 These files are structured as follows (this is a standard keyfile syntax also used in application .desktop and config files):
 
