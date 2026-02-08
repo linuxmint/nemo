@@ -40,8 +40,10 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-module.h>
 
-#include "nemo-plugin-manager.h"
 #include "nemo-template-config-widget.h"
+#include "nemo-action-layout-editor.h"
+#include "nemo-extension-config-widget.h"
+
 #include "nemo-actions.h"
 
 /* string enum preferences */
@@ -464,14 +466,14 @@ nemo_file_management_properties_dialog_setup_icon_caption_page (GtkBuilder *buil
 }
 
 static void
-nemo_file_management_properties_dialog_setup_plugin_page (GtkBuilder *builder)
+nemo_file_management_properties_dialog_setup_extensions_page (GtkBuilder *builder)
 {
     GtkWidget *box;
 
-    box = GTK_WIDGET (gtk_builder_get_object (builder, "plugin_box"));
+    box = GTK_WIDGET (gtk_builder_get_object (builder, "extensions_box"));
 
     gtk_box_pack_start (GTK_BOX (box),
-                        GTK_WIDGET (nemo_plugin_manager_new ()),
+                        GTK_WIDGET (nemo_extension_config_widget_new ()),
                         TRUE, TRUE, 0);
 }
 
@@ -484,6 +486,18 @@ nemo_file_management_properties_dialog_setup_templates_page (GtkBuilder *builder
 
     gtk_box_pack_start (GTK_BOX (box),
                         GTK_WIDGET (nemo_template_config_widget_new ()),
+                        TRUE, TRUE, 0);
+}
+
+static void
+nemo_file_management_properties_dialog_setup_actions_page (GtkBuilder *builder)
+{
+    GtkWidget *box;
+
+    box = GTK_WIDGET (gtk_builder_get_object (builder, "actions_box"));
+
+    gtk_box_pack_start (GTK_BOX (box),
+                        GTK_WIDGET (nemo_action_layout_editor_new ()),
                         TRUE, TRUE, 0);
 }
 
@@ -1142,8 +1156,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 
 	nemo_file_management_properties_dialog_setup_icon_caption_page (builder);
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
-    nemo_file_management_properties_dialog_setup_plugin_page (builder);
+    nemo_file_management_properties_dialog_setup_extensions_page (builder);
     nemo_file_management_properties_dialog_setup_templates_page (builder);
+    nemo_file_management_properties_dialog_setup_actions_page (builder);
 
 
     setup_configurable_menu_items (builder);
