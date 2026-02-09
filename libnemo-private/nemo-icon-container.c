@@ -3620,6 +3620,28 @@ nemo_icon_container_search_position_func (NemoIconContainer *container,
     if (nemo_icon_container_get_is_desktop (container)) {
         x = cont_x + cont_width - requisition.width;
         y = cont_y + cont_height - requisition.height;
+
+        if (eel_check_is_wayland ()) {
+            GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (container));
+            GdkWindow *parent_window = gtk_widget_get_window (toplevel);
+            gint parent_x, parent_y;
+
+            gdk_window_get_origin (parent_window, &parent_x, &parent_y);
+
+            GdkRectangle anchor_rect = {
+                x - parent_x,
+                y - parent_y,
+                1, 1
+            };
+
+            gdk_window_move_to_rect (gtk_widget_get_window (search_dialog),
+                                     &anchor_rect,
+                                     GDK_GRAVITY_NORTH_WEST,
+                                     GDK_GRAVITY_NORTH_WEST,
+                                     0,
+                                     0, 0);
+            return;
+        }
     } else {
         if (cont_x + cont_width > monitor.x + monitor.width) {
             x = monitor.x + monitor.width - requisition.width;
@@ -4082,6 +4104,17 @@ nemo_icon_container_ensure_interactive_directory (NemoIconContainer *container)
 	gtk_container_add (GTK_CONTAINER (vbox), container->details->search_entry);
 
 	gtk_widget_realize (container->details->search_entry);
+
+    if (eel_check_is_wayland () && nemo_icon_container_get_is_desktop (container)) {
+        GdkRectangle anchor_rect = { 0, 0, 1, 1 };
+
+        gdk_window_move_to_rect (gtk_widget_get_window (container->details->search_window),
+                                 &anchor_rect,
+                                 GDK_GRAVITY_NORTH_WEST,
+                                 GDK_GRAVITY_NORTH_WEST,
+                                 0,
+                                 0, 0);
+    }
 }
 
 /* Pops up the interactive search entry.  If keybinding is TRUE then the user
