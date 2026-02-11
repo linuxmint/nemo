@@ -528,6 +528,7 @@ nemo_view_reset_to_defaults (NemoView *view)
     file = view->details->slot->viewed_file;
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, NULL, NULL);
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, NULL);
+    nemo_file_set_metadata (file, NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE, NULL, NULL);
     gtk_action_activate (gtk_action_group_get_action (nemo_window_get_main_action_group (window), NEMO_ACTION_RELOAD));
 }
 
