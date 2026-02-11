@@ -373,6 +373,16 @@ sort_places_func (gconstpointer a,
     return g_utf8_collate (((PlaceInfo *) a)->name, ((PlaceInfo *) b)->name);
 }
 
+static gint
+sort_mounts_func (gconstpointer a,
+                  gconstpointer b)
+{
+    g_autofree gchar *name_a = g_mount_get_name (G_MOUNT (a));
+    g_autofree gchar *name_b = g_mount_get_name (G_MOUNT (b));
+
+    return g_utf8_collate (name_a, name_b);
+}
+
 static PlaceInfo *
 new_place_info (PlaceType place_type,
                 SectionType section_type,
@@ -1254,7 +1264,7 @@ update_places (NemoPlacesSidebar *sidebar)
 
 	g_list_free_full (network_volumes, g_object_unref);
 
-	network_mounts = g_list_reverse (network_mounts);
+	network_mounts = g_list_sort(network_mounts, sort_mounts_func);
 	for (l = network_mounts; l != NULL; l = l->next) {
 		mount = l->data;
 		root = g_mount_get_default_location (mount);
