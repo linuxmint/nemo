@@ -15,6 +15,10 @@
 #include <gdk/gdkx.h>
 #include <stdio.h>
 
+#ifdef HAVE_GTK_LAYER_SHELL
+#include <gtk-layer-shell.h>
+#endif
+
 #include "libnemo-private/nemo-action-manager.h"
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-desktop-utils.h>
@@ -629,12 +633,16 @@ fallback_startup_idle_cb (NemoDesktopManager *manager)
 static gboolean
 is_cinnamon_desktop (void)
 {
+    const gchar *session_desktop = g_getenv ("XDG_SESSION_DESKTOP");
+    const gchar *desktop_session = g_getenv ("DESKTOP_SESSION");
 
-    if (g_strcmp0 (g_getenv ("XDG_SESSION_DESKTOP"), "cinnamon") == 0) {
+    if (session_desktop != NULL &&
+        g_strstr_len (session_desktop, -1, "cinnamon") != NULL) {
         return TRUE;
     }
 
-    if (g_strstr_len (g_getenv ("DESKTOP_SESSION"), -1, "cinnamon") != NULL) {
+    if (desktop_session != NULL &&
+        g_strstr_len (desktop_session, -1, "cinnamon") != NULL) {
         return TRUE;
     }
 
@@ -882,12 +890,23 @@ nemo_desktop_manager_get_margins (NemoDesktopManager *manager,
 {
     FETCH_PRIV (manager);
     GdkRectangle work_rect, geometry;
+    gboolean use_layer_shell = FALSE;
 
-    /* We don't use margins if we have reliable work area
-     * info (e.g. having an active Cinnamon session) */
+#ifdef HAVE_GTK_LAYER_SHELL
+    use_layer_shell = gtk_layer_is_supported ();
+#endif
+
+    DEBUG ("NemoDesktopManager get_margins: monitor=%d proxy_owned=%d other_desktop=%d use_layer_shell=%d",
+           monitor, priv->proxy_owned, priv->other_desktop, use_layer_shell);
+
+    /* When Cinnamon is running, we don't use margins because the window is
+     * sized to the work area (X11 mode) or the compositor sizes it to the
+     * workarea (layer-shell mode with exclusive_zone=0). */
 
     if (priv->proxy_owned && !priv->other_desktop) {
         *left = *right = *top = *bottom = 0;
+
+        DEBUG ("NemoDesktopManager get_margins: returning 0 margins (Cinnamon running)");
 
         return;
     }
