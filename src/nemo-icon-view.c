@@ -165,13 +165,20 @@ static const SortCriterion sort_criteria[] = {
 		N_("by Modification _Date"),
 		N_("Keep icons sorted by modification date in rows")
 	},
-	{
-		NEMO_FILE_SORT_BY_TRASHED_TIME,
-		"trashed",
-		"Sort by Trash Time",
-		N_("by T_rash Time"),
-		N_("Keep icons sorted by trash time in rows")
-	}
+  {
+    	NEMO_FILE_SORT_BY_TRASHED_TIME,
+    	"trashed",
+    	"Sort by Trash Time",
+    	N_("by T_rash Time"),
+    	N_("Keep icons sorted by trash time in rows")
+  },
+  {
+    	NEMO_FILE_SORT_BY_EXTENSION,
+    	"extension",
+    	"Sort by Extension",
+    	N_("by _Extension"),
+    	N_("Keep icons sorted by extension in rows")
+  }
 };
 
 static void                 nemo_icon_view_set_directory_sort_by        (NemoIconView           *icon_view,
@@ -1448,6 +1455,10 @@ static const GtkRadioActionEntry arrange_radio_entries[] = {
     N_("By T_rash Time"), NULL,
     N_("Keep icons sorted by trash time in rows"),
     NEMO_FILE_SORT_BY_TRASHED_TIME },
+  { "Sort by Extension", NULL,
+    N_("By _Extension"), NULL,
+    N_("Keep icons sorted by extension in rows"),
+    NEMO_FILE_SORT_BY_EXTENSION },
 };
 
 static void

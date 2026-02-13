@@ -109,6 +109,11 @@ static const DesktopSortCriterion sort_criteria[] = {
         "Desktop Sort by Date",
         "modification date",
         NEMO_FILE_SORT_BY_MTIME
+    },
+    {
+        "Desktop Sort by Extension",
+        "extension",
+        NEMO_FILE_SORT_BY_EXTENSION
     }
 };
 
@@ -1085,7 +1090,11 @@ static const GtkRadioActionEntry desktop_sort_radio_entries[] = {
     { "Desktop Sort by Date", NULL,
       N_("Date"), NULL,
       NULL,
-      NEMO_FILE_SORT_BY_MTIME }  
+      NEMO_FILE_SORT_BY_MTIME },
+    { "Desktop Sort by Extension", NULL,
+      N_("Extension"), NULL,
+      NULL,
+      NEMO_FILE_SORT_BY_EXTENSION }
 };
 
 static const GtkActionEntry desktop_grid_entries[] = {

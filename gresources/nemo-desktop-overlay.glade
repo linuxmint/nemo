@@ -131,6 +131,11 @@
         <col id="1" translatable="yes">Date</col>
         <col id="2">Desktop Sort by Date</col>
       </row>
+      <row>
+        <col id="0">10</col>
+        <col id="1" translatable="yes">Extension</col>
+        <col id="2">Desktop Sort by Extension</col>
+      </row>
     </data>
   </object>
   <object class="XAppGtkWindow" id="overlay_window">
