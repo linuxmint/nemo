@@ -1257,6 +1257,23 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                           </packing>
                                         </child>
                                         <child>
+                                          <object class="GtkCheckButton" id="restore_tabs_on_startup_checkbutton">
+                                            <property name="label" translatable="yes">Restore last window tabs on startup</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="padding">3</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkCheckButton" id="expand_row_on_dnd_dwell_checkbutton">
                                             <property name="label" translatable="yes">Automatically expand rows during drag-and-drop</property>
                                             <property name="visible">True</property>
@@ -1269,7 +1286,7 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">4</property>
+                                            <property name="position">5</property>
                                           </packing>
                                         </child>
                                       </object>
