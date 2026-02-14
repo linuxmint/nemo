@@ -1016,12 +1016,10 @@ draw_label_text (NemoIconCanvasItem *item,
 	GtkStyleContext *context;
 	GtkStateFlags state, base_state;
 	gboolean have_editable, have_additional;
-	gboolean needs_highlight, prelight_label, is_rtl_label_beside;
+	gboolean needs_highlight, prelight_label;
 	EelIRect text_rect;
 	int x, y;
 	int max_text_width;
-	gdouble frame_w, frame_h, frame_x, frame_y;
-	gboolean draw_frame = TRUE;
 
 #ifdef PERFORMANCE_TEST_DRAW_DISABLE
 	return;
@@ -1041,8 +1039,6 @@ draw_label_text (NemoIconCanvasItem *item,
 	text_rect = compute_text_rectangle (item, icon_rect, TRUE, BOUNDS_USAGE_FOR_DISPLAY);
 
 	needs_highlight = details->is_highlighted_for_selection || details->is_highlighted_for_drop;
-	is_rtl_label_beside = nemo_icon_container_is_layout_rtl (container) &&
-			      container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE;
 
 	editable_layout = NULL;
 	additional_layout = NULL;
@@ -1063,39 +1059,12 @@ draw_label_text (NemoIconCanvasItem *item,
 			      NULL);
 
 	/* if the icon is highlighted, do some set-up */
-	if (needs_highlight &&
-	    !details->is_renaming) {
+	if (needs_highlight && !details->is_renaming) {
 		state |= GTK_STATE_FLAG_SELECTED;
-
-		frame_x = is_rtl_label_beside ? text_rect.x0 + item->details->text_dx : text_rect.x0;
-		frame_y = text_rect.y0;
-		frame_w = is_rtl_label_beside ? text_rect.x1 - text_rect.x0 - item->details->text_dx : text_rect.x1 - text_rect.x0;
-		frame_h = text_rect.y1 - text_rect.y0;
 	} else if (!needs_highlight && have_editable &&
 		   details->text_width > 0 && details->text_height > 0 &&
 		   prelight_label && item->details->is_prelit) {
 		state |= GTK_STATE_FLAG_PRELIGHT;
-
-		frame_x = text_rect.x0;
-		frame_y = text_rect.y0;
-		frame_w = text_rect.x1 - text_rect.x0;
-		frame_h = text_rect.y1 - text_rect.y0;
-	} else {
-		draw_frame = FALSE;
-	}
-
-	if (draw_frame) {
-		gtk_style_context_save (context);
-		gtk_style_context_set_state (context, state);
-
-		gtk_render_frame (context, cr,
-				  frame_x, frame_y,
-				  frame_w, frame_h);
-		gtk_render_background (context, cr,
-				       frame_x, frame_y,
-				       frame_w, frame_h);
-
-		gtk_style_context_restore (context);
 	}
 
 	if (container->details->label_position == NEMO_ICON_LABEL_POSITION_BESIDE) {
@@ -1153,6 +1122,8 @@ draw_label_text (NemoIconCanvasItem *item,
 	}
 
 	if (item->details->is_highlighted_as_keyboard_focus) {
+		EelIRect combined_rect;
+
 		if (needs_highlight) {
 			state = GTK_STATE_FLAG_SELECTED;
 		}
@@ -1160,12 +1131,14 @@ draw_label_text (NemoIconCanvasItem *item,
 		gtk_style_context_save (context);
 		gtk_style_context_set_state (context, state);
 
+		eel_irect_union (&combined_rect, &icon_rect, &text_rect);
+
 		gtk_render_focus (context,
 				  cr,
-				  text_rect.x0,
-				  text_rect.y0,
-				  text_rect.x1 - text_rect.x0,
-				  text_rect.y1 - text_rect.y0);
+				  combined_rect.x0,
+				  combined_rect.y0,
+				  combined_rect.x1 - combined_rect.x0,
+				  combined_rect.y1 - combined_rect.y0);
 
 		gtk_style_context_restore (context);
 	}
@@ -1361,8 +1334,9 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
 	NemoIconCanvasItem *icon_item;
 	NemoIconCanvasItemDetails *details;
 	EelIRect icon_rect;
-    cairo_surface_t *temp_surface;
+	cairo_surface_t *temp_surface;
 	GtkStyleContext *context;
+	gboolean needs_highlight, prelight_label;
 
 	container = NEMO_ICON_CONTAINER (item->canvas);
 	icon_item = NEMO_ICON_CANVAS_ITEM (item);
@@ -1379,6 +1353,33 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
 	gtk_style_context_add_class (context, "nemo-canvas-item");
 
 	icon_rect = icon_item->details->canvas_rect;
+
+	/* Draw selection/prelight background */
+	needs_highlight = details->is_highlighted_for_selection || details->is_highlighted_for_drop;
+	gtk_widget_style_get (GTK_WIDGET (container), "activate_prelight_icon_label", &prelight_label, NULL);
+
+	if (!details->is_renaming && (needs_highlight || (prelight_label && details->is_prelit))) {
+		EelIRect combined_rect;
+		GtkStateFlags state = gtk_widget_get_state_flags (GTK_WIDGET (container)) & ~(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_PRELIGHT);
+		if (needs_highlight) {
+			state |= GTK_STATE_FLAG_SELECTED;
+		} else {
+			state |= GTK_STATE_FLAG_PRELIGHT;
+		}
+
+		eel_irect_union (&combined_rect, &icon_rect, &details->text_rect);
+
+		gtk_style_context_save (context);
+		gtk_style_context_set_state (context, state);
+		gtk_render_background (context, cr, combined_rect.x0, combined_rect.y0,
+					   combined_rect.x1 - combined_rect.x0,
+					   combined_rect.y1 - combined_rect.y0);
+		gtk_render_frame (context, cr, combined_rect.x0, combined_rect.y0,
+					  combined_rect.x1 - combined_rect.x0,
+					  combined_rect.y1 - combined_rect.y0);
+		gtk_style_context_restore (context);
+	}
+
 	temp_surface = map_surface (icon_item);
 
     gtk_render_icon_surface (context, cr,
@@ -1573,12 +1574,14 @@ static gboolean
 hit_test (NemoIconCanvasItem *icon_item, EelIRect canvas_rect)
 {
 	NemoIconCanvasItemDetails *details;
+	EelIRect combined_rect;
 
 	details = icon_item->details;
 
+	eel_irect_union (&combined_rect, &details->canvas_rect, &details->text_rect);
+
 	/* Quick check to see if the rect hits the icon or text at all. */
-	if (!eel_irect_hits_irect (icon_item->details->canvas_rect, canvas_rect)
-	    && (!eel_irect_hits_irect (details->text_rect, canvas_rect))) {
+	if (!eel_irect_hits_irect (combined_rect, canvas_rect)) {
 		return FALSE;
 	}
 
@@ -1587,15 +1590,16 @@ hit_test (NemoIconCanvasItem *icon_item, EelIRect canvas_rect)
 		return TRUE;
 	}
 
-	/* Check for hit in the icon. */
-	if (eel_irect_hits_irect (icon_item->details->canvas_rect, canvas_rect)) {
-		return TRUE;
-	}
-
-	/* Check for hit in the text. */
-	if (eel_irect_hits_irect (details->text_rect, canvas_rect)
-	    && !icon_item->details->is_renaming) {
-		return TRUE;
+	/* If we are renaming, we only want hits in the icon, as the renamer widget
+	 * is on top of the text area. */
+	if (details->is_renaming) {
+		if (eel_irect_hits_irect (details->canvas_rect, canvas_rect)) {
+			return TRUE;
+		}
+	} else {
+		if (eel_irect_hits_irect (combined_rect, canvas_rect)) {
+			return TRUE;
+		}
 	}
 
 	return FALSE;
