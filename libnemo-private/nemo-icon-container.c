@@ -6925,7 +6925,7 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 			eel_editable_label_set_justify (EEL_EDITABLE_LABEL (details->rename_widget), GTK_JUSTIFY_CENTER);
 		}
 
-		gtk_misc_set_padding (GTK_MISC (details->rename_widget), 1, 1);
+		gtk_misc_set_padding (GTK_MISC (details->rename_widget), 3, 1);
 		gtk_layout_put (GTK_LAYOUT (container),
 				details->rename_widget, 0, 0);
 	}
