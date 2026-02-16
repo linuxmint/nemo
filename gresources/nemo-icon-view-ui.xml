@@ -10,8 +10,9 @@
 					<menuitem name="Sort by Type" action="Sort by Type"/>
 					<menuitem name="Sort by Detailed Type" action="Sort by Detailed Type"/>
 					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
-					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
-				</placeholder>
+					      <menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
+					      <menuitem name="Sort by Extension" action="Sort by Extension"/>
+					</placeholder>
 				<separator name="Layout separator"/>
 				<menuitem name="Reversed Order" action="Reversed Order"/>
 			</menu>
@@ -32,8 +33,9 @@
 					<menuitem name="Sort by Type" action="Sort by Type"/>
 					<menuitem name="Sort by Detailed Type" action="Sort by Detailed Type"/>
 					<menuitem name="Sort by Modification Date" action="Sort by Modification Date"/>
-					<menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
-				</placeholder>
+					      <menuitem name="Sort by Trash Time" action="Sort by Trash Time"/>
+					      <menuitem name="Sort by Extension" action="Sort by Extension"/>
+					</placeholder>
 				<separator name="Layout separator"/>
 				<menuitem name="Reversed Order" action="Reversed Order"/>
 			</menu>
