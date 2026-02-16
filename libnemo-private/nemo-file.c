@@ -6788,7 +6788,8 @@ nemo_file_get_string_attribute_q (NemoFile *file, GQuark attribute_q)
         if (ext) {
             return g_strdup (ext + 1);
         }
-        return NULL;
+
+        return g_strdup ("");
     }
 	if (attribute_q == attribute_type_q) {
 		return nemo_file_get_type_as_string (file);
