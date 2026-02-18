@@ -39,8 +39,6 @@
 
 #include <eel/eel-gtk-extensions.h>
 
-#include "nemo-plugin-manager.h"
-
 #define DEBUG_FLAG NEMO_DEBUG_DESKTOP
 #include <libnemo-private/nemo-debug.h>
 
