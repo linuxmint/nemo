@@ -199,6 +199,7 @@ static const char * const executable_text_components[] = {
 	"scripts_execute_radiobutton",
 	"scripts_view_radiobutton",
 	"scripts_confirm_radiobutton",
+	"scripts_execute_terminal_radiobutton",
 	NULL
 };
 
