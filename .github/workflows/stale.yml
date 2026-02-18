@@ -33,6 +33,10 @@ on:
         default: false
         type: boolean
 
+permissions:
+  actions: write
+  issues: write
+
 jobs:
   stale:
     uses: linuxmint/github-actions/.github/workflows/stale-issues.yml@master
