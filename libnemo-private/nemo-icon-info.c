@@ -289,15 +289,15 @@ nemo_emblem_size_get_ratio (NemoEmblemSize size)
 {
     switch (size) {
     case NEMO_EMBLEM_SIZE_EXTRA_SMALL:
-        return 0.15;
+        return 0.20;
     case NEMO_EMBLEM_SIZE_SMALL:
-        return 0.25;
-    case NEMO_EMBLEM_SIZE_MEDIUM:
         return 0.33;
+    case NEMO_EMBLEM_SIZE_MEDIUM:
+        return 0.45;
     case NEMO_EMBLEM_SIZE_LARGE:
-        return 0.50;
+        return 0.60;
     default:
-        return 0.25;
+        return 0.33;
     }
 }
 
