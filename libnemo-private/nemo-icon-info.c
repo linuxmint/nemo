@@ -23,6 +23,7 @@
 #include "nemo-icon-info.h"
 #include "nemo-icon-names.h"
 #include "nemo-default-file-icon.h"
+#include "nemo-emblemed-icon.h"
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 
@@ -283,6 +284,175 @@ icon_key_free (IconKey *key)
 	g_free (key);
 }
 
+static gdouble
+nemo_emblem_size_get_ratio (NemoEmblemSize size)
+{
+    switch (size) {
+    case NEMO_EMBLEM_SIZE_EXTRA_SMALL:
+        return 0.15;
+    case NEMO_EMBLEM_SIZE_SMALL:
+        return 0.25;
+    case NEMO_EMBLEM_SIZE_MEDIUM:
+        return 0.33;
+    case NEMO_EMBLEM_SIZE_LARGE:
+        return 0.50;
+    default:
+        return 0.25;
+    }
+}
+
+static NemoEmblemPosition
+auto_position_order[] = {
+    NEMO_EMBLEM_POSITION_LOWER_RIGHT,
+    NEMO_EMBLEM_POSITION_LOWER_LEFT,
+    NEMO_EMBLEM_POSITION_UPPER_RIGHT,
+    NEMO_EMBLEM_POSITION_UPPER_LEFT,
+};
+
+static NemoIconInfo *
+nemo_icon_info_lookup_emblemed (NemoEmblemedIcon *emblemed_icon,
+                                int               size,
+                                int               scale)
+{
+    GIcon *base_icon;
+    GList *emblems, *l;
+    NemoIconInfo *base_info;
+    GdkPixbuf *base_pixbuf, *result_pixbuf;
+    gint base_w, base_h, canvas_w, canvas_h, pad_x, pad_y;
+    gboolean corners_taken[5] = { FALSE };
+    gint auto_idx = 0;
+    gint max_emblem_px = 0;
+
+    base_icon = nemo_emblemed_icon_get_icon (emblemed_icon);
+    base_info = nemo_icon_info_lookup (base_icon, size, scale);
+    base_pixbuf = nemo_icon_info_get_pixbuf (base_info);
+    nemo_icon_info_unref (base_info);
+
+    base_w = gdk_pixbuf_get_width (base_pixbuf);
+    base_h = gdk_pixbuf_get_height (base_pixbuf);
+
+    emblems = nemo_emblemed_icon_get_emblems (emblemed_icon);
+
+    for (l = emblems; l != NULL; l = l->next) {
+        NemoEmblem *emblem = NEMO_EMBLEM (l->data);
+        gdouble ratio = nemo_emblem_size_get_ratio (nemo_emblem_get_size (emblem));
+        gint epx = MAX ((gint)(MAX (base_w, base_h) * ratio), 8);
+        if (epx > max_emblem_px) {
+            max_emblem_px = epx;
+        }
+        corners_taken[nemo_emblem_get_position (emblem)] = TRUE;
+    }
+
+    pad_x = max_emblem_px > base_w ? (max_emblem_px - base_w + 1) / 2 : 0;
+    pad_y = max_emblem_px > base_h ? (max_emblem_px - base_h + 1) / 2 : 0;
+
+    canvas_w = base_w + pad_x * 2;
+    canvas_h = base_h + pad_y * 2;
+
+    result_pixbuf = gdk_pixbuf_new (gdk_pixbuf_get_colorspace (base_pixbuf),
+                                    TRUE,
+                                    gdk_pixbuf_get_bits_per_sample (base_pixbuf),
+                                    canvas_w, canvas_h);
+    gdk_pixbuf_fill (result_pixbuf, 0x00000000);
+
+    gdk_pixbuf_copy_area (base_pixbuf, 0, 0, base_w, base_h,
+                          result_pixbuf, pad_x, pad_y);
+    g_object_unref (base_pixbuf);
+
+    for (l = emblems; l != NULL; l = l->next) {
+        NemoEmblem *emblem = NEMO_EMBLEM (l->data);
+        GIcon *emblem_icon;
+        NemoEmblemPosition pos;
+        gdouble ratio;
+        gint emblem_px, dest_x, dest_y;
+        GtkIconTheme *icon_theme;
+        GtkIconInfo *emblem_gtkicon;
+        GdkPixbuf *emblem_pixbuf;
+
+        emblem_icon = nemo_emblem_get_icon (emblem);
+        pos = nemo_emblem_get_position (emblem);
+
+        if (pos == NEMO_EMBLEM_POSITION_DEFAULT) {
+            while (auto_idx < 4 && corners_taken[auto_position_order[auto_idx]]) {
+                auto_idx++;
+            }
+
+            if (auto_idx < 4) {
+                pos = auto_position_order[auto_idx];
+                corners_taken[pos] = TRUE;
+                auto_idx++;
+            } else {
+                pos = NEMO_EMBLEM_POSITION_LOWER_RIGHT;
+            }
+        }
+
+        ratio = nemo_emblem_size_get_ratio (nemo_emblem_get_size (emblem));
+        emblem_px = MAX ((gint)(MAX (base_w, base_h) * ratio), 8);
+
+        icon_theme = gtk_icon_theme_get_default ();
+        emblem_gtkicon = gtk_icon_theme_lookup_by_gicon_for_scale (icon_theme,
+                                                                    emblem_icon,
+                                                                    emblem_px / scale,
+                                                                    scale,
+                                                                    GTK_ICON_LOOKUP_FORCE_SIZE);
+        if (emblem_gtkicon == NULL) {
+            continue;
+        }
+
+        emblem_pixbuf = gtk_icon_info_load_icon (emblem_gtkicon, NULL);
+        g_object_unref (emblem_gtkicon);
+
+        if (emblem_pixbuf == NULL) {
+            continue;
+        }
+
+        gint ew = gdk_pixbuf_get_width (emblem_pixbuf);
+        gint eh = gdk_pixbuf_get_height (emblem_pixbuf);
+
+        switch (pos) {
+        case NEMO_EMBLEM_POSITION_LOWER_RIGHT:
+            dest_x = canvas_w - ew;
+            dest_y = canvas_h - eh;
+            break;
+        case NEMO_EMBLEM_POSITION_LOWER_LEFT:
+            dest_x = 0;
+            dest_y = canvas_h - eh;
+            break;
+        case NEMO_EMBLEM_POSITION_UPPER_RIGHT:
+            dest_x = canvas_w - ew;
+            dest_y = 0;
+            break;
+        case NEMO_EMBLEM_POSITION_UPPER_LEFT:
+            dest_x = 0;
+            dest_y = 0;
+            break;
+        default:
+            dest_x = canvas_w - ew;
+            dest_y = canvas_h - eh;
+            break;
+        }
+
+        dest_x = MAX (dest_x, 0);
+        dest_y = MAX (dest_y, 0);
+
+        gdk_pixbuf_composite (emblem_pixbuf, result_pixbuf,
+                              dest_x, dest_y,
+                              MIN (ew, canvas_w - dest_x),
+                              MIN (eh, canvas_h - dest_y),
+                              dest_x, dest_y,
+                              1.0, 1.0,
+                              GDK_INTERP_BILINEAR,
+                              255);
+
+        g_object_unref (emblem_pixbuf);
+    }
+
+    NemoIconInfo *icon_info = nemo_icon_info_new_for_pixbuf (result_pixbuf, scale);
+    g_object_unref (result_pixbuf);
+
+    return icon_info;
+}
+
 NemoIconInfo *
 nemo_icon_info_lookup (GIcon *icon,
                int size,
@@ -292,6 +462,10 @@ nemo_icon_info_lookup (GIcon *icon,
     GtkIconInfo *gtkicon_info;
 
     NemoIconInfo *icon_info;
+
+    if (NEMO_IS_EMBLEMED_ICON (icon)) {
+        return nemo_icon_info_lookup_emblemed (NEMO_EMBLEMED_ICON (icon), size, scale);
+    }
 
     icon_theme = gtk_icon_theme_get_default ();
 

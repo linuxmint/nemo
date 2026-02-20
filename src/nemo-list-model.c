@@ -38,6 +38,7 @@
 #include <eel/eel-graphic-effects.h>
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-emblemed-icon.h>
 
 enum {
 	SUBDIRECTORY_UNLOADED,
@@ -350,36 +351,21 @@ nemo_list_model_get_value (GtkTreeModel *tree_model, GtkTreeIter *iter, int colu
 
             if (emblem_icons) {
                 GdkPixbuf *initial_pixbuf;
-                GIcon *gicon, *emblemed_icon, *emblem_icon;
-                GEmblem *emblem;
-                gint w, h, s;
-                gboolean bad_ratio;
+                GIcon *gicon;
+                NemoEmblem *emblem;
 
                 initial_pixbuf = nemo_icon_info_get_pixbuf_at_size (icon_info, icon_size * icon_scale);
-
-                w = gdk_pixbuf_get_width (initial_pixbuf);
-                h = gdk_pixbuf_get_height (initial_pixbuf);
-
-                s = MAX (w, h);
-                if (s < icon_size)
-                    icon_size = s;
-
-                bad_ratio = (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > (int)(w * 0.75) ||
-                            (int)(nemo_icon_get_emblem_size_for_icon_size (icon_size) * icon_scale) > (int)(h * 0.75);
-
                 gicon = G_ICON (initial_pixbuf);
 
-                /* pick only the first emblem we can render for the list view */
-                for (l = emblem_icons; !bad_ratio && l != NULL; l = l->next) {
-                    emblem_icon = l->data;
-                    emblem = g_emblem_new (emblem_icon);
-                    emblemed_icon = g_emblemed_icon_new (gicon, emblem);
+                /* pick only the first emblem for the list view */
+                l = emblem_icons;
+                if (l != NULL) {
+                    emblem = nemo_emblem_new (l->data, NEMO_EMBLEM_SIZE_MEDIUM, NEMO_EMBLEM_POSITION_LOWER_RIGHT);
+                    GIcon *emblemed_icon = nemo_emblemed_icon_new (gicon, emblem);
 
                     g_object_unref (gicon);
                     g_object_unref (emblem);
                     gicon = emblemed_icon;
-
-                    break;
                 }
 
                 nemo_icon_info_clear (&icon_info);

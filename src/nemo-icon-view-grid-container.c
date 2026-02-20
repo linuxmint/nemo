@@ -43,6 +43,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
+#include <libnemo-private/nemo-emblemed-icon.h>
 
 static void update_layout_constants (NemoIconContainer *container);
 
@@ -71,9 +72,8 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 	NemoFile *file;
 	NemoFileIconFlags flags;
 	NemoIconInfo *icon_info;
-	GdkPixbuf *pixbuf;
 	GIcon *emblemed_icon;
-	GEmblem *emblem;
+	NemoEmblem *emblem;
 	GList *emblem_icons, *l;
     gint scale;
 
@@ -102,51 +102,20 @@ nemo_icon_view_grid_container_get_icon_images (NemoIconContainer *container,
 
 	/* apply emblems */
 	if (emblem_icons != NULL) {
-        gint w, h, s;
-        gboolean bad_ratio;
+        GIcon *gicon = G_ICON (nemo_icon_info_get_pixbuf (icon_info));
 
-        l = emblem_icons;
+        for (l = emblem_icons; l != NULL; l = l->next) {
+            emblem = nemo_emblem_new (l->data, NEMO_EMBLEM_SIZE_MEDIUM, NEMO_EMBLEM_POSITION_DEFAULT);
+            emblemed_icon = nemo_emblemed_icon_new (gicon, emblem);
+            g_object_unref (gicon);
+            g_object_unref (emblem);
+            gicon = emblemed_icon;
+        }
 
-		pixbuf = nemo_icon_info_get_pixbuf (icon_info);
+        nemo_icon_info_clear (&icon_info);
+        icon_info = nemo_icon_info_lookup (gicon, size, scale);
+        g_object_unref (gicon);
 
-        w = gdk_pixbuf_get_width (pixbuf);
-        h = gdk_pixbuf_get_height (pixbuf);
-
-        s = MAX (w, h);
-        if (s < size)
-            size = s;
-
-        bad_ratio = (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > (int)(w * 0.75) ||
-                    (int)nemo_icon_get_emblem_size_for_icon_size (size) * scale > (int)(h * 0.75);
-
-        if (bad_ratio)
-            goto skip_emblem; /* Would prefer to not use goto, but
-                               * I don't want to do these checks on
-                               * non-emblemed icons (the majority)
-                               * as it would be too costly */
-
-        emblem = g_emblem_new (l->data);
-
-		emblemed_icon = g_emblemed_icon_new (G_ICON (pixbuf), emblem);
-		g_object_unref (emblem);
-
-		for (l = l->next; l != NULL; l = l->next) {
-			emblem = g_emblem_new (l->data);
-			g_emblemed_icon_add_emblem (G_EMBLEMED_ICON (emblemed_icon),
-						    emblem);
-			g_object_unref (emblem);
-		}
-
-		nemo_icon_info_clear (&icon_info);
-		icon_info = nemo_icon_info_lookup (emblemed_icon, size, scale);
-        g_object_unref (emblemed_icon);
-
-skip_emblem:
-		g_object_unref (pixbuf);
-
-	}
-
-	if (emblem_icons != NULL) {
 		g_list_free_full (emblem_icons, g_object_unref);
 	}
 
