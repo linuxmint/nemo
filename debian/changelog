@@ -1,3 +1,9 @@
+nemo (6.6.4) zena; urgency=medium
+
+  * packaging: Depend on xapp-symbolic-icons
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 23 Feb 2026 09:03:22 +0000
+
 nemo (6.6.3) zena; urgency=medium
 
   [ Michael Webster ]
