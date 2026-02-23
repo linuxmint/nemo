@@ -98,6 +98,7 @@ Depends:
  untex,
  html2text,
  python3-xlrd,
+ xapp-symbolic-icons (>= 1.0.7),
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
