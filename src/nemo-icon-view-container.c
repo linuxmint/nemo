@@ -125,19 +125,19 @@ nemo_icon_view_container_get_icon_images (NemoIconContainer *container,
 
 	/* apply emblems */
 	if (emblem_icons != NULL) {
-        GIcon *gicon = G_ICON (nemo_icon_info_get_pixbuf (icon_info));
+        GdkPixbuf *pixbuf = nemo_icon_info_get_pixbuf (icon_info);
+        emblemed_icon = nemo_emblemed_icon_new (G_ICON (pixbuf), NULL);
 
         for (l = emblem_icons; l != NULL; l = l->next) {
             emblem = nemo_emblem_new (l->data, NEMO_EMBLEM_SIZE_MEDIUM, NEMO_EMBLEM_POSITION_DEFAULT);
-            emblemed_icon = nemo_emblemed_icon_new (gicon, emblem);
-            g_object_unref (gicon);
+            nemo_emblemed_icon_add_emblem (NEMO_EMBLEMED_ICON (emblemed_icon), emblem);
             g_object_unref (emblem);
-            gicon = emblemed_icon;
         }
 
         nemo_icon_info_clear (&icon_info);
-        icon_info = nemo_icon_info_lookup (gicon, size, scale);
-        g_object_unref (gicon);
+        icon_info = nemo_icon_info_lookup (emblemed_icon, size, scale);
+        g_object_unref (emblemed_icon);
+        g_object_unref (pixbuf);
 
 		g_list_free_full (emblem_icons, g_object_unref);
 	}
