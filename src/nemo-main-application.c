@@ -483,8 +483,34 @@ open_windows (NemoMainApplication *application,
 	gint i;
 
 	if (files == NULL || files[0] == NULL) {
-		/* Open a window pointing at the default location. */
-		open_window (application, NULL, screen, geometry);
+		/* No explicit locations requested: try restoring the last session. */
+		NemoWindow *window;
+		gboolean have_geometry;
+		gboolean do_restore;
+
+		window = nemo_main_application_create_window (NEMO_APPLICATION (application), screen);
+
+		have_geometry = geometry != NULL && strcmp (geometry, "") != 0;
+		if (have_geometry && !gtk_widget_get_visible (GTK_WIDGET (window))) {
+			/* never maximize windows opened from shell if a
+			 * custom geometry has been requested.
+			 */
+			gtk_window_unmaximize (GTK_WINDOW (window));
+			eel_gtk_window_set_initial_geometry_from_string (GTK_WINDOW (window),
+									 geometry,
+									 APPLICATION_WINDOW_MIN_WIDTH,
+									 APPLICATION_WINDOW_MIN_HEIGHT,
+									 FALSE);
+		}
+
+		do_restore = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_RESTORE_TABS_ON_STARTUP);
+
+		if (!do_restore || !nemo_window_restore_saved_tabs (window)) {
+			/* Fall back to a safe default location */
+			GFile *home = g_file_new_for_path (g_get_home_dir ());
+			nemo_window_go_to (window, home);
+			g_object_unref (home);
+		}
 	} else {
 		if (open_in_existing_window) {
 			/* Open one tab at each requested location in an existing window */
@@ -542,6 +568,7 @@ nemo_main_application_open (GApplication *app,
 	gboolean open_in_tabs = FALSE;
 	gchar *geometry = NULL;
 	gboolean open_in_existing_window = strcmp (options, "EXISTING_WINDOW") == 0;
+	gboolean default_no_args = FALSE;
 	const char splitter = '=';
 
 	g_debug ("Open called on the GApplication instance; %d files", n_files);
@@ -550,7 +577,12 @@ nemo_main_application_open (GApplication *app,
 		/* Check if local command line passed --geometry or --tabs */
 		if (strlen (options) > 0) {
 			gchar** split_options = g_strsplit (options, &splitter, 2);
-			if (strcmp (split_options[0], "NULL") != 0) {
+			if (g_str_has_prefix (split_options[0], "DEFAULT")) {
+				default_no_args = TRUE;
+				if (g_str_has_prefix (split_options[0], "DEFAULT+")) {
+					geometry = g_strdup (split_options[0] + strlen ("DEFAULT+"));
+				}
+			} else if (strcmp (split_options[0], "NULL") != 0) {
 				geometry = g_strdup (split_options[0]);
 			}
 			sscanf (split_options[1], "%d", &open_in_tabs);
@@ -565,7 +597,13 @@ nemo_main_application_open (GApplication *app,
            geometry ? geometry : "none",
            open_in_existing_window ? "yes" : "no");
 
-	open_windows (self, files, n_files, gdk_screen_get_default (), geometry, open_in_tabs, open_in_existing_window);
+	if (default_no_args) {
+		/* Treat this as a no-arg launch; open_windows() will attempt session restore
+		 * and fall back to Home if restore isn't possible. */
+		open_windows (self, NULL, 0, gdk_screen_get_default (), geometry, open_in_tabs, open_in_existing_window);
+	} else {
+		open_windows (self, files, n_files, gdk_screen_get_default (), geometry, open_in_tabs, open_in_existing_window);
+	}
 
     g_clear_pointer (&geometry, g_free);
 }
@@ -807,9 +845,11 @@ post_registration:
 
 	GFile **files;
 	gint idx, len;
+	gboolean used_default_location;
 
 	len = 0;
 	files = NULL;
+	used_default_location = FALSE;
 
 	/* Convert args to GFiles */
 	if (remaining != NULL) {
@@ -831,32 +871,50 @@ post_registration:
 	}
 
 	if (files == NULL && !no_default_window) {
+		/* Original behavior: default to Home when no URIs are provided. */
 		files = g_malloc0 (2 * sizeof (GFile *));
 		len = 1;
 
 		files[0] = g_file_new_for_path (g_get_home_dir ());
 		files[1] = NULL;
+
+		/* Mark that this was a no-arg launch, not an explicit URI. */
+		used_default_location = TRUE;
 	}
-	/* Invoke "Open" to open in existing window or create new windows */
+
+	/* Invoke "Open" to open in existing window or create new windows.
+	 */
 	if (len > 0) {
 		gchar* concatOptions = g_malloc0(64);
 		if (open_in_existing_window) {
 			g_stpcpy (concatOptions, "EXISTING_WINDOW");
 		} else {
 			if (self->priv->geometry == NULL) {
-				g_snprintf (concatOptions, 64, "NULL=%d", open_in_tabs);
+				/* If Home was synthesized because no URIs were passed, signal that
+				 * to the primary instance so it can attempt session restore. */
+				if (used_default_location) {
+					g_snprintf (concatOptions, 64, "DEFAULT=%d", open_in_tabs);
+				} else {
+					g_snprintf (concatOptions, 64, "NULL=%d", open_in_tabs);
+				}
 			} else {
-				g_snprintf (concatOptions, 64, "%s=%d", self->priv->geometry, open_in_tabs);
+				if (used_default_location) {
+					g_snprintf (concatOptions, 64, "DEFAULT+%s=%d", self->priv->geometry, open_in_tabs);
+				} else {
+					g_snprintf (concatOptions, 64, "%s=%d", self->priv->geometry, open_in_tabs);
+				}
 			}
 		}
 		g_application_open (application, files, len, concatOptions);
 		g_free (concatOptions);
 	}
 
-	for (idx = 0; idx < len; idx++) {
-		g_object_unref (files[idx]);
+	if (files != NULL) {
+		for (idx = 0; idx < len; idx++) {
+			g_object_unref (files[idx]);
+		}
+		g_free (files);
 	}
-	g_free (files);
 
  out:
 	g_option_context_free (context);
