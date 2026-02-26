@@ -300,6 +300,13 @@ global_scale_changed (NemoDesktopManager *manager)
 
     DEBUG ("Monitor scaling changed");
 
+#ifdef HAVE_GTK_LAYER_SHELL
+    if (gtk_layer_is_supported ()) {
+        DEBUG ("Ignoring scale change - compositor handles sizing with layer-shell");
+        return;
+    }
+#endif
+
     queue_update_layout (manager);
 }
 
