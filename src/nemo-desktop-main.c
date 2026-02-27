@@ -55,6 +55,47 @@
 
 #ifdef HAVE_GTK_LAYER_SHELL
 #include <gtk-layer-shell/gtk-layer-shell.h>
+#include <wayland-client.h>
+
+static gboolean layer_shell_available = FALSE;
+
+static void
+registry_handle_global (void *data, struct wl_registry *registry,
+                        uint32_t name, const char *interface, uint32_t version)
+{
+    if (g_strcmp0 (interface, "zwlr_layer_shell_v1") == 0)
+        layer_shell_available = TRUE;
+}
+
+static void
+registry_handle_global_remove (void *data, struct wl_registry *registry, uint32_t name)
+{
+}
+
+static const struct wl_registry_listener registry_listener = {
+    registry_handle_global,
+    registry_handle_global_remove,
+};
+
+static gboolean
+check_layer_shell_support (void)
+{
+    struct wl_display *display;
+    struct wl_registry *registry;
+
+    display = wl_display_connect (NULL);
+    if (!display)
+        return FALSE;
+
+    registry = wl_display_get_registry (display);
+    wl_registry_add_listener (registry, &registry_listener, NULL);
+    wl_display_roundtrip (display);
+
+    wl_registry_destroy (registry);
+    wl_display_disconnect (display);
+
+    return layer_shell_available;
+}
 #endif
 
 int
@@ -91,7 +132,20 @@ main (int argc, char *argv[])
 
 	g_set_prgname ("nemo-desktop");
 
+#ifdef HAVE_GTK_LAYER_SHELL
+	if (check_layer_shell_support ())
+	{
+		g_message ("nemo-desktop: using Wayland backend, gtk-layer-shell supported");
+	}
+	else
+	{
+		g_message ("nemo-desktop: Not a Wayland session, or wlr-layer-shell protocol not supported, using X11 backend");
+		gdk_set_allowed_backends ("x11");
+	}
+#else
+	g_message ("nemo-desktop: using X11");
 	gdk_set_allowed_backends ("x11");
+#endif
 
 #ifdef HAVE_EXEMPI
 	xmp_init();
