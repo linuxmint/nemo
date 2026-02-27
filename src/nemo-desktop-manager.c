@@ -22,6 +22,7 @@
 #include "libnemo-private/nemo-action-manager.h"
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-desktop-utils.h>
+#include <eel/eel-gtk-extensions.h>
 
 static gboolean layout_changed (NemoDesktopManager *manager);
 
@@ -115,7 +116,7 @@ get_run_state (NemoDesktopManager *manager)
     gint ret;
     GError *error;
 
-    if (priv->other_desktop) {
+    if (priv->other_desktop || eel_check_is_wayland ()) {
         ret = RUN_STATE_FALLBACK;
         goto out;
     }
@@ -225,7 +226,7 @@ get_window_rect_for_monitor (NemoDesktopManager *manager,
     out_rect_var = NULL;
 
     if (priv->current_run_state == RUN_STATE_FALLBACK) {
-        DEBUG ("Currently in fallback mode, retrieving n_monitors via GdkScreen");
+        DEBUG ("Currently in fallback/wayland mode, retrieving n_monitors via GdkScreen");
 
         nemo_desktop_utils_get_monitor_geometry (monitor, &out_rect);
 
@@ -290,7 +291,7 @@ queue_update_layout (NemoDesktopManager *manager)
         priv->update_layout_idle_id = 0;
     }
 
-    priv->update_layout_idle_id = g_idle_add ((GSourceFunc) layout_changed, manager);
+    priv->update_layout_idle_id = g_timeout_add (250, (GSourceFunc) layout_changed, manager);
 }
 
 static void
@@ -301,7 +302,7 @@ global_scale_changed (NemoDesktopManager *manager)
     DEBUG ("Monitor scaling changed");
 
 #ifdef HAVE_GTK_LAYER_SHELL
-    if (gtk_layer_is_supported ()) {
+    if (eel_check_is_wayland ()) {
         DEBUG ("Ignoring scale change - compositor handles sizing with layer-shell");
         return;
     }
@@ -747,16 +748,17 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
                               G_CALLBACK (queue_update_layout),
                               manager);
 
-    /* If we're a cinnamon session, increase the use count temporarily for the application,
+    /* If we're an x11 cinnamon session, increase the use count temporarily for the application,
      * and establish a proxy for org.Cinnamon.  The hold prevents the GApplication from simply
      * exiting while waiting for the GAsyncReadyCallback.
-     * 
-     * If we're not running cinnamon,  */
+     */
 
     g_application_hold (G_APPLICATION (nemo_application_get_singleton ()));
 
-    if (is_cinnamon_desktop ()) {
-         g_message ("nemo-desktop: session is cinnamon, establishing proxy");
+    priv->other_desktop = !is_cinnamon_desktop ();
+    if (!priv->other_desktop && !eel_check_is_wayland ()) {
+        
+         g_message ("nemo-desktop: session is x11 cinnamon, establishing proxy");
 
         nemo_cinnamon_proxy_new_for_bus (G_BUS_TYPE_SESSION,
                                          G_DBUS_PROXY_FLAGS_NONE,
@@ -765,17 +767,11 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
                                          NULL,
                                          (GAsyncReadyCallback) on_proxy_created,
                                          manager);
-    } else {
-        g_message ("nemo-desktop: session is not cinnamon (checked XDG_SESSION_DESKTOP,"
-                   "DESKTOP_SESSION environment variables.) Applying default behavior");
-
-        priv->other_desktop = TRUE;
-        connect_fallback_signals (manager);
-
-        /* Even though we start immediately when we can't do a proxy, we need to get out
-         * of the desktop manager's init first, or else we have recursion problems. */
-        g_idle_add ((GSourceFunc) fallback_startup_idle_cb, manager);
+        return;
     }
+
+    connect_fallback_signals (manager);
+    g_timeout_add (250, (GSourceFunc) fallback_startup_idle_cb, manager);
 }
 
 static NemoDesktopManager *_manager = NULL;
