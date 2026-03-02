@@ -30,6 +30,8 @@
 
 #include "nemo-application.h"
 
+#include "nemo-desktop-window.h"
+
 #if (defined(ENABLE_EMPTY_VIEW) && ENABLE_EMPTY_VIEW)
 #include "nemo-empty-view.h"
 #endif /* ENABLE_EMPTY_VIEW */
@@ -547,14 +549,13 @@ nemo_application_quit (NemoApplication *self)
 				continue;
 			}
 
-			NemoWindow *nw = NEMO_WINDOW (w);
-
 			/* Avoid saving the desktop window */
-			if (nw->details != NULL && nw->details->disable_chrome) {
+			if (NEMO_IS_DESKTOP_WINDOW (w)) {
 				continue;
 			}
 
-			last_window = nw;
+			last_window = NEMO_WINDOW (w);
+			break;
 		}
 
 		if (last_window != NULL) {
