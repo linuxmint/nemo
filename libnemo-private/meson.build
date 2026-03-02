@@ -98,6 +98,10 @@ if libselinux_enabled
   nemo_private_deps += libselinux
 endif
 
+if gtk_layer_shell_enabled
+  nemo_private_deps += gtk_layer_shell
+endif
+
 nemo_private_lib = static_library('nemo-private',
   nemo_private_sources,
   dependencies: nemo_private_deps,

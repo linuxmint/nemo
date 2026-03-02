@@ -30,6 +30,10 @@
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 
+#ifdef HAVE_GTK_LAYER_SHELL
+#include <gtk-layer-shell/gtk-layer-shell.h>
+#endif
+
 #include <libnemo-private/nemo-desktop-utils.h>
 #include <libnemo-private/nemo-action.h>
 #include <libnemo-private/nemo-file.h>
@@ -402,7 +406,14 @@ nemo_blank_desktop_window_init (NemoBlankDesktopWindow *window)
 
     window->details->popup_menu = NULL;
     window->details->actions_changed_id = 0;
-    gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DESKTOP);
+
+    if (eel_check_is_wayland ()) {
+#ifdef HAVE_GTK_LAYER_SHELL
+        gtk_layer_init_for_window (GTK_WINDOW (window));
+#endif
+    } else {
+        gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_DESKTOP);
+    }
 
     /* Make it easier for themes authors to style the desktop window separately */
     gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (window)), "nemo-desktop-window");
@@ -436,7 +447,10 @@ map (GtkWidget *widget)
 {
 	/* Chain up to realize our children */
 	GTK_WIDGET_CLASS (nemo_blank_desktop_window_parent_class)->map (widget);
-	gdk_window_lower (gtk_widget_get_window (widget));
+
+    if (!eel_check_is_wayland ()) {
+        gdk_window_lower (gtk_widget_get_window (widget));
+    }
 
     GdkWindow *window;
     GdkRGBA transparent = { 0, 0, 0, 0 };
@@ -498,6 +512,14 @@ void
 nemo_blank_desktop_window_update_geometry (NemoBlankDesktopWindow *window)
 {
     GdkRectangle rect;
+
+    if (nemo_desktop_utils_configure_layer_shell (GTK_WINDOW (window),
+                                                    window->details->monitor,
+                                                    FALSE)) {
+        DEBUG ("NemoBlankDesktopWindow: using layer-shell for monitor %d",
+               window->details->monitor);
+        return;
+    }
 
     nemo_desktop_manager_get_window_rect_for_monitor (nemo_desktop_manager_get (),
                                                       window->details->monitor,

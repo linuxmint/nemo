@@ -19,7 +19,14 @@
  *
  */
 
+#include <config.h>
 #include "nemo-desktop-utils.h"
+
+#include <eel/eel-gtk-extensions.h>
+
+#ifdef HAVE_GTK_LAYER_SHELL
+#include <gtk-layer-shell/gtk-layer-shell.h>
+#endif
 
 static GdkScreen *default_screen = NULL;
 
@@ -181,3 +188,33 @@ nemo_desktop_utils_get_scale_factor (void)
     return (gint) scale;
 }
 
+gboolean
+nemo_desktop_utils_configure_layer_shell (GtkWindow *window,
+                                          gint       monitor_num,
+                                          gboolean   keyboard_on_demand)
+{
+    if (eel_check_is_wayland ()) {
+#ifdef HAVE_GTK_LAYER_SHELL
+        GdkDisplay *display = gdk_display_get_default ();
+        GdkMonitor *monitor = gdk_display_get_monitor (display, monitor_num);
+
+        gtk_layer_set_layer (window, GTK_LAYER_SHELL_LAYER_BOTTOM);
+        gtk_layer_set_namespace (window, "nemo-desktop");
+        gtk_layer_set_keyboard_mode (window,
+                                     keyboard_on_demand ? GTK_LAYER_SHELL_KEYBOARD_MODE_ON_DEMAND
+                                                        : GTK_LAYER_SHELL_KEYBOARD_MODE_NONE);
+        gtk_layer_set_exclusive_zone (window, 0);
+        gtk_layer_set_anchor (window, GTK_LAYER_SHELL_EDGE_TOP, TRUE);
+        gtk_layer_set_anchor (window, GTK_LAYER_SHELL_EDGE_BOTTOM, TRUE);
+        gtk_layer_set_anchor (window, GTK_LAYER_SHELL_EDGE_LEFT, TRUE);
+        gtk_layer_set_anchor (window, GTK_LAYER_SHELL_EDGE_RIGHT, TRUE);
+
+        if (monitor) {
+            gtk_layer_set_monitor (window, monitor);
+        }
+#endif
+        return TRUE;
+    }
+
+    return FALSE;
+}

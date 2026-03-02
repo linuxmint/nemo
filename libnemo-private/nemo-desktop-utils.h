@@ -35,6 +35,10 @@ gint nemo_desktop_utils_get_num_monitors (void);
 gboolean nemo_desktop_utils_get_monitor_cloned (gint monitor, gint x_primary);
 gint nemo_desktop_utils_get_scale_factor (void);
 
+gboolean nemo_desktop_utils_configure_layer_shell (GtkWindow *window,
+                                                   gint       monitor_num,
+                                                   gboolean   keyboard_on_demand);
+
 G_END_DECLS
 
 #endif
