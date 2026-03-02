@@ -3853,8 +3853,7 @@ nemo_icon_container_search_iter (NemoIconContainer *container,
 			continue;
 		}
 
-		if (strncmp (case_normalized_key, case_normalized_name,
-			     strlen (case_normalized_key)) == 0) {
+		if (strstr (case_normalized_name, case_normalized_key) != NULL) {
 			count++;
 		}
 
