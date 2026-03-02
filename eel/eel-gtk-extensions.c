@@ -251,6 +251,9 @@ eel_gtk_window_set_initial_geometry_from_string (GtkWindow *window,
 	eel_gtk_window_set_initial_geometry (window, geometry_flags, left, top, width, height);
 }
 
+/* nemo-desktop only runs on Wayland when gtk-layer-shell is available
+ * (checked in nemo-desktop-main.c before gtk_init), so a TRUE return
+ * here also implies layer-shell support. */
 gboolean
 eel_check_is_wayland (void)
 {

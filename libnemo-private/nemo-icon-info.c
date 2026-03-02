@@ -168,6 +168,7 @@ nemo_icon_info_new_for_icon_info (GtkIconInfo *icon_info,
 typedef struct  {
 	GIcon *icon;
 	int size;
+	int scale;
 } IconKey;
 
 static GHashTable *loadable_icon_cache = NULL;
@@ -253,7 +254,7 @@ nemo_icon_info_clear_caches (void)
 static guint
 icon_key_hash (IconKey *key)
 {
-	return g_icon_hash (key->icon) ^ key->size;
+	return g_icon_hash (key->icon) ^ key->size ^ key->scale;
 }
 
 static gboolean
@@ -261,17 +262,19 @@ icon_key_equal (const IconKey *a,
                 const IconKey *b)
 {
 	return a->size == b->size &&
+		a->scale == b->scale &&
 		g_icon_equal (a->icon, b->icon);
 }
 
 static IconKey *
-icon_key_new (GIcon *icon, int size)
+icon_key_new (GIcon *icon, int size, int scale)
 {
 	IconKey *key;
 
 	key = g_new0 (IconKey, 1);
 	key->icon = g_object_ref (icon);
 	key->size = size;
+	key->scale = scale;
 
 	return key;
 }
@@ -311,6 +314,7 @@ nemo_icon_info_lookup (GIcon *icon,
 
         lookup_key.icon = icon;
         lookup_key.size = size;
+        lookup_key.scale = scale;
 
         icon_info = g_hash_table_lookup (loadable_icon_cache, &lookup_key);
         if (icon_info) {
@@ -344,7 +348,7 @@ nemo_icon_info_lookup (GIcon *icon,
 
         icon_info = nemo_icon_info_new_for_pixbuf (pixbuf, scale);
 
-        key = icon_key_new (icon, size);
+        key = icon_key_new (icon, size, scale);
         g_hash_table_insert (loadable_icon_cache, key, icon_info);
 
         g_clear_object (&pixbuf);
@@ -363,6 +367,7 @@ nemo_icon_info_lookup (GIcon *icon,
 
         lookup_key.icon = icon;
         lookup_key.size = size;
+        lookup_key.scale = scale;
 
         icon_info = g_hash_table_lookup (themed_icon_cache, &lookup_key);
         if (icon_info) {
@@ -388,7 +393,7 @@ nemo_icon_info_lookup (GIcon *icon,
         icon_info = nemo_icon_info_new_for_icon_info (gtkicon_info, scale);
         g_object_unref (gtkicon_info);
 
-        key = icon_key_new (icon, size);
+        key = icon_key_new (icon, size, scale);
         g_hash_table_insert (themed_icon_cache, key, icon_info);
 
         return nemo_icon_info_ref (icon_info);
