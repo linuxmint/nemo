@@ -43,6 +43,12 @@ endforeach
 conf.set10('HAVE_MALLOPT', cc.has_function('mallopt', prefix: '#include <malloc.h>'))
 
 
+add_global_arguments([
+    '-Werror=implicit-function-declaration',
+  ],
+  language: 'c',
+)
+
 if not get_option('deprecated_warnings')
   add_global_arguments([
       '-Wno-deprecated-declarations',
