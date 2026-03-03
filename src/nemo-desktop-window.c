@@ -41,6 +41,7 @@
 #endif
 
 #include <eel/eel-vfs-extensions.h>
+#include <eel/eel-gtk-extensions.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-global-preferences.h>
