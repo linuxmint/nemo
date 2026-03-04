@@ -30,6 +30,8 @@
 
 #include "nemo-application.h"
 
+#include "nemo-desktop-window.h"
+
 #if (defined(ENABLE_EMPTY_VIEW) && ENABLE_EMPTY_VIEW)
 #include "nemo-empty-view.h"
 #endif /* ENABLE_EMPTY_VIEW */
@@ -534,6 +536,33 @@ nemo_application_quit (NemoApplication *self)
 	GList *windows;
 
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
+
+	/* Save session state once, before we destroy all windows.
+	 * Save the last non-desktop window we find. */
+	{
+		NemoWindow *last_window = NULL;
+
+		for (GList *l = windows; l != NULL; l = l->next) {
+			GtkWindow *w = GTK_WINDOW (l->data);
+
+			if (!NEMO_IS_WINDOW (w)) {
+				continue;
+			}
+
+			/* Avoid saving the desktop window */
+			if (NEMO_IS_DESKTOP_WINDOW (w)) {
+				continue;
+			}
+
+			last_window = NEMO_WINDOW (w);
+			break;
+		}
+
+		if (last_window != NULL) {
+			nemo_window_save_session_state (last_window);
+		}
+	}
+
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
 
     /* we have been asked to force quit */
