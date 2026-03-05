@@ -95,6 +95,12 @@ struct NemoWindowDetails
         /* split view */
         GtkWidget *split_view_hpane;
 
+        /* preview pane */
+        GtkWidget *preview_hpane;
+        GtkWidget *preview_pane;       /* NemoPreviewPane */
+        gboolean   preview_pane_visible;
+        gulong     preview_selection_handler_id;
+
         // A closed pane's location, valid until the remaining pane
         // location changes.
         GFile *secondary_pane_last_location;

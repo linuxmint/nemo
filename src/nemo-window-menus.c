@@ -663,6 +663,51 @@ action_split_view_callback (GtkAction *action,
 }
 
 static void
+action_preview_pane_callback (GtkAction *action,
+                              gpointer user_data)
+{
+	NemoWindow *window;
+	gboolean is_active;
+
+	if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		return;
+	}
+
+	window = NEMO_WINDOW (user_data);
+
+	is_active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+	if (is_active != nemo_window_preview_pane_showing (window)) {
+		if (is_active) {
+			nemo_window_preview_pane_on (window);
+		} else {
+			nemo_window_preview_pane_off (window);
+		}
+	}
+}
+
+static void
+action_preview_pane_grow_callback (GtkAction *action,
+                                   gpointer user_data)
+{
+	if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		return;
+	}
+
+	nemo_window_preview_pane_resize (NEMO_WINDOW (user_data), 50);
+}
+
+static void
+action_preview_pane_shrink_callback (GtkAction *action,
+                                     gpointer user_data)
+{
+	if (NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		return;
+	}
+
+	nemo_window_preview_pane_resize (NEMO_WINDOW (user_data), -50);
+}
+
+static void
 sidebar_radio_entry_changed_cb (GtkAction *action,
                 GtkRadioAction *current,
                 gpointer user_data)
@@ -784,15 +829,33 @@ nemo_window_update_show_hide_ui_elements (NemoWindow *window)
     NemoWindowPane *pane;
 	GtkActionGroup *action_group;
 	GtkAction *action;
+	gboolean active, split_view_showing, preview_showing;
 
+	split_view_showing = nemo_window_split_view_showing (window);
+	preview_showing = nemo_window_preview_pane_showing (window);
 	action_group = nemo_window_get_main_action_group (window);
 
 	action = gtk_action_group_get_action (action_group,
 					      NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
-    gtk_action_block_activate (action);
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				      nemo_window_split_view_showing (window));
-    gtk_action_unblock_activate (action);
+	active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+	if (active != split_view_showing) {
+		gtk_action_block_activate (action);
+		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+					      split_view_showing);
+		gtk_action_unblock_activate (action);
+	}
+
+	action = gtk_action_group_get_action (action_group,
+					      NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE);
+	active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+	if (active != preview_showing) {
+		gtk_action_block_activate (action);
+		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+					      preview_showing);
+		gtk_action_unblock_activate (action);
+	}
 
 	nemo_window_update_split_view_actions_sensitivity (window);
 
@@ -804,10 +867,14 @@ nemo_window_update_show_hide_ui_elements (NemoWindow *window)
 
         action = gtk_action_group_get_action (action_group,
                                               NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
-        gtk_action_block_activate (action);
-        gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-                                      nemo_window_split_view_showing (window));
-        gtk_action_unblock_activate (action);
+	active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+	if (active != split_view_showing) {
+		gtk_action_block_activate (action);
+		gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+					      split_view_showing);
+		gtk_action_unblock_activate (action);
+	}
     }
 }
 
@@ -1535,7 +1602,7 @@ static const GtkActionEntry main_entries[] = {
     N_("Move current tab to right"),
     G_CALLBACK (action_tabs_move_right_callback) },
   { "Sidebar List", NULL, N_("Sidebar") },
-  { "Toolbar List", NULL, N_("Toolbar") }
+  { "Toolbar List", NULL, N_("Toolbar") },
 };
 
 static const GtkToggleActionEntry main_toggle_entries[] = {
@@ -1573,6 +1640,11 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* label, accelerator */   N_("E_xtra Pane"), "F3",
   /* tooltip */              N_("Open an extra folder view side-by-side"),
                              G_CALLBACK (action_split_view_callback),
+  /* is_active */            FALSE },
+  /* name, stock id */     { NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE, NULL,
+  /* label, accelerator */   N_("_Preview Pane"), "<alt>F3",
+  /* tooltip */              N_("Show a file preview panel"),
+                             G_CALLBACK (action_preview_pane_callback),
   /* is_active */            FALSE },
     /* name, stock id */         { NEMO_ACTION_SHOW_THUMBNAILS, NULL,
   /* label, accelerator */       N_("Show _Thumbnails"), NULL,
@@ -1815,6 +1887,19 @@ nemo_window_create_toolbar_action_group (NemoWindow *window)
 
     gtk_action_group_add_action (action_group, action);
     gtk_action_set_icon_name (GTK_ACTION (action), "xsi-view-dual-symbolic");
+
+    g_object_unref (action);
+
+    action = GTK_ACTION (gtk_toggle_action_new (NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE,
+                         _("Preview Pane"),
+                         _("Show a file preview panel"),
+                         NULL));
+    g_signal_connect (action, "activate",
+                      G_CALLBACK (action_preview_pane_callback),
+                      window);
+
+    gtk_action_group_add_action (action_group, action);
+    gtk_action_set_icon_name (GTK_ACTION (action), "xsi-preview-symbolic");
 
     g_object_unref (action);
 

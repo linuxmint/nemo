@@ -157,6 +157,11 @@ void     nemo_window_split_view_on        (NemoWindow *window);
 void     nemo_window_split_view_off       (NemoWindow *window);
 gboolean nemo_window_split_view_showing   (NemoWindow *window);
 
+void     nemo_window_preview_pane_on      (NemoWindow *window);
+void     nemo_window_preview_pane_off     (NemoWindow *window);
+gboolean nemo_window_preview_pane_showing (NemoWindow *window);
+void     nemo_window_preview_pane_resize  (NemoWindow *window, int delta);
+
 gboolean nemo_window_disable_chrome_mapping (GValue *value,
                                                  GVariant *variant,
                                                  gpointer user_data);

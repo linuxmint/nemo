@@ -21,6 +21,8 @@
 #mesondefine HAVE_PANGO_144
 // Define to use gtk-layer-shell
 #mesondefine HAVE_GTK_LAYER_SHELL
+// Define to enable GStreamer video preview
+#mesondefine HAVE_GSTREAMER
 
 
 
