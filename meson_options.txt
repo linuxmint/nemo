@@ -14,3 +14,5 @@ option('tracker',type : 'combo', choices : ['true', 'false', 'auto'], value : 'f
        description: 'Tracker support')
 option('gtk_layer_shell', type : 'boolean', value : false,
        description: 'Use gtk-layer-shell to draw desktop on wayland')
+option('gstreamer', type : 'boolean', value : true,
+       description: 'Video preview via GStreamer')

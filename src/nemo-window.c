@@ -48,6 +48,7 @@
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 #include "nemo-statusbar.h"
+#include "nemo-preview-pane.h"
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -91,6 +92,8 @@ static void side_pane_id_changed                    (NemoWindow            *wind
 static void toggle_menubar                          (NemoWindow            *window,
                                                      gint                   action);
 static void nemo_window_reload                      (NemoWindow            *window);
+static void preview_connect_view                    (NemoWindow            *window);
+static void preview_disconnect_view                 (NemoWindow            *window);
 
 /* Sanity check: highest mouse button value I could find was 14. 5 is our
  * lower threshold (well-documented to be the one of the button events for the
@@ -698,9 +701,18 @@ nemo_window_constructed (GObject *self)
 	gtk_widget_show (vbox);
 
 	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
-	gtk_box_pack_start (GTK_BOX (vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show (hpaned);
 	window->details->split_view_hpane = hpaned;
+
+	/* Preview pane: wrap split_view_hpane inside an outer paned */
+	window->details->preview_hpane = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+	gtk_paned_pack1 (GTK_PANED (window->details->preview_hpane), hpaned, TRUE, FALSE);
+	gtk_box_pack_start (GTK_BOX (vbox), window->details->preview_hpane, TRUE, TRUE, 0);
+	gtk_widget_show (window->details->preview_hpane);
+
+	window->details->preview_pane = nemo_preview_pane_new ();
+	g_object_ref_sink (window->details->preview_pane);
+	window->details->preview_pane_visible = FALSE;
 
 	pane = nemo_window_pane_new (window);
 	window->details->panes = g_list_prepend (window->details->panes, pane);
@@ -848,6 +860,14 @@ nemo_window_destroy (GtkWidget *object)
 	/* the panes list should now be empty */
 	g_assert (window->details->panes == NULL);
 	g_assert (window->details->active_pane == NULL);
+
+	if (window->details->preview_pane != NULL) {
+		if (!window->details->preview_pane_visible) {
+			gtk_widget_destroy (window->details->preview_pane);
+		}
+		g_object_unref (window->details->preview_pane);
+		window->details->preview_pane = NULL;
+	}
 
 	GTK_WIDGET_CLASS (nemo_window_parent_class)->destroy (object);
 }
@@ -1245,6 +1265,18 @@ nemo_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
+	if ((event->state & GDK_CONTROL_MASK) &&
+	    !(event->state & (GDK_SHIFT_MASK | GDK_MOD1_MASK))) {
+		if (event->keyval == GDK_KEY_bracketright) {
+			nemo_window_preview_pane_resize (window, -50);
+			return TRUE;
+		}
+		if (event->keyval == GDK_KEY_bracketleft) {
+			nemo_window_preview_pane_resize (window, 50);
+			return TRUE;
+		}
+	}
+
 	for (i = 0; i < G_N_ELEMENTS (extra_window_keybindings); i++) {
 		if (extra_window_keybindings[i].keyval == event->keyval) {
 			const GList *action_groups;
@@ -1600,6 +1632,12 @@ nemo_window_connect_content_view (NemoWindow *window,
         nemo_window_sync_view_type (window);
     }
 
+	/* Reconnect preview pane to new view's selection signal */
+	if (window->details->preview_pane_visible) {
+		preview_disconnect_view (window);
+		preview_connect_view (window);
+	}
+
 	nemo_view_grab_focus (view);
 }
 
@@ -1619,6 +1657,13 @@ nemo_window_disconnect_content_view (NemoWindow *window,
 	}
 
 	g_signal_handlers_disconnect_by_func (view, G_CALLBACK (zoom_level_changed_callback), window);
+
+	/* Disconnect preview pane from this view */
+	if (window->details->preview_selection_handler_id != 0) {
+		g_signal_handler_disconnect (view,
+			window->details->preview_selection_handler_id);
+		window->details->preview_selection_handler_id = 0;
+	}
 }
 
 /**
@@ -2267,6 +2312,202 @@ gboolean
 nemo_window_split_view_showing (NemoWindow *window)
 {
 	return g_list_length (NEMO_WINDOW (window)->details->panes) > 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Preview pane                                                       */
+/* ------------------------------------------------------------------ */
+
+static void
+preview_selection_changed_cb (NemoView *view, gpointer user_data)
+{
+	NemoWindow *window = NEMO_WINDOW (user_data);
+	GList *selection;
+	NemoFile *file;
+
+	if (!window->details->preview_pane_visible) {
+		return;
+	}
+
+	selection = nemo_view_get_selection (view);
+
+	if (selection != NULL && g_list_length (selection) == 1) {
+		file = NEMO_FILE (selection->data);
+		nemo_preview_pane_set_file (
+			NEMO_PREVIEW_PANE (window->details->preview_pane),
+			file);
+	} else {
+		nemo_preview_pane_clear (
+			NEMO_PREVIEW_PANE (window->details->preview_pane));
+	}
+
+	nemo_file_list_free (selection);
+}
+
+static void
+preview_connect_view (NemoWindow *window)
+{
+	NemoWindowSlot *slot;
+	NemoView *view;
+
+	slot = nemo_window_get_active_slot (window);
+	if (slot == NULL) {
+		return;
+	}
+
+	view = nemo_window_slot_get_current_view (slot);
+	if (view == NULL) {
+		return;
+	}
+
+	if (window->details->preview_selection_handler_id != 0) {
+		return;
+	}
+
+	window->details->preview_selection_handler_id =
+		g_signal_connect (view, "selection-changed",
+				  G_CALLBACK (preview_selection_changed_cb),
+				  window);
+
+	preview_selection_changed_cb (view, window);
+}
+
+static void
+preview_disconnect_view (NemoWindow *window)
+{
+	NemoWindowSlot *slot;
+	NemoView *view;
+
+	if (window->details->preview_selection_handler_id == 0) {
+		return;
+	}
+
+	slot = nemo_window_get_active_slot (window);
+	if (slot != NULL) {
+		view = nemo_window_slot_get_current_view (slot);
+		if (view != NULL) {
+			g_signal_handler_disconnect (view,
+				window->details->preview_selection_handler_id);
+		}
+	}
+
+	window->details->preview_selection_handler_id = 0;
+}
+
+void
+nemo_window_preview_pane_on (NemoWindow *window)
+{
+	gint saved_width, win_width;
+
+	g_return_if_fail (NEMO_IS_WINDOW (window));
+
+	if (window->details->preview_pane_visible) {
+		return;
+	}
+
+	gtk_paned_pack2 (GTK_PANED (window->details->preview_hpane),
+			 window->details->preview_pane, FALSE, FALSE);
+	gtk_widget_show (window->details->preview_pane);
+	window->details->preview_pane_visible = TRUE;
+
+	/* Restore pane width from settings */
+	saved_width = g_settings_get_int (nemo_preview_pane_preferences,
+					  "pane-width");
+	win_width = gtk_widget_get_allocated_width (GTK_WIDGET (window));
+	if (saved_width > 50 && win_width > saved_width + 200) {
+		gtk_paned_set_position (
+			GTK_PANED (window->details->preview_hpane),
+			win_width - saved_width);
+	} else if (win_width > 400) {
+		gtk_paned_set_position (
+			GTK_PANED (window->details->preview_hpane),
+			(int) (win_width * 0.6));
+	}
+
+	preview_connect_view (window);
+	nemo_window_update_show_hide_ui_elements (window);
+}
+
+void
+nemo_window_preview_pane_off (NemoWindow *window)
+{
+	gint position, total_width, pane_width;
+
+	g_return_if_fail (NEMO_IS_WINDOW (window));
+
+	if (!window->details->preview_pane_visible) {
+		return;
+	}
+
+	/* Save pane width before removing */
+	position = gtk_paned_get_position (
+		GTK_PANED (window->details->preview_hpane));
+	total_width = gtk_widget_get_allocated_width (
+		GTK_WIDGET (window->details->preview_hpane));
+	pane_width = total_width - position;
+	if (pane_width > 50) {
+		g_settings_set_int (nemo_preview_pane_preferences,
+				    "pane-width", pane_width);
+	}
+
+	preview_disconnect_view (window);
+
+	nemo_preview_pane_clear (
+		NEMO_PREVIEW_PANE (window->details->preview_pane));
+	gtk_container_remove (GTK_CONTAINER (window->details->preview_hpane),
+			      window->details->preview_pane);
+	window->details->preview_pane_visible = FALSE;
+
+	g_object_set (G_OBJECT (window->details->preview_hpane),
+		      "position", 0,
+		      "position-set", FALSE,
+		      NULL);
+
+	nemo_window_update_show_hide_ui_elements (window);
+}
+
+gboolean
+nemo_window_preview_pane_showing (NemoWindow *window)
+{
+	return window->details->preview_pane_visible;
+}
+
+void
+nemo_window_preview_pane_resize (NemoWindow *window, int delta)
+{
+	gint position, total_width, new_pos, min_content, min_preview;
+
+	g_return_if_fail (NEMO_IS_WINDOW (window));
+
+	if (!window->details->preview_pane_visible) {
+		return;
+	}
+
+	position = gtk_paned_get_position (
+		GTK_PANED (window->details->preview_hpane));
+	total_width = gtk_widget_get_allocated_width (
+		GTK_WIDGET (window->details->preview_hpane));
+
+	/* delta > 0 grows preview (moves divider left),
+	 * delta < 0 shrinks preview (moves divider right) */
+	new_pos = position - delta;
+
+	min_content = 200;
+	min_preview = 150;
+
+	if (new_pos < min_content) {
+		new_pos = min_content;
+	}
+	if (new_pos > total_width - min_preview) {
+		new_pos = total_width - min_preview;
+	}
+
+	gtk_paned_set_position (
+		GTK_PANED (window->details->preview_hpane), new_pos);
+
+	/* Persist new width */
+	g_settings_set_int (nemo_preview_pane_preferences,
+			    "pane-width", total_width - new_pos);
 }
 
 void

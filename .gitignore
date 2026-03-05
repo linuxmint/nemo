@@ -46,3 +46,6 @@ debian/files
 *.debhelper
 
 obj-x86_64-linux-gnu
+libnemo-private/gschemas.compiled
+preview-pane-demo.gif
+record_demo2.sh

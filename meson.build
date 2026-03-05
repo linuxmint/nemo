@@ -146,6 +146,13 @@ if gtk_layer_shell_enabled
   conf.set('HAVE_GTK_LAYER_SHELL', gtk_layer_shell.found())
 endif
 
+gstreamer_enabled = get_option('gstreamer')
+if gstreamer_enabled
+  gstreamer = dependency('gstreamer-1.0',              version: '>=1.0')
+  gstreamer_video = dependency('gstreamer-video-1.0',  version: '>=1.0')
+endif
+conf.set('HAVE_GSTREAMER', gstreamer_enabled)
+
 # make sure pango development files are installed
 pango = dependency('pango', version: '>=1.40.0')
 # check for newer pango for necessary workarounds
@@ -211,6 +218,7 @@ message('\n'.join(['',
 '    source code location:   @0@'.format(meson.project_source_root()),
 '    compiler:               @0@'.format(cc.get_id()),
 '    libexif support:        @0@'.format(libexif_enabled),
+'    GStreamer support:      @0@'.format(gstreamer_enabled),
 '    exempi  support:        @0@'.format(exempi_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
 '    Wayland support:        @0@'.format(cc.has_header('gdk/gdkwayland.h', dependencies: gtk)),
