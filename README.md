@@ -30,3 +30,30 @@ Nemo v1.0.0 had the following features as described by the developers:
 9. Full navigation options (back, forward, up, refresh)
 10. Ability to toggle between the path entry and the path breadcrumb widgets
 11. Many more configuration options
+
+Preview Pane
+====
+
+The Preview Pane provides a live file preview and metadata panel directly inside the file manager window. Toggle it with **Alt+F3** or the button in the status bar.
+
+### GPS Map Preview
+
+When viewing an image that contains GPS coordinates in its EXIF data, the Preview Pane displays a **150×150 map tile** from [OpenStreetMap](https://www.openstreetmap.org) alongside the file metadata. A crosshair marker indicates the exact location where the photo was taken.
+
+- **Click the map** to open the location in your default browser on OpenStreetMap
+- Tiles are **cached locally** in `~/.cache/nemo/map-tiles/` for instant subsequent loads
+- Works fully **offline-safe** — if there is no internet connection, the map simply does not appear; no errors or UI disruption
+- No API keys or external dependencies required — uses only libraries already bundled with Nemo (GIO, GdkPixbuf, Cairo, libexif)
+
+![GPS map preview in the Preview Pane](Documents/map_preview.png)
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| **Alt+F3** | Toggle the Preview Pane on/off |
+| **Shift+Alt+F3** | Toggle the metadata/details panel within the Preview Pane |
+| **Ctrl+[** | Grow the Preview Pane (wider) |
+| **Ctrl+]** | Shrink the Preview Pane (narrower) |
+
+![Preview Pane keyboard shortcuts](Documents/key%20bindings.png)

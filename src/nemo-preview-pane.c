@@ -26,6 +26,7 @@
 #include <config.h>
 #include "nemo-preview-pane.h"
 
+#include <math.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -46,6 +47,7 @@
 #endif
 
 #define PREVIEW_TEXT_MAX_BYTES 4096
+#define GPS_MAP_SIZE          150
 
 struct _NemoPreviewPane
 {
@@ -110,6 +112,14 @@ struct _NemoPreviewPane
 	GtkWidget	*detail_location;
 	GtkWidget	*detail_gps;
 	GtkWidget	*detail_gps_label;
+
+	/* GPS map mini-tile */
+	GtkWidget	*detail_gps_map;
+	GtkWidget	*gps_map_event_box;
+	double		 gps_lat;
+	double		 gps_lon;
+	GCancellable	*map_cancellable;
+
 	gboolean	 details_vpaned_set;
 
 	/* State */
@@ -526,6 +536,295 @@ load_text_preview (NemoPreviewPane *self, NemoFile *file)
 				   data);
 }
 
+#ifdef HAVE_EXIF
+#define GPS_MAP_TILE_SIZE 256
+#define GPS_MAP_ZOOM       15
+
+/* Convert decimal degrees to OSM tile coordinates */
+static void
+gps_to_tile (double lat, double lon, int zoom,
+             int *tile_x, int *tile_y,
+             double *pixel_x, double *pixel_y)
+{
+	double n = pow (2.0, zoom);
+	double lat_rad = lat * G_PI / 180.0;
+	double tx = (lon + 180.0) / 360.0 * n;
+	double ty = (1.0 - log (tan (lat_rad) + 1.0 / cos (lat_rad)) / G_PI)
+		    / 2.0 * n;
+
+	*tile_x = (int) floor (tx);
+	*tile_y = (int) floor (ty);
+	*pixel_x = (tx - *tile_x) * GPS_MAP_TILE_SIZE;
+	*pixel_y = (ty - *tile_y) * GPS_MAP_TILE_SIZE;
+}
+
+/* Build the cache directory path for map tiles */
+static char *
+gps_map_cache_dir (void)
+{
+	return g_build_filename (g_get_user_cache_dir (),
+				 "nemo", "map-tiles", NULL);
+}
+
+/* Build a cache file path for a specific tile */
+static char *
+gps_map_cache_path (int zoom, int tile_x, int tile_y)
+{
+	char *dir = gps_map_cache_dir ();
+	char *filename = g_strdup_printf ("%d_%d_%d.png",
+					  zoom, tile_x, tile_y);
+	char *path = g_build_filename (dir, filename, NULL);
+
+	g_free (dir);
+	g_free (filename);
+	return path;
+}
+
+/* Draw a crosshair marker and crop to GPS_MAP_SIZE centered on the
+ * GPS point, then set it on the GtkImage widget. */
+static void
+gps_map_render_tile (NemoPreviewPane *self,
+                     GdkPixbuf       *tile_pixbuf,
+                     double           pixel_x,
+                     double           pixel_y)
+{
+	cairo_surface_t *surface;
+	cairo_t *cr;
+	GdkPixbuf *result;
+	int src_x, src_y;
+	int tw, th;
+
+	if (tile_pixbuf == NULL)
+		return;
+
+	tw = gdk_pixbuf_get_width (tile_pixbuf);
+	th = gdk_pixbuf_get_height (tile_pixbuf);
+
+	/* Calculate crop origin so the GPS point is centered in the
+	 * GPS_MAP_SIZE square.  Clamp to tile boundaries. */
+	src_x = (int) (pixel_x - GPS_MAP_SIZE / 2.0);
+	src_y = (int) (pixel_y - GPS_MAP_SIZE / 2.0);
+	if (src_x < 0) src_x = 0;
+	if (src_y < 0) src_y = 0;
+	if (src_x + GPS_MAP_SIZE > tw) src_x = tw - GPS_MAP_SIZE;
+	if (src_y + GPS_MAP_SIZE > th) src_y = th - GPS_MAP_SIZE;
+	if (src_x < 0) src_x = 0;
+	if (src_y < 0) src_y = 0;
+
+	/* Create a cairo surface and paint the cropped region */
+	surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
+					      GPS_MAP_SIZE, GPS_MAP_SIZE);
+	cr = cairo_create (surface);
+
+	gdk_cairo_set_source_pixbuf (cr, tile_pixbuf, -src_x, -src_y);
+	cairo_paint (cr);
+
+	/* Draw crosshair at the GPS point */
+	{
+		double cx = pixel_x - src_x;
+		double cy = pixel_y - src_y;
+
+		cairo_set_line_width (cr, 2.5);
+
+		/* White outline for visibility */
+		cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.9);
+		cairo_arc (cr, cx, cy, 10.0, 0, 2 * G_PI);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx, cy - 16);
+		cairo_line_to (cr, cx, cy - 6);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx, cy + 6);
+		cairo_line_to (cr, cx, cy + 16);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx - 16, cy);
+		cairo_line_to (cr, cx - 6, cy);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx + 6, cy);
+		cairo_line_to (cr, cx + 16, cy);
+		cairo_stroke (cr);
+
+		/* Red inner */
+		cairo_set_source_rgba (cr, 0.9, 0.1, 0.1, 0.95);
+		cairo_set_line_width (cr, 2.0);
+		cairo_arc (cr, cx, cy, 9.0, 0, 2 * G_PI);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx, cy - 15);
+		cairo_line_to (cr, cx, cy - 6);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx, cy + 6);
+		cairo_line_to (cr, cx, cy + 15);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx - 15, cy);
+		cairo_line_to (cr, cx - 6, cy);
+		cairo_stroke (cr);
+		cairo_move_to (cr, cx + 6, cy);
+		cairo_line_to (cr, cx + 15, cy);
+		cairo_stroke (cr);
+
+		/* Center dot */
+		cairo_set_source_rgba (cr, 0.9, 0.1, 0.1, 1.0);
+		cairo_arc (cr, cx, cy, 3.0, 0, 2 * G_PI);
+		cairo_fill (cr);
+	}
+
+	cairo_destroy (cr);
+
+	result = gdk_pixbuf_get_from_surface (surface, 0, 0,
+					      GPS_MAP_SIZE, GPS_MAP_SIZE);
+	cairo_surface_destroy (surface);
+
+	if (result != NULL) {
+		gtk_image_set_from_pixbuf (
+			GTK_IMAGE (self->detail_gps_map), result);
+		gtk_widget_show (self->gps_map_event_box);
+		g_object_unref (result);
+	}
+}
+
+typedef struct {
+	NemoPreviewPane *self;
+	double pixel_x;
+	double pixel_y;
+	char  *cache_path;
+} MapTileData;
+
+static void
+map_tile_data_free (MapTileData *data)
+{
+	g_free (data->cache_path);
+	g_slice_free (MapTileData, data);
+}
+
+static void
+map_tile_download_cb (GObject      *source,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+	MapTileData *data = user_data;
+	NemoPreviewPane *self = data->self;
+	GFileInputStream *stream;
+	GdkPixbuf *pixbuf = NULL;
+	GError *error = NULL;
+
+	stream = g_file_read_finish (G_FILE (source), result, &error);
+	if (stream == NULL) {
+		/* No internet or cancelled — silently ignore */
+		g_clear_error (&error);
+		map_tile_data_free (data);
+		return;
+	}
+
+	pixbuf = gdk_pixbuf_new_from_stream (G_INPUT_STREAM (stream),
+					     NULL, &error);
+	g_object_unref (stream);
+
+	if (pixbuf == NULL) {
+		g_clear_error (&error);
+		map_tile_data_free (data);
+		return;
+	}
+
+	/* Save to cache (best-effort, ignore errors) */
+	{
+		char *dir = gps_map_cache_dir ();
+		g_mkdir_with_parents (dir, 0755);
+		g_free (dir);
+
+		gdk_pixbuf_save (pixbuf, data->cache_path, "png",
+				 NULL, NULL);
+	}
+
+	gps_map_render_tile (self, pixbuf, data->pixel_x, data->pixel_y);
+	g_object_unref (pixbuf);
+	map_tile_data_free (data);
+}
+
+static void
+gps_map_fetch_tile (NemoPreviewPane *self,
+                    double lat, double lon)
+{
+	int tile_x, tile_y;
+	double pixel_x, pixel_y;
+	char *cache_path;
+	GdkPixbuf *cached_pixbuf;
+
+	/* Cancel any previous map fetch */
+	if (self->map_cancellable != NULL) {
+		g_cancellable_cancel (self->map_cancellable);
+		g_clear_object (&self->map_cancellable);
+	}
+
+	gps_to_tile (lat, lon, GPS_MAP_ZOOM,
+	             &tile_x, &tile_y, &pixel_x, &pixel_y);
+
+	cache_path = gps_map_cache_path (GPS_MAP_ZOOM, tile_x, tile_y);
+
+	/* Try cache first — fast path */
+	cached_pixbuf = gdk_pixbuf_new_from_file (cache_path, NULL);
+	if (cached_pixbuf != NULL) {
+		gps_map_render_tile (self, cached_pixbuf,
+				     pixel_x, pixel_y);
+		g_object_unref (cached_pixbuf);
+		g_free (cache_path);
+		return;
+	}
+
+	/* Download from OpenStreetMap */
+	{
+		char *url;
+		GFile *tile_file;
+		MapTileData *data;
+
+		url = g_strdup_printf (
+			"https://tile.openstreetmap.org/%d/%d/%d.png",
+			GPS_MAP_ZOOM, tile_x, tile_y);
+
+		tile_file = g_file_new_for_uri (url);
+		g_free (url);
+
+		self->map_cancellable = g_cancellable_new ();
+
+		data = g_slice_new0 (MapTileData);
+		data->self = self;
+		data->pixel_x = pixel_x;
+		data->pixel_y = pixel_y;
+		data->cache_path = cache_path; /* takes ownership */
+
+		g_file_read_async (tile_file,
+				   G_PRIORITY_LOW,
+				   self->map_cancellable,
+				   map_tile_download_cb,
+				   data);
+		g_object_unref (tile_file);
+	}
+}
+
+/* Click handler: open the GPS location in the default map application */
+static gboolean
+gps_map_clicked_cb (GtkWidget      *widget,
+                    GdkEventButton *event,
+                    gpointer        user_data)
+{
+	NemoPreviewPane *self = NEMO_PREVIEW_PANE (user_data);
+	char *uri;
+
+	if (event->type != GDK_BUTTON_PRESS || event->button != 1)
+		return FALSE;
+
+	/* Open OSM in the default browser */
+	uri = g_strdup_printf ("https://www.openstreetmap.org/?mlat=%.6f&mlon=%.6f#map=16/%.6f/%.6f",
+			       self->gps_lat, self->gps_lon,
+			       self->gps_lat, self->gps_lon);
+
+	gtk_show_uri_on_window (
+		GTK_WINDOW (gtk_widget_get_toplevel (widget)),
+		uri, event->time, NULL);
+	g_free (uri);
+
+	return TRUE;
+}
+#endif /* HAVE_EXIF */
+
 static void
 update_details (NemoPreviewPane *self, NemoFile *file)
 {
@@ -713,11 +1012,26 @@ update_details (NemoPreviewPane *self, NemoFile *file)
 							self->detail_gps);
 						gtk_widget_show (
 							self->detail_gps_label);
+
+						/* Compute decimal lat/lon and fetch map tile */
+						{
+							double dec_lat = lat_d + lat_m / 60.0 + lat_s / 3600.0;
+							double dec_lon = lon_d + lon_m / 60.0 + lon_s / 3600.0;
+							if (lat_c == 'S' || lat_c == 's')
+								dec_lat = -dec_lat;
+							if (lon_c == 'W' || lon_c == 'w')
+								dec_lon = -dec_lon;
+							self->gps_lat = dec_lat;
+							self->gps_lon = dec_lon;
+							gps_map_fetch_tile (self, dec_lat, dec_lon);
+						}
 					} else {
 						gtk_widget_hide (
 							self->detail_gps);
 						gtk_widget_hide (
 							self->detail_gps_label);
+						gtk_widget_hide (
+							self->gps_map_event_box);
 					}
 
 					exif_data_unref (ed);
@@ -726,23 +1040,30 @@ update_details (NemoPreviewPane *self, NemoFile *file)
 						self->detail_gps);
 					gtk_widget_hide (
 						self->detail_gps_label);
+					gtk_widget_hide (
+						self->gps_map_event_box);
 				}
 			} else {
 				gtk_widget_hide (
 					self->detail_gps);
 				gtk_widget_hide (
 					self->detail_gps_label);
+				gtk_widget_hide (
+					self->gps_map_event_box);
 			}
 		} else {
 			gtk_widget_hide (
 				self->detail_gps);
 			gtk_widget_hide (
 				self->detail_gps_label);
+			gtk_widget_hide (
+				self->gps_map_event_box);
 		}
 	}
 #else
 	gtk_widget_hide (self->detail_gps);
 	gtk_widget_hide (self->detail_gps_label);
+	gtk_widget_hide (self->gps_map_event_box);
 #endif
 
 	gtk_widget_show (self->details_scroll);
@@ -759,6 +1080,11 @@ clear_details (NemoPreviewPane *self)
 	gtk_label_set_text (GTK_LABEL (self->detail_location), "");
 	gtk_widget_hide (self->detail_gps);
 	gtk_widget_hide (self->detail_gps_label);
+	gtk_widget_hide (self->gps_map_event_box);
+	if (self->map_cancellable != NULL) {
+		g_cancellable_cancel (self->map_cancellable);
+		g_clear_object (&self->map_cancellable);
+	}
 	gtk_widget_hide (self->details_scroll);
 }
 
@@ -1321,6 +1647,10 @@ nemo_preview_pane_dispose (GObject *object)
 	NemoPreviewPane *self = NEMO_PREVIEW_PANE (object);
 
 	g_cancellable_cancel (self->cancellable);
+	if (self->map_cancellable != NULL) {
+		g_cancellable_cancel (self->map_cancellable);
+		g_clear_object (&self->map_cancellable);
+	}
 	disconnect_file (self);
 	clear_image_data (self);
 
@@ -1686,30 +2016,64 @@ nemo_preview_pane_init (NemoPreviewPane *self)
 		GTK_SCROLLED_WINDOW (self->details_scroll),
 		GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 
-	grid = GTK_GRID (gtk_grid_new ());
-	gtk_grid_set_row_spacing (grid, 6);
-	gtk_grid_set_column_spacing (grid, 12);
-	gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
-	gtk_widget_set_margin_end (GTK_WIDGET (grid), 12);
-	gtk_widget_set_margin_top (GTK_WIDGET (grid), 12);
-	gtk_widget_set_margin_bottom (GTK_WIDGET (grid), 12);
-	self->details_grid = GTK_WIDGET (grid);
+	/* Outer HBox: text metadata on left, map on right */
+	{
+		GtkWidget *details_hbox;
 
-	self->detail_name = create_detail_row (grid, _("Name:"), 0);
-	self->detail_size = create_detail_row (grid, _("Size:"), 1);
-	self->detail_type = create_detail_row (grid, _("Type:"), 2);
-	self->detail_modified = create_detail_row (grid, _("Modified:"), 3);
-	self->detail_permissions = create_detail_row (grid, _("Permissions:"), 4);
-	self->detail_location = create_detail_row (grid, _("Location:"), 5);
-	self->detail_gps = create_detail_row (grid, _("GPS:"), 6);
-	self->detail_gps_label = gtk_grid_get_child_at (grid, 0, 6);
-	/* GPS row hidden by default, shown only when data is present */
-	gtk_widget_hide (self->detail_gps);
-	gtk_widget_hide (self->detail_gps_label);
+		details_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 8);
+		gtk_widget_set_margin_start (details_hbox, 12);
+		gtk_widget_set_margin_end (details_hbox, 12);
+		gtk_widget_set_margin_top (details_hbox, 12);
+		gtk_widget_set_margin_bottom (details_hbox, 12);
 
-	gtk_container_add (GTK_CONTAINER (self->details_scroll),
-			   GTK_WIDGET (grid));
-	gtk_widget_show (GTK_WIDGET (grid));
+		/* Left side: text metadata grid */
+		grid = GTK_GRID (gtk_grid_new ());
+		gtk_grid_set_row_spacing (grid, 6);
+		gtk_grid_set_column_spacing (grid, 12);
+		self->details_grid = GTK_WIDGET (grid);
+
+		self->detail_name = create_detail_row (grid, _("Name:"), 0);
+		self->detail_size = create_detail_row (grid, _("Size:"), 1);
+		self->detail_type = create_detail_row (grid, _("Type:"), 2);
+		self->detail_modified = create_detail_row (grid, _("Modified:"), 3);
+		self->detail_permissions = create_detail_row (grid, _("Permissions:"), 4);
+		self->detail_location = create_detail_row (grid, _("Location:"), 5);
+		self->detail_gps = create_detail_row (grid, _("GPS:"), 6);
+		self->detail_gps_label = gtk_grid_get_child_at (grid, 0, 6);
+		/* GPS row hidden by default, shown only when data is present */
+		gtk_widget_hide (self->detail_gps);
+		gtk_widget_hide (self->detail_gps_label);
+
+		gtk_widget_show (GTK_WIDGET (grid));
+		gtk_box_pack_start (GTK_BOX (details_hbox),
+				    GTK_WIDGET (grid), TRUE, TRUE, 0);
+
+		/* Right side: GPS map tile */
+		self->gps_map_event_box = gtk_event_box_new ();
+		gtk_widget_set_halign (self->gps_map_event_box, GTK_ALIGN_END);
+		gtk_widget_set_valign (self->gps_map_event_box, GTK_ALIGN_START);
+		self->detail_gps_map = gtk_image_new ();
+		gtk_widget_set_size_request (self->detail_gps_map,
+					     GPS_MAP_SIZE, GPS_MAP_SIZE);
+		gtk_container_add (GTK_CONTAINER (self->gps_map_event_box),
+				   self->detail_gps_map);
+		gtk_widget_show (self->detail_gps_map);
+		gtk_widget_set_tooltip_text (self->gps_map_event_box,
+					     _("Click to open in map"));
+		gtk_widget_set_events (self->gps_map_event_box,
+				       GDK_BUTTON_PRESS_MASK);
+		g_signal_connect (self->gps_map_event_box,
+				  "button-press-event",
+				  G_CALLBACK (gps_map_clicked_cb), self);
+		gtk_widget_set_no_show_all (self->gps_map_event_box, TRUE);
+		gtk_widget_hide (self->gps_map_event_box);
+		gtk_box_pack_end (GTK_BOX (details_hbox),
+				  self->gps_map_event_box, FALSE, FALSE, 0);
+
+		gtk_widget_show (details_hbox);
+		gtk_container_add (GTK_CONTAINER (self->details_scroll),
+				   details_hbox);
+	}
 
 	gtk_paned_pack2 (GTK_PANED (self->vpaned),
 			 self->details_scroll, FALSE, FALSE);
@@ -1730,4 +2094,16 @@ GtkWidget *
 nemo_preview_pane_new (void)
 {
 	return g_object_new (NEMO_TYPE_PREVIEW_PANE, NULL);
+}
+
+void
+nemo_preview_pane_toggle_details (NemoPreviewPane *self)
+{
+	g_return_if_fail (NEMO_IS_PREVIEW_PANE (self));
+
+	if (gtk_widget_get_visible (self->details_scroll)) {
+		gtk_widget_hide (self->details_scroll);
+	} else if (self->current_file != NULL) {
+		gtk_widget_show (self->details_scroll);
+	}
 }

@@ -38,6 +38,7 @@ GtkWidget *nemo_preview_pane_new             (void);
 void       nemo_preview_pane_set_file        (NemoPreviewPane *self,
 					      NemoFile        *file);
 void       nemo_preview_pane_clear           (NemoPreviewPane *self);
+void       nemo_preview_pane_toggle_details  (NemoPreviewPane *self);
 
 G_END_DECLS
 

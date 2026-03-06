@@ -1278,6 +1278,19 @@ nemo_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
+	/* Shift+Alt+F3 toggles the details/metadata panel inside the
+	 * preview pane. */
+	if (event->keyval == GDK_KEY_F3 &&
+	    (event->state & gtk_accelerator_get_default_mod_mask ()) ==
+	    (GDK_SHIFT_MASK | GDK_MOD1_MASK)) {
+		if (window->details->preview_pane_visible) {
+			nemo_preview_pane_toggle_details (
+				NEMO_PREVIEW_PANE (
+					window->details->preview_pane));
+			return TRUE;
+		}
+	}
+
 	/* Insert key = New Folder (configurable via new-folder-alt) */
 	if (nemo_keybinding_settings != NULL) {
 		g_autofree gchar *nf_accel = g_settings_get_string (nemo_keybinding_settings, "new-folder-alt");
