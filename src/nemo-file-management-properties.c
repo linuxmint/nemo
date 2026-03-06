@@ -43,6 +43,7 @@
 #include "nemo-plugin-manager.h"
 #include "nemo-template-config-widget.h"
 #include "nemo-actions.h"
+#include "nemo-keybindings.h"
 
 /* string enum preferences */
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DEFAULT_VIEW_WIDGET "default_view_combobox"
@@ -485,6 +486,18 @@ nemo_file_management_properties_dialog_setup_templates_page (GtkBuilder *builder
     gtk_box_pack_start (GTK_BOX (box),
                         GTK_WIDGET (nemo_template_config_widget_new ()),
                         TRUE, TRUE, 0);
+}
+
+static void
+nemo_file_management_properties_dialog_setup_keybindings_page (GtkBuilder *builder)
+{
+    GtkWidget *box;
+    GtkWidget *editor;
+
+    box = GTK_WIDGET (gtk_builder_get_object (builder, "keybindings_box"));
+    editor = nemo_keybindings_create_editor ();
+
+    gtk_box_pack_start (GTK_BOX (box), editor, TRUE, TRUE, 0);
 }
 
 static void
@@ -1144,6 +1157,7 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 	nemo_file_management_properties_dialog_setup_list_column_page (builder);
     nemo_file_management_properties_dialog_setup_plugin_page (builder);
     nemo_file_management_properties_dialog_setup_templates_page (builder);
+    nemo_file_management_properties_dialog_setup_keybindings_page (builder);
 
 
     setup_configurable_menu_items (builder);

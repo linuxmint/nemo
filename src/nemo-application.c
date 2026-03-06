@@ -61,6 +61,8 @@
 #include <libnemo-private/nemo-thumbnails.h>
 #include <libnemo-extension/nemo-menu-provider.h>
 
+#include "nemo-keybindings.h"
+
 #define DEBUG_FLAG NEMO_DEBUG_APPLICATION
 #include <libnemo-private/nemo-debug.h>
 
@@ -564,6 +566,9 @@ nemo_application_startup (GApplication *app)
 	/* initialize theming */
 	init_icons_and_styles ();
 	init_gtk_accels ();
+
+	/* initialize configurable keybindings */
+	nemo_keybindings_init ();
 
 	/* initialize nemo modules */
 	nemo_module_setup ();
