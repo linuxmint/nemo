@@ -84,12 +84,14 @@ const NemoKeybindingEntry nemo_keybinding_entries[] = {
 
 	/* File Operations — accel-map entries */
 	{ "open",                  "<Actions>/DirViewActions/Open",             N_("Open"),                       N_("File Operations"), "<Control>o",        NULL, NULL },
+	{ "open-default",          NULL,                                        N_("Open with Default App"),       N_("File Operations"), "F4",                NULL, NULL },
 	{ "open-alternate",        "<Actions>/DirViewActions/OpenAlternate",    N_("Open in New Window"),         N_("File Operations"), "<Control><Shift>o", NULL, NULL },
 	{ "open-in-new-tab",       "<Actions>/DirViewActions/OpenInNewTab",     N_("Open in New Tab"),            N_("File Operations"), "<Control><Shift>t", NULL, NULL },
 	{ "open-in-terminal",      "<Actions>/DirViewActions/OpenInTerminal",   N_("Open in Terminal"),           N_("File Operations"), "<Shift>F4",         NULL, NULL },
 	{ "open-containing-folder","<Actions>/DirViewActions/OpenContainingFolder", N_("Open Containing Folder"), N_("File Operations"), "<Control><Alt>o",   NULL, NULL },
 	{ "properties",            "<Actions>/DirViewActions/Properties",       N_("Properties"),                 N_("File Operations"), "<Alt>Return",       NULL, NULL },
 	{ "new-folder",            "<Actions>/DirViewActions/New Folder",       N_("New Folder"),                 N_("File Operations"), "<Control><Shift>n", NULL, NULL },
+	{ "new-folder-alt",        NULL,                                        N_("New Folder (alternate)"),      N_("File Operations"), "Insert",             NULL, NULL },
 	{ "rename",                "<Actions>/DirViewActions/Rename",           N_("Rename"),                     N_("File Operations"), "F2",                NULL, NULL },
 	{ "create-link",           "<Actions>/DirViewActions/Create Link",      N_("Make Symbolic Link"),         N_("File Operations"), "<Control>m",        NULL, NULL },
 	{ "pin-file",              "<Actions>/DirViewActions/Pin File",         N_("Pin/Unpin File"),             N_("File Operations"), "<Control><Shift>d", NULL, NULL },
@@ -177,6 +179,12 @@ apply_keybinding (const NemoKeybindingEntry *entry)
 	}
 
 	/* --- Accel-map entry --- */
+
+	if (entry->accel_path == NULL) {
+		/* Window-level keybinding handled elsewhere (e.g. key_press_event).
+		 * Nothing to apply here. */
+		return;
+	}
 
 	if (accel_string == NULL || accel_string[0] == '\0') {
 		/* Disabled binding: remove any existing accelerator */

@@ -1278,6 +1278,58 @@ nemo_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
+	/* Insert key = New Folder (configurable via new-folder-alt) */
+	if (nemo_keybinding_settings != NULL) {
+		g_autofree gchar *nf_accel = g_settings_get_string (nemo_keybinding_settings, "new-folder-alt");
+		guint nf_key = 0;
+		GdkModifierType nf_mods = 0;
+
+		gtk_accelerator_parse (nf_accel, &nf_key, &nf_mods);
+
+		if (nf_key != 0 && event->keyval == nf_key &&
+		    (event->state & gtk_accelerator_get_default_mod_mask ()) == nf_mods) {
+			const GList *action_groups;
+			GtkAction *action = NULL;
+
+			action_groups = gtk_ui_manager_get_action_groups (window->details->ui_manager);
+			while (action_groups != NULL && action == NULL) {
+				action = gtk_action_group_get_action (action_groups->data, NEMO_ACTION_NEW_FOLDER);
+				action_groups = action_groups->next;
+			}
+
+			if (action != NULL && gtk_action_is_sensitive (action)) {
+				gtk_action_activate (action);
+				return TRUE;
+			}
+		}
+	}
+
+	/* F4 = Open selected file with default application (configurable via open-default) */
+	if (nemo_keybinding_settings != NULL) {
+		g_autofree gchar *od_accel = g_settings_get_string (nemo_keybinding_settings, "open-default");
+		guint od_key = 0;
+		GdkModifierType od_mods = 0;
+
+		gtk_accelerator_parse (od_accel, &od_key, &od_mods);
+
+		if (od_key != 0 && event->keyval == od_key &&
+		    (event->state & gtk_accelerator_get_default_mod_mask ()) == od_mods) {
+			const GList *action_groups;
+			GtkAction *action = NULL;
+
+			action_groups = gtk_ui_manager_get_action_groups (window->details->ui_manager);
+			while (action_groups != NULL && action == NULL) {
+				action = gtk_action_group_get_action (action_groups->data, NEMO_ACTION_OPEN);
+				action_groups = action_groups->next;
+			}
+
+			if (action != NULL && gtk_action_is_sensitive (action)) {
+				gtk_action_activate (action);
+				return TRUE;
+			}
+		}
+	}
+
 	for (i = 0; i < G_N_ELEMENTS (extra_window_keybindings); i++) {
 		if (extra_window_keybindings[i].keyval == event->keyval) {
 			const GList *action_groups;

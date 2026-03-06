@@ -2296,6 +2296,8 @@ update_menu_states (NemoPlacesSidebar *sidebar)
 	gboolean show_stop;
 	gboolean show_empty_trash;
 	gboolean show_properties;
+	gboolean show_clear_recent;
+	gboolean show_remove_all_bookmarks;
 	char *uri = NULL;
 
 	type = PLACES_BUILT_IN;
@@ -2345,6 +2347,11 @@ update_menu_states (NemoPlacesSidebar *sidebar)
 	show_empty_trash = (uri != NULL) &&
 			   (!strcmp (uri, "trash:///"));
 
+	show_clear_recent = (uri != NULL) &&
+			    (!strcmp (uri, "recent:///"));
+
+	show_remove_all_bookmarks = (type == PLACES_BOOKMARK);
+
     g_free (uri);
 
 	/* Only show properties for local mounts */
@@ -2366,6 +2373,8 @@ update_menu_states (NemoPlacesSidebar *sidebar)
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_START_VOLUME, show_start);
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_STOP_VOLUME, show_stop);
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, show_empty_trash);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SIDEBAR_CLEAR_RECENT, show_clear_recent);
+    set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_SIDEBAR_REMOVE_ALL_BOOKMARKS, show_remove_all_bookmarks);
     set_action_visible (sidebar->bookmark_action_group, NEMO_ACTION_PROPERTIES, show_properties);
 
 	/* Adjust start/stop items to reflect the type of the drive */
@@ -3182,6 +3191,25 @@ empty_trash_cb (GtkAction           *item,
 	nemo_file_operations_empty_trash (GTK_WIDGET (sidebar->window));
 }
 
+static void
+clear_recent_cb (GtkAction           *item,
+		 NemoPlacesSidebar *sidebar)
+{
+	GtkRecentManager *manager = gtk_recent_manager_get_default ();
+	gtk_recent_manager_purge_items (manager, NULL);
+}
+
+static void
+remove_all_bookmarks_cb (GtkAction           *item,
+			 NemoPlacesSidebar *sidebar)
+{
+	guint len = nemo_bookmark_list_length (sidebar->bookmarks);
+	while (len > 0) {
+		len--;
+		nemo_bookmark_list_delete_item_at (sidebar->bookmarks, len);
+	}
+}
+
 static gboolean
 find_prev_or_next_row (NemoPlacesSidebar *sidebar,
 		       GtkTreeIter *iter,
@@ -3524,6 +3552,8 @@ static const GtkActionEntry bookmark_action_entries[] = {
     { NEMO_ACTION_START_VOLUME,            NULL,                   N_("_Start"),               NULL, NULL, G_CALLBACK (start_shortcut_cb)              },
     { NEMO_ACTION_STOP_VOLUME,             NULL,                   N_("_Stop"),                NULL, NULL, G_CALLBACK (stop_shortcut_cb)               },
     { NEMO_ACTION_EMPTY_TRASH_CONDITIONAL, NULL,                   N_("_Empty _Trash"),        NULL, NULL, G_CALLBACK (empty_trash_cb)                 },
+    { NEMO_ACTION_SIDEBAR_CLEAR_RECENT,    NULL,                   N_("_Clear Recent"),        NULL, NULL, G_CALLBACK (clear_recent_cb)                },
+    { NEMO_ACTION_SIDEBAR_REMOVE_ALL_BOOKMARKS, NULL,              N_("Remove _All Bookmarks"),NULL, NULL, G_CALLBACK (remove_all_bookmarks_cb)        },
     { NEMO_ACTION_PROPERTIES,              NULL,                   N_("_Properties"),          NULL, NULL, G_CALLBACK (properties_cb)                  },
 };
 

@@ -168,6 +168,8 @@
 #define NEMO_ACTION_DESKTOP_OVERLAY "Desktop Overlay"
 
 #define NEMO_ACTION_SIDEBAR_REMOVE "Remove Bookmark"
+#define NEMO_ACTION_SIDEBAR_REMOVE_ALL_BOOKMARKS "Remove All Bookmarks"
+#define NEMO_ACTION_SIDEBAR_CLEAR_RECENT "Clear Recent"
 #define NEMO_ACTION_SIDEBAR_DETECT_MEDIA "Detect Media"
 
 typedef struct
