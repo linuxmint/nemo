@@ -105,6 +105,11 @@ static void load_new_location                         (NemoWindowSlot         *s
 						       gboolean                    tell_new_content_view);
 static void location_has_really_changed               (NemoWindowSlot         *slot);
 static void update_for_new_location                   (NemoWindowSlot         *slot);
+static void nemo_window_slot_emit_location_change     (NemoWindowSlot         *slot,
+                                                       GFile                      *from,
+                                                       GFile                      *to);
+static void nemo_window_emit_location_change          (NemoWindow             *window,
+                                                       GFile                      *location);
 
 /* set_displayed_location:
  */
@@ -572,14 +577,36 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
                 gtk_widget_show_all (overview);
             }
 
-            /* Update slot state with proper bookmark tracking */
+            /* Properly mirror update_for_new_location() so that slot->location is
+             * updated to overview:// and the previous location lands on the back-list.
+             * Without this, slot->location would stay pointing at the previous dir,
+             * causing (a) the "same location" early-return to fire when the user
+             * clicks the same sidebar item again, and (b) set_displayed_location()
+             * on the next navigation to rotate the wrong bookmark into the back-list,
+             * ending up with overview:// in back_list and triggering the
+             * "cannot handle overview locations" error on back-button press. */
             set_displayed_location (target_slot, location);
+            handle_go_elsewhere (target_slot, location);
+            nemo_window_slot_emit_location_change (target_slot, target_slot->location, location);
+            g_clear_object (&target_slot->location);
+            target_slot->location = g_object_ref (location);
+
+            /* Emit the window-level "loading_uri" signal so the sidebar
+             * can update its selection to the Overview row. */
+            if (target_slot == nemo_window_get_active_slot (target_window)) {
+                nemo_window_emit_location_change (target_window, location);
+            }
 
             g_free (target_slot->title);
             target_slot->title = g_strdup (_("Overview"));
 
             nemo_window_slot_update_title (target_slot);
             nemo_window_slot_update_icon (target_slot);
+
+            if (target_slot == nemo_window_get_active_slot (target_window)) {
+                nemo_window_pane_sync_up_actions (target_slot->pane);
+                nemo_window_pane_sync_location_widgets (target_slot->pane);
+            }
 
             if (old_location != NULL)
                 g_object_unref (old_location);
@@ -628,10 +655,11 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
             target_slot->content_view = NULL;
         }
 
-        /* If we're leaving overview, use normal history handling */
-        if (was_overview) {
-            handle_go_elsewhere (target_slot, location);
-        }
+        /* The overview entry already updated slot->location to overview:// and
+         * pushed the previous location onto the back-list.  begin_location_change
+         * → update_for_new_location → update_history(STANDARD) will call
+         * handle_go_elsewhere and push overview:// onto the back-list automatically,
+         * so we must NOT call handle_go_elsewhere here a second time. */
     }
 
     begin_location_change (target_slot,
@@ -785,6 +813,81 @@ begin_location_change (NemoWindowSlot        *slot,
 
 	slot->open_callback = callback;
 	slot->open_callback_user_data = user_data;
+
+    /* ── Short-circuit for overview:// — no async file-info lookup needed ── */
+    {
+        char *scheme = g_file_get_uri_scheme (location);
+        if (g_strcmp0 (scheme, "overview") == 0) {
+            g_free (scheme);
+
+            /* Remove any existing content view */
+            if (slot->content_view != NULL) {
+                GtkWidget *old_widget = GTK_WIDGET (slot->content_view);
+                gtk_widget_destroy (old_widget);
+                g_object_unref (slot->content_view);
+                slot->content_view = NULL;
+            }
+
+            /* Remove any previous overview widget */
+            {
+                GList *children = gtk_container_get_children (GTK_CONTAINER (slot->view_overlay));
+                GList *c;
+                for (c = children; c != NULL; c = c->next) {
+                    if (NEMO_IS_OVERVIEW (c->data))
+                        gtk_widget_destroy (GTK_WIDGET (c->data));
+                }
+                g_list_free (children);
+            }
+
+            /* Create and show the overview widget */
+            {
+                GtkWidget *overview = nemo_overview_new ();
+                gtk_container_add (GTK_CONTAINER (slot->view_overlay), overview);
+                gtk_widget_show_all (overview);
+            }
+
+            /* Mirror update_for_new_location() for the overview:// pseudo-location.
+             * set_displayed_location() must run before update_history() so that
+             * last_location_bookmark matches slot->location for the assertions
+             * inside handle_go_back() / handle_go_elsewhere(). */
+            set_displayed_location (slot, location);
+            update_history (slot, type, location);
+            nemo_window_slot_emit_location_change (slot, slot->location, location);
+            g_clear_object (&slot->location);
+            slot->location = g_object_ref (location); /* same pointer as pending_location */
+
+            /* Emit the window-level "loading_uri" signal so the sidebar
+             * can update its selection to the Overview row. */
+            if (slot == nemo_window_get_active_slot (nemo_window_slot_get_window (slot))) {
+                nemo_window_emit_location_change (nemo_window_slot_get_window (slot), location);
+            }
+
+            g_free (slot->title);
+            slot->title = g_strdup (_("Overview"));
+            nemo_window_slot_update_title (slot);
+            nemo_window_slot_update_icon (slot);
+
+            if (slot == nemo_window_get_active_slot (nemo_window_slot_get_window (slot))) {
+                nemo_window_pane_sync_up_actions (slot->pane);
+                nemo_window_pane_sync_location_widgets (slot->pane);
+            }
+
+            /* Fire the completion callback, then clean up pending state. */
+            if (slot->open_callback != NULL) {
+                slot->open_callback (nemo_window_slot_get_window (slot),
+                                     NULL, slot->open_callback_user_data);
+                slot->open_callback = NULL;
+                slot->open_callback_user_data = NULL;
+            }
+            end_location_change (slot);
+
+            if (parent_selection != NULL)
+                g_list_free_full (parent_selection, g_object_unref);
+
+            return;
+        }
+        g_free (scheme);
+    }
 
     directory = nemo_directory_get (location);
 
