@@ -191,6 +191,53 @@ G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
 static gint click_policy = NEMO_CLICK_POLICY_SINGLE;
 
+static gboolean
+list_view_search_equal_func (GtkTreeModel *model,
+                             gint search_column,
+                             const gchar *key,
+                             GtkTreeIter *iter,
+                             gpointer user_data)
+{
+	gchar *name = NULL;
+	gchar *normalized_key = NULL;
+	gchar *case_normalized_key = NULL;
+	gchar *normalized_name = NULL;
+	gchar *case_normalized_name = NULL;
+	gboolean is_match = FALSE;
+
+	(void) user_data;
+
+	if (key == NULL || key[0] == '\0') {
+		return TRUE;
+	}
+
+	gtk_tree_model_get (model, iter, search_column, &name, -1);
+	if (name == NULL) {
+		return TRUE;
+	}
+
+	normalized_key = g_utf8_normalize (key, -1, G_NORMALIZE_ALL);
+	normalized_name = g_utf8_normalize (name, -1, G_NORMALIZE_ALL);
+
+	if (normalized_key != NULL && normalized_name != NULL) {
+		case_normalized_key = g_utf8_casefold (normalized_key, -1);
+		case_normalized_name = g_utf8_casefold (normalized_name, -1);
+
+		if (case_normalized_key != NULL && case_normalized_name != NULL) {
+			is_match = strstr (case_normalized_name, case_normalized_key) != NULL;
+		}
+	}
+
+	g_free (case_normalized_name);
+	g_free (normalized_name);
+	g_free (case_normalized_key);
+	g_free (normalized_key);
+	g_free (name);
+
+	/* GtkTreeView expects FALSE for a row that matches. */
+	return !is_match;
+}
+
 static const char * default_trash_visible_columns[] = {
 	"name", "size", "type", "trashed_on", "trash_orig_path", NULL
 };
@@ -2538,6 +2585,10 @@ create_and_set_up_tree_view (NemoListView *view)
 							NULL);
 
 	gtk_tree_view_set_enable_search (view->details->tree_view, TRUE);
+	gtk_tree_view_set_search_equal_func (view->details->tree_view,
+					     list_view_search_equal_func,
+					     view,
+					     NULL);
 
 	/* Don't handle backspace key. It's used to open the parent folder. */
 	binding_set = gtk_binding_set_by_class (GTK_WIDGET_GET_CLASS (view->details->tree_view));
