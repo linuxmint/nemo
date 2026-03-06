@@ -1149,6 +1149,7 @@ open_with_dialog_response_cb (GtkDialog *dialog,
 
     gtk_widget_destroy (GTK_WIDGET (dialog));
     g_object_unref (info);
+    nemo_file_unref (file);
 }
 
 static void
@@ -1178,6 +1179,9 @@ run_open_with_dialog (ActivateParametersSpecial *params)
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
     GtkWidget *chooser = nemo_mime_application_chooser_new (uri, uris, mime_type, ok_button);
+
+    g_free (uri);
+    g_free (mime_type);
 
     GtkWidget *content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -1713,6 +1717,7 @@ activate_files (ActivateParameters *parameters)
 
                 file_path = g_file_get_path (initial_location);
                 uri = g_strconcat ("admin://", file_path, NULL);
+                g_free (file_path);
             }
 
             final_location = g_file_new_for_uri (uri);
