@@ -587,9 +587,14 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
                 gtk_widget_show_all (overview);
             }
 
-            /* Update slot state */
-            if (target_slot->location != NULL)
-                g_object_unref (target_slot->location);
+            /* Update slot state (must happen before location change to preserve old_location) */
+            if (target_slot->location != NULL) {
+                /* Add current location to back list before switching to overview */
+                target_slot->back_list = g_list_prepend (target_slot->back_list,
+                                                        nemo_bookmark_new (target_slot->location, NULL, NULL, NULL));
+            }
+
+            g_object_unref (target_slot->location);
             target_slot->location = g_object_ref (location);
 
             g_free (target_slot->title);
