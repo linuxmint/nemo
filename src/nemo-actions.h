@@ -80,6 +80,7 @@
 #define NEMO_ACTION_CUT "Cut"
 #define NEMO_ACTION_LOCATION_CUT "LocationCut"
 #define NEMO_ACTION_COPY "Copy"
+#define NEMO_ACTION_COPY_PATH "Copy Path"
 #define NEMO_ACTION_LOCATION_COPY "LocationCopy"
 #define NEMO_ACTION_PASTE "Paste"
 #define NEMO_ACTION_PASTE_FILES_INTO "Paste Files Into"
@@ -193,6 +194,9 @@ static const ConfigurableMenuItemInfo CONFIGURABLE_MENU_ITEM_INFO [] = {
 
     { NEMO_ACTION_COPY, "selection_menu__copy_check",
      "/selection/File Clipboard Actions/Copy", "selection-menu-copy" },
+
+    { NEMO_ACTION_COPY_PATH, "selection_menu__copy_path_check",
+     "/selection/File Clipboard Actions/Copy Path", "selection-menu-copy-path" },
 
     { NEMO_ACTION_PASTE_FILES_INTO, "selection_menu__paste_check",
      "/selection/File Clipboard Actions/Paste Files Into", "selection-menu-paste" },
