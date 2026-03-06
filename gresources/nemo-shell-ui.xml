@@ -50,6 +50,7 @@
 		<separator/>
 		<placeholder name="Extension Actions"/>
 		<separator/>
+		<menuitem name="Create Action" action="Create Action"/>
 		<menuitem name="Preferences" action="Preferences"/>
 	</menu>
 	<menu action="View">
