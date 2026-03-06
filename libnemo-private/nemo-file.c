@@ -7948,7 +7948,13 @@ nemo_file_mark_gone (NemoFile *file)
 	/* Let the directory know it's gone. */
 	directory = file->details->directory;
 	if (!nemo_file_is_self_owned (file)) {
+		/* Hold a temporary ref across nemo_directory_remove_file: when the
+		 * directory is monitoring its file list, remove_file calls
+		 * nemo_file_unref() which can drop the refcount to zero and free
+		 * the object before the nemo_file_clear_info() call below. */
+		nemo_file_ref (file);
 		nemo_directory_remove_file (directory, file);
+		nemo_file_unref (file);
 	}
 
 	nemo_file_clear_info (file);
