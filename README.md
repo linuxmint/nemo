@@ -57,3 +57,41 @@ When viewing an image that contains GPS coordinates in its EXIF data, the Previe
 | **Ctrl+]** | Shrink the Preview Pane (narrower) |
 
 ![Preview Pane keyboard shortcuts](Documents/key%20bindings.png)
+---
+
+smpl-nemo Additions
+====
+
+This fork ([KonTy/nemo](https://github.com/KonTy/nemo)) extends upstream Nemo with the following features:
+
+### Overview Page — Disk Usage Visualisation
+
+A new **Overview** entry sits at the top of the sidebar under *My Computer*. It provides a full disk-usage dashboard without leaving the file manager.
+
+- **Donut charts** — one per mounted volume, showing used vs. free space with percentage label
+- **Deep top-offenders scan** — a full recursive `du`-style scan (equivalent to `du -a | sort -nr | head`) runs automatically in the background as soon as Nemo starts, so the chart is ready the moment you open Overview
+- **Bar chart** — horizontal bar per offender, scaled to the largest item, with a hover tooltip showing the full path and human-readable size
+- **Ranked list** — scrollable list of the top disk hogs beneath each bar chart; click any row to navigate directly to that directory
+- **Process-wide cache** — scan results are shared across all windows and tabs; revisiting Overview is instant
+- **Periodic rescan** — the cache refreshes automatically every 120 seconds in the background
+- **Sidebar selection** — the Overview row in the sidebar is highlighted correctly when Overview is active, and cleared when navigating away
+- **Full navigation integration** — back/forward buttons, sidebar clicks, and address-bar entries all work correctly with `overview://`; pressing Back from a directory returns to Overview without errors
+
+### Preview Pane
+
+An embedded preview panel toggled with **Alt+F3** that shows a live file preview and metadata directly inside the window.
+
+- GPS map tile (OpenStreetMap) for geotagged images, with a crosshair at the shot location; click to open in browser
+- Map tiles cached locally in `~/.cache/nemo/map-tiles/`
+- Adjustable pane width with **Ctrl+[** / **Ctrl+]**
+
+### Other Additions
+
+| Feature | Description |
+|---------|-------------|
+| **Copy Path** | *Copy Path* entry in the right-click context menu |
+| **Tab to switch panes** | Press **Tab** to move focus between left and right split panes |
+| **Anywhere search** | Interactive filename search matches characters anywhere in the name, not just at the start |
+| **Sidebar context menus** | Right-click context menus on sidebar items; **Insert** / **F4** keybindings |
+| **Configurable shortcuts** | Keyboard shortcuts editable via preferences |
+| **Memory leak fixes** | Several memory leaks in the original codebase corrected |
