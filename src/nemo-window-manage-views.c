@@ -68,6 +68,7 @@
  * for the desktop window.
  */
 #include "nemo-desktop-window.h"
+#include "nemo-overview.h"
 
 /* This number controls a maximum character count for a URL that is
  * displayed as part of a dialog. It's fairly arbitrary -- big enough
@@ -549,6 +550,71 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 
         g_object_unref (old_location);
             return;
+    }
+
+    /* ── Overview page: intercept overview:/// ──────────────── */
+    {
+        char *scheme = g_file_get_uri_scheme (location);
+        if (g_strcmp0 (scheme, "overview") == 0) {
+            g_free (scheme);
+
+            /* Remove the current directory view, if any */
+            if (target_slot->content_view != NULL) {
+                GtkWidget *old_widget = GTK_WIDGET (target_slot->content_view);
+                gtk_widget_destroy (old_widget);
+                g_object_unref (target_slot->content_view);
+                target_slot->content_view = NULL;
+            }
+
+            /* Remove any previous overview widget */
+            {
+                GList *children = gtk_container_get_children (GTK_CONTAINER (target_slot->view_overlay));
+                GList *c;
+                for (c = children; c != NULL; c = c->next) {
+                    if (NEMO_IS_OVERVIEW (c->data))
+                        gtk_widget_destroy (GTK_WIDGET (c->data));
+                }
+                g_list_free (children);
+            }
+
+            /* Create and show the overview widget */
+            {
+                GtkWidget *overview = nemo_overview_new ();
+                gtk_container_add (GTK_CONTAINER (target_slot->view_overlay), overview);
+                gtk_widget_show_all (overview);
+            }
+
+            /* Update slot state */
+            if (target_slot->location != NULL)
+                g_object_unref (target_slot->location);
+            target_slot->location = g_object_ref (location);
+
+            g_free (target_slot->title);
+            target_slot->title = g_strdup (_("Overview"));
+
+            nemo_window_slot_update_title (target_slot);
+            nemo_window_slot_update_icon (target_slot);
+
+            if (old_location != NULL)
+                g_object_unref (old_location);
+
+            if (callback != NULL)
+                callback (target_window, NULL, user_data);
+
+            return;
+        }
+        g_free (scheme);
+    }
+
+    /* ── If navigating away from overview, clean it up ───────── */
+    {
+        GList *children = gtk_container_get_children (GTK_CONTAINER (target_slot->view_overlay));
+        GList *c;
+        for (c = children; c != NULL; c = c->next) {
+            if (NEMO_IS_OVERVIEW (c->data))
+                gtk_widget_destroy (GTK_WIDGET (c->data));
+        }
+        g_list_free (children);
     }
 
     begin_location_change (target_slot,
