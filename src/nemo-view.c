@@ -6781,6 +6781,54 @@ action_copy_files_callback (GtkAction *action,
 }
 
 static void
+action_copy_path_callback (GtkAction *action,
+			   gpointer callback_data)
+{
+	NemoView *view;
+	GList *selection, *l;
+	GString *paths;
+	GtkClipboard *clipboard;
+
+	view = NEMO_VIEW (callback_data);
+	selection = nemo_view_get_selection (view);
+
+	if (selection == NULL) {
+		return;
+	}
+
+	paths = g_string_new (NULL);
+
+	for (l = selection; l != NULL; l = l->next) {
+		NemoFile *file = NEMO_FILE (l->data);
+		GFile *location = nemo_file_get_location (file);
+		gchar *path = g_file_get_path (location);
+
+		if (path != NULL) {
+			if (paths->len > 0) {
+				g_string_append_c (paths, '\n');
+			}
+			g_string_append (paths, path);
+			g_free (path);
+		} else {
+			char *uri = nemo_file_get_uri (file);
+			if (paths->len > 0) {
+				g_string_append_c (paths, '\n');
+			}
+			g_string_append (paths, uri);
+			g_free (uri);
+		}
+
+		g_object_unref (location);
+	}
+
+	clipboard = nemo_clipboard_get (GTK_WIDGET (view));
+	gtk_clipboard_set_text (clipboard, paths->str, paths->len);
+
+	nemo_file_list_free (selection);
+	g_string_free (paths, TRUE);
+}
+
+static void
 move_copy_selection_to_next_pane (NemoView *view,
 				  int copy_action)
 {
@@ -8282,6 +8330,10 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Copy"), "<control>C",
   /* tooltip */                  N_("Prepare the selected files to be copied with a Paste command"),
 				 G_CALLBACK (action_copy_files_callback) },
+  /* name, stock id */         { "Copy Path", NULL,
+  /* label, accelerator */       N_("Copy Pat_h"), NULL,
+  /* tooltip */                  N_("Copy the path of the selected files to the clipboard"),
+				 G_CALLBACK (action_copy_path_callback) },
   /* name, stock id */         { "Paste", "xsi-edit-paste-symbolic",
   /* label, accelerator */       N_("_Paste"), "<control>V",
   /* tooltip */                  N_("Move or copy files previously selected by a Cut or Copy command"),
@@ -9930,6 +9982,10 @@ real_update_menus (NemoView *view)
 
 	action = gtk_action_group_get_action (view->details->dir_action_group,
 					      NEMO_ACTION_COPY);
+	gtk_action_set_sensitive (action, can_copy_files);
+
+	action = gtk_action_group_get_action (view->details->dir_action_group,
+					      NEMO_ACTION_COPY_PATH);
 	gtk_action_set_sensitive (action, can_copy_files);
 
 	real_update_paste_menu (view, selection, selection_count);
