@@ -80,6 +80,7 @@ app_chooser_dialog_response_cb (GtkDialog *dialog,
 
     gtk_widget_destroy (GTK_WIDGET (dialog));
     g_object_unref (info);
+    nemo_file_unref (file);
 }
 
 int
