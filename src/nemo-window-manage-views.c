@@ -540,22 +540,7 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		}
 	}
 
-    if (target_window == window && target_slot == slot &&
-        old_location && g_file_equal (old_location, location) &&
-        !is_desktop) {
-
-        if (callback != NULL) {
-        	callback (window, NULL, user_data);
-        }
-
-        g_object_unref (old_location);
-            return;
-    }
-
-    /* Start overview lazy cache in background while Nemo is running. */
-    nemo_overview_start_lazy_cache ();
-
-    /* ── Overview page: intercept overview:/// ──────────────── */
+    /* ── Check for overview:// EARLY, before any other location logic ────── */
     {
         char *scheme = g_file_get_uri_scheme (location);
         if (g_strcmp0 (scheme, "overview") == 0) {
@@ -607,6 +592,21 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
         g_free (scheme);
     }
 
+    if (target_window == window && target_slot == slot &&
+        old_location && g_file_equal (old_location, location) &&
+        !is_desktop) {
+
+        if (callback != NULL) {
+        	callback (window, NULL, user_data);
+        }
+
+        g_object_unref (old_location);
+            return;
+    }
+
+    /* Start overview lazy cache in background while Nemo is running. */
+    nemo_overview_start_lazy_cache ();
+
     /* ── If navigating away from overview, clean it up and handle history ───────── */
     {
         GList *children = gtk_container_get_children (GTK_CONTAINER (target_slot->view_overlay));
@@ -619,6 +619,14 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
             }
         }
         g_list_free (children);
+
+        /* If we're leaving overview to a regular location, destroy old content view */
+        if (was_overview && target_slot->content_view != NULL) {
+            GtkWidget *old_widget = GTK_WIDGET (target_slot->content_view);
+            gtk_widget_destroy (old_widget);
+            g_object_unref (target_slot->content_view);
+            target_slot->content_view = NULL;
+        }
 
         /* If we're leaving overview, use normal history handling */
         if (was_overview) {
