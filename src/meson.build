@@ -41,6 +41,7 @@ nemoCommon_sources = [
   'nemo-icon-view.c',
   'nemo-image-properties-page.c',
   'nemo-interesting-folder-bar.c',
+  'nemo-keybindings.c',
   'nemo-list-model.c',
   'nemo-list-view.c',
   'nemo-location-bar.c',

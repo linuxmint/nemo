@@ -34,6 +34,7 @@
 #include "nemo-actions.h"
 #include "nemo-application.h"
 #include "nemo-bookmarks-window.h"
+#include "nemo-keybindings.h"
 #include "nemo-desktop-window.h"
 #include "nemo-location-bar.h"
 #include "nemo-mime-actions.h"
@@ -2198,10 +2199,36 @@ nemo_window_class_init (NemoWindowClass *class)
 			      G_TYPE_NONE, 1, NEMO_TYPE_WINDOW_SLOT);
 
 	binding_set = gtk_binding_set_by_class (class);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
-				      "go-up", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
-				      "reload", 0);
+
+	/* BackSpace and F5 are managed by nemo-keybindings.c via GSettings,
+	 * but we need defaults in class_init because the binding set doesn't
+	 * exist yet when nemo_keybindings_apply_all() runs at startup.
+	 * If GSettings are already initialized, read from them;
+	 * otherwise use the hardcoded defaults. */
+	if (nemo_keybinding_settings != NULL) {
+		g_autofree gchar *go_up_accel = g_settings_get_string (nemo_keybinding_settings, "go-up-alt");
+		g_autofree gchar *reload_accel = g_settings_get_string (nemo_keybinding_settings, "reload-alt");
+		guint go_up_key = 0, reload_key = 0;
+		GdkModifierType go_up_mods = 0, reload_mods = 0;
+
+		gtk_accelerator_parse (go_up_accel, &go_up_key, &go_up_mods);
+		gtk_accelerator_parse (reload_accel, &reload_key, &reload_mods);
+
+		if (go_up_key != 0) {
+			gtk_binding_entry_add_signal (binding_set, go_up_key, go_up_mods,
+						      "go-up", 0);
+		}
+		if (reload_key != 0) {
+			gtk_binding_entry_add_signal (binding_set, reload_key, reload_mods,
+						      "reload", 0);
+		}
+	} else {
+		gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0,
+					      "go-up", 0);
+		gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0,
+					      "reload", 0);
+	}
+
 	gtk_binding_entry_add_signal (binding_set, GDK_KEY_slash, 0,
 				      "prompt-for-location", 1,
 				      G_TYPE_STRING, "/");
@@ -2273,6 +2300,8 @@ nemo_window_split_view_on (NemoWindow *window)
 	g_object_unref (location);
 
 	window_set_search_action_text (window, FALSE);
+
+	nemo_window_update_show_hide_ui_elements (window);
 }
 
 void

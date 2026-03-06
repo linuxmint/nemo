@@ -1175,11 +1175,24 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		return GDK_EVENT_PROPAGATE;
 	}
 
-    if (!nemo_view_get_active (NEMO_VIEW (view)) && gtk_tree_selection_count_selected_rows (selection) > 0) {
-        NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
-        nemo_window_slot_make_hosting_pane_active (slot);
-        return GDK_EVENT_STOP;
-    }
+	if (!nemo_view_get_active (NEMO_VIEW (view))) {
+		NemoWindowSlot *slot = nemo_view_get_nemo_window_slot (NEMO_VIEW (view));
+		nemo_window_slot_make_hosting_pane_active (slot);
+
+		/* Select and cursor the clicked file so the pane activates
+		 * with the right item highlighted. */
+		{
+			GtkTreePath *click_path = NULL;
+			if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
+			                                   &click_path, NULL, NULL, NULL)) {
+				gtk_tree_selection_unselect_all (selection);
+				gtk_tree_selection_select_path (selection, click_path);
+				gtk_tree_view_set_cursor (tree_view, click_path, NULL, FALSE);
+				gtk_tree_path_free (click_path);
+			}
+		}
+		return GDK_EVENT_STOP;
+	}
 
 	nemo_list_model_set_drag_view
 		(NEMO_LIST_MODEL (gtk_tree_view_get_model (tree_view)),
@@ -4354,13 +4367,34 @@ nemo_list_view_end_loading (NemoView *view,
 {
 	NemoClipboardMonitor *monitor;
 	NemoClipboardInfo *info;
+	NemoListView *list_view;
 
-    set_ok_to_load_deferred_attrs (NEMO_LIST_VIEW (view), TRUE);
+	list_view = NEMO_LIST_VIEW (view);
+
+	set_ok_to_load_deferred_attrs (list_view, TRUE);
 
 	monitor = nemo_clipboard_monitor_get ();
 	info = nemo_clipboard_monitor_get_clipboard_info (monitor);
 
-	list_view_notify_clipboard_info (monitor, info, NEMO_LIST_VIEW (view));
+	list_view_notify_clipboard_info (monitor, info, list_view);
+
+	/* In split-pane mode, if nothing is selected after loading,
+	 * select and cursor the first row so there's always a visible
+	 * cursor in each pane. */
+	{
+		GtkTreeSelection *sel;
+		GtkTreeIter first;
+
+		sel = gtk_tree_view_get_selection (list_view->details->tree_view);
+		if (gtk_tree_selection_count_selected_rows (sel) == 0) {
+			GtkTreeModel *model = gtk_tree_view_get_model (list_view->details->tree_view);
+			if (model != NULL && gtk_tree_model_get_iter_first (model, &first)) {
+				GtkTreePath *path = gtk_tree_model_get_path (model, &first);
+				gtk_tree_view_set_cursor (list_view->details->tree_view, path, NULL, FALSE);
+				gtk_tree_path_free (path);
+			}
+		}
+	}
 }
 
 static const char *

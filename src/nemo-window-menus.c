@@ -58,6 +58,7 @@
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-ui-utilities.h>
+#include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-undo-manager.h>
 #include <libnemo-private/nemo-program-choosing.h>
@@ -578,6 +579,29 @@ action_show_hide_sidebar_callback (GtkAction *action,
 
 		if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action))) {
 			nemo_window_show_sidebar (window);
+
+			/* Focus the first row in the sidebar tree view
+			 * so keyboard navigation works immediately */
+			if (window->details->sidebar != NULL) {
+				GList *children = gtk_container_get_children (
+					GTK_CONTAINER (window->details->sidebar));
+				GList *l;
+				for (l = children; l != NULL; l = l->next) {
+					GtkWidget *child = GTK_WIDGET (l->data);
+					if (GTK_IS_SCROLLED_WINDOW (child)) {
+						GtkWidget *inner = gtk_bin_get_child (GTK_BIN (child));
+						if (GTK_IS_TREE_VIEW (inner)) {
+							GtkTreeView *tv = GTK_TREE_VIEW (inner);
+							GtkTreePath *first = gtk_tree_path_new_first ();
+							gtk_tree_view_set_cursor (tv, first, NULL, FALSE);
+							gtk_widget_grab_focus (GTK_WIDGET (tv));
+							gtk_tree_path_free (first);
+							break;
+						}
+					}
+				}
+				g_list_free (children);
+			}
 		} else {
 			nemo_window_hide_sidebar (window);
 		}
@@ -894,6 +918,515 @@ action_edit_bookmarks_callback (GtkAction *action,
     if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
         nemo_window_edit_bookmarks (NEMO_WINDOW (user_data));
     }
+}
+
+/*
+ * Bookmark / Disk Picker popup menu (Alt+F1 / Alt+F2)
+ *
+ * Shows a popup menu listing all bookmarks and mounted volumes.
+ * Alt+F1: always navigate in the LEFT (first) pane.
+ * Alt+F2: always navigate in the RIGHT (second) pane (opens split view if needed).
+ */
+
+typedef struct {
+	NemoWindow *window;
+	gboolean    right_pane;      /* TRUE = navigate the right (second) pane */
+	GFile      *location;        /* owned */
+	GVolume    *volume;          /* owned, may be NULL */
+} BookmarkPickerData;
+
+static void
+bookmark_picker_data_free (BookmarkPickerData *data)
+{
+	g_clear_object (&data->location);
+	g_clear_object (&data->volume);
+	g_slice_free (BookmarkPickerData, data);
+}
+
+/* Idle callback to switch focus to a specific pane after navigation completes */
+static gboolean
+deferred_focus_pane (gpointer user_data)
+{
+	NemoWindowPane *pane = NEMO_WINDOW_PANE (user_data);
+
+	if (NEMO_IS_WINDOW_PANE (pane) && pane->window != NULL) {
+		nemo_window_set_active_pane (pane->window, pane);
+		nemo_window_pane_grab_focus (pane);
+	}
+
+	g_object_unref (pane);
+	return G_SOURCE_REMOVE;
+}
+
+/* Get the slot for the left (first) or right (second) pane.
+ * Creates split view if necessary for the right pane. */
+static NemoWindowSlot *
+get_pane_slot (NemoWindow *window, gboolean right_pane, NemoWindowPane **out_pane)
+{
+	GList *panes = window->details->panes;
+	NemoWindowPane *target_pane;
+
+	if (right_pane) {
+		/* Ensure split view is open for the right pane */
+		if (!nemo_window_split_view_showing (window)) {
+			nemo_window_split_view_on (window);
+			panes = window->details->panes;
+		}
+		/* The second pane in the list is the right pane */
+		if (panes != NULL && panes->next != NULL) {
+			target_pane = NEMO_WINDOW_PANE (panes->next->data);
+		} else {
+			target_pane = NULL;
+		}
+	} else {
+		/* The first pane in the list is the left pane */
+		if (panes != NULL) {
+			target_pane = NEMO_WINDOW_PANE (panes->data);
+		} else {
+			target_pane = NULL;
+		}
+	}
+
+	if (out_pane != NULL) {
+		*out_pane = target_pane;
+	}
+
+	return (target_pane != NULL) ? target_pane->active_slot : NULL;
+}
+
+/* Called when a bookmark / volume entry in the picker menu is activated. */
+static void
+bookmark_picker_item_activated (GtkMenuItem *item,
+                                gpointer     user_data)
+{
+	BookmarkPickerData *data = user_data;
+	NemoWindowSlot *slot;
+	NemoWindowPane *target_pane = NULL;
+	GFile *location;
+
+	location = data->location;
+
+	if (location == NULL && data->volume != NULL) {
+		GMount *mount = g_volume_get_mount (data->volume);
+		if (mount != NULL) {
+			location = g_mount_get_default_location (mount);
+			g_object_unref (mount);
+		}
+		if (location == NULL) {
+			/* Volume not mounted — could mount it, but skip for now */
+			return;
+		}
+		/* Take ownership so free works correctly */
+		data->location = location;
+	}
+
+	if (location == NULL) {
+		return;
+	}
+
+	slot = get_pane_slot (data->window, data->right_pane, &target_pane);
+
+	if (slot != NULL) {
+		nemo_window_slot_open_location (slot, location, 0);
+
+		/* Defer focus switch so the content view has time to be
+		 * created by the async loader */
+		if (target_pane != NULL) {
+			g_object_ref (target_pane);
+			g_idle_add (deferred_focus_pane, target_pane);
+		}
+	}
+}
+
+static gchar
+pick_mnemonic (const gchar *name, gboolean *used, gchar *out_char)
+{
+	/* Try to find an unused letter in the name for the mnemonic */
+	const gchar *p;
+	for (p = name; *p != '\0'; p = g_utf8_next_char (p)) {
+		gunichar c = g_utf8_get_char (p);
+		gunichar lower = g_unichar_tolower (c);
+		if (g_unichar_isalpha (c) && lower >= 'a' && lower <= 'z') {
+			int idx = (int)(lower - 'a');
+			if (!used[idx]) {
+				used[idx] = TRUE;
+				*out_char = (gchar)lower;
+				return (gchar)lower;
+			}
+		}
+	}
+	*out_char = '\0';
+	return '\0';
+}
+
+static GtkWidget *
+create_picker_menu_item (const gchar *name,
+                         const gchar *icon_name,
+                         gboolean    *mnemonic_used)
+{
+	GtkWidget *item;
+	GtkWidget *box;
+	GtkWidget *icon;
+	GtkWidget *label;
+	gchar mnem_char;
+	gchar *label_text;
+
+	pick_mnemonic (name, mnemonic_used, &mnem_char);
+
+	if (mnem_char != '\0') {
+		/* Build label with underscore before the mnemonic char */
+		GString *s = g_string_new (NULL);
+		const gchar *p;
+		gboolean inserted = FALSE;
+		for (p = name; *p != '\0'; p = g_utf8_next_char (p)) {
+			gunichar c = g_utf8_get_char (p);
+			if (!inserted && g_unichar_tolower (c) == (gunichar)mnem_char) {
+				g_string_append_c (s, '_');
+				inserted = TRUE;
+			}
+			g_string_append_unichar (s, c);
+		}
+		label_text = g_string_free (s, FALSE);
+	} else {
+		label_text = g_strdup (name);
+	}
+
+	item = gtk_menu_item_new ();
+	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+
+	if (icon_name != NULL) {
+		icon = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
+		gtk_box_pack_start (GTK_BOX (box), icon, FALSE, FALSE, 0);
+	}
+
+	label = gtk_label_new_with_mnemonic (label_text);
+	gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+	gtk_box_pack_start (GTK_BOX (box), label, TRUE, TRUE, 0);
+
+	gtk_container_add (GTK_CONTAINER (item), box);
+
+	g_free (label_text);
+
+	return item;
+}
+
+static void
+show_bookmark_picker (NemoWindow *window,
+                      gboolean    right_pane)
+{
+	GtkWidget *menu;
+	GtkWidget *item;
+	NemoBookmarkList *bookmarks;
+	GVolumeMonitor *volume_monitor;
+	guint bookmark_count;
+	guint i;
+	GList *drives, *volumes, *mounts, *l, *ll;
+	gboolean mnemonic_used[26] = { FALSE };
+
+	menu = gtk_menu_new ();
+
+	/* --- Section: Bookmarks --- */
+	item = gtk_menu_item_new_with_label (_("Bookmarks"));
+	gtk_widget_set_sensitive (item, FALSE);
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	/* Home */
+	{
+		BookmarkPickerData *data = g_slice_new0 (BookmarkPickerData);
+		data->window = window;
+		data->right_pane = right_pane;
+		data->location = g_file_new_for_path (g_get_home_dir ());
+
+		item = create_picker_menu_item (_("Home"), "user-home", mnemonic_used);
+		g_signal_connect_data (item, "activate",
+		                       G_CALLBACK (bookmark_picker_item_activated),
+		                       data,
+		                       (GClosureNotify) bookmark_picker_data_free, 0);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	}
+
+	/* User bookmarks */
+	if (window->details->bookmark_list == NULL) {
+		window->details->bookmark_list = nemo_bookmark_list_get_default ();
+	}
+	bookmarks = window->details->bookmark_list;
+	bookmark_count = nemo_bookmark_list_length (bookmarks);
+
+	for (i = 0; i < bookmark_count; i++) {
+		NemoBookmark *bookmark;
+		const gchar *name;
+		gchar *icon_name;
+		GFile *location;
+		BookmarkPickerData *data;
+
+		bookmark = nemo_bookmark_list_item_at (bookmarks, i);
+		name = nemo_bookmark_get_name (bookmark);
+		icon_name = nemo_bookmark_get_icon_name (bookmark);
+		location = nemo_bookmark_get_location (bookmark);
+
+		data = g_slice_new0 (BookmarkPickerData);
+		data->window = window;
+		data->right_pane = right_pane;
+		data->location = g_object_ref (location);
+
+		item = create_picker_menu_item (name, icon_name, mnemonic_used);
+		g_signal_connect_data (item, "activate",
+		                       G_CALLBACK (bookmark_picker_item_activated),
+		                       data,
+		                       (GClosureNotify) bookmark_picker_data_free, 0);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+		g_free (icon_name);
+	}
+
+	/* --- Section: Disks / Volumes --- */
+	item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	item = gtk_menu_item_new_with_label (_("Disks"));
+	gtk_widget_set_sensitive (item, FALSE);
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	/* Root filesystem */
+	{
+		BookmarkPickerData *data = g_slice_new0 (BookmarkPickerData);
+		data->window = window;
+		data->right_pane = right_pane;
+		data->location = g_file_new_for_path ("/");
+
+		item = create_picker_menu_item (_("File System"), "drive-harddisk", mnemonic_used);
+		g_signal_connect_data (item, "activate",
+		                       G_CALLBACK (bookmark_picker_item_activated),
+		                       data,
+		                       (GClosureNotify) bookmark_picker_data_free, 0);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	}
+
+	volume_monitor = g_volume_monitor_get ();
+
+	/* 1) Connected drives and their volumes */
+	drives = g_volume_monitor_get_connected_drives (volume_monitor);
+	for (l = drives; l != NULL; l = l->next) {
+		GDrive *drive = G_DRIVE (l->data);
+		GList *drive_volumes;
+
+		drive_volumes = g_drive_get_volumes (drive);
+
+		if (drive_volumes == NULL) {
+			/* Drive with no volumes (e.g. empty card reader) — skip */
+			continue;
+		}
+
+		for (ll = drive_volumes; ll != NULL; ll = ll->next) {
+			GVolume *volume = G_VOLUME (ll->data);
+			GMount *mount = g_volume_get_mount (volume);
+			gchar *name;
+			GIcon *gicon;
+			gchar *icon_name_str = NULL;
+			BookmarkPickerData *data;
+
+			if (mount == NULL) {
+				/* Not mounted — skip */
+				continue;
+			}
+
+			name = g_volume_get_name (volume);
+			gicon = g_volume_get_icon (volume);
+
+			if (gicon != NULL && G_IS_THEMED_ICON (gicon)) {
+				const gchar * const *names = g_themed_icon_get_names (G_THEMED_ICON (gicon));
+				if (names && names[0])
+					icon_name_str = g_strdup (names[0]);
+			}
+
+			data = g_slice_new0 (BookmarkPickerData);
+			data->window = window;
+			data->right_pane = right_pane;
+			data->location = g_mount_get_default_location (mount);
+
+			item = create_picker_menu_item (name,
+			                                icon_name_str ? icon_name_str : "drive-removable-media",
+			                                mnemonic_used);
+			g_signal_connect_data (item, "activate",
+			                       G_CALLBACK (bookmark_picker_item_activated),
+			                       data,
+			                       (GClosureNotify) bookmark_picker_data_free, 0);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+			g_free (name);
+			g_free (icon_name_str);
+			g_clear_object (&gicon);
+			g_object_unref (mount);
+		}
+		g_list_free_full (drive_volumes, g_object_unref);
+	}
+	g_list_free_full (drives, g_object_unref);
+
+	/* 2) Volumes without a drive (e.g. loop devices, disk images) */
+	volumes = g_volume_monitor_get_volumes (volume_monitor);
+	for (l = volumes; l != NULL; l = l->next) {
+		GVolume *volume = G_VOLUME (l->data);
+		GDrive *drive;
+
+		drive = g_volume_get_drive (volume);
+		if (drive != NULL) {
+			/* Already listed above under its drive */
+			g_object_unref (drive);
+			continue;
+		}
+
+		{
+			GMount *mount = g_volume_get_mount (volume);
+			gchar *name;
+			GIcon *gicon;
+			gchar *icon_name_str = NULL;
+			BookmarkPickerData *data;
+
+			if (mount == NULL) {
+				/* Not mounted — skip */
+				continue;
+			}
+
+			name = g_volume_get_name (volume);
+			gicon = g_volume_get_icon (volume);
+
+			if (gicon != NULL && G_IS_THEMED_ICON (gicon)) {
+				const gchar * const *names = g_themed_icon_get_names (G_THEMED_ICON (gicon));
+				if (names && names[0])
+					icon_name_str = g_strdup (names[0]);
+			}
+
+			data = g_slice_new0 (BookmarkPickerData);
+			data->window = window;
+			data->right_pane = right_pane;
+			data->location = g_mount_get_default_location (mount);
+
+			item = create_picker_menu_item (name,
+			                                icon_name_str ? icon_name_str : "drive-harddisk",
+			                                mnemonic_used);
+			g_signal_connect_data (item, "activate",
+			                       G_CALLBACK (bookmark_picker_item_activated),
+			                       data,
+			                       (GClosureNotify) bookmark_picker_data_free, 0);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+			g_free (name);
+			g_free (icon_name_str);
+			g_clear_object (&gicon);
+			g_object_unref (mount);
+		}
+	}
+	g_list_free_full (volumes, g_object_unref);
+
+	/* 3) Mounts without a volume (network shares, MTP phones, fuse mounts) */
+	mounts = g_volume_monitor_get_mounts (volume_monitor);
+	for (l = mounts; l != NULL; l = l->next) {
+		GMount *mount = G_MOUNT (l->data);
+		GVolume *volume;
+
+		volume = g_mount_get_volume (mount);
+		if (volume != NULL) {
+			/* Already listed above under its volume */
+			g_object_unref (volume);
+			continue;
+		}
+
+		/* Shadow mounts (internal implementation detail) — skip */
+		if (g_mount_is_shadowed (mount)) {
+			continue;
+		}
+
+		{
+			gchar *name = g_mount_get_name (mount);
+			GIcon *gicon = g_mount_get_icon (mount);
+			gchar *icon_name_str = NULL;
+			BookmarkPickerData *data;
+
+			if (gicon != NULL && G_IS_THEMED_ICON (gicon)) {
+				const gchar * const *names = g_themed_icon_get_names (G_THEMED_ICON (gicon));
+				if (names && names[0])
+					icon_name_str = g_strdup (names[0]);
+			}
+
+			data = g_slice_new0 (BookmarkPickerData);
+			data->window = window;
+			data->right_pane = right_pane;
+			data->location = g_mount_get_default_location (mount);
+
+			item = create_picker_menu_item (name,
+			                                icon_name_str ? icon_name_str : "folder-remote",
+			                                mnemonic_used);
+			g_signal_connect_data (item, "activate",
+			                       G_CALLBACK (bookmark_picker_item_activated),
+			                       data,
+			                       (GClosureNotify) bookmark_picker_data_free, 0);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+			g_free (name);
+			g_free (icon_name_str);
+			g_clear_object (&gicon);
+		}
+	}
+	g_list_free_full (mounts, g_object_unref);
+
+	g_object_unref (volume_monitor);
+
+	/* Show and popup anchored to the target pane's toolbar */
+	gtk_widget_show_all (menu);
+
+	{
+		GList *panes = window->details->panes;
+		NemoWindowPane *target = NULL;
+
+		if (right_pane && panes != NULL && panes->next != NULL) {
+			target = NEMO_WINDOW_PANE (panes->next->data);
+		} else if (panes != NULL) {
+			target = NEMO_WINDOW_PANE (panes->data);
+		}
+
+		GtkWidget *anchor = (target && target->tool_bar && gtk_widget_get_visible (target->tool_bar))
+		                     ? target->tool_bar
+		                     : (window->details->active_pane && window->details->active_pane->tool_bar)
+		                       ? window->details->active_pane->tool_bar
+		                       : GTK_WIDGET (window);
+		GdkRectangle rect = { 0, 0, 1, 1 };
+		GtkAllocation alloc;
+
+		gtk_widget_get_allocation (anchor, &alloc);
+		rect.width = alloc.width;
+		rect.y = alloc.height;  /* position just below the toolbar */
+
+		gtk_menu_popup_at_rect (GTK_MENU (menu),
+		                        gtk_widget_get_window (anchor),
+		                        &rect,
+		                        GDK_GRAVITY_NORTH_WEST,
+		                        GDK_GRAVITY_NORTH_WEST,
+		                        NULL);
+	}
+}
+
+static void
+action_bookmark_picker_callback (GtkAction *action,
+                                 gpointer   user_data)
+{
+	if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		show_bookmark_picker (NEMO_WINDOW (user_data), FALSE);
+	}
+}
+
+static void
+action_bookmark_picker_other_callback (GtkAction *action,
+                                       gpointer   user_data)
+{
+	if (!NEMO_IS_DESKTOP_WINDOW (user_data)) {
+		show_bookmark_picker (NEMO_WINDOW (user_data), TRUE);
+	}
 }
 
 static void
@@ -1589,6 +2122,12 @@ static const GtkActionEntry main_entries[] = {
   /* name, stock id, label */  { "Edit Bookmarks", NULL, N_("_Edit Bookmarks..."),
                                  "<control>b", N_("Display a window that allows editing the bookmarks in this menu"),
                                  G_CALLBACK (action_edit_bookmarks_callback) },
+  /* name, stock id, label */  { NEMO_ACTION_BOOKMARK_PICKER, NULL, N_("Bookmark/_Disk Picker"),
+                                 "<alt>F1", N_("Show a list of bookmarks and disks to navigate to"),
+                                 G_CALLBACK (action_bookmark_picker_callback) },
+  /* name, stock id, label */  { NEMO_ACTION_BOOKMARK_PICKER_OTHER, NULL, N_("Bookmark/Disk Picker (Other _Pane)"),
+                                 "<alt>F2", N_("Show a list of bookmarks and disks to navigate to in the other pane"),
+                                 G_CALLBACK (action_bookmark_picker_other_callback) },
   { "TabsPrevious", NULL, N_("_Previous Tab"), "<control>Page_Up",
     N_("Activate previous tab"),
     G_CALLBACK (action_tabs_previous_callback) },
