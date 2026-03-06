@@ -40,6 +40,7 @@
 #define VBAR_TOTAL_H       (VBAR_SIZE_H + VBAR_MAX_H + VBAR_LABEL_H)
 #define VBAR_MAX_BARS       10   /* max bars per chart             */
 #define TOP_OFFENDERS_MAX   10   /* deep-scan ranked entries       */
+#define CACHE_RESCAN_SECS  120   /* background cache refresh period */
 
 /* ── Colours ───────────────────────────────────────────────────── */
 typedef struct { double r, g, b; } Rgb;
@@ -101,6 +102,27 @@ typedef struct {
 	char        **volume_names;
 	int          *colour_idxs;
 } ScanThreadData;
+
+typedef struct {
+	char   *volume_name;
+	char   *mount_path;
+	int     colour_idx;
+	GArray *deep;
+	gint64  updated_msec;
+} CachedVolumeResult;
+
+typedef struct {
+	guint n_volumes;
+	char **mount_paths;
+	char **volume_names;
+	int  *colour_idxs;
+} CacheScanJob;
+
+static GHashTable   *g_scan_cache = NULL; /* mount_path => CachedVolumeResult* */
+static GMutex        g_scan_cache_lock;
+static GCancellable *g_scan_cache_cancel = NULL;
+static gboolean      g_scan_cache_running = FALSE;
+static guint         g_scan_cache_timer_id = 0;
 
 /* ── Widget ────────────────────────────────────────────────────── */
 struct _NemoOverview {
@@ -175,6 +197,115 @@ scan_thread_data_free (ScanThreadData *td)
 	g_free (td->volume_names);
 	g_free (td->colour_idxs);
 	g_free (td);
+}
+
+static GArray *
+dup_entries_array (GArray *src)
+{
+	GArray *dst;
+	guint i;
+
+	if (src == NULL)
+		return NULL;
+
+	dst = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
+	g_array_set_clear_func (dst, (GDestroyNotify) dir_size_entry_clear);
+
+	for (i = 0; i < src->len; i++) {
+		DirSizeEntry *s = &g_array_index (src, DirSizeEntry, i);
+		DirSizeEntry d = { 0 };
+		d.name = g_strdup (s->name);
+		d.full_path = g_strdup (s->full_path);
+		d.size = s->size;
+		g_array_append_val (dst, d);
+	}
+
+	return dst;
+}
+
+static void
+cached_volume_result_free (CachedVolumeResult *cv)
+{
+	if (cv == NULL)
+		return;
+	g_free (cv->volume_name);
+	g_free (cv->mount_path);
+	if (cv->deep)
+		g_array_unref (cv->deep);
+	g_free (cv);
+}
+
+static void
+cache_scan_job_free (CacheScanJob *job)
+{
+	guint i;
+	if (job == NULL)
+		return;
+	for (i = 0; i < job->n_volumes; i++) {
+		g_free (job->mount_paths[i]);
+		g_free (job->volume_names[i]);
+	}
+	g_free (job->mount_paths);
+	g_free (job->volume_names);
+	g_free (job->colour_idxs);
+	g_free (job);
+}
+
+static void
+scan_cache_init_once (void)
+{
+	g_mutex_lock (&g_scan_cache_lock);
+	if (g_scan_cache == NULL)
+		g_scan_cache = g_hash_table_new_full (g_str_hash,
+		                                     g_str_equal,
+		                                     g_free,
+		                                     (GDestroyNotify) cached_volume_result_free);
+	g_mutex_unlock (&g_scan_cache_lock);
+}
+
+static gboolean
+scan_cache_lookup_copy (const char *mount_path, ScanResult *sr)
+{
+	CachedVolumeResult *cv;
+	gboolean ok = FALSE;
+
+	if (mount_path == NULL || sr == NULL)
+		return FALSE;
+
+	g_mutex_lock (&g_scan_cache_lock);
+	cv = g_scan_cache != NULL ? g_hash_table_lookup (g_scan_cache, mount_path) : NULL;
+	if (cv != NULL && cv->deep != NULL && cv->deep->len > 0) {
+		sr->deep = dup_entries_array (cv->deep);
+		ok = (sr->deep != NULL && sr->deep->len > 0);
+	}
+	g_mutex_unlock (&g_scan_cache_lock);
+
+	return ok;
+}
+
+static void
+scan_cache_store (const char *volume_name,
+                  const char *mount_path,
+                  int colour_idx,
+                  GArray *deep)
+{
+	CachedVolumeResult *cv;
+
+	if (mount_path == NULL || deep == NULL)
+		return;
+
+	scan_cache_init_once ();
+
+	cv = g_new0 (CachedVolumeResult, 1);
+	cv->volume_name = g_strdup (volume_name != NULL ? volume_name : mount_path);
+	cv->mount_path = g_strdup (mount_path);
+	cv->colour_idx = colour_idx;
+	cv->deep = dup_entries_array (deep);
+	cv->updated_msec = g_get_monotonic_time () / 1000;
+
+	g_mutex_lock (&g_scan_cache_lock);
+	g_hash_table_replace (g_scan_cache, g_strdup (mount_path), cv);
+	g_mutex_unlock (&g_scan_cache_lock);
 }
 
 /* ── Deep scan helpers (background thread) ─────────────────────── */
@@ -728,6 +859,37 @@ pareto_query_tooltip_cb (GtkWidget  *widget,
 	return TRUE;
 }
 
+static gboolean
+list_path_button_press_cb (GtkWidget *widget,
+                           GdkEventButton *event,
+                           gpointer user_data)
+{
+	const char *full_path;
+	GFile *location;
+	GtkWidget *toplevel;
+
+	(void) user_data;
+
+	if (event->button != 1 ||
+	    !(event->type == GDK_BUTTON_PRESS || event->type == GDK_2BUTTON_PRESS))
+		return FALSE;
+
+	full_path = g_object_get_data (G_OBJECT (widget), "full-path");
+	if (full_path == NULL)
+		return FALSE;
+
+	location = g_file_new_for_path (full_path);
+	toplevel = gtk_widget_get_toplevel (widget);
+	if (NEMO_IS_WINDOW (toplevel)) {
+		NemoWindowSlot *slot =
+			nemo_window_get_active_slot (NEMO_WINDOW (toplevel));
+		if (slot != NULL)
+			nemo_window_slot_open_location (slot, location, 0);
+	}
+	g_object_unref (location);
+	return TRUE;
+}
+
 /* ── Show pointer cursor on chart to hint clickability ─────────── */
 
 static void
@@ -791,9 +953,11 @@ pareto_idle_cb (gpointer data)
 {
 	ScanResult *sr = data;
 	NemoOverview *self;
+	GtkWidget *volume_box;
 	GtkWidget *heading, *chart;
 	char *heading_text;
 	gboolean have_deep;
+	GList *children, *c;
 
 	if (g_cancellable_is_cancelled (sr->cancel)) {
 		g_object_unref (sr->self);
@@ -833,6 +997,23 @@ pareto_idle_cb (gpointer data)
 		gtk_widget_show (self->pareto_box);
 	}
 
+	/* Remove old section for this mount before adding refreshed one */
+	children = gtk_container_get_children (GTK_CONTAINER (self->pareto_box));
+	for (c = children; c != NULL; c = c->next) {
+		GtkWidget *child = GTK_WIDGET (c->data);
+		const char *mp = g_object_get_data (G_OBJECT (child), "pareto-mount-path");
+		if (mp != NULL && g_strcmp0 (mp, sr->mount_path) == 0)
+			gtk_widget_destroy (child);
+	}
+	g_list_free (children);
+
+	volume_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_widget_set_margin_bottom (volume_box, 8);
+	g_object_set_data_full (G_OBJECT (volume_box),
+	                        "pareto-mount-path",
+	                        g_strdup (sr->mount_path),
+	                        g_free);
+
 	/* ── Volume heading ── */
 	heading_text = g_strdup_printf ("%s  (%s)", sr->volume_name, sr->mount_path);
 	heading = gtk_label_new (heading_text);
@@ -849,7 +1030,7 @@ pareto_idle_cb (gpointer data)
 	gtk_widget_set_margin_start (heading, 8);
 	gtk_widget_set_margin_top (heading, 16);
 	gtk_widget_set_margin_bottom (heading, 2);
-	gtk_box_pack_start (GTK_BOX (self->pareto_box), heading, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (volume_box), heading, FALSE, FALSE, 0);
 	gtk_widget_show (heading);
 
 	/* One deep chart per drive */
@@ -859,15 +1040,15 @@ pareto_idle_cb (gpointer data)
 		gtk_widget_set_halign (sub, GTK_ALIGN_START);
 		gtk_widget_set_margin_start (sub, 8);
 		gtk_widget_set_margin_top (sub, 4);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box), sub, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (volume_box), sub, FALSE, FALSE, 0);
 		gtk_widget_show (sub);
 
 		chart = create_pareto_chart (sr->deep, sr->colour_idx);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box), chart, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (volume_box), chart, FALSE, FALSE, 0);
 		gtk_widget_show (chart);
 	}
 
-	/* Ranked list, du-like, with full relative paths */
+	/* Ranked list, du-like, with clickable full relative paths */
 	{
 		GtkWidget *list_grid = gtk_grid_new ();
 		guint i;
@@ -882,6 +1063,7 @@ pareto_idle_cb (gpointer data)
 		for (i = 0; i < count; i++) {
 			DirSizeEntry *e = &g_array_index (sr->deep, DirSizeEntry, i);
 			GtkWidget *size_lbl;
+			GtkWidget *row_click;
 			GtkWidget *path_lbl;
 			char *sz = g_format_size (e->size);
 
@@ -891,6 +1073,20 @@ pareto_idle_cb (gpointer data)
 			gtk_grid_attach (GTK_GRID (list_grid), size_lbl, 0, (gint) i, 1, 1);
 			gtk_widget_show (size_lbl);
 
+			row_click = gtk_event_box_new ();
+			gtk_widget_set_halign (row_click, GTK_ALIGN_FILL);
+			gtk_widget_set_hexpand (row_click, TRUE);
+			gtk_event_box_set_visible_window (GTK_EVENT_BOX (row_click), FALSE);
+			gtk_widget_add_events (row_click, GDK_BUTTON_PRESS_MASK);
+			g_object_set_data_full (G_OBJECT (row_click),
+			                        "full-path",
+			                        g_strdup (e->full_path != NULL ? e->full_path : ""),
+			                        g_free);
+			g_signal_connect (row_click, "button-press-event",
+			                  G_CALLBACK (list_path_button_press_cb), NULL);
+			g_signal_connect (row_click, "realize",
+			                  G_CALLBACK (pareto_realize_cb), NULL);
+
 			path_lbl = gtk_label_new (e->name);
 			gtk_label_set_xalign (GTK_LABEL (path_lbl), 0.0);
 			gtk_label_set_ellipsize (GTK_LABEL (path_lbl), PANGO_ELLIPSIZE_MIDDLE);
@@ -898,15 +1094,20 @@ pareto_idle_cb (gpointer data)
 			gtk_widget_set_hexpand (path_lbl, TRUE);
 			gtk_widget_set_tooltip_text (path_lbl,
 			                             e->full_path != NULL ? e->full_path : e->name);
-			gtk_grid_attach (GTK_GRID (list_grid), path_lbl, 1, (gint) i, 1, 1);
+			gtk_container_add (GTK_CONTAINER (row_click), path_lbl);
 			gtk_widget_show (path_lbl);
+			gtk_widget_show (row_click);
 
+			gtk_grid_attach (GTK_GRID (list_grid), row_click, 1, (gint) i, 1, 1);
 			g_free (sz);
 		}
 
-		gtk_box_pack_start (GTK_BOX (self->pareto_box), list_grid, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (volume_box), list_grid, FALSE, FALSE, 0);
 		gtk_widget_show (list_grid);
 	}
+
+	gtk_box_pack_start (GTK_BOX (self->pareto_box), volume_box, FALSE, FALSE, 0);
+	gtk_widget_show (volume_box);
 
 	g_object_unref (sr->self);
 	scan_result_free (sr);
@@ -947,6 +1148,11 @@ scan_thread_func (gpointer data)
 			break;
 		}
 
+		scan_cache_store (td->volume_names[i],
+		                  td->mount_paths[i],
+		                  td->colour_idxs[i],
+		                  deep);
+
 		sr = g_new0 (ScanResult, 1);
 		sr->self        = g_object_ref (td->self);
 		sr->cancel      = g_object_ref (td->cancel);
@@ -961,6 +1167,166 @@ scan_thread_func (gpointer data)
 	g_object_unref (td->self);
 	scan_thread_data_free (td);
 	return NULL;
+}
+
+static CacheScanJob *
+build_cache_scan_job (void)
+{
+	CacheScanJob *job;
+	GVolumeMonitor *monitor;
+	GList *mounts, *l;
+	guint n = 0;
+	int colour = 0;
+	gboolean have_root = FALSE;
+
+	job = g_new0 (CacheScanJob, 1);
+
+	/* Root filesystem first */
+	{
+		struct stat st;
+		if (stat ("/", &st) == 0) {
+			job->n_volumes = 1;
+			job->mount_paths = g_new0 (char *, 1);
+			job->volume_names = g_new0 (char *, 1);
+			job->colour_idxs = g_new0 (int, 1);
+			job->mount_paths[0] = g_strdup ("/");
+			job->volume_names[0] = g_strdup (_("File System"));
+			job->colour_idxs[0] = colour++;
+			have_root = TRUE;
+			n = 1;
+		}
+	}
+
+	monitor = g_volume_monitor_get ();
+	mounts = g_volume_monitor_get_mounts (monitor);
+
+	for (l = mounts; l != NULL; l = l->next) {
+		GMount *mount = G_MOUNT (l->data);
+		GFile *root;
+		char *mpath;
+
+		if (g_mount_is_shadowed (mount))
+			continue;
+
+		if (have_root) {
+			GFile *mroot = g_mount_get_root (mount);
+			char *p = g_file_get_path (mroot);
+			g_object_unref (mroot);
+			if (p != NULL && g_strcmp0 (p, "/") == 0) {
+				g_free (p);
+				continue;
+			}
+			g_free (p);
+		}
+
+		root = g_mount_get_root (mount);
+		mpath = g_file_get_path (root);
+		if (mpath == NULL) {
+			g_object_unref (root);
+			continue;
+		}
+
+		job->n_volumes = n + 1;
+		job->mount_paths = g_renew (char *, job->mount_paths, job->n_volumes);
+		job->volume_names = g_renew (char *, job->volume_names, job->n_volumes);
+		job->colour_idxs = g_renew (int, job->colour_idxs, job->n_volumes);
+		job->mount_paths[n] = mpath;
+		job->volume_names[n] = g_mount_get_name (mount);
+		job->colour_idxs[n] = colour++;
+		n++;
+
+		g_object_unref (root);
+	}
+
+	g_list_free_full (mounts, g_object_unref);
+	g_object_unref (monitor);
+	return job;
+}
+
+static gpointer
+cache_scan_thread_func (gpointer data)
+{
+	CacheScanJob *job = data;
+	guint i;
+
+	for (i = 0; i < job->n_volumes; i++) {
+		struct stat mount_st;
+		GArray *deep;
+
+		if (g_scan_cache_cancel != NULL &&
+		    g_cancellable_is_cancelled (g_scan_cache_cancel))
+			break;
+
+		if (stat (job->mount_paths[i], &mount_st) != 0)
+			continue;
+
+		deep = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
+		g_array_set_clear_func (deep, (GDestroyNotify) dir_size_entry_clear);
+
+		scan_path_collect_top (job->mount_paths[i],
+		                      job->mount_paths[i],
+		                      mount_st.st_dev,
+		                      g_scan_cache_cancel,
+		                      deep,
+		                      FALSE);
+
+		if (g_scan_cache_cancel != NULL &&
+		    g_cancellable_is_cancelled (g_scan_cache_cancel)) {
+			g_array_unref (deep);
+			break;
+		}
+
+		scan_cache_store (job->volume_names[i],
+		                  job->mount_paths[i],
+		                  job->colour_idxs[i],
+		                  deep);
+		g_array_unref (deep);
+	}
+
+	g_mutex_lock (&g_scan_cache_lock);
+	g_scan_cache_running = FALSE;
+	g_mutex_unlock (&g_scan_cache_lock);
+
+	cache_scan_job_free (job);
+	return NULL;
+}
+
+static void
+start_cache_scan_if_needed (void)
+{
+	CacheScanJob *job;
+
+	scan_cache_init_once ();
+
+	g_mutex_lock (&g_scan_cache_lock);
+	if (g_scan_cache_running) {
+		g_mutex_unlock (&g_scan_cache_lock);
+		return;
+	}
+	if (g_scan_cache_cancel != NULL)
+		g_object_unref (g_scan_cache_cancel);
+	g_scan_cache_cancel = g_cancellable_new ();
+	g_scan_cache_running = TRUE;
+	g_mutex_unlock (&g_scan_cache_lock);
+
+	job = build_cache_scan_job ();
+	if (job->n_volumes == 0) {
+		cache_scan_job_free (job);
+		g_mutex_lock (&g_scan_cache_lock);
+		g_scan_cache_running = FALSE;
+		g_mutex_unlock (&g_scan_cache_lock);
+		return;
+	}
+
+	g_thread_unref (g_thread_new ("overview-cache-scan", cache_scan_thread_func, job));
+}
+
+static gboolean
+cache_rescan_timer_cb (gpointer data)
+{
+	(void) data;
+	start_cache_scan_if_needed ();
+	return G_SOURCE_CONTINUE;
 }
 
 /* ── Kick off the background scan ──────────────────────────────── */
@@ -984,6 +1350,24 @@ start_background_scan (NemoOverview *self)
 	gtk_container_foreach (GTK_CONTAINER (self->pareto_box),
 	                       (GtkCallback) gtk_widget_destroy, NULL);
 	gtk_widget_hide (self->pareto_box);
+
+	/* Instant render from cache (if available) */
+	for (i = 0; i < self->volumes->len; i++) {
+		VolumeInfo *v = &g_array_index (self->volumes, VolumeInfo, i);
+		ScanResult *sr = g_new0 (ScanResult, 1);
+		sr->self = g_object_ref (self);
+		sr->cancel = g_object_ref (self->scan_cancel);
+		sr->volume_name = g_strdup (v->name);
+		sr->mount_path = g_strdup (v->mount_path);
+		sr->colour_idx = v->colour_idx;
+		if (scan_cache_lookup_copy (v->mount_path, sr))
+			g_idle_add (pareto_idle_cb, sr);
+		else
+			scan_result_free (sr);
+	}
+
+	/* Always keep background rescans running for freshness */
+	start_cache_scan_if_needed ();
 
 	td = g_new0 (ScanThreadData, 1);
 	td->self         = g_object_ref (self);
@@ -1065,8 +1449,21 @@ rebuild_ui (NemoOverview *self)
 /* ── Public API ────────────────────────────────────────────────── */
 
 void
+nemo_overview_start_lazy_cache (void)
+{
+	scan_cache_init_once ();
+	start_cache_scan_if_needed ();
+
+	if (g_scan_cache_timer_id == 0)
+		g_scan_cache_timer_id = g_timeout_add_seconds (CACHE_RESCAN_SECS,
+		                                              cache_rescan_timer_cb,
+		                                              NULL);
+}
+
+void
 nemo_overview_refresh (NemoOverview *self)
 {
+	nemo_overview_start_lazy_cache ();
 	gather_volumes (self);
 	rebuild_ui (self);
 	start_background_scan (self);

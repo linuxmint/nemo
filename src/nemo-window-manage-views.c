@@ -552,6 +552,9 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
             return;
     }
 
+    /* Start overview lazy cache in background while Nemo is running. */
+    nemo_overview_start_lazy_cache ();
+
     /* ── Overview page: intercept overview:/// ──────────────── */
     {
         char *scheme = g_file_get_uri_scheme (location);

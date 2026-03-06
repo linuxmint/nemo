@@ -21,5 +21,6 @@ G_DECLARE_FINAL_TYPE (NemoOverview, nemo_overview, NEMO, OVERVIEW, GtkScrolledWi
 
 GtkWidget *nemo_overview_new (void);
 void       nemo_overview_refresh (NemoOverview *self);
+void       nemo_overview_start_lazy_cache (void);
 
 #endif /* NEMO_OVERVIEW_H */
