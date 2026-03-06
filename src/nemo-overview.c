@@ -2,7 +2,7 @@
 
 /*
  * nemo-overview.c - Disk usage overview page with donut charts
- *                   and lazy Pareto directory-size bar charts.
+ *                   and lazy Pareto directory-size vertical bar charts.
  *
  * Copyright (C) 2026 Nemo contributors
  *
@@ -24,22 +24,24 @@
 #include "nemo-window-slot.h"
 #include "nemo-window.h"
 
-/* ── Layout constants ──────────────────────────────────────────── */
-#define DONUT_SIZE         110   /* widget allocation per donut    */
-#define DONUT_PADDING       12   /* space around each card         */
-#define CARD_PADDING        10   /* padding inside card            */
-#define LABEL_GAP            6   /* gap between donut and text     */
+/* ── Donut layout ──────────────────────────────────────────────── */
+#define DONUT_SIZE         110
+#define DONUT_PADDING       12
+#define CARD_PADDING        10
+#define LABEL_GAP            6
 
-#define PARETO_BAR_H        22   /* height of each horizontal bar  */
-#define PARETO_BAR_GAP       4   /* gap between bars               */
-#define PARETO_MAX_DIRS      8   /* show top N directories         */
-#define PARETO_LABEL_W     160   /* width reserved for dir name    */
-#define PARETO_SIZE_W       80   /* width reserved for size text   */
+/* ── Vertical-bar Pareto layout ────────────────────────────────── */
+#define VBAR_W              40   /* width of each bar              */
+#define VBAR_GAP             6   /* gap between bars               */
+#define VBAR_MAX_H         130   /* max bar height (tallest bar)   */
+#define VBAR_LABEL_H        65   /* rotated-label area below bars  */
+#define VBAR_SIZE_H         18   /* size-text area above bars      */
+#define VBAR_TOTAL_H       (VBAR_SIZE_H + VBAR_MAX_H + VBAR_LABEL_H)
+#define VBAR_MAX_BARS       10   /* max bars per chart             */
 
 /* ── Colours ───────────────────────────────────────────────────── */
 typedef struct { double r, g, b; } Rgb;
 
-/* Used-space colour palette – one per drive, cycled */
 static const Rgb used_colours[] = {
 	{ 0.33, 0.63, 0.91 },  /* blue    */
 	{ 0.42, 0.78, 0.44 },  /* green   */
@@ -50,7 +52,6 @@ static const Rgb used_colours[] = {
 };
 #define N_COLOURS G_N_ELEMENTS (used_colours)
 
-/* Free-space colour: semi-transparent grey */
 static const Rgb free_colour = { 0.75, 0.75, 0.75 };
 
 /* ── Per-volume data ───────────────────────────────────────────── */
@@ -66,13 +67,14 @@ typedef struct {
 	int      colour_idx;
 } VolumeInfo;
 
-/* ── Per-directory size entry ──────────────────────────────────── */
+/* ── Per-directory size entry (for Pareto charts) ──────────────── */
 typedef struct {
-	char    *name;
+	char    *name;       /* display name, e.g. "home" or "home/user" */
+	char    *full_path;  /* absolute path for navigation             */
 	guint64  size;
 } DirSizeEntry;
 
-/* ── Data attached to a pareto drawing area (freed with widget) ── */
+/* ── Data attached to each Pareto drawing area ─────────────────── */
 typedef struct {
 	int     colour_idx;
 	GArray *entries;        /* DirSizeEntry, sorted desc by size */
@@ -80,18 +82,19 @@ typedef struct {
 
 /* ── Scan result pushed from bg thread via g_idle_add ──────────── */
 typedef struct {
-	NemoOverview *self;     /* strong ref – prevents finalize    */
-	GCancellable *cancel;   /* strong ref – shared with widget   */
+	NemoOverview *self;
+	GCancellable *cancel;
 	char         *volume_name;
 	char         *mount_path;
 	int           colour_idx;
-	GArray       *entries;  /* DirSizeEntry, sorted desc         */
+	GArray       *level1;   /* top-level dirs, sorted desc       */
+	GArray       *level2;   /* subdirectories, sorted desc       */
 } ScanResult;
 
 /* ── Data passed to the background scan thread ─────────────────── */
 typedef struct {
-	NemoOverview *self;     /* strong ref                        */
-	GCancellable *cancel;   /* strong ref                        */
+	NemoOverview *self;
+	GCancellable *cancel;
 	guint         n_volumes;
 	char        **mount_paths;
 	char        **volume_names;
@@ -101,12 +104,12 @@ typedef struct {
 /* ── Widget ────────────────────────────────────────────────────── */
 struct _NemoOverview {
 	GtkScrolledWindow parent;
-	GtkWidget    *main_box;       /* vertical: donuts + sep + pareto */
-	GtkWidget    *flow_box;       /* donut cards (row 1)             */
-	GtkWidget    *pareto_sep;     /* separator, hidden initially     */
-	GtkWidget    *pareto_box;     /* vertical box for bar charts     */
-	GArray       *volumes;        /* array of VolumeInfo             */
-	GCancellable *scan_cancel;    /* cancel bg scan on destroy       */
+	GtkWidget    *main_box;
+	GtkWidget    *flow_box;
+	GtkWidget    *pareto_sep;
+	GtkWidget    *pareto_box;
+	GArray       *volumes;
+	GCancellable *scan_cancel;
 };
 
 G_DEFINE_TYPE (NemoOverview, nemo_overview, GTK_TYPE_SCROLLED_WINDOW)
@@ -132,6 +135,7 @@ static void
 dir_size_entry_clear (DirSizeEntry *e)
 {
 	g_free (e->name);
+	g_free (e->full_path);
 }
 
 static void
@@ -151,8 +155,10 @@ scan_result_free (ScanResult *sr)
 	g_clear_object (&sr->cancel);
 	g_free (sr->volume_name);
 	g_free (sr->mount_path);
-	if (sr->entries)
-		g_array_unref (sr->entries);
+	if (sr->level1)
+		g_array_unref (sr->level1);
+	if (sr->level2)
+		g_array_unref (sr->level2);
 	g_free (sr);
 }
 
@@ -182,7 +188,7 @@ dir_size_compare_desc (gconstpointer a, gconstpointer b)
 	return 0;
 }
 
-/* ── Recursive directory size (runs on background thread) ──────── */
+/* ── Recursive directory size (background thread) ──────────────── */
 
 static guint64
 compute_dir_size (const char *path, dev_t dev, GCancellable *cancel)
@@ -212,11 +218,10 @@ compute_dir_size (const char *path, dev_t dev, GCancellable *cancel)
 		child = g_build_filename (path, entry->d_name, NULL);
 
 		if (lstat (child, &st) == 0) {
-			if (S_ISREG (st.st_mode)) {
+			if (S_ISREG (st.st_mode))
 				total += (guint64) st.st_size;
-			} else if (S_ISDIR (st.st_mode) && st.st_dev == dev) {
+			else if (S_ISDIR (st.st_mode) && st.st_dev == dev)
 				total += compute_dir_size (child, dev, cancel);
-			}
 		}
 
 		g_free (child);
@@ -226,7 +231,7 @@ compute_dir_size (const char *path, dev_t dev, GCancellable *cancel)
 	return total;
 }
 
-/* ── Donut drawing ─────────────────────────────────────────────── */
+/* ── Donut drawing (thin ring) ─────────────────────────────────── */
 
 static gboolean
 donut_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
@@ -237,7 +242,7 @@ donut_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	double cx = w / 2.0;
 	double cy = h / 2.0;
 	double outer = MIN (w, h) / 2.0 - 4;
-	double inner = outer * 0.62;
+	double inner = outer * 0.78;   /* thinner ring */
 	const Rgb *uc = &used_colours[v->colour_idx % N_COLOURS];
 
 	double start = -M_PI / 2.0;
@@ -329,7 +334,7 @@ create_volume_card (VolumeInfo *v)
 	gtk_label_set_max_width_chars (GTK_LABEL (name_label), 18);
 	gtk_box_pack_start (GTK_BOX (vbox), name_label, FALSE, FALSE, 0);
 
-	/* Detail line: "12.4 GB / 50.0 GB  —  37.6 GB free" */
+	/* Detail line */
 	used_str  = format_size_short (v->used);
 	total_str = format_size_short (v->total);
 	free_str  = format_size_short (v->free_bytes);
@@ -373,12 +378,10 @@ gather_volumes (NemoOverview *self)
 	int colour = 0;
 	gboolean have_root = FALSE;
 
-	/* Clear old data */
-	if (self->volumes->len > 0) {
+	if (self->volumes->len > 0)
 		g_array_set_size (self->volumes, 0);
-	}
 
-	/* Always include the root filesystem first */
+	/* Root filesystem */
 	{
 		GFile *root_file = g_file_new_for_path ("/");
 		GFileInfo *rinfo = g_file_query_filesystem_info (root_file,
@@ -396,9 +399,9 @@ gather_volumes (NemoOverview *self)
 					rv.used = g_file_info_get_attribute_uint64 (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
 				else
 					rv.used = rv.total - rv.free_bytes;
-				rv.fraction = (double) rv.used / (double) rv.total;
+				rv.fraction   = (double) rv.used / (double) rv.total;
 				rv.colour_idx = colour++;
-				rv.name = g_strdup (_("File System"));
+				rv.name       = g_strdup (_("File System"));
 				rv.mount_path = g_strdup ("/");
 				if (g_file_info_has_attribute (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE))
 					rv.fs_type = g_strdup (g_file_info_get_attribute_string (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE));
@@ -414,7 +417,7 @@ gather_volumes (NemoOverview *self)
 	}
 
 	monitor = g_volume_monitor_get ();
-	mounts = g_volume_monitor_get_mounts (monitor);
+	mounts  = g_volume_monitor_get_mounts (monitor);
 
 	for (l = mounts; l != NULL; l = l->next) {
 		GMount *mount = G_MOUNT (l->data);
@@ -422,14 +425,12 @@ gather_volumes (NemoOverview *self)
 		GFileInfo *info;
 		VolumeInfo v = { 0 };
 
-		/* Skip shadowed mounts (e.g. snap loopbacks) */
 		if (g_mount_is_shadowed (mount))
 			continue;
 
-		/* Skip root if we already added it manually */
 		if (have_root) {
 			GFile *mroot = g_mount_get_root (mount);
-			char *mpath = g_file_get_path (mroot);
+			char *mpath  = g_file_get_path (mroot);
 			g_object_unref (mroot);
 			if (mpath != NULL && g_strcmp0 (mpath, "/") == 0) {
 				g_free (mpath);
@@ -446,10 +447,7 @@ gather_volumes (NemoOverview *self)
 			G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
 			NULL, NULL);
 
-		if (info == NULL) {
-			g_object_unref (root);
-			continue;
-		}
+		if (info == NULL) { g_object_unref (root); continue; }
 
 		v.total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
 		if (v.total == 0) {
@@ -459,16 +457,14 @@ gather_volumes (NemoOverview *self)
 		}
 
 		v.free_bytes = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-
 		if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED))
 			v.used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
 		else
 			v.used = v.total - v.free_bytes;
 
-		v.fraction = (double) v.used / (double) v.total;
+		v.fraction   = (double) v.used / (double) v.total;
 		v.colour_idx = colour++;
-
-		v.name = g_mount_get_name (mount);
+		v.name       = g_mount_get_name (mount);
 		v.mount_path = g_file_get_path (root);
 		if (v.mount_path == NULL)
 			v.mount_path = g_file_get_uri (root);
@@ -478,7 +474,6 @@ gather_volumes (NemoOverview *self)
 		else
 			v.fs_type = g_strdup ("unknown");
 
-		/* Device node from the GVolume if available */
 		{
 			GVolume *gvol = g_mount_get_volume (mount);
 			if (gvol != NULL) {
@@ -490,7 +485,6 @@ gather_volumes (NemoOverview *self)
 		}
 
 		g_array_append_val (self->volumes, v);
-
 		g_object_unref (info);
 		g_object_unref (root);
 	}
@@ -499,15 +493,14 @@ gather_volumes (NemoOverview *self)
 	g_object_unref (monitor);
 }
 
-/* ── Pareto bar chart drawing ──────────────────────────────────── */
+/* ── Vertical Pareto bar chart drawing ─────────────────────────── */
 
 static gboolean
 pareto_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
 	ParetoDrawData *pd = user_data;
-	int w = gtk_widget_get_allocated_width (widget);
 	const Rgb *colour = &used_colours[pd->colour_idx % N_COLOURS];
-	guint count = MIN (pd->entries->len, (guint) PARETO_MAX_DIRS);
+	guint count = MIN (pd->entries->len, (guint) VBAR_MAX_BARS);
 	guint i;
 
 	if (count == 0) return FALSE;
@@ -515,81 +508,172 @@ pareto_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	guint64 max_size = g_array_index (pd->entries, DirSizeEntry, 0).size;
 	if (max_size == 0) return FALSE;
 
-	int bar_start = PARETO_LABEL_W;
-	int bar_end   = w - PARETO_SIZE_W;
-	int bar_w     = MAX (bar_end - bar_start, 40);
+	double baseline_y = VBAR_SIZE_H + VBAR_MAX_H;
 
 	for (i = 0; i < count; i++) {
 		DirSizeEntry *e = &g_array_index (pd->entries, DirSizeEntry, i);
-		double y = i * (PARETO_BAR_H + PARETO_BAR_GAP);
 		double frac = (double) e->size / (double) max_size;
-		double bw = frac * bar_w;
+		double bar_h = frac * VBAR_MAX_H;
+		double x = i * (VBAR_W + VBAR_GAP);
 
-		/* Directory name (left-aligned) */
-		{
-			PangoLayout *lay = pango_cairo_create_layout (cr);
-			PangoFontDescription *fd = pango_font_description_from_string ("Sans 11");
-			int tw, th;
-
-			pango_layout_set_font_description (lay, fd);
-			pango_font_description_free (fd);
-			pango_layout_set_text (lay, e->name, -1);
-			pango_layout_set_width (lay, (PARETO_LABEL_W - 12) * PANGO_SCALE);
-			pango_layout_set_ellipsize (lay, PANGO_ELLIPSIZE_END);
-
-			pango_layout_get_pixel_size (lay, &tw, &th);
-
-			cairo_set_source_rgba (cr, 0.75, 0.75, 0.75, 1.0);
-			cairo_move_to (cr, 0, y + (PARETO_BAR_H - th) / 2.0);
-			pango_cairo_show_layout (cr, lay);
-			g_object_unref (lay);
-		}
-
-		/* Horizontal bar */
-		cairo_set_source_rgba (cr, colour->r, colour->g, colour->b, 0.65);
-		cairo_rectangle (cr, bar_start, y + 2, bw, PARETO_BAR_H - 4);
+		/* ── vertical bar (grows upward from baseline) ── */
+		cairo_set_source_rgba (cr, colour->r, colour->g, colour->b, 0.70);
+		cairo_rectangle (cr, x, baseline_y - bar_h, VBAR_W, bar_h);
 		cairo_fill (cr);
 
-		/* Size text (right of bar) */
+		/* ── size text above bar ── */
 		{
 			char *sz = g_format_size (e->size);
 			PangoLayout *lay = pango_cairo_create_layout (cr);
-			PangoFontDescription *fd = pango_font_description_from_string ("Sans 10");
+			PangoFontDescription *fd =
+				pango_font_description_from_string ("Sans 8");
 			int tw, th;
 
 			pango_layout_set_font_description (lay, fd);
 			pango_font_description_free (fd);
 			pango_layout_set_text (lay, sz, -1);
-
 			pango_layout_get_pixel_size (lay, &tw, &th);
 
 			cairo_set_source_rgba (cr, 0.65, 0.65, 0.65, 1.0);
-			cairo_move_to (cr, bar_end + 8, y + (PARETO_BAR_H - th) / 2.0);
+			cairo_move_to (cr,
+			               x + (VBAR_W - tw) / 2.0,
+			               baseline_y - bar_h - th - 2);
 			pango_cairo_show_layout (cr, lay);
 			g_object_unref (lay);
 			g_free (sz);
+		}
+
+		/* ── rotated label below baseline (-45°) ── */
+		{
+			PangoLayout *lay = pango_cairo_create_layout (cr);
+			PangoFontDescription *fd =
+				pango_font_description_from_string ("Sans 9");
+
+			pango_layout_set_font_description (lay, fd);
+			pango_font_description_free (fd);
+			pango_layout_set_text (lay, e->name, -1);
+			pango_layout_set_width (lay, 100 * PANGO_SCALE);
+			pango_layout_set_ellipsize (lay, PANGO_ELLIPSIZE_END);
+
+			cairo_save (cr);
+			/* anchor at bottom-centre of bar, then rotate 45° CW */
+			cairo_translate (cr, x + VBAR_W - 2, baseline_y + 4);
+			cairo_rotate (cr, -G_PI / 4.0);
+			cairo_set_source_rgba (cr, 0.75, 0.75, 0.75, 1.0);
+			cairo_move_to (cr, 0, 0);
+			pango_cairo_show_layout (cr, lay);
+			cairo_restore (cr);
+			g_object_unref (lay);
 		}
 	}
 
 	return FALSE;
 }
 
-/* ── Idle callback: add one volume's pareto chart to the UI ────── */
+/* ── Double-click on a bar → navigate to that directory ────────── */
+
+static gboolean
+pareto_button_press_cb (GtkWidget      *widget,
+                        GdkEventButton *event,
+                        gpointer        user_data)
+{
+	ParetoDrawData *pd = user_data;
+	guint count;
+	int bar_idx;
+	DirSizeEntry *e;
+	GFile *location;
+	GtkWidget *toplevel;
+
+	if (event->type != GDK_2BUTTON_PRESS || event->button != 1)
+		return FALSE;
+
+	count = MIN (pd->entries->len, (guint) VBAR_MAX_BARS);
+	bar_idx = (int) (event->x) / (VBAR_W + VBAR_GAP);
+
+	if (bar_idx < 0 || bar_idx >= (int) count)
+		return FALSE;
+
+	e = &g_array_index (pd->entries, DirSizeEntry, bar_idx);
+	if (e->full_path == NULL)
+		return FALSE;
+
+	location = g_file_new_for_path (e->full_path);
+	toplevel = gtk_widget_get_toplevel (widget);
+
+	if (NEMO_IS_WINDOW (toplevel)) {
+		NemoWindowSlot *slot =
+			nemo_window_get_active_slot (NEMO_WINDOW (toplevel));
+		if (slot != NULL)
+			nemo_window_slot_open_location (slot, location, 0);
+	}
+
+	g_object_unref (location);
+	return TRUE;
+}
+
+/* ── Show pointer cursor on chart to hint clickability ─────────── */
+
+static void
+pareto_realize_cb (GtkWidget *widget, gpointer data)
+{
+	GdkCursor *hand;
+	(void) data;
+
+	hand = gdk_cursor_new_from_name (gtk_widget_get_display (widget),
+	                                 "pointer");
+	if (hand != NULL) {
+		gdk_window_set_cursor (gtk_widget_get_window (widget), hand);
+		g_object_unref (hand);
+	}
+}
+
+/* ── Helper: create one vertical bar chart widget ──────────────── */
+
+static GtkWidget *
+create_pareto_chart (GArray *entries, int colour_idx)
+{
+	GtkWidget *draw_area;
+	ParetoDrawData *pd;
+	guint count = MIN (entries->len, (guint) VBAR_MAX_BARS);
+	int chart_w = count * (VBAR_W + VBAR_GAP);
+
+	draw_area = gtk_drawing_area_new ();
+	gtk_widget_set_size_request (draw_area, chart_w, VBAR_TOTAL_H);
+	gtk_widget_set_halign (draw_area, GTK_ALIGN_START);
+	gtk_widget_set_margin_start (draw_area, 8);
+	gtk_widget_set_margin_end (draw_area, 8);
+	gtk_widget_set_margin_bottom (draw_area, 8);
+
+	/* Enable button-press events for double-click navigation */
+	gtk_widget_add_events (draw_area, GDK_BUTTON_PRESS_MASK);
+
+	pd = g_new0 (ParetoDrawData, 1);
+	pd->colour_idx = colour_idx;
+	pd->entries    = g_array_ref (entries);
+
+	g_object_set_data_full (G_OBJECT (draw_area), "pareto-data",
+	                        pd, pareto_draw_data_free);
+	g_signal_connect (draw_area, "draw",
+	                  G_CALLBACK (pareto_draw_cb), pd);
+	g_signal_connect (draw_area, "button-press-event",
+	                  G_CALLBACK (pareto_button_press_cb), pd);
+	g_signal_connect (draw_area, "realize",
+	                  G_CALLBACK (pareto_realize_cb), NULL);
+
+	return draw_area;
+}
+
+/* ── Idle callback: add one volume's charts to the UI ──────────── */
 
 static gboolean
 pareto_idle_cb (gpointer data)
 {
 	ScanResult *sr = data;
 	NemoOverview *self;
-	GtkWidget *heading, *draw_area;
-	ParetoDrawData *pd;
-	guint count;
-	int chart_h;
+	GtkWidget *heading, *chart;
 	char *heading_text;
+	gboolean have_l1, have_l2;
 
-	/* If scan was cancelled (widget being destroyed), bail out.
-	 * Both checks run on the main thread, so no race with
-	 * gtk_widget_destroy. */
 	if (g_cancellable_is_cancelled (sr->cancel)) {
 		g_object_unref (sr->self);
 		scan_result_free (sr);
@@ -597,9 +681,10 @@ pareto_idle_cb (gpointer data)
 	}
 
 	self = sr->self;
-	count = MIN (sr->entries->len, (guint) PARETO_MAX_DIRS);
+	have_l1 = (sr->level1 != NULL && sr->level1->len > 0);
+	have_l2 = (sr->level2 != NULL && sr->level2->len > 0);
 
-	if (count == 0) {
+	if (!have_l1 && !have_l2) {
 		g_object_unref (sr->self);
 		scan_result_free (sr);
 		return G_SOURCE_REMOVE;
@@ -620,14 +705,15 @@ pareto_idle_cb (gpointer data)
 		gtk_widget_set_margin_start (section_lbl, 8);
 		gtk_widget_set_margin_top (section_lbl, 12);
 		gtk_widget_set_margin_bottom (section_lbl, 4);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box), section_lbl, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box),
+		                    section_lbl, FALSE, FALSE, 0);
 		gtk_widget_show (section_lbl);
 
 		gtk_widget_show (self->pareto_sep);
 		gtk_widget_show (self->pareto_box);
 	}
 
-	/* Volume heading */
+	/* ── Volume heading ── */
 	heading_text = g_strdup_printf ("%s  (%s)", sr->volume_name, sr->mount_path);
 	heading = gtk_label_new (heading_text);
 	g_free (heading_text);
@@ -639,40 +725,55 @@ pareto_idle_cb (gpointer data)
 		gtk_label_set_attributes (GTK_LABEL (heading), ha);
 		pango_attr_list_unref (ha);
 	}
-
 	gtk_widget_set_halign (heading, GTK_ALIGN_START);
 	gtk_widget_set_margin_start (heading, 8);
 	gtk_widget_set_margin_top (heading, 16);
-	gtk_widget_set_margin_bottom (heading, 4);
+	gtk_widget_set_margin_bottom (heading, 2);
 	gtk_box_pack_start (GTK_BOX (self->pareto_box), heading, FALSE, FALSE, 0);
 	gtk_widget_show (heading);
 
-	/* Drawing area for bar chart */
-	chart_h = count * (PARETO_BAR_H + PARETO_BAR_GAP);
-	draw_area = gtk_drawing_area_new ();
-	gtk_widget_set_size_request (draw_area, -1, chart_h);
-	gtk_widget_set_hexpand (draw_area, TRUE);
-	gtk_widget_set_margin_start (draw_area, 8);
-	gtk_widget_set_margin_end (draw_area, 8);
-	gtk_widget_set_margin_bottom (draw_area, 8);
+	/* ── Level 1: top-level directories ── */
+	if (have_l1) {
+		GtkWidget *sub;
+		sub = gtk_label_new (_("Top directories"));
+		gtk_widget_set_opacity (sub, 0.6);
+		gtk_widget_set_halign (sub, GTK_ALIGN_START);
+		gtk_widget_set_margin_start (sub, 8);
+		gtk_widget_set_margin_top (sub, 4);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box),
+		                    sub, FALSE, FALSE, 0);
+		gtk_widget_show (sub);
 
-	/* Attach draw data (freed when drawing area is destroyed) */
-	pd = g_new0 (ParetoDrawData, 1);
-	pd->colour_idx = sr->colour_idx;
-	pd->entries = g_array_ref (sr->entries);
-	g_object_set_data_full (G_OBJECT (draw_area), "pareto-data",
-	                        pd, pareto_draw_data_free);
-	g_signal_connect (draw_area, "draw", G_CALLBACK (pareto_draw_cb), pd);
+		chart = create_pareto_chart (sr->level1, sr->colour_idx);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box),
+		                    chart, FALSE, FALSE, 0);
+		gtk_widget_show (chart);
+	}
 
-	gtk_box_pack_start (GTK_BOX (self->pareto_box), draw_area, FALSE, FALSE, 0);
-	gtk_widget_show (draw_area);
+	/* ── Level 2: subdirectories ── */
+	if (have_l2) {
+		GtkWidget *sub;
+		sub = gtk_label_new (_("Subdirectories"));
+		gtk_widget_set_opacity (sub, 0.6);
+		gtk_widget_set_halign (sub, GTK_ALIGN_START);
+		gtk_widget_set_margin_start (sub, 8);
+		gtk_widget_set_margin_top (sub, 4);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box),
+		                    sub, FALSE, FALSE, 0);
+		gtk_widget_show (sub);
+
+		chart = create_pareto_chart (sr->level2, sr->colour_idx);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box),
+		                    chart, FALSE, FALSE, 0);
+		gtk_widget_show (chart);
+	}
 
 	g_object_unref (sr->self);
 	scan_result_free (sr);
 	return G_SOURCE_REMOVE;
 }
 
-/* ── Background scan thread ────────────────────────────────────── */
+/* ── Background scan thread (2-level) ──────────────────────────── */
 
 static gpointer
 scan_thread_func (gpointer data)
@@ -684,7 +785,7 @@ scan_thread_func (gpointer data)
 		DIR *dp;
 		struct dirent *entry;
 		struct stat mount_st;
-		GArray *entries;
+		GArray *l1, *l2;
 		ScanResult *sr;
 
 		if (g_cancellable_is_cancelled (td->cancel))
@@ -693,19 +794,23 @@ scan_thread_func (gpointer data)
 		if (stat (td->mount_paths[i], &mount_st) != 0)
 			continue;
 
-		entries = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
-		g_array_set_clear_func (entries, (GDestroyNotify) dir_size_entry_clear);
+		l1 = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
+		g_array_set_clear_func (l1, (GDestroyNotify) dir_size_entry_clear);
+
+		l2 = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
+		g_array_set_clear_func (l2, (GDestroyNotify) dir_size_entry_clear);
 
 		dp = opendir (td->mount_paths[i]);
 		if (dp == NULL) {
-			g_array_unref (entries);
+			g_array_unref (l1);
+			g_array_unref (l2);
 			continue;
 		}
 
 		while ((entry = readdir (dp)) != NULL) {
-			DirSizeEntry de = { 0 };
 			char *child_path;
 			struct stat st;
+			guint64 l1_total;
 
 			if (g_cancellable_is_cancelled (td->cancel))
 				break;
@@ -717,17 +822,69 @@ scan_thread_func (gpointer data)
 			child_path = g_build_filename (td->mount_paths[i],
 			                               entry->d_name, NULL);
 
-			if (lstat (child_path, &st) == 0 &&
-			    S_ISDIR (st.st_mode) &&
-			    st.st_dev == mount_st.st_dev) {
-				de.name = g_strdup (entry->d_name);
-				de.size = compute_dir_size (child_path,
-				                            mount_st.st_dev,
-				                            td->cancel);
-				if (de.size > 0)
-					g_array_append_val (entries, de);
-				else
-					g_free (de.name);
+			if (lstat (child_path, &st) != 0 ||
+			    !S_ISDIR (st.st_mode) ||
+			    st.st_dev != mount_st.st_dev) {
+				g_free (child_path);
+				continue;
+			}
+
+			/* ── Scan level 2 children of this top-level dir ── */
+			l1_total = 0;
+			{
+				DIR *dp2 = opendir (child_path);
+				if (dp2 != NULL) {
+					struct dirent *entry2;
+					while ((entry2 = readdir (dp2)) != NULL) {
+						char *child2_path;
+						struct stat st2;
+
+						if (g_cancellable_is_cancelled (td->cancel))
+							break;
+
+						if (g_strcmp0 (entry2->d_name, ".") == 0 ||
+						    g_strcmp0 (entry2->d_name, "..") == 0)
+							continue;
+
+						child2_path = g_build_filename (
+							child_path, entry2->d_name, NULL);
+
+						if (lstat (child2_path, &st2) == 0) {
+							if (S_ISREG (st2.st_mode)) {
+								l1_total += (guint64) st2.st_size;
+							} else if (S_ISDIR (st2.st_mode) &&
+							           st2.st_dev == mount_st.st_dev) {
+								guint64 sz = compute_dir_size (
+									child2_path,
+									mount_st.st_dev,
+									td->cancel);
+								l1_total += sz;
+
+								if (sz > 0) {
+									DirSizeEntry de = { 0 };
+									de.name = g_strdup_printf (
+										"%s/%s",
+										entry->d_name,
+										entry2->d_name);
+									de.full_path = g_strdup (child2_path);
+									de.size = sz;
+									g_array_append_val (l2, de);
+								}
+							}
+						}
+						g_free (child2_path);
+					}
+					closedir (dp2);
+				}
+			}
+
+			/* Level 1 entry */
+			if (l1_total > 0) {
+				DirSizeEntry de = { 0 };
+				de.name      = g_strdup (entry->d_name);
+				de.full_path = g_strdup (child_path);
+				de.size      = l1_total;
+				g_array_append_val (l1, de);
 			}
 
 			g_free (child_path);
@@ -736,20 +893,22 @@ scan_thread_func (gpointer data)
 		closedir (dp);
 
 		if (g_cancellable_is_cancelled (td->cancel)) {
-			g_array_unref (entries);
+			g_array_unref (l1);
+			g_array_unref (l2);
 			break;
 		}
 
-		g_array_sort (entries, dir_size_compare_desc);
+		g_array_sort (l1, dir_size_compare_desc);
+		g_array_sort (l2, dir_size_compare_desc);
 
-		/* Push result to main thread */
 		sr = g_new0 (ScanResult, 1);
 		sr->self        = g_object_ref (td->self);
 		sr->cancel      = g_object_ref (td->cancel);
 		sr->volume_name = g_strdup (td->volume_names[i]);
 		sr->mount_path  = g_strdup (td->mount_paths[i]);
 		sr->colour_idx  = td->colour_idxs[i];
-		sr->entries     = entries;   /* ownership transferred */
+		sr->level1      = l1;
+		sr->level2      = l2;
 
 		g_idle_add (pareto_idle_cb, sr);
 	}
@@ -770,20 +929,17 @@ start_background_scan (NemoOverview *self)
 	if (self->volumes->len == 0)
 		return;
 
-	/* Cancel any previous scan */
 	if (self->scan_cancel != NULL) {
 		g_cancellable_cancel (self->scan_cancel);
 		g_object_unref (self->scan_cancel);
 	}
 	self->scan_cancel = g_cancellable_new ();
 
-	/* Hide pareto section (fresh scan) */
 	gtk_widget_hide (self->pareto_sep);
 	gtk_container_foreach (GTK_CONTAINER (self->pareto_box),
 	                       (GtkCallback) gtk_widget_destroy, NULL);
 	gtk_widget_hide (self->pareto_box);
 
-	/* Build thread data with copies of volume info */
 	td = g_new0 (ScanThreadData, 1);
 	td->self         = g_object_ref (self);
 	td->cancel       = g_object_ref (self->scan_cancel);
@@ -804,7 +960,6 @@ start_background_scan (NemoOverview *self)
 
 /* ── Build / rebuild donut UI ──────────────────────────────────── */
 
-/* Callback: double-click / Enter on a card navigates to that volume */
 static void
 card_activated_cb (GtkFlowBox      *box,
                    GtkFlowBoxChild *child,
@@ -822,7 +977,8 @@ card_activated_cb (GtkFlowBox      *box,
 	if (card == NULL)
 		return;
 
-	mount_path = (const char *) g_object_get_data (G_OBJECT (card), "mount-path");
+	mount_path = (const char *) g_object_get_data (G_OBJECT (card),
+	                                               "mount-path");
 	if (mount_path == NULL)
 		return;
 
@@ -843,7 +999,6 @@ rebuild_ui (NemoOverview *self)
 {
 	guint i;
 
-	/* Clear donut cards */
 	gtk_container_foreach (GTK_CONTAINER (self->flow_box),
 	                       (GtkCallback) gtk_widget_destroy, NULL);
 
@@ -856,7 +1011,7 @@ rebuild_ui (NemoOverview *self)
 	}
 
 	for (i = 0; i < self->volumes->len; i++) {
-		VolumeInfo *v = &g_array_index (self->volumes, VolumeInfo, i);
+		VolumeInfo *v  = &g_array_index (self->volumes, VolumeInfo, i);
 		GtkWidget *card = create_volume_card (v);
 		gtk_flow_box_insert (GTK_FLOW_BOX (self->flow_box), card, -1);
 	}
@@ -879,7 +1034,6 @@ nemo_overview_dispose (GObject *obj)
 {
 	NemoOverview *self = NEMO_OVERVIEW (obj);
 
-	/* Cancel background scan so idle callbacks won't touch dead widgets */
 	if (self->scan_cancel != NULL) {
 		g_cancellable_cancel (self->scan_cancel);
 		g_clear_object (&self->scan_cancel);
@@ -909,59 +1063,66 @@ nemo_overview_init (NemoOverview *self)
 {
 	GtkWidget *viewport;
 
-	/* Setup scrolled window */
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self),
 	                                GTK_POLICY_NEVER,
 	                                GTK_POLICY_AUTOMATIC);
 
-	/* Main vertical box holds everything */
 	self->main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 
-	/* ── Row 1: FlowBox for donut cards ── */
+	/* ── Row 1: donut cards ── */
 	self->flow_box = gtk_flow_box_new ();
 	gtk_flow_box_set_homogeneous (GTK_FLOW_BOX (self->flow_box), TRUE);
-	gtk_flow_box_set_selection_mode (GTK_FLOW_BOX (self->flow_box), GTK_SELECTION_SINGLE);
-	gtk_flow_box_set_activate_on_single_click (GTK_FLOW_BOX (self->flow_box), FALSE);
+	gtk_flow_box_set_selection_mode (GTK_FLOW_BOX (self->flow_box),
+	                                 GTK_SELECTION_SINGLE);
+	gtk_flow_box_set_activate_on_single_click (
+		GTK_FLOW_BOX (self->flow_box), FALSE);
 	g_signal_connect (self->flow_box, "child-activated",
 	                  G_CALLBACK (card_activated_cb), NULL);
-	gtk_flow_box_set_max_children_per_line (GTK_FLOW_BOX (self->flow_box), 6);
-	gtk_flow_box_set_min_children_per_line (GTK_FLOW_BOX (self->flow_box), 1);
-	gtk_flow_box_set_column_spacing (GTK_FLOW_BOX (self->flow_box), 0);
-	gtk_flow_box_set_row_spacing (GTK_FLOW_BOX (self->flow_box), 0);
+	gtk_flow_box_set_max_children_per_line (
+		GTK_FLOW_BOX (self->flow_box), 6);
+	gtk_flow_box_set_min_children_per_line (
+		GTK_FLOW_BOX (self->flow_box), 1);
+	gtk_flow_box_set_column_spacing (
+		GTK_FLOW_BOX (self->flow_box), 0);
+	gtk_flow_box_set_row_spacing (
+		GTK_FLOW_BOX (self->flow_box), 0);
 	gtk_widget_set_valign (self->flow_box, GTK_ALIGN_START);
 	gtk_widget_set_halign (self->flow_box, GTK_ALIGN_CENTER);
 	gtk_widget_set_margin_top (self->flow_box, 24);
 	gtk_widget_set_margin_bottom (self->flow_box, 12);
 	gtk_widget_set_margin_start (self->flow_box, 24);
 	gtk_widget_set_margin_end (self->flow_box, 24);
-	gtk_box_pack_start (GTK_BOX (self->main_box), self->flow_box, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (self->main_box),
+	                    self->flow_box, FALSE, FALSE, 0);
 
-	/* ── Separator (hidden until pareto results arrive) ── */
+	/* ── Separator ── */
 	self->pareto_sep = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_widget_set_margin_start (self->pareto_sep, 32);
 	gtk_widget_set_margin_end (self->pareto_sep, 32);
 	gtk_widget_set_margin_top (self->pareto_sep, 4);
 	gtk_widget_set_margin_bottom (self->pareto_sep, 4);
 	gtk_widget_set_no_show_all (self->pareto_sep, TRUE);
-	gtk_box_pack_start (GTK_BOX (self->main_box), self->pareto_sep, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (self->main_box),
+	                    self->pareto_sep, FALSE, FALSE, 0);
 
-	/* ── Row 2: Pareto bar charts (hidden until scan completes) ── */
+	/* ── Row 2: Pareto charts ── */
 	self->pareto_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_widget_set_margin_start (self->pareto_box, 24);
 	gtk_widget_set_margin_end (self->pareto_box, 24);
 	gtk_widget_set_margin_bottom (self->pareto_box, 24);
 	gtk_widget_set_no_show_all (self->pareto_box, TRUE);
-	gtk_box_pack_start (GTK_BOX (self->main_box), self->pareto_box, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (self->main_box),
+	                    self->pareto_box, FALSE, FALSE, 0);
 
-	/* Viewport wraps main_box inside the scrolled window */
 	viewport = gtk_viewport_new (NULL, NULL);
-	gtk_viewport_set_shadow_type (GTK_VIEWPORT (viewport), GTK_SHADOW_NONE);
+	gtk_viewport_set_shadow_type (GTK_VIEWPORT (viewport),
+	                              GTK_SHADOW_NONE);
 	gtk_container_add (GTK_CONTAINER (viewport), self->main_box);
 	gtk_container_add (GTK_CONTAINER (self), viewport);
 
-	/* Volume data array */
 	self->volumes = g_array_new (FALSE, TRUE, sizeof (VolumeInfo));
-	g_array_set_clear_func (self->volumes, (GDestroyNotify) volume_info_clear);
+	g_array_set_clear_func (self->volumes,
+	                        (GDestroyNotify) volume_info_clear);
 
 	self->scan_cancel = NULL;
 
