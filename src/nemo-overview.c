@@ -18,6 +18,9 @@
 #include <gio/gio.h>
 #include <math.h>
 
+#include "nemo-window-slot.h"
+#include "nemo-window.h"
+
 /* ── Layout constants ──────────────────────────────────────────── */
 #define DONUT_SIZE         160   /* widget allocation per donut    */
 #define DONUT_OUTER_R       60   /* outer radius in px             */
@@ -217,6 +220,11 @@ create_volume_card (VolumeInfo *v)
 		g_free (mount_text);
 	}
 
+	/* Store mount_path so child-activated can navigate to it */
+	if (v->mount_path != NULL)
+		g_object_set_data_full (G_OBJECT (card), "mount-path",
+		                        g_strdup (v->mount_path), g_free);
+
 	gtk_widget_show_all (card);
 	return card;
 }
@@ -229,10 +237,46 @@ gather_volumes (NemoOverview *self)
 	GVolumeMonitor *monitor;
 	GList *mounts, *l;
 	int colour = 0;
+	gboolean have_root = FALSE;
 
 	/* Clear old data */
 	if (self->volumes->len > 0) {
 		g_array_set_size (self->volumes, 0);
+	}
+
+	/* Always include the root filesystem first */
+	{
+		GFile *root_file = g_file_new_for_path ("/");
+		GFileInfo *rinfo = g_file_query_filesystem_info (root_file,
+			G_FILE_ATTRIBUTE_FILESYSTEM_SIZE ","
+			G_FILE_ATTRIBUTE_FILESYSTEM_FREE ","
+			G_FILE_ATTRIBUTE_FILESYSTEM_USED ","
+			G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
+			NULL, NULL);
+		if (rinfo != NULL) {
+			VolumeInfo rv = { 0 };
+			rv.total = g_file_info_get_attribute_uint64 (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+			if (rv.total > 0) {
+				rv.free_bytes = g_file_info_get_attribute_uint64 (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+				if (g_file_info_has_attribute (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED))
+					rv.used = g_file_info_get_attribute_uint64 (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+				else
+					rv.used = rv.total - rv.free_bytes;
+				rv.fraction = (double) rv.used / (double) rv.total;
+				rv.colour_idx = colour++;
+				rv.name = g_strdup (_("File System"));
+				rv.mount_path = g_strdup ("/");
+				if (g_file_info_has_attribute (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE))
+					rv.fs_type = g_strdup (g_file_info_get_attribute_string (rinfo, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE));
+				else
+					rv.fs_type = g_strdup ("unknown");
+				rv.device = g_strdup ("/");
+				g_array_append_val (self->volumes, rv);
+				have_root = TRUE;
+			}
+			g_object_unref (rinfo);
+		}
+		g_object_unref (root_file);
 	}
 
 	monitor = g_volume_monitor_get ();
@@ -247,6 +291,18 @@ gather_volumes (NemoOverview *self)
 		/* Skip shadowed mounts (e.g. snap loopbacks) */
 		if (g_mount_is_shadowed (mount))
 			continue;
+
+		/* Skip root if we already added it manually */
+		if (have_root) {
+			GFile *mroot = g_mount_get_root (mount);
+			char *mpath = g_file_get_path (mroot);
+			g_object_unref (mroot);
+			if (mpath != NULL && g_strcmp0 (mpath, "/") == 0) {
+				g_free (mpath);
+				continue;
+			}
+			g_free (mpath);
+		}
 
 		root = g_mount_get_root (mount);
 		info = g_file_query_filesystem_info (root,
@@ -311,6 +367,40 @@ gather_volumes (NemoOverview *self)
 
 /* ── Build / rebuild UI ────────────────────────────────────────── */
 
+/* Callback: double-click / Enter on a card navigates to that volume */
+static void
+card_activated_cb (GtkFlowBox      *box,
+                   GtkFlowBoxChild *child,
+                   gpointer         user_data)
+{
+	GtkWidget *card;
+	const char *mount_path;
+	GFile *location;
+	GtkWidget *toplevel;
+	NemoWindowSlot *slot;
+
+	(void) user_data;
+
+	card = gtk_bin_get_child (GTK_BIN (child));
+	if (card == NULL)
+		return;
+
+	mount_path = (const char *) g_object_get_data (G_OBJECT (card), "mount-path");
+	if (mount_path == NULL)
+		return;
+
+	location = g_file_new_for_path (mount_path);
+
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (box));
+	if (NEMO_IS_WINDOW (toplevel)) {
+		slot = nemo_window_get_active_slot (NEMO_WINDOW (toplevel));
+		if (slot != NULL)
+			nemo_window_slot_open_location (slot, location, 0);
+	}
+
+	g_object_unref (location);
+}
+
 static void
 rebuild_ui (NemoOverview *self)
 {
@@ -374,7 +464,10 @@ nemo_overview_init (NemoOverview *self)
 	/* FlowBox for responsive grid layout */
 	self->flow_box = gtk_flow_box_new ();
 	gtk_flow_box_set_homogeneous (GTK_FLOW_BOX (self->flow_box), TRUE);
-	gtk_flow_box_set_selection_mode (GTK_FLOW_BOX (self->flow_box), GTK_SELECTION_NONE);
+	gtk_flow_box_set_selection_mode (GTK_FLOW_BOX (self->flow_box), GTK_SELECTION_SINGLE);
+	gtk_flow_box_set_activate_on_single_click (GTK_FLOW_BOX (self->flow_box), FALSE);
+	g_signal_connect (self->flow_box, "child-activated",
+	                  G_CALLBACK (card_activated_cb), NULL);
 	gtk_flow_box_set_max_children_per_line (GTK_FLOW_BOX (self->flow_box), 6);
 	gtk_flow_box_set_min_children_per_line (GTK_FLOW_BOX (self->flow_box), 1);
 	gtk_flow_box_set_column_spacing (GTK_FLOW_BOX (self->flow_box), 0);

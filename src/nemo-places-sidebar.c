@@ -776,6 +776,17 @@ update_places (NemoPlacesSidebar *sidebar)
 
     cat_iter = add_heading (sidebar, SECTION_COMPUTER,
                                     _("My Computer"));
+
+    /* Overview — disk usage donut charts (first entry) */
+    mount_uri = (char *)"overview:///";
+    icon = (char *)"drive-harddisk-symbolic";
+    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
+                           SECTION_COMPUTER,
+                           _("Overview"), icon, mount_uri,
+                           NULL, NULL, NULL, 0,
+                           _("Disk usage overview"), 0, FALSE,
+                           cat_iter);
+
     /* add built in bookmarks */
 
     /* home folder */
@@ -922,16 +933,6 @@ update_places (NemoPlacesSidebar *sidebar)
                                cat_iter);
         g_free (icon);
     }
-
-    /* Overview — disk usage donut charts */
-    mount_uri = (char *)"overview:///";
-    icon = (char *)"drive-harddisk-symbolic";
-    cat_iter = add_place (sidebar, PLACES_BUILT_IN,
-                           SECTION_COMPUTER,
-                           _("Overview"), icon, mount_uri,
-                           NULL, NULL, NULL, 0,
-                           _("Disk usage overview"), 0, FALSE,
-                           cat_iter);
 
     cat_iter = add_heading (sidebar, SECTION_BOOKMARKS,
                                     _("Bookmarks"));
