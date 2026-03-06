@@ -18,6 +18,7 @@
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <math.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
 
@@ -34,10 +35,11 @@
 #define VBAR_W              28   /* width of each bar              */
 #define VBAR_GAP             6   /* gap between bars               */
 #define VBAR_MAX_H         130   /* max bar height (tallest bar)   */
-#define VBAR_LABEL_H        65   /* rotated-label area below bars  */
+#define VBAR_LABEL_H        65   /* label area below bars          */
 #define VBAR_SIZE_H         18   /* size-text area above bars      */
 #define VBAR_TOTAL_H       (VBAR_SIZE_H + VBAR_MAX_H + VBAR_LABEL_H)
 #define VBAR_MAX_BARS       10   /* max bars per chart             */
+#define TOP_OFFENDERS_MAX   10   /* deep-scan ranked entries       */
 
 /* ── Colours ───────────────────────────────────────────────────── */
 typedef struct { double r, g, b; } Rgb;
@@ -87,8 +89,7 @@ typedef struct {
 	char         *volume_name;
 	char         *mount_path;
 	int           colour_idx;
-	GArray       *level1;   /* top-level dirs, sorted desc       */
-	GArray       *level2;   /* subdirectories, sorted desc       */
+	GArray       *deep;     /* full-depth top offenders          */
 } ScanResult;
 
 /* ── Data passed to the background scan thread ─────────────────── */
@@ -155,10 +156,8 @@ scan_result_free (ScanResult *sr)
 	g_clear_object (&sr->cancel);
 	g_free (sr->volume_name);
 	g_free (sr->mount_path);
-	if (sr->level1)
-		g_array_unref (sr->level1);
-	if (sr->level2)
-		g_array_unref (sr->level2);
+	if (sr->deep)
+		g_array_unref (sr->deep);
 	g_free (sr);
 }
 
@@ -178,26 +177,90 @@ scan_thread_data_free (ScanThreadData *td)
 	g_free (td);
 }
 
-static gint
-dir_size_compare_desc (gconstpointer a, gconstpointer b)
+/* ── Deep scan helpers (background thread) ─────────────────────── */
+
+static void
+consider_top_offender (GArray *top,
+                       const char *mount_path,
+                       const char *full_path,
+                       guint64 size)
 {
-	const DirSizeEntry *ea = a;
-	const DirSizeEntry *eb = b;
-	if (ea->size > eb->size) return -1;
-	if (ea->size < eb->size) return  1;
-	return 0;
+	DirSizeEntry candidate = { 0 };
+	guint i;
+	const char *rel;
+
+	if (size == 0 || top == NULL || full_path == NULL)
+		return;
+
+	candidate.full_path = g_strdup (full_path);
+	if (g_strcmp0 (full_path, mount_path) == 0) {
+		candidate.name = g_strdup (".");
+	} else if (g_str_has_prefix (full_path, mount_path)) {
+		rel = full_path + strlen (mount_path);
+		while (*rel == '/')
+			rel++;
+		candidate.name = g_strdup_printf ("./%s", rel);
+	} else {
+		candidate.name = g_path_get_basename (full_path);
+	}
+	candidate.size = size;
+
+	for (i = 0; i < top->len; i++) {
+		DirSizeEntry *e = &g_array_index (top, DirSizeEntry, i);
+		if (candidate.size > e->size)
+			break;
+	}
+
+	if (i >= TOP_OFFENDERS_MAX) {
+		dir_size_entry_clear (&candidate);
+		return;
+	}
+
+	if (top->len < TOP_OFFENDERS_MAX) {
+		g_array_append_val (top, candidate);
+	} else {
+		DirSizeEntry *last = &g_array_index (top, DirSizeEntry, top->len - 1);
+		dir_size_entry_clear (last);
+		*last = candidate;
+	}
+
+	for (i = top->len - 1; i > 0; i--) {
+		DirSizeEntry *a = &g_array_index (top, DirSizeEntry, i - 1);
+		DirSizeEntry *b = &g_array_index (top, DirSizeEntry, i);
+		if (a->size >= b->size)
+			break;
+		DirSizeEntry tmp = *a;
+		*a = *b;
+		*b = tmp;
+	}
 }
 
-/* ── Recursive directory size (background thread) ──────────────── */
-
 static guint64
-compute_dir_size (const char *path, dev_t dev, GCancellable *cancel)
+scan_path_collect_top (const char  *path,
+	               const char  *mount_path,
+	               dev_t        dev,
+	               GCancellable *cancel,
+	               GArray      *top,
+	               gboolean     include_self)
 {
 	DIR *dp;
 	struct dirent *entry;
+	struct stat pst;
 	guint64 total = 0;
 
 	if (g_cancellable_is_cancelled (cancel))
+		return 0;
+
+	if (lstat (path, &pst) != 0)
+		return 0;
+
+	if (S_ISREG (pst.st_mode)) {
+		total = (guint64) pst.st_size;
+		consider_top_offender (top, mount_path, path, total);
+		return total;
+	}
+
+	if (!S_ISDIR (pst.st_mode) || pst.st_dev != dev)
 		return 0;
 
 	dp = opendir (path);
@@ -218,16 +281,28 @@ compute_dir_size (const char *path, dev_t dev, GCancellable *cancel)
 		child = g_build_filename (path, entry->d_name, NULL);
 
 		if (lstat (child, &st) == 0) {
-			if (S_ISREG (st.st_mode))
+			if (S_ISREG (st.st_mode)) {
 				total += (guint64) st.st_size;
-			else if (S_ISDIR (st.st_mode) && st.st_dev == dev)
-				total += compute_dir_size (child, dev, cancel);
+				consider_top_offender (top, mount_path, child,
+				                      (guint64) st.st_size);
+			} else if (S_ISDIR (st.st_mode) && st.st_dev == dev) {
+				total += scan_path_collect_top (child,
+				                               mount_path,
+				                               dev,
+				                               cancel,
+				                               top,
+				                               TRUE);
+			}
 		}
 
 		g_free (child);
 	}
 
 	closedir (dp);
+
+	if (include_self)
+		consider_top_offender (top, mount_path, path, total);
+
 	return total;
 }
 
@@ -718,7 +793,7 @@ pareto_idle_cb (gpointer data)
 	NemoOverview *self;
 	GtkWidget *heading, *chart;
 	char *heading_text;
-	gboolean have_l1, have_l2;
+	gboolean have_deep;
 
 	if (g_cancellable_is_cancelled (sr->cancel)) {
 		g_object_unref (sr->self);
@@ -727,10 +802,9 @@ pareto_idle_cb (gpointer data)
 	}
 
 	self = sr->self;
-	have_l1 = (sr->level1 != NULL && sr->level1->len > 0);
-	have_l2 = (sr->level2 != NULL && sr->level2->len > 0);
+	have_deep = (sr->deep != NULL && sr->deep->len > 0);
 
-	if (!have_l1 && !have_l2) {
+	if (!have_deep) {
 		g_object_unref (sr->self);
 		scan_result_free (sr);
 		return G_SOURCE_REMOVE;
@@ -778,51 +852,60 @@ pareto_idle_cb (gpointer data)
 	gtk_box_pack_start (GTK_BOX (self->pareto_box), heading, FALSE, FALSE, 0);
 	gtk_widget_show (heading);
 
-	/* ── Charts side-by-side ── */
-	if (have_l1 || have_l2) {
-		GtkWidget *hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 16);
-		gtk_box_set_homogeneous (GTK_BOX (hbox), TRUE);
-		gtk_widget_set_margin_start (hbox, 8);
-		gtk_widget_set_margin_end (hbox, 8);
-		gtk_widget_set_margin_top (hbox, 4);
-		gtk_widget_set_margin_bottom (hbox, 16);
+	/* One deep chart per drive */
+	{
+		GtkWidget *sub = gtk_label_new (_("Top offenders (full depth)"));
+		gtk_widget_set_opacity (sub, 0.6);
+		gtk_widget_set_halign (sub, GTK_ALIGN_START);
+		gtk_widget_set_margin_start (sub, 8);
+		gtk_widget_set_margin_top (sub, 4);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box), sub, FALSE, FALSE, 0);
+		gtk_widget_show (sub);
 
-		if (have_l1) {
-			GtkWidget *vbox_l1 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
-			GtkWidget *lbl_l1 = gtk_label_new (_("Top directories"));
-			gtk_widget_set_hexpand (vbox_l1, TRUE);
-			gtk_widget_set_opacity (lbl_l1, 0.6);
-			gtk_label_set_xalign (GTK_LABEL (lbl_l1), 0.0);
-			gtk_box_pack_start (GTK_BOX (vbox_l1), lbl_l1, FALSE, FALSE, 0);
-			gtk_widget_show (lbl_l1);
+		chart = create_pareto_chart (sr->deep, sr->colour_idx);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box), chart, FALSE, FALSE, 0);
+		gtk_widget_show (chart);
+	}
 
-			chart = create_pareto_chart (sr->level1, sr->colour_idx);
-			gtk_box_pack_start (GTK_BOX (vbox_l1), chart, FALSE, FALSE, 0);
-			gtk_widget_show (chart);
+	/* Ranked list, du-like, with full relative paths */
+	{
+		GtkWidget *list_grid = gtk_grid_new ();
+		guint i;
+		guint count = MIN (sr->deep->len, (guint) TOP_OFFENDERS_MAX);
 
-			gtk_box_pack_start (GTK_BOX (hbox), vbox_l1, TRUE, TRUE, 0);
-			gtk_widget_show (vbox_l1);
+		gtk_widget_set_margin_start (list_grid, 8);
+		gtk_widget_set_margin_end (list_grid, 8);
+		gtk_widget_set_margin_bottom (list_grid, 16);
+		gtk_grid_set_row_spacing (GTK_GRID (list_grid), 2);
+		gtk_grid_set_column_spacing (GTK_GRID (list_grid), 10);
+
+		for (i = 0; i < count; i++) {
+			DirSizeEntry *e = &g_array_index (sr->deep, DirSizeEntry, i);
+			GtkWidget *size_lbl;
+			GtkWidget *path_lbl;
+			char *sz = g_format_size (e->size);
+
+			size_lbl = gtk_label_new (sz);
+			gtk_widget_set_halign (size_lbl, GTK_ALIGN_START);
+			gtk_widget_set_opacity (size_lbl, 0.8);
+			gtk_grid_attach (GTK_GRID (list_grid), size_lbl, 0, (gint) i, 1, 1);
+			gtk_widget_show (size_lbl);
+
+			path_lbl = gtk_label_new (e->name);
+			gtk_label_set_xalign (GTK_LABEL (path_lbl), 0.0);
+			gtk_label_set_ellipsize (GTK_LABEL (path_lbl), PANGO_ELLIPSIZE_MIDDLE);
+			gtk_widget_set_halign (path_lbl, GTK_ALIGN_START);
+			gtk_widget_set_hexpand (path_lbl, TRUE);
+			gtk_widget_set_tooltip_text (path_lbl,
+			                             e->full_path != NULL ? e->full_path : e->name);
+			gtk_grid_attach (GTK_GRID (list_grid), path_lbl, 1, (gint) i, 1, 1);
+			gtk_widget_show (path_lbl);
+
+			g_free (sz);
 		}
 
-		if (have_l2) {
-			GtkWidget *vbox_l2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
-			GtkWidget *lbl_l2 = gtk_label_new (_("Subdirectories"));
-			gtk_widget_set_hexpand (vbox_l2, TRUE);
-			gtk_widget_set_opacity (lbl_l2, 0.6);
-			gtk_label_set_xalign (GTK_LABEL (lbl_l2), 0.0);
-			gtk_box_pack_start (GTK_BOX (vbox_l2), lbl_l2, FALSE, FALSE, 0);
-			gtk_widget_show (lbl_l2);
-
-			chart = create_pareto_chart (sr->level2, sr->colour_idx);
-			gtk_box_pack_start (GTK_BOX (vbox_l2), chart, FALSE, FALSE, 0);
-			gtk_widget_show (chart);
-
-			gtk_box_pack_start (GTK_BOX (hbox), vbox_l2, TRUE, TRUE, 0);
-			gtk_widget_show (vbox_l2);
-		}
-
-		gtk_box_pack_start (GTK_BOX (self->pareto_box), hbox, FALSE, FALSE, 0);
-		gtk_widget_show (hbox);
+		gtk_box_pack_start (GTK_BOX (self->pareto_box), list_grid, FALSE, FALSE, 0);
+		gtk_widget_show (list_grid);
 	}
 
 	g_object_unref (sr->self);
@@ -830,7 +913,7 @@ pareto_idle_cb (gpointer data)
 	return G_SOURCE_REMOVE;
 }
 
-/* ── Background scan thread (2-level) ──────────────────────────── */
+/* ── Background scan thread (full depth top offenders) ─────────── */
 
 static gpointer
 scan_thread_func (gpointer data)
@@ -839,10 +922,8 @@ scan_thread_func (gpointer data)
 	guint i;
 
 	for (i = 0; i < td->n_volumes; i++) {
-		DIR *dp;
-		struct dirent *entry;
 		struct stat mount_st;
-		GArray *l1, *l2;
+		GArray *deep;
 		ScanResult *sr;
 
 		if (g_cancellable_is_cancelled (td->cancel))
@@ -851,112 +932,20 @@ scan_thread_func (gpointer data)
 		if (stat (td->mount_paths[i], &mount_st) != 0)
 			continue;
 
-		l1 = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
-		g_array_set_clear_func (l1, (GDestroyNotify) dir_size_entry_clear);
+		deep = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
+		g_array_set_clear_func (deep, (GDestroyNotify) dir_size_entry_clear);
 
-		l2 = g_array_new (FALSE, TRUE, sizeof (DirSizeEntry));
-		g_array_set_clear_func (l2, (GDestroyNotify) dir_size_entry_clear);
-
-		dp = opendir (td->mount_paths[i]);
-		if (dp == NULL) {
-			g_array_unref (l1);
-			g_array_unref (l2);
-			continue;
-		}
-
-		while ((entry = readdir (dp)) != NULL) {
-			char *child_path;
-			struct stat st;
-			guint64 l1_total;
-
-			if (g_cancellable_is_cancelled (td->cancel))
-				break;
-
-			if (g_strcmp0 (entry->d_name, ".") == 0 ||
-			    g_strcmp0 (entry->d_name, "..") == 0)
-				continue;
-
-			child_path = g_build_filename (td->mount_paths[i],
-			                               entry->d_name, NULL);
-
-			if (lstat (child_path, &st) != 0 ||
-			    !S_ISDIR (st.st_mode) ||
-			    st.st_dev != mount_st.st_dev) {
-				g_free (child_path);
-				continue;
-			}
-
-			/* ── Scan level 2 children of this top-level dir ── */
-			l1_total = 0;
-			{
-				DIR *dp2 = opendir (child_path);
-				if (dp2 != NULL) {
-					struct dirent *entry2;
-					while ((entry2 = readdir (dp2)) != NULL) {
-						char *child2_path;
-						struct stat st2;
-
-						if (g_cancellable_is_cancelled (td->cancel))
-							break;
-
-						if (g_strcmp0 (entry2->d_name, ".") == 0 ||
-						    g_strcmp0 (entry2->d_name, "..") == 0)
-							continue;
-
-						child2_path = g_build_filename (
-							child_path, entry2->d_name, NULL);
-
-						if (lstat (child2_path, &st2) == 0) {
-							if (S_ISREG (st2.st_mode)) {
-								l1_total += (guint64) st2.st_size;
-							} else if (S_ISDIR (st2.st_mode) &&
-							           st2.st_dev == mount_st.st_dev) {
-								guint64 sz = compute_dir_size (
-									child2_path,
-									mount_st.st_dev,
-									td->cancel);
-								l1_total += sz;
-
-								if (sz > 0) {
-									DirSizeEntry de = { 0 };
-									de.name = g_strdup_printf (
-										"%s/%s",
-										entry->d_name,
-										entry2->d_name);
-									de.full_path = g_strdup (child2_path);
-									de.size = sz;
-									g_array_append_val (l2, de);
-								}
-							}
-						}
-						g_free (child2_path);
-					}
-					closedir (dp2);
-				}
-			}
-
-			/* Level 1 entry */
-			if (l1_total > 0) {
-				DirSizeEntry de = { 0 };
-				de.name      = g_strdup (entry->d_name);
-				de.full_path = g_strdup (child_path);
-				de.size      = l1_total;
-				g_array_append_val (l1, de);
-			}
-
-			g_free (child_path);
-		}
-
-		closedir (dp);
+		scan_path_collect_top (td->mount_paths[i],
+		                      td->mount_paths[i],
+		                      mount_st.st_dev,
+		                      td->cancel,
+		                      deep,
+		                      FALSE);
 
 		if (g_cancellable_is_cancelled (td->cancel)) {
-			g_array_unref (l1);
-			g_array_unref (l2);
+			g_array_unref (deep);
 			break;
 		}
-
-		g_array_sort (l1, dir_size_compare_desc);
-		g_array_sort (l2, dir_size_compare_desc);
 
 		sr = g_new0 (ScanResult, 1);
 		sr->self        = g_object_ref (td->self);
@@ -964,8 +953,7 @@ scan_thread_func (gpointer data)
 		sr->volume_name = g_strdup (td->volume_names[i]);
 		sr->mount_path  = g_strdup (td->mount_paths[i]);
 		sr->colour_idx  = td->colour_idxs[i];
-		sr->level1      = l1;
-		sr->level2      = l2;
+		sr->deep        = deep;
 
 		g_idle_add (pareto_idle_cb, sr);
 	}
