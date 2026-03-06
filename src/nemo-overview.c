@@ -31,7 +31,7 @@
 #define LABEL_GAP            6
 
 /* ── Vertical-bar Pareto layout ────────────────────────────────── */
-#define VBAR_W              40   /* width of each bar              */
+#define VBAR_W              28   /* width of each bar              */
 #define VBAR_GAP             6   /* gap between bars               */
 #define VBAR_MAX_H         130   /* max bar height (tallest bar)   */
 #define VBAR_LABEL_H        65   /* rotated-label area below bars  */
@@ -524,7 +524,6 @@ pareto_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		/* ── size text above bar ── */
 		/* ── directory name on top (above bar) ── */
 		{
-			char *sz = g_format_size (e->size);
 			char *nm = e->name;
 			PangoLayout *lay = pango_cairo_create_layout (cr);
 			PangoFontDescription *fd =
@@ -614,6 +613,46 @@ pareto_button_press_cb (GtkWidget      *widget,
 	return TRUE;
 }
 
+/* ── Hover tooltip on a bar: full path + size ─────────────────── */
+
+static gboolean
+pareto_query_tooltip_cb (GtkWidget  *widget,
+                         gint        x,
+                         gint        y,
+                         gboolean    keyboard_mode,
+                         GtkTooltip *tooltip,
+                         gpointer    user_data)
+{
+	ParetoDrawData *pd = user_data;
+	guint count;
+	int bar_idx;
+	DirSizeEntry *e;
+	char *sz;
+	char *tip;
+
+	(void) widget;
+	(void) y;
+	(void) keyboard_mode;
+
+	count = MIN (pd->entries->len, (guint) VBAR_MAX_BARS);
+	bar_idx = x / (VBAR_W + VBAR_GAP);
+
+	if (bar_idx < 0 || bar_idx >= (int) count)
+		return FALSE;
+
+	e = &g_array_index (pd->entries, DirSizeEntry, bar_idx);
+	sz = g_format_size (e->size);
+	tip = g_strdup_printf ("%s\n%s",
+	                       e->full_path != NULL ? e->full_path : e->name,
+	                       sz);
+
+	gtk_tooltip_set_text (tooltip, tip);
+
+	g_free (tip);
+	g_free (sz);
+	return TRUE;
+}
+
 /* ── Show pointer cursor on chart to hint clickability ─────────── */
 
 static void
@@ -643,9 +682,11 @@ create_pareto_chart (GArray *entries, int colour_idx)
 	draw_area = gtk_drawing_area_new ();
 	gtk_widget_set_size_request (draw_area, chart_w, VBAR_TOTAL_H);
 	gtk_widget_set_halign (draw_area, GTK_ALIGN_START);
-	gtk_widget_set_margin_start (draw_area, 8);
-	gtk_widget_set_margin_end (draw_area, 8);
+	gtk_widget_set_margin_start (draw_area, 0);
+	gtk_widget_set_margin_end (draw_area, 0);
 	gtk_widget_set_margin_bottom (draw_area, 8);
+	gtk_widget_set_hexpand (draw_area, TRUE);
+	gtk_widget_set_has_tooltip (draw_area, TRUE);
 
 	/* Enable button-press events for double-click navigation */
 	gtk_widget_add_events (draw_area, GDK_BUTTON_PRESS_MASK);
@@ -660,6 +701,8 @@ create_pareto_chart (GArray *entries, int colour_idx)
 	                  G_CALLBACK (pareto_draw_cb), pd);
 	g_signal_connect (draw_area, "button-press-event",
 	                  G_CALLBACK (pareto_button_press_cb), pd);
+	g_signal_connect (draw_area, "query-tooltip",
+	                  G_CALLBACK (pareto_query_tooltip_cb), pd);
 	g_signal_connect (draw_area, "realize",
 	                  G_CALLBACK (pareto_realize_cb), NULL);
 
@@ -735,44 +778,10 @@ pareto_idle_cb (gpointer data)
 	gtk_box_pack_start (GTK_BOX (self->pareto_box), heading, FALSE, FALSE, 0);
 	gtk_widget_show (heading);
 
-	/* ── Level 1: top-level directories ── */
-	if (have_l1) {
-		GtkWidget *sub;
-		sub = gtk_label_new (_("Top directories"));
-		gtk_widget_set_opacity (sub, 0.6);
-		gtk_widget_set_halign (sub, GTK_ALIGN_START);
-		gtk_widget_set_margin_start (sub, 8);
-		gtk_widget_set_margin_top (sub, 4);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box),
-		                    sub, FALSE, FALSE, 0);
-		gtk_widget_show (sub);
-
-		chart = create_pareto_chart (sr->level1, sr->colour_idx);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box),
-		                    chart, FALSE, FALSE, 0);
-		gtk_widget_show (chart);
-	}
-
-	/* ── Level 2: subdirectories ── */
-	if (have_l2) {
-		GtkWidget *sub;
-		sub = gtk_label_new (_("Subdirectories"));
-		gtk_widget_set_opacity (sub, 0.6);
-		gtk_widget_set_halign (sub, GTK_ALIGN_START);
-		gtk_widget_set_margin_start (sub, 8);
-		gtk_widget_set_margin_top (sub, 4);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box),
-		                    sub, FALSE, FALSE, 0);
-		gtk_widget_show (sub);
-
-		chart = create_pareto_chart (sr->level2, sr->colour_idx);
-		gtk_box_pack_start (GTK_BOX (self->pareto_box),
-		                    chart, FALSE, FALSE, 0);
-		gtk_widget_show (chart);
-	}
 	/* ── Charts side-by-side ── */
 	if (have_l1 || have_l2) {
 		GtkWidget *hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 16);
+		gtk_box_set_homogeneous (GTK_BOX (hbox), TRUE);
 		gtk_widget_set_margin_start (hbox, 8);
 		gtk_widget_set_margin_end (hbox, 8);
 		gtk_widget_set_margin_top (hbox, 4);
@@ -781,6 +790,7 @@ pareto_idle_cb (gpointer data)
 		if (have_l1) {
 			GtkWidget *vbox_l1 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
 			GtkWidget *lbl_l1 = gtk_label_new (_("Top directories"));
+			gtk_widget_set_hexpand (vbox_l1, TRUE);
 			gtk_widget_set_opacity (lbl_l1, 0.6);
 			gtk_label_set_xalign (GTK_LABEL (lbl_l1), 0.0);
 			gtk_box_pack_start (GTK_BOX (vbox_l1), lbl_l1, FALSE, FALSE, 0);
@@ -790,13 +800,14 @@ pareto_idle_cb (gpointer data)
 			gtk_box_pack_start (GTK_BOX (vbox_l1), chart, FALSE, FALSE, 0);
 			gtk_widget_show (chart);
 
-			gtk_box_pack_start (GTK_BOX (hbox), vbox_l1, FALSE, FALSE, 0);
+			gtk_box_pack_start (GTK_BOX (hbox), vbox_l1, TRUE, TRUE, 0);
 			gtk_widget_show (vbox_l1);
 		}
 
 		if (have_l2) {
 			GtkWidget *vbox_l2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
 			GtkWidget *lbl_l2 = gtk_label_new (_("Subdirectories"));
+			gtk_widget_set_hexpand (vbox_l2, TRUE);
 			gtk_widget_set_opacity (lbl_l2, 0.6);
 			gtk_label_set_xalign (GTK_LABEL (lbl_l2), 0.0);
 			gtk_box_pack_start (GTK_BOX (vbox_l2), lbl_l2, FALSE, FALSE, 0);
@@ -806,7 +817,7 @@ pareto_idle_cb (gpointer data)
 			gtk_box_pack_start (GTK_BOX (vbox_l2), chart, FALSE, FALSE, 0);
 			gtk_widget_show (chart);
 
-			gtk_box_pack_start (GTK_BOX (hbox), vbox_l2, FALSE, FALSE, 0);
+			gtk_box_pack_start (GTK_BOX (hbox), vbox_l2, TRUE, TRUE, 0);
 			gtk_widget_show (vbox_l2);
 		}
 
