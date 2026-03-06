@@ -522,8 +522,10 @@ pareto_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		cairo_fill (cr);
 
 		/* ── size text above bar ── */
+		/* ── directory name on top (above bar) ── */
 		{
 			char *sz = g_format_size (e->size);
+			char *nm = e->name;
 			PangoLayout *lay = pango_cairo_create_layout (cr);
 			PangoFontDescription *fd =
 				pango_font_description_from_string ("Sans 8");
@@ -531,7 +533,9 @@ pareto_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 			pango_layout_set_font_description (lay, fd);
 			pango_font_description_free (fd);
-			pango_layout_set_text (lay, sz, -1);
+			pango_layout_set_text (lay, nm, -1);
+			pango_layout_set_width (lay, VBAR_W * PANGO_SCALE);
+			pango_layout_set_ellipsize (lay, PANGO_ELLIPSIZE_END);
 			pango_layout_get_pixel_size (lay, &tw, &th);
 
 			cairo_set_source_rgba (cr, 0.65, 0.65, 0.65, 1.0);
@@ -540,30 +544,29 @@ pareto_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			               baseline_y - bar_h - th - 2);
 			pango_cairo_show_layout (cr, lay);
 			g_object_unref (lay);
-			g_free (sz);
 		}
 
-		/* ── rotated label below baseline (-45°) ── */
+		/* ── size text below bar ── */
 		{
+			char *sz = g_format_size (e->size);
 			PangoLayout *lay = pango_cairo_create_layout (cr);
 			PangoFontDescription *fd =
-				pango_font_description_from_string ("Sans 9");
+				pango_font_description_from_string ("Sans 7");
+			int tw, th;
 
 			pango_layout_set_font_description (lay, fd);
 			pango_font_description_free (fd);
 			pango_layout_set_text (lay, e->name, -1);
-			pango_layout_set_width (lay, 100 * PANGO_SCALE);
-			pango_layout_set_ellipsize (lay, PANGO_ELLIPSIZE_END);
+			pango_layout_set_text (lay, sz, -1);
+			pango_layout_get_pixel_size (lay, &tw, &th);
 
-			cairo_save (cr);
-			/* anchor at bottom-centre of bar, then rotate 45° CW */
-			cairo_translate (cr, x + VBAR_W - 2, baseline_y + 4);
-			cairo_rotate (cr, -G_PI / 4.0);
-			cairo_set_source_rgba (cr, 0.75, 0.75, 0.75, 1.0);
-			cairo_move_to (cr, 0, 0);
+			cairo_set_source_rgba (cr, 0.65, 0.65, 0.65, 1.0);
+			cairo_move_to (cr,
+			               x + (VBAR_W - tw) / 2.0,
+			               baseline_y + 2);
 			pango_cairo_show_layout (cr, lay);
-			cairo_restore (cr);
 			g_object_unref (lay);
+			g_free (sz);
 		}
 	}
 
@@ -766,6 +769,49 @@ pareto_idle_cb (gpointer data)
 		gtk_box_pack_start (GTK_BOX (self->pareto_box),
 		                    chart, FALSE, FALSE, 0);
 		gtk_widget_show (chart);
+	}
+	/* ── Charts side-by-side ── */
+	if (have_l1 || have_l2) {
+		GtkWidget *hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 16);
+		gtk_widget_set_margin_start (hbox, 8);
+		gtk_widget_set_margin_end (hbox, 8);
+		gtk_widget_set_margin_top (hbox, 4);
+		gtk_widget_set_margin_bottom (hbox, 16);
+
+		if (have_l1) {
+			GtkWidget *vbox_l1 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+			GtkWidget *lbl_l1 = gtk_label_new (_("Top directories"));
+			gtk_widget_set_opacity (lbl_l1, 0.6);
+			gtk_label_set_xalign (GTK_LABEL (lbl_l1), 0.0);
+			gtk_box_pack_start (GTK_BOX (vbox_l1), lbl_l1, FALSE, FALSE, 0);
+			gtk_widget_show (lbl_l1);
+
+			chart = create_pareto_chart (sr->level1, sr->colour_idx);
+			gtk_box_pack_start (GTK_BOX (vbox_l1), chart, FALSE, FALSE, 0);
+			gtk_widget_show (chart);
+
+			gtk_box_pack_start (GTK_BOX (hbox), vbox_l1, FALSE, FALSE, 0);
+			gtk_widget_show (vbox_l1);
+		}
+
+		if (have_l2) {
+			GtkWidget *vbox_l2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+			GtkWidget *lbl_l2 = gtk_label_new (_("Subdirectories"));
+			gtk_widget_set_opacity (lbl_l2, 0.6);
+			gtk_label_set_xalign (GTK_LABEL (lbl_l2), 0.0);
+			gtk_box_pack_start (GTK_BOX (vbox_l2), lbl_l2, FALSE, FALSE, 0);
+			gtk_widget_show (lbl_l2);
+
+			chart = create_pareto_chart (sr->level2, sr->colour_idx);
+			gtk_box_pack_start (GTK_BOX (vbox_l2), chart, FALSE, FALSE, 0);
+			gtk_widget_show (chart);
+
+			gtk_box_pack_start (GTK_BOX (hbox), vbox_l2, FALSE, FALSE, 0);
+			gtk_widget_show (vbox_l2);
+		}
+
+		gtk_box_pack_start (GTK_BOX (self->pareto_box), hbox, FALSE, FALSE, 0);
+		gtk_widget_show (hbox);
 	}
 
 	g_object_unref (sr->self);
