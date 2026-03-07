@@ -4404,6 +4404,25 @@ get_custom_icon (NemoFile *file)
 		icon = g_object_ref (file->details->custom_icon);
  	}
 
+	if (icon == NULL && nemo_file_is_directory (file)) {
+		static const char *cover_names[] = { "cover.jpg", "cover.png", NULL };
+		GFile *dir_location = nemo_file_get_location (file);
+
+		for (int i = 0; cover_names[i] != NULL; i++) {
+			GFile *cover_file = g_file_get_child (dir_location, cover_names[i]);
+
+			if (g_file_query_exists (cover_file, NULL)) {
+				icon = g_file_icon_new (cover_file);
+				g_object_unref (cover_file);
+				break;
+			}
+
+			g_object_unref (cover_file);
+		}
+
+		g_object_unref (dir_location);
+	}
+
 	return icon;
 }
 
