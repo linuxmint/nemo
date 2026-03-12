@@ -61,12 +61,14 @@
 #include "nemo-places-sidebar.h"
 #include "nemo-properties-window.h"
 #include "nemo-window.h"
+#include "nemo-window-pane.h"
 #include "nemo-window-slot.h"
 
 #define DEBUG_FLAG NEMO_DEBUG_PLACES
 #include <libnemo-private/nemo-debug.h>
 
 #define EXPANDER_PAD_COLUMN_WIDTH 4
+
 #define EJECT_COLUMN_MIN_WIDTH 22
 #define EJECT_COLUMN_MAX_WIDTH 60
 #define DRAG_EXPAND_CATEGORY_DELAY 500
@@ -92,6 +94,7 @@ typedef struct {
     GtkTreeModel       *store_filter;
 
 	NemoWindow *window;
+	NemoWindowPane *pane;  /* NULL = track active pane; non-NULL = locked to this pane */
 	NemoBookmarkList *bookmarks;
 	GVolumeMonitor *volume_monitor;
 
@@ -162,6 +165,16 @@ typedef struct {
 typedef struct {
         GObjectClass parent;
 } NemoPlacesSidebarProviderClass;
+
+/* Return the slot for this sidebar - pane->active_slot if pane-locked, else window active slot */
+static NemoWindowSlot *
+sidebar_get_slot (NemoPlacesSidebar *sidebar)
+{
+    if (sidebar->pane != NULL) {
+        return sidebar->pane->active_slot;
+    }
+    return nemo_window_get_active_slot (sidebar->window);
+}
 
 enum {
 	PLACES_SIDEBAR_COLUMN_ROW_TYPE,
@@ -768,7 +781,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	sidebar->devices_header_added = FALSE;
 	sidebar->bookmarks_header_added = FALSE;
 
-	slot = nemo_window_get_active_slot (sidebar->window);
+	slot = sidebar_get_slot (sidebar);
 	location = nemo_window_slot_get_current_uri (slot);
 
 	network_mounts = network_volumes = NULL;
@@ -1464,6 +1477,15 @@ loading_uri_callback (NemoWindow *window,
                NemoPlacesSidebar *sidebar)
 {
     GtkTreeSelection *selection;
+
+    /* If this sidebar is locked to a specific pane, only update when
+     * the loading slot belongs to that pane */
+    if (sidebar->pane != NULL) {
+        NemoWindowSlot *active = sidebar_get_slot (sidebar);
+        if (active == NULL || g_strcmp0 (nemo_window_slot_get_current_uri (active), location) != 0) {
+            return;
+        }
+    }
     GtkTreeIter       iter_cat, iter_child;
     gboolean          valid_cat, valid_child;
     char              *uri;
@@ -2505,7 +2527,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 		location = g_file_new_for_uri (uri);
 		/* Navigate to the clicked location */
 		if ((flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) == 0) {
-			slot = nemo_window_get_active_slot (sidebar->window);
+			slot = sidebar_get_slot (sidebar);
 			nemo_window_slot_open_location (slot, location, flags);
 		} else {
 			NemoWindow *cur, *new;
@@ -2533,7 +2555,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 
 			g_assert (sidebar->go_to_after_mount_slot == NULL);
 
-			slt = nemo_window_get_active_slot (sidebar->window);
+			slt = sidebar_get_slot (sidebar);
 			sidebar->go_to_after_mount_slot = slt;
 			g_object_add_weak_pointer (G_OBJECT (sidebar->go_to_after_mount_slot),
 						   (gpointer *) &sidebar->go_to_after_mount_slot);
@@ -4617,6 +4639,18 @@ nemo_places_sidebar_new (NemoWindow *window)
 
 	sidebar = g_object_new (NEMO_TYPE_PLACES_SIDEBAR, NULL);
 	nemo_places_sidebar_set_parent_window (sidebar, window);
+
+	return GTK_WIDGET (sidebar);
+}
+
+GtkWidget *
+nemo_places_sidebar_new_for_pane (NemoWindow *window, NemoWindowPane *pane)
+{
+	NemoPlacesSidebar *sidebar;
+
+	sidebar = g_object_new (NEMO_TYPE_PLACES_SIDEBAR, NULL);
+	nemo_places_sidebar_set_parent_window (sidebar, window);
+	sidebar->pane = pane;
 
 	return GTK_WIDGET (sidebar);
 }

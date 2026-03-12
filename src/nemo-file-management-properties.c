@@ -99,6 +99,9 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DETECT_CONTENT_MEDIA_WIDGET "media_detect_content_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_ADVANCED_PERMISSIONS_WIDGET "show_advanced_permissions_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_START_WITH_DUAL_PANE_WIDGET "start_with_dual_pane_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_VERTICAL_SPLIT_WIDGET "dual_pane_vertical_split_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_SIDEBAR_WIDGET "dual_pane_separate_sidebar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_NAV_BAR_WIDGET "dual_pane_separate_nav_bar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET "ignore_view_metadata_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_BOOKMARKS_IN_TO_MENUS_WIDGET "bookmarks_in_to_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_IN_TO_MENUS_WIDGET "places_in_to_checkbutton"
@@ -772,6 +775,43 @@ setup_configurable_menu_items (GtkBuilder *builder)
     }
 }
 
+/* When "Show panes vertically" is off, the two dependent options
+ * (separate sidebar, separate nav bar) are meaningless -- they only
+ * apply to vertical split mode.  Disable and uncheck them whenever
+ * the vertical-split toggle is off.
+ */
+static void
+setup_dual_pane_sensitivity (GtkBuilder *builder)
+{
+    gboolean vertical =
+        gtk_toggle_button_get_active (
+            GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_VERTICAL_SPLIT_WIDGET)));
+
+    GtkWidget *sep_sidebar =
+        GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_SIDEBAR_WIDGET));
+    GtkWidget *sep_nav =
+        GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_NAV_BAR_WIDGET));
+
+    if (!vertical) {
+        /* Turn off and grey out the dependent options */
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_sidebar), FALSE);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_nav),     FALSE);
+    }
+
+    gtk_widget_set_sensitive (sep_sidebar, vertical);
+    gtk_widget_set_sensitive (sep_nav,     vertical);
+}
+
+static void
+connect_dual_pane_sensitivity (GtkBuilder *builder)
+{
+    g_signal_connect_swapped (
+        GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_VERTICAL_SPLIT_WIDGET)),
+        "toggled",
+        G_CALLBACK (setup_dual_pane_sensitivity),
+        builder);
+}
+
 static void
 setup_tooltip_items (GtkBuilder *builder)
 {
@@ -1068,6 +1108,18 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
                        NEMO_PREFERENCES_START_WITH_DUAL_PANE);
 
     bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_VERTICAL_SPLIT_WIDGET,
+                       NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_SIDEBAR_WIDGET,
+                       NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_NAV_BAR_WIDGET,
+                       NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+
+    bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET,
                        NEMO_PREFERENCES_IGNORE_VIEW_METADATA);
 
@@ -1126,6 +1178,9 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_list_view_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_SHOW_LIST_VIEW_EXPANDERS_WIDGET,
                        NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION);
+
+    setup_dual_pane_sensitivity (builder);
+    connect_dual_pane_sensitivity (builder);
 
     setup_tooltip_items (builder);
     connect_tooltip_items (builder);

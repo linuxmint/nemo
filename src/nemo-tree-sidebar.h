@@ -59,8 +59,12 @@ typedef struct {
 	GtkScrolledWindowClass parent_class;
 } FMTreeViewClass;
 
+#include "nemo-window-types.h"
+
 GType fm_tree_view_get_type (void);
 
-GtkWidget *nemo_tree_sidebar_new (NemoWindow *window);
+GtkWidget *nemo_tree_sidebar_new          (NemoWindow *window);
+GtkWidget *nemo_tree_sidebar_new_for_pane (NemoWindow *window,
+                                           NemoWindowPane *pane);
 
 #endif /* FM_TREE_VIEW_H */

@@ -1,3 +1,14 @@
+nemo (6.6.4) zena; urgency=medium
+
+  [ cdmdotnet Limited ]
+  * Dual-pane enhancements: vertical split mode (panes stacked one above
+    the other), separate sidebar per pane, separate Path Bar / Location
+    Entry per pane. All options default to off, preserving existing
+    behaviour when not enabled. New preferences exposed in a dedicated
+    Dual Pane section of the Behaviour tab.
+
+ -- Nemo User <nemo@localhost>  Sat, 14 Mar 2026 00:00:00 +0000
+
 nemo (6.6.3) zena; urgency=medium
 
   [ Michael Webster ]

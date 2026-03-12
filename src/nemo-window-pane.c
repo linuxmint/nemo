@@ -295,8 +295,9 @@ path_bar_button_pressed_callback (GtkWidget *widget,
 			   GINT_TO_POINTER (TRUE));
 
 	if (event->button == GDK_BUTTON_SECONDARY) {
-		slot = nemo_window_get_active_slot (pane->window);
-		view = slot->content_view;
+		/* Use this pane's slot so right-click context menu works on inactive panes */
+		slot = pane->active_slot;
+		view = slot ? slot->content_view : NULL;
 		if (view != NULL) {
 			button_location = nemo_path_bar_get_path_for_button (
 				NEMO_PATH_BAR (pane->path_bar), widget);
@@ -344,8 +345,8 @@ path_bar_button_released_callback (GtkWidget *widget,
 		}
 
 		if (flags != 0) {
-			slot = nemo_window_get_active_slot (pane->window);
-			nemo_window_slot_open_location (slot, button_location, flags);
+			/* Open tab/window relative to this pane, not the window-active pane */
+			nemo_window_slot_open_location (pane->active_slot, button_location, flags);
 			g_object_unref (button_location);
 			return TRUE;
 		}
@@ -358,9 +359,11 @@ path_bar_button_released_callback (GtkWidget *widget,
     if (event->button == GDK_BUTTON_PRIMARY) {
         NemoView *view;
 
-        slot = nemo_window_get_active_slot (pane->window);
-        view = slot->content_view;
-        
+        /* Use this pane's active slot, not the window's active slot, so that
+         * clicking a path-bar button in an inactive pane works on that pane. */
+        slot = pane->active_slot;
+        view = slot ? slot->content_view : NULL;
+
         if (view != NULL) {
             button_location = nemo_path_bar_get_path_for_button (NEMO_PATH_BAR (pane->path_bar), widget);
             if (button_location != NULL) {
@@ -377,6 +380,8 @@ path_bar_button_released_callback (GtkWidget *widget,
     }
 
     if (current_location_clicked) {
+        /* Switch THIS pane's toolbar to location-entry mode, not the active pane's. */
+        nemo_window_set_active_pane (pane->window, pane);
         nemo_window_show_location_entry (pane->window);
         return GDK_EVENT_STOP;
     }
@@ -764,7 +769,6 @@ action_show_hide_search_callback (GtkAction *action,
 				  gpointer user_data)
 {
 	NemoWindowPane *pane = user_data;
-	NemoWindow *window = pane->window;
 	NemoWindowSlot *slot;
 
 	slot = pane->active_slot;
@@ -789,7 +793,8 @@ action_show_hide_search_callback (GtkAction *action,
 					location = g_file_new_for_path (g_get_home_dir ());
 				}	
 
-				nemo_window_go_to (window, location);
+				/* Navigate this pane's slot directly, not the window-active slot */
+				nemo_window_slot_open_location (slot, location, 0);
 				g_object_unref (location);
 			}
 
@@ -882,7 +887,12 @@ only_show_active_pane_toolbar_mapping (GValue *value,
         gboolean chrome_allowed = g_value_get_boolean (value);
         gboolean self_is_active = (pane == nemo_window_get_active_pane (pane->window));
 
-        g_value_set_boolean (value, chrome_allowed && self_is_active);
+        /* If toolbar is embedded inside the pane itself (separate nav bar mode),
+         * always show it regardless of which pane is active, so each pane's
+         * navigation bar is always visible. */
+        gboolean is_embedded = (gtk_widget_get_parent (pane->tool_bar) == GTK_WIDGET (pane));
+
+        g_value_set_boolean (value, chrome_allowed && (self_is_active || is_embedded));
     }
 
     return TRUE;
@@ -1098,11 +1108,52 @@ nemo_window_pane_set_active_style (NemoWindowPane *pane,
 	gtk_widget_reset_style (GTK_WIDGET (pane));
 }
 
+/* Apply or remove active/inactive CSS classes on a sidebar box.
+ *
+ * The active sidebar gets "nemo-active-sidebar" (overrides the grey
+ * GTK_STYLE_CLASS_SIDEBAR background with the pane's white background).
+ * The inactive sidebar gets "nemo-inactive-pane" (keeps the grey).
+ *
+ * Both classes are defined in nemo-style-fallback-mandatory.css.
+ */
+static void
+sidebar_set_active_style (GtkWidget *sidebar_box, gboolean is_active)
+{
+    GtkStyleContext *style;
+
+    if (sidebar_box == NULL) {
+        return;
+    }
+
+    style = gtk_widget_get_style_context (sidebar_box);
+
+    if (is_active) {
+        /* Remove the GTK sidebar class so the theme's grey .sidebar rules
+         * no longer apply to this box or its children.  The box then falls
+         * back to the normal window background colour.
+         * Also remove nemo-inactive-pane in case we're toggling back. */
+        gtk_style_context_remove_class (style, GTK_STYLE_CLASS_SIDEBAR);
+        gtk_style_context_remove_class (style, "nemo-inactive-pane");
+    } else {
+        /* Restore the GTK sidebar class so the theme greys this box, and
+         * add nemo-inactive-pane so our own rule also greys the treeview rows. */
+        gtk_style_context_add_class (style, GTK_STYLE_CLASS_SIDEBAR);
+        gtk_style_context_add_class (style, "nemo-inactive-pane");
+    }
+
+    gtk_widget_reset_style (sidebar_box);
+    /* Force children (scrolled window, viewport, treeview) to repaint too */
+    gtk_widget_queue_draw (sidebar_box);
+}
+
 void
 nemo_window_pane_set_active (NemoWindowPane *pane,
 				 gboolean is_active)
 {
 	NemoNavigationState *nav_state;
+    NemoWindow *window = pane->window;
+    gboolean is_pane1;
+    gboolean per_pane_mode;
 
 	if (is_active) {
 		nav_state = nemo_window_get_navigation_state (pane->window);
@@ -1110,6 +1161,17 @@ nemo_window_pane_set_active (NemoWindowPane *pane,
 	}
 	/* pane inactive style */
 	nemo_window_pane_set_active_style (pane, is_active);
+
+    /* In per-pane mode (both sidebars visible), also update the paired sidebar */
+    per_pane_mode = (window->details->primary_pane_content_paned != NULL);
+    if (per_pane_mode && window->details->panes != NULL) {
+        is_pane1 = (window->details->panes->data == pane);
+        if (is_pane1) {
+            sidebar_set_active_style (window->details->sidebar, is_active);
+        } else {
+            sidebar_set_active_style (window->details->sidebar2, is_active);
+        }
+    }
 }
 
 void
@@ -1383,4 +1445,54 @@ nemo_window_pane_open_slot (NemoWindowPane *pane,
 	pane->slots = g_list_append (pane->slots, slot);
 
 	return slot;
+}
+
+/**
+ * nemo_window_pane_embed_toolbar:
+ * Move pane's toolbar from the shared toolbar_holder into the pane itself,
+ * so each pane shows its own navigation bar (used in vertical split mode).
+ */
+void
+nemo_window_pane_embed_toolbar (NemoWindowPane *pane)
+{
+    NemoWindow *window = pane->window;
+    GtkWidget *tb = pane->tool_bar;
+
+    /* Already embedded in the pane itself? */
+    if (gtk_widget_get_parent (tb) == GTK_WIDGET (pane)) {
+        return;
+    }
+
+    g_object_ref (tb);
+    gtk_container_remove (GTK_CONTAINER (window->details->toolbar_holder), tb);
+
+    /* Insert toolbar above the notebook (position 0 in the pane box) */
+    gtk_box_pack_start (GTK_BOX (pane), tb, FALSE, FALSE, 0);
+    gtk_box_reorder_child (GTK_BOX (pane), tb, 0);
+    gtk_widget_show (tb);
+    g_object_unref (tb);
+}
+
+/**
+ * nemo_window_pane_detach_toolbar:
+ * Move pane's toolbar back from the pane into the shared toolbar_holder.
+ */
+void
+nemo_window_pane_detach_toolbar (NemoWindowPane *pane)
+{
+    NemoWindow *window = pane->window;
+    GtkWidget *tb = pane->tool_bar;
+
+    /* Already in toolbar_holder? */
+    if (gtk_widget_get_parent (tb) == window->details->toolbar_holder) {
+        return;
+    }
+
+    g_object_ref (tb);
+    gtk_container_remove (GTK_CONTAINER (pane), tb);
+
+    gtk_box_pack_start (GTK_BOX (window->details->toolbar_holder), tb, TRUE, TRUE, 0);
+    /* Keep it hidden — the primary toolbar is what's shown in the holder */
+    gtk_widget_hide (tb);
+    g_object_unref (tb);
 }

@@ -91,6 +91,14 @@ static void side_pane_id_changed                    (NemoWindow            *wind
 static void toggle_menubar                          (NemoWindow            *window,
                                                      gint                   action);
 static void nemo_window_reload                      (NemoWindow            *window);
+static void nemo_window_update_split_view_orientation (NemoWindow *window);
+static void nemo_window_set_up_sidebar2             (NemoWindow *window);
+static void nemo_window_tear_down_sidebar2          (NemoWindow *window);
+static void nemo_window_set_up_pane1_wrapper        (NemoWindow *window);
+static void nemo_window_refresh_sidebar1_pane_lock  (NemoWindow *window, gboolean lock_to_pane1);
+static void nemo_window_tear_down_pane1_wrapper     (NemoWindow *window);
+static void dual_pane_prefs_changed                 (gpointer callback_data);
+static void nemo_window_refresh_sidebar_colours     (NemoWindow *window);
 
 /* Sanity check: highest mouse button value I could find was 14. 5 is our
  * lower threshold (well-documented to be the one of the button events for the
@@ -295,7 +303,6 @@ nemo_window_sync_allow_stop (NemoWindow *window,
 			update_cursor (window);
 		}
 
-
 		notebook = NEMO_NOTEBOOK (slot->pane->notebook);
 		nemo_notebook_sync_loading (notebook, slot);
 	}
@@ -477,6 +484,8 @@ nemo_window_hide_sidebar (NemoWindow *window)
 		return;
 	}
 
+	nemo_window_tear_down_pane1_wrapper (window);
+    nemo_window_tear_down_sidebar2 (window);
 	nemo_window_tear_down_sidebar (window);
 	nemo_window_update_show_hide_ui_elements (window);
 
@@ -497,9 +506,31 @@ nemo_window_show_sidebar (NemoWindow *window)
 	}
 
 	nemo_window_set_up_sidebar (window);
-	nemo_window_update_show_hide_ui_elements (window);
 
+    /* Mark sidebar as shown BEFORE calling wrapper setup functions.
+     * set_up_pane1_wrapper guards on show_sidebar being TRUE - if we
+     * set it after, the guard silently skips the wrapper and sidebar1
+     * stays full-height in content_paned, breaking the layout. */
     nemo_window_set_show_sidebar (window, TRUE);
+
+    /* Restore per-pane layout if applicable */
+    {
+        gboolean split = nemo_window_split_view_showing (window);
+        gboolean vertical = g_settings_get_boolean (nemo_preferences,
+                                                    NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
+        gboolean sep_sidebar = g_settings_get_boolean (nemo_preferences,
+                                                       NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+        gboolean sep_nav = g_settings_get_boolean (nemo_preferences,
+                                                   NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+        /* pane1 wrapper only when separate_sidebar ON (independent of sep_nav) */
+        if (split && vertical && sep_sidebar) {
+            nemo_window_set_up_pane1_wrapper (window);
+            nemo_window_set_up_sidebar2 (window);
+        }
+    }
+
+	nemo_window_update_show_hide_ui_elements (window);
+    nemo_window_refresh_sidebar_colours (window);
 }
 
 static gboolean
@@ -517,9 +548,30 @@ side_pane_id_changed (NemoWindow *window)
         return;
     }
 
-    /* refresh the sidebar setting */
+    /* refresh the sidebar - tear down per-pane wrappers first so sidebar
+     * can be safely moved back to content_paned before rebuild */
+    nemo_window_tear_down_pane1_wrapper (window);
+    nemo_window_tear_down_sidebar2 (window);
     nemo_window_tear_down_sidebar (window);
     nemo_window_set_up_sidebar (window);
+
+    /* Restore per-pane layout if applicable */
+    {
+        gboolean split = nemo_window_split_view_showing (window);
+        gboolean vertical = g_settings_get_boolean (nemo_preferences,
+                                                    NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
+        gboolean sep_sidebar = g_settings_get_boolean (nemo_preferences,
+                                                       NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+        gboolean sep_nav = g_settings_get_boolean (nemo_preferences,
+                                                   NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+        /* pane1 wrapper only when separate_sidebar ON (independent of sep_nav) */
+        if (split && vertical && sep_sidebar && window->details->show_sidebar) {
+            nemo_window_set_up_pane1_wrapper (window);
+            nemo_window_set_up_sidebar2 (window);
+        }
+    }
+
+    nemo_window_refresh_sidebar_colours (window);
 }
 
 gboolean
@@ -697,7 +749,8 @@ nemo_window_constructed (GObject *self)
 			 TRUE, FALSE);
 	gtk_widget_show (vbox);
 
-	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+	hpaned = gtk_paned_new (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT)
+                            ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL);
 	gtk_box_pack_start (GTK_BOX (vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show (hpaned);
 	window->details->split_view_hpane = hpaned;
@@ -706,7 +759,6 @@ nemo_window_constructed (GObject *self)
 	window->details->panes = g_list_prepend (window->details->panes, pane);
 
 	gtk_paned_pack1 (GTK_PANED (hpaned), GTK_WIDGET (pane), TRUE, FALSE);
-
 
     nemo_statusbar = nemo_status_bar_new (window);
     window->details->nemo_status_bar = nemo_statusbar;
@@ -836,6 +888,12 @@ nemo_window_destroy (GtkWidget *object)
 	window = NEMO_WINDOW (object);
 
 	DEBUG ("Destroying window");
+
+	/* Tear down per-pane wrappers before the sidebar and panes, so sidebar2
+	 * and pri_paned are removed cleanly from the widget hierarchy before
+	 * pane widgets are destroyed. */
+	nemo_window_tear_down_pane1_wrapper (window);
+	nemo_window_tear_down_sidebar2 (window);
 
 	/* close the sidebar first */
 	nemo_window_tear_down_sidebar (window);
@@ -1006,8 +1064,13 @@ nemo_window_close_pane (NemoWindow *window,
 	}
 
 	/* Required really. Destroying the NemoWindowPane still leaves behind the toolbar.
-	 * This kills it off. Do it before we call gtk_widget_destroy for safety. */
-	gtk_container_remove (GTK_CONTAINER (window->details->toolbar_holder), GTK_WIDGET (pane->tool_bar));
+	 * This kills it off. Do it before we call gtk_widget_destroy for safety.
+	 * The toolbar may have been reparented into the pane itself (embedded nav bar mode),
+	 * in which case gtk_widget_destroy on the pane will handle it — but we remove it
+	 * from toolbar_holder only if that's where it still lives. */
+	if (gtk_widget_get_parent (GTK_WIDGET (pane->tool_bar)) == window->details->toolbar_holder) {
+		gtk_container_remove (GTK_CONTAINER (window->details->toolbar_holder), GTK_WIDGET (pane->tool_bar));
+	}
 
 	window->details->panes = g_list_remove (window->details->panes, pane);
 
@@ -1082,7 +1145,12 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		if (old_slot->content_view != NULL) {
 			nemo_window_disconnect_content_view (window, old_slot->content_view);
 		}
-		gtk_widget_hide (GTK_WIDGET (old_slot->pane->tool_bar));
+		/* Only hide the toolbar if it is in the shared toolbar_holder.
+		 * Embedded toolbars (separate nav bar mode) must always stay visible. */
+		if (gtk_widget_get_parent (GTK_WIDGET (old_slot->pane->tool_bar)) ==
+		    window->details->toolbar_holder) {
+			gtk_widget_hide (GTK_WIDGET (old_slot->pane->tool_bar));
+		}
 		/* inform slot & view */
 		g_signal_emit_by_name (old_slot, "inactive");
 	}
@@ -1106,12 +1174,15 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
                         nemo_window_connect_content_view (window, new_slot->content_view);
                 }
 
-		// Show active toolbar
-		gboolean show_toolbar;
-		show_toolbar = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
-
-		if ( show_toolbar) {
-			gtk_widget_show (GTK_WIDGET (new_slot->pane->tool_bar));
+		/* Show active toolbar - but only if it is in toolbar_holder (not embedded).
+		 * Embedded toolbars in separate-nav-bar mode are always visible. */
+		if (gtk_widget_get_parent (GTK_WIDGET (new_slot->pane->tool_bar)) ==
+		    window->details->toolbar_holder) {
+			gboolean show_toolbar = g_settings_get_boolean (nemo_window_state,
+			                                                NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
+			if (show_toolbar) {
+				gtk_widget_show (GTK_WIDGET (new_slot->pane->tool_bar));
+			}
 		}
 
 		/* inform slot & view */
@@ -1558,7 +1629,6 @@ zoom_level_changed_callback (NemoView *view,
 	nemo_window_sync_zoom_widgets (window);
 }
 
-
 /* These are called
  *   A) when switching the view within the active slot
  *   B) when switching the active slot
@@ -1684,7 +1754,6 @@ nemo_window_get_next_pane (NemoWindow *window)
        return next_pane;
 }
 
-
 void
 nemo_window_slot_set_viewed_file (NemoWindowSlot *slot,
 				      NemoFile *file)
@@ -1774,7 +1843,6 @@ nemo_window_get_extra_slot (NemoWindow *window)
 
 	g_assert (NEMO_IS_WINDOW (window));
 
-
 	/* return NULL if there is only one pane */
 	if (window->details->panes == NULL ||
 	    window->details->panes->next == NULL) {
@@ -1828,9 +1896,13 @@ center_pane_divider (GtkWidget  *paned,
 {
     /* Make the paned think it's been manually resized, otherwise
      * things like the trash bar will force unwanted resizes */
+    GtkOrientation orientation = gtk_orientable_get_orientation (GTK_ORIENTABLE (paned));
+    gint size = (orientation == GTK_ORIENTATION_VERTICAL)
+        ? gtk_widget_get_allocated_height (paned)
+        : gtk_widget_get_allocated_width (paned);
 
     g_object_set (G_OBJECT (paned),
-                  "position", gtk_widget_get_allocated_width (paned) / 2,
+                  "position", size / 2,
                   NULL);
 
     g_signal_handlers_disconnect_by_func (G_OBJECT (paned), center_pane_divider, NULL);
@@ -1960,7 +2032,6 @@ use_extra_mouse_buttons_changed (gpointer callback_data)
 	mouse_extra_buttons = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS);
 }
 
-
 /*
  * Main API
  */
@@ -2013,6 +2084,20 @@ nemo_window_init (NemoWindow *window)
 				  "changed::" NEMO_PREFERENCES_INHERIT_SHOW_THUMBNAILS,
 				  G_CALLBACK(nemo_window_sync_thumbnail_action),
 				  window);
+
+    /* Respond to dual pane preference changes */
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT,
+                  G_CALLBACK (dual_pane_prefs_changed),
+                  window);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR,
+                  G_CALLBACK (dual_pane_prefs_changed),
+                  window);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR,
+                  G_CALLBACK (dual_pane_prefs_changed),
+                  window);
 }
 
 static NemoIconInfo *
@@ -2187,11 +2272,701 @@ nemo_window_new (GtkApplication *application,
 			     NULL);
 }
 
+/* ---- Dual pane helper functions ---- */
+
+/*
+ * Per-pane layout helpers.
+ *
+ * When "separate sidebar per pane" or "separate nav bar per pane" is active in
+ * vertical (stacked) dual-pane mode, each pane column looks like:
+ *
+ *   pack_paned (HPaned)
+ *     ├── sidebar_box  (pack1, fixed width)
+ *     └── content_vbox (pack2, expanding)
+ *           ├── toolbar   (optional, via embed_toolbar)
+ *           └── pane      (NemoWindowPane)
+ *
+ * For pane1 we move the primary sidebar OUT of content_paned and INTO a new
+ * inline HPaned that is then packed as child1 of split_view_hpane.
+ * For pane2 we wrap it in the same structure as child2 of split_view_hpane.
+ */
+
+/* ---------- pane2 (secondary) wrapper ---------- */
+
+static void
+nemo_window_set_up_sidebar2 (NemoWindow *window)
+{
+    GtkWidget *sidebar2_widget;
+    const gchar *sidebar_id;
+    GList *last;
+    NemoWindowPane *pane2;
+    GtkWidget *pane2_widget;
+    GtkPaned *hpane;
+    GtkWidget *child2;
+    GtkWidget *sec_paned;
+    GtkWidget *content_vbox;
+
+    if (!nemo_window_split_view_showing (window)) {
+        return;
+    }
+
+    sidebar_id = window->details->sidebar_id;
+    if (!sidebar_id || (g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_PLACES) != 0 &&
+                        g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_TREE) != 0)) {
+        return;
+    }
+
+    last = g_list_last (window->details->panes);
+    if (!last || last->data == window->details->panes->data) {
+        return;
+    }
+    pane2 = last->data;
+    pane2_widget = GTK_WIDGET (pane2);
+
+    if (window->details->secondary_pane_content_paned != NULL) {
+        return;
+    }
+
+    /* pane2 may already be inside a content_vbox (from embed_toolbar).
+     * Whichever widget is currently child2 of split_view_hpane is what we wrap. */
+    hpane = GTK_PANED (window->details->split_view_hpane);
+    child2 = gtk_paned_get_child2 (hpane);
+    if (child2 == NULL) {
+        return;
+    }
+
+    g_object_ref (child2);
+    gtk_container_remove (GTK_CONTAINER (hpane), child2);
+
+    /* If pane2 doesn't yet have a content_vbox (embed_toolbar not called), wrap it now */
+    if (child2 == pane2_widget) {
+        content_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+        gtk_widget_show (content_vbox);
+        gtk_box_pack_start (GTK_BOX (content_vbox), pane2_widget, TRUE, TRUE, 0);
+        g_object_unref (child2);
+        child2 = content_vbox;
+        g_object_ref (child2);
+    }
+
+    /* Create outer HPaned: sidebar2 | content_vbox */
+    sec_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+    window->details->secondary_pane_content_paned = sec_paned;
+    gtk_widget_show (sec_paned);
+
+    /* Create sidebar2 box locked to pane2 */
+    window->details->sidebar2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+    gtk_style_context_add_class (gtk_widget_get_style_context (window->details->sidebar2),
+                                 GTK_STYLE_CLASS_SIDEBAR);
+
+    if (g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_PLACES) == 0) {
+        sidebar2_widget = nemo_places_sidebar_new_for_pane (window, pane2);
+    } else {
+        sidebar2_widget = nemo_tree_sidebar_new_for_pane (window, pane2);
+    }
+
+    gtk_box_pack_start (GTK_BOX (window->details->sidebar2), sidebar2_widget, TRUE, TRUE, 0);
+    gtk_widget_show (sidebar2_widget);
+    gtk_widget_show (window->details->sidebar2);
+
+    /* sidebar2 on left (fixed), content_vbox on right (expanding) */
+    gtk_paned_pack1 (GTK_PANED (sec_paned), window->details->sidebar2, FALSE, FALSE);
+    gtk_paned_pack2 (GTK_PANED (sec_paned), child2, TRUE, FALSE);
+    g_object_unref (child2);
+
+    gtk_paned_set_position (GTK_PANED (sec_paned),
+                            g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SIDEBAR_WIDTH));
+
+    gtk_paned_pack2 (GTK_PANED (hpane), sec_paned, TRUE, FALSE);
+
+    /* Sync sidebar2 active/inactive CSS class to reflect current active pane */
+    {
+        GtkStyleContext *s2 = gtk_widget_get_style_context (window->details->sidebar2);
+        gboolean pane2_active = (window->details->active_pane == pane2);
+        if (pane2_active) {
+            gtk_style_context_remove_class (s2, "nemo-inactive-pane");
+            gtk_style_context_add_class    (s2, "nemo-active-sidebar");
+        } else {
+            gtk_style_context_remove_class (s2, "nemo-active-sidebar");
+            gtk_style_context_add_class    (s2, "nemo-inactive-pane");
+        }
+        gtk_widget_reset_style (window->details->sidebar2);
+    }
+}
+
+static void
+nemo_window_tear_down_sidebar2 (NemoWindow *window)
+{
+    GList *last;
+    NemoWindowPane *pane2;
+    GtkWidget *pane2_widget;
+    GtkPaned *hpane;
+    GtkWidget *sec_paned;
+    GtkWidget *restore_widget;  /* what gets packed back into hpane as child2 */
+
+    if (window->details->secondary_pane_content_paned == NULL) {
+        return;
+    }
+
+    sec_paned = window->details->secondary_pane_content_paned;
+    window->details->secondary_pane_content_paned = NULL;
+    window->details->sidebar2 = NULL;
+
+    if (!nemo_window_split_view_showing (window)) {
+        return;
+    }
+
+    last = g_list_last (window->details->panes);
+    if (!last || last->data == window->details->panes->data) {
+        return;
+    }
+    pane2 = last->data;
+    pane2_widget = GTK_WIDGET (pane2);
+
+    hpane = GTK_PANED (window->details->split_view_hpane);
+
+    /* Walk up from pane2 to find the direct child of sec_paned that contains
+     * it (may be pane2 itself, or a content_vbox wrapping it). */
+    restore_widget = pane2_widget;
+    {
+        GtkWidget *p = gtk_widget_get_parent (pane2_widget);
+        while (p != NULL && p != sec_paned) {
+            restore_widget = p;
+            p = gtk_widget_get_parent (p);
+        }
+        if (p == NULL) {
+            return;
+        }
+    }
+
+    /* Safely lift restore_widget out of sec_paned before destroying sec_paned */
+    g_object_ref (restore_widget);
+    gtk_container_remove (GTK_CONTAINER (sec_paned), restore_widget);
+
+    /* Now sec_paned only has sidebar2 left; remove it from hpane and destroy it.
+     * sidebar2 is destroyed with it - that is safe, it has no panes inside.
+     * Hold a ref across the remove so the widget isn't freed before destroy. */
+    g_object_ref (sec_paned);
+    if (gtk_widget_get_parent (sec_paned) == GTK_WIDGET (hpane)) {
+        gtk_container_remove (GTK_CONTAINER (hpane), sec_paned);
+    }
+    gtk_widget_destroy (sec_paned);
+    g_object_unref (sec_paned);
+
+    /* Put pane2 (or its vbox wrapper) back as child2 of hpane */
+    gtk_paned_pack2 (GTK_PANED (hpane), restore_widget, TRUE, FALSE);
+    g_object_unref (restore_widget);
+
+}
+
+/* Rebuild the inner sidebar1 widget with or without pane1 locking.
+ * When per-pane mode is active, sidebar1 must be locked to pane1 so it only
+ * updates when pane1 navigates, not when pane2 does. */
+static void
+nemo_window_refresh_sidebar1_pane_lock (NemoWindow *window, gboolean lock_to_pane1)
+{
+    GtkWidget *sidebar_box;
+    GtkWidget *old_widget;
+    GtkWidget *new_widget;
+    GList *children;
+    NemoWindowPane *pane1;
+    const gchar *sidebar_id;
+
+    if (window->details->sidebar == NULL) {
+        return;
+    }
+
+    sidebar_id = window->details->sidebar_id;
+    if (!sidebar_id || (g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_PLACES) != 0 &&
+                        g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_TREE) != 0)) {
+        return;
+    }
+
+    sidebar_box = window->details->sidebar;
+    pane1 = window->details->panes ? window->details->panes->data : NULL;
+
+    /* Remove the existing inner widget */
+    children = gtk_container_get_children (GTK_CONTAINER (sidebar_box));
+    if (children != NULL) {
+        old_widget = GTK_WIDGET (children->data);
+        gtk_container_remove (GTK_CONTAINER (sidebar_box), old_widget);
+        g_list_free (children);
+    }
+
+    /* Create a replacement with or without pane lock */
+    if (lock_to_pane1 && pane1 != NULL) {
+        if (g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_PLACES) == 0) {
+            new_widget = nemo_places_sidebar_new_for_pane (window, pane1);
+        } else {
+            new_widget = nemo_tree_sidebar_new_for_pane (window, pane1);
+        }
+    } else {
+        if (g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_PLACES) == 0) {
+            new_widget = nemo_places_sidebar_new (window);
+        } else {
+            new_widget = nemo_tree_sidebar_new (window);
+        }
+    }
+
+    gtk_box_pack_start (GTK_BOX (sidebar_box), new_widget, TRUE, TRUE, 0);
+    gtk_widget_show (new_widget);
+}
+
+/* ---------- pane1 (primary) wrapper ----------
+ *
+ * Moves the primary sidebar from content_paned (where it spans full height)
+ * into an inline HPaned that lives as child1 of split_view_hpane, so that
+ * pane1 has its own sidebar column just like pane2.
+ */
+
+static void
+nemo_window_set_up_pane1_wrapper (NemoWindow *window)
+{
+    NemoWindowPane *pane1;
+    GtkWidget *pane1_widget;
+    GtkWidget *sidebar1;
+    GtkPaned *split_hpane;
+    GtkWidget *child1;
+    GtkWidget *pri_paned;
+    GtkWidget *content_vbox;
+
+    if (window->details->primary_pane_content_paned != NULL) {
+        return;  /* Already set up */
+    }
+
+    if (!window->details->show_sidebar || window->details->sidebar == NULL) {
+        return;  /* No sidebar to move */
+    }
+
+    pane1 = window->details->panes->data;
+    pane1_widget = GTK_WIDGET (pane1);
+    split_hpane = GTK_PANED (window->details->split_view_hpane);
+
+    /* child1 of split_view_hpane is either pane1 directly, or a content_vbox
+     * containing toolbar + pane1 (if embed_toolbar was called for pane1). */
+    child1 = gtk_paned_get_child1 (split_hpane);
+    if (child1 == NULL) {
+        return;
+    }
+
+    g_object_ref (child1);
+    gtk_container_remove (GTK_CONTAINER (split_hpane), child1);
+
+    /* If child1 is the bare pane, wrap it in a content_vbox so toolbar can
+     * be added later consistently */
+    if (child1 == pane1_widget) {
+        content_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+        gtk_widget_show (content_vbox);
+        gtk_box_pack_start (GTK_BOX (content_vbox), pane1_widget, TRUE, TRUE, 0);
+        g_object_unref (child1);
+        child1 = content_vbox;
+        g_object_ref (child1);
+    }
+
+    /* Move the primary sidebar widget out of content_paned and into a new
+     * inline HPaned.  We take the sidebar box (window->details->sidebar). */
+    sidebar1 = window->details->sidebar;
+
+    g_object_ref (sidebar1);
+    gtk_container_remove (GTK_CONTAINER (window->details->content_paned), sidebar1);
+
+    /* Hide content_paned's now-empty pack1 gap by setting position to 0 */
+    gtk_paned_set_position (GTK_PANED (window->details->content_paned), 0);
+
+    /* Create inline HPaned for pane1: sidebar1 | content_vbox */
+    pri_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+    window->details->primary_pane_content_paned = pri_paned;
+    gtk_widget_show (pri_paned);
+
+    gtk_paned_pack1 (GTK_PANED (pri_paned), sidebar1, FALSE, FALSE);
+    g_object_unref (sidebar1);
+    gtk_paned_pack2 (GTK_PANED (pri_paned), child1, TRUE, FALSE);
+    g_object_unref (child1);
+
+    gtk_paned_set_position (GTK_PANED (pri_paned),
+                            g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SIDEBAR_WIDTH));
+
+    gtk_paned_pack1 (GTK_PANED (split_hpane), pri_paned, TRUE, FALSE);
+
+    /* Lock sidebar1 to pane1 now that we are in per-pane mode */
+    nemo_window_refresh_sidebar1_pane_lock (window, TRUE);
+
+    /* Add a top separator to sidebar1 to restore the border that was previously
+     * provided by toolbar_holder sitting above it */
+    if (sidebar1 != NULL) {
+        GtkWidget *sep = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+        gtk_box_pack_start (GTK_BOX (sidebar1), sep, FALSE, FALSE, 0);
+        gtk_box_reorder_child (GTK_BOX (sidebar1), sep, 0);
+        gtk_widget_show (sep);
+        g_object_set_data (G_OBJECT (sidebar1), "pane-wrapper-top-sep", sep);
+    }
+
+    /* Sync sidebar1 active/inactive CSS class to reflect current active pane.
+     * sidebar_set_active_style is defined in nemo-window-pane.c; we replicate
+     * the same logic here to avoid adding a cross-file helper just for this. */
+    {
+        GtkStyleContext *s1 = gtk_widget_get_style_context (window->details->sidebar);
+        gboolean pane1_active = (window->details->active_pane == pane1);
+        if (pane1_active) {
+            gtk_style_context_remove_class (s1, "nemo-inactive-pane");
+            gtk_style_context_add_class    (s1, "nemo-active-sidebar");
+        } else {
+            gtk_style_context_remove_class (s1, "nemo-active-sidebar");
+            gtk_style_context_add_class    (s1, "nemo-inactive-pane");
+        }
+        gtk_widget_reset_style (window->details->sidebar);
+    }
+
+}
+
+static void
+nemo_window_tear_down_pane1_wrapper (NemoWindow *window)
+{
+    NemoWindowPane *pane1;
+    GtkWidget *pane1_widget;
+    GtkWidget *sidebar1;
+    GtkPaned *split_hpane;
+    GtkWidget *pri_paned;
+    GtkWidget *restore_widget;
+
+    if (window->details->primary_pane_content_paned == NULL) {
+        return;
+    }
+
+    pri_paned = window->details->primary_pane_content_paned;
+    window->details->primary_pane_content_paned = NULL;
+
+    pane1 = window->details->panes->data;
+    pane1_widget = GTK_WIDGET (pane1);
+    split_hpane = GTK_PANED (window->details->split_view_hpane);
+    sidebar1 = window->details->sidebar;
+
+    /* Walk up from pane1 to find the direct child of pri_paned that contains it */
+    restore_widget = pane1_widget;
+    {
+        GtkWidget *p = gtk_widget_get_parent (pane1_widget);
+        while (p != NULL && p != GTK_WIDGET (pri_paned)) {
+            restore_widget = p;
+            p = gtk_widget_get_parent (p);
+        }
+        if (p == NULL) {
+            goto restore_sidebar;
+        }
+    }
+
+    /* Step 1: Rescue sidebar1 from pri_paned BEFORE we touch anything else.
+     * This must happen first so content_paned.pack1 is populated before
+     * pri_paned is unparented — GTK may re-layout between operations. */
+    if (sidebar1 != NULL && gtk_widget_get_parent (sidebar1) == GTK_WIDGET (pri_paned)) {
+        g_object_ref (sidebar1);
+        gtk_container_remove (GTK_CONTAINER (pri_paned), sidebar1);
+
+        /* Remove the top separator we added when entering per-pane mode */
+        {
+            GtkWidget *sep = g_object_get_data (G_OBJECT (sidebar1), "pane-wrapper-top-sep");
+            if (sep != NULL) {
+                gtk_widget_destroy (sep);
+                g_object_set_data (G_OBJECT (sidebar1), "pane-wrapper-top-sep", NULL);
+            }
+        }
+
+        /* sidebar1 goes back into content_paned pack1 at full window height */
+        gtk_paned_pack1 (GTK_PANED (window->details->content_paned),
+                         sidebar1, FALSE, FALSE);
+        g_object_unref (sidebar1);
+        gtk_paned_set_position (GTK_PANED (window->details->content_paned),
+                                g_settings_get_int (nemo_window_state,
+                                                    NEMO_WINDOW_STATE_SIDEBAR_WIDTH));
+    } else {
+    }
+
+    /* Step 2: Extract restore_widget (content_vbox containing pane1) from
+     * pri_paned and put it back as child1 of split_hpane. */
+    g_object_ref (restore_widget);
+    gtk_container_remove (GTK_CONTAINER (pri_paned), restore_widget);
+
+    /* Step 3: Remove pri_paned from split_hpane and destroy it.
+     * Hold a ref so the widget isn't freed by the remove before destroy. */
+    g_object_ref (pri_paned);
+    if (gtk_widget_get_parent (GTK_WIDGET (pri_paned)) == GTK_WIDGET (split_hpane)) {
+        gtk_container_remove (GTK_CONTAINER (split_hpane), GTK_WIDGET (pri_paned));
+    }
+    gtk_widget_destroy (GTK_WIDGET (pri_paned));
+    g_object_unref (pri_paned);
+
+    /* Step 4: Restore pane1 (or its vbox) as child1 of split_hpane. */
+    gtk_paned_pack1 (GTK_PANED (split_hpane), restore_widget, TRUE, FALSE);
+    g_object_unref (restore_widget);
+
+    /* Step 5: Unlock sidebar1 from pane1 now that we are leaving per-pane mode. */
+    nemo_window_refresh_sidebar1_pane_lock (window, FALSE);
+
+    return;
+
+restore_sidebar:
+    /* Fallback: pane1 was not inside pri_paned (already moved). Still need to
+     * rescue sidebar1 from pri_paned back to content_paned if it's there. */
+    if (sidebar1 != NULL && gtk_widget_get_parent (sidebar1) == GTK_WIDGET (pri_paned)) {
+        g_object_ref (sidebar1);
+        gtk_container_remove (GTK_CONTAINER (pri_paned), sidebar1);
+        gtk_paned_pack1 (GTK_PANED (window->details->content_paned),
+                         sidebar1, FALSE, FALSE);
+        g_object_unref (sidebar1);
+        gtk_paned_set_position (GTK_PANED (window->details->content_paned),
+                                g_settings_get_int (nemo_window_state,
+                                                    NEMO_WINDOW_STATE_SIDEBAR_WIDTH));
+    }
+    g_object_ref (pri_paned);
+    if (gtk_widget_get_parent (GTK_WIDGET (pri_paned)) == GTK_WIDGET (split_hpane)) {
+        gtk_container_remove (GTK_CONTAINER (split_hpane), GTK_WIDGET (pri_paned));
+    }
+    gtk_widget_destroy (GTK_WIDGET (pri_paned));
+    g_object_unref (pri_paned);
+    nemo_window_refresh_sidebar1_pane_lock (window, FALSE);
+}
+
+/* Recreate the split_view_hpane with the new orientation */
+static void
+nemo_window_update_split_view_orientation (NemoWindow *window)
+{
+    gboolean vertical;
+    GtkOrientation desired;
+    GtkOrientation current;
+    GtkWidget *old_paned;
+    GtkWidget *parent;
+    GtkWidget *child1;
+    GtkWidget *child2;
+    GtkWidget *new_paned;
+
+    vertical = g_settings_get_boolean (nemo_preferences,
+                                       NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
+    desired = vertical ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
+
+    old_paned = window->details->split_view_hpane;
+    if (old_paned == NULL) {
+        return;
+    }
+
+    current = gtk_orientable_get_orientation (GTK_ORIENTABLE (old_paned));
+    if (current == desired) {
+        return;  /* Nothing to do */
+    }
+
+    /* Get parent container (the vbox) */
+    parent = gtk_widget_get_parent (old_paned);
+    if (parent == NULL) {
+        return;
+    }
+
+    /* Collect children from the old paned */
+    child1 = gtk_paned_get_child1 (GTK_PANED (old_paned));
+    child2 = gtk_paned_get_child2 (GTK_PANED (old_paned));
+
+    if (child1) g_object_ref (child1);
+    if (child2) g_object_ref (child2);
+    if (child1) gtk_container_remove (GTK_CONTAINER (old_paned), child1);
+    if (child2) gtk_container_remove (GTK_CONTAINER (old_paned), child2);
+
+    gtk_container_remove (GTK_CONTAINER (parent), old_paned);
+
+    /* Create new paned with desired orientation */
+    new_paned = gtk_paned_new (desired);
+    gtk_box_pack_start (GTK_BOX (parent), new_paned, TRUE, TRUE, 0);
+    gtk_widget_show (new_paned);
+    window->details->split_view_hpane = new_paned;
+
+    /* Re-attach children */
+    if (child1) {
+        gtk_paned_pack1 (GTK_PANED (new_paned), child1, TRUE, FALSE);
+        g_object_unref (child1);
+    }
+    if (child2) {
+        gtk_paned_pack2 (GTK_PANED (new_paned), child2, TRUE, FALSE);
+        g_object_unref (child2);
+    }
+
+    /* Center the divider */
+    if (child2) {
+        g_signal_connect_after (new_paned,
+                                "notify::position",
+                                G_CALLBACK (center_pane_divider),
+                                NULL);
+    }
+}
+
+/* Refresh sidebar background colours to match current per-pane state.
+ *
+ * Called after any operation that creates, destroys, or changes sidebars:
+ *   - split_view_on / split_view_off
+ *   - show_sidebar / hide_sidebar
+ *   - side_pane_id_changed (Places <-> Tree switch)
+ *   - dual_pane_prefs_changed (any of the three dual-pane prefs)
+ *
+ * Rules:
+ *   Per-pane mode active (both sidebars visible):
+ *     - sidebar for the active pane   → GTK_STYLE_CLASS_SIDEBAR removed (normal bg)
+ *     - sidebar for the inactive pane → GTK_STYLE_CLASS_SIDEBAR kept + nemo-inactive-pane
+ *   Single sidebar / not in per-pane mode:
+ *     - sidebar1 → GTK_STYLE_CLASS_SIDEBAR restored (theme default, no custom class)
+ */
+static void
+nemo_window_refresh_sidebar_colours (NemoWindow *window)
+{
+    gboolean per_pane_mode;
+    NemoWindowPane *active_pane;
+    NemoWindowPane *pane1;
+    GList *last;
+    NemoWindowPane *pane2;
+
+    if (window->details->sidebar == NULL) {
+        return;
+    }
+
+    per_pane_mode = (window->details->primary_pane_content_paned != NULL) &&
+                    (window->details->sidebar2 != NULL);
+
+    if (per_pane_mode) {
+        active_pane = nemo_window_get_active_pane (window);
+        pane1 = window->details->panes ? window->details->panes->data : NULL;
+        last  = g_list_last (window->details->panes);
+        pane2 = (last && last->data != pane1) ? last->data : NULL;
+
+        gboolean pane1_active = (active_pane == pane1);
+
+        nemo_window_pane_set_active (pane1,  pane1_active);
+        if (pane2) {
+            nemo_window_pane_set_active (pane2, !pane1_active);
+        }
+    } else {
+        /* Not in per-pane mode: restore sidebar1 to normal themed state.
+         * Remove any custom classes we may have set, restore GTK_STYLE_CLASS_SIDEBAR. */
+        GtkStyleContext *style = gtk_widget_get_style_context (window->details->sidebar);
+        gtk_style_context_remove_class (style, "nemo-inactive-pane");
+        if (!gtk_style_context_has_class (style, GTK_STYLE_CLASS_SIDEBAR)) {
+            gtk_style_context_add_class (style, GTK_STYLE_CLASS_SIDEBAR);
+        }
+        gtk_widget_reset_style (window->details->sidebar);
+        gtk_widget_queue_draw  (window->details->sidebar);
+    }
+}
+
+static void
+dual_pane_prefs_changed (gpointer callback_data)
+{
+    NemoWindow *window = NEMO_WINDOW (callback_data);
+    gboolean split_showing;
+    gboolean want_per_pane;
+    gboolean want_sidebar2;
+    GList *last;
+    NemoWindowPane *pane1;
+    NemoWindowPane *pane2;
+    gboolean vertical;
+    gboolean separate_nav;
+    gboolean separate_sidebar;
+
+    split_showing = nemo_window_split_view_showing (window);
+    vertical = g_settings_get_boolean (nemo_preferences,
+                                       NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
+    separate_nav = g_settings_get_boolean (nemo_preferences,
+                                           NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+    separate_sidebar = g_settings_get_boolean (nemo_preferences,
+                                               NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+
+    /* Handle orientation change - must happen before any wrapper setup */
+    nemo_window_update_split_view_orientation (window);
+
+    /* The pane1 sidebar wrapper (pri_paned) is ONLY needed when separate_sidebar
+     * is ON.  Per spec 3.5.3, toolbar embedding (separate_nav) is independent of
+     * sidebar layout — when nav bar is ON but sidebar is OFF the sidebar stays
+     * full-height in content_paned and pri_paned must NOT be created.
+     *
+     * want_per_pane  = controls the pane1 sidebar wrapper (pri_paned)
+     * want_sidebar2  = controls the pane2 sidebar wrapper (sec_paned + sidebar2) */
+    want_per_pane = split_showing && vertical && separate_sidebar &&
+                    window->details->show_sidebar;
+
+    want_sidebar2 = want_per_pane;
+
+    /* --- Sidebar wrapper teardown/setup (order is critical, per spec section 5):
+     *
+     * TEARDOWN order: pane1_wrapper first, then sidebar2.
+     *   tear_down_pane1_wrapper() rescues sidebar1 back into content_paned.
+     *   tear_down_sidebar2() then finds pane2 cleanly inside hpane.child2.
+     *   Reversing this order leaves sidebar1 stranded inside a half-destroyed
+     *   pri_paned when sidebar2 tries to walk the widget tree from pane2.
+     *
+     * SETUP order: sidebar2 first, then pane1_wrapper (matches build order).
+     */
+
+    /* --- pane1 sidebar wrapper (teardown only — setup happens after sidebar2) --- */
+    if (!want_per_pane && window->details->primary_pane_content_paned != NULL) {
+        nemo_window_tear_down_pane1_wrapper (window);
+    }
+
+    /* --- pane2 sidebar wrapper --- */
+    if (want_sidebar2 && window->details->secondary_pane_content_paned == NULL) {
+        nemo_window_set_up_sidebar2 (window);
+    } else if (!want_sidebar2 && window->details->secondary_pane_content_paned != NULL) {
+        nemo_window_tear_down_sidebar2 (window);
+    }
+
+    /* --- pane1 sidebar wrapper (setup only — teardown happened above) --- */
+    if (want_per_pane && window->details->primary_pane_content_paned == NULL) {
+        nemo_window_set_up_pane1_wrapper (window);
+    }
+
+    /* --- per-pane toolbars --- */
+    if (split_showing) {
+        pane1 = window->details->panes->data;
+        last = g_list_last (window->details->panes);
+        pane2 = (last && last->data != pane1) ? last->data : NULL;
+
+        if (vertical && separate_nav) {
+            /* Embed toolbar into each pane */
+            nemo_window_pane_embed_toolbar (pane1);
+            if (pane2) {
+                nemo_window_pane_embed_toolbar (pane2);
+            }
+        } else {
+            /* Detach pane toolbars back to toolbar_holder.
+             * detach_toolbar() hides the toolbar after moving it (so only the
+             * active pane's bar is visible in the shared holder).  After
+             * detaching we must explicitly re-show the active pane's toolbar
+             * because no set_active_slot() call will be triggered by the pref
+             * change alone — without this the toolbar holder stays empty. */
+            nemo_window_pane_detach_toolbar (pane1);
+            if (pane2) {
+                nemo_window_pane_detach_toolbar (pane2);
+            }
+
+            /* Re-show the active pane's toolbar in the holder, respecting the
+             * toolbar visibility setting. */
+            {
+                NemoWindowPane *active_pane = nemo_window_get_active_pane (window);
+                if (active_pane != NULL) {
+                    GtkWidget *tb = GTK_WIDGET (active_pane->tool_bar);
+                    gboolean show_toolbar = g_settings_get_boolean (nemo_window_state,
+                                                                    NEMO_WINDOW_STATE_START_WITH_TOOLBAR);
+                    if (show_toolbar &&
+                        gtk_widget_get_parent (tb) == window->details->toolbar_holder) {
+                        gtk_widget_show (tb);
+                    }
+                }
+            }
+        }
+    }
+
+    /* Apply sidebar background colours after any structural change. */
+    nemo_window_refresh_sidebar_colours (window);
+}
+
 void
 nemo_window_split_view_on (NemoWindow *window)
 {
 	NemoWindowSlot *slot, *old_active_slot;
 	GFile *location;
+    NemoWindowPane *pane2;
+    gboolean vertical;
+    gboolean separate_nav;
 
 	old_active_slot = nemo_window_get_active_slot (window);
 	slot = create_extra_pane (window);
@@ -2215,6 +2990,34 @@ nemo_window_split_view_on (NemoWindow *window)
 	g_object_unref (location);
 
 	window_set_search_action_text (window, FALSE);
+
+    /* Set up per-pane features if enabled */
+    pane2 = slot->pane;
+
+    vertical = g_settings_get_boolean (nemo_preferences,
+                                       NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
+    separate_nav = g_settings_get_boolean (nemo_preferences,
+                                           NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+    gboolean separate_sidebar = g_settings_get_boolean (nemo_preferences,
+                                                        NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+    /* Per spec 3.5.3: toolbar embedding is independent of sidebar layout.
+     * pane1 wrapper (pri_paned) is ONLY created when separate_sidebar is ON. */
+    gboolean per_pane = vertical && separate_sidebar &&
+                        window->details->show_sidebar;
+
+    if (vertical && separate_nav) {
+        NemoWindowPane *pane1 = window->details->panes->data;
+        nemo_window_pane_embed_toolbar (pane1);
+        nemo_window_pane_embed_toolbar (pane2);
+    }
+
+    if (per_pane) {
+        nemo_window_set_up_pane1_wrapper (window);
+        nemo_window_set_up_sidebar2 (window);
+    }
+
+    /* Apply sidebar background colours now that all sidebars are in place. */
+    nemo_window_refresh_sidebar_colours (window);
 }
 
 void
@@ -2225,6 +3028,13 @@ nemo_window_split_view_off (NemoWindow *window)
 
 	active_pane = nemo_window_get_active_pane (window);
 
+    /* Tear down all per-pane wrappers before closing panes.
+     * Order is critical (spec section 5): pane1_wrapper first, then sidebar2.
+     * tear_down_pane1_wrapper rescues sidebar1 back to content_paned first;
+     * tear_down_sidebar2 then finds pane2 cleanly in hpane.child2. */
+    nemo_window_tear_down_pane1_wrapper (window);
+    nemo_window_tear_down_sidebar2 (window);
+
 	/* delete all panes except the first (main) pane */
 	for (l = window->details->panes; l != NULL; l = next) {
 		next = l->next;
@@ -2232,9 +3042,17 @@ nemo_window_split_view_off (NemoWindow *window)
 		if (pane != active_pane) {
             g_clear_object (&window->details->secondary_pane_last_location);
             window->details->secondary_pane_last_location = nemo_window_slot_get_location (pane->active_slot);
+            /* Detach embedded toolbar back to toolbar_holder before destroying pane */
+            nemo_window_pane_detach_toolbar (pane);
 			nemo_window_close_pane (window, pane);
 		}
 	}
+
+    /* Also detach pane1 toolbar (pane1 might have had its toolbar embedded) */
+    if (window->details->panes != NULL) {
+        NemoWindowPane *pane1 = window->details->panes->data;
+        nemo_window_pane_detach_toolbar (pane1);
+    }
 
     /* Reset split view pane's position so the position can be
      * caught again later */
@@ -2248,6 +3066,7 @@ nemo_window_split_view_off (NemoWindow *window)
 					      active_pane->action_group);
 
 	nemo_window_update_show_hide_ui_elements (window);
+    nemo_window_refresh_sidebar_colours (window);
 }
 
 gboolean

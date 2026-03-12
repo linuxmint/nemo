@@ -37,6 +37,7 @@
 #include "nemo-tree-sidebar-model.h"
 #include "nemo-properties-window.h"
 #include "nemo-window-slot.h"
+#include "nemo-window-pane.h"
 
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-clipboard-monitor.h>
@@ -73,6 +74,7 @@ typedef struct {
 
 struct FMTreeViewDetails {
 	NemoWindow *window;
+	NemoWindowPane *pane;  /* NULL = track active pane; non-NULL = locked to this pane */
 	GtkTreeView *tree_widget;
 	GtkTreeModelSort *sort_model;
 	FMTreeModel *child_model;
@@ -132,7 +134,17 @@ static void rebuild_menu (FMTreeView *view);
 // static void add_action_popup_items (FMTreeView *view);
 
 G_DEFINE_TYPE (FMTreeView, fm_tree_view, GTK_TYPE_SCROLLED_WINDOW)
+
 #define parent_class fm_tree_view_parent_class
+
+static NemoWindowSlot *
+tree_view_get_slot (FMTreeView *view)
+{
+    if (view->details->pane != NULL) {
+        return view->details->pane->active_slot;
+    }
+    return nemo_window_get_active_slot (view->details->window);
+}
 
 static void
 notify_clipboard_info (NemoClipboardMonitor *monitor,
@@ -361,7 +373,7 @@ got_activation_uri_callback (NemoFile *file, gpointer callback_data)
 		 (NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW |
 		  NEMO_WINDOW_OPEN_FLAG_NEW_TAB)) == 0;
 
-	slot = nemo_window_get_active_slot (view->details->window);
+	slot = tree_view_get_slot (view);
 
 	uri = nemo_file_get_activation_uri (file);
 	if (nemo_file_is_launcher (file)) {
@@ -1584,7 +1596,7 @@ create_tree (FMTreeView *view)
               "key-press-event", G_CALLBACK (key_press_callback),
               view);
 
-	slot = nemo_window_get_active_slot (view->details->window);
+	slot = tree_view_get_slot (view);
 	location = nemo_window_slot_get_current_uri (slot);
 	schedule_select_and_show_location (view, location);
 	g_free (location);
@@ -1640,6 +1652,21 @@ loading_uri_callback (NemoWindow *window,
 	FMTreeView *view;
 
 	view = FM_TREE_VIEW (callback_data);
+
+	/* If locked to a pane, only update when that pane's slot is loading */
+	if (view->details->pane != NULL) {
+		NemoWindowSlot *slot = tree_view_get_slot (view);
+		if (slot == NULL) {
+			return;
+		}
+		char *slot_uri = nemo_window_slot_get_current_uri (slot);
+		gboolean match = (slot_uri != NULL && strcmp (slot_uri, location) == 0);
+		g_free (slot_uri);
+		if (!match) {
+			return;
+		}
+	}
+
 	schedule_select_and_show_location (view, location);
 }
 
@@ -1882,6 +1909,18 @@ nemo_tree_sidebar_new (NemoWindow *window)
 	
 	sidebar = g_object_new (fm_tree_view_get_type (), NULL);
 	fm_tree_view_set_parent_window (sidebar, window);
+
+	return GTK_WIDGET (sidebar);
+}
+
+GtkWidget *
+nemo_tree_sidebar_new_for_pane (NemoWindow *window, NemoWindowPane *pane)
+{
+	FMTreeView *sidebar;
+
+	sidebar = g_object_new (fm_tree_view_get_type (), NULL);
+	fm_tree_view_set_parent_window (sidebar, window);
+	sidebar->details->pane = pane;
 
 	return GTK_WIDGET (sidebar);
 }

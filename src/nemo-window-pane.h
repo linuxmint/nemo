@@ -104,5 +104,7 @@ void nemo_window_pane_grab_focus (NemoWindowPane *pane);
 void nemo_window_pane_sync_up_actions (NemoWindowPane *pane);
 /* bars */
 void     nemo_window_pane_ensure_location_bar (NemoWindowPane *pane);
+void     nemo_window_pane_embed_toolbar        (NemoWindowPane *pane);
+void     nemo_window_pane_detach_toolbar       (NemoWindowPane *pane);
 
 #endif /* NEMO_WINDOW_PANE_H */

@@ -34,3 +34,16 @@
   color: @theme_selected_fg_color;
   background-color: @theme_selected_bg_color;
 }
+
+/* Per-pane sidebar colouring (dual-pane mode with separate sidebars).
+ *
+ * When two sidebars are shown, the ACTIVE sidebar box has GTK_STYLE_CLASS_SIDEBAR
+ * removed by sidebar_set_active_style() so the theme's grey .sidebar rules no
+ * longer apply — it simply uses the normal window background.
+ *
+ * The INACTIVE sidebar keeps GTK_STYLE_CLASS_SIDEBAR (grey) and also gets
+ * "nemo-inactive-pane" so the rule below greys its treeview rows explicitly.
+ * (The existing rule at the top of this file handles .nemo-inactive-pane .view.)
+ *
+ * No additional CSS rules are needed here for the active sidebar.
+ */

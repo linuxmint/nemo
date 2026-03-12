@@ -99,6 +99,15 @@ struct NemoWindowDetails
         // location changes.
         GFile *secondary_pane_last_location;
 
+        /* second sidebar for dual-pane separate sidebar mode */
+        GtkWidget *sidebar2;
+        gchar *sidebar2_id;
+        int side_pane2_width;
+        /* outer HPaned wrapper for pane1 column (sidebar1-inline + pane1) in per-pane mode */
+        GtkWidget *primary_pane_content_paned;
+        /* outer HPaned wrapper for pane2 column (sidebar2 + pane2) in per-pane mode */
+        GtkWidget *secondary_pane_content_paned;
+
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;

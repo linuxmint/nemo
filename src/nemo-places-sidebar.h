@@ -42,9 +42,12 @@
 #define NEMO_PLACES_SIDEBAR_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), NEMO_TYPE_PLACES_SIDEBAR, NemoPlacesSidebarClass))
 
+#include "nemo-window-types.h"
 
-GType nemo_places_sidebar_get_type (void);
-GtkWidget * nemo_places_sidebar_new (NemoWindow *window);
+GType      nemo_places_sidebar_get_type      (void);
+GtkWidget *nemo_places_sidebar_new           (NemoWindow *window);
+GtkWidget *nemo_places_sidebar_new_for_pane  (NemoWindow *window,
+                                              NemoWindowPane *pane);
 
 
 #endif

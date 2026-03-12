@@ -137,6 +137,9 @@ typedef enum
 #define NEMO_PREFERENCES_CLOSE_DEVICE_VIEW_ON_EJECT "close-device-view-on-device-eject"
 
 #define NEMO_PREFERENCES_START_WITH_DUAL_PANE "start-with-dual-pane"
+#define NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT "dual-pane-vertical-split"
+#define NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR "dual-pane-separate-sidebar"
+#define NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR "dual-pane-separate-nav-bar"
 #define NEMO_PREFERENCES_IGNORE_VIEW_METADATA "ignore-view-metadata"
 #define NEMO_PREFERENCES_SHOW_BOOKMARKS_IN_TO_MENUS "show-bookmarks-in-to-menus"
 #define NEMO_PREFERENCES_SHOW_PLACES_IN_TO_MENUS "show-places-in-to-menus"

@@ -9,12 +9,15 @@
 .project
 .metadata
 bin/**
+pkg/**
 tmp/**
 tmp/**/*
 *.tmp
 *.bak
 *.swp
 *~.nib
+*.sh
+*.deb
 local.properties
 .classpath
 .settings/

@@ -346,6 +346,21 @@
       <summary>Whether to default to showing dual-pane view when a new window is opened</summary>
       <description>If set to true, new Nemo windows will default to showing two panes</description>
     </key>
+    <key name="dual-pane-vertical-split" type="b">
+      <default>false</default>
+      <summary>Whether to show dual panes vertically (one above the other)</summary>
+      <description>If set to true, dual-pane view will show one pane above the other instead of side by side</description>
+    </key>
+    <key name="dual-pane-separate-sidebar" type="b">
+      <default>false</default>
+      <summary>Whether each pane has its own sidebar</summary>
+      <description>If set to true, each pane in dual-pane view will have its own independent sidebar</description>
+    </key>
+    <key name="dual-pane-separate-nav-bar" type="b">
+      <default>false</default>
+      <summary>Whether each pane has its own path bar / location entry</summary>
+      <description>If set to true, each pane in dual-pane view will have its own independent navigation bar</description>
+    </key>
     <key name="ignore-view-metadata" type="b">
       <default>false</default>
       <summary>Whether to ignore folder metadata for view zoom levels and layouts</summary>
