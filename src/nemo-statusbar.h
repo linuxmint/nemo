@@ -25,6 +25,7 @@
 #include <gio/gio.h>
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
+#include "nemo-window-pane.h"
 #include "nemo-view.h"
 
 typedef struct _NemoStatusBar      NemoStatusBar;
@@ -54,6 +55,10 @@ struct _NemoStatusBar
     GtkWidget *show_button;
     GtkWidget *hide_button;
     GtkWidget *separator;
+
+    /* When non-NULL this bar is locked to a specific pane instead of
+     * following the active pane.  Used for per-pane statusbars. */
+    NemoWindowPane *locked_pane;
 };
 
 struct _NemoStatusBarClass
@@ -64,6 +69,7 @@ struct _NemoStatusBarClass
 GType    nemo_status_bar_get_type (void) G_GNUC_CONST;
 
 GtkWidget *nemo_status_bar_new (NemoWindow *window);
+GtkWidget *nemo_status_bar_new_for_pane (NemoWindow *window, NemoWindowPane *pane);
 
 GtkWidget *nemo_status_bar_get_real_statusbar (NemoStatusBar *bar);
 

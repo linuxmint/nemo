@@ -102,6 +102,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_VERTICAL_SPLIT_WIDGET "dual_pane_vertical_split_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_SIDEBAR_WIDGET "dual_pane_separate_sidebar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_NAV_BAR_WIDGET "dual_pane_separate_nav_bar_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_STATUSBAR_WIDGET "dual_pane_separate_statusbar_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET "ignore_view_metadata_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_BOOKMARKS_IN_TO_MENUS_WIDGET "bookmarks_in_to_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PLACES_IN_TO_MENUS_WIDGET "places_in_to_checkbutton"
@@ -775,10 +776,12 @@ setup_configurable_menu_items (GtkBuilder *builder)
     }
 }
 
-/* When "Show panes vertically" is off, the two dependent options
- * (separate sidebar, separate nav bar) are meaningless -- they only
- * apply to vertical split mode.  Disable and uncheck them whenever
+/* When "Show panes vertically" is off, the three dependent options
+ * (separate sidebar, separate nav bar, separate statusbar) are meaningless --
+ * they only apply to vertical split mode.  Disable and uncheck them whenever
  * the vertical-split toggle is off.
+ * Additionally, "separate statusbar" requires "separate sidebar" to also be on
+ * (it needs the per-pane column VBoxes that separate sidebar creates).
  */
 static void
 setup_dual_pane_sensitivity (GtkBuilder *builder)
@@ -791,15 +794,28 @@ setup_dual_pane_sensitivity (GtkBuilder *builder)
         GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_SIDEBAR_WIDGET));
     GtkWidget *sep_nav =
         GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_NAV_BAR_WIDGET));
+    GtkWidget *sep_statusbar =
+        GTK_WIDGET (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_STATUSBAR_WIDGET));
+
+    gboolean sidebar_on = vertical &&
+        gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (sep_sidebar));
 
     if (!vertical) {
-        /* Turn off and grey out the dependent options */
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_sidebar), FALSE);
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_nav),     FALSE);
+        /* Turn off and grey out all vertical-only options */
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_sidebar),    FALSE);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_nav),        FALSE);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_statusbar),  FALSE);
     }
 
-    gtk_widget_set_sensitive (sep_sidebar, vertical);
-    gtk_widget_set_sensitive (sep_nav,     vertical);
+    if (!sidebar_on) {
+        /* Statusbar requires separate sidebar */
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sep_statusbar), FALSE);
+    }
+
+    gtk_widget_set_sensitive (sep_sidebar,   vertical);
+    gtk_widget_set_sensitive (sep_nav,       vertical);
+    /* Statusbar is only sensitive when vertical AND separate sidebar are both on */
+    gtk_widget_set_sensitive (sep_statusbar, sidebar_on);
 }
 
 static void
@@ -807,6 +823,12 @@ connect_dual_pane_sensitivity (GtkBuilder *builder)
 {
     g_signal_connect_swapped (
         GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_VERTICAL_SPLIT_WIDGET)),
+        "toggled",
+        G_CALLBACK (setup_dual_pane_sensitivity),
+        builder);
+    /* Also re-evaluate when separate_sidebar changes, since statusbar depends on it */
+    g_signal_connect_swapped (
+        GTK_TOGGLE_BUTTON (W (NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_SIDEBAR_WIDGET)),
         "toggled",
         G_CALLBACK (setup_dual_pane_sensitivity),
         builder);
@@ -1118,6 +1140,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_NAV_BAR_WIDGET,
                        NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+
+    bind_builder_bool (builder, nemo_preferences,
+                       NEMO_FILE_MANAGEMENT_PROPERTIES_DUAL_PANE_SEPARATE_STATUSBAR_WIDGET,
+                       NEMO_PREFERENCES_DUAL_PANE_SEPARATE_STATUSBAR);
 
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_IGNORE_VIEW_METADATA_WIDGET,

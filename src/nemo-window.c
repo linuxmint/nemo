@@ -99,6 +99,9 @@ static void nemo_window_refresh_sidebar1_pane_lock  (NemoWindow *window, gboolea
 static void nemo_window_tear_down_pane1_wrapper     (NemoWindow *window);
 static void dual_pane_prefs_changed                 (gpointer callback_data);
 static void nemo_window_refresh_sidebar_colours     (NemoWindow *window);
+static void nemo_window_set_up_per_pane_statusbars  (NemoWindow *window);
+static void nemo_window_tear_down_per_pane_statusbars (NemoWindow *window);
+static gboolean on_button_press_callback            (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 
 /* Sanity check: highest mouse button value I could find was 14. 5 is our
  * lower threshold (well-documented to be the one of the button events for the
@@ -167,11 +170,43 @@ nemo_window_push_status (NemoWindow *window,
 {
 	g_return_if_fail (NEMO_IS_WINDOW (window));
 
+	/* When per-pane statusbars are active, route the message to the
+	 * statusbar that is paired with the currently active pane, so each
+	 * pane's bar shows that pane's own status text. */
+	GtkStatusbar *target = NULL;
+
+	if (window->details->nemo_status_bar2 != NULL) {
+		NemoWindowPane *active = nemo_window_get_active_pane (window);
+		GList *panes = window->details->panes;
+
+		if (panes != NULL && active == (NemoWindowPane *) panes->data) {
+			/* Active pane is pane1 — use statusbar inside statusbar1_eb */
+			if (window->details->statusbar1_eb != NULL) {
+				GList *ch = gtk_container_get_children (
+					GTK_CONTAINER (window->details->statusbar1_eb));
+				if (ch != NULL && NEMO_IS_STATUS_BAR (ch->data)) {
+					target = GTK_STATUSBAR (
+						NEMO_STATUS_BAR (ch->data)->real_statusbar);
+				}
+				g_list_free (ch);
+			}
+		} else {
+			/* Active pane is pane2 */
+			if (window->details->statusbar2 != NULL) {
+				target = GTK_STATUSBAR (window->details->statusbar2);
+			}
+		}
+	}
+
+	if (target == NULL) {
+		target = GTK_STATUSBAR (window->details->statusbar);
+	}
+
 	/* clear any previous message, underflow is allowed */
-	gtk_statusbar_pop (GTK_STATUSBAR (window->details->statusbar), 0);
+	gtk_statusbar_pop (target, 0);
 
 	if (text != NULL && text[0] != '\0') {
-		gtk_statusbar_push (GTK_STATUSBAR (window->details->statusbar), 0, text);
+		gtk_statusbar_push (target, 0, text);
 	}
 }
 
@@ -484,7 +519,8 @@ nemo_window_hide_sidebar (NemoWindow *window)
 		return;
 	}
 
-	nemo_window_tear_down_pane1_wrapper (window);
+	nemo_window_tear_down_per_pane_statusbars (window);
+    nemo_window_tear_down_pane1_wrapper (window);
     nemo_window_tear_down_sidebar2 (window);
 	nemo_window_tear_down_sidebar (window);
 	nemo_window_update_show_hide_ui_elements (window);
@@ -520,12 +556,15 @@ nemo_window_show_sidebar (NemoWindow *window)
                                                     NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
         gboolean sep_sidebar = g_settings_get_boolean (nemo_preferences,
                                                        NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
-        gboolean sep_nav = g_settings_get_boolean (nemo_preferences,
-                                                   NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+        gboolean sep_statusbar = g_settings_get_boolean (nemo_preferences,
+                                                         NEMO_PREFERENCES_DUAL_PANE_SEPARATE_STATUSBAR);
         /* pane1 wrapper only when separate_sidebar ON (independent of sep_nav) */
         if (split && vertical && sep_sidebar) {
             nemo_window_set_up_pane1_wrapper (window);
             nemo_window_set_up_sidebar2 (window);
+            if (sep_statusbar) {
+                nemo_window_set_up_per_pane_statusbars (window);
+            }
         }
     }
 
@@ -550,6 +589,7 @@ side_pane_id_changed (NemoWindow *window)
 
     /* refresh the sidebar - tear down per-pane wrappers first so sidebar
      * can be safely moved back to content_paned before rebuild */
+    nemo_window_tear_down_per_pane_statusbars (window);
     nemo_window_tear_down_pane1_wrapper (window);
     nemo_window_tear_down_sidebar2 (window);
     nemo_window_tear_down_sidebar (window);
@@ -562,12 +602,15 @@ side_pane_id_changed (NemoWindow *window)
                                                     NEMO_PREFERENCES_DUAL_PANE_VERTICAL_SPLIT);
         gboolean sep_sidebar = g_settings_get_boolean (nemo_preferences,
                                                        NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
-        gboolean sep_nav = g_settings_get_boolean (nemo_preferences,
-                                                   NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
+        gboolean sep_statusbar = g_settings_get_boolean (nemo_preferences,
+                                                         NEMO_PREFERENCES_DUAL_PANE_SEPARATE_STATUSBAR);
         /* pane1 wrapper only when separate_sidebar ON (independent of sep_nav) */
         if (split && vertical && sep_sidebar && window->details->show_sidebar) {
             nemo_window_set_up_pane1_wrapper (window);
             nemo_window_set_up_sidebar2 (window);
+            if (sep_statusbar) {
+                nemo_window_set_up_per_pane_statusbars (window);
+            }
         }
     }
 
@@ -892,6 +935,7 @@ nemo_window_destroy (GtkWidget *object)
 	/* Tear down per-pane wrappers before the sidebar and panes, so sidebar2
 	 * and pri_paned are removed cleanly from the widget hierarchy before
 	 * pane widgets are destroyed. */
+	nemo_window_tear_down_per_pane_statusbars (window);
 	nemo_window_tear_down_pane1_wrapper (window);
 	nemo_window_tear_down_sidebar2 (window);
 
@@ -1525,6 +1569,24 @@ nemo_window_sync_zoom_widgets (NemoWindow *window)
 	gtk_action_set_sensitive (action, can_zoom);
 
     nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (window->details->nemo_status_bar));
+
+    /* When per-pane statusbars are active, sync both locked bars independently
+     * so each shows the correct zoom level for its own pane. */
+    if (window->details->nemo_status_bar2 != NULL) {
+        nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (window->details->nemo_status_bar2));
+        /* Also sync pane1's statusbar (stored inside statusbar1_eb) */
+        if (window->details->statusbar1_eb != NULL) {
+            GList *children = gtk_container_get_children (
+                GTK_CONTAINER (window->details->statusbar1_eb));
+            if (children != NULL) {
+                GtkWidget *sb1 = GTK_WIDGET (children->data);
+                if (NEMO_IS_STATUS_BAR (sb1)) {
+                    nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (sb1));
+                }
+                g_list_free (children);
+            }
+        }
+    }
 }
 
 void
@@ -2096,6 +2158,10 @@ nemo_window_init (NemoWindow *window)
                   window);
     g_signal_connect_swapped (nemo_preferences,
                   "changed::" NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR,
+                  G_CALLBACK (dual_pane_prefs_changed),
+                  window);
+    g_signal_connect_swapped (nemo_preferences,
+                  "changed::" NEMO_PREFERENCES_DUAL_PANE_SEPARATE_STATUSBAR,
                   G_CALLBACK (dual_pane_prefs_changed),
                   window);
 }
@@ -2849,6 +2915,159 @@ nemo_window_refresh_sidebar_colours (NemoWindow *window)
     }
 }
 
+/* ---------------------------------------------------------------------------
+ * Per-pane status bars
+ *
+ * When "separate statusbar per pane" is on (requires vertical split +
+ * separate sidebar), each pane column VBox already exists:
+ *   split_view_hpane
+ *     child1: pri_paned (HPaned)       <- pane1 column
+ *               sidebar1 | pane1_content_vbox
+ *     child2: sec_paned (HPaned)       <- pane2 column
+ *               sidebar2 | pane2_content_vbox
+ *
+ * We append a separator + NemoStatusBar at the BOTTOM of each content_vbox,
+ * and hide the global statusbar (its outer event-box remains in the grid so
+ * widget references stay valid).
+ * --------------------------------------------------------------------------- */
+
+/* Walk up from pane widget to find its direct-child-of-paned container
+ * (either the bare pane or the content_vbox wrapping it). */
+static GtkWidget *
+find_content_vbox_for_pane (NemoWindow *window, NemoWindowPane *pane)
+{
+    GtkWidget *w = GTK_WIDGET (pane);
+    while (w != NULL) {
+        GtkWidget *p = gtk_widget_get_parent (w);
+        if (p == NULL)
+            return NULL;
+        if (GTK_IS_PANED (p))
+            return w;   /* direct child of a Paned — that is the content vbox */
+        w = p;
+    }
+    return NULL;
+}
+
+static void
+nemo_window_set_up_per_pane_statusbars (NemoWindow *window)
+{
+    NemoWindowPane *pane1, *pane2;
+    GtkWidget *vbox1, *vbox2;
+    GList *last;
+
+    if (window->details->nemo_status_bar2 != NULL)
+        return;   /* already set up */
+
+    if (!nemo_window_split_view_showing (window))
+        return;
+
+    last = g_list_last (window->details->panes);
+    if (!last || last->data == window->details->panes->data)
+        return;
+
+    pane1 = (NemoWindowPane *) window->details->panes->data;
+    pane2 = (NemoWindowPane *) last->data;
+
+    /* Per-pane statusbars require the sidebar column VBoxes to exist. */
+    if (window->details->primary_pane_content_paned == NULL ||
+        window->details->secondary_pane_content_paned == NULL)
+        return;
+
+    vbox1 = find_content_vbox_for_pane (window, pane1);
+    vbox2 = find_content_vbox_for_pane (window, pane2);
+
+    if (vbox1 == NULL || vbox2 == NULL)
+        return;
+
+    /* ---- statusbar for pane1 ---- */
+    {
+        GtkWidget *sep = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+        gtk_box_pack_end (GTK_BOX (vbox1), sep, FALSE, FALSE, 0);
+        gtk_widget_show (sep);
+        window->details->statusbar1_sep = sep;
+
+        GtkWidget *sb = nemo_status_bar_new_for_pane (window, pane1);
+        GtkWidget *eb = gtk_event_box_new ();
+        gtk_widget_add_events (eb, GDK_BUTTON_PRESS_MASK);
+        g_signal_connect_object (eb, "button-press-event",
+                                 G_CALLBACK (on_button_press_callback), window, 0);
+        gtk_container_add (GTK_CONTAINER (eb), sb);
+        gtk_box_pack_end (GTK_BOX (vbox1), eb, FALSE, FALSE, 0);
+        gtk_widget_show (eb);
+        window->details->statusbar1_eb = eb;
+
+        nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (sb));
+        nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (sb));
+    }
+
+    /* ---- statusbar for pane2 ---- */
+    {
+        GtkWidget *sep = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+        gtk_box_pack_end (GTK_BOX (vbox2), sep, FALSE, FALSE, 0);
+        gtk_widget_show (sep);
+        window->details->statusbar2_sep = sep;
+
+        GtkWidget *sb = nemo_status_bar_new_for_pane (window, pane2);
+        window->details->nemo_status_bar2 = sb;
+        window->details->statusbar2 = nemo_status_bar_get_real_statusbar (NEMO_STATUS_BAR (sb));
+
+        GtkWidget *eb = gtk_event_box_new ();
+        gtk_widget_add_events (eb, GDK_BUTTON_PRESS_MASK);
+        g_signal_connect_object (eb, "button-press-event",
+                                 G_CALLBACK (on_button_press_callback), window, 0);
+        gtk_container_add (GTK_CONTAINER (eb), sb);
+        gtk_box_pack_end (GTK_BOX (vbox2), eb, FALSE, FALSE, 0);
+        gtk_widget_show (eb);
+        window->details->statusbar2_eb = eb;
+
+        nemo_status_bar_sync_zoom_widgets (NEMO_STATUS_BAR (sb));
+        nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (sb));
+    }
+
+    /* Hide the global statusbar (outer NemoStatusBar widget).
+     * Its event-box wrapper stays in the grid so existing bindings remain valid. */
+    gtk_widget_hide (window->details->nemo_status_bar);
+}
+
+static void
+nemo_window_tear_down_per_pane_statusbars (NemoWindow *window)
+{
+    /* Destroy pane1 statusbar widgets */
+    if (window->details->statusbar1_eb != NULL) {
+        gtk_widget_destroy (window->details->statusbar1_eb);
+        window->details->statusbar1_eb = NULL;
+    }
+    if (window->details->statusbar1_sep != NULL) {
+        gtk_widget_destroy (window->details->statusbar1_sep);
+        window->details->statusbar1_sep = NULL;
+    }
+
+    /* Destroy pane2 statusbar widgets (nemo_status_bar2 is inside statusbar2_eb) */
+    if (window->details->statusbar2_eb != NULL) {
+        gtk_widget_destroy (window->details->statusbar2_eb);
+        window->details->statusbar2_eb = NULL;
+    }
+    if (window->details->statusbar2_sep != NULL) {
+        gtk_widget_destroy (window->details->statusbar2_sep);
+        window->details->statusbar2_sep = NULL;
+    }
+    window->details->nemo_status_bar2 = NULL;
+    window->details->statusbar2 = NULL;
+
+    /* Restore the global statusbar — guard against being called during window
+     * destruction when the widget may no longer be valid. */
+    if (window->details->nemo_status_bar != NULL &&
+        GTK_IS_WIDGET (window->details->nemo_status_bar)) {
+        gtk_widget_show (window->details->nemo_status_bar);
+
+        /* Sync the restored global bar */
+        nemo_status_bar_sync_zoom_widgets (
+            NEMO_STATUS_BAR (window->details->nemo_status_bar));
+        nemo_status_bar_sync_button_states (
+            NEMO_STATUS_BAR (window->details->nemo_status_bar));
+    }
+}
+
 static void
 dual_pane_prefs_changed (gpointer callback_data)
 {
@@ -2870,6 +3089,8 @@ dual_pane_prefs_changed (gpointer callback_data)
                                            NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
     separate_sidebar = g_settings_get_boolean (nemo_preferences,
                                                NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+    gboolean separate_statusbar = g_settings_get_boolean (nemo_preferences,
+                                                          NEMO_PREFERENCES_DUAL_PANE_SEPARATE_STATUSBAR);
 
     /* Handle orientation change - must happen before any wrapper setup */
     nemo_window_update_split_view_orientation (window);
@@ -2879,12 +3100,24 @@ dual_pane_prefs_changed (gpointer callback_data)
      * sidebar layout — when nav bar is ON but sidebar is OFF the sidebar stays
      * full-height in content_paned and pri_paned must NOT be created.
      *
-     * want_per_pane  = controls the pane1 sidebar wrapper (pri_paned)
-     * want_sidebar2  = controls the pane2 sidebar wrapper (sec_paned + sidebar2) */
+     * want_per_pane      = controls the pane1 sidebar wrapper (pri_paned)
+     * want_sidebar2      = controls the pane2 sidebar wrapper (sec_paned + sidebar2)
+     * want_per_statusbar = controls the per-pane statusbar widgets */
     want_per_pane = split_showing && vertical && separate_sidebar &&
                     window->details->show_sidebar;
 
     want_sidebar2 = want_per_pane;
+
+    /* Per-pane statusbars require vertical + separate_sidebar (column VBoxes must
+     * exist).  They are also disabled when the global statusbar is visible and
+     * the user hasn't turned on this feature. */
+    gboolean want_per_statusbar = want_per_pane && separate_statusbar;
+
+    /* --- Per-pane statusbar teardown (must happen BEFORE sidebar teardown so
+     * the column VBoxes still exist when we remove the statusbar widgets) --- */
+    if (!want_per_statusbar && window->details->nemo_status_bar2 != NULL) {
+        nemo_window_tear_down_per_pane_statusbars (window);
+    }
 
     /* --- Sidebar wrapper teardown/setup (order is critical, per spec section 5):
      *
@@ -2912,6 +3145,11 @@ dual_pane_prefs_changed (gpointer callback_data)
     /* --- pane1 sidebar wrapper (setup only — teardown happened above) --- */
     if (want_per_pane && window->details->primary_pane_content_paned == NULL) {
         nemo_window_set_up_pane1_wrapper (window);
+    }
+
+    /* --- per-pane statusbars (setup — column VBoxes now exist) --- */
+    if (want_per_statusbar && window->details->nemo_status_bar2 == NULL) {
+        nemo_window_set_up_per_pane_statusbars (window);
     }
 
     /* --- per-pane toolbars --- */
@@ -3000,6 +3238,8 @@ nemo_window_split_view_on (NemoWindow *window)
                                            NEMO_PREFERENCES_DUAL_PANE_SEPARATE_NAV_BAR);
     gboolean separate_sidebar = g_settings_get_boolean (nemo_preferences,
                                                         NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR);
+    gboolean separate_statusbar = g_settings_get_boolean (nemo_preferences,
+                                                          NEMO_PREFERENCES_DUAL_PANE_SEPARATE_STATUSBAR);
     /* Per spec 3.5.3: toolbar embedding is independent of sidebar layout.
      * pane1 wrapper (pri_paned) is ONLY created when separate_sidebar is ON. */
     gboolean per_pane = vertical && separate_sidebar &&
@@ -3016,6 +3256,11 @@ nemo_window_split_view_on (NemoWindow *window)
         nemo_window_set_up_sidebar2 (window);
     }
 
+    /* Per-pane statusbars require the column VBoxes to be in place first */
+    if (per_pane && separate_statusbar) {
+        nemo_window_set_up_per_pane_statusbars (window);
+    }
+
     /* Apply sidebar background colours now that all sidebars are in place. */
     nemo_window_refresh_sidebar_colours (window);
 }
@@ -3029,9 +3274,11 @@ nemo_window_split_view_off (NemoWindow *window)
 	active_pane = nemo_window_get_active_pane (window);
 
     /* Tear down all per-pane wrappers before closing panes.
-     * Order is critical (spec section 5): pane1_wrapper first, then sidebar2.
+     * Order is critical (spec section 5): statusbars first (need column VBoxes),
+     * then pane1_wrapper, then sidebar2.
      * tear_down_pane1_wrapper rescues sidebar1 back to content_paned first;
      * tear_down_sidebar2 then finds pane2 cleanly in hpane.child2. */
+    nemo_window_tear_down_per_pane_statusbars (window);
     nemo_window_tear_down_pane1_wrapper (window);
     nemo_window_tear_down_sidebar2 (window);
 

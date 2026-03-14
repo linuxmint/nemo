@@ -108,6 +108,15 @@ struct NemoWindowDetails
         /* outer HPaned wrapper for pane2 column (sidebar2 + pane2) in per-pane mode */
         GtkWidget *secondary_pane_content_paned;
 
+        /* per-pane statusbars (only when dual-pane-separate-statusbar is on) */
+        GtkWidget *nemo_status_bar2;       /* NemoStatusBar for pane2 */
+        GtkWidget *statusbar2;             /* inner GtkStatusbar from nemo_status_bar2 */
+        GtkWidget *statusbar2_eb;          /* event-box wrapper */
+        GtkWidget *statusbar2_sep;         /* separator above statusbar2 */
+        /* pane1 statusbar container (the original nemo_status_bar moved into pane1 col) */
+        GtkWidget *statusbar1_eb;          /* event-box wrapper used in pane1 col */
+        GtkWidget *statusbar1_sep;         /* separator above statusbar1 in pane1 col */
+
         gboolean disable_chrome;
 
         guint sidebar_width_handler_id;

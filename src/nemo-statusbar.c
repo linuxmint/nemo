@@ -19,14 +19,16 @@
  */
 
 #include "nemo-statusbar.h"
-
+#include "nemo-window-pane.h"
 #include "nemo-actions.h"
+
+#include <libnemo-private/nemo-global-preferences.h>
 
 #include <config.h>
 #include <glib/gi18n.h>
 
 enum {
-        LAST_SIGNAL
+    LAST_SIGNAL
 };
 
 enum {
@@ -38,10 +40,43 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
 
 G_DEFINE_TYPE (NemoStatusBar, nemo_status_bar, GTK_TYPE_BOX);
 
+/* ---------------------------------------------------------------------------
+ * Helpers: resolve "which slot / sidebar" this bar operates on.
+ *
+ * When locked_pane is set the bar always tracks that pane.
+ * Otherwise it tracks the window's currently active pane (classic behaviour).
+ * --------------------------------------------------------------------------- */
+
+static NemoWindowSlot *
+bar_get_slot (NemoStatusBar *bar)
+{
+    if (bar->locked_pane != NULL) {
+        return bar->locked_pane->active_slot;
+    }
+    return nemo_window_get_active_slot (bar->window);
+}
+
+/* Return the sidebar_id this bar should reflect.
+ * Both per-pane bars reflect the same global sidebar type (only the content
+ * differs between the two sidebars). */
+static const gchar *
+bar_get_sidebar_id (NemoStatusBar *bar)
+{
+    return nemo_window_get_sidebar_id (NEMO_WINDOW (bar->window));
+}
+
+/* Return whether the sidebar for this bar is visible. */
+static gboolean
+bar_get_sidebar_visible (NemoStatusBar *bar)
+{
+    return nemo_window_get_show_sidebar (NEMO_WINDOW (bar->window));
+}
+
 static void
 nemo_status_bar_init (NemoStatusBar *bar)
 {
     bar->window = NULL;
+    bar->locked_pane = NULL;
 }
 
 static void
@@ -86,15 +121,19 @@ nemo_status_bar_dispose (GObject *object)
     NemoStatusBar *bar = NEMO_STATUS_BAR (object);
 
     bar->window = NULL;
+    bar->locked_pane = NULL;
 
     G_OBJECT_CLASS (nemo_status_bar_parent_class)->dispose (object);
 }
+
+/* ---------------------------------------------------------------------------
+ * Button callbacks
+ * --------------------------------------------------------------------------- */
 
 static void
 action_places_toggle_callback (GtkButton *button, NemoStatusBar *bar)
 {
     nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window), NEMO_WINDOW_SIDEBAR_PLACES);
-
     nemo_status_bar_sync_button_states (bar);
 }
 
@@ -102,7 +141,6 @@ static void
 action_treeview_toggle_callback (GtkButton *button, NemoStatusBar *bar)
 {
     nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window), NEMO_WINDOW_SIDEBAR_TREE);
-
     nemo_status_bar_sync_button_states (bar);
 }
 
@@ -115,7 +153,25 @@ action_show_sidebar_callback (GtkButton *button, NemoStatusBar *bar)
 static void
 action_hide_sidebar_callback (GtkButton *button, NemoStatusBar *bar)
 {
-    nemo_window_hide_sidebar (bar->window);
+    NemoWindow *win = NEMO_WINDOW (bar->window);
+
+    if (bar->locked_pane != NULL) {
+        GList *panes = win->details->panes;
+
+        if (panes != NULL && bar->locked_pane == (NemoWindowPane *) panes->data) {
+            /* pane1 bar: hiding sidebar turns off the whole sidebar,
+             * which also disables dual-sidebar (see dual_pane_prefs_changed). */
+            nemo_window_hide_sidebar (win);
+        } else {
+            /* pane2 bar: "hide" means turn off the separate-sidebar feature.
+             * This triggers dual_pane_prefs_changed which tears everything down. */
+            g_settings_set_boolean (nemo_preferences,
+                                    NEMO_PREFERENCES_DUAL_PANE_SEPARATE_SIDEBAR,
+                                    FALSE);
+        }
+    } else {
+        nemo_window_hide_sidebar (win);
+    }
 }
 
 static void
@@ -136,7 +192,7 @@ on_slider_changed_cb (GtkWidget *zoom_slider, gpointer user_data)
     NemoStatusBar *bar = NEMO_STATUS_BAR (user_data);
     gdouble val = gtk_range_get_value (GTK_RANGE (zoom_slider));
 
-    NemoWindowSlot *slot = nemo_window_get_active_slot (bar->window);
+    NemoWindowSlot *slot = bar_get_slot (bar);
 
     if (!NEMO_IS_WINDOW_SLOT (slot))
         return;
@@ -288,6 +344,29 @@ nemo_status_bar_new (NemoWindow *window)
                          NULL);
 }
 
+/**
+ * nemo_status_bar_new_for_pane:
+ *
+ * Create a status bar locked to @pane.  The zoom slider reads/writes
+ * @pane->active_slot instead of the window's active slot.  The hide-sidebar
+ * button behaviour depends on which pane this bar is associated with
+ * (see action_hide_sidebar_callback).
+ */
+GtkWidget *
+nemo_status_bar_new_for_pane (NemoWindow *window, NemoWindowPane *pane)
+{
+    NemoStatusBar *bar;
+
+    bar = NEMO_STATUS_BAR (
+        g_object_new (NEMO_TYPE_STATUS_BAR,
+                      "orientation", GTK_ORIENTATION_HORIZONTAL,
+                      "spacing", 0,
+                      "window", window,
+                      NULL));
+    bar->locked_pane = pane;
+    return GTK_WIDGET (bar);
+}
+
 GtkWidget *
 nemo_status_bar_get_real_statusbar (NemoStatusBar *bar)
 {
@@ -297,9 +376,8 @@ nemo_status_bar_get_real_statusbar (NemoStatusBar *bar)
 void
 nemo_status_bar_sync_button_states (NemoStatusBar *bar)
 {
-    const gchar *sidebar_id = nemo_window_get_sidebar_id (NEMO_WINDOW (bar->window));
-
-    gboolean sidebar_visible = nemo_window_get_show_sidebar (NEMO_WINDOW (bar->window));
+    const gchar *sidebar_id = bar_get_sidebar_id (bar);
+    gboolean sidebar_visible = bar_get_sidebar_visible (bar);
 
     if (sidebar_visible) {
         gtk_widget_show (bar->tree_button);
@@ -323,9 +401,7 @@ nemo_status_bar_sync_button_states (NemoStatusBar *bar)
     }
     g_signal_handlers_unblock_by_func (GTK_BUTTON (bar->tree_button), action_treeview_toggle_callback, bar);
 
-
     g_signal_handlers_block_by_func (GTK_BUTTON (bar->places_button), action_places_toggle_callback, bar);
-
     if (g_strcmp0 (sidebar_id, NEMO_WINDOW_SIDEBAR_PLACES) == 0) {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bar->places_button), TRUE);
     } else {
@@ -337,8 +413,7 @@ nemo_status_bar_sync_button_states (NemoStatusBar *bar)
 void
 nemo_status_bar_sync_zoom_widgets (NemoStatusBar *bar)
 {
-
-    NemoWindowSlot *slot = nemo_window_get_active_slot (bar->window);
+    NemoWindowSlot *slot = bar_get_slot (bar);
 
     if (!NEMO_IS_WINDOW_SLOT (slot))
         return;

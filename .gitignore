@@ -9,7 +9,6 @@
 .project
 .metadata
 bin/**
-pkg/**
 tmp/**
 tmp/**/*
 *.tmp
