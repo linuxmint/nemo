@@ -116,6 +116,11 @@ struct NemoWindowDetails
         /* pane1 statusbar container (the original nemo_status_bar moved into pane1 col) */
         GtkWidget *statusbar1_eb;          /* event-box wrapper used in pane1 col */
         GtkWidget *statusbar1_sep;         /* separator above statusbar1 in pane1 col */
+        /* global statusbar outer wrappers — stored so we can hide/show them
+         * without touching nemo_status_bar's visible property (which is bound
+         * to GSettings and would corrupt the floating-bar visibility logic) */
+        GtkWidget *statusbar_global_eb;    /* event-box wrapping nemo_status_bar */
+        GtkWidget *statusbar_global_sep;   /* separator above the global statusbar */
 
         gboolean disable_chrome;
 

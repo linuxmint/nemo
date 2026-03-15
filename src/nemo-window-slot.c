@@ -689,7 +689,12 @@ real_slot_set_short_status (NemoWindowSlot *slot,
 		      "disable-chrome", &disable_chrome,
 		      NULL);
 
-	if (status == NULL || show_statusbar || disable_chrome) {
+	/* Also suppress the floating bar when per-pane statusbars are active —
+	 * each pane has its own real statusbar so the floating overlay is redundant. */
+	NemoWindow *win = nemo_window_slot_get_window (slot);
+	gboolean per_pane_statusbar = (win->details->nemo_status_bar2 != NULL);
+
+	if (status == NULL || show_statusbar || disable_chrome || per_pane_statusbar) {
 		gtk_widget_hide (slot->floating_bar);
 		return;
 	}

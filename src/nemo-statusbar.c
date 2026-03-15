@@ -33,6 +33,7 @@ enum {
 
 enum {
     PROP_WINDOW = 1,
+    PROP_PANE,
     NUM_PROPERTIES
 };
 
@@ -57,11 +58,16 @@ bar_get_slot (NemoStatusBar *bar)
 }
 
 /* Return the sidebar_id this bar should reflect.
- * Both per-pane bars reflect the same global sidebar type (only the content
- * differs between the two sidebars). */
+ * When locked to a pane, inspect that pane's actual sidebar widget type so the
+ * toggle buttons show the correct state even when the two panes have different
+ * sidebar types. */
 static const gchar *
 bar_get_sidebar_id (NemoStatusBar *bar)
 {
+    if (bar->locked_pane != NULL) {
+        return nemo_window_get_pane_sidebar_type (NEMO_WINDOW (bar->window),
+                                                  bar->locked_pane);
+    }
     return nemo_window_get_sidebar_id (NEMO_WINDOW (bar->window));
 }
 
@@ -91,6 +97,9 @@ nemo_status_bar_set_property (GObject        *object,
         case PROP_WINDOW:
             self->window = g_value_get_object (value);
             break;
+        case PROP_PANE:
+            self->locked_pane = g_value_get_pointer (value);
+            break;
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
             break;
@@ -108,6 +117,9 @@ nemo_status_bar_get_property (GObject      *object,
     switch (arg_id) {
         case PROP_WINDOW:
             g_value_set_object (value, self->window);
+            break;
+        case PROP_PANE:
+            g_value_set_pointer (value, self->locked_pane);
             break;
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, arg_id, pspec);
@@ -133,14 +145,30 @@ nemo_status_bar_dispose (GObject *object)
 static void
 action_places_toggle_callback (GtkButton *button, NemoStatusBar *bar)
 {
-    nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window), NEMO_WINDOW_SIDEBAR_PLACES);
+    if (bar->locked_pane != NULL) {
+        /* Per-pane mode: only change THIS pane's sidebar, not the global type */
+        nemo_window_set_pane_sidebar_type (NEMO_WINDOW (bar->window),
+                                           bar->locked_pane,
+                                           NEMO_WINDOW_SIDEBAR_PLACES);
+    } else {
+        nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window),
+                                    NEMO_WINDOW_SIDEBAR_PLACES);
+    }
     nemo_status_bar_sync_button_states (bar);
 }
 
 static void
 action_treeview_toggle_callback (GtkButton *button, NemoStatusBar *bar)
 {
-    nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window), NEMO_WINDOW_SIDEBAR_TREE);
+    if (bar->locked_pane != NULL) {
+        /* Per-pane mode: only change THIS pane's sidebar, not the global type */
+        nemo_window_set_pane_sidebar_type (NEMO_WINDOW (bar->window),
+                                           bar->locked_pane,
+                                           NEMO_WINDOW_SIDEBAR_TREE);
+    } else {
+        nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window),
+                                    NEMO_WINDOW_SIDEBAR_TREE);
+    }
     nemo_status_bar_sync_button_states (bar);
 }
 
@@ -156,7 +184,7 @@ action_hide_sidebar_callback (GtkButton *button, NemoStatusBar *bar)
     NemoWindow *win = NEMO_WINDOW (bar->window);
 
     if (bar->locked_pane != NULL) {
-        GList *panes = win->details->panes;
+        GList *panes = nemo_window_get_panes (win);
 
         if (panes != NULL && bar->locked_pane == (NemoWindowPane *) panes->data) {
             /* pane1 bar: hiding sidebar turns off the whole sidebar,
@@ -290,8 +318,14 @@ nemo_status_bar_constructed (GObject *object)
     g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::show-sidebar",
                              G_CALLBACK (sidebar_state_changed_cb), bar, G_CONNECT_AFTER);
 
-    g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::sidebar-view-id",
-                           G_CALLBACK (sidebar_type_changed_cb), bar, G_CONNECT_AFTER);
+    /* The global sidebar-view-id notify fires when the user changes type via the
+     * View menu or a non-locked statusbar.  Locked bars don't need this signal —
+     * their type changes are driven by nemo_window_set_pane_sidebar_type() which
+     * calls sync_button_states directly, never touching sidebar-view-id. */
+    if (bar->locked_pane == NULL) {
+        g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::sidebar-view-id",
+                               G_CALLBACK (sidebar_type_changed_cb), bar, G_CONNECT_AFTER);
+    }
 
     g_signal_connect (GTK_RANGE (zoom_slider), "value-changed",
                       G_CALLBACK (on_slider_changed_cb), bar);
@@ -331,6 +365,13 @@ nemo_status_bar_class_init (NemoStatusBarClass *status_bar_class)
                                                    G_PARAM_CONSTRUCT_ONLY |
                                                    G_PARAM_STATIC_STRINGS);
 
+    properties[PROP_PANE] = g_param_spec_pointer ("locked-pane",
+                                                  "Locked NemoWindowPane",
+                                                  "Pane this bar is locked to, or NULL for global",
+                                                  G_PARAM_READWRITE |
+                                                  G_PARAM_CONSTRUCT_ONLY |
+                                                  G_PARAM_STATIC_STRINGS);
+
     g_object_class_install_properties (oclass, NUM_PROPERTIES, properties);
 }
 
@@ -355,16 +396,12 @@ nemo_status_bar_new (NemoWindow *window)
 GtkWidget *
 nemo_status_bar_new_for_pane (NemoWindow *window, NemoWindowPane *pane)
 {
-    NemoStatusBar *bar;
-
-    bar = NEMO_STATUS_BAR (
-        g_object_new (NEMO_TYPE_STATUS_BAR,
-                      "orientation", GTK_ORIENTATION_HORIZONTAL,
-                      "spacing", 0,
-                      "window", window,
-                      NULL));
-    bar->locked_pane = pane;
-    return GTK_WIDGET (bar);
+    return g_object_new (NEMO_TYPE_STATUS_BAR,
+                         "orientation",  GTK_ORIENTATION_HORIZONTAL,
+                         "spacing",      0,
+                         "window",       window,
+                         "locked-pane",  pane,
+                         NULL);
 }
 
 GtkWidget *

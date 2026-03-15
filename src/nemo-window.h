@@ -166,6 +166,17 @@ void     nemo_window_set_sidebar_id (NemoWindow *window,
 
 const gchar *    nemo_window_get_sidebar_id (NemoWindow *window);
 
+/* Change the sidebar type for a single per-pane sidebar without affecting the
+ * global sidebar_id or triggering a full side_pane_id_changed rebuild. */
+void     nemo_window_set_pane_sidebar_type (NemoWindow     *window,
+                                            NemoWindowPane *pane,
+                                            const gchar    *id);
+
+/* Query the current sidebar type for a per-pane sidebar box.
+ * Returns NEMO_WINDOW_SIDEBAR_PLACES, NEMO_WINDOW_SIDEBAR_TREE, or NULL. */
+const gchar * nemo_window_get_pane_sidebar_type (NemoWindow     *window,
+                                                 NemoWindowPane *pane);
+
 void    nemo_window_set_show_sidebar (NemoWindow *window,
                                       gboolean show);
 
