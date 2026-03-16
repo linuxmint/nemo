@@ -1,3 +1,66 @@
+commit 99b3cba71b7a364cb495e10496de9e184a1fcd70
+Author: Nemo Developer <nemo@local>
+Date:   2025-01-01
+
+    dual-pane: add vertical split, separate sidebars, nav bars, and statusbars
+
+    Extend the dual-pane feature with four new user-configurable options,
+    all found in Preferences → Behaviour → Dual Pane:
+
+    "Show panes vertically – one above the other" (default: off)
+      Adds a VPaned orientation for split-view in addition to the existing
+      side-by-side HPaned layout.  The split_view_hpane is recreated with
+      the appropriate GtkOrientation when the preference changes.
+
+    "Separate sidebar per pane" (default: off, requires vertical split)
+      In vertical split mode each pane column gets its own independent
+      sidebar (places or tree) locked to that pane's navigation so
+      browsing in one pane does not move the other pane's sidebar.
+      Implemented by wrapping pane1 in a new inline HPaned
+      (primary_pane_content_paned) and adding a second sidebar box
+      (sidebar2 / secondary_pane_content_paned) for pane2.
+
+    "Separate Path Bar/Location Entry per pane" (default: off, requires vertical split)
+      Embeds a full toolbar (path bar / location entry) directly inside
+      each pane column so each pane tracks its own navigation history
+      independently without sharing the window-level toolbar.
+
+    "Separate statusbar per pane" (default: off, requires vertical split + separate sidebar)
+      Adds a full-width NemoStatusBar below each pane column (spanning
+      both the sidebar and content area).  The global statusbar is hidden
+      by concealing its outer event-box wrapper rather than changing its
+      visible property, preserving the GSettings binding that controls the
+      floating-bar "selected items" overlay.  Each per-pane bar is locked
+      to its pane via a new PROP_PANE construct property so its zoom
+      slider and sidebar buttons operate on that pane only.  The places /
+      tree toggle buttons call the new nemo_window_set_pane_sidebar_type()
+      helper which swaps the sidebar widget in-place without firing the
+      global notify::sidebar-view-id signal, keeping each pane's sidebar
+      type independent.
+
+    Modified files:
+      src/nemo-window.c
+      src/nemo-window.h
+      src/nemo-window-private.h
+      src/nemo-window-slot.c
+      src/nemo-statusbar.c
+      src/nemo-statusbar.h
+      src/nemo-file-management-properties.c
+      gresources/nemo-file-management-properties.glade
+      libnemo-private/nemo-global-preferences.h
+      libnemo-private/org.nemo.gschema.xml
+
+M	src/nemo-window.c
+M	src/nemo-window.h
+M	src/nemo-window-private.h
+M	src/nemo-window-slot.c
+M	src/nemo-statusbar.c
+M	src/nemo-statusbar.h
+M	src/nemo-file-management-properties.c
+M	gresources/nemo-file-management-properties.glade
+M	libnemo-private/nemo-global-preferences.h
+M	libnemo-private/org.nemo.gschema.xml
+
 commit 16763a8b828387930641d69c04451e02d67cadd6
 Author: Cosimo Cecchi <cosimoc@gnome.org>
 Date:   2012-05-14
