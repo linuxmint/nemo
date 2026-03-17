@@ -78,6 +78,7 @@
 #define NEMO_METADATA_KEY_DESKTOP_GRID_HORIZONTAL  "desktop-horizontal"
 #define NEMO_METADATA_KEY_SHOW_THUMBNAILS "show-thumbnails"
 #define NEMO_METADATA_KEY_DESKTOP_GRID_ADJUST      "desktop-grid-adjust"
+#define NEMO_METADATA_KEY_DESKTOP_LABEL_SACLE_ADJUST      "desktop-label-scale-adjust"
 
 #define NEMO_METADATA_KEY_PINNED                   "pinned-to-top"
 #define NEMO_METADATA_KEY_FAVORITE                 "xapp-favorite"
