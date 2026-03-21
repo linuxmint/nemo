@@ -26,6 +26,7 @@
     <value nick="locale" value="0"/>
     <value nick="iso" value="1"/>
     <value nick="informal" value="2"/>
+    <value nick="custom" value="3"/>
   </enum>
 
   <enum id="org.nemo.DateFontChoice">
@@ -309,7 +310,37 @@
     <key name="date-format" enum="org.nemo.DateFormat">
       <default>'locale'</default>
       <summary>Date Format</summary>
-      <description>The format of file dates. Possible values are "locale", "iso", and "informal".</description>
+      <description>The format of file dates. Possible values are "locale", "iso", "informal", and "custom".</description>
+    </key>
+    <key name="date-format-custom" type="s">
+      <default>'YYYY.MM.DD HH:mm:SS'</default>
+      <summary>Custom Date Format</summary>
+      <description>Custom date format string. Tokens: YYYY=4-digit year, YY=2-digit year, MM=month, DD=day, HH=hour(24h), hh=hour(12h), mm=minute, SS=second.</description>
+    </key>
+    <key name="date-column-autosize" type="b">
+      <default>false</default>
+      <summary>Auto-size date columns</summary>
+      <description>Automatically resize date columns in list view to fit the date string.</description>
+    </key>
+    <key name="date-column-fit-trigger" type="i">
+      <default>0</default>
+      <summary>Date column fit trigger</summary>
+      <description>Incremented each time the user clicks the auto-fit button for date columns.</description>
+    </key>
+    <key name="date-column-padding" type="i">
+      <default>-16</default>
+      <summary>Date column padding</summary>
+      <description>Pixel offset added to the measured text width when auto-fitting date columns. Negative values make the column tighter.</description>
+    </key>
+    <key name="date-column-save-padding-trigger" type="i">
+      <default>0</default>
+      <summary>Save date column padding trigger</summary>
+      <description>Incremented each time the user clicks the save-padding button.</description>
+    </key>
+    <key name="list-view-alternating-rows" type="b">
+      <default>true</default>
+      <summary>Alternating row colors in list view</summary>
+      <description>Show alternating white and light-gray rows in the list view for easier reading.</description>
     </key>
     <key name="date-font-choice" enum="org.nemo.DateFontChoice">
       <default>'auto-mono'</default>

@@ -54,6 +54,7 @@
 #include <libnemo-private/nemo-dnd.h>
 #include <libnemo-private/nemo-file-dnd.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-ui-utilities.h>
 #include <libnemo-private/nemo-global-preferences.h>
 #include <libnemo-private/nemo-icon-dnd.h>
@@ -128,6 +129,8 @@ struct NemoListViewDetails {
     gint current_selection_count;
 
     gboolean overlay_scrolling;
+
+    GtkCssProvider *alternating_rows_provider;
 };
 
 struct SelectionForeachData {
@@ -2237,6 +2240,8 @@ apply_columns_settings (NemoListView *list_view,
     g_list_free (view_columns);
 }
 
+static void set_row_background (GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter);
+
 static void
 filename_cell_data_func (GtkTreeViewColumn *column,
 			 GtkCellRenderer   *renderer,
@@ -2276,6 +2281,8 @@ filename_cell_data_func (GtkTreeViewColumn *column,
 		      NULL);
 
     g_free (text);
+
+    set_row_background (GTK_CELL_RENDERER (renderer), model, iter);
 }
 
 static gboolean
@@ -2493,8 +2500,7 @@ update_date_fonts (NemoListView *view)
                               "font", date_name,
                               NULL);
             }
-        }
-        else {
+        } else {
             g_object_set (GTK_CELL_RENDERER_TEXT (cell),
                           "font", font_name,
                           NULL);
@@ -2507,6 +2513,198 @@ update_date_fonts (NemoListView *view)
     g_free (font_name);
     g_free (date_family);
     g_free (date_name);
+}
+
+/* Measure the current date format string and set all date columns to that width.
+ * Columns remain in FIXED+resizable mode so the user can still adjust manually. */
+static void
+auto_fit_date_columns (NemoListView *view)
+{
+    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
+
+    gchar *font_name = NULL;
+    GtkSettings *settings = gtk_settings_get_default ();
+    g_object_get (settings, "gtk-font-name", &font_name, NULL);
+
+    gchar *sample = nemo_file_get_sample_date_string ();
+    if (sample == NULL) {
+        g_free (font_name);
+        return;
+    }
+
+    PangoLayout *layout = gtk_widget_create_pango_layout (
+        GTK_WIDGET (view->details->tree_view), sample);
+    g_free (sample);
+
+    PangoFontDescription *desc = pango_font_description_from_string (font_name);
+    g_free (font_name);
+    pango_layout_set_font_description (layout, desc);
+    pango_font_description_free (desc);
+
+    gint text_width, text_height;
+    pango_layout_get_pixel_size (layout, &text_width, &text_height);
+    g_object_unref (layout);
+
+    gint padding = g_settings_get_int (nemo_preferences, NEMO_PREFERENCES_DATE_COLUMN_PADDING);
+    gint col_width = text_width + padding;
+    if (col_width < 30)
+        col_width = 30;
+
+    GList *l;
+    GList *combined = g_list_copy (view->details->cells);
+    combined = g_list_prepend (combined, view->details->file_name_cell);
+
+    for (l = combined; l != NULL; l = l->next) {
+        GtkCellRenderer *cell = GTK_CELL_RENDERER (l->data);
+        const gchar *column_id = g_object_get_data (G_OBJECT (cell), "column-id");
+
+        if (g_str_has_prefix (column_id, "date_")) {
+            GtkTreeViewColumn *col = g_hash_table_lookup (view->details->columns, column_id);
+            if (col != NULL) {
+                gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_FIXED);
+                gtk_tree_view_column_set_resizable (col, TRUE);
+                gtk_tree_view_column_set_fixed_width (col, col_width);
+            }
+        }
+    }
+
+    g_list_free (combined);
+}
+
+/* Measure the current width of the first visible date column, compare it to
+ * the Pango text width, and save the difference as the new padding value. */
+static void
+save_date_column_padding (NemoListView *view)
+{
+    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
+
+    /* Measure text width */
+    gchar *font_name = NULL;
+    GtkSettings *settings = gtk_settings_get_default ();
+    g_object_get (settings, "gtk-font-name", &font_name, NULL);
+
+    gchar *sample = nemo_file_get_sample_date_string ();
+    if (sample == NULL) {
+        g_free (font_name);
+        return;
+    }
+
+    PangoLayout *layout = gtk_widget_create_pango_layout (
+        GTK_WIDGET (view->details->tree_view), sample);
+    g_free (sample);
+
+    PangoFontDescription *desc = pango_font_description_from_string (font_name);
+    g_free (font_name);
+    pango_layout_set_font_description (layout, desc);
+    pango_font_description_free (desc);
+
+    gint text_width, text_height;
+    pango_layout_get_pixel_size (layout, &text_width, &text_height);
+    g_object_unref (layout);
+
+    /* Find the first visible date column and read its current width */
+    GList *l;
+    GList *combined = g_list_copy (view->details->cells);
+    combined = g_list_prepend (combined, view->details->file_name_cell);
+
+    for (l = combined; l != NULL; l = l->next) {
+        GtkCellRenderer *cell = GTK_CELL_RENDERER (l->data);
+        const gchar *column_id = g_object_get_data (G_OBJECT (cell), "column-id");
+
+        if (g_str_has_prefix (column_id, "date_")) {
+            GtkTreeViewColumn *col = g_hash_table_lookup (view->details->columns, column_id);
+            if (col != NULL && gtk_tree_view_column_get_visible (col)) {
+                /* Use fixed_width – this is always up-to-date even when the
+                 * Nemo window is behind the preferences dialog. */
+                gint col_width = gtk_tree_view_column_get_fixed_width (col);
+                if (col_width <= 0)
+                    col_width = gtk_tree_view_column_get_width (col);
+                gint padding = col_width - text_width;
+                g_settings_set_int (nemo_preferences,
+                                    NEMO_PREFERENCES_DATE_COLUMN_PADDING, padding);
+                /* Immediately apply the new padding so the effect is visible */
+                auto_fit_date_columns (view);
+                break;
+            }
+        }
+    }
+
+    g_list_free (combined);
+}
+
+/* Set or clear the cell-background property on a renderer based on row parity.
+ * Uses the GtkCellRenderer cell-background property which is the only reliable
+ * method for per-row coloring in GTK3 GtkTreeView. */
+static void
+set_row_background (GtkCellRenderer *renderer,
+                    GtkTreeModel    *model,
+                    GtkTreeIter     *iter)
+{
+    if (g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_LIST_VIEW_ALTERNATING_ROWS)) {
+        GtkTreePath *path = gtk_tree_model_get_path (model, iter);
+        gint *indices = gtk_tree_path_get_indices (path);
+        gint depth    = gtk_tree_path_get_depth (path);
+        gboolean odd  = (indices[depth - 1] % 2 != 0);
+        gtk_tree_path_free (path);
+
+        g_object_set (renderer,
+                      "cell-background",     odd ? "#ebebeb" : NULL,
+                      "cell-background-set", odd,
+                      NULL);
+    } else {
+        g_object_set (renderer, "cell-background-set", FALSE, NULL);
+    }
+}
+
+/* Cell data func for the icon renderer in the filename column. */
+static void
+icon_cell_data_func (GtkTreeViewColumn *column,
+                     GtkCellRenderer   *renderer,
+                     GtkTreeModel      *model,
+                     GtkTreeIter       *iter,
+                     gpointer           user_data)
+{
+    cairo_surface_t *surface = NULL;
+    gtk_tree_model_get (model, iter, NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN, &surface, -1);
+    g_object_set (renderer, "surface", surface, NULL);
+    if (surface) {
+        cairo_surface_destroy (surface);
+    }
+    set_row_background (renderer, model, iter);
+}
+
+/* Cell data func for plain text columns (all non-filename columns). */
+static void
+text_cell_data_func (GtkTreeViewColumn *column,
+                     GtkCellRenderer   *renderer,
+                     GtkTreeModel      *model,
+                     GtkTreeIter       *iter,
+                     gpointer           user_data)
+{
+    gint col_num = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (renderer), "model-column-num"));
+    gchar *text  = NULL;
+    gint weight;
+
+    gtk_tree_model_get (model, iter,
+                        col_num, &text,
+                        NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN, &weight,
+                        -1);
+    g_object_set (renderer, "text", text, "weight", weight, NULL);
+    g_free (text);
+
+    set_row_background (renderer, model, iter);
+}
+
+/* Apply alternating row colors: simply queue a redraw so the cell data funcs
+ * above re-run for every visible row with the current setting. */
+static void
+update_alternating_rows (NemoListView *view)
+{
+    g_return_if_fail (NEMO_IS_LIST_VIEW (view));
+
+    if (view->details->tree_view != NULL) {
+        gtk_widget_queue_draw (GTK_WIDGET (view->details->tree_view));
+    }
 }
 
 static void
@@ -2691,10 +2889,8 @@ create_and_set_up_tree_view (NemoListView *view)
             gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
 
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
-			gtk_tree_view_column_set_attributes (view->details->file_name_column,
-							     cell,
-							     "surface", NEMO_LIST_MODEL_SMALLEST_ICON_COLUMN,
-							     NULL);
+			gtk_tree_view_column_set_cell_data_func (view->details->file_name_column, cell,
+			                                         icon_cell_data_func, NULL, NULL);
 
 			cell = gtk_cell_renderer_text_new ();
 			view->details->file_name_cell = (GtkCellRendererText *)cell;
@@ -2738,10 +2934,9 @@ create_and_set_up_tree_view (NemoListView *view)
 
             gtk_tree_view_column_set_title (column, label);
             gtk_tree_view_column_pack_start (column, cell, TRUE);
-            gtk_tree_view_column_set_attributes (column, cell,
-                                                 "text", column_num,
-                                                 "weight", NEMO_LIST_MODEL_TEXT_WEIGHT_COLUMN,
-                                                 NULL);
+            g_object_set_data (G_OBJECT (cell), "model-column-num", GINT_TO_POINTER (column_num));
+            gtk_tree_view_column_set_cell_data_func (column, cell,
+                                                     text_cell_data_func, NULL, NULL);
 
             gtk_tree_view_append_column (view->details->tree_view, column);
             gtk_tree_view_column_set_min_width (column, 30);
@@ -2767,7 +2962,15 @@ create_and_set_up_tree_view (NemoListView *view)
     GtkSettings *gtk_settings = gtk_settings_get_default ();
     g_signal_connect_swapped (gtk_settings, "notify::gtk-font-name", G_CALLBACK (update_date_fonts), view);
     g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_FONT_CHOICE, G_CALLBACK (update_date_fonts), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_FORMAT, G_CALLBACK (update_date_fonts), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_FORMAT_CUSTOM, G_CALLBACK (update_date_fonts), view);
     g_signal_connect_swapped (gnome_interface_preferences, "changed::" NEMO_PREFERENCES_MONO_FONT_NAME, G_CALLBACK (update_date_fonts), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_COLUMN_FIT_TRIGGER, G_CALLBACK (auto_fit_date_columns), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_DATE_COLUMN_SAVE_PADDING_TRIGGER, G_CALLBACK (save_date_column_padding), view);
+    g_signal_connect_swapped (nemo_preferences, "changed::" NEMO_PREFERENCES_LIST_VIEW_ALTERNATING_ROWS, G_CALLBACK (update_alternating_rows), view);
+
+    view->details->alternating_rows_provider = NULL;
+    update_alternating_rows (view);
 	nemo_column_list_free (nemo_columns);
 
 	default_visible_columns = g_settings_get_strv (nemo_list_view_preferences,

@@ -61,6 +61,7 @@ GSettings *gnome_interface_preferences;
 GTimeZone      *prefs_current_timezone;
 gboolean        prefs_current_24h_time_format;
 NemoDateFormat  prefs_current_date_format;
+gchar          *prefs_current_date_custom_format = NULL;
 
 GTimer    *nemo_startup_timer;
 
@@ -413,6 +414,8 @@ on_time_data_changed (gpointer user_data)
 {
     prefs_current_date_format = g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT);
     prefs_current_24h_time_format = g_settings_get_boolean (cinnamon_interface_preferences, "clock-use-24h");
+    g_free (prefs_current_date_custom_format);
+    prefs_current_date_custom_format = g_settings_get_string (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT_CUSTOM);
 
     if (prefs_current_timezone != NULL) {
         g_time_zone_unref (prefs_current_timezone);
@@ -430,6 +433,10 @@ setup_cached_time_data (void)
 
     g_signal_connect_swapped (nemo_preferences,
                               "changed::" NEMO_PREFERENCES_DATE_FORMAT,
+                              G_CALLBACK (on_time_data_changed), NULL);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_DATE_FORMAT_CUSTOM,
                               G_CALLBACK (on_time_data_changed), NULL);
 
     g_signal_connect_swapped (cinnamon_interface_preferences,

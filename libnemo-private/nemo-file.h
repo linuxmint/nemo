@@ -552,6 +552,9 @@ gint nemo_file_get_search_result_count            (NemoFile *file, gpointer sear
 gchar *nemo_file_get_search_result_count_as_string (NemoFile *file, gpointer search_dir);
 gchar *nemo_file_get_search_result_snippet        (NemoFile *file, gpointer search_dir);
 
+/* Date formatting helpers */
+gchar *nemo_file_get_sample_date_string (void);
+
 /* Debugging */
 void                    nemo_file_dump                              (NemoFile                   *file);
 
