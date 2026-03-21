@@ -1,0 +1,29 @@
+# German translations for custom Nemo date format additions.
+# These strings are not in the upstream nemo.mo and must be merged manually.
+#
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+
+msgid "Custom…"
+msgstr "Benutzerdefiniert…"
+
+msgid "Format string:"
+msgstr "Formatzeichenfolge:"
+
+msgid "Tokens: YYYY=year, YY=2-digit year, MM=month, DD=day, HH=hour(24h), hh=hour(12h), mm=minute, SS=second\nExample: YYYY.MM.DD HH:mm:SS"
+msgstr "Token: YYYY=Jahr, YY=2-stelliges Jahr, MM=Monat, DD=Tag, HH=Stunde(24h), hh=Stunde(12h), mm=Minute, SS=Sekunde\nBeispiel: YYYY.MM.DD HH:mm:SS"
+
+msgid "Auto-fit"
+msgstr "Automatisch anpassen"
+
+msgid "Sets all date column widths to text width plus saved padding. Column widths remain manually adjustable."
+msgstr "Setzt die Breite aller Datumsspalten auf Textbreite + gespeicherter Abstand. Die Breite bleibt manuell verschiebbar."
+
+msgid "Save padding"
+msgstr "Abstand speichern"
+
+msgid "Saves the current padding between text and column border as the new default for \"Auto-fit\"."
+msgstr "Speichert den aktuellen Abstand zwischen Textinhalt und Spaltenrand als neuen Standard für \"Automatisch anpassen\"."

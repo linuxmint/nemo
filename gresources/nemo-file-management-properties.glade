@@ -936,6 +936,23 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="list_view_alternating_rows_checkbutton">
+                                            <property name="label" translatable="yes">Abwechselnde Zeilenfarben (weiß / hellgrau)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="xalign">0</property>
+                                            <property name="draw-indicator">True</property>
+                                            <property name="tooltip-text" translatable="yes">Zeilen abwechselnd weiß und hellgrau darstellen, um die Lesbarkeit zu verbessern.</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -1968,6 +1985,44 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkBox" id="date_format_custom_box">
+                                    <property name="visible">False</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkLabel" id="date_format_custom_label">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="label" translatable="yes">Format string:</property>
+                                        <property name="xalign">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="date_format_custom_entry">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="width-chars">24</property>
+                                        <property name="tooltip-text" translatable="yes">Tokens: YYYY=year, YY=2-digit year, MM=month, DD=day, HH=hour(24h), hh=hour(12h), mm=minute, SS=second&#10;Example: YYYY.MM.DD HH:mm:SS</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkAlignment" id="alignment10">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -2024,6 +2079,54 @@ along with .  If not, see <http://www.gnu.org/licenses/>.
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
                                 <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkAlignment" id="alignment_date_autosize">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="left-padding">40</property>
+                                <child>
+                                  <object class="GtkBox" id="date_column_buttons_box">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="orientation">horizontal</property>
+                                    <property name="spacing">8</property>
+                                    <child>
+                                      <object class="GtkButton" id="date_column_autofit_button">
+                                        <property name="label" translatable="yes">Auto-fit</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Sets all date column widths to text width plus saved padding. Column widths remain manually adjustable.</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="date_column_save_padding_button">
+                                        <property name="label" translatable="yes">Save padding</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Saves the current padding between text and column border as the new default for &quot;Auto-fit&quot;.</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                             <child>
