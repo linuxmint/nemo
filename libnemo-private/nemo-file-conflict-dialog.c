@@ -106,7 +106,7 @@ file_list_ready_cb (GList *files,
 	NemoFileConflictDialogDetails *details;
 	char *primary_text, *message, *secondary_text;
 	const gchar *message_extra;
-	char *dest_name, *dest_dir_name, *edit_name;
+	char *edit_name;
 	char *label_text;
 	char *size, *date, *type = NULL;
 	GdkPixbuf *pixbuf;
@@ -127,8 +127,8 @@ file_list_ready_cb (GList *files,
 	src_mtime = nemo_file_get_mtime (src);
 	dest_mtime = nemo_file_get_mtime (dest);
 
-	dest_name = nemo_file_get_display_name (dest);
-	dest_dir_name = nemo_file_get_display_name (dest_dir);
+	g_autofree gchar *dest_name = nemo_file_get_display_name (dest);
+	g_autofree gchar *dest_dir_name = nemo_file_get_display_name (dest_dir);
 
 	source_is_dir = nemo_file_is_directory (src);
 	dest_is_dir = nemo_file_is_directory (dest);

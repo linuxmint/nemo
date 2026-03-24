@@ -1623,6 +1623,7 @@ nemo_window_show (GtkWidget *widget)
 
 	window = NEMO_WINDOW (widget);
 
+    g_free (window->details->sidebar_id);
     window->details->sidebar_id = g_settings_get_string (nemo_window_state,
                                                          NEMO_WINDOW_STATE_SIDE_PANE_VIEW);
 

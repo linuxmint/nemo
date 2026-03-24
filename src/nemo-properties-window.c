@@ -3052,6 +3052,7 @@ create_volume_usage_widget (NemoPropertiesWindow *window)
 	uri = nemo_file_get_activation_uri (file);
 
 	location = g_file_new_for_uri (uri);
+	g_free (uri);
 	info = g_file_query_filesystem_info (location, "filesystem::*", NULL, NULL);
 
 	if (info) {
