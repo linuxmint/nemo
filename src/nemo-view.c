@@ -1274,24 +1274,6 @@ action_open_callback (GtkAction *action,
 }
 
 static void
-action_open_close_parent_callback (GtkAction *action,
-				   gpointer callback_data)
-{
-	GList *selection;
-	NemoView *view;
-
-	view = NEMO_VIEW (callback_data);
-
-	selection = nemo_view_get_selection (view);
-	nemo_view_activate_files (view,
-				      selection,
-				      NEMO_WINDOW_OPEN_FLAG_CLOSE_BEHIND,
-				      TRUE);
-	nemo_file_list_free (selection);
-}
-
-
-static void
 action_open_alternate_callback (GtkAction *action,
 				gpointer callback_data)
 {
@@ -8404,10 +8386,6 @@ static const GtkActionEntry directory_view_entries[] = {
   /* label, accelerator */       N_("_Detect Media"), NULL,
   /* tooltip */                  N_("Detect media in the selected drive"),
 				 G_CALLBACK (action_self_detect_media_callback) },
-  /* name, stock id */         { "OpenCloseParent", NULL,
-  /* label, accelerator */       N_("Open File and Close window"), "<alt><shift>Down",
-  /* tooltip */                  NULL,
-				 G_CALLBACK (action_open_close_parent_callback) },
   /* Location-specific actions */
   /* name, stock id */         { NEMO_ACTION_LOCATION_OPEN_ALTERNATE, NULL,
   /* label, accelerator */       N_("Open in Navigation Window"), "",

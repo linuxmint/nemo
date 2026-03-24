@@ -1,6 +1,5 @@
 <ui>
 <accelerator action="OpenAccel"/>
-<accelerator action="OpenCloseParent"/>
 <accelerator action="PropertiesAccel"/>
 <accelerator action="RenameSelectAll"/>
 <menubar name="MenuBar">
