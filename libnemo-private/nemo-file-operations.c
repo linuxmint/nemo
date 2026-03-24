@@ -3991,8 +3991,13 @@ copy_move_directory (CopyMoveJob *copy_job,
 	}
 
 	if (create_dest) {
-		flags = (readonly_source_fs) ? G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_TARGET_DEFAULT_PERMS
-					     : G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA;
+		flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
+		if (readonly_source_fs) {
+			flags |= G_FILE_COPY_TARGET_DEFAULT_PERMS;
+		} else if (copy_job->is_move) {
+			flags |= G_FILE_COPY_ALL_METADATA;
+		}
+
 		/* Ignore errors here. Failure to copy metadata is not a hard error */
 		g_file_copy_attributes (src, *dest,
 					flags,
@@ -4561,13 +4566,6 @@ copy_move_file (CopyMoveJob *copy_job,
 	}
 
 	if (res) {
-		if (!copy_job->is_move) {
-			/* Ignore errors here. Failure to copy metadata is not a hard error */
-			g_file_copy_attributes (src, dest,
-			                        flags | G_FILE_COPY_ALL_METADATA,
-			                        job->cancellable, NULL);
-		}
-
 		transfer_info->num_files ++;
 		report_copy_progress (copy_job, source_info, transfer_info);
 
