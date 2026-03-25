@@ -7947,11 +7947,18 @@ nemo_file_mark_gone (NemoFile *file)
 
 	/* Let the directory know it's gone. */
 	directory = file->details->directory;
+	/* Hold a temporary ref so the object stays alive through both
+	 * nemo_directory_remove_file() (which may drop the last directory ref
+	 * and free the object) AND the nemo_file_clear_info() call below.
+	 * Without this, remove_file can free the NemoFile and clear_info then
+	 * dereferences the freed pointer, causing a SIGSEGV (bug #3712). */
+	nemo_file_ref (file);
 	if (!nemo_file_is_self_owned (file)) {
 		nemo_directory_remove_file (directory, file);
 	}
 
 	nemo_file_clear_info (file);
+	nemo_file_unref (file);
 
 	/* FIXME bugzilla.gnome.org 42429:
 	 * Maybe we can get rid of the name too eventually, but
