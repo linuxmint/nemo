@@ -1770,6 +1770,19 @@ nemo_icon_view_compare_files (NemoIconView   *icon_view,
 				  NemoFile *a,
 				  NemoFile *b)
 {
+	NemoView *view = NEMO_VIEW (icon_view);
+	NemoIconContainer *container = nemo_icon_view_get_icon_container (icon_view);
+
+	if (container != NULL &&
+	    nemo_icon_container_get_filter_highlight (container) != NULL) {
+		gint pos_a = nemo_view_get_filter_match (view, a);
+		gint pos_b = nemo_view_get_filter_match (view, b);
+
+		if (pos_a != pos_b) {
+			return (pos_a < pos_b) ? -1 : 1;
+		}
+	}
+
 	return nemo_file_compare_for_sort
 		(a, b, icon_view->details->sort->sort_type,
 		 /* Use type-unsafe cast for performance */
@@ -2355,6 +2368,26 @@ button_press_callback (GtkWidget *widget, GdkEventFocus *event, gpointer user_da
     return GDK_EVENT_PROPAGATE;
 }
 
+static void
+nemo_icon_view_update_filter_text (NemoView   *view,
+                                   const char *filter_text)
+{
+    NemoIconContainer *container;
+
+    container = nemo_icon_view_get_icon_container (NEMO_ICON_VIEW (view));
+    if (container != NULL) {
+        nemo_icon_container_set_filter_highlight (container, filter_text);
+    }
+}
+
+static gboolean
+icon_container_activate_filter_cb (NemoIconContainer *container,
+                                   GdkEvent *event,
+                                   NemoIconView *icon_view)
+{
+    return nemo_view_activate_filter (NEMO_VIEW (icon_view), (GdkEventKey *) event);
+}
+
 static NemoIconContainer *
 create_icon_container (NemoIconView *icon_view)
 {
@@ -2424,6 +2457,8 @@ create_icon_container (NemoIconView *icon_view)
 				 G_CALLBACK (get_stored_layout_timestamp), icon_view, 0);
 	g_signal_connect_object (icon_container, "store_layout_timestamp",
 				 G_CALLBACK (store_layout_timestamp), icon_view, 0);
+	g_signal_connect_object (icon_container, "check-filter-event",
+				 G_CALLBACK (icon_container_activate_filter_cb), icon_view, 0);
 
 	gtk_container_add (GTK_CONTAINER (icon_view),
 			   GTK_WIDGET (icon_container));
@@ -2732,6 +2767,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 	nemo_view_class->set_selection = nemo_icon_view_set_selection;
 	nemo_view_class->invert_selection = nemo_icon_view_invert_selection;
 	nemo_view_class->compare_files = compare_files;
+	nemo_view_class->update_filter_text = nemo_icon_view_update_filter_text;
 	nemo_view_class->zoom_to_level = nemo_icon_view_zoom_to_level;
 	nemo_view_class->get_zoom_level = nemo_icon_view_get_zoom_level;
         nemo_view_class->click_policy_changed = nemo_icon_view_click_policy_changed;
