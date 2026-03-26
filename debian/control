@@ -23,7 +23,7 @@ Build-Depends:
  libgtk-3-doc,
  libgtk-layer-shell-dev,
  libjson-glib-dev (>= 1.6),
- libpango1.0-dev,
+ libpango1.0-dev (>= 1.44.0),
  libx11-dev,
  libxapp-dev (>= 2.0.0),
  libxext-dev,
