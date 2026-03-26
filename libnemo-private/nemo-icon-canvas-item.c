@@ -1410,18 +1410,14 @@ create_label_layout (NemoIconCanvasItem *item,
 	GString *str;
 	char *zeroified_text;
 	const char *p;
-#ifdef HAVE_PANGO_144
  	PangoAttrList *attr_list;
-#endif
 
 	canvas_item = EEL_CANVAS_ITEM (item);
 
 	container = NEMO_ICON_CONTAINER (canvas_item->canvas);
 	context = gtk_widget_get_pango_context (GTK_WIDGET (canvas_item->canvas));
 	layout = pango_layout_new (context);
-#ifdef HAVE_PANGO_144
  	attr_list = pango_attr_list_new ();
-#endif
 
 	zeroified_text = NULL;
 
@@ -1457,10 +1453,8 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_spacing (layout, LABEL_LINE_SPACING);
 	pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
 
-#ifdef HAVE_PANGO_144
  	pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
  	pango_layout_set_attributes (layout, attr_list);
-#endif
 
 	/* Create a font description */
 	if (container->details->font && g_strcmp0 (container->details->font, "") != 0) {
@@ -1486,9 +1480,7 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
-#ifdef HAVE_PANGO_144
  	pango_attr_list_unref (attr_list);
-#endif
 
 	return layout;
 }
