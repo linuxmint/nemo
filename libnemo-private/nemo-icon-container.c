@@ -198,6 +198,7 @@ enum {
 	ICON_REMOVED,
 	CLEARED,
     GET_TOOLTIP_TEXT,
+    CHECK_FILTER_EVENT,
 	LAST_SIGNAL
 };
 
@@ -2770,6 +2771,7 @@ finalize (GObject *object)
 	details->icon_set = NULL;
 
 	g_free (details->font);
+	g_free (details->filter_highlight_text);
 
 	if (details->a11y_item_action_queue != NULL) {
 		while (!g_queue_is_empty (details->a11y_item_action_queue)) {
@@ -4261,6 +4263,14 @@ key_press_event (GtkWidget *widget,
 			}
 			break;
 		case GDK_KEY_space:
+			if (!nemo_icon_container_get_is_desktop (container)) {
+				gboolean filter_handled = FALSE;
+				g_signal_emit (container, signals[CHECK_FILTER_EVENT], 0, (GdkEvent *) event, &filter_handled);
+				if (filter_handled) {
+					handled = TRUE;
+					break;
+				}
+			}
 			keyboard_space (container, event);
 			handled = TRUE;
 			break;
@@ -4321,64 +4331,64 @@ key_press_event (GtkWidget *widget,
 		handled = GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->key_press_event (widget, event);
 	}
 
-	/* We pass the event to the search_entry.  If its text changes, then we
-	 * start the typeahead find capabilities.
-	 * Copied from NemoIconContainer */
+	/* For non-desktop containers, forward keypresses to the filter bar.
+	 * The signal handler validates the keypress and returns TRUE if handled.
+	 * Desktop containers keep the old interactive search behavior. */
 	if (!handled &&
-		event->keyval != GDK_KEY_asciitilde &&
-		event->keyval != GDK_KEY_KP_Divide &&
-	    event->keyval != GDK_KEY_slash /* don't steal slash key events, used for "go to" */ &&
-	    event->keyval != GDK_KEY_BackSpace &&
+	    event->keyval != GDK_KEY_asciitilde &&
+	    event->keyval != GDK_KEY_KP_Divide &&
+	    event->keyval != GDK_KEY_slash &&
 	    event->keyval != GDK_KEY_Delete) {
-		GdkEvent *new_event;
-		GdkWindow *window;
-		char *old_text;
-		const char *new_text;
-		gboolean retval;
-		gboolean text_modified;
-		gulong popup_menu_id;
 
-		nemo_icon_container_ensure_interactive_directory (container);
+	    if (!nemo_icon_container_get_is_desktop (container)) {
+	        g_signal_emit (container, signals[CHECK_FILTER_EVENT], 0, (GdkEvent *) event, &handled);
+	    } else {
+	        /* Desktop: old interactive search behavior */
+	        GdkEvent *new_event;
+	        GdkWindow *window;
+	        char *old_text;
+	        const char *new_text;
+	        gboolean retval;
+	        gboolean text_modified;
+	        gulong popup_menu_id;
 
-		/* Make a copy of the current text */
-		old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (container->details->search_entry)));
-		new_event = gdk_event_copy ((GdkEvent *) event);
-		window = ((GdkEventKey *) new_event)->window;
-		((GdkEventKey *) new_event)->window = gtk_widget_get_window (container->details->search_entry);
-		gtk_widget_realize (container->details->search_window);
+	        nemo_icon_container_ensure_interactive_directory (container);
 
-		popup_menu_id = g_signal_connect (container->details->search_entry,
-						  "popup_menu", G_CALLBACK (gtk_true), NULL);
+	        old_text = g_strdup (gtk_entry_get_text (GTK_ENTRY (container->details->search_entry)));
+	        new_event = gdk_event_copy ((GdkEvent *) event);
+	        window = ((GdkEventKey *) new_event)->window;
+	        ((GdkEventKey *) new_event)->window = gtk_widget_get_window (container->details->search_entry);
+	        gtk_widget_realize (container->details->search_window);
 
-		gtk_widget_show (container->details->search_window);
+	        popup_menu_id = g_signal_connect (container->details->search_entry,
+	                          "popup_menu", G_CALLBACK (gtk_true), NULL);
 
-		/* Send the event to the window.  If the preedit_changed signal is emitted
-		 * during this event, we will set priv->imcontext_changed  */
-		container->details->imcontext_changed = FALSE;
-		retval = gtk_widget_event (container->details->search_entry, new_event);
-		gtk_widget_hide (container->details->search_window);
+	        gtk_widget_show (container->details->search_window);
 
-		g_signal_handler_disconnect (container->details->search_entry,
-					     popup_menu_id);
+	        container->details->imcontext_changed = FALSE;
+	        retval = gtk_widget_event (container->details->search_entry, new_event);
+	        gtk_widget_hide (container->details->search_window);
 
-		/* We check to make sure that the entry tried to handle the text, and that
-		 * the text has changed. */
-		new_text = gtk_entry_get_text (GTK_ENTRY (container->details->search_entry));
-		text_modified = strcmp (old_text, new_text) != 0;
-		g_free (old_text);
-		if (container->details->imcontext_changed ||    /* we're in a preedit */
-		    (retval && text_modified)) {                /* ...or the text was modified */
-			if (nemo_icon_container_start_interactive_search (container)) {
-				gtk_widget_grab_focus (GTK_WIDGET (container));
-				return TRUE;
-			} else {
-				gtk_entry_set_text (GTK_ENTRY (container->details->search_entry), "");
-				return FALSE;
-			}
-		}
+	        g_signal_handler_disconnect (container->details->search_entry,
+	                         popup_menu_id);
 
-		((GdkEventKey *) new_event)->window = window;
-		gdk_event_free (new_event);
+	        new_text = gtk_entry_get_text (GTK_ENTRY (container->details->search_entry));
+	        text_modified = strcmp (old_text, new_text) != 0;
+	        g_free (old_text);
+	        if (container->details->imcontext_changed ||
+	            (retval && text_modified)) {
+	            if (nemo_icon_container_start_interactive_search (container)) {
+	                gtk_widget_grab_focus (GTK_WIDGET (container));
+	                return TRUE;
+	            } else {
+	                gtk_entry_set_text (GTK_ENTRY (container->details->search_entry), "");
+	                return FALSE;
+	            }
+	        }
+
+	        ((GdkEventKey *) new_event)->window = window;
+	        gdk_event_free (new_event);
+	    }
 	}
 
 	return handled;
@@ -4868,6 +4878,16 @@ nemo_icon_container_class_init (NemoIconContainerClass *class)
                         NULL,
                         G_TYPE_STRING, 1,
                         G_TYPE_POINTER);
+
+    signals[CHECK_FILTER_EVENT]
+        = g_signal_new ("check-filter-event",
+                        G_TYPE_FROM_CLASS (class),
+                        G_SIGNAL_RUN_LAST,
+                        0,
+                        g_signal_accumulator_true_handled, NULL,
+                        g_cclosure_marshal_generic,
+                        G_TYPE_BOOLEAN, 1,
+                        GDK_TYPE_EVENT);
 
 	/* GtkWidget class.  */
 
@@ -7183,6 +7203,26 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
                                   G_CALLBACK (text_ellipsis_limit_changed_container_callback),
                                   container);
     }
+}
+
+void
+nemo_icon_container_set_filter_highlight (NemoIconContainer *container,
+                                          const char *filter_text)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    g_free (container->details->filter_highlight_text);
+    container->details->filter_highlight_text = g_strdup (filter_text);
+
+    nemo_icon_container_invalidate_labels (container);
+    nemo_icon_container_request_update_all (container);
+}
+
+const char *
+nemo_icon_container_get_filter_highlight (NemoIconContainer *container)
+{
+    g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), NULL);
+    return container->details->filter_highlight_text;
 }
 
 void

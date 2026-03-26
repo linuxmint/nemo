@@ -31,6 +31,7 @@
 #include "nemo-file-utilities.h"
 #include "nemo-global-preferences.h"
 #include "nemo-icon-private.h"
+#include "nemo-fzy-utils.h"
 #include <eel/eel-art-extensions.h>
 #include <eel/eel-gdk-extensions.h>
 #include <eel/eel-glib-extensions.h>
@@ -1398,6 +1399,36 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
 #define ZERO_WIDTH_SPACE "\xE2\x80\x8B"
 
 
+static void
+add_filter_highlight_attrs (PangoAttrList *attr_list,
+                            const char *zeroified_text,
+                            const char *filter_text)
+{
+    PangoAttrList *match_attrs;
+    PangoAttrIterator *iter;
+
+    /* Match against the zeroified text directly. The zero-width spaces
+     * are invisible to the user and fzy skips over them naturally as
+     * non-matching characters. The returned positions are byte offsets
+     * into the zeroified text, which is what the PangoLayout uses -
+     * no remapping needed. */
+    match_attrs = nemo_fzy_match_attrs (filter_text, zeroified_text);
+    if (match_attrs == NULL) {
+        return;
+    }
+
+    iter = pango_attr_list_get_iterator (match_attrs);
+    do {
+        PangoAttribute *a = pango_attr_iterator_get (iter, PANGO_ATTR_WEIGHT);
+        if (a != NULL) {
+            pango_attr_list_change (attr_list, pango_attribute_copy (a));
+        }
+    } while (pango_attr_iterator_next (iter));
+
+    pango_attr_iterator_destroy (iter);
+    pango_attr_list_unref (match_attrs);
+}
+
 static PangoLayout *
 create_label_layout (NemoIconCanvasItem *item,
 		     const char *text)
@@ -1407,17 +1438,17 @@ create_label_layout (NemoIconCanvasItem *item,
 	PangoFontDescription *desc;
 	NemoIconContainer *container;
 	EelCanvasItem *canvas_item;
+	PangoAttrList *attr_list;
 	GString *str;
 	char *zeroified_text;
 	const char *p;
- 	PangoAttrList *attr_list;
 
 	canvas_item = EEL_CANVAS_ITEM (item);
 
 	container = NEMO_ICON_CONTAINER (canvas_item->canvas);
 	context = gtk_widget_get_pango_context (GTK_WIDGET (canvas_item->canvas));
 	layout = pango_layout_new (context);
- 	attr_list = pango_attr_list_new ();
+	attr_list = pango_attr_list_new ();
 
 	zeroified_text = NULL;
 
@@ -1453,8 +1484,12 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_spacing (layout, LABEL_LINE_SPACING);
 	pango_layout_set_wrap (layout, PANGO_WRAP_WORD_CHAR);
 
- 	pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
- 	pango_layout_set_attributes (layout, attr_list);
+	pango_attr_list_insert (attr_list, pango_attr_insert_hyphens_new (FALSE));
+
+	add_filter_highlight_attrs (attr_list, zeroified_text,
+	                            nemo_icon_container_get_filter_highlight (container));
+
+	pango_layout_set_attributes (layout, attr_list);
 
 	/* Create a font description */
 	if (container->details->font && g_strcmp0 (container->details->font, "") != 0) {
@@ -1480,7 +1515,7 @@ create_label_layout (NemoIconCanvasItem *item,
 	pango_layout_set_font_description (layout, desc);
 	pango_font_description_free (desc);
 	g_free (zeroified_text);
- 	pango_attr_list_unref (attr_list);
+	pango_attr_list_unref (attr_list);
 
 	return layout;
 }

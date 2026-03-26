@@ -34,6 +34,7 @@ nemoCommon_sources = [
   'nemo-error-reporting.c',
   'nemo-extension-config-widget.c',
   'nemo-file-management-properties.c',
+  'nemo-filter-bar.c',
   'nemo-floating-bar.c',
   'nemo-freedesktop-dbus.c',
   'nemo-icon-view-container.c',

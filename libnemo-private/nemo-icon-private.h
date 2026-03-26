@@ -261,6 +261,8 @@ struct NemoIconContainerDetails {
     gboolean show_desktop_tooltips;
     gboolean show_icon_view_tooltips;
 
+    gchar *filter_highlight_text;
+
 	/* Ignore the visible area the next time the scroll region is recomputed */
 	gboolean reset_scroll_region_trigger;
 	

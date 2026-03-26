@@ -42,6 +42,7 @@
 enum {
 	SUBDIRECTORY_UNLOADED,
     GET_ICON_SCALE,
+    GET_FILTER_MATCH,
 	LAST_SIGNAL
 };
 
@@ -86,6 +87,8 @@ struct NemoListModelDetails {
 	GList *highlight_files;
     gboolean temp_unsorted;
     gboolean expansion_enabled;
+
+    gboolean filter_active;
 };
 
 typedef struct {
@@ -252,6 +255,17 @@ nemo_list_model_get_path (GtkTreeModel *tree_model, GtkTreeIter *iter)
 	}
 
 	return path;
+}
+
+static gint
+nemo_list_model_get_filter_match (NemoListModel *model, NemoFile *file)
+{
+    gint retval = -1;
+
+    g_signal_emit (model, list_model_signals[GET_FILTER_MATCH], 0,
+                   file, &retval);
+
+    return retval;
 }
 
 static gint
@@ -722,6 +736,15 @@ nemo_list_model_file_entry_compare_func (gconstpointer a,
 	file_entry2 = (FileEntry *)b;
 
 	if (file_entry1->file != NULL && file_entry2->file != NULL) {
+		if (model->details->filter_active) {
+			gint match1 = nemo_list_model_get_filter_match (model, file_entry1->file);
+			gint match2 = nemo_list_model_get_filter_match (model, file_entry2->file);
+
+			if (match1 != match2) {
+				return (match1 < match2) ? -1 : 1;
+			}
+		}
+
 		result = nemo_file_compare_for_sort_by_attribute_q (file_entry1->file, file_entry2->file,
 									model->details->sort_attribute,
 									model->details->sort_directories_first,
@@ -1016,7 +1039,9 @@ nemo_list_model_add_file (NemoListModel *model, NemoFile *file,
 	}
 
 	if (ptr != NULL) {
-		g_warning ("file already in tree (parent_ptr: %p)!!!\n", parent_ptr);
+		if (!model->details->filter_active) {
+			g_warning ("file already in tree (parent_ptr: %p)!!!", parent_ptr);
+		}
 		return FALSE;
 	}
 
@@ -1686,6 +1711,24 @@ nemo_list_model_finalize (GObject *object)
 	G_OBJECT_CLASS (nemo_list_model_parent_class)->finalize (object);
 }
 
+void
+nemo_list_model_set_filter_active (NemoListModel *model,
+                                   gboolean       active)
+{
+	g_return_if_fail (NEMO_IS_LIST_MODEL (model));
+
+	model->details->filter_active = active;
+
+	nemo_list_model_sort (model);
+}
+
+gboolean
+nemo_list_model_get_filter_active (NemoListModel *model)
+{
+	g_return_val_if_fail (NEMO_IS_LIST_MODEL (model), FALSE);
+	return model->details->filter_active;
+}
+
 static void
 nemo_list_model_init (NemoListModel *model)
 {
@@ -1725,10 +1768,19 @@ nemo_list_model_class_init (NemoListModelClass *klass)
       list_model_signals[GET_ICON_SCALE] =
         g_signal_new ("get-icon-scale",
                       NEMO_TYPE_LIST_MODEL,
-                      G_SIGNAL_RUN_FIRST | G_SIGNAL_RUN_LAST,
+                      G_SIGNAL_RUN_LAST,
                       0, NULL, NULL,
                       NULL,
                       G_TYPE_INT, 0);
+
+     list_model_signals[GET_FILTER_MATCH] =
+        g_signal_new ("get-filter-match",
+                      NEMO_TYPE_LIST_MODEL,
+                      G_SIGNAL_RUN_LAST,
+                      0, NULL, NULL,
+                      NULL,
+                      G_TYPE_INT, 1,
+                      NEMO_TYPE_FILE);
 }
 
 static void

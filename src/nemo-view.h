@@ -31,6 +31,8 @@
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 
+#define NEMO_FILTER_NO_MATCH G_MAXINT
+
 #include <libnemo-private/nemo-directory.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-container.h>
@@ -312,6 +314,9 @@ struct NemoViewClass {
 	void           (* scroll_to_file)	  (NemoView          *view,
 						   const char            *uri);
 
+	void    (* update_filter_text)             (NemoView *view,
+						   const char  *filter_text);
+
         /* Signals used only for keybindings */
         gboolean (* trash)                         (NemoView *view);
         gboolean (* delete)                        (NemoView *view);
@@ -376,6 +381,17 @@ void                nemo_view_unfreeze_updates                 (NemoView  *view)
 gboolean            nemo_view_get_is_renaming                  (NemoView  *view);
 void                nemo_view_set_is_renaming                  (NemoView  *view,
 								    gboolean       renaming);
+
+/* Type-to-filter */
+void                nemo_view_set_filter_text                  (NemoView  *view,
+                                                                    const char    *text);
+void                nemo_view_clear_filter                     (NemoView  *view);
+gboolean            nemo_view_get_filter_active                (NemoView  *view);
+const char         *nemo_view_get_filter_text                  (NemoView  *view);
+gint                nemo_view_get_filter_match                 (NemoView  *view,
+                                                                    NemoFile  *file);
+gboolean            nemo_view_activate_filter                  (NemoView  *view,
+                                                                    GdkEventKey   *event);
 void                nemo_view_add_subdirectory                (NemoView  *view,
 								   NemoDirectory*directory);
 void                nemo_view_remove_subdirectory             (NemoView  *view,
