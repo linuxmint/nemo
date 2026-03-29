@@ -24,8 +24,8 @@ NemoDesktopWindow GtkPaned {
 }
 
 .nemo-desktop.nemo-canvas-item {
-    color: #eeeeee;
-    text-shadow: 1px 1px alpha(black, 0.8);
+	color: #eeeeee;
+    text-shadow: 2px 2px 3px alpha(black, 0.8);
 }
 
 .nemo-desktop.nemo-canvas-item:hover {
