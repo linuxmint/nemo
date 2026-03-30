@@ -61,6 +61,7 @@
 #include <eel/eel-vfs-extensions.h>
 
 #include <libnemo-extension/nemo-menu-provider.h>
+#include <libnemo-extension/nemo-selection-provider.h>
 #include <libnemo-private/nemo-bookmark.h>
 #include <libnemo-private/nemo-clipboard.h>
 #include <libnemo-private/nemo-clipboard-monitor.h>
@@ -10310,6 +10311,33 @@ schedule_update_status (NemoView *view)
 	}
 }
 
+static void
+nemo_view_notify_selection_providers (NemoView *view)
+{
+    GList *providers, *l, *selection, *file_infos;
+    GtkWidget *window;
+
+    providers = nemo_module_get_extensions_for_type (NEMO_TYPE_SELECTION_PROVIDER);
+    if (providers == NULL)
+        return;
+
+    selection = nemo_view_get_selection (view);
+    window = GTK_WIDGET (nemo_view_get_containing_window (view));
+
+    file_infos = NULL;
+    for (l = selection; l != NULL; l = l->next)
+        file_infos = g_list_prepend (file_infos, NEMO_FILE_INFO (l->data));
+    file_infos = g_list_reverse (file_infos);
+
+    for (l = providers; l != NULL; l = l->next)
+        nemo_selection_provider_selection_changed (NEMO_SELECTION_PROVIDER (l->data),
+                                                   window, file_infos);
+
+    g_list_free (file_infos);
+    nemo_file_list_free (selection);
+    nemo_module_extension_list_free (providers);
+}
+
 /**
  * nemo_view_notify_selection_changed:
  *
@@ -10359,6 +10387,7 @@ nemo_view_notify_selection_changed (NemoView *view)
 		/* Schedule an update of menu item states to match selection */
         selection_changed_schedule_update_menus (view);
 	}
+    nemo_view_notify_selection_providers (view);
 }
 
 static void
