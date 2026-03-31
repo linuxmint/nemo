@@ -566,6 +566,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 				       _("Re_name"),
 				       CONFLICT_RESPONSE_RENAME);
 	gtk_widget_hide (details->rename_button);
+	gtk_widget_set_no_show_all(details->rename_button, TRUE);
 
 	details->replace_button =
 		gtk_dialog_add_button (dialog,
