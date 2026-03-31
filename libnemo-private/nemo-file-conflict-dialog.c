@@ -622,6 +622,7 @@ nemo_file_conflict_dialog_class_init (NemoFileConflictDialogClass *klass)
 char *
 nemo_file_conflict_dialog_get_new_name (NemoFileConflictDialog *dialog)
 {
+	g_assert(gtk_entry_get_text_length (GTK_ENTRY (dialog->details->entry)) > 0);
 	return g_strdup (gtk_entry_get_text
 			 (GTK_ENTRY (dialog->details->entry)));
 }
