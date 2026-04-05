@@ -4,6 +4,8 @@
 #include <eel/eel-string.h>
 
 static GtkCssProvider *mandatory_css_provider = NULL;
+static GtkCssProvider *desktop_css_provider = NULL;
+static gboolean theme_has_desktop_support = FALSE;
 
 static gboolean
 css_provider_load_from_resource (GtkCssProvider *provider,
@@ -178,6 +180,57 @@ is_known_supported_theme (const gchar *theme_name)
 }
 
 static void
+check_desktop_support (const gchar *theme_name)
+{
+    GtkCssProvider *provider;
+    gchar *css;
+
+    provider = gtk_css_provider_get_named (theme_name, NULL);
+    css = gtk_css_provider_to_string (provider);
+
+    theme_has_desktop_support = (g_strstr_len (css, -1, "nemo-desktop") != NULL);
+
+    g_free (css);
+}
+
+static void
+update_desktop_provider (void)
+{
+    gboolean use_theme;
+    gboolean should_load;
+
+    use_theme = g_settings_get_boolean (nemo_desktop_preferences,
+                                        NEMO_PREFERENCES_DESKTOP_TEXT_SHADOW_USE_THEME);
+
+    /* Load our desktop CSS unless the user opted into the theme's own
+     * desktop styling AND the theme actually provides it. */
+    should_load = !(use_theme && theme_has_desktop_support);
+
+    if (should_load && desktop_css_provider == NULL) {
+        GtkCssProvider *provider;
+        GError *error = NULL;
+
+        provider = gtk_css_provider_new ();
+
+        if (!css_provider_load_from_resource (provider, "/org/nemo/nemo-style-desktop.css", &error)) {
+            g_warning ("Failed to load desktop css: %s", error->message);
+            g_clear_error (&error);
+            g_object_unref (provider);
+            return;
+        }
+
+        gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                                   GTK_STYLE_PROVIDER (provider),
+                                                   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        desktop_css_provider = provider;
+    } else if (!should_load && desktop_css_provider != NULL) {
+        gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (),
+                                                      GTK_STYLE_PROVIDER (desktop_css_provider));
+        g_clear_object (&desktop_css_provider);
+    }
+}
+
+static void
 process_theme (GtkSettings *gtk_settings)
 {
     gchar *theme_name;
@@ -197,8 +250,18 @@ process_theme (GtkSettings *gtk_settings)
         add_fallback_mandatory_css_provider (theme_name);
     }
 
+    check_desktop_support (theme_name);
+    update_desktop_provider ();
+
     gtk_style_context_reset_widgets (gdk_screen_get_default ());
     g_free (theme_name);
+}
+
+static void
+on_use_theme_setting_changed (GSettings *settings, const gchar *key, gpointer user_data)
+{
+    update_desktop_provider ();
+    gtk_style_context_reset_widgets (gdk_screen_get_default ());
 }
 
 void
@@ -222,6 +285,10 @@ nemo_theme_utils_init_styles (void)
 
     g_signal_connect_swapped (gtk_settings, "notify::gtk-theme-name",
                               G_CALLBACK (process_theme), gtk_settings);
+
+    g_signal_connect (nemo_desktop_preferences,
+                      "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_SHADOW_USE_THEME,
+                      G_CALLBACK (on_use_theme_setting_changed), NULL);
 
     process_theme (gtk_settings);
 }

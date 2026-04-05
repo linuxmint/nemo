@@ -7152,6 +7152,38 @@ nemo_icon_container_get_is_desktop (NemoIconContainer *container)
 	return container->details->is_desktop;
 }
 
+static const gchar *shadow_class_names[] = {
+    "shadow-normal",
+    "shadow-darker",
+    "shadow-darkest"
+};
+
+static void
+update_desktop_shadow_class (NemoIconContainer *container)
+{
+    GtkStyleContext *context;
+    gchar *setting, *class_name;
+    gint i;
+
+    context = gtk_widget_get_style_context (GTK_WIDGET (container));
+
+    for (i = 0; i < G_N_ELEMENTS (shadow_class_names); i++) {
+        gtk_style_context_remove_class (context, shadow_class_names[i]);
+    }
+
+    /* The class is always applied. When the user has opted into theme-driven
+     * styling and the theme supports it, nemo-theme-utils skips loading the
+     * shadow stylesheet, so the class simply matches no rules. */
+    setting = g_settings_get_string (nemo_desktop_preferences,
+                                     NEMO_PREFERENCES_DESKTOP_TEXT_SHADOW);
+    class_name = g_strdup_printf ("shadow-%s", setting);
+    gtk_style_context_add_class (context, class_name);
+    g_free (class_name);
+    g_free (setting);
+
+    gtk_widget_queue_draw (GTK_WIDGET (container));
+}
+
 void
 nemo_icon_container_set_is_desktop (NemoIconContainer *container,
 					   gboolean is_desktop)
@@ -7166,6 +7198,9 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
     g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
                                           text_ellipsis_limit_changed_container_callback,
                                           container);
+    g_signal_handlers_disconnect_by_func (nemo_desktop_preferences,
+                                          update_desktop_shadow_class,
+                                          container);
 
     if (is_desktop) {
         GtkStyleContext *context;
@@ -7173,9 +7208,16 @@ nemo_icon_container_set_is_desktop (NemoIconContainer *container,
         context = gtk_widget_get_style_context (GTK_WIDGET (container));
         gtk_style_context_add_class (context, "nemo-desktop");
 
+        update_desktop_shadow_class (container);
+
         g_signal_connect_swapped (nemo_desktop_preferences,
                                   "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_ELLIPSIS_LIMIT,
                                   G_CALLBACK (text_ellipsis_limit_changed_container_callback),
+                                  container);
+
+        g_signal_connect_swapped (nemo_desktop_preferences,
+                                  "changed::" NEMO_PREFERENCES_DESKTOP_TEXT_SHADOW,
+                                  G_CALLBACK (update_desktop_shadow_class),
                                   container);
     } else {
         g_signal_connect_swapped (nemo_icon_view_preferences,
