@@ -65,6 +65,9 @@ struct _NemoProgressInfoWidgetPriv {
     /* pre-start page */
     GtkWidget *pre_info; /* GtkLabel */
 
+    GtkWidget *pending_start_pause_button;
+    GtkWidget *running_start_pause_button;
+
     GtkWidget *status; /* GtkLabel */
     GtkWidget *details; /* GtkLabel */
     GtkWidget *progress_bar;
