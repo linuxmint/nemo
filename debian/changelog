@@ -1,3 +1,59 @@
+nemo (6.7.0) unstable; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-main-application.c: Clear a window's saved secondary pane location if an unmount invalidates it.
+  * nemo-action-manager.c: Fix layout file monitor and action refresh. (#3675)
+  * nemo-file-utilities.c: Match mounts, volumes and drives with xsi icons.
+  * nemo-list-view.c: Don't allow the 'Location' column for normal directories.
+  * nemo-column-utilities.c: Add some translator comments for the Location and Hits columns.
+  * nemo-list-view.c: When column expanders are disabled, don't check subdir counts or set up tracking for children.
+  * build: Fix some warnings.
+  * dnd: Don't allow drag-and-drop into or out of computer://.
+
+  [ Jamie Drinkell ]
+  * Add Keyboard Shortcut for Open in Terminal (#3686)
+
+  [ Michael Webster ]
+  * .github/workflows: Add generate-test-packages trigger.
+
+  [ jombo.uk ]
+  * Sort by File Extension for Grid and List View (#3666)
+
+  [ Michael Webster ]
+  * nemo-file.c: Don't display 'unknown' in the extension column if a file has none.
+
+  [ Xavier Jurado ]
+  * nemo-places-sidebar.c: Sort network mounts alphabetically (#3695)
+
+  [ Achim ]
+  * fix path in action-info.md (#3701)
+
+  [ Michael Webster ]
+  * Add stale.yml github workflow.
+  * Try fixing permissions.
+
+  [ Clement Lefebvre ]
+  * packaging: Depend on xapp-symbolic-icons
+
+  [ Michael Webster ]
+  * Implement gtk-layer-shell. (#3684)
+  * nemo-desktop-window.c: Fix missing include.
+  * meson.build: Add -Werror=implicit-function-declaration
+  * nemo-view.c: Remove 'open-file-and-close-window' action.
+
+  [ Kaveh ]
+  * Restore Last Window Tabs on Startup (#3661)
+
+  [ konti1334 ]
+  * Fix several memory leaks. (#3721)
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: Fix file copies breaking ownership rules. (#3731)
+  * nemo-view.c: Cleanup unused code from a removed feature.
+  * nemo-progress-info-widget.c: Disable start/pause button when an operation is cancelled.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 13 Apr 2026 08:38:01 +0100
+
 nemo (6.6.3) zena; urgency=medium
 
   [ Michael Webster ]
