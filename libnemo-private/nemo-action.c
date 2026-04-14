@@ -59,6 +59,8 @@ typedef struct {
     gboolean escape_underscores;
     gboolean escape_space;
     gboolean show_in_blank_desktop;
+    gboolean sidebar_allow;
+    gboolean sidebar_only;
     gboolean run_in_terminal;
     gchar *uri_scheme;
 
@@ -831,6 +833,8 @@ nemo_action_constructed (GObject *object)
     g_strfreev (files);
 
     gboolean is_desktop = FALSE;
+    gboolean sidebar_allow = FALSE;
+    gboolean sidebar_only = FALSE;
 
     if (conditions && condition_count > 0) {
         guint j;
@@ -856,6 +860,14 @@ nemo_action_constructed (GObject *object)
             if (g_strcmp0 (condition, "removable") == 0) {
                 /* this is handled in nemo_action_get_visibility() */
             }
+            else
+            if (g_strcmp0 (condition, "sidebar-allow") == 0) {
+                sidebar_allow = TRUE;
+            }
+            else
+            if (g_strcmp0 (condition, "sidebar-only") == 0) {
+                sidebar_only = TRUE;
+            }
             else {
                 g_warning ("Ignoring invalid condition: %s."
                            " See sample action at /usr/share/nemo/actions/sample.nemo_action", condition);
@@ -870,6 +882,16 @@ nemo_action_constructed (GObject *object)
     g_free (exec_raw);
 
     TokenType token_type;
+
+    if (sidebar_allow && sidebar_only) {
+        g_warning ("Action '%s' specifies both 'sidebar-allow' and 'sidebar-only' conditions;"
+                   " ignoring both.", action->key_file_path);
+        sidebar_allow = FALSE;
+        sidebar_only = FALSE;
+    }
+
+    priv->sidebar_allow = sidebar_allow;
+    priv->sidebar_only = sidebar_only;
 
     priv->show_in_blank_desktop = is_desktop &&
                                     type == SELECTION_NONE &&
@@ -1865,6 +1887,15 @@ get_visibility (NemoAction *action,
                 GtkWindow  *window)
 {
     NemoActionPrivate *priv = nemo_action_get_instance_private (action);
+
+    if (for_places) {
+        if (!priv->sidebar_allow && !priv->sidebar_only)
+            return FALSE;
+    } else {
+        if (priv->sidebar_only)
+            return FALSE;
+    }
+
     // Check DBUS
     if (!priv->dbus_satisfied)
         return FALSE;
