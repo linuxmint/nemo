@@ -93,6 +93,11 @@ Extensions=any;
 #     "dbus <name>" exists
 #     "exec <program>" run program and check its exit code (0 is pass, non-0 is fail).
 #                      Enclose in < > if the program resides in the action's folder.
+#     "sidebar-allow" also show this action in the places sidebar context menu (by
+#                     default, actions are hidden from the sidebar). Cannot be used
+#                     with sidebar-only. (6.8)
+#     "sidebar-only"  only show this action in the places sidebar context menu, not
+#                     in normal file views. Cannot be used with sidebar-allow. (6.8)
 
 #Conditions=desktop;
 
