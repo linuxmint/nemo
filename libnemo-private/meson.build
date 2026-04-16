@@ -69,6 +69,7 @@ nemo_private_sources = [
   'nemo-signaller.c',
   'nemo-thumbnails.c',
   'nemo-trash-monitor.c',
+  'nemo-theme-utils.c',
   'nemo-tree-view-drag-dest.c',
   'nemo-ui-utilities.c',
   'nemo-undo-manager.c',
