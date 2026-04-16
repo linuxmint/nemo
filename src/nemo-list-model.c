@@ -1107,6 +1107,9 @@ update_dummy_row (NemoListModel *model,
     got_count = nemo_file_get_directory_item_count (file, &count, &unreadable);
 
     if ((got_count && count == 0) || (!got_count && unreadable)) {
+        /* The directory doesn't have any items in it, so we want to
+         * hide the the expander. Check if there is any dummy entry
+         * (which would force its appearence) and remove it. */
         files = file_entry->files;
         if (g_sequence_get_length (files) == 1) {
             GSequenceIter *dummy_ptr = g_sequence_get_iter_at_pos (files, 0);
@@ -1129,6 +1132,15 @@ update_dummy_row (NemoListModel *model,
                 }
             }
         }
+    } else if (got_count && count > 0) {
+        /* The directory does have items in it. We want an expander present,
+         * so check if there are any entries, and if not add a dummy one. */
+        files = file_entry->files;
+
+        if (g_sequence_get_length (files) == 0) {
+            add_dummy_row (model, file_entry);
+			changed = TRUE;
+		}
     }
 
     file_entry->expanding = FALSE;
