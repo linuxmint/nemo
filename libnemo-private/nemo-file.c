@@ -5158,6 +5158,106 @@ nemo_date_type_to_string (NemoDateType type)
 }
 
 /**
+ * nemo_custom_date_format_to_strftime:
+ *
+ * Convert a user-friendly date format string (e.g. "YYYY.MM.DD HH:mm:SS")
+ * into a strftime-compatible format string.
+ *
+ * Supported tokens:
+ *   YYYY  -> %Y  (4-digit year)
+ *   YY    -> %y  (2-digit year)
+ *   MM    -> %m  (month 01-12)
+ *   DD    -> %d  (day 01-31)
+ *   HH    -> %H  (hour 00-23, 24h)
+ *   hh    -> %I  (hour 01-12, 12h)
+ *   mm    -> %M  (minute 00-59)
+ *   SS    -> %S  (second 00-59)
+ *
+ * Returns: Newly allocated strftime format string (caller must g_free).
+ **/
+static gchar *
+nemo_custom_date_format_to_strftime (const gchar *user_fmt)
+{
+    /* Token table: order matters – longer tokens before shorter ones
+     * that share a prefix (YYYY before YY, HH before hh). */
+    static const struct { const gchar *token; const gchar *replacement; } tokens[] = {
+        { "YYYY", "%Y" },
+        { "YY",   "%y" },
+        { "MM",   "%m" },
+        { "DD",   "%d" },
+        { "HH",   "%H" },
+        { "hh",   "%I" },
+        { "mm",   "%M" },
+        { "SS",   "%S" },
+        { NULL, NULL }
+    };
+
+    GString *out = g_string_new ("");
+    const gchar *p = user_fmt;
+
+    while (*p != '\0') {
+        gboolean matched = FALSE;
+        gint i;
+
+        for (i = 0; tokens[i].token != NULL; i++) {
+            gsize tlen = strlen (tokens[i].token);
+            if (g_ascii_strncasecmp (p, tokens[i].token, tlen) == 0 &&
+                /* Case-sensitive check: token must match exactly */
+                strncmp (p, tokens[i].token, tlen) == 0) {
+                g_string_append (out, tokens[i].replacement);
+                p += tlen;
+                matched = TRUE;
+                break;
+            }
+        }
+
+        if (!matched) {
+            g_string_append_c (out, *p);
+            p++;
+        }
+    }
+
+    return g_string_free (out, FALSE);
+}
+
+/**
+ * nemo_file_get_sample_date_string:
+ *
+ * Returns a sample date string formatted with the current date format
+ * preference. Useful for measuring the required column width.
+ * The caller is responsible for g_free-ing the result.
+ **/
+gchar *
+nemo_file_get_sample_date_string (void)
+{
+    GDateTime *now = g_date_time_new_now_local ();
+    gchar *result = NULL;
+
+    switch (prefs_current_date_format) {
+        case NEMO_DATE_FORMAT_ISO:
+            result = g_date_time_format (now, "%Y-%m-%d %H:%M:%S");
+            break;
+        case NEMO_DATE_FORMAT_CUSTOM: {
+            const gchar *user_fmt = (prefs_current_date_custom_format != NULL &&
+                                     *prefs_current_date_custom_format != '\0')
+                                    ? prefs_current_date_custom_format
+                                    : "YYYY.MM.DD HH:mm:SS";
+            gchar *strfmt = nemo_custom_date_format_to_strftime (user_fmt);
+            result = g_date_time_format (now, strfmt);
+            g_free (strfmt);
+            break;
+        }
+        case NEMO_DATE_FORMAT_LOCALE:
+        default:
+            result = g_date_time_format (now, "%c");
+            break;
+    }
+
+    g_date_time_unref (now);
+    return result;
+}
+
+/**
  * nemo_file_get_date_as_string:
  *
  * Get a user-displayable string representing a file modification date.
@@ -5207,7 +5307,16 @@ nemo_file_get_date_as_string (NemoFile       *file,
 	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
 		result = g_date_time_format (file_date_time, "%Y-%m-%d %H:%M:%S");
 		goto out;
-	}
+	} else if (date_format_pref == NEMO_DATE_FORMAT_CUSTOM) {
+        const gchar *user_fmt = (prefs_current_date_custom_format != NULL &&
+                                 *prefs_current_date_custom_format != '\0')
+                                ? prefs_current_date_custom_format
+                                : "YYYY.MM.DD HH:mm:SS";
+        gchar *strfmt = nemo_custom_date_format_to_strftime (user_fmt);
+        result = g_date_time_format (file_date_time, strfmt);
+        g_free (strfmt);
+        goto out;
+    }
 
     if (date_format != NEMO_DATE_FORMAT_FULL) {
         GDateTime *file_date;

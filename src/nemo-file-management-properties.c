@@ -50,8 +50,14 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_COMPACT_VIEW_ZOOM_WIDGET "compact_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_LIST_VIEW_ZOOM_WIDGET "list_view_zoom_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_SORT_ORDER_WIDGET "sort_order_combobox"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET "date_format_combobox"
-#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET "date_font_choice_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET       "date_format_combobox"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_CUSTOM_BOX   "date_format_custom_box"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_CUSTOM_ENTRY "date_format_custom_entry"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET  "date_font_choice_combobox"
+/* date_column_autosize_checkbutton was removed; autosize is now triggered via buttons */
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_COLUMN_FITBTN_WIDGET     "date_column_autofit_button"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_COLUMN_SAVEBTN_WIDGET    "date_column_save_padding_button"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_ALTERNATING_ROWS_WIDGET      "list_view_alternating_rows_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_IMAGE_WIDGET "preview_image_combobox"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_PREVIEW_FOLDER_WIDGET "preview_folder_combobox"
@@ -160,6 +166,7 @@ static const char * const date_format_values[] = {
 	"locale",
 	"iso",
 	"informal",
+	"custom",
 	NULL
 };
 
@@ -511,6 +518,9 @@ create_date_format_menu (GtkBuilder *builder)
 
 	gtk_combo_box_text_append_text (combo_box, _("Yesterday"));
 
+    /* "Custom" entry shows the current custom format as preview */
+    gtk_combo_box_text_append_text (combo_box, _("Custom…"));
+
 	g_date_time_unref (now);
 }
 
@@ -838,20 +848,55 @@ on_dialog_destroy (GtkWidget *widget,
 }
 
 static void
+on_date_column_autofit_button_clicked (GtkButton *button,
+                                       gpointer   user_data)
+{
+    gint current = g_settings_get_int (nemo_preferences,
+                                       NEMO_PREFERENCES_DATE_COLUMN_FIT_TRIGGER);
+    g_settings_set_int (nemo_preferences,
+                        NEMO_PREFERENCES_DATE_COLUMN_FIT_TRIGGER, current + 1);
+}
+
+static void
+on_date_column_save_padding_clicked (GtkButton *button,
+                                     gpointer   user_data)
+{
+    gint current = g_settings_get_int (nemo_preferences,
+                                       NEMO_PREFERENCES_DATE_COLUMN_SAVE_PADDING_TRIGGER);
+    g_settings_set_int (nemo_preferences,
+                        NEMO_PREFERENCES_DATE_COLUMN_SAVE_PADDING_TRIGGER, current + 1);
+}
+
+static void
+on_date_format_custom_entry_changed (GtkEntry *entry,
+                                     gpointer  user_data)
+{
+    const gchar *text = gtk_entry_get_text (entry);
+    g_settings_set_string (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT_CUSTOM, text);
+}
+
+static void
 on_date_format_combo_changed (GtkComboBox *widget,
                               gpointer     user_data)
 {
     GtkBuilder *builder = GTK_BUILDER (user_data);
     gint active = gtk_combo_box_get_active (widget);
+    GtkWidget *custom_box = GTK_WIDGET (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_CUSTOM_BOX));
 
     switch (active) {
         case NEMO_DATE_FORMAT_LOCALE:
         case NEMO_DATE_FORMAT_ISO:
             gtk_widget_set_sensitive (GTK_WIDGET (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET)), TRUE);
+            gtk_widget_hide (custom_box);
+            break;
+        case NEMO_DATE_FORMAT_CUSTOM:
+            gtk_widget_set_sensitive (GTK_WIDGET (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET)), TRUE);
+            gtk_widget_show (custom_box);
             break;
         case NEMO_DATE_FORMAT_INFORMAL:
         default:
             gtk_widget_set_sensitive (GTK_WIDGET (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET)), FALSE);
+            gtk_widget_hide (custom_box);
             break;
     }
 }
@@ -1021,6 +1066,13 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
                NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FONT_CHOICE_WIDGET,
                NEMO_PREFERENCES_DATE_FONT_CHOICE,
                (const char **) date_font_choice_values);
+    bind_builder_bool (builder, nemo_preferences,
+               NEMO_FILE_MANAGEMENT_PROPERTIES_ALTERNATING_ROWS_WIDGET,
+               NEMO_PREFERENCES_LIST_VIEW_ALTERNATING_ROWS);
+    g_signal_connect (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_COLUMN_FITBTN_WIDGET),
+                      "clicked", G_CALLBACK (on_date_column_autofit_button_clicked), NULL);
+    g_signal_connect (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_COLUMN_SAVEBTN_WIDGET),
+                      "clicked", G_CALLBACK (on_date_column_save_padding_clicked), NULL);
 	bind_builder_radio (builder, nemo_preferences,
 			    (const char **) click_behavior_components,
 			    NEMO_PREFERENCES_CLICK_POLICY,
@@ -1141,6 +1193,16 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
 
     g_signal_connect (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET), "changed",
                       G_CALLBACK (on_date_format_combo_changed), builder);
+
+    /* Initialise custom format entry from settings */
+    {
+        GtkEntry *custom_entry = GTK_ENTRY (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_CUSTOM_ENTRY));
+        gchar *stored = g_settings_get_string (nemo_preferences, NEMO_PREFERENCES_DATE_FORMAT_CUSTOM);
+        gtk_entry_set_text (custom_entry, stored);
+        g_free (stored);
+        g_signal_connect (custom_entry, "changed",
+                          G_CALLBACK (on_date_format_custom_entry_changed), NULL);
+    }
 
     on_date_format_combo_changed (GTK_COMBO_BOX (gtk_builder_get_object (builder, NEMO_FILE_MANAGEMENT_PROPERTIES_DATE_FORMAT_WIDGET)),
                                   builder);

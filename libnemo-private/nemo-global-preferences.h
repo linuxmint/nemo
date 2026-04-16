@@ -43,6 +43,12 @@ G_BEGIN_DECLS
 #define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
 #define NEMO_PREFERENCES_DATE_FORMAT            "date-format"
+#define NEMO_PREFERENCES_DATE_FORMAT_CUSTOM     "date-format-custom"
+#define NEMO_PREFERENCES_DATE_COLUMN_AUTOSIZE        "date-column-autosize"
+#define NEMO_PREFERENCES_DATE_COLUMN_FIT_TRIGGER         "date-column-fit-trigger"
+#define NEMO_PREFERENCES_DATE_COLUMN_PADDING             "date-column-padding"
+#define NEMO_PREFERENCES_DATE_COLUMN_SAVE_PADDING_TRIGGER "date-column-save-padding-trigger"
+#define NEMO_PREFERENCES_LIST_VIEW_ALTERNATING_ROWS  "list-view-alternating-rows"
 #define NEMO_PREFERENCES_DATE_FONT_CHOICE  "date-font-choice"
 #define NEMO_PREFERENCES_MONO_FONT_NAME "monospace-font-name"
 
@@ -55,7 +61,8 @@ typedef enum
 {
 	NEMO_DATE_FORMAT_LOCALE,
 	NEMO_DATE_FORMAT_ISO,
-	NEMO_DATE_FORMAT_INFORMAL
+	NEMO_DATE_FORMAT_INFORMAL,
+	NEMO_DATE_FORMAT_CUSTOM
 } NemoDateFormat;
 
 typedef enum
@@ -335,6 +342,7 @@ extern GSettings *gnome_interface_preferences;
 extern GTimeZone      *prefs_current_timezone;
 extern gboolean        prefs_current_24h_time_format;
 extern NemoDateFormat  prefs_current_date_format;
+extern gchar          *prefs_current_date_custom_format;
 
 extern GTimer    *nemo_startup_timer;
 
