@@ -30,3 +30,24 @@ Nemo v1.0.0 had the following features as described by the developers:
 9. Full navigation options (back, forward, up, refresh)
 10. Ability to toggle between the path entry and the path breadcrumb widgets
 11. Many more configuration options
+
+Build from source
+====
+The easiest way to build Nemo is with
+[Docker](https://docs.docker.com/get-docker/)
+and
+[Docker Compose](https://docs.docker.com/compose/install/).
+
+```bash
+make build
+```
+
+Compiled output is written to `./build-output/`.
+
+> **Note:** Because the build runs inside a Docker container,
+the `./build-output/` and `./build/` directories and their
+contents will be owned by `root`. To restore ownership to your
+user, run:
+> ```bash
+> make fix_permissions
+> ```

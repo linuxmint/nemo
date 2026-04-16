@@ -1,0 +1,9 @@
+services:
+  build:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - .:/src
+      - ./build-output:/src/build/src
+    command: bash -c "rm -rf /src/build/src/* && meson setup build --prefix=/usr && ninja -C build"
