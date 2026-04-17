@@ -321,6 +321,11 @@
       <summary>Whether to show hidden files</summary>
       <description>If set to true, then hidden files are shown by default in the file manager.  Hidden files are either dotfiles, listed in the folder's .hidden file or backup files ending with a tilde (~).</description>
     </key>
+    <key name="show-real-filename" type="b">
+      <default>false</default>
+      <summary>Whether to show files by their actual filename</summary>
+      <description>If set to true, all files will be displayed using their actual filename instead of any custom display name (such as the Name field inside .desktop files).</description>
+    </key>
     <key name="show-full-path-titles" type="b">
       <default>false</default>
       <summary>Whether to show the full path of the current view in the title bar and tab bars</summary>
