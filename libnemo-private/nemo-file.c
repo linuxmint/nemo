@@ -230,14 +230,6 @@ nemo_file_set_display_name (NemoFile *file,
 {
 	gboolean changed;
 
-	/* When enabled, always show the actual filename instead of any custom
-	 * display name (e.g. the Name field inside .desktop files). */
-	if (custom &&
-	    file->details->name != NULL &&
-	    g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_REAL_FILENAME)) {
-		return FALSE;
-	}
-
 	if (custom && display_name == NULL) {
 		/* We're re-setting a custom display name, invalidate it if
 		   we already set it so that the old one is re-read */
@@ -4162,6 +4154,13 @@ nemo_file_peek_display_name (NemoFile *file)
 							FALSE);
 			g_free (escaped_name);
 		}
+	}
+
+	/* When enabled, always show the actual filename instead of any custom
+	 * display name (e.g. the Name field inside .desktop files). */
+	if (file->details->name != NULL &&
+	    g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_REAL_FILENAME)) {
+		return file->details->name;
 	}
 
 	return file->details->display_name;
