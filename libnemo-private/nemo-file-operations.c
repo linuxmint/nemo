@@ -26,6 +26,10 @@
             Pavel Cisler <pavel@eazel.com>
  */
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE  /* for sync_file_range() */
+#endif
+
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
@@ -34,6 +38,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -4174,11 +4179,22 @@ remove_target_recursively (CommonJob *job,
 
 }
 
+/* Interval (in bytes) for periodic page cache flushing during
+ * cross-filesystem copies.  Every FLUSH_CHUNK_SIZE bytes, the progress
+ * callback initiates async writeback and drops clean pages so that dirty
+ * pages never accumulate enough to hit the kernel's dirty_ratio limit.
+ * See: https://github.com/linuxmint/nemo/issues/3710 */
+#define FLUSH_CHUNK_SIZE (32 * 1024 * 1024)  /* 32 MiB */
+
 typedef struct {
 	CopyMoveJob *job;
 	goffset last_size;
 	SourceInfo *source_info;
 	TransferInfo *transfer_info;
+	/* Page cache flush state for cross-filesystem copies */
+	GFile *dest;           /* dest file, or NULL to skip flushing */
+	int    dest_fd;        /* lazily opened O_RDONLY fd for dest */
+	goffset last_flush_offset; /* last offset where we kicked writeback */
 } ProgressData;
 
 static void
@@ -4199,6 +4215,46 @@ copy_file_progress_callback (goffset current_num_bytes,
 		report_copy_progress (pdata->job,
 				      pdata->source_info,
 				      pdata->transfer_info);
+	}
+
+	/* Periodically flush dest pages to prevent dirty page accumulation
+	 * on slow devices (e.g. USB).  Without this, splice() fills the
+	 * page cache at RAM speed and the kernel hits dirty_ratio, blocking
+	 * all writers for minutes.
+	 *
+	 * SYNC_FILE_RANGE_WAIT_BEFORE waits for any previously submitted
+	 * writeback to complete (natural back-pressure that paces the copy
+	 * to the device speed).  SYNC_FILE_RANGE_WRITE then starts async
+	 * writeback for the current chunk.  FADV_DONTNEED drops pages whose
+	 * writeback has already completed. */
+	if (pdata->dest != NULL &&
+	    current_num_bytes - pdata->last_flush_offset >= FLUSH_CHUNK_SIZE) {
+		if (pdata->dest_fd < 0) {
+			char *path = g_file_get_path (pdata->dest);
+			if (path != NULL) {
+				pdata->dest_fd = open (path, O_RDONLY);
+				g_free (path);
+			}
+		}
+
+		if (pdata->dest_fd >= 0) {
+			goffset flush_end = current_num_bytes;
+
+			sync_file_range (pdata->dest_fd,
+			                 pdata->last_flush_offset,
+			                 flush_end - pdata->last_flush_offset,
+			                 SYNC_FILE_RANGE_WAIT_BEFORE |
+			                 SYNC_FILE_RANGE_WRITE);
+
+			/* Drop pages from ranges whose writeback is likely done */
+			if (pdata->last_flush_offset > 0) {
+				posix_fadvise (pdata->dest_fd, 0,
+				               pdata->last_flush_offset,
+				               POSIX_FADV_DONTNEED);
+			}
+		}
+
+		pdata->last_flush_offset = current_num_bytes;
 	}
 }
 
@@ -4549,6 +4605,12 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.source_info = source_info;
 	pdata.transfer_info = transfer_info;
 
+	/* Enable incremental page cache flushing for cross-filesystem copies
+	 * of regular files (not moves, which are same-fs renames). */
+	pdata.dest = (!copy_job->is_move && !same_fs) ? dest : NULL;
+	pdata.dest_fd = -1;
+	pdata.last_flush_offset = 0;
+
 	if (copy_job->is_move) {
 		res = g_file_move (src, dest,
 				   flags,
@@ -4563,6 +4625,20 @@ copy_move_file (CopyMoveJob *copy_job,
 				   copy_file_progress_callback,
 				   &pdata,
 				   &error);
+	}
+
+	/* Clean up the fd the progress callback may have opened.
+	 * On success, do a final async writeback + page cache drop.
+	 * On failure, just close. */
+	if (pdata.dest_fd >= 0) {
+		if (res) {
+			sync_file_range (pdata.dest_fd, 0, 0,
+			                 SYNC_FILE_RANGE_WRITE);
+			posix_fadvise (pdata.dest_fd, 0, 0,
+			               POSIX_FADV_DONTNEED);
+		}
+		close (pdata.dest_fd);
+		pdata.dest_fd = -1;
 	}
 
 	if (res) {
