@@ -47,7 +47,8 @@ void nemo_desktop_manager_get_overlay_info              (NemoDesktopManager *man
                                                          gint                monitor,
                                                          GtkActionGroup    **action_group,
                                                          gint               *h_adjust,
-                                                         gint               *v_adjust);
+                                                         gint               *v_adjust,
+                                                         double             *label_scale_adjust);
 void     nemo_desktop_manager_show_desktop_overlay    (NemoDesktopManager *manager,
                                                        gint                initial_monitor);
 gboolean nemo_desktop_manager_get_is_cinnamon         (NemoDesktopManager *manager);
