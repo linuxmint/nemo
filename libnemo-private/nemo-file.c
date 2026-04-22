@@ -4156,6 +4156,13 @@ nemo_file_peek_display_name (NemoFile *file)
 		}
 	}
 
+	/* When enabled, always show the actual filename instead of any custom
+	 * display name (e.g. the Name field inside .desktop files). */
+	if (file->details->name != NULL &&
+	    g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_REAL_FILENAME)) {
+		return file->details->name;
+	}
+
 	return file->details->display_name;
 }
 
