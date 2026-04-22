@@ -1701,19 +1701,6 @@ sort_column_changed_callback (GtkTreeSortable *sortable,
 	view->details->last_sort_attr = sort_attr;
 }
 
-static gboolean
-editable_focus_out_cb (GtkWidget *widget,
-		       GdkEvent *event,
-		       gpointer user_data)
-{
-	NemoListView *view = user_data;
-
-	nemo_view_set_is_renaming (NEMO_VIEW (view), FALSE);
-	nemo_view_unfreeze_updates (NEMO_VIEW (view));
-
-    return GDK_EVENT_PROPAGATE;
-}
-
 static void
 cell_renderer_editing_started_cb (GtkCellRenderer *renderer,
 				  GtkCellEditable *editable,
@@ -1730,8 +1717,11 @@ cell_renderer_editing_started_cb (GtkCellRenderer *renderer,
 
 	list_view->details->original_name = g_strdup (gtk_entry_get_text (entry));
 
-	g_signal_connect (entry, "focus-out-event",
-			  G_CALLBACK (editable_focus_out_cb), list_view);
+    g_signal_handlers_block_matched (entry,
+                                     G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_DATA,
+                                     g_signal_lookup ("focus-out-event", GTK_TYPE_WIDGET),
+                                     0, NULL, NULL,
+                                     renderer);
 
 	nemo_clipboard_set_up_editable
 		(GTK_EDITABLE (entry),
