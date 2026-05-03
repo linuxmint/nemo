@@ -70,6 +70,7 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
+#include "nemo-gfile.h"
 
 /* TODO: TESTING!!! */
 
@@ -4544,28 +4545,56 @@ copy_move_file (CopyMoveJob *copy_job,
 		flags |= G_FILE_COPY_TARGET_DEFAULT_PERMS;
 	}
 
-	pdata.job = copy_job;
-	pdata.last_size = 0;
-	pdata.source_info = source_info;
-	pdata.transfer_info = transfer_info;
+    gboolean force_synchronous =
+        nemo_global_preferences_get_force_synchronous_file_operations ();
 
-	if (copy_job->is_move) {
-		res = g_file_move (src, dest,
-				   flags,
-				   job->cancellable,
-				   copy_file_progress_callback,
-				   &pdata,
-				   &error);
-	} else {
-		res = g_file_copy (src, dest,
-				   flags,
-				   job->cancellable,
-				   copy_file_progress_callback,
-				   &pdata,
-				   &error);
-	}
+    pdata.job = copy_job;
+    pdata.last_size = 0;
+    pdata.source_info = source_info;
+    pdata.transfer_info = transfer_info;
 
-	if (res) {
+    if (force_synchronous) {
+        if (copy_job->is_move) {
+            res = nemo_g_file_move_synchronous (src,
+                                                dest,
+                                                flags,
+                                                job->cancellable,
+                                                copy_file_progress_callback,
+                                                &pdata,
+                                                &error);
+        }
+        else {
+            res = nemo_g_file_copy_synchronous (src,
+                                                dest,
+                                                flags,
+                                                job->cancellable,
+                                                copy_file_progress_callback,
+                                                &pdata,
+                                                &error);
+        }
+    }
+    else {
+        if (copy_job->is_move) {
+            res = g_file_move (src,
+                               dest,
+                               flags,
+                               job->cancellable,
+                               copy_file_progress_callback,
+                               &pdata,
+                               &error);
+        }
+        else {
+            res = g_file_copy (src,
+                               dest,
+                               flags,
+                               job->cancellable,
+                               copy_file_progress_callback,
+                               &pdata,
+                               &error);
+        }
+    }
+
+    if (res) {
 		transfer_info->num_files ++;
 		report_copy_progress (copy_job, source_info, transfer_info);
 

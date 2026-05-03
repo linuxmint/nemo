@@ -117,6 +117,7 @@
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_TOOLTIP_FULL_PATH_WIDGET "tt_show_full_path_checkbutton"
 
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_SKIP_FILE_OP_QUEUE_WIDGET "skip_file_op_queue_checkbutton"
+#define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_FORCE_SYNCHRONOUS_FILE_OPERATIONS "force_synchronous_file_operations_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET "click_double_parent_folder_checkbutton"
 #define NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL_WIDGET "expand_row_on_dnd_dwell_checkbutton"
 
@@ -1119,6 +1120,10 @@ nemo_file_management_properties_dialog_setup (GtkBuilder  *builder,
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_SKIP_FILE_OP_QUEUE_WIDGET,
                        NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS);
+
+	bind_builder_bool(builder, nemo_preferences,
+					  NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_FORCE_SYNCHRONOUS_FILE_OPERATIONS,
+					  NEMO_PREFERENCES_FORCE_SYNCHRONOUS_FILE_OPERATIONS);
 
     bind_builder_bool (builder, nemo_preferences,
                        NEMO_FILE_MANAGEMENT_PROPERTIES_NEMO_PREFERENCES_CLICK_DBL_PARENT_FOLDER_WIDGET,

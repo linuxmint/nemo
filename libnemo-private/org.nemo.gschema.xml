@@ -448,6 +448,10 @@
       <default>-1</default>
       <summary>Number of threads to dedicate to thumbnailing. -1 to let the program decide. The maximum allowed threads is half the number of logical processors, regardless of what is set here. If you change this setting you must restart Nemo for it to take effect.</summary>
     </key>
+    <key name="force-synchronous-file-operations" type="b">
+      <default>false</default>
+      <summary>Write synchronously and show progress dialog</summary>
+    </key>
   </schema>
 
   <schema id="org.nemo.icon-view" path="/org/nemo/icon-view/" gettext-domain="nemo">

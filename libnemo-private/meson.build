@@ -40,6 +40,7 @@ nemo_private_sources = [
   'nemo-file-undo-operations.c',
   'nemo-file-utilities.c',
   'nemo-file.c',
+  'nemo-gfile.c',
   'nemo-global-preferences.c',
   'nemo-icon-canvas-item.c',
   'nemo-icon-container.c',

@@ -35,6 +35,7 @@
 #include <eel/eel-debug.h>
 #include <glib/gi18n.h>
 #include <gio/gdesktopappinfo.h>
+#include <glib/gi18n.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_PREFERENCES
 #include <libnemo-private/nemo-debug.h>
@@ -80,21 +81,21 @@ GFileMonitor *tz_mon;
 char *
 nemo_global_preferences_get_default_folder_viewer_preference_as_iid (void)
 {
-	int preference_value;
-	const char *viewer_iid;
+    int preference_value;
+    const char *viewer_iid;
 
-	preference_value =
+    preference_value =
 		g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_DEFAULT_FOLDER_VIEWER);
 
-	if (preference_value == NEMO_DEFAULT_FOLDER_VIEWER_LIST_VIEW) {
-		viewer_iid = NEMO_LIST_VIEW_IID;
+    if (preference_value == NEMO_DEFAULT_FOLDER_VIEWER_LIST_VIEW) {
+        viewer_iid = NEMO_LIST_VIEW_IID;
 	} else if (preference_value == NEMO_DEFAULT_FOLDER_VIEWER_COMPACT_VIEW) {
-		viewer_iid = NEMO_COMPACT_VIEW_IID;
+        viewer_iid = NEMO_COMPACT_VIEW_IID;
 	} else {
-		viewer_iid = NEMO_ICON_VIEW_IID;
-	}
+        viewer_iid = NEMO_ICON_VIEW_IID;
+    }
 
-	return g_strdup (viewer_iid);
+    return g_strdup (viewer_iid);
 }
 
 gboolean
@@ -119,13 +120,13 @@ int
 nemo_global_preferences_get_size_prefix_preference (void)
 {
     switch (size_prefixes_preference) {
-        case 0: // base-10
-            return G_FORMAT_SIZE_DEFAULT;
-        case 1: // base-10 full
+    case 0: // base-10
+        return G_FORMAT_SIZE_DEFAULT;
+    case 1: // base-10 full
             return G_FORMAT_SIZE_DEFAULT |                           G_FORMAT_SIZE_LONG_FORMAT;
-        case 2: // base-2
-            return G_FORMAT_SIZE_DEFAULT | G_FORMAT_SIZE_IEC_UNITS;
-        case 3: // base-2 full
+    case 2: // base-2
+        return G_FORMAT_SIZE_DEFAULT | G_FORMAT_SIZE_IEC_UNITS;
+    case 3: // base-2 full
             return G_FORMAT_SIZE_DEFAULT | G_FORMAT_SIZE_IEC_UNITS | G_FORMAT_SIZE_LONG_FORMAT;
     }
 
@@ -407,6 +408,12 @@ nemo_global_preferences_get_mono_font_family_match (const gchar *in_family_name)
     return g_strdup (best);
 }
 
+gboolean
+nemo_global_preferences_get_force_synchronous_file_operations (void)
+{
+    return g_settings_get_boolean (nemo_preferences,
+                                   "force-synchronous-file-operations");
+}
 
 static void
 on_time_data_changed (gpointer user_data)
@@ -452,13 +459,13 @@ setup_cached_time_data (void)
 void
 nemo_global_preferences_init (void)
 {
-	static gboolean initialized = FALSE;
+    static gboolean initialized = FALSE;
 
-	if (initialized) {
-		return;
-	}
+    if (initialized) {
+        return;
+    }
 
-	initialized = TRUE;
+    initialized = TRUE;
 
 	nemo_preferences = g_settings_new("org.nemo.preferences");
 	nemo_window_state = g_settings_new("org.nemo.window-state");
@@ -468,7 +475,7 @@ nemo_global_preferences_init (void)
 	nemo_desktop_preferences = g_settings_new("org.nemo.desktop");
     /* Some settings such as show hidden files are shared between Nautilus and GTK file chooser */
     gtk_filechooser_preferences = g_settings_new_with_path ("org.gtk.Settings.FileChooser",
-                                                            "/org/gtk/settings/file-chooser/");
+                                  "/org/gtk/settings/file-chooser/");
 	nemo_tree_sidebar_preferences = g_settings_new("org.nemo.sidebar-panels.tree");
     nemo_plugin_preferences = g_settings_new("org.nemo.plugins");
     nemo_menu_config_preferences = g_settings_new("org.nemo.preferences.menu-config");
@@ -480,7 +487,8 @@ nemo_global_preferences_init (void)
     cinnamon_privacy_preferences = g_settings_new("org.cinnamon.desktop.privacy");
 	cinnamon_interface_preferences = g_settings_new ("org.cinnamon.desktop.interface");
     // System mono font
-    gnome_interface_preferences = g_settings_new ("org.gnome.desktop.interface");
+    gnome_interface_preferences =
+        g_settings_new ("org.gnome.desktop.interface");
 
     setup_cached_pref_keys ();
     setup_cached_time_data ();

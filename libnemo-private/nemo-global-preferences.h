@@ -53,9 +53,9 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-	NEMO_DATE_FORMAT_LOCALE,
-	NEMO_DATE_FORMAT_ISO,
-	NEMO_DATE_FORMAT_INFORMAL
+    NEMO_DATE_FORMAT_LOCALE,
+    NEMO_DATE_FORMAT_ISO,
+    NEMO_DATE_FORMAT_INFORMAL
 } NemoDateFormat;
 
 typedef enum
@@ -67,8 +67,8 @@ typedef enum
 
 typedef enum
 {
-	NEMO_NEW_TAB_POSITION_AFTER_CURRENT_TAB,
-	NEMO_NEW_TAB_POSITION_END,
+    NEMO_NEW_TAB_POSITION_AFTER_CURRENT_TAB,
+    NEMO_NEW_TAB_POSITION_END,
 } NemoNewTabPosition;
 
 /* Sidebar panels  */
@@ -155,10 +155,10 @@ typedef enum
 
 enum
 {
-	NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,
-	NEMO_DEFAULT_FOLDER_VIEWER_COMPACT_VIEW,
-	NEMO_DEFAULT_FOLDER_VIEWER_LIST_VIEW,
-	NEMO_DEFAULT_FOLDER_VIEWER_OTHER
+    NEMO_DEFAULT_FOLDER_VIEWER_ICON_VIEW,
+    NEMO_DEFAULT_FOLDER_VIEWER_COMPACT_VIEW,
+    NEMO_DEFAULT_FOLDER_VIEWER_LIST_VIEW,
+    NEMO_DEFAULT_FOLDER_VIEWER_OTHER
 };
 
 /* These IIDs are used by the preferences code and in nemo-application.c */
@@ -196,21 +196,21 @@ enum
 
 enum
 {
-	NEMO_CLICK_POLICY_SINGLE,
-	NEMO_CLICK_POLICY_DOUBLE
+    NEMO_CLICK_POLICY_SINGLE,
+    NEMO_CLICK_POLICY_DOUBLE
 };
 
 enum
 {
-	NEMO_EXECUTABLE_TEXT_LAUNCH,
-	NEMO_EXECUTABLE_TEXT_DISPLAY,
-	NEMO_EXECUTABLE_TEXT_ASK
+    NEMO_EXECUTABLE_TEXT_LAUNCH,
+    NEMO_EXECUTABLE_TEXT_DISPLAY,
+    NEMO_EXECUTABLE_TEXT_ASK
 };
 
 typedef enum
 {
-	NEMO_SPEED_TRADEOFF_ALWAYS,
-	NEMO_SPEED_TRADEOFF_LOCAL_ONLY,
+    NEMO_SPEED_TRADEOFF_ALWAYS,
+    NEMO_SPEED_TRADEOFF_LOCAL_ONLY,
     NEMO_SPEED_TRADEOFF_NEVER
 } NemoSpeedTradeoffValue;
 
@@ -277,7 +277,8 @@ typedef enum
 #define NEMO_PREFERENCES_LAST_SERVER_CONNECT_METHOD "last-server-connect-method"
 
 /* File operations queue */
-#define NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS          "never-queue-file-ops"
+#define NEMO_PREFERENCES_NEVER_QUEUE_FILE_OPS "never-queue-file-ops"
+#define NEMO_PREFERENCES_FORCE_SYNCHRONOUS_FILE_OPERATIONS "force-synchronous-file-operations"
 
 #define NEMO_PREFERENCES_CLICK_DOUBLE_PARENT_FOLDER    "click-double-parent-folder"
 #define NEMO_PREFERENCES_EXPAND_ROW_ON_DND_DWELL       "expand-row-on-dnd-dwell"
@@ -311,6 +312,7 @@ gchar **nemo_global_preferences_get_fileroller_mimetypes (void);
 
 gchar *nemo_global_preferences_get_mono_system_font (void);
 gchar *nemo_global_preferences_get_mono_font_family_match (const gchar *in_family);
+gboolean nemo_global_preferences_get_force_synchronous_file_operations (void);
 
 extern GSettings *nemo_preferences;
 extern GSettings *nemo_icon_view_preferences;
