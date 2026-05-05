@@ -821,10 +821,22 @@ static void
 prepare_pango_layout_width (NemoIconCanvasItem *item,
 			    PangoLayout *layout)
 {
+	NemoIconContainer *container;
+    int width;
+
 	if (nemo_icon_canvas_item_get_max_text_width (item) < 0) {
 		pango_layout_set_width (layout, -1);
 	} else {
-		pango_layout_set_width (layout, floor (nemo_icon_canvas_item_get_max_text_width (item)) * PANGO_SCALE);
+        width = floor (nemo_icon_canvas_item_get_max_text_width (item));
+
+		container = NEMO_ICON_CONTAINER (EEL_CANVAS_ITEM (item)->canvas);
+
+        /* check if the container is_desktop? */
+	    if (!IS_COMPACT_VIEW (container) && width % 2 != 0) {
+            width += 1;
+        }
+
+		pango_layout_set_width (layout, width * PANGO_SCALE);
 		pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
 	}
 }
@@ -970,6 +982,12 @@ measure_label_text (NemoIconCanvasItem *item)
 		details->text_dx = additional_dx;
 	}
 
+    /* check if the container is_desktop? */
+    if (!IS_COMPACT_VIEW (container) && details->text_width % 2 != 0) {
+		details->text_width += 1;
+		details->text_dx += 1;
+    }
+
 	if (have_additional) {
 		details->text_height = editable_height + LABEL_LINE_SPACING + additional_height;
 		details->text_height_for_layout = editable_height_for_layout + LABEL_LINE_SPACING + additional_height;
@@ -1052,6 +1070,11 @@ draw_label_text (NemoIconCanvasItem *item,
 	g_assert (have_editable || have_additional);
 
 	max_text_width = floor (nemo_icon_canvas_item_get_max_text_width (item));
+
+    /* check if the container is_desktop? */
+    if (!IS_COMPACT_VIEW (container) && max_text_width % 2 != 0) {
+        max_text_width += 1;
+    }
 
 	base_state = gtk_widget_get_state_flags (GTK_WIDGET (container));
 	base_state &= ~(GTK_STATE_FLAG_SELECTED |
@@ -1524,7 +1547,6 @@ nemo_icon_canvas_item_event (EelCanvasItem *item, GdkEvent *event)
 
 	icon_item = NEMO_ICON_CANVAS_ITEM (item);
 	cursor_window = ((GdkEventAny *)event)->window;
-
 
     if (event->type == GDK_ENTER_NOTIFY) {
         nemo_icon_container_update_tooltip_text (NEMO_ICON_CONTAINER (item->canvas), icon_item);
@@ -2008,7 +2030,11 @@ nemo_icon_canvas_item_get_max_text_width (NemoIconCanvasItem *item)
     } else {
         /* normal icon view */
         if (container->details->is_desktop) {
-            return nemo_get_desktop_text_width_for_zoom_level (nemo_icon_container_get_zoom_level (container));
+            return nemo_get_desktop_text_width_for_zoom_level (nemo_icon_container_get_zoom_level (container))
+					/* apply desktop icon label width scaling */
+					* (container->details->label_scale_adjust / 100.0)
+                    /* see measure_label_text(): extra to make it look nicer */
+					- (TEXT_BACK_PADDING_X * 2);
         } else {
             return nemo_get_icon_text_width_for_zoom_level (nemo_icon_container_get_zoom_level (container));
         }
