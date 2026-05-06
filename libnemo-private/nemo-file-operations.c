@@ -70,6 +70,7 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
+#include "nemo-gfile.h"
 
 /* TODO: TESTING!!! */
 
@@ -4550,14 +4551,14 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.transfer_info = transfer_info;
 
 	if (copy_job->is_move) {
-		res = g_file_move (src, dest,
+		res = nemo_g_file_move_synchronous (src, dest,
 				   flags,
 				   job->cancellable,
 				   copy_file_progress_callback,
 				   &pdata,
 				   &error);
 	} else {
-		res = g_file_copy (src, dest,
+		res = nemo_g_file_copy_synchronous (src, dest,
 				   flags,
 				   job->cancellable,
 				   copy_file_progress_callback,

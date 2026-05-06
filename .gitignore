@@ -46,3 +46,11 @@ debian/files
 *.debhelper
 
 obj-x86_64-linux-gnu
+
+# Ignore additional dev environment files 
+.vscode/
+.clang-format
+.clangd
+
+#Ignore .md files with "MY_" prefix
+MY_*.md
