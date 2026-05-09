@@ -1,6 +1,5 @@
 /* nemo-gfile.h
  *
- * Copyright (C) 2006-2023 Red Hat, Inc.
  * Copyright (C) 2026 Nemo Project
  *
  * This library is free software; you can redistribute it and/or
@@ -29,28 +28,29 @@ G_BEGIN_DECLS
 /* Target progress update frequency (1 update in 1 second) */
 #define NEMO_G_FILE_TARGET_MAX_CHUNK_TIME_US 1000000
 #define NEMO_G_FILE_MIN_BUFFER_SIZE 1024 * 1024
+#define NEMO_G_FILE_MAX_BUFFER_SIZE 1024 * 1024 * 128
 
 typedef void (*NemoGFileProgressCallback) (goffset current_num_bytes,
-                                           goffset total_num_bytes,
-                                           gpointer user_data);
+					   goffset total_num_bytes,
+					   gpointer user_data);
 
 gboolean
-nemo_g_file_copy_synchronous (GFile *source,
-                              GFile *destination,
-                              GFileCopyFlags flags,
-                              GCancellable *cancellable,
-                              NemoGFileProgressCallback progress_callback,
-                              gpointer progress_callback_data,
-                              GError **error);
+nemo_g_file_copy_block_sync (GFile *source,
+			     GFile *destination,
+			     GFileCopyFlags flags,
+			     GCancellable *cancellable,
+			     NemoGFileProgressCallback progress_callback,
+			     gpointer progress_callback_data,
+			     GError **error);
 
 gboolean
-nemo_g_file_move_synchronous (GFile *source,
-                              GFile *destination,
-                              GFileCopyFlags flags,
-                              GCancellable *cancellable,
-                              NemoGFileProgressCallback progress_callback,
-                              gpointer progress_callback_data,
-                              GError **error);
+nemo_g_file_move_block_sync (GFile *source,
+			     GFile *destination,
+			     GFileCopyFlags flags,
+			     GCancellable *cancellable,
+			     NemoGFileProgressCallback progress_callback,
+			     gpointer progress_callback_data,
+			     GError **error);
 
 G_END_DECLS
 

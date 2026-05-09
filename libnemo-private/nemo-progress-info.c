@@ -516,6 +516,7 @@ nemo_progress_info_finish (NemoProgressInfo *info)
 	if (!info->finished) {
 		info->finished = TRUE;
 		
+		info->progress_at_idle = TRUE;
 		info->finish_at_idle = TRUE;
 		queue_idle (info, TRUE);
 	}
@@ -620,18 +621,23 @@ nemo_progress_info_pulse_progress (NemoProgressInfo *info)
 {
 	g_mutex_lock (&info->info_lock);
 
+	if (info->finished) {
+        g_mutex_unlock (&info->info_lock);
+        return;
+    }
+
 	info->activity_mode = TRUE;
 	info->progress = 0.0;
 	info->progress_at_idle = TRUE;
 	queue_idle (info, FALSE);
 	
-
-    while (info->paused) {
+   	while (info->paused && !g_cancellable_is_cancelled (info->cancellable)) {
         g_cond_wait (info->cond, &info->info_lock);
     }
 
 	g_mutex_unlock (&info->info_lock);
 }
+
 
 void
 nemo_progress_info_set_progress (NemoProgressInfo *info,
@@ -655,7 +661,12 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	}
 	
 	g_mutex_lock (&info->info_lock);
-	
+
+	if (info->finished) {
+        g_mutex_unlock (&info->info_lock);
+        return;
+    }
+
 	if (info->activity_mode || /* emit on switch from activity mode */
 	    fabs (current_percent - info->progress) > 0
 	    ) {
@@ -665,7 +676,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 		queue_idle (info, FALSE);
 	}
 
-    while (info->paused) {
+	while (info->paused && !g_cancellable_is_cancelled (info->cancellable)) {
         g_cond_wait (info->cond, &info->info_lock);
     }
 

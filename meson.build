@@ -44,7 +44,7 @@ conf.set10('HAVE_MALLOPT', cc.has_function('mallopt', prefix: '#include <malloc.
 
 
 add_global_arguments([
-    '-Werror=implicit-function-declaration',
+    '-Werror=implicit-function-declaration'
   ],
   language: 'c',
 )
@@ -75,19 +75,39 @@ glib_version = '>=2.45.7'
 
 math    = cc.find_library('m', required: true)
 
-gtk     = dependency('gtk+-3.0',                    version: '>=3.10.0')
-gio     = dependency('gio-2.0',                     version: glib_version)
-gio_unix= dependency('gio-unix-2.0',                version: glib_version)
-glib    = dependency('glib-2.0',                    version: glib_version)
-gmodule = dependency('gmodule-no-export-2.0',       version: glib_version)
-gobject = dependency('gobject-2.0',                 version: '>=2.0')
-go_intr = dependency('gobject-introspection-1.0',   version: '>=1.0')
-json    = dependency('json-glib-1.0',               version: '>=1.6')
+# Get the absolute path to the local glib install
+glib_install_path = run_command(
+  'realpath',
+  meson.current_source_dir() / '..' / 'glib' / 'install',
+  check: true
+).stdout().strip()
 
+
+glib_custom = declare_dependency(
+  dependencies: [
+    dependency('glib-2.0', version: glib_version),
+    dependency('gobject-2.0', version: '>=2.0'),
+    dependency('gio-2.0', version: glib_version),
+    dependency('gio-unix-2.0', version: glib_version),
+    dependency('gmodule-no-export-2.0', version: glib_version),
+  ],
+)
+
+# Use the overridden dependencies for glib components
+glib     = glib_custom
+gobject  = glib_custom
+gio      = glib_custom
+gio_unix = glib_custom
+gmodule  = glib_custom
+
+# Keep other dependencies as before
+gtk     = dependency('gtk+-3.0',                    version: '>=3.10.0')
 cinnamon= dependency('cinnamon-desktop',            version: '>=4.8.0')
 gail    = dependency('gail-3.0')
 x11     = dependency('x11')
 xapp    = dependency('xapp',                        version: '>=2.0.0')
+json    = dependency('json-glib-1.0',               version: '>=1.6')
+go_intr = dependency('gobject-introspection-1.0',   version: '>=1.0')
 
 # Facultative dependencies
 
