@@ -62,14 +62,17 @@ get_min_buffer_size (const char *path)
 	/* Try POSIX recommended increment for file transfers */
 	long rec_increment = safe_pathconf (path, _PC_REC_INCR_XFER_SIZE);
 	if (rec_increment > 0) {
-		return MAX (NEMO_G_FILE_MIN_BUFFER_SIZE, (size_t)rec_increment);
+		return MIN (MAX (NEMO_G_FILE_MIN_BUFFER_SIZE,
+				 (size_t)rec_increment),
+			    NEMO_G_FILE_MAX_BUFFER_SIZE);
 	}
 
 	/* Try Linux-specific minimum allocation size */
 	long alloc_size_min = safe_pathconf (path, _PC_ALLOC_SIZE_MIN);
 	if (alloc_size_min > 0) {
-		return MAX (NEMO_G_FILE_MIN_BUFFER_SIZE,
-			    (size_t)alloc_size_min);
+		return MIN (MAX (NEMO_G_FILE_MIN_BUFFER_SIZE,
+				 (size_t)alloc_size_min),
+			    NEMO_G_FILE_MAX_BUFFER_SIZE);
 	}
 
 	/* Fall back to statvfs */
@@ -77,9 +80,9 @@ get_min_buffer_size (const char *path)
 	if (statvfs (path, &fs_info) == 0) {
 		size_t block_size =
 			fs_info.f_frsize; /* Filesystem fragment size */
-		return MAX (NEMO_G_FILE_MIN_BUFFER_SIZE,
-			    block_size *
-				    256); /* At least 1MB, or 256x block size */
+		return MIN (MAX (NEMO_G_FILE_MIN_BUFFER_SIZE, block_size * 256),
+			    NEMO_G_FILE_MAX_BUFFER_SIZE);
+		/* At least 1MB, or 256x block size, but not exceeding NEMO_G_FILE_MAX_BUFFER_SIZE */
 	}
 
 	/* Final fallback */
@@ -213,13 +216,13 @@ cleanup:
 }
 
 gboolean
-nemo_g_file_copy_block_sync (GFile *source,
-			     GFile *destination,
-			     GFileCopyFlags flags,
-			     GCancellable *cancellable,
-			     NemoGFileProgressCallback progress_callback,
-			     gpointer progress_callback_data,
-			     GError **error)
+nemo_g_file_copy_to_blk_sync (GFile *source,
+			      GFile *destination,
+			      GFileCopyFlags flags,
+			      GCancellable *cancellable,
+			      NemoGFileProgressCallback progress_callback,
+			      gpointer progress_callback_data,
+			      GError **error)
 {
 	gchar *src_path, *dest_path;
 	int src_fd = -1, dest_fd = -1;
@@ -433,7 +436,7 @@ nemo_g_file_copy_block_sync (GFile *source,
 			}
 			buffer_size = new_buffer_size;
 			buffer_adjustment_steps++;
-		} else {
+		} else if (!buffer_size_found) {
 			buffer_size_found = TRUE;
 			g_debug ("Final buffer size used: %zu bytes (%zu MB)\n",
 				 buffer_size,
@@ -484,13 +487,13 @@ cleanup:
 }
 
 gboolean
-nemo_g_file_move_block_sync (GFile *source,
-			     GFile *destination,
-			     GFileCopyFlags flags,
-			     GCancellable *cancellable,
-			     NemoGFileProgressCallback progress_callback,
-			     gpointer progress_callback_data,
-			     GError **error)
+nemo_g_file_move_to_blk_sync (GFile *source,
+			      GFile *destination,
+			      GFileCopyFlags flags,
+			      GCancellable *cancellable,
+			      NemoGFileProgressCallback progress_callback,
+			      gpointer progress_callback_data,
+			      GError **error)
 {
 	if (g_cancellable_set_error_if_cancelled (cancellable, error))
 		return FALSE;
@@ -578,13 +581,13 @@ nemo_g_file_move_block_sync (GFile *source,
 	/* Fall back to copy+delete for cross-filesystem moves or
      * when rename is unavailable */
 	flags |= G_FILE_COPY_ALL_METADATA | G_FILE_COPY_NOFOLLOW_SYMLINKS;
-	if (!nemo_g_file_copy_block_sync (source,
-					  destination,
-					  flags,
-					  cancellable,
-					  progress_callback,
-					  progress_callback_data,
-					  error))
+	if (!nemo_g_file_copy_to_blk_sync (source,
+					   destination,
+					   flags,
+					   cancellable,
+					   progress_callback,
+					   progress_callback_data,
+					   error))
 		return FALSE;
 
 	return g_file_delete (source, cancellable, error);
