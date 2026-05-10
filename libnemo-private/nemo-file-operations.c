@@ -72,7 +72,6 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
-#include "nemo-gfile.h"
 
 /* TODO: TESTING!!! */
 
@@ -3904,6 +3903,58 @@ is_dir (GFile *file)
 	return res;
 }
 
+/* Determine if a given source file is a regular file e.g. no link and
+ if the target device is a mounted block device*/
+static gboolean
+gfile_src_is_regular_file_dest_is_on_block_device (GFile *src, GFile *dest)
+{
+	// 1. Check if the GFile is a regular file.
+	GFileType type =
+		g_file_query_file_type (src, G_FILE_QUERY_INFO_NONE, NULL);
+	if (type != G_FILE_TYPE_REGULAR) {
+		return FALSE;
+	}
+
+	// 2. Get the parent directory of the GFile.
+	GFile *parent = g_file_get_parent (dest);
+	if (!parent) {
+		return FALSE; // No parent (e.g., root directory).
+	}
+
+	// 3. Get the path of the parent directory.
+	gchar *parent_path = g_file_get_path (parent);
+	if (!parent_path) {
+		g_object_unref (parent);
+		return FALSE; // Parent is not a local directory.
+	}
+
+	// 4. Check if the parent directory resides on a block device.
+	FILE *mounts = setmntent ("/proc/mounts", "r");
+	if (!mounts) {
+		g_free (parent_path);
+		g_object_unref (parent);
+		return FALSE;
+	}
+
+	struct mntent *ent;
+	gboolean is_on_block_device = FALSE;
+	while ((ent = getmntent (mounts)) != NULL) {
+		if (g_str_equal (ent->mnt_dir, parent_path)) {
+			// Found the exact mount point
+			struct stat st;
+			if (stat (ent->mnt_fsname, &st) == 0) {
+				is_on_block_device = S_ISBLK (st.st_mode);
+			}
+			break;
+		}
+	}
+
+	endmntent (mounts);
+	g_free (parent_path);
+	g_object_unref (parent);
+	return is_on_block_device;
+}
+
 static void
 copy_move_file (CopyMoveJob *job,
 		GFile *src,
@@ -4631,58 +4682,6 @@ get_target_file_for_display_name (GFile *dir, const gchar *name)
 	}
 
 	return dest;
-}
-
-/* Determine if a given source file is a regular file e.g. no link and
- if the target device is a mounted block device*/
-static gboolean
-gfile_src_is_regular_file_dest_is_on_block_device (GFile *src, GFile *dest)
-{
-	// 1. Check if the GFile is a regular file.
-	GFileType type =
-		g_file_query_file_type (src, G_FILE_QUERY_INFO_NONE, NULL);
-	if (type != G_FILE_TYPE_REGULAR) {
-		return FALSE;
-	}
-
-	// 2. Get the parent directory of the GFile.
-	GFile *parent = g_file_get_parent (dest);
-	if (!parent) {
-		return FALSE; // No parent (e.g., root directory).
-	}
-
-	// 3. Get the path of the parent directory.
-	gchar *parent_path = g_file_get_path (parent);
-	if (!parent_path) {
-		g_object_unref (parent);
-		return FALSE; // Parent is not a local directory.
-	}
-
-	// 4. Check if the parent directory resides on a block device.
-	FILE *mounts = setmntent ("/proc/mounts", "r");
-	if (!mounts) {
-		g_free (parent_path);
-		g_object_unref (parent);
-		return FALSE;
-	}
-
-	struct mntent *ent;
-	gboolean is_on_block_device = FALSE;
-	while ((ent = getmntent (mounts)) != NULL) {
-		if (g_str_equal (ent->mnt_dir, parent_path)) {
-			// Found the exact mount point
-			struct stat st;
-			if (stat (ent->mnt_fsname, &st) == 0) {
-				is_on_block_device = S_ISBLK (st.st_mode);
-			}
-			break;
-		}
-	}
-
-	endmntent (mounts);
-	g_free (parent_path);
-	g_object_unref (parent);
-	return is_on_block_device;
 }
 
 /* Debuting files is non-NULL only for toplevel items */
