@@ -375,7 +375,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 		goto cleanup;
 	}
 
-	g_debug ("Initial buffer size: %zu bytes (%zu MB)\n",
+	g_debug ("Initial buffer size for blk copy: %zu bytes (%zu MB)\n",
 		 buffer_size,
 		 buffer_size / 1024 / 1024);
 
@@ -420,9 +420,10 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 
 		/* Adaptive buffer sizing */
 		if (!buffer_size_found &&
+			(goffset) buffer_size < total_size &&
 		    chunk_time_us < target_chunk_time_us &&
 		    buffer_adjustment_steps < max_buffer_adjustment_steps &&
-		    buffer_size * 2 < NEMO_G_FILE_MAX_BUFFER_SIZE &&
+		    buffer_size * 2 <= NEMO_G_FILE_MAX_BUFFER_SIZE &&
 		    bytes_copied < total_size) {
 			size_t new_buffer_size = buffer_size * 2;
 			g_free (buffer);
@@ -438,7 +439,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 			buffer_adjustment_steps++;
 		} else if (!buffer_size_found) {
 			buffer_size_found = TRUE;
-			g_debug ("Final buffer size used: %zu bytes (%zu MB)\n",
+			g_debug ("Final buffer size used for blk copy: %zu bytes (%zu MB)\n",
 				 buffer_size,
 				 buffer_size / 1024 / 1024);
 		}
@@ -479,9 +480,26 @@ cleanup:
 			unlink (dest_path);
 		close (dest_fd);
 	}
+
+	/* Restore backup if copy failed */
+	if (!success && backup_created) {
+		gchar *backup_path = g_strconcat (dest_path, "~", NULL);
+		if (rename (backup_path, dest_path) != 0) {
+			g_warning ("Failed to restore backup '%s' to '%s': %s",
+				   backup_path,
+				   dest_path,
+				   g_strerror (errno));
+		}
+		g_free (backup_path);
+	}
+
 	g_free (buffer);
 	g_free (src_path);
 	g_free (dest_path);
+
+	/* Ensure 100% progress is always reported on success */
+	if (success && progress_callback)
+		progress_callback (total_size, total_size, progress_callback_data);
 
 	return success;
 }
