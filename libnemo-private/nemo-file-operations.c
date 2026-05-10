@@ -26,7 +26,6 @@
             Pavel Cisler <pavel@eazel.com>
  */
 
-#include "nemo-file.h"
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
@@ -4634,7 +4633,7 @@ get_target_file_for_display_name (GFile *dir, const gchar *name)
 	return dest;
 }
 
-/*The purpose of this function is to determine if a given source file is a regular file e.g. no link and
+/* Determine if a given source file is a regular file e.g. no link and
  if the target device is a mounted block device*/
 static gboolean
 gfile_src_is_regular_file_dest_is_on_block_device (GFile *src, GFile *dest)
@@ -4882,7 +4881,7 @@ retry:
 				&error);
 		}
 	} else {
-		// Use GIO copy move file operations (streams/pipes with splice)
+		// Use GIO's copy and move file operations (uses streams/pipes with splice)
 		if (copy_job->is_move) {
 			res = g_file_move (src,
 					   dest,
