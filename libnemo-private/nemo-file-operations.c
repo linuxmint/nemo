@@ -4863,7 +4863,7 @@ retry:
 
 	if (gfile_src_is_regular_file_dest_is_on_block_device (src, dest)) {
 		if (copy_job->is_move) {
-			res = nemo_g_file_move_block_sync (
+			res = nemo_g_file_move_to_blk_sync (
 				src,
 				dest,
 				flags,
@@ -4872,7 +4872,7 @@ retry:
 				&pdata,
 				&error);
 		} else {
-			res = nemo_g_file_copy_block_sync (
+			res = nemo_g_file_copy_to_blk_sync (
 				src,
 				dest,
 				flags,
