@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <mntent.h>
 
 #include "nemo-file-operations.h"
@@ -72,6 +73,7 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
+//#include "nemo-file-watcher.h"
 #include "nemo-gfile.h"
 
 /* TODO: TESTING!!! */
@@ -105,6 +107,7 @@ typedef struct {
 	gboolean auto_rename_all;
 	gboolean replace_all;
 	gboolean delete_all;
+	gboolean progress_done;   // set by watcher if it called nemo_progress_info_finish
 } CommonJob;
 
 typedef struct {
@@ -188,6 +191,14 @@ typedef struct {
 	guint64 last_report_time;
 	int last_reported_files_left;
 } TransferInfo;
+
+typedef struct {
+    CopyMoveJob  *job;
+    SourceInfo   *source_info;
+    TransferInfo *transfer_info;
+    goffset       last_size;
+    //FileWatcher  *watcher;
+} ProgressData;
 
 #define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
 #define US_PER_MS 1000
@@ -1156,6 +1167,7 @@ init_common (gsize job_size,
 	if (parent_window) {
         common->monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (parent_window));
 	}
+	common->progress_done =FALSE;
 
 	return common;
 }
@@ -1163,7 +1175,9 @@ init_common (gsize job_size,
 static void
 finalize_common (CommonJob *common)
 {
-	nemo_progress_info_finish (common->progress);
+	if (!common->progress_done) {
+        nemo_progress_info_finish (common->progress);
+    }
 
 	if (common->inhibit_cookie != -1) {
 		nemo_uninhibit_power_manager (common->inhibit_cookie);
@@ -4177,13 +4191,6 @@ remove_target_recursively (CommonJob *job,
 
 }
 
-typedef struct {
-	CopyMoveJob *job;
-	goffset last_size;
-	SourceInfo *source_info;
-	TransferInfo *transfer_info;
-} ProgressData;
-
 static void
 copy_file_progress_callback (goffset current_num_bytes,
 			     goffset total_num_bytes,
@@ -4204,6 +4211,25 @@ copy_file_progress_callback (goffset current_num_bytes,
 				      pdata->transfer_info);
 	}
 }
+
+
+// static void
+// copy_file_progress_callback_watcher (goffset current_num_bytes,
+//                                      goffset total_num_bytes,
+//                                      gpointer user_data)
+// {
+//     ProgressData *pdata = user_data;
+//     FileWatcher  *watcher = pdata->watcher;
+
+//     g_mutex_lock (&watcher->mutex);
+//     watcher->current_num_bytes = current_num_bytes;
+//     watcher->total_num_bytes   = total_num_bytes;
+//     g_mutex_unlock (&watcher->mutex);
+
+//     if (watcher->error) {
+//         copy_file_progress_callback (current_num_bytes, total_num_bytes, user_data);
+//     }
+// }
 
 static gboolean
 test_dir_is_parent (GFile *child, GFile *root)
@@ -4401,55 +4427,157 @@ get_target_file_for_display_name (GFile *dir,
 }
 
 /* Determine if a given source file is a regular file e.g. no link and
- if the target device is a mounted block device*/
+ * if the target device is a consumer grade USB block device */
 static gboolean
-gfile_src_is_regular_file_dest_is_on_block_device (GFile *src, GFile *dest)
+gfile_dest_is_consumer_usb_device (GFile *src, GFile *dest)
 {
-	// 1. Check if the GFile is a regular file.
+	/* 1. Check if src is a regular file */
 	GFileType type =
 		g_file_query_file_type (src, G_FILE_QUERY_INFO_NONE, NULL);
 	if (type != G_FILE_TYPE_REGULAR) {
 		return FALSE;
 	}
 
-	// 2. Get the parent directory of the GFile.
-	GFile *parent = g_file_get_parent (dest);
-	if (!parent) {
-		return FALSE; // No parent (e.g., root directory).
+	/* 2. Get the path of dest */
+	gchar *dest_path = g_file_get_path (dest);
+	if (!dest_path) {
+		return FALSE;
 	}
 
-	// 3. Get the path of the parent directory.
-	gchar *parent_path = g_file_get_path (parent);
-	if (!parent_path) {
-		g_object_unref (parent);
-		return FALSE; // Parent is not a local directory.
-	}
-
-	// 4. Check if the parent directory resides on a block device.
+	/* 3. Find the longest matching mount entry for dest_path */
 	FILE *mounts = setmntent ("/proc/mounts", "r");
 	if (!mounts) {
-		g_free (parent_path);
-		g_object_unref (parent);
+		g_free (dest_path);
 		return FALSE;
 	}
 
 	struct mntent *ent;
-	gboolean is_on_block_device = FALSE;
+	gchar *best_mnt_fsname = NULL;
+	size_t best_mnt_len = 0;
+
 	while ((ent = getmntent (mounts)) != NULL) {
-		if (g_str_equal (ent->mnt_dir, parent_path)) {
-			// Found the exact mount point
+		size_t mnt_len = strlen (ent->mnt_dir);
+
+		/* mount point must be a prefix of dest_path and either
+         * be the root "/" or be followed by "/" or end of string
+         * to avoid partial directory name matches */
+		if (strncmp (dest_path, ent->mnt_dir, mnt_len) == 0 &&
+		    (dest_path[mnt_len] == '/' || dest_path[mnt_len] == '\0') &&
+		    mnt_len > best_mnt_len) {
 			struct stat st;
-			if (stat (ent->mnt_fsname, &st) == 0) {
-				is_on_block_device = S_ISBLK (st.st_mode);
+			if (stat (ent->mnt_fsname, &st) == 0 &&
+			    S_ISBLK (st.st_mode)) {
+				g_free (best_mnt_fsname);
+				best_mnt_fsname = g_strdup (ent->mnt_fsname);
+				best_mnt_len = mnt_len;
 			}
-			break;
 		}
 	}
-
 	endmntent (mounts);
-	g_free (parent_path);
-	g_object_unref (parent);
-	return is_on_block_device;
+	g_free (dest_path);
+
+	if (!best_mnt_fsname) {
+		return FALSE;
+	}
+
+	/* 4. Get major:minor of the block device */
+	struct stat dev_st;
+	if (stat (best_mnt_fsname, &dev_st) != 0) {
+		g_free (best_mnt_fsname);
+		return FALSE;
+	}
+	g_free (best_mnt_fsname);
+
+	unsigned int maj = major (dev_st.st_rdev);
+	unsigned int min = minor (dev_st.st_rdev);
+
+	/* 5. Resolve the sysfs path for this device via /sys/dev/block/maj:min */
+	gchar *sys_block_link =
+		g_strdup_printf ("/sys/dev/block/%u:%u", maj, min);
+	char resolved_buf[PATH_MAX];
+	gchar *resolved = realpath (sys_block_link, resolved_buf);
+	g_free (sys_block_link);
+
+	if (!resolved) {
+		return FALSE;
+	}
+
+	/* resolved now points to resolved_buf — no need to free */
+	gchar *disk_sys_path;
+
+	/* 6. If this is a partition, go up one level to the whole disk */
+	gchar *partition_file =
+		g_build_filename (resolved_buf, "partition", NULL);
+	if (g_file_test (partition_file, G_FILE_TEST_EXISTS)) {
+		disk_sys_path = g_path_get_dirname (resolved_buf);
+	} else {
+		disk_sys_path = g_strdup (resolved_buf);
+	}
+	g_free (partition_file);
+
+	/* 7. Check removable flag */
+	gchar *removable_path =
+		g_build_filename (disk_sys_path, "removable", NULL);
+	gchar *removable_str = NULL;
+	gboolean is_removable = FALSE;
+
+	if (g_file_get_contents (removable_path, &removable_str, NULL, NULL)) {
+		is_removable = (removable_str[0] == '1');
+		g_free (removable_str);
+	}
+	g_free (removable_path);
+
+	if (!is_removable) {
+		g_free (disk_sys_path);
+		return FALSE;
+	}
+
+	/* 8. Walk up the sysfs tree looking for a 'subsystem' symlink
+     * that resolves to 'usb' */
+	gboolean is_usb = FALSE;
+	gchar *curr_path = g_strdup (disk_sys_path);
+	g_free (disk_sys_path);
+
+	while (curr_path != NULL && strlen (curr_path) > strlen ("/sys")) {
+		gchar *subsystem_path =
+			g_build_filename (curr_path, "subsystem", NULL);
+		char sub_resolved_buf[PATH_MAX];
+		gchar *sub_resolved =
+			realpath (subsystem_path, sub_resolved_buf);
+		g_free (subsystem_path);
+
+		if (sub_resolved) {
+			gchar *subsystem_name =
+				g_path_get_basename (sub_resolved_buf);
+
+			if (g_str_equal (subsystem_name, "usb")) {
+				is_usb = TRUE;
+				g_free (subsystem_name);
+				g_free (curr_path);
+				curr_path = NULL;
+				break;
+			}
+			g_free (subsystem_name);
+		}
+
+		gchar *parent_dir = g_path_get_dirname (curr_path);
+
+		if (g_str_equal (parent_dir, curr_path)) {
+			g_free (parent_dir);
+			g_free (curr_path);
+			curr_path = NULL;
+			break;
+		}
+
+		g_free (curr_path);
+		curr_path = parent_dir;
+	}
+
+	if (curr_path) {
+		g_free (curr_path);
+	}
+
+	return is_usb;
 }
 
 /* Debuting files is non-NULL only for toplevel items */
@@ -4590,6 +4718,7 @@ copy_move_file (CopyMoveJob *copy_job,
 
  retry:
 
+	job->progress_done = FALSE;
 	error = NULL;
 	flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
 	if (overwrite) {
@@ -4604,7 +4733,79 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.source_info = source_info;
 	pdata.transfer_info = transfer_info;
 
-	if (gfile_src_is_regular_file_dest_is_on_block_device (src, dest)) {
+	// if (gfile_src_is_regular_file_dest_is_on_block_device (src, dest)) { // local, native filesystem
+	// 	FileWatcher *watcher =
+	// 		file_watcher_new (dest,
+	// 						pdata.source_info->num_bytes,
+	// 						job->cancellable,
+	// 						job->progress,
+	// 						&job->progress_done);
+	// 	file_watcher_start (watcher);
+	// 	file_watcher_wait_ready (watcher);   // blocks until inotify is ready
+	// 	pdata.watcher = watcher;
+
+	// 	if (copy_job->is_move) {
+	// 		res = g_file_move (src,
+	// 				   dest,
+	// 				   flags,
+	// 				   job->cancellable,
+	// 				   copy_file_progress_callback_watcher,
+	// 				   &pdata,
+	// 				   &error);
+	// 	} else {
+	// 		res = g_file_copy (src,
+	// 				   dest,
+	// 				   flags,
+	// 				   job->cancellable,
+	// 				   copy_file_progress_callback_watcher,
+	// 				   &pdata,
+	// 				   &error);
+	// 	}
+
+	// 	file_watcher_set_copy_done (watcher);
+	// 	file_watcher_wait (watcher);
+	// 	file_watcher_free (watcher);
+	// 	pdata.watcher = NULL;
+	// } else {
+	// 	if (copy_job->is_move) {
+	// 		res = g_file_move (src,
+	// 				   dest,
+	// 				   flags,
+	// 				   job->cancellable,
+	// 				   copy_file_progress_callback,
+	// 				   &pdata,
+	// 				   &error);
+	// 	} else {
+	// 		res = g_file_copy (src,
+	// 				   dest,
+	// 				   flags,
+	// 				   job->cancellable,
+	// 				   copy_file_progress_callback,
+	// 				   &pdata,
+	// 				   &error);
+	// 	}
+	// }
+
+	
+	// if (copy_job->is_move) {
+	// 	res = g_file_move (src,
+	// 			   dest,
+	// 			   flags,
+	// 			   job->cancellable,
+	// 			   copy_file_progress_callback,
+	// 			   &pdata,
+	// 			   &error);
+	// } else {
+	// 	res = g_file_copy (src,
+	// 			   dest,
+	// 			   flags,
+	// 			   job->cancellable,
+	// 			   copy_file_progress_callback,
+	// 			   &pdata,
+	// 			   &error);
+	// }
+
+	if (gfile_dest_is_consumer_usb_device (src, dest)) {
 		if (copy_job->is_move) {
 			res = nemo_g_file_move_to_blk_sync (
 				src,
