@@ -4429,7 +4429,7 @@ get_target_file_for_display_name (GFile *dir,
 /* Determine if a given source file is a regular file e.g. no link and
  * if the target device is a consumer grade USB block device */
 static gboolean
-gfile_dest_is_consumer_usb_device (GFile *src, GFile *dest)
+is_regular_gfile_and_dest_is_consumer_usb_blk_device (GFile *src, GFile *dest)
 {
 	/* 1. Check if src is a regular file */
 	GFileType type =
@@ -4733,79 +4733,7 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.source_info = source_info;
 	pdata.transfer_info = transfer_info;
 
-	// if (gfile_src_is_regular_file_dest_is_on_block_device (src, dest)) { // local, native filesystem
-	// 	FileWatcher *watcher =
-	// 		file_watcher_new (dest,
-	// 						pdata.source_info->num_bytes,
-	// 						job->cancellable,
-	// 						job->progress,
-	// 						&job->progress_done);
-	// 	file_watcher_start (watcher);
-	// 	file_watcher_wait_ready (watcher);   // blocks until inotify is ready
-	// 	pdata.watcher = watcher;
-
-	// 	if (copy_job->is_move) {
-	// 		res = g_file_move (src,
-	// 				   dest,
-	// 				   flags,
-	// 				   job->cancellable,
-	// 				   copy_file_progress_callback_watcher,
-	// 				   &pdata,
-	// 				   &error);
-	// 	} else {
-	// 		res = g_file_copy (src,
-	// 				   dest,
-	// 				   flags,
-	// 				   job->cancellable,
-	// 				   copy_file_progress_callback_watcher,
-	// 				   &pdata,
-	// 				   &error);
-	// 	}
-
-	// 	file_watcher_set_copy_done (watcher);
-	// 	file_watcher_wait (watcher);
-	// 	file_watcher_free (watcher);
-	// 	pdata.watcher = NULL;
-	// } else {
-	// 	if (copy_job->is_move) {
-	// 		res = g_file_move (src,
-	// 				   dest,
-	// 				   flags,
-	// 				   job->cancellable,
-	// 				   copy_file_progress_callback,
-	// 				   &pdata,
-	// 				   &error);
-	// 	} else {
-	// 		res = g_file_copy (src,
-	// 				   dest,
-	// 				   flags,
-	// 				   job->cancellable,
-	// 				   copy_file_progress_callback,
-	// 				   &pdata,
-	// 				   &error);
-	// 	}
-	// }
-
-	
-	// if (copy_job->is_move) {
-	// 	res = g_file_move (src,
-	// 			   dest,
-	// 			   flags,
-	// 			   job->cancellable,
-	// 			   copy_file_progress_callback,
-	// 			   &pdata,
-	// 			   &error);
-	// } else {
-	// 	res = g_file_copy (src,
-	// 			   dest,
-	// 			   flags,
-	// 			   job->cancellable,
-	// 			   copy_file_progress_callback,
-	// 			   &pdata,
-	// 			   &error);
-	// }
-
-	if (gfile_dest_is_consumer_usb_device (src, dest)) {
+	if (is_regular_gfile_and_dest_is_consumer_usb_blk_device (src, dest)) {
 		if (copy_job->is_move) {
 			res = nemo_g_file_move_to_blk_sync (
 				src,

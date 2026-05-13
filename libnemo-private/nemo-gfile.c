@@ -375,7 +375,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 		goto cleanup;
 	}
 
-	g_debug ("Initial buffer size for blk copy: %zu bytes (%zu MB)\n",
+	g_debug ("Initial buffer size for blk copy: %zu bytes (%zu MB)",
 		 buffer_size,
 		 buffer_size / 1024 / 1024);
 
@@ -439,7 +439,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 			buffer_adjustment_steps++;
 		} else if (!buffer_size_found) {
 			buffer_size_found = TRUE;
-			g_debug ("Final buffer size used for blk copy: %zu bytes (%zu MB)\n",
+			g_debug ("Final buffer size used for blk copy: %zu bytes (%zu MB)",
 				 buffer_size,
 				 buffer_size / 1024 / 1024);
 		}
