@@ -107,7 +107,6 @@ typedef struct {
 	gboolean auto_rename_all;
 	gboolean replace_all;
 	gboolean delete_all;
-	gboolean progress_done;   // set by watcher if it called nemo_progress_info_finish
 } CommonJob;
 
 typedef struct {
@@ -197,7 +196,6 @@ typedef struct {
     SourceInfo   *source_info;
     TransferInfo *transfer_info;
     goffset       last_size;
-    //FileWatcher  *watcher;
 } ProgressData;
 
 #define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
@@ -1167,17 +1165,14 @@ init_common (gsize job_size,
 	if (parent_window) {
         common->monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (parent_window));
 	}
-	common->progress_done =FALSE;
-
+	
 	return common;
 }
 
 static void
 finalize_common (CommonJob *common)
 {
-	if (!common->progress_done) {
-        nemo_progress_info_finish (common->progress);
-    }
+	nemo_progress_info_finish (common->progress);
 
 	if (common->inhibit_cookie != -1) {
 		nemo_uninhibit_power_manager (common->inhibit_cookie);
@@ -4212,25 +4207,6 @@ copy_file_progress_callback (goffset current_num_bytes,
 	}
 }
 
-
-// static void
-// copy_file_progress_callback_watcher (goffset current_num_bytes,
-//                                      goffset total_num_bytes,
-//                                      gpointer user_data)
-// {
-//     ProgressData *pdata = user_data;
-//     FileWatcher  *watcher = pdata->watcher;
-
-//     g_mutex_lock (&watcher->mutex);
-//     watcher->current_num_bytes = current_num_bytes;
-//     watcher->total_num_bytes   = total_num_bytes;
-//     g_mutex_unlock (&watcher->mutex);
-
-//     if (watcher->error) {
-//         copy_file_progress_callback (current_num_bytes, total_num_bytes, user_data);
-//     }
-// }
-
 static gboolean
 test_dir_is_parent (GFile *child, GFile *root)
 {
@@ -4718,7 +4694,6 @@ copy_move_file (CopyMoveJob *copy_job,
 
  retry:
 
-	job->progress_done = FALSE;
 	error = NULL;
 	flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
 	if (overwrite) {
