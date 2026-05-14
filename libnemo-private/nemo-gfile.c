@@ -393,6 +393,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 		/* Handle partial writes */
 		size_t bytes_to_write = bytes_read;
 		size_t total_written = 0;
+
 		while (total_written < bytes_to_write) {
 			bytes_written = write (dest_fd,
 					       buffer + total_written,
@@ -411,37 +412,40 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 			}
 			total_written += bytes_written;
 		}
+
 		bytes_copied += total_written;
 
 		/* Measure chunk time and adapt buffer size */
 		guint64 current_time_us = g_get_monotonic_time ();
-		chunk_time_us = (current_time_us - last_chunk_time_us);
+		chunk_time_us = current_time_us - last_chunk_time_us;
 		last_chunk_time_us = current_time_us;
 
 		/* Adaptive buffer sizing */
-		if (!buffer_size_found &&
-			(goffset) buffer_size < total_size &&
+		if (!buffer_size_found && (goffset)buffer_size < total_size &&
 		    chunk_time_us < target_chunk_time_us &&
 		    buffer_adjustment_steps < max_buffer_adjustment_steps &&
 		    buffer_size * 2 <= NEMO_G_FILE_MAX_BUFFER_SIZE &&
 		    bytes_copied < total_size) {
-			size_t new_buffer_size = buffer_size * 2;
-			g_free (buffer);
-			buffer = g_malloc (new_buffer_size);
-			if (!buffer) {
-				g_set_error (error,
-					     G_IO_ERROR,
-					     G_IO_ERROR_FAILED,
-					     "Failed to reallocate buffer");
-				goto cleanup;
+			gpointer new_buffer = g_try_malloc (buffer_size * 2);
+			if (!new_buffer) {
+				/* Allocation failed — stop trying to grow, continue at current size */
+				buffer_size_found = TRUE;
+				g_warning (
+					"Buffer growth failed at %zu bytes, continuing at current size",
+					buffer_size);
+			} else {
+				g_free (buffer);
+				buffer = new_buffer;
+				buffer_size *= 2;
+				buffer_adjustment_steps++;
 			}
-			buffer_size = new_buffer_size;
-			buffer_adjustment_steps++;
+
 		} else if (!buffer_size_found) {
 			buffer_size_found = TRUE;
-			g_debug ("Final buffer size used for blk copy: %zu bytes (%zu MB)",
-				 buffer_size,
-				 buffer_size / 1024 / 1024);
+			g_debug (
+				"Final buffer size used for blk copy: %zu bytes (%zu MB)",
+				buffer_size,
+				buffer_size / 1024 / 1024);
 		}
 
 		if (progress_callback && buffer_size_found) {
@@ -499,7 +503,8 @@ cleanup:
 
 	/* Ensure 100% progress is always reported on success */
 	if (success && progress_callback)
-		progress_callback (total_size, total_size, progress_callback_data);
+		progress_callback (
+			total_size, total_size, progress_callback_data);
 
 	return success;
 }

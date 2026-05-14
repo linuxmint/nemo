@@ -73,7 +73,6 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
-//#include "nemo-file-watcher.h"
 #include "nemo-gfile.h"
 
 /* TODO: TESTING!!! */
@@ -1165,7 +1164,7 @@ init_common (gsize job_size,
 	if (parent_window) {
         common->monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (parent_window));
 	}
-	
+
 	return common;
 }
 
