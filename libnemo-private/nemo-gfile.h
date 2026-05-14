@@ -25,10 +25,10 @@
 
 G_BEGIN_DECLS
 
-/* Target progress update frequency (1 update in 1 second) */
-#define NEMO_G_FILE_TARGET_MAX_CHUNK_TIME_US 1000000
+#define NEMO_G_FILE_TARGET_MAX_CHUNK_TIME_US 500000
 #define NEMO_G_FILE_MIN_BUFFER_SIZE 1024 * 1024
 #define NEMO_G_FILE_MAX_BUFFER_SIZE 1024 * 1024 * 256
+#define NEMO_G_FILE_BUFFER_TRIALS 3
 
 typedef void (*NemoGFileProgressCallback) (goffset current_num_bytes,
 					   goffset total_num_bytes,

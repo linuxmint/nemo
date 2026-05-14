@@ -27,17 +27,17 @@
 #include <glib.h> /* For GError, g_set_error, etc. */
 #include <glib/gprintf.h>
 #include <glib/gstdio.h> /* For g_file_error_from_errno (deprecated, but included for compatibility) */
+#include <linux/fs.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <utime.h>
-#include <linux/fs.h>
-#include <sys/syscall.h>
 
 /* Helper function to safely call pathconf */
 static long
@@ -82,7 +82,8 @@ get_min_buffer_size (const char *path)
 			fs_info.f_frsize; /* Filesystem fragment size */
 		return MIN (MAX (NEMO_G_FILE_MIN_BUFFER_SIZE, block_size * 256),
 			    NEMO_G_FILE_MAX_BUFFER_SIZE);
-		/* At least 1MB, or 256x block size, but not exceeding NEMO_G_FILE_MAX_BUFFER_SIZE */
+		/* At least 1MB, or 256x block size, but not exceeding
+         * NEMO_G_FILE_MAX_BUFFER_SIZE */
 	}
 
 	/* Final fallback */
@@ -240,6 +241,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 	guint64 chunk_time_us = 0;
 	size_t buffer_size;
 	int buffer_adjustment_steps = 0;
+	int new_buffer_trial_counter = 0;
 	const int max_buffer_adjustment_steps = 7;
 	gboolean buffer_size_found = FALSE;
 	gboolean backup_created = FALSE;
@@ -276,7 +278,7 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 	if (src_fd == -1) {
 		if (errno == ELOOP) {
 			/* Source is a symlink and we're not following it —
-			* block copy of symlinks is not supported */
+             * block copy of symlinks is not supported */
 			g_set_error (error,
 				     G_IO_ERROR,
 				     G_IO_ERROR_NOT_SUPPORTED,
@@ -420,35 +422,44 @@ nemo_g_file_copy_to_blk_sync (GFile *source,
 		chunk_time_us = current_time_us - last_chunk_time_us;
 		last_chunk_time_us = current_time_us;
 
-		/* Adaptive buffer sizing */
+		/* Adaptive buffer sizing (grow only - power of 2 - try new size n
+         * times) */
 		if (!buffer_size_found && (goffset)buffer_size < total_size &&
-		    chunk_time_us < target_chunk_time_us &&
 		    buffer_adjustment_steps < max_buffer_adjustment_steps &&
 		    buffer_size * 2 <= NEMO_G_FILE_MAX_BUFFER_SIZE &&
+		    new_buffer_trial_counter < NEMO_G_FILE_BUFFER_TRIALS &&
 		    bytes_copied < total_size) {
-			gpointer new_buffer = g_try_malloc (buffer_size * 2);
-			if (!new_buffer) {
-				/* Allocation failed — stop trying to grow, continue at current size */
-				buffer_size_found = TRUE;
-				g_warning (
-					"Buffer growth failed at %zu bytes, continuing at current size",
-					buffer_size);
+			if (chunk_time_us < target_chunk_time_us) {
+				gpointer new_buffer =
+					g_try_malloc (buffer_size * 2);
+				if (!new_buffer) {
+					buffer_size_found = TRUE;
+					g_debug (
+						"Final buffer size used for blk copy: %zu bytes "
+						"(%zu MB)",
+						buffer_size,
+						buffer_size / 1024 / 1024);
+				} else {
+					g_free (buffer);
+					buffer = new_buffer;
+					buffer_size *= 2;
+					buffer_adjustment_steps++;
+				}
+				new_buffer_trial_counter = 0;
 			} else {
-				g_free (buffer);
-				buffer = new_buffer;
-				buffer_size *= 2;
-				buffer_adjustment_steps++;
+				new_buffer_trial_counter++;
 			}
 
 		} else if (!buffer_size_found) {
 			buffer_size_found = TRUE;
+			new_buffer_trial_counter = 0;
 			g_debug (
 				"Final buffer size used for blk copy: %zu bytes (%zu MB)",
 				buffer_size,
 				buffer_size / 1024 / 1024);
 		}
 
-		if (progress_callback && buffer_size_found) {
+		if (progress_callback) {
 			guint64 elapsed_us =
 				current_time_us - last_progress_time_us;
 			if (elapsed_us >= target_chunk_time_us ||
