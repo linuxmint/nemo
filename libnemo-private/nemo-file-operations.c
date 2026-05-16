@@ -3715,6 +3715,7 @@ static void copy_move_file (CopyMoveJob *job,
 			    GFile *dest_dir,
 			    gboolean same_fs,
 			    gboolean unique_names,
+			    GFile *precomputed_dest,
 			    char **dest_fs_type,
 			    SourceInfo *source_info,
 			    TransferInfo *transfer_info,
@@ -3896,7 +3897,7 @@ copy_move_directory (CopyMoveJob *copy_job,
 		       (info = g_file_enumerator_next_file (enumerator, job->cancellable, skip_error?NULL:&error)) != NULL) {
 			src_file = g_file_get_child (src,
 						     g_file_info_get_name (info));
-			copy_move_file (copy_job, src_file, *dest, same_fs, FALSE, &dest_fs_type,
+			copy_move_file (copy_job, src_file, *dest, same_fs, FALSE, NULL, &dest_fs_type,
 					source_info, transfer_info, NULL, NULL, FALSE, &local_skipped_file,
 					readonly_source_fs);
 			g_object_unref (src_file);
@@ -4404,6 +4405,7 @@ copy_move_file (CopyMoveJob *copy_job,
 		GFile *dest_dir,
 		gboolean same_fs,
 		gboolean unique_names,
+		GFile *precomputed_dest,
 		char **dest_fs_type,
 		SourceInfo *source_info,
 		TransferInfo *transfer_info,
@@ -4458,6 +4460,11 @@ copy_move_file (CopyMoveJob *copy_job,
 
 	if (unique_names) {
 		dest = get_unique_target_file (src, dest_dir, same_fs, *dest_fs_type, unique_name_nr++);
+	} else if (precomputed_dest != NULL) {
+		/* Set by the cross-filesystem move fallback when the user already
+		 * picked a new name during move_file_prepare. Reuse that exact
+		 * destination so the conflict dialog is not shown a second time. */
+		dest = g_object_ref (precomputed_dest);
 	} else if (copy_job->target_name != NULL) {
 		dest = get_target_file_with_custom_name (src, dest_dir, *dest_fs_type, same_fs,
 							 copy_job->target_name);
@@ -4905,6 +4912,7 @@ copy_files (CopyMoveJob *job,
 			skipped_file = FALSE;
 			copy_move_file (job, src, dest,
 					same_fs, unique_names,
+					NULL,
 					&dest_fs_type,
 					source_info, transfer_info,
 					job->debuting_files,
@@ -5117,13 +5125,26 @@ report_move_progress (CopyMoveJob *move_job, int total, int left)
 
 typedef struct {
 	GFile *file;
+	/* If set, the copy+delete move phase must use this destination
+	 * (e.g. after the user picked a new name in move_file_prepare). */
+	GFile *precomputed_dest;
 	gboolean overwrite;
 	gboolean has_position;
 	GdkPoint position;
 } MoveFileCopyFallback;
 
+static void
+move_file_copy_fallback_free (gpointer data)
+{
+	MoveFileCopyFallback *fallback = data;
+
+	g_clear_object (&fallback->precomputed_dest);
+	g_free (fallback);
+}
+
 static MoveFileCopyFallback *
 move_copy_file_callback_new (GFile *file,
+			     GFile *precomputed_dest,
 			     gboolean overwrite,
 			     GdkPoint *position)
 {
@@ -5131,6 +5152,9 @@ move_copy_file_callback_new (GFile *file,
 
 	fallback = g_new (MoveFileCopyFallback, 1);
 	fallback->file = file;
+	fallback->precomputed_dest = precomputed_dest != NULL
+		? g_object_ref (precomputed_dest)
+		: NULL;
 	fallback->overwrite = overwrite;
 	if (position) {
 		fallback->has_position = TRUE;
@@ -5377,6 +5401,7 @@ move_file_prepare (CopyMoveJob *move_job,
 		g_error_free (error);
 
 		fallback = move_copy_file_callback_new (src,
+							dest,
 							overwrite,
 							position);
 		*fallback_files = g_list_prepend (*fallback_files, fallback);
@@ -5515,7 +5540,9 @@ common = &job->common;
 		   selected overwrite on all toplevel items */
 		skipped_file = FALSE;
 		copy_move_file (job, src, job->destination,
-				same_fs, FALSE, dest_fs_type,
+				same_fs, FALSE,
+				fallback->precomputed_dest,
+				dest_fs_type,
 				source_info, transfer_info,
 				job->debuting_files,
 				point, fallback->overwrite, &skipped_file, FALSE);
@@ -5616,7 +5643,7 @@ move_job (GIOSchedulerJob *io_job,
 		    &source_info, &transfer_info);
 
  aborted:
-	g_list_free_full (fallbacks, g_free);
+	g_list_free_full (fallbacks, move_file_copy_fallback_free);
 
 	g_free (dest_fs_id);
 	g_free (dest_fs_type);
