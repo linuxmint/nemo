@@ -5265,16 +5265,17 @@ nemo_icon_container_clear (NemoIconContainer *container)
 
     details->ok_to_load_deferred_attrs = FALSE;
 
-	for (p = details->icons; p != NULL; p = p->next) {
-		icon_free (p->data);
-	}
-	g_list_free (details->icons);
+	GList *icons_to_free = details->icons;
 	details->icons = NULL;
 	g_list_free (details->new_icons);
 	details->new_icons = NULL;
+	g_hash_table_destroy (details->icon_set);
+	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
 
- 	g_hash_table_destroy (details->icon_set);
- 	details->icon_set = g_hash_table_new (g_direct_hash, g_direct_equal);
+	for (p = icons_to_free; p != NULL; p = p->next) {
+		icon_free (p->data);
+	}
+	g_list_free (icons_to_free);
 }
 
 gboolean
