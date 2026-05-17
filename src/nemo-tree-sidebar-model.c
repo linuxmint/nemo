@@ -1639,15 +1639,19 @@ fm_tree_model_remove_root_uri (FMTreeModel *model, const char *uri)
 	TreeNode *node;
 	GtkTreePath *path;
 	FMTreeModelRoot *root;
-	NemoFile *file;
 
-	file = nemo_file_get_by_uri (uri);
-	for (node = model->details->root_node; node != NULL; node = node->next) {
-		if (file == node->file) {
+	/* NemoFile pointer for a given URI can differ between mount-added and
+ 	* mount-removed events due to cache invalidation. Use URI string
+ 	* comparison instead of pointer equality to reliably find the node. */
+	for (node = model->details->root_node; node != NULL;
+	     node = node->next) {
+		char *node_uri = nemo_file_get_uri (node->file);
+		gboolean match = g_strcmp0 (node_uri, uri) == 0;
+		g_free (node_uri);
+		if (match) {
 			break;
 		}
 	}
-	nemo_file_unref (file);
 
 	if (node) {
 		/* remove the node */
