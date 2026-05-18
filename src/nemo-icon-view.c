@@ -2688,6 +2688,13 @@ nemo_icon_view_constructed (GObject *object)
     nemo_icon_container_set_is_desktop (icon_container, FALSE);
 }
 
+static const gchar *
+nemo_icon_view_get_sort_attribute (NemoView *view)
+{
+	NemoIconView *icon_view = NEMO_ICON_VIEW (view);
+	return icon_view->details->sort->metadata_text;
+}
+
 static void
 nemo_icon_view_class_init (NemoIconViewClass *klass)
 {
@@ -2747,6 +2754,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 	nemo_view_class->get_view_id = nemo_icon_view_get_id;
 	nemo_view_class->get_first_visible_file = icon_view_get_first_visible_file;
 	nemo_view_class->scroll_to_file = icon_view_scroll_to_file;
+	nemo_view_class->get_sort_attribute = nemo_icon_view_get_sort_attribute;
 
 	properties[PROP_COMPACT] =
 		g_param_spec_boolean ("compact",

@@ -4308,6 +4308,26 @@ nemo_list_view_get_id (NemoView *view)
 	return NEMO_LIST_VIEW_ID;
 }
 
+static const gchar *
+nemo_list_view_get_sort_attribute (NemoView *view)
+{
+	NemoListView *list_view = NEMO_LIST_VIEW (view);
+	gint sort_column_id;
+	GtkSortType order;
+	GQuark attribute;
+
+	if (!gtk_tree_sortable_get_sort_column_id (
+			GTK_TREE_SORTABLE (list_view->details->model),
+			&sort_column_id, &order)) {
+		return NULL;
+	}
+
+	attribute = nemo_list_model_get_attribute_from_sort_column_id (
+		list_view->details->model, sort_column_id);
+
+	return attribute != 0 ? g_quark_to_string (attribute) : NULL;
+}
+
 static void
 nemo_list_view_class_init (NemoListViewClass *class)
 {
@@ -4357,6 +4377,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->get_first_visible_file = nemo_list_view_get_first_visible_file;
 	nemo_view_class->scroll_to_file = list_view_scroll_to_file;
     nemo_view_class->click_to_rename_mode_changed = nemo_list_view_click_to_rename_mode_changed;
+	nemo_view_class->get_sort_attribute = nemo_list_view_get_sort_attribute;
 }
 
 static void

@@ -456,6 +456,7 @@ int                     nemo_file_compare_for_sort_by_attribute_q   (NemoFile   
 									 gboolean                        reversed,
                                      gpointer                        search_dir);
 gboolean                nemo_file_is_date_sort_attribute_q          (GQuark                          attribute);
+gboolean                nemo_file_attribute_slow_sort               (const gchar                    *sort_attribute);
 
 int                     nemo_file_compare_display_name              (NemoFile                   *file_1,
 									 const char                     *pattern);

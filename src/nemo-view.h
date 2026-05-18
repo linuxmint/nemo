@@ -315,6 +315,9 @@ struct NemoViewClass {
         /* Signals used only for keybindings */
         gboolean (* trash)                         (NemoView *view);
         gboolean (* delete)                        (NemoView *view);
+
+	/* Returns the current sort attribute string, or NULL if unknown/default */
+	const gchar * (* get_sort_attribute)       (NemoView *view);
 };
 
 /* GObject support */

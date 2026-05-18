@@ -69,6 +69,7 @@
 #include <libnemo-private/nemo-search-directory.h>
 #include <libnemo-private/nemo-directory.h>
 #include <libnemo-private/nemo-dnd.h>
+#include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file-changes-queue.h>
 #include <libnemo-private/nemo-file-dnd.h>
@@ -95,8 +96,11 @@
 #define DEBUG_FLAG NEMO_DEBUG_DIRECTORY_VIEW
 #include <libnemo-private/nemo-debug.h>
 
-/* Minimum starting update inverval */
-#define UPDATE_INTERVAL_MIN 200
+/* Minimum starting update interval for progressive display */
+#define UPDATE_INTERVAL_MIN 10
+/* One-shot pre-render delay in deferred mode (sort by folder size, deep counts etc.),
+ * to give async deep counts a chance to arrive before the first render. */
+#define UPDATE_INTERVAL_DEFERRED 50
 /* Maximum update interval */
 #define UPDATE_INTERVAL_MAX 2000
 /* Amount of miliseconds the update interval is increased */
@@ -112,6 +116,8 @@
 #define DUPLICATE_VERTICAL_ICON_OFFSET   30
 
 #define MAX_QUEUED_UPDATES 250
+/* Max files to hold before falling back to progressive display during loading */
+#define MAX_LOADING_PENDING_HELD 500
 
 #define SELECTION_CHANGED_UPDATE_INTERVAL 50
 
@@ -266,6 +272,9 @@ struct NemoViewDetails
 	gboolean updates_frozen;
 	guint	 updates_queued;
 	gboolean needs_reload;
+	guint    loading_pending_held;
+	const gchar *display_method;
+	gdouble  first_render_elapsed;
 
 	gboolean is_renaming;
 
@@ -3354,7 +3363,13 @@ done_loading (NemoView *view,
             g_clear_pointer (&nemo_startup_timer, g_timer_destroy);
         }
 
-        g_printerr ("Folder load time: %f seconds\n", g_timer_elapsed (view->details->load_timer, NULL));
+        gchar *uri = nemo_view_get_uri (view);
+        g_printerr ("Folder load time: %f seconds. First render: %.0fms. Method: %s. URI: %s\n",
+                    g_timer_elapsed (view->details->load_timer, NULL),
+                    view->details->first_render_elapsed,
+                    view->details->display_method,
+                    uri);
+        g_free (uri);
 
         g_idle_add_full (1000, (GSourceFunc) idle_timer_report, view, NULL);
     }
@@ -3636,6 +3651,9 @@ process_new_files (NemoView *view)
 
 	new_added_files = view->details->new_added_files;
 	view->details->new_added_files = NULL;
+
+	if (view->details->first_render_elapsed < 0.0 && new_added_files != NULL)
+		view->details->first_render_elapsed = g_timer_elapsed (view->details->load_timer, NULL) * 1000.0;
 	new_changed_files = view->details->new_changed_files;
 	view->details->new_changed_files = NULL;
 
@@ -3771,6 +3789,8 @@ display_pending_files (NemoView *view)
 	if (view->details->updates_frozen) {
 		return;
 	}
+
+	view->details->loading_pending_held = 0;
 
 	process_new_files (view);
 	process_old_files (view);
@@ -3944,7 +3964,21 @@ queue_pending_files (NemoView *view,
 	*pending_list = g_list_concat (file_and_directory_list_from_files (directory, files),
 				       *pending_list);
 
-    schedule_timeout_display_of_pending_files (view, view->details->update_interval);
+	/* During loading of a normal local directory, hold files in the pending
+	 * list and let done_loading_callback flush them all at once. For search,
+	 * non-native filesystems, post-load changes, or very large directories,
+	 * show progressively. */
+	view->details->loading_pending_held += g_list_length (files);
+
+	gboolean schedule = !view->details->loading ||
+	                    nemo_directory_are_all_files_seen (directory) ||
+	                    nemo_directory_is_in_search (directory) ||
+	                    !g_file_is_native (nemo_directory_get_location (directory)) ||
+	                    view->details->loading_pending_held > MAX_LOADING_PENDING_HELD;
+
+	if (schedule) {
+		schedule_timeout_display_of_pending_files (view, view->details->update_interval);
+	}
 }
 
 static void
@@ -4071,6 +4105,28 @@ files_changed_callback (NemoDirectory *directory,
 }
 
 static void
+display_pending_files_with_tradeoff (NemoView *view)
+{
+	NemoViewClass *klass = NEMO_VIEW_GET_CLASS (view);
+	const gchar *sort_attribute = NULL;
+
+	if (klass->get_sort_attribute != NULL) {
+		sort_attribute = klass->get_sort_attribute (view);
+	}
+
+	gboolean fast = sort_attribute == NULL || !nemo_file_attribute_slow_sort (sort_attribute);
+	view->details->display_method = fast ? "immediate" : "deferred";
+
+	unschedule_display_of_pending_files (view);
+
+	if (fast) {
+		display_pending_files (view);
+	} else {
+		schedule_timeout_display_of_pending_files (view, UPDATE_INTERVAL_DEFERRED);
+	}
+}
+
+static void
 done_loading_callback (NemoDirectory *directory,
 		       gpointer callback_data)
 {
@@ -4080,12 +4136,7 @@ done_loading_callback (NemoDirectory *directory,
 
 	process_new_files (view);
 	if (g_hash_table_size (view->details->non_ready_files) == 0) {
-		/* Unschedule a pending update and schedule a new one with the minimal
-		 * update interval. This gives the view a short chance at gathering the
-		 * (cached) deep counts.
-		 */
-		unschedule_display_of_pending_files (view);
-		schedule_timeout_display_of_pending_files (view, UPDATE_INTERVAL_MIN);
+		display_pending_files_with_tradeoff (view);
 	}
 }
 
@@ -10396,6 +10447,9 @@ load_directory (NemoView *view,
 	g_signal_emit (view, signals[CLEAR], 0);
 
 	view->details->loading = TRUE;
+	view->details->loading_pending_held = 0;
+	view->details->display_method = "progressive";
+	view->details->first_render_elapsed = -1.0;
 
 	/* Update menus when directory is empty, before going to new
 	 * location, so they won't have any false lingering knowledge
@@ -10481,7 +10535,7 @@ finish_loading (NemoView *view)
 		 * (cached) deep counts.
 		 */
 		unschedule_display_of_pending_files (view);
-		schedule_timeout_display_of_pending_files (view, UPDATE_INTERVAL_MIN);
+		schedule_timeout_display_of_pending_files (view, UPDATE_INTERVAL_DEFERRED);
 	}
 
 	/* Start loading. */
