@@ -1,3 +1,17 @@
+nemo (6.7.1) unstable; urgency=medium
+
+  [ konti1334 ]
+  * libnemo-private: fix use-after-free crash in nemo_file_mark_gone (#3724)
+
+  [ Michael Webster ]
+  * actions: Don't show in the places-sidebar menu, unless Conditions allow it.
+  * Renaming: Fix renaming in the list view being canceled when the keyboard layout changes.
+
+  [ Clement Lefebvre ]
+  * view: Increase navigation speed
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 19 May 2026 17:46:05 +0100
+
 nemo (6.7.0) unstable; urgency=medium
 
   [ Michael Webster ]
