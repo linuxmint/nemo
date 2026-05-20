@@ -384,6 +384,40 @@ nemo_desktop_application_open (GApplication *app,
     /* FIXME: how to do this? */
 }
 
+/* File managers known to accept --select with the same "open parent, select
+ * URI" semantics as nemo. */
+static const gchar * const select_capable_handlers[] = {
+    "nemo",
+    "nautilus",
+    "caja",
+    "dolphin",
+    NULL
+};
+
+static gboolean
+handler_supports_select (const gchar *exe)
+{
+    gchar *basename;
+    gboolean found = FALSE;
+    gint i;
+
+    if (exe == NULL) {
+        return FALSE;
+    }
+
+    basename = g_path_get_basename (exe);
+
+    for (i = 0; select_capable_handlers[i] != NULL; i++) {
+        if (g_strcmp0 (basename, select_capable_handlers[i]) == 0) {
+            found = TRUE;
+            break;
+        }
+    }
+
+    g_free (basename);
+    return found;
+}
+
 static void
 nemo_desktop_application_open_location (NemoApplication     *application,
                                         GFile               *location,
@@ -391,35 +425,96 @@ nemo_desktop_application_open_location (NemoApplication     *application,
                                         const char          *startup_id,
                                         const gboolean      open_in_tabs)
 {
+    /* Route through show_items so all "open with selection" paths share
+     * the same launch logic.  When there's no selection, fall back to
+     * g_app_info_launch with the location so we don't lose plain-folder
+     * opens (this path isn't currently exercised by the freedesktop dbus
+     * handlers but is part of the open_location contract). */
+    if (selection != NULL) {
+        GFile *one = selection;
+        nemo_application_show_items (application, &one, 1, startup_id);
+        return;
+    }
+
+    if (location != NULL) {
+        GAppInfo *appinfo;
+        GError *error = NULL;
+        GList *uri_list;
+
+        appinfo = g_app_info_get_default_for_type ("inode/directory", TRUE);
+        if (!appinfo) {
+            g_warning ("Cannot launch file browser, no mimetype handler for inode/directory");
+            return;
+        }
+
+        uri_list = g_list_prepend (NULL, location);
+        if (!g_app_info_launch (appinfo, uri_list, NULL, &error)) {
+            gchar *uri = g_file_get_uri (location);
+            g_warning ("Could not launch file browser to display file: %s", uri);
+            g_free (uri);
+            g_clear_error (&error);
+        }
+
+        g_list_free (uri_list);
+        g_clear_object (&appinfo);
+    }
+}
+
+static void
+nemo_desktop_application_show_items (NemoApplication *application,
+                                     GFile          **uris,
+                                     gint             n_uris,
+                                     const char      *startup_id)
+{
     GAppInfo *appinfo;
     GError *error = NULL;
-    GList *sel_list = NULL;
+    const gchar *exe;
+    gint i;
+
+    if (uris == NULL || n_uris == 0) {
+        return;
+    }
 
     appinfo = g_app_info_get_default_for_type ("inode/directory", TRUE);
-
     if (!appinfo) {
         g_warning ("Cannot launch file browser, no mimetype handler for inode/directory");
         return;
     }
 
-    if (selection != NULL) {
-        sel_list = g_list_prepend (sel_list, selection);
-    } else if (location != NULL) {
-        sel_list = g_list_prepend (sel_list, location);
-    }
+    exe = g_app_info_get_executable (appinfo);
 
-    if (!g_app_info_launch (appinfo, sel_list, NULL, &error)) {
-        gchar *uri;
+    if (handler_supports_select (exe)) {
+        GPtrArray *argv = g_ptr_array_new_with_free_func (g_free);
 
-        uri = g_file_get_uri (selection);
-        g_warning ("Could not launch file browser to display file: %s\n", uri);
+        g_ptr_array_add (argv, g_strdup (exe));
+        g_ptr_array_add (argv, g_strdup ("--select"));
+        for (i = 0; i < n_uris; i++) {
+            g_ptr_array_add (argv, g_file_get_uri (uris[i]));
+        }
+        g_ptr_array_add (argv, NULL);
 
-        g_free (uri);
-        g_clear_error (&error);
-    }
+        if (!g_spawn_async (NULL, (gchar **) argv->pdata, NULL,
+                            G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &error)) {
+            g_warning ("Could not launch file browser %s: %s", exe,
+                       error ? error->message : "(unknown)");
+            g_clear_error (&error);
+        }
 
-    if (sel_list != NULL) {
-        g_list_free (sel_list);
+        g_ptr_array_unref (argv);
+    } else {
+        GList *uri_list = NULL;
+
+        for (i = n_uris - 1; i >= 0; i--) {
+            uri_list = g_list_prepend (uri_list, uris[i]);
+        }
+
+        if (!g_app_info_launch (appinfo, uri_list, NULL, &error)) {
+            g_warning ("Could not launch file browser: %s",
+                       error ? error->message : "(unknown)");
+            g_clear_error (&error);
+        }
+
+        g_list_free (uri_list);
     }
 
     g_clear_object (&appinfo);
@@ -451,6 +546,7 @@ nemo_desktop_application_class_init (NemoDesktopApplicationClass *class)
     nemo_app_class->create_window = nemo_desktop_application_create_window;
     nemo_app_class->continue_quit = nemo_desktop_application_continue_quit;
     nemo_app_class->open_location = nemo_desktop_application_open_location;
+    nemo_app_class->show_items = nemo_desktop_application_show_items;
 
     g_type_class_add_private (class, sizeof (NemoDesktopApplicationPriv));
 }

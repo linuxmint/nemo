@@ -558,6 +558,85 @@ nemo_main_application_open_location (NemoApplication     *application,
 }
 
 static void
+nemo_main_application_show_items (NemoApplication *application,
+                                  GFile          **uris,
+                                  gint             n_uris,
+                                  const char      *startup_id)
+{
+	GHashTable *groups;
+	GHashTableIter iter;
+	gpointer key, value;
+	gint i;
+
+	if (uris == NULL || n_uris == 0) {
+		return;
+	}
+
+	/* Group URIs by their parent location so URIs sharing a parent open in
+	 * a single window with all of them selected, instead of N windows of
+	 * the same folder.  Keyed by parent URI string (owned by hash). */
+	groups = g_hash_table_new_full (g_str_hash, g_str_equal,
+	                                g_free, (GDestroyNotify) g_ptr_array_unref);
+
+	for (i = 0; i < n_uris; i++) {
+		GFile *parent;
+		gchar *key_uri;
+		GPtrArray *group;
+
+		parent = g_file_get_parent (uris[i]);
+		key_uri = (parent != NULL) ? g_file_get_uri (parent)
+		                           : g_file_get_uri (uris[i]);
+
+		group = g_hash_table_lookup (groups, key_uri);
+		if (group == NULL) {
+			group = g_ptr_array_new ();
+			g_hash_table_insert (groups, key_uri, group);
+		} else {
+			g_free (key_uri);
+		}
+		g_ptr_array_add (group, uris[i]);
+
+		g_clear_object (&parent);
+	}
+
+	g_hash_table_iter_init (&iter, groups);
+	while (g_hash_table_iter_next (&iter, &key, &value)) {
+		GPtrArray *group = (GPtrArray *) value;
+		GFile *first = g_ptr_array_index (group, 0);
+		GFile *parent;
+		NemoWindow *window;
+		GList *sel_list = NULL;
+		guint j;
+
+		parent = g_file_get_parent (first);
+
+		window = nemo_main_application_create_window (application, gdk_screen_get_default ());
+		if (startup_id != NULL) {
+			gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+		}
+
+		if (parent != NULL) {
+			for (j = 0; j < group->len; j++) {
+				sel_list = g_list_prepend (sel_list,
+				                           nemo_file_get ((GFile *) g_ptr_array_index (group, j)));
+			}
+			sel_list = g_list_reverse (sel_list);
+
+			nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), parent,
+			                                     0, sel_list, NULL, NULL);
+
+			nemo_file_list_free (sel_list);
+			g_object_unref (parent);
+		} else {
+			nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), first,
+			                                     0, NULL, NULL, NULL);
+		}
+	}
+
+	g_hash_table_destroy (groups);
+}
+
+static void
 nemo_main_application_open (GApplication *app,
                             GFile       **files,
                             gint          n_files,
@@ -569,15 +648,18 @@ nemo_main_application_open (GApplication *app,
 	gchar *geometry = NULL;
 	gboolean open_in_existing_window = strcmp (options, "EXISTING_WINDOW") == 0;
 	gboolean default_no_args = FALSE;
+	gboolean select_mode = FALSE;
 	const char splitter = '=';
 
 	g_debug ("Open called on the GApplication instance; %d files", n_files);
 
 	if (!open_in_existing_window) {
-		/* Check if local command line passed --geometry or --tabs */
+		/* Check if local command line passed --geometry, --tabs or --select */
 		if (strlen (options) > 0) {
 			gchar** split_options = g_strsplit (options, &splitter, 2);
-			if (g_str_has_prefix (split_options[0], "DEFAULT")) {
+			if (strcmp (split_options[0], "SELECT") == 0) {
+				select_mode = TRUE;
+			} else if (g_str_has_prefix (split_options[0], "DEFAULT")) {
 				default_no_args = TRUE;
 				if (g_str_has_prefix (split_options[0], "DEFAULT+")) {
 					geometry = g_strdup (split_options[0] + strlen ("DEFAULT+"));
@@ -591,13 +673,16 @@ nemo_main_application_open (GApplication *app,
 	}
 
 	DEBUG ("Open called on the GApplication instance; %d files, open in tabs: %s, geometry: '%s',"
-           "open in existing window: %s",
+           "open in existing window: %s, select mode: %s",
            n_files,
            open_in_tabs ? "yes" : "no",
            geometry ? geometry : "none",
-           open_in_existing_window ? "yes" : "no");
+           open_in_existing_window ? "yes" : "no",
+           select_mode ? "yes" : "no");
 
-	if (default_no_args) {
+	if (select_mode) {
+		nemo_application_show_items (NEMO_APPLICATION (app), files, n_files, NULL);
+	} else if (default_no_args) {
 		/* Treat this as a no-arg launch; open_windows() will attempt session restore
 		 * and fall back to Home if restore isn't possible. */
 		open_windows (self, NULL, 0, gdk_screen_get_default (), geometry, open_in_tabs, open_in_existing_window);
@@ -705,6 +790,7 @@ nemo_main_application_local_command_line (GApplication *application,
     gboolean no_desktop_ignored = FALSE;
 	gboolean fix_cache = FALSE;
     gboolean debug = FALSE;
+	gboolean select = FALSE;
 	gchar **remaining = NULL;
     GApplicationFlags init_flags;
 	NemoMainApplication *self = NEMO_MAIN_APPLICATION (application);
@@ -730,6 +816,8 @@ nemo_main_application_local_command_line (GApplication *application,
 		  N_("Open URIs in tabs."), NULL },
 		{ "existing-window", 0, 0, G_OPTION_ARG_NONE, &open_in_existing_window,
 		  N_("Open URIs in an existing window."), NULL },
+		{ "select", 's', 0, G_OPTION_ARG_NONE, &select,
+		  N_("Show URI's parent and select the URI."), NULL },
 		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
 		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
@@ -870,6 +958,12 @@ post_registration:
 		g_strfreev (remaining);
 	}
 
+	if (select && len == 0) {
+		g_printerr ("%s\n", _("--select must be used with at least one URI."));
+		*exit_status = EXIT_FAILURE;
+		goto out;
+	}
+
 	if (files == NULL && !no_default_window) {
 		/* Original behavior: default to Home when no URIs are provided. */
 		files = g_malloc0 (2 * sizeof (GFile *));
@@ -888,6 +982,8 @@ post_registration:
 		gchar* concatOptions = g_malloc0(64);
 		if (open_in_existing_window) {
 			g_stpcpy (concatOptions, "EXISTING_WINDOW");
+		} else if (select) {
+			g_snprintf (concatOptions, 64, "SELECT=%d", open_in_tabs);
 		} else {
 			if (self->priv->geometry == NULL) {
 				/* If Home was synthesized because no URIs were passed, signal that
@@ -1032,6 +1128,7 @@ nemo_main_application_class_init (NemoMainApplicationClass *class)
 
     nemo_app_class = NEMO_APPLICATION_CLASS (class);
     nemo_app_class->open_location = nemo_main_application_open_location;
+    nemo_app_class->show_items = nemo_main_application_show_items;
     nemo_app_class->create_window = nemo_main_application_create_window;
     nemo_app_class->notify_unmount_show = nemo_main_application_notify_unmount_show;
     nemo_app_class->notify_unmount_done = nemo_main_application_notify_unmount_done;

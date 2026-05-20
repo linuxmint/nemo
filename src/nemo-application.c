@@ -454,6 +454,18 @@ nemo_application_open_location (NemoApplication *application,
                                                                               open_in_tabs);
 }
 
+void
+nemo_application_show_items (NemoApplication *application,
+                             GFile          **uris,
+                             gint             n_uris,
+                             const char      *startup_id)
+{
+    NEMO_APPLICATION_CLASS (G_OBJECT_GET_CLASS (application))->show_items (application,
+                                                                           uris,
+                                                                           n_uris,
+                                                                           startup_id);
+}
+
 NemoWindow *
 nemo_application_create_window (NemoApplication *application,
                                 GdkScreen       *screen)

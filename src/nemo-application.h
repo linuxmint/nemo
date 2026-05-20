@@ -62,6 +62,11 @@ struct NemoApplicationClass {
                                     const char *startup_id,
                                     const gboolean open_in_tabs);
 
+    void         (* show_items)    (NemoApplication *application,
+                                    GFile          **uris,
+                                    gint             n_uris,
+                                    const char      *startup_id);
+
     NemoWindow * (* create_window) (NemoApplication *application,
                                     GdkScreen       *screen);
 
@@ -88,6 +93,10 @@ void nemo_application_open_location (NemoApplication *application,
                                      GFile *selection,
                                      const char *startup_id,
                                      const gboolean open_in_tabs);
+void nemo_application_show_items    (NemoApplication *application,
+                                     GFile          **uris,
+                                     gint             n_uris,
+                                     const char      *startup_id);
 void nemo_application_close_all_windows (NemoApplication *self);
 
 void nemo_application_notify_unmount_show (NemoApplication *application,

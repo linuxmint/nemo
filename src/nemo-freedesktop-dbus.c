@@ -59,27 +59,23 @@ skeleton_handle_show_items_cb (NemoFreedesktopFileManager1 *object,
 			       const gchar *startup_id,
 			       gpointer data)
 {
-        NemoApplication *application;
+	NemoApplication *application;
+	GPtrArray *files;
 	int i;
 
-        application = NEMO_APPLICATION (g_application_get_default ());
+	application = NEMO_APPLICATION (g_application_get_default ());
 
+	files = g_ptr_array_new_with_free_func (g_object_unref);
 	for (i = 0; uris[i] != NULL; i++) {
-		GFile *file;
-		GFile *parent;
-
-		file = g_file_new_for_uri (uris[i]);
-		parent = g_file_get_parent (file);
-
-		if (parent != NULL) {
-			nemo_application_open_location (application, parent, file, startup_id, FALSE);
-			g_object_unref (parent);
-		} else {
-			nemo_application_open_location (application, file, NULL, startup_id, FALSE);
-		}
-
-		g_object_unref (file);
+		g_ptr_array_add (files, g_file_new_for_uri (uris[i]));
 	}
+
+	nemo_application_show_items (application,
+	                             (GFile **) files->pdata,
+	                             files->len,
+	                             startup_id);
+
+	g_ptr_array_unref (files);
 
 	nemo_freedesktop_file_manager1_complete_show_items (object, invocation);
 	return TRUE;
