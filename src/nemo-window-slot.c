@@ -28,6 +28,7 @@
 
 #include "nemo-actions.h"
 #include "nemo-desktop-window.h"
+#include "nemo-filter-bar.h"
 #include "nemo-floating-bar.h"
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
@@ -198,6 +199,7 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 					       gboolean            visible)
 {
     gtk_widget_hide (slot->no_search_results_box);
+    nemo_window_slot_hide_filter_bar (slot);
 
 	if (visible) {
 		ensure_query_editor (slot);
@@ -223,6 +225,10 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
         }
 
         nemo_query_editor_set_query (slot->query_editor, NULL);
+
+        if (slot->content_view != NULL) {
+            nemo_view_grab_focus (slot->content_view);
+        }
 	}
 }
 
@@ -276,8 +282,8 @@ floating_bar_action_cb (NemoFloatingBar *floating_bar,
 	}
 }
 
-static GtkWidget *
-create_nsr_box (void)
+static void
+create_nsr_box (NemoWindowSlot *slot)
 {
     GtkWidget *box;
     GtkWidget *widget;
@@ -288,7 +294,7 @@ create_nsr_box (void)
     widget = gtk_image_new_from_icon_name ("xsi-search-symbolic", GTK_ICON_SIZE_DIALOG);
     gtk_box_pack_start (GTK_BOX (box), widget, FALSE, FALSE, 0);
 
-    widget = gtk_label_new (_("No files found"));
+    widget = gtk_label_new ("");
     attrs = pango_attr_list_new ();
     pango_attr_list_insert (attrs, pango_attr_size_new (20 * PANGO_SCALE));
     gtk_label_set_attributes (GTK_LABEL (widget), attrs);
@@ -301,7 +307,69 @@ create_nsr_box (void)
     gtk_widget_show_all (box);
     gtk_widget_set_no_show_all (box, TRUE);
     gtk_widget_hide (box);
-    return box;
+
+    slot->no_search_results_box = box;
+    slot->no_results_label = widget;
+}
+
+static void
+view_begin_loading_cb (NemoView       *view,
+                       NemoWindowSlot *slot)
+{
+    if (gtk_revealer_get_reveal_child (GTK_REVEALER (slot->filter_bar_revealer))) {
+        gtk_revealer_set_reveal_child (GTK_REVEALER (slot->filter_bar_revealer), FALSE);
+        nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), "");
+    }
+
+    nemo_view_grab_focus (view);
+}
+
+static void
+filter_bar_cancel_cb (NemoFilterBar *bar,
+                      NemoWindowSlot *slot)
+{
+    if (slot->content_view != NULL) {
+        nemo_view_clear_filter (slot->content_view);
+    }
+}
+
+static void
+view_activate_filter_cb (NemoView   *view,
+                         const char *filter_text,
+                         NemoWindowSlot *slot)
+{
+    if (filter_text != NULL && filter_text[0] != '\0') {
+        gtk_revealer_set_reveal_child (GTK_REVEALER (slot->filter_bar_revealer), TRUE);
+        nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), filter_text);
+
+        if (NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->is_empty (view)) {
+            gtk_label_set_text (GTK_LABEL (slot->no_results_label), _("No matching files"));
+            gtk_widget_show (slot->no_search_results_box);
+        } else {
+            gtk_widget_hide (slot->no_search_results_box);
+        }
+    } else {
+        gtk_widget_hide (slot->no_search_results_box);
+        nemo_window_slot_hide_filter_bar (slot);
+    }
+}
+
+void
+nemo_window_slot_hide_filter_bar (NemoWindowSlot *slot)
+{
+    g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
+
+    if (!gtk_revealer_get_reveal_child (GTK_REVEALER (slot->filter_bar_revealer))) {
+        return;
+    }
+
+    gtk_revealer_set_reveal_child (GTK_REVEALER (slot->filter_bar_revealer), FALSE);
+    nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), "");
+
+    if (slot->content_view != NULL) {
+        nemo_view_clear_filter (slot->content_view);
+        nemo_view_grab_focus (slot->content_view);
+    }
 }
 
 static void
@@ -322,6 +390,18 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 
 	nemo_window_slot_add_extra_location_widget (slot, GTK_WIDGET (slot->query_editor));
 
+    slot->filter_bar = nemo_filter_bar_new ();
+    slot->filter_bar_revealer = gtk_revealer_new ();
+    gtk_revealer_set_transition_type (GTK_REVEALER (slot->filter_bar_revealer),
+                                      GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN);
+    gtk_revealer_set_transition_duration (GTK_REVEALER (slot->filter_bar_revealer), 150);
+    gtk_container_add (GTK_CONTAINER (slot->filter_bar_revealer), slot->filter_bar);
+    gtk_box_pack_start (GTK_BOX (slot), slot->filter_bar_revealer, FALSE, FALSE, 0);
+    gtk_widget_show_all (slot->filter_bar_revealer);
+
+    g_signal_connect (slot->filter_bar, "cancel",
+                      G_CALLBACK (filter_bar_cancel_cb), slot);
+
 	slot->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->view_overlay,
 			       GDK_ENTER_NOTIFY_MASK |
@@ -335,7 +415,7 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 	gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
 				 slot->floating_bar);
 
-    slot->no_search_results_box = create_nsr_box ();
+    create_nsr_box (slot);
     gtk_overlay_add_overlay (GTK_OVERLAY (slot->view_overlay),
                              slot->no_search_results_box);
 
@@ -362,10 +442,10 @@ view_end_loading_cb (NemoView       *view,
 
         if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
             if (!nemo_directory_is_not_empty (directory)) {
+                gtk_label_set_text (GTK_LABEL (slot->no_results_label), _("No files found"));
                 gtk_widget_show (slot->no_search_results_box);
             } else {
                 gtk_widget_hide (slot->no_search_results_box);
-
             }
         }
 
@@ -632,6 +712,12 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 	if (slot->content_view != NULL) {
 		/* disconnect old view */
         g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_end_loading_cb), slot);
+        g_signal_handlers_disconnect_by_func (slot->content_view, G_CALLBACK (view_begin_loading_cb), slot);
+
+        if (slot->filter_activate_handler_id > 0) {
+            g_signal_handler_disconnect (slot->content_view, slot->filter_activate_handler_id);
+            slot->filter_activate_handler_id = 0;
+        }
 
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
@@ -640,6 +726,9 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 		g_object_unref (slot->content_view);
 		slot->content_view = NULL;
 	}
+
+    /* Hide filter bar when switching views */
+    nemo_window_slot_hide_filter_bar (slot);
 
 	if (new_view != NULL) {
 		widget = GTK_WIDGET (new_view);
@@ -650,6 +739,11 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
 		g_object_ref (slot->content_view);
 
 		g_signal_connect (new_view, "end_loading", G_CALLBACK (view_end_loading_cb), slot);
+		g_signal_connect (new_view, "begin_loading", G_CALLBACK (view_begin_loading_cb), slot);
+
+        slot->filter_activate_handler_id =
+            g_signal_connect (new_view, "activate-filter",
+                              G_CALLBACK (view_activate_filter_cb), slot);
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);

@@ -31,6 +31,8 @@ nemo_private_sources = [
   'nemo-directory.c',
   'nemo-dnd.c',
   'nemo-entry.c',
+  'fzy-match.c',
+  'nemo-fzy-utils.c',
   'nemo-file-changes-queue.c',
   'nemo-file-conflict-dialog.c',
   'nemo-file-dnd.c',
