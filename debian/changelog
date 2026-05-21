@@ -1,3 +1,12 @@
+nemo (6.7.2) unstable; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-application: Fix FileManager1.ShowItems().
+  * all: Remove pango-1.44 conditional checks, bump minimum version req.
+  * Implement a filtered view for interactive-search.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 21 May 2026 10:43:10 +0100
+
 nemo (6.7.1) unstable; urgency=medium
 
   [ konti1334 ]
