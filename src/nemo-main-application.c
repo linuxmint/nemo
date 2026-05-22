@@ -557,6 +557,62 @@ nemo_main_application_open_location (NemoApplication     *application,
 	}
 }
 
+static NemoWindowSlot *
+find_existing_slot_for_location (NemoApplication *application,
+                                 GFile           *location)
+{
+	GList *windows;
+	GList *l;
+
+	windows = gtk_application_get_windows (GTK_APPLICATION (application));
+	for (l = windows; l != NULL; l = l->next) {
+		NemoWindow *window;
+		GList *p;
+
+		if (!NEMO_IS_WINDOW (l->data)) {
+			continue;
+		}
+
+		window = NEMO_WINDOW (l->data);
+
+		for (p = window->details->panes; p != NULL; p = p->next) {
+			NemoWindowPane *pane = p->data;
+			GList *s;
+
+			for (s = pane->slots; s != NULL; s = s->next) {
+				NemoWindowSlot *slot = s->data;
+				GFile *slot_location;
+				gboolean match;
+
+				slot_location = nemo_window_slot_get_location (slot);
+				if (slot_location == NULL) {
+					continue;
+				}
+
+				match = g_file_equal (slot_location, location);
+				g_object_unref (slot_location);
+
+				if (match) {
+					return slot;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+static void
+present_window (NemoWindow *window)
+{
+	if (eel_check_is_wayland ()) {
+		gtk_window_present (GTK_WINDOW (window));
+	} else {
+		gtk_window_present_with_time (GTK_WINDOW (window),
+		                              gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
+	}
+}
+
 static void
 nemo_main_application_show_items (NemoApplication *application,
                                   GFile          **uris,
@@ -604,16 +660,13 @@ nemo_main_application_show_items (NemoApplication *application,
 		GPtrArray *group = (GPtrArray *) value;
 		GFile *first = g_ptr_array_index (group, 0);
 		GFile *parent;
-		NemoWindow *window;
+		GFile *target;
+		NemoWindowSlot *existing_slot;
 		GList *sel_list = NULL;
 		guint j;
 
 		parent = g_file_get_parent (first);
-
-		window = nemo_main_application_create_window (application, gdk_screen_get_default ());
-		if (startup_id != NULL) {
-			gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
-		}
+		target = (parent != NULL) ? parent : first;
 
 		if (parent != NULL) {
 			for (j = 0; j < group->len; j++) {
@@ -621,16 +674,40 @@ nemo_main_application_show_items (NemoApplication *application,
 				                           nemo_file_get ((GFile *) g_ptr_array_index (group, j)));
 			}
 			sel_list = g_list_reverse (sel_list);
-
-			nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), parent,
-			                                     0, sel_list, NULL, NULL);
-
-			nemo_file_list_free (sel_list);
-			g_object_unref (parent);
-		} else {
-			nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), first,
-			                                     0, NULL, NULL, NULL);
 		}
+
+		existing_slot = find_existing_slot_for_location (application, target);
+
+		if (existing_slot != NULL) {
+			NemoWindow *window = nemo_window_slot_get_window (existing_slot);
+			NemoView *view;
+
+			nemo_window_slot_make_hosting_pane_active (existing_slot);
+
+			if (sel_list != NULL) {
+				view = nemo_window_slot_get_current_view (existing_slot);
+				if (view != NULL) {
+					nemo_view_set_selection (view, sel_list);
+				}
+			}
+
+			present_window (window);
+		} else {
+			NemoWindow *window;
+
+			window = nemo_main_application_create_window (application, gdk_screen_get_default ());
+			if (startup_id != NULL) {
+				gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+			}
+
+			nemo_window_slot_open_location_full (nemo_window_get_active_slot (window), target,
+			                                     0, sel_list, NULL, NULL);
+		}
+
+		if (sel_list != NULL) {
+			nemo_file_list_free (sel_list);
+		}
+		g_clear_object (&parent);
 	}
 
 	g_hash_table_destroy (groups);
