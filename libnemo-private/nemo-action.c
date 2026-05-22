@@ -1141,12 +1141,12 @@ nemo_action_get_property (GObject    *object,
 static gchar *
 find_token_type (const gchar *str, TokenType *token_type)
 {
-    gchar *ptr = NULL;
+    gchar *ptr = (gchar *) str;
     *token_type = TOKEN_NONE;
 
-    ptr = g_strstr_len (str, -1, "%");
+    while ((ptr = g_strstr_len (ptr, -1, "%")) != NULL) {
 
-    if (ptr != NULL) {
+    
         if (g_str_has_prefix (ptr, TOKEN_EXEC_FILE_LIST)) {
             *token_type = TOKEN_PATH_LIST;
             return ptr;
@@ -1191,6 +1191,7 @@ find_token_type (const gchar *str, TokenType *token_type)
             *token_type = TOKEN_XID;
             return ptr;
         }
+       ptr++;
     }
 
     return NULL;
