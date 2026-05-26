@@ -109,6 +109,7 @@ struct NemoWindowSlot {
 	char *pending_scroll_to;
 	GList *pending_selection;
 	NemoFile *determine_view_file;
+	gpointer determine_view_weak_data; /* SlotWeakData* for use-after-free guard */
 	GCancellable *mount_cancellable;
 	GError *mount_error;
 	gboolean tried_mount;

@@ -91,6 +91,23 @@ static void end_location_change                       (NemoWindowSlot         *s
 static void cancel_location_change                    (NemoWindowSlot         *slot);
 static void got_file_info_for_view_selection_callback (NemoFile               *file,
 						       gpointer                    callback_data);
+
+/* Weak-reference notify: called by GObject when the NemoWindowSlot is
+ * finalized.  We store the slot pointer inside a GWeakRef-like gpointer
+ * that lives on the heap so that got_file_info_for_view_selection_callback
+ * can detect a dangling reference and bail out safely.
+ */
+typedef struct {
+    NemoWindowSlot *slot; /* zeroed by slot_weak_notify when slot dies */
+} SlotWeakData;
+
+static void
+slot_weak_notify (gpointer data,
+                  GObject *former_object)
+{
+    SlotWeakData *wd = data;
+    wd->slot = NULL;
+}
 static void create_content_view                       (NemoWindowSlot         *slot,
 						       const char                 *view_id);
 static void display_view_selection_failure            (NemoWindow             *window,
@@ -749,11 +766,19 @@ begin_location_change (NemoWindowSlot        *slot,
 	 * this ensures that the window isn't destroyed */
         cancel_viewed_file_changed_callback (slot);
 
+	/* Allocate a small sentinel that will be zeroed by slot_weak_notify if
+	 * the slot is destroyed before the async callback fires (use-after-free
+	 * guard, Solution B). */
+	SlotWeakData *_wd = g_new0 (SlotWeakData, 1);
+	_wd->slot = slot;
+	g_object_weak_ref (G_OBJECT (slot), slot_weak_notify, _wd);
+	slot->determine_view_weak_data = _wd;
+
 	nemo_file_call_when_ready (slot->determine_view_file,
 				       NEMO_FILE_ATTRIBUTE_INFO |
 				       NEMO_FILE_ATTRIBUTE_MOUNT,
                                        got_file_info_for_view_selection_callback,
-				       slot);
+				       _wd);
 }
 
 typedef struct {
@@ -794,10 +819,15 @@ mount_not_mounted_callback (GObject *source_object,
 		g_error_free (error);
 	} else {
 		nemo_file_invalidate_all_attributes (slot->determine_view_file);
+		SlotWeakData *_wd3 = g_new0 (SlotWeakData, 1);
+		_wd3->slot = slot;
+		g_object_weak_ref (G_OBJECT (slot), slot_weak_notify, _wd3);
+		slot->determine_view_weak_data = _wd3;
+
 		nemo_file_call_when_ready (slot->determine_view_file,
 					       NEMO_FILE_ATTRIBUTE_INFO,
 					       got_file_info_for_view_selection_callback,
-					       slot);
+					       _wd3);
 	}
 
 	g_object_unref (cancellable);
@@ -817,8 +847,28 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	GMountOperation *mount_op;
 	MountNotMountedData *data;
 	NemoApplication *app;
+	SlotWeakData *_wd;
 
-	slot = callback_data;
+	_wd = callback_data;
+
+	/* --- Weak-reference guard (Solution B) ---
+	 * If the NemoWindowSlot was destroyed between nemo_file_call_when_ready
+	 * and the moment this callback fires, slot_weak_notify() has already
+	 * zeroed _wd->slot.  Bail out gracefully instead of crashing.
+	 */
+	if (_wd->slot == NULL || !NEMO_IS_WINDOW_SLOT (_wd->slot)) {
+		nemo_file_unref (file);
+		g_free (_wd);
+		return;
+	}
+
+	slot = _wd->slot;
+	/* The slot is still alive: remove our weak reference so slot_weak_notify
+	 * is not called a second time when the slot is eventually finalized. */
+	g_object_weak_unref (G_OBJECT (slot), slot_weak_notify, _wd);
+	g_free (_wd);
+	slot->determine_view_weak_data = NULL;
+
 	window = nemo_window_slot_get_window (slot);
 
 	g_assert (slot->determine_view_file == file);
@@ -867,10 +917,15 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		slot->pending_scroll_to = nemo_file_get_uri (file);
 
 		nemo_file_invalidate_all_attributes (slot->determine_view_file);
+		SlotWeakData *_wd2 = g_new0 (SlotWeakData, 1);
+		_wd2->slot = slot;
+		g_object_weak_ref (G_OBJECT (slot), slot_weak_notify, _wd2);
+		slot->determine_view_weak_data = _wd2;
+
 		nemo_file_call_when_ready (slot->determine_view_file,
 					       NEMO_FILE_ATTRIBUTE_INFO,
 					       got_file_info_for_view_selection_callback,
-					       slot);
+					       _wd2);
 
 		nemo_file_unref (file);
 
@@ -1654,9 +1709,25 @@ free_location_change (NemoWindowSlot *slot)
 	}
 
         if (slot->determine_view_file != NULL) {
-		nemo_file_cancel_call_when_ready
-			(slot->determine_view_file,
-			 got_file_info_for_view_selection_callback, slot);
+		/* Cancel the pending call_when_ready using the correct SlotWeakData
+		 * pointer.  Also remove the weak ref so slot_weak_notify is not
+		 * invoked after we have already freed _wd. */
+		if (slot->determine_view_weak_data != NULL) {
+			SlotWeakData *_wd_cancel = slot->determine_view_weak_data;
+			slot->determine_view_weak_data = NULL;
+			/* Prevent slot_weak_notify from being called after free */
+			if (_wd_cancel->slot != NULL) {
+				g_object_weak_unref (G_OBJECT (slot), slot_weak_notify, _wd_cancel);
+			}
+			nemo_file_cancel_call_when_ready
+				(slot->determine_view_file,
+				 got_file_info_for_view_selection_callback, _wd_cancel);
+			g_free (_wd_cancel);
+		} else {
+			nemo_file_cancel_call_when_ready
+				(slot->determine_view_file,
+				 got_file_info_for_view_selection_callback, NULL);
+		}
                 slot->determine_view_file = NULL;
         }
 
