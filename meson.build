@@ -1,7 +1,7 @@
 # Meson build file
 
 # https://github.com/linuxmint/nemo
-project('nemo', 'c', version : '6.7.2', meson_version : '>=0.56.0')
+project('nemo', 'c', version : '6.7.2', meson_version : '>=0.64.0')
 
 # 1. If the library code has changed at all since last release, then increment revision.
 # 2. If any interfaces have been added, then increment current and set revision to 0.
@@ -182,7 +182,6 @@ nemo_definitions =  [
 
 po_subdir = join_paths(meson.project_source_root(), 'po')
 
-subdir('install-scripts')
 subdir('cut-n-paste-code/libegg')
 subdir('data')
 subdir('eel')
@@ -196,6 +195,14 @@ subdir('search-helpers')
 subdir('test')
 subdir('docs')
 subdir('action-layout-editor')
+
+# Post-installation actions. Skipped automatically when DESTDIR is set
+# (debian builds, etc.), since the package manager handles them.
+gnome.post_install(
+    glib_compile_schemas: true,
+    gtk_update_icon_cache: true,
+    update_mime_database: true,
+)
 
 message('\n'.join(['',
 '        @0@-@1@'.format(meson.project_name(), meson.project_version()),
