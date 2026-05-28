@@ -33,6 +33,7 @@
 #include "nemo-desktop-application.h"
 
 #include <libnemo-private/nemo-debug.h>
+#include <libnemo-private/nemo-malloc-utils.h>
 #include <eel/eel-debug.h>
 
 #include <glib/gi18n.h>
@@ -41,9 +42,6 @@
 
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
-#endif
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -104,19 +102,7 @@ main (int argc, char *argv[])
 	gint retval;
 	NemoApplication *application;
 
-#if defined (HAVE_MALLOPT) && defined(M_MMAP_THRESHOLD)
-	/* Nemo uses lots and lots of small and medium size allocations,
-	 * and then a few large ones for the desktop background. By default
-	 * glibc uses a dynamic treshold for how large allocations should
-	 * be mmaped. Unfortunately this triggers quickly for nemo when
-	 * it does the desktop background allocations, raising the limit
-	 * such that a lot of temporary large allocations end up on the
-	 * heap and are thus not returned to the OS. To fix this we set
-	 * a hardcoded limit. I don't know what a good value is, but 128K
-	 * was the old glibc static limit, lets use that.
-	 */
-	mallopt (M_MMAP_THRESHOLD, 128 *1024);
-#endif
+	nemo_malloc_setup ();
 
 	/* This will be done by gtk+ later, but for now, force it to GNOME */
 	g_desktop_app_info_set_desktop_env ("GNOME");

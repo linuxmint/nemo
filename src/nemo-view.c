@@ -75,6 +75,7 @@
 #include <libnemo-private/nemo-file-dnd.h>
 #include <libnemo-private/nemo-file-operations.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-malloc-utils.h>
 #include <libnemo-private/fzy-match.h>
 #include <libnemo-private/nemo-fzy-utils.h>
 #include <libnemo-private/nemo-file-private.h>
@@ -4162,6 +4163,8 @@ done_loading_callback (NemoDirectory *directory,
 	if (g_hash_table_size (view->details->non_ready_files) == 0) {
 		display_pending_files_with_tradeoff (view);
 	}
+
+	nemo_schedule_heap_trim ();
 }
 
 static void

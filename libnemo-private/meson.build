@@ -49,6 +49,7 @@ nemo_private_sources = [
   'nemo-icon-info.c',
   'nemo-job-queue.c',
   'nemo-lib-self-check-functions.c',
+  'nemo-malloc-utils.c',
   'nemo-link.c',
   'nemo-merged-directory.c',
   'nemo-metadata.c',
