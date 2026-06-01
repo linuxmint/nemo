@@ -2380,6 +2380,17 @@ nemo_icon_view_update_filter_text (NemoView   *view,
     }
 }
 
+static void
+nemo_icon_view_select_first (NemoView *view)
+{
+    NemoIconContainer *container;
+
+    container = nemo_icon_view_get_icon_container (NEMO_ICON_VIEW (view));
+    if (container != NULL) {
+        nemo_icon_container_select_first (container);
+    }
+}
+
 static gboolean
 icon_container_activate_filter_cb (NemoIconContainer *container,
                                    GdkEvent *event,
@@ -2775,6 +2786,7 @@ nemo_icon_view_class_init (NemoIconViewClass *klass)
 	nemo_view_class->invert_selection = nemo_icon_view_invert_selection;
 	nemo_view_class->compare_files = compare_files;
 	nemo_view_class->update_filter_text = nemo_icon_view_update_filter_text;
+	nemo_view_class->select_first = nemo_icon_view_select_first;
 	nemo_view_class->zoom_to_level = nemo_icon_view_zoom_to_level;
 	nemo_view_class->get_zoom_level = nemo_icon_view_get_zoom_level;
         nemo_view_class->click_policy_changed = nemo_icon_view_click_policy_changed;

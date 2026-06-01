@@ -302,6 +302,7 @@ void              nemo_icon_container_set_highlighted_for_clipboard (NemoIconCon
 /* operations on all icons */
 void              nemo_icon_container_unselect_all                  (NemoIconContainer  *view);
 void              nemo_icon_container_select_all                    (NemoIconContainer  *view);
+void              nemo_icon_container_select_first                  (NemoIconContainer  *container);
 
 
 /* operations on the selection */

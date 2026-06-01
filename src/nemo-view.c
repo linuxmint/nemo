@@ -10928,6 +10928,10 @@ apply_filter_debounce_cb (gpointer data)
     NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->update_filter_text (view, view->details->filter_text);
     nemo_view_apply_filter (view);
 
+    if (view->details->filter_active) {
+        NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->select_first (view);
+    }
+
     /* Re-emit so the slot can update the "no matching files" indicator
      * now that apply_filter has updated the view contents. */
     g_signal_emit (view, signals[ACTIVATE_FILTER], 0, view->details->filter_text);
@@ -11088,6 +11092,11 @@ real_using_manual_layout (NemoView *view)
 
 static void
 real_update_filter_text (NemoView *view, const char *filter_text)
+{
+}
+
+static void
+real_select_first (NemoView *view)
 {
 }
 
@@ -11549,6 +11558,7 @@ nemo_view_class_init (NemoViewClass *klass)
         klass->unmerge_menus = real_unmerge_menus;
         klass->update_menus = real_update_menus;
 	klass->update_filter_text = real_update_filter_text;
+	klass->select_first = real_select_first;
 	klass->trash = real_trash;
 	klass->delete = real_delete;
 

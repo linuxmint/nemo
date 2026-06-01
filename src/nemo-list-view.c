@@ -274,6 +274,7 @@ get_default_sort_order (NemoFile *file, gboolean *reversed)
 }
 
 static void nemo_list_view_update_filter_text (NemoView *view, const char *filter_text);
+static void nemo_list_view_select_first        (NemoView *view);
 
 static void
 tooltip_prefs_changed_callback (NemoListView *view)
@@ -4427,6 +4428,7 @@ nemo_list_view_class_init (NemoListViewClass *class)
 	nemo_view_class->invert_selection = nemo_list_view_invert_selection;
 	nemo_view_class->compare_files = nemo_list_view_compare_files;
 	nemo_view_class->update_filter_text = nemo_list_view_update_filter_text;
+	nemo_view_class->select_first = nemo_list_view_select_first;
 	nemo_view_class->sort_directories_first_changed = nemo_list_view_sort_directories_first_changed;
 	nemo_view_class->sort_favorites_first_changed = nemo_list_view_sort_favorites_first_changed;
 	nemo_view_class->start_renaming_file = nemo_list_view_start_renaming_file;
@@ -4597,4 +4599,21 @@ nemo_list_view_update_filter_text (NemoView   *view,
 
     nemo_list_model_set_filter_active (list_view->details->model,
                                        filter_text != NULL && filter_text[0] != '\0');
+}
+
+static void
+nemo_list_view_select_first (NemoView *view)
+{
+    NemoListView *list_view = NEMO_LIST_VIEW (view);
+    GtkTreeModel *model = GTK_TREE_MODEL (list_view->details->model);
+    GtkTreeIter iter;
+    GtkTreePath *path;
+
+    if (!gtk_tree_model_get_iter_first (model, &iter)) {
+        return;
+    }
+
+    path = gtk_tree_model_get_path (model, &iter);
+    gtk_tree_view_set_cursor (list_view->details->tree_view, path, NULL, FALSE);
+    gtk_tree_path_free (path);
 }

@@ -6200,6 +6200,43 @@ nemo_icon_container_select_all (NemoIconContainer *container)
 }
 
 /**
+ * nemo_icon_container_select_first:
+ * @container: An icon container widget.
+ *
+ * Selects the first icon in display order, unselecting any others.
+ * The icon list is resorted first if pending changes (such as
+ * a filtered add) left it out of order.
+ **/
+void
+nemo_icon_container_select_first (NemoIconContainer *container)
+{
+    NemoIcon *icon;
+
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    if (container->details->needs_resort) {
+        nemo_icon_container_resort (container);
+        container->details->needs_resort = FALSE;
+    }
+
+    if (container->details->icons == NULL) {
+        return;
+    }
+
+    icon = container->details->icons->data;
+
+    /* Drop any stale keyboard focus from the previous selection so arrow-key
+     * navigation starts from this new selection. */
+    clear_keyboard_focus (container);
+    clear_keyboard_rubberband_start (container);
+    container->details->range_selection_base_icon = icon;
+
+    if (select_one_unselect_others (container, icon)) {
+        g_signal_emit (container, signals[SELECTION_CHANGED], 0);
+    }
+}
+
+/**
  * nemo_icon_container_set_selection:
  * @container: An icon container widget.
  * @selection: A list of NemoIconData *.

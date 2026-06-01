@@ -317,6 +317,8 @@ struct NemoViewClass {
 	void    (* update_filter_text)             (NemoView *view,
 						   const char  *filter_text);
 
+	void    (* select_first)                   (NemoView *view);
+
         /* Signals used only for keybindings */
         gboolean (* trash)                         (NemoView *view);
         gboolean (* delete)                        (NemoView *view);
