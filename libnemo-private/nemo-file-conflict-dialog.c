@@ -49,6 +49,8 @@ struct _NemoFileConflictDialogDetails
 	gulong dest_handler_id;
 
 	/* UI objects */
+	GtkWidget *stack;
+	GtkWidget *spinner;
 	GtkWidget *titles_vbox;
 	GtkWidget *first_hbox;
 	GtkWidget *second_hbox;
@@ -336,6 +338,16 @@ file_list_ready_cb (GList *files,
 			  G_CALLBACK (file_icons_changed), fcd);
 	details->dest_handler_id = g_signal_connect (dest, "changed",
 			  G_CALLBACK (file_icons_changed), fcd);
+
+	gtk_stack_set_visible_child_name (GTK_STACK (details->stack), "content");
+	gtk_spinner_stop (GTK_SPINNER (details->spinner));
+
+	gtk_dialog_set_response_sensitive (GTK_DIALOG (fcd), CONFLICT_RESPONSE_SKIP, TRUE);
+	gtk_dialog_set_response_sensitive (GTK_DIALOG (fcd), CONFLICT_RESPONSE_AUTO_RENAME, TRUE);
+	gtk_dialog_set_response_sensitive (GTK_DIALOG (fcd), CONFLICT_RESPONSE_REPLACE, TRUE);
+	gtk_widget_set_sensitive (details->expander, TRUE);
+	gtk_widget_set_sensitive (details->checkbox, TRUE);
+	gtk_widget_grab_focus (details->replace_button);
 }
 
 static void
@@ -482,11 +494,26 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 	details = fcd->details = NEMO_FILE_CONFLICT_DIALOG_GET_PRIVATE (fcd);
 	dialog = GTK_DIALOG (fcd);
 
-	/* Setup the main hbox */
-	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-	dialog_area = gtk_dialog_get_content_area (dialog);
-	gtk_box_pack_start (GTK_BOX (dialog_area), hbox, FALSE, FALSE, 0);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
+    /* The real content can only be built once file_list_ready_cb() runs.
+     * Until then show a spinner page in its place. */
+    dialog_area = gtk_dialog_get_content_area (dialog);
+    details->stack = gtk_stack_new ();
+    gtk_stack_set_transition_type (GTK_STACK (details->stack),
+                                   GTK_STACK_TRANSITION_TYPE_CROSSFADE);
+    gtk_box_pack_start (GTK_BOX (dialog_area), details->stack, TRUE, TRUE, 0);
+
+    /* loading page */
+    details->spinner = gtk_spinner_new ();
+    gtk_widget_set_size_request (details->spinner, 32, 32);
+    gtk_widget_set_halign (details->spinner, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign (details->spinner, GTK_ALIGN_CENTER);
+    gtk_stack_add_named (GTK_STACK (details->stack), details->spinner, "loading");
+    gtk_spinner_start (GTK_SPINNER (details->spinner));
+
+    /* content page */
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
+    gtk_stack_add_named (GTK_STACK (details->stack), hbox, "content");
+    gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 
 	/* Setup the dialog image */
     widget = gtk_image_new_from_icon_name ("xsi-dialog-warning-symbolic", GTK_ICON_SIZE_DIALOG);
@@ -572,7 +599,18 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 		gtk_dialog_add_button (dialog,
 				       _("Replace"),
 				       CONFLICT_RESPONSE_REPLACE);
-	gtk_widget_grab_focus (details->replace_button);
+
+	/* Until file_list_ready_cb() runs the dialog is only partially
+	 * populated: the entry is empty and conflict_name is unset. Acting
+	 * on it in that state is meaningless and, for Rename, dangerous (the
+	 * empty name resolves to the parent directory, see #3750). Allow only
+	 * Cancel until the dialog is fully built.
+	 */
+	gtk_dialog_set_response_sensitive (dialog, CONFLICT_RESPONSE_SKIP, FALSE);
+	gtk_dialog_set_response_sensitive (dialog, CONFLICT_RESPONSE_AUTO_RENAME, FALSE);
+	gtk_dialog_set_response_sensitive (dialog, CONFLICT_RESPONSE_REPLACE, FALSE);
+	gtk_widget_set_sensitive (details->expander, FALSE);
+	gtk_widget_set_sensitive (details->checkbox, FALSE);
 
 	/* Setup HIG properties */
 	gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
@@ -581,6 +619,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
     gtk_button_box_set_layout (GTK_BUTTON_BOX (gtk_dialog_get_action_area (dialog)), GTK_BUTTONBOX_SPREAD);
 
 	gtk_widget_show_all (dialog_area);
+	gtk_stack_set_visible_child_name (GTK_STACK (details->stack), "loading");
 }
 
 static void
@@ -623,7 +662,6 @@ nemo_file_conflict_dialog_class_init (NemoFileConflictDialogClass *klass)
 char *
 nemo_file_conflict_dialog_get_new_name (NemoFileConflictDialog *dialog)
 {
-	g_assert(gtk_entry_get_text_length (GTK_ENTRY (dialog->details->entry)) > 0);
 	return g_strdup (gtk_entry_get_text
 			 (GTK_ENTRY (dialog->details->entry)));
 }
