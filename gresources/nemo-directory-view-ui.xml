@@ -49,6 +49,8 @@
 		</placeholder>
 	</menu>
 	<menu action="Edit">
+        <menuitem name="Restore From Trash" action="Restore From Trash"/>
+        <separator/>
 		<placeholder name="Clipboard Actions">
 			<menuitem name="Cut" action="Cut"/>
 			<menuitem name="Copy" action="Copy"/>
@@ -95,7 +97,6 @@
 		<placeholder name="Dangerous File Items Placeholder">
 			<menuitem name="Trash" action="Trash"/>
 			<menuitem name="Delete" action="Delete"/>
-			<menuitem name="Restore From Trash" action="Restore From Trash"/>
 		</placeholder>
 		<placeholder name="Extension Actions"/>
 	</menu>
@@ -149,6 +150,8 @@
 
 </popup>
 <popup name="selection">
+    <menuitem name="Restore From Trash" action="Restore From Trash"/>
+    <separator/>
 	<placeholder name="Open Placeholder">
 		<menuitem name="Open" action="Open"/>
 		<menuitem name="OpenInNewTab" action="OpenInNewTab"/>
@@ -214,7 +217,6 @@
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="Trash"/>
 		<menuitem name="Delete" action="Delete"/>
-		<menuitem name="Restore From Trash" action="Restore From Trash"/>
 	</placeholder>
 	<separator name="Appearance separator"/>
 	<placeholder name="Icon Appearance Items">
@@ -235,6 +237,8 @@
         <menuitem name="Properties" action="Properties"/>
 </popup>
 <popup name="location">
+    <menuitem name="Restore From Trash" action="LocationRestoreFromTrash"/>
+    <separator/>
 	<placeholder name="Open Placeholder">
 		<menuitem name="LocationOpenInNewTab" action="LocationOpenInNewTab"/>
 		<menuitem name="LocationOpenAlternate" action="LocationOpenAlternate"/>
@@ -249,7 +253,6 @@
 	<placeholder name="Dangerous File Actions">
 		<menuitem name="Trash" action="LocationTrash"/>
 		<menuitem name="Delete" action="LocationDelete"/>
-		<menuitem name="Restore From Trash" action="LocationRestoreFromTrash"/>
 	</placeholder>
 	<separator name="Location After Dangerous Separator"/>
 	<menuitem name="Location Mount Volume" action="Location Mount Volume"/>
