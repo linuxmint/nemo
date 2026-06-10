@@ -278,6 +278,7 @@ struct NemoViewDetails
 	gboolean needs_reload;
 	guint    loading_pending_held;
 	const gchar *display_method;
+	gboolean displayed_during_load;
 	gdouble  first_render_elapsed;
 
 	gboolean is_renaming;
@@ -3806,6 +3807,29 @@ process_old_files (NemoView *view)
 	}
 }
 
+/* Completion only waits on the essential file info needed to place a row.
+ * Attributes that load asynchronously and only affect a subset of files
+ * cosmetically - thumbnails and .desktop link info (the Name/Icon decoration)
+ * fill in afterwards and should not keep a folder out of the 'immediate' path.
+ */
+static gboolean
+non_ready_files_pending (NemoView *view)
+{
+	GHashTableIter iter;
+	gpointer key;
+
+	g_hash_table_iter_init (&iter, view->details->non_ready_files);
+	while (g_hash_table_iter_next (&iter, &key, NULL)) {
+		FileAndDirectory *fad = key;
+
+		if (!nemo_file_check_if_ready (fad->file, NEMO_FILE_ATTRIBUTE_INFO)) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 static void
 display_pending_files (NemoView *view)
 {
@@ -3822,7 +3846,7 @@ display_pending_files (NemoView *view)
 
 	if (view->details->model != NULL
 	    && nemo_directory_are_all_files_seen (view->details->model)
-	    && g_hash_table_size (view->details->non_ready_files) == 0) {
+	    && !non_ready_files_pending (view)) {
 		done_loading (view, TRUE);
 	}
 }
@@ -3916,6 +3940,15 @@ display_pending_callback (gpointer data)
 	g_object_ref (G_OBJECT (view));
 
 	view->details->display_pending_source_id = 0;
+
+	if (view->details->loading) {
+		view->details->displayed_during_load = TRUE;
+		if (g_getenv ("NEMO_BENCHMARK_LOADING")) {
+			g_printerr ("  progressive flush during load: held=%u at %.0fms\n",
+			            view->details->loading_pending_held,
+			            g_timer_elapsed (view->details->load_timer, NULL) * 1000.0);
+		}
+	}
 
 	display_pending_files (view);
 
@@ -4135,14 +4168,20 @@ display_pending_files_with_tradeoff (NemoView *view)
 	NemoViewClass *klass = NEMO_VIEW_GET_CLASS (view);
 	const gchar *sort_attribute = NULL;
 
+	unschedule_display_of_pending_files (view);
+
+	/* Skip relabeling our method if we ended up progressively loading. */
+	if (view->details->displayed_during_load) {
+		display_pending_files (view);
+		return;
+	}
+
 	if (klass->get_sort_attribute != NULL) {
 		sort_attribute = klass->get_sort_attribute (view);
 	}
 
 	gboolean fast = sort_attribute == NULL || !nemo_file_attribute_slow_sort (sort_attribute);
 	view->details->display_method = fast ? "immediate" : "deferred";
-
-	unschedule_display_of_pending_files (view);
 
 	if (fast) {
 		display_pending_files (view);
@@ -4160,7 +4199,7 @@ done_loading_callback (NemoDirectory *directory,
 	view = NEMO_VIEW (callback_data);
 
 	process_new_files (view);
-	if (g_hash_table_size (view->details->non_ready_files) == 0) {
+	if (!non_ready_files_pending (view)) {
 		display_pending_files_with_tradeoff (view);
 	}
 
@@ -10489,6 +10528,7 @@ load_directory (NemoView *view,
 	view->details->loading = TRUE;
 	view->details->loading_pending_held = 0;
 	view->details->display_method = "progressive";
+	view->details->displayed_during_load = FALSE;
 	view->details->first_render_elapsed = -1.0;
 
 	/* Update menus when directory is empty, before going to new
