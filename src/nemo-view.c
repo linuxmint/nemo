@@ -100,14 +100,14 @@
 #include <libnemo-private/nemo-debug.h>
 
 /* Minimum starting update interval for progressive display */
-#define UPDATE_INTERVAL_MIN 10
+#define UPDATE_INTERVAL_MIN 100
 /* One-shot pre-render delay in deferred mode (sort by folder size, deep counts etc.),
  * to give async deep counts a chance to arrive before the first render. */
 #define UPDATE_INTERVAL_DEFERRED 50
 /* Maximum update interval */
-#define UPDATE_INTERVAL_MAX 2000
+#define UPDATE_INTERVAL_MAX 500
 /* Amount of miliseconds the update interval is increased */
-#define UPDATE_INTERVAL_INC 250
+#define UPDATE_INTERVAL_INC 200
 /* Interval at which the update interval is increased */
 #define UPDATE_INTERVAL_TIMEOUT_INTERVAL 500
 /* Milliseconds that have to pass without a change to reset the update interval */
@@ -4077,6 +4077,9 @@ changes_timeout_callback (gpointer data)
 		    view->details->loading) {
 			/* Increase */
 			view->details->update_interval += UPDATE_INTERVAL_INC;
+            if (g_getenv("NEMO_BENCHMARK_LOADING")) {
+                g_printerr ("Increasing update interval to: %d ms\n", view->details->update_interval);
+            }
 		}
 		ret = TRUE;
 	} else {
@@ -4096,9 +4099,7 @@ schedule_changes (NemoView *view)
 	/* Remember when the change was queued */
 	view->details->last_queued = g_get_monotonic_time ();
 
-	/* No need to schedule if there are already changes pending or during loading */
-	if (view->details->changes_timeout_id != 0 ||
-	    view->details->loading) {
+	if (view->details->changes_timeout_id != 0) {
 		return;
 	}
 
