@@ -3631,8 +3631,7 @@ still_should_show_file (NemoView *view, NemoFile *file, NemoDirectory *directory
 static gboolean
 ready_to_load (NemoFile *file)
 {
-	return nemo_file_check_if_ready (file,
-					     NEMO_FILE_ATTRIBUTES_FOR_ICON);
+	return nemo_file_check_if_ready (file, NEMO_FILE_ATTRIBUTE_INFO);
 }
 
 static int
