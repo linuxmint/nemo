@@ -1,3 +1,29 @@
+nemo (6.7.3) alfa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-main-application.c: When selecting files from the commandline, re-use existing windows that already display the correct locataion.
+  * nemo-main.c: Tune allocator behavior, call malloc_trim() when loading a new location to release memory more aggressively.
+  * build: Modernize post-install.
+
+  [ Kristóf Széles ]
+  * Fix duplicate conflict dialog when moving files across volumes (#3772)
+
+  [ Michael Webster ]
+  * filter-view: Explicitly select the first item when filtering is applied.
+
+  [ Jethro Donaldson ]
+  * Bugfix: rename replaces parent directory (issue #3750) (#3751)
+
+  [ Michael Webster ]
+  * nemo-file-conflict-dialog.c: Disable all responses except cancel until the dialog's content is fully resolved.
+  * trash: Make 'Restore' a primary action in the context menus instead of grouping it with "Delete permanently".
+  * nemo-view.c: Don't allow thumbnails and .desktop link info to prevent 'immediate' loading of a folder.
+  * nemo-mime-actions.c: Allow opening untrusted desktop files as normal files.
+  * nemo-view.c: Update ready_to_load() to match change in ec06509a10.
+  * nemo-view.c: Don't disable update interval progression while loading.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 16 Jun 2026 18:07:24 +0200
+
 nemo (6.7.2) unstable; urgency=medium
 
   [ Michael Webster ]
