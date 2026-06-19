@@ -853,6 +853,38 @@ do_perform_self_checks (gint *exit_status)
 }
 
 static gboolean
+check_remote_responsive (GError **error)
+{
+	GDBusConnection *connection;
+	GVariant *result;
+
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, error);
+	if (connection == NULL) {
+		return FALSE;
+	}
+
+	result = g_dbus_connection_call_sync (connection,
+					      "org.Nemo",
+					      "/org/Nemo",
+					      "org.freedesktop.DBus.Peer",
+					      "Ping",
+					      NULL,
+					      NULL,
+					      G_DBUS_CALL_FLAGS_NO_AUTO_START,
+					      1000, /* 1000 ms timeout */
+					      NULL,
+					      error);
+
+	g_object_unref (connection);
+
+	if (result != NULL) {
+		g_variant_unref (result);
+	}
+
+	return *error == NULL;
+}
+
+static gboolean
 nemo_main_application_local_command_line (GApplication *application,
 					 gchar ***arguments,
 					 gint *exit_status)
@@ -985,6 +1017,26 @@ nemo_main_application_local_command_line (GApplication *application,
         g_clear_error (&error);
     } else {
         goto post_registration;
+    }
+
+    /* If service registration failed, check if the remote instance is responsive */
+    {
+        GError *ping_error = NULL;
+        if (!check_remote_responsive (&ping_error)) {
+            g_warning ("The process holding org.Nemo is frozen or unresponsive (%s). Falling back to non-unique local mode.",
+                       ping_error ? ping_error->message : "unknown error");
+            g_clear_error (&ping_error);
+
+            g_application_set_flags (application, init_flags | G_APPLICATION_NON_UNIQUE);
+            g_application_register (application, NULL, &error);
+            if (error != NULL) {
+                g_printerr ("Could not register nemo in non-unique mode: %s\n", error->message);
+                g_clear_error (&error);
+                *exit_status = EXIT_FAILURE;
+                goto out;
+            }
+            goto post_registration;
+        }
     }
 
     /* If service registration failed, try to connect to the existing instance */

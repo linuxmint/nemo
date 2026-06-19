@@ -26,3 +26,13 @@ test('Copy test',
   ),
   args: []
 )
+
+test('DBus Fallback test',
+  find_program('dbus-run-session'),
+  args: [
+    '--',
+    find_program('python3'),
+    files('test-dbus-fallback.py'),
+    nemo
+  ]
+)
