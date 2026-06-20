@@ -58,6 +58,10 @@ typedef struct {
     gulong name_owner_changed_id;
     gulong proxy_signals_id;
     gulong fallback_size_changed_id;
+    gulong monitor_added_id;
+    gulong monitor_removed_id;
+
+    gboolean has_wayland_app_hold;
 } NemoDesktopManagerPrivate;
 
 struct _NemoDesktopManager
@@ -573,6 +577,37 @@ on_failsafe_timeout (NemoDesktopManager *manager)
 }
 
 static void
+on_monitor_removed_wayland (GdkDisplay         *display,
+                            GdkMonitor         *monitor,
+                            NemoDesktopManager *manager)
+{
+    FETCH_PRIV (manager);
+
+    if (priv->current_run_state < RUN_STATE_RUNNING) {
+        return;
+    }
+
+    /* The compositor sent zwlr_layer_surface_v1.closed for the layer surface
+     * associated with the removed output. gtk-layer-shell will destroy the
+     * backing wl_surface in response. We must destroy our GtkWindow first,
+     * before that happens, or a pending frame clock event will call
+     * gdk_window_begin_draw_frame() on the dead wl_surface and crash. */
+    DEBUG ("Wayland output removed - closing desktop windows immediately");
+
+    close_all_windows (manager);
+    queue_update_layout (manager);
+}
+
+static void
+on_monitor_added_wayland (GdkDisplay         *display,
+                          GdkMonitor         *monitor,
+                          NemoDesktopManager *manager)
+{
+    DEBUG ("Wayland output added - queuing layout update");
+    queue_update_layout (manager);
+}
+
+static void
 connect_fallback_signals (NemoDesktopManager *manager)
 {
     FETCH_PRIV (manager);
@@ -583,6 +618,20 @@ connect_fallback_signals (NemoDesktopManager *manager)
                                                                "size_changed",
                                                                G_CALLBACK (queue_update_layout),
                                                                manager);
+
+    if (eel_check_is_wayland ()) {
+        GdkDisplay *display = gdk_display_get_default ();
+
+        priv->monitor_removed_id = g_signal_connect (display,
+                                                     "monitor-removed",
+                                                     G_CALLBACK (on_monitor_removed_wayland),
+                                                     manager);
+
+        priv->monitor_added_id = g_signal_connect (display,
+                                                   "monitor-added",
+                                                   G_CALLBACK (on_monitor_added_wayland),
+                                                   manager);
+    }
 }
 
 static void
@@ -669,6 +718,25 @@ nemo_desktop_manager_dispose (GObject *object)
     if (priv->fallback_size_changed_id > 0) {
         g_signal_handler_disconnect (priv->fallback_screen, priv->fallback_size_changed_id);
         priv->fallback_size_changed_id = 0;
+    }
+
+    if (priv->monitor_removed_id > 0 || priv->monitor_added_id > 0) {
+        GdkDisplay *display = gdk_display_get_default ();
+
+        if (priv->monitor_removed_id > 0) {
+            g_signal_handler_disconnect (display, priv->monitor_removed_id);
+            priv->monitor_removed_id = 0;
+        }
+
+        if (priv->monitor_added_id > 0) {
+            g_signal_handler_disconnect (display, priv->monitor_added_id);
+            priv->monitor_added_id = 0;
+        }
+    }
+
+    if (priv->has_wayland_app_hold) {
+        g_application_release (G_APPLICATION (nemo_application_get_singleton ()));
+        priv->has_wayland_app_hold = FALSE;
     }
 
     G_OBJECT_CLASS (nemo_desktop_manager_parent_class)->dispose (object);
@@ -764,6 +832,18 @@ nemo_desktop_manager_init (NemoDesktopManager *manager)
     }
 
     connect_fallback_signals (manager);
+
+    if (eel_check_is_wayland ()) {
+        /* Hold the application alive independently of any windows so that
+         * nemo-desktop survives monitor removal (e.g. KVM switch).  Without
+         * this, gtk-layer-shell destroys our windows when the compositor
+         * removes an output and GtkApplication exits immediately with no
+         * windows left.  The hold is released in nemo_desktop_manager_dispose
+         * when the application is genuinely quitting. */
+        g_application_hold (G_APPLICATION (nemo_application_get_singleton ()));
+        priv->has_wayland_app_hold = TRUE;
+    }
+
     g_timeout_add (250, (GSourceFunc) fallback_startup_idle_cb, manager);
 }
 
