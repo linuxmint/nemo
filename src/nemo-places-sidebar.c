@@ -3597,7 +3597,7 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 		return TRUE;
 	}
 
-	if (clicked_eject_button (sidebar, &path)) {
+	if (event->button == GDK_BUTTON_PRIMARY && clicked_eject_button (sidebar, &path)) {
 		eject_or_unmount_bookmark (sidebar, path);
 		gtk_tree_path_free (path);
 
@@ -3607,7 +3607,7 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 	tree_view = GTK_TREE_VIEW (widget);
 	model = gtk_tree_view_get_model (tree_view);
 
-	if (event->button == 1) {
+	if (event->button == GDK_BUTTON_PRIMARY) {
 
 		if (event->window != gtk_tree_view_get_bin_window (tree_view)) {
 			return FALSE;
@@ -3657,7 +3657,7 @@ bookmarks_button_press_event_cb (GtkWidget             *widget,
 		return FALSE;
 	}
 
-	if (event->button == 3) {
+	if (event->button == GDK_BUTTON_SECONDARY) {
 		gtk_tree_model_get (model, &iter,
 				    PLACES_SIDEBAR_COLUMN_ROW_TYPE, &row_type,
 				    -1);
@@ -3665,7 +3665,7 @@ bookmarks_button_press_event_cb (GtkWidget             *widget,
 		if (row_type != PLACES_HEADING) {
 			bookmarks_popup_menu (sidebar, event);
 		}
-	} else if (event->button == 2) {
+	} else if (event->button == GDK_BUTTON_MIDDLE) {
 		NemoWindowOpenFlags flags = 0;
 
 		if (g_settings_get_boolean (nemo_preferences,
