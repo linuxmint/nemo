@@ -706,6 +706,8 @@ get_executable_text_file_action (GtkWindow *parent_window, NemoFile *file)
 	preferences_value = g_settings_get_enum	(nemo_preferences,
 						 NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION);
 	switch (preferences_value) {
+	case NEMO_EXECUTABLE_TEXT_LAUNCH_IN_TERMINAL:
+		return ACTIVATION_ACTION_LAUNCH_IN_TERMINAL;
 	case NEMO_EXECUTABLE_TEXT_LAUNCH:
 		return ACTIVATION_ACTION_LAUNCH;
 	case NEMO_EXECUTABLE_TEXT_DISPLAY:
@@ -763,6 +765,8 @@ get_default_executable_text_file_action (void)
 	preferences_value = g_settings_get_enum	(nemo_preferences,
 						 NEMO_PREFERENCES_EXECUTABLE_TEXT_ACTIVATION);
 	switch (preferences_value) {
+	case NEMO_EXECUTABLE_TEXT_LAUNCH_IN_TERMINAL:
+		return ACTIVATION_ACTION_LAUNCH_IN_TERMINAL;
 	case NEMO_EXECUTABLE_TEXT_LAUNCH:
 		return ACTIVATION_ACTION_LAUNCH;
 	case NEMO_EXECUTABLE_TEXT_DISPLAY:
