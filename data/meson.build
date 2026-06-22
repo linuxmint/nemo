@@ -43,6 +43,12 @@ dbusFiles = [
     output: 'nemo.FileManager1.service',
     configuration: dataConf,
   ),
+
+  configure_file(
+    input : 'org.Nemo.FileChooser.service.in',
+    output: 'org.Nemo.FileChooser.service',
+    configuration: dataConf,
+  ),
 ]
 
 install_data(dbusFiles,
