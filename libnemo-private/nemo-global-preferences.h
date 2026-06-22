@@ -41,6 +41,7 @@ G_BEGIN_DECLS
 
 /* Display  */
 #define NEMO_PREFERENCES_SHOW_HIDDEN_FILES			"show-hidden-files"
+#define NEMO_PREFERENCES_SHOW_REAL_FILENAME			"show-real-filename"
 #define NEMO_PREFERENCES_SHOW_ADVANCED_PERMISSIONS		"show-advanced-permissions"
 #define NEMO_PREFERENCES_DATE_FORMAT            "date-format"
 #define NEMO_PREFERENCES_DATE_FONT_CHOICE  "date-font-choice"
