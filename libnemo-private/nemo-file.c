@@ -4611,6 +4611,18 @@ nemo_file_has_loaded_thumbnail (NemoFile *file)
     return file->details->thumbnail_is_up_to_date;
 }
 
+char *
+nemo_file_get_thumbnail_path (NemoFile *file)
+{
+    g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    if (file->details->thumbnail_path != NULL) {
+        return g_strdup (file->details->thumbnail_path);
+    }
+
+    return NULL;
+}
+
 static void
 prepend_icon_name (const char *name,
 		   GThemedIcon *icon)
