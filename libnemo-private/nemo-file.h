@@ -386,6 +386,12 @@ void                    nemo_file_get_desktop_grid_adjusts (NemoFile   *file,
                                                             const char *key,
                                                             int        *int_a,
                                                             int        *int_b);
+void                    nemo_file_set_desktop_label_scale_adjust (NemoFile   *file,
+		                                                  const char *key,
+		                                                  double double_a);
+void                    nemo_file_get_desktop_label_scale_adjust (NemoFile   *file,
+		                                                  const char *key,
+		                                                  double *double_a);
 /* Covers for common data types. */
 gboolean                nemo_file_get_boolean_metadata              (NemoFile                   *file,
 									 const char                     *key,

@@ -1259,3 +1259,36 @@ nemo_desktop_icon_grid_view_set_grid_adjusts (NemoDesktopIconGridView *view,
     nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
 
 }
+
+void
+nemo_desktop_icon_grid_view_set_label_scale_adjust (NemoDesktopIconGridView *view,
+                                                    double                   label_scale_adjust)
+{
+    NemoIconContainer *container;
+    NemoFile *file;
+
+    if (view->details->updating_menus) {
+        return;
+    }
+
+    container = get_icon_container (view);
+    clear_orphan_states (view);
+
+    file = nemo_view_get_directory_as_file (NEMO_VIEW (view));
+
+    nemo_icon_container_set_label_scale_adjust (container, label_scale_adjust);
+
+    container->details->needs_resort = TRUE;
+    container->details->auto_layout = TRUE;
+
+    nemo_icon_view_set_directory_label_scale_adjust (NEMO_ICON_VIEW (view),
+                                               file,
+                                               label_scale_adjust);
+
+    nemo_icon_container_redo_layout (container);
+
+    nemo_view_update_menus (NEMO_VIEW (view));
+
+    nemo_icon_container_store_layout_timestamps_now (get_icon_container (view));
+
+}

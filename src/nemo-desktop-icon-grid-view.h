@@ -56,5 +56,7 @@ GtkActionGroup *nemo_desktop_icon_grid_view_get_action_group (NemoDesktopIconGri
 void nemo_desktop_icon_grid_view_set_grid_adjusts (NemoDesktopIconGridView *view,
                                                    gint                     h_adjust,
                                                    gint                     v_adjust);
+void nemo_desktop_icon_grid_view_set_label_scale_adjust (NemoDesktopIconGridView *view,
+                                                         double                   label_scale_adjust);
 
 #endif /* NEMO_DESKTOP_ICON_GRID_VIEW_H */

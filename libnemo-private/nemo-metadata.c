@@ -63,6 +63,7 @@ static char *used_metadata_names[] = {
   (char *)NEMO_METADATA_KEY_PINNED,
   (char *)NEMO_METADATA_KEY_FAVORITE,
   (char *)NEMO_METADATA_KEY_FAVORITE_AVAILABLE,
+  (char *)NEMO_METADATA_KEY_DESKTOP_LABEL_SACLE_ADJUST,
   NULL
 };
 

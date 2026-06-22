@@ -5027,6 +5027,7 @@ nemo_icon_container_init (NemoIconContainer *container)
 
     details->h_adjust = 100;
     details->v_adjust = 100;
+    details->label_scale_adjust = 100;
 }
 
 typedef struct {
@@ -6726,6 +6727,16 @@ nemo_icon_container_set_grid_adjusts (NemoIconContainer *container,
 
     container->details->h_adjust = h_adjust;
     container->details->v_adjust = v_adjust;
+}
+
+void
+nemo_icon_container_set_label_scale_adjust (NemoIconContainer *container,
+                                            double             label_scale_adjust)
+{
+    g_return_if_fail (NEMO_IS_ICON_CONTAINER (container));
+
+    container->details->label_scale_adjust = label_scale_adjust;
+
 }
 
 gboolean

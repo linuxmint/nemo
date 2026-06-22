@@ -31,9 +31,12 @@ typedef struct
 
     guint adjust_changed_id;
     guint configure_event_id;
+    guint label_scale_adjust_changed_id;
 
     gint h_percent;
     gint v_percent;
+
+    double label_scale;
 
     gboolean syncing;
 } NemoDesktopOverlayPrivate;
@@ -48,6 +51,7 @@ struct _NemoDesktopOverlay
 enum
 {
     ADJUSTS_CHANGED,
+    LABEL_SCALE_CHANGED,
     LAST_SIGNAL
 };
 
@@ -113,6 +117,7 @@ sync_controls (NemoDesktopOverlay *overlay,
     gint h_adjust, v_adjust, active_id;
     gboolean fake_group;
     const gchar *combo_id;
+    double label_scale;
 
     priv->syncing = TRUE;
 
@@ -133,13 +138,17 @@ sync_controls (NemoDesktopOverlay *overlay,
                                                priv->monitor,
                                                &action_group,
                                                &h_adjust,
-                                               &v_adjust);
+                                               &v_adjust,
+                                               &label_scale);
 
         range = GTK_RANGE (gtk_builder_get_object (priv->builder, "horizontal_adjust_slider"));
         gtk_range_set_value (range, (double) h_adjust);
 
         range = GTK_RANGE (gtk_builder_get_object (priv->builder, "vertical_adjust_slider"));
         gtk_range_set_value (range, (double) v_adjust);
+
+        range = GTK_RANGE (gtk_builder_get_object (priv->builder, "label_width_slider"));
+        gtk_range_set_value (range, label_scale);
 
         /* Catch enabling of a particular monitor.  If we were a blank window and now
          * we're a real desktop window, it makes sense to present the view settings to the user */
@@ -268,6 +277,28 @@ signal_adjust_changed (NemoDesktopOverlay *overlay)
     }
 }
 
+static void
+signal_label_scale_adjust_changed (NemoDesktopOverlay *overlay)
+{
+    NemoDesktopOverlayPrivate *priv = overlay->priv;
+    double label_scale, val;
+
+    val = gtk_range_get_value (GTK_RANGE (gtk_builder_get_object (priv->builder,
+                                                                    "label_width_slider")));
+
+    /* limit icon label width scaling to 50% to 200% */
+    label_scale =  fmax (fmin (val, 200.0), 50.0);
+
+    if (label_scale != priv->label_scale) {
+        priv->label_scale = label_scale;
+
+        g_signal_emit (overlay,
+                       signals[LABEL_SCALE_CHANGED], 0,
+                       priv->nemo_window,
+                       label_scale);
+    }
+}
+
 static gboolean
 signal_adjust_delay_timeout (gpointer user_data)
 {
@@ -277,6 +308,19 @@ signal_adjust_delay_timeout (gpointer user_data)
     priv->adjust_changed_id = 0;
 
     signal_adjust_changed (overlay);
+
+    return FALSE;
+}
+
+static gboolean
+signal_label_scale_adjust_delay_timeout (gpointer user_data)
+{
+    NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
+    NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
+
+    priv->label_scale_adjust_changed_id = 0;
+
+    signal_label_scale_adjust_changed (overlay);
 
     return FALSE;
 }
@@ -298,6 +342,22 @@ queue_changed_signal (NemoDesktopOverlay *overlay)
 }
 
 static void
+queue_label_scale_changed_signal (NemoDesktopOverlay *overlay)
+{
+    NemoDesktopOverlayPrivate *priv = nemo_desktop_overlay_get_instance_private (overlay);
+
+    if (priv->syncing) {
+        return;
+    }
+
+    if (priv->label_scale_adjust_changed_id > 0) {
+        return;
+    }
+
+    priv->label_scale_adjust_changed_id = g_timeout_add (50, (GSourceFunc) signal_label_scale_adjust_delay_timeout, overlay);
+}
+
+static void
 on_horizontal_adjust_changed (GtkRange *range,
                               gpointer  user_data)
 {
@@ -313,6 +373,16 @@ on_vertical_adjust_changed (GtkRange *range,
     NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
 
     queue_changed_signal (overlay);
+}
+
+
+static void
+on_label_scale_adjust_changed (GtkRange *range,
+                               gpointer  user_data)
+{
+    NemoDesktopOverlay *overlay = NEMO_DESKTOP_OVERLAY (user_data);
+
+    queue_label_scale_changed_signal (overlay);
 }
 
 static void
@@ -388,6 +458,9 @@ on_grid_reset_button_clicked (GtkWidget *button,
     gtk_range_set_value (range, 100.0);
 
     range = GTK_RANGE (gtk_builder_get_object (priv->builder, "vertical_adjust_slider"));
+    gtk_range_set_value (range, 100.0);
+
+    range = GTK_RANGE (gtk_builder_get_object (priv->builder, "label_width_slider"));
     gtk_range_set_value (range, 100.0);
 }
 
@@ -515,6 +588,7 @@ nemo_desktop_overlay_init (NemoDesktopOverlay *overlay)
     gtk_builder_add_callback_symbols (priv->builder,
       "on_vertical_adjust_changed", G_CALLBACK (on_vertical_adjust_changed),
       "on_horizontal_adjust_changed", G_CALLBACK (on_horizontal_adjust_changed),
+      "on_label_scale_adjust_changed", G_CALLBACK (on_label_scale_adjust_changed),
       "on_disabled_view_link_button_clicked", G_CALLBACK (on_view_prefs_button_clicked),
       "on_disabled_view_link_button_activate_link", G_CALLBACK (on_link_button_activate_link),
       "on_view_prefs_link_button_clicked", G_CALLBACK (on_view_prefs_button_clicked),
@@ -600,6 +674,15 @@ nemo_desktop_overlay_class_init (NemoDesktopOverlayClass *klass)
                       NULL, NULL, NULL,
                       G_TYPE_NONE, 3,
                       NEMO_TYPE_WINDOW, G_TYPE_INT, G_TYPE_INT);
+
+    signals[LABEL_SCALE_CHANGED] =
+        g_signal_new ("label-scale-changed",
+                      G_TYPE_FROM_CLASS (klass),
+                      G_SIGNAL_RUN_LAST,
+                      0,
+                      NULL, NULL, NULL,
+                      G_TYPE_NONE, 2,
+                      NEMO_TYPE_WINDOW, G_TYPE_DOUBLE);
 
     G_OBJECT_CLASS (klass)->dispose = nemo_desktop_overlay_dispose;
 }

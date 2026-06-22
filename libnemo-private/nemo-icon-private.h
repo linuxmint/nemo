@@ -257,6 +257,7 @@ struct NemoIconContainerDetails {
     gboolean horizontal;
     gint h_adjust;
     gint v_adjust;
+    double label_scale_adjust;
 
     gboolean show_desktop_tooltips;
     gboolean show_icon_view_tooltips;

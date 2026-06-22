@@ -287,6 +287,8 @@ gboolean          nemo_icon_container_get_horizontal_layout (NemoIconContainer *
 void              nemo_icon_container_set_grid_adjusts (NemoIconContainer *container,
                                                         gint               h_adjust,
                                                         gint               v_adjust);
+void              nemo_icon_container_set_label_scale_adjust (NemoIconContainer *container,
+                                                              double             label_scale_adjust);
 
 void              nemo_icon_container_set_label_position            (NemoIconContainer  *container,
 									 NemoIconLabelPosition pos);

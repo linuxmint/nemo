@@ -70,6 +70,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <math.h>
 
 #ifdef HAVE_SELINUX
 #include <selinux/selinux.h>
@@ -3947,6 +3948,50 @@ nemo_file_get_desktop_grid_adjusts (NemoFile   *file,
 
         g_strfreev (meta_strv);
     }
+}
+
+void
+nemo_file_set_desktop_label_scale_adjust (NemoFile   *file,
+                                          const char *key,
+                                          double      double_a)
+{
+    g_return_if_fail (NEMO_IS_FILE (file));
+    g_return_if_fail (key != NULL);
+    g_return_if_fail (key[0] != '\0');
+
+    /* double_a is a single decimal point value in the range [50.0, 200.0] */
+    /* to preserve this value multiple by 10 */
+    /* then use floorf to get the integer part */
+	int value = (int)floorf(double_a * 10);
+
+    /* 1000 is 100.0 - the default value of no scaling */
+    nemo_file_set_integer_metadata (file, key, 1000, value);
+}
+
+void
+nemo_file_get_desktop_label_scale_adjust (NemoFile   *file,
+                                          const char *key,
+                                          double     *double_a)
+{
+    char c;
+    double result;
+
+    g_return_if_fail (key != NULL);
+    g_return_if_fail (key[0] != '\0');
+
+    if (file == NULL ||
+        file->details->metadata == NULL) {
+        return;
+    }
+
+    g_return_if_fail (NEMO_IS_FILE (file));
+
+    /* 1000 is 100.0 - the default value of no scaling */
+	int value = nemo_file_get_integer_metadata (file, key, 1000);
+
+	if (double_a) {
+		*double_a = value / 10.0;
+	}
 }
 
 gboolean
