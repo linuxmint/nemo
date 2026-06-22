@@ -626,6 +626,21 @@
       <summary>Fade the background on change</summary>
       <description>If set to true, then Nemo will use a fade effect to change the desktop background.</description>
     </key>
+    <key name="desktop-text-shadow" type="s">
+      <choices>
+        <choice value="normal"/>
+        <choice value="darker"/>
+        <choice value="darkest"/>
+      </choices>
+      <default>'normal'</default>
+      <summary>Desktop icon text shadow level</summary>
+      <description>Controls the text shadow for desktop icon labels. Values: "normal", "darker", "darkest".</description>
+    </key>
+    <key name="desktop-text-shadow-use-theme" type="b">
+      <default>false</default>
+      <summary>Use GTK theme for desktop icon text styling</summary>
+      <description>If true and the current GTK theme provides desktop icon styling, use the theme instead of the built-in shadow setting.</description>
+    </key>
   </schema>
 
   <schema id="org.nemo.window-state" path="/org/nemo/window-state/" gettext-domain="nemo">
