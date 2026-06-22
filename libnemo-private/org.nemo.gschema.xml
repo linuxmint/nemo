@@ -927,4 +927,262 @@
       <summary>List of search helper filenames to skip when using content search.</summary>
     </key>
   </schema>
+
+  <schema id="org.nemo.keybindings" path="/org/nemo/keybindings/">
+    <!-- Navigation -->
+    <key name="go-back" type="s">
+      <default>'&lt;Alt&gt;Left'</default>
+      <summary>Go back</summary>
+    </key>
+    <key name="go-forward" type="s">
+      <default>'&lt;Alt&gt;Right'</default>
+      <summary>Go forward</summary>
+    </key>
+    <key name="go-up" type="s">
+      <default>'&lt;Alt&gt;Up'</default>
+      <summary>Go to parent folder</summary>
+    </key>
+    <key name="go-home" type="s">
+      <default>'&lt;Alt&gt;Home'</default>
+      <summary>Go to home folder</summary>
+    </key>
+    <key name="edit-location" type="s">
+      <default>'&lt;Control&gt;l'</default>
+      <summary>Toggle location entry</summary>
+    </key>
+    <key name="reload" type="s">
+      <default>'&lt;Control&gt;r'</default>
+      <summary>Reload current location</summary>
+    </key>
+    <key name="reload-alt" type="s">
+      <default>'F5'</default>
+      <summary>Reload current location (alternate)</summary>
+    </key>
+    <key name="go-up-alt" type="s">
+      <default>'BackSpace'</default>
+      <summary>Go to parent folder (alternate)</summary>
+    </key>
+    <key name="search" type="s">
+      <default>'&lt;Control&gt;f'</default>
+      <summary>Search for files</summary>
+    </key>
+
+    <!-- Window -->
+    <key name="new-window" type="s">
+      <default>'&lt;Control&gt;n'</default>
+      <summary>Open a new window</summary>
+    </key>
+    <key name="close-window" type="s">
+      <default>'&lt;Control&gt;w'</default>
+      <summary>Close window or tab</summary>
+    </key>
+    <key name="close-all-windows" type="s">
+      <default>'&lt;Control&gt;q'</default>
+      <summary>Close all windows</summary>
+    </key>
+    <key name="show-hidden-files" type="s">
+      <default>'&lt;Control&gt;h'</default>
+      <summary>Toggle hidden files</summary>
+    </key>
+    <key name="show-sidebar" type="s">
+      <default>'F9'</default>
+      <summary>Toggle sidebar</summary>
+    </key>
+    <key name="split-view" type="s">
+      <default>'F3'</default>
+      <summary>Toggle split view</summary>
+    </key>
+    <key name="switch-pane" type="s">
+      <default>'F6'</default>
+      <summary>Switch to other pane</summary>
+    </key>
+    <key name="same-location-pane" type="s">
+      <default>'&lt;Alt&gt;s'</default>
+      <summary>Same location as other pane</summary>
+    </key>
+
+    <!-- Tabs -->
+    <key name="new-tab" type="s">
+      <default>'&lt;Control&gt;t'</default>
+      <summary>Open a new tab</summary>
+    </key>
+    <key name="previous-tab" type="s">
+      <default>'&lt;Control&gt;Page_Up'</default>
+      <summary>Previous tab</summary>
+    </key>
+    <key name="next-tab" type="s">
+      <default>'&lt;Control&gt;Page_Down'</default>
+      <summary>Next tab</summary>
+    </key>
+    <key name="move-tab-left" type="s">
+      <default>'&lt;Shift&gt;&lt;Control&gt;Page_Up'</default>
+      <summary>Move tab left</summary>
+    </key>
+    <key name="move-tab-right" type="s">
+      <default>'&lt;Shift&gt;&lt;Control&gt;Page_Down'</default>
+      <summary>Move tab right</summary>
+    </key>
+
+    <!-- View -->
+    <key name="zoom-in" type="s">
+      <default>'&lt;Control&gt;plus'</default>
+      <summary>Zoom in</summary>
+    </key>
+    <key name="zoom-out" type="s">
+      <default>'&lt;Control&gt;minus'</default>
+      <summary>Zoom out</summary>
+    </key>
+    <key name="zoom-normal" type="s">
+      <default>'&lt;Control&gt;0'</default>
+      <summary>Reset zoom to normal</summary>
+    </key>
+    <key name="icon-view" type="s">
+      <default>'&lt;Control&gt;1'</default>
+      <summary>Switch to icon view</summary>
+    </key>
+    <key name="list-view" type="s">
+      <default>'&lt;Control&gt;2'</default>
+      <summary>Switch to list view</summary>
+    </key>
+    <key name="compact-view" type="s">
+      <default>'&lt;Control&gt;3'</default>
+      <summary>Switch to compact view</summary>
+    </key>
+
+    <!-- Bookmarks -->
+    <key name="add-bookmark" type="s">
+      <default>'&lt;Control&gt;d'</default>
+      <summary>Add bookmark</summary>
+    </key>
+    <key name="edit-bookmarks" type="s">
+      <default>'&lt;Control&gt;b'</default>
+      <summary>Edit bookmarks</summary>
+    </key>
+    <key name="bookmark-picker" type="s">
+      <default>'&lt;Alt&gt;F1'</default>
+      <summary>Open bookmark and disk picker for current pane</summary>
+    </key>
+    <key name="bookmark-picker-other" type="s">
+      <default>'&lt;Alt&gt;F2'</default>
+      <summary>Open bookmark and disk picker for other pane</summary>
+    </key>
+
+    <!-- File Operations -->
+    <key name="open" type="s">
+      <default>'&lt;Control&gt;o'</default>
+      <summary>Open selected item</summary>
+    </key>
+    <key name="open-default" type="s">
+      <default>''</default>
+      <summary>Open with default application</summary>
+    </key>
+    <key name="open-alternate" type="s">
+      <default>'&lt;Control&gt;&lt;Shift&gt;o'</default>
+      <summary>Open in new window</summary>
+    </key>
+    <key name="open-in-new-tab" type="s">
+      <default>'&lt;Control&gt;&lt;Shift&gt;t'</default>
+      <summary>Open in new tab</summary>
+    </key>
+    <key name="open-in-terminal" type="s">
+      <default>'&lt;Shift&gt;F4'</default>
+      <summary>Open in terminal</summary>
+    </key>
+    <key name="open-containing-folder" type="s">
+      <default>'&lt;Control&gt;&lt;Alt&gt;o'</default>
+      <summary>Open containing folder</summary>
+    </key>
+    <key name="properties" type="s">
+      <default>'&lt;Alt&gt;Return'</default>
+      <summary>Show properties</summary>
+    </key>
+    <key name="new-folder" type="s">
+      <default>'&lt;Control&gt;&lt;Shift&gt;n'</default>
+      <summary>Create new folder</summary>
+    </key>
+    <key name="new-folder-alt" type="s">
+      <default>''</default>
+      <summary>Create new folder (alternate)</summary>
+    </key>
+    <key name="rename" type="s">
+      <default>'F2'</default>
+      <summary>Rename selected item</summary>
+    </key>
+    <key name="create-link" type="s">
+      <default>'&lt;Control&gt;m'</default>
+      <summary>Create symbolic link</summary>
+    </key>
+    <key name="pin-file" type="s">
+      <default>'&lt;Control&gt;&lt;Shift&gt;d'</default>
+      <summary>Pin or unpin file</summary>
+    </key>
+    <key name="trash" type="s">
+      <default>'Delete'</default>
+      <summary>Move to trash</summary>
+    </key>
+    <key name="trash-alt" type="s">
+      <default>''</default>
+      <summary>Move to trash (alternate key)</summary>
+    </key>
+    <key name="delete-permanently" type="s">
+      <default>'&lt;Shift&gt;Delete'</default>
+      <summary>Delete permanently</summary>
+    </key>
+    <key name="copy-to-other-pane" type="s">
+      <default>''</default>
+      <summary>Copy selection to other pane</summary>
+    </key>
+    <key name="move-to-other-pane" type="s">
+      <default>''</default>
+      <summary>Move selection to other pane</summary>
+    </key>
+
+    <!-- Clipboard -->
+    <key name="cut" type="s">
+      <default>'&lt;Control&gt;x'</default>
+      <summary>Cut files</summary>
+    </key>
+    <key name="copy" type="s">
+      <default>'&lt;Control&gt;c'</default>
+      <summary>Copy files</summary>
+    </key>
+    <key name="paste" type="s">
+      <default>'&lt;Control&gt;v'</default>
+      <summary>Paste files</summary>
+    </key>
+
+    <!-- Selection -->
+    <key name="select-all" type="s">
+      <default>'&lt;Control&gt;a'</default>
+      <summary>Select all items</summary>
+    </key>
+    <key name="select-pattern" type="s">
+      <default>'&lt;Control&gt;s'</default>
+      <summary>Select items matching a pattern</summary>
+    </key>
+    <key name="invert-selection" type="s">
+      <default>'&lt;Control&gt;&lt;Shift&gt;i'</default>
+      <summary>Invert selection</summary>
+    </key>
+
+    <!-- Edit -->
+    <key name="undo" type="s">
+      <default>'&lt;Control&gt;z'</default>
+      <summary>Undo</summary>
+    </key>
+    <key name="redo" type="s">
+      <default>'&lt;Control&gt;y'</default>
+      <summary>Redo</summary>
+    </key>
+
+    <!-- Help -->
+    <key name="show-help" type="s">
+      <default>'F1'</default>
+      <summary>Show help</summary>
+    </key>
+    <key name="show-shortcuts" type="s">
+      <default>'&lt;Control&gt;F1'</default>
+      <summary>Show keyboard shortcuts</summary>
+    </key>
+  </schema>
 </schemalist>
