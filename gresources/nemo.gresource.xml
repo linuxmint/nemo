@@ -27,4 +27,7 @@
     <file>nemo-style-fallback-mandatory.css</file>
     <file>nemo-style-application.css</file>
   </gresource>
+  <gresource prefix="/org/nemo/action-layout-editor">
+    <file>nemo-action-layout-editor.glade</file>
+  </gresource>
 </gresources>

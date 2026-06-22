@@ -5,6 +5,7 @@ nemo_i18n_header = [
 
 nemo_extension_sources = [
   gresources,
+  'nemo-action-layout-editor.c',
   'nemo-column-provider.c',
   'nemo-column.c',
   'nemo-desktop-preferences.c',
@@ -22,6 +23,7 @@ nemo_extension_sources = [
 ]
 
 nemo_extension_headers = [
+  'nemo-action-layout-editor.h',
   'nemo-column-provider.h',
   'nemo-column.h',
   'nemo-desktop-preferences.h',
@@ -40,7 +42,7 @@ nemo_extension_headers = [
 
 nemo_extension_incdir = include_directories('.')
 
-nemo_extension_deps = [ glib, gtk ]
+nemo_extension_deps = [ glib, gtk, json, xapp ]
 
 nemo_extension_lib = shared_library('nemo-extension',
   nemo_extension_sources + nemo_i18n_header,
@@ -84,5 +86,15 @@ pkgconfig.generate(filebase: 'libnemo-extension',
   libraries: nemo_extension_lib,
   subdirs: 'nemo',
   variables: 'extensiondir=${libdir}/@0@/@1@'.format('nemo', 'extensions-3.0'),
+)
+
+# Test executable for NemoActionLayoutEditor
+test_action_layout_editor = executable('test-action-layout-editor',
+  'test-action-layout-editor.c',
+  dependencies: nemo_extension_deps,
+  link_with: nemo_extension_lib,
+  include_directories: [ rootInclude, nemo_extension_incdir ],
+  build_by_default: true,
+  install: false,
 )
 
