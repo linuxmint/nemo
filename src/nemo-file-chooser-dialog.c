@@ -1341,6 +1341,9 @@ nemo_file_chooser_dialog_get_selected_uris (GtkDialog *dialog)
     if (!data)
         return NULL;
         
+    g_message ("nemo_file_chooser_dialog_get_selected_uris: action=%d, selected_uris_count=%d, current_folder=%p",
+               data->action, g_slist_length (data->selected_uris), data->current_folder);
+        
     GSList *list = NULL;
     GSList *l;
     for (l = data->selected_uris; l != NULL; l = l->next) {

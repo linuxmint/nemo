@@ -35,10 +35,13 @@ on_open_dialog_response (GtkDialog *dialog, gint response_id, gpointer user_data
     ResponseData *data = user_data;
     GPtrArray *results = g_ptr_array_new_with_free_func (g_free);
 
-    if (response_id == GTK_RESPONSE_ACCEPT) {
+    g_message ("Nemo Open Dialog Response ID: %d", response_id);
+
+    if (response_id == GTK_RESPONSE_ACCEPT || response_id == GTK_RESPONSE_OK) {
         GSList *uris = nemo_file_chooser_dialog_get_selected_uris (dialog);
         GSList *l;
         for (l = uris; l != NULL; l = l->next) {
+            g_message ("Nemo Dialog selected URI: %s", (const gchar *)l->data);
             g_ptr_array_add (results, g_strdup (l->data));
         }
         g_slist_free_full (uris, g_free);
@@ -65,6 +68,9 @@ handle_open_file_cb (NemoFileChooser *object,
 {
     GtkWidget *dialog;
 
+    g_message ("handle_open_file_cb: title='%s', multiselect=%d, directory=%d, initial_folder='%s'",
+               title ? title : "", multiselect, directory, initial_folder ? initial_folder : "");
+
     dialog = nemo_file_chooser_dialog_new (title,
                                           directory ? GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER : GTK_FILE_CHOOSER_ACTION_OPEN,
                                           multiselect,
@@ -88,7 +94,7 @@ on_save_dialog_response (GtkDialog *dialog, gint response_id, gpointer user_data
     ResponseData *data = user_data;
     gchar *result = NULL;
 
-    if (response_id == GTK_RESPONSE_ACCEPT) {
+    if (response_id == GTK_RESPONSE_ACCEPT || response_id == GTK_RESPONSE_OK) {
         result = nemo_file_chooser_dialog_get_selected_uri (dialog);
     }
 
