@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+  "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+  <interface name="org.Nemo.FileChooser">
+    <method name="OpenFile">
+      <arg type="s" name="title" direction="in"/>
+      <arg type="as" name="filters" direction="in"/>
+      <arg type="b" name="multiselect" direction="in"/>
+      <arg type="b" name="directory" direction="in"/>
+      <arg type="s" name="initial_folder" direction="in"/>
+      <arg type="as" name="results" direction="out"/>
+    </method>
+    <method name="SaveFile">
+      <arg type="s" name="title" direction="in"/>
+      <arg type="s" name="initial_folder" direction="in"/>
+      <arg type="s" name="suggested_name" direction="in"/>
+      <arg type="s" name="result" direction="out"/>
+    </method>
+  </interface>
+</node>

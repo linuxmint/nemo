@@ -14,9 +14,18 @@ nemoBuiltSources = gnome.gdbus_codegen(
   object_manager: true
 )
 
+nemoFileChooserBuiltSources = gnome.gdbus_codegen(
+  'nemo-file-chooser-generated',
+  join_paths(meson.project_source_root(), 'data', 'org.Nemo.FileChooser.xml'),
+  interface_prefix: 'org.Nemo.',
+  namespace: 'Nemo',
+  object_manager: false
+)
+
 nemoCommon_sources = [
   dbusBuiltSources,
   nemoBuiltSources,
+  nemoFileChooserBuiltSources,
   'nemo-action-config-widget.c',
   'nemo-application.c',
   'nemo-blank-desktop-window.c',
@@ -36,6 +45,8 @@ nemoCommon_sources = [
   'nemo-file-management-properties.c',
   'nemo-filter-bar.c',
   'nemo-floating-bar.c',
+  'nemo-file-chooser-dbus.c',
+  'nemo-file-chooser-dialog.c',
   'nemo-freedesktop-dbus.c',
   'nemo-icon-view-container.c',
   'nemo-icon-view-grid-container.c',

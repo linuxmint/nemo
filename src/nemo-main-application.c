@@ -31,6 +31,7 @@
 #endif /* ENABLE_EMPTY_VIEW */
 
 #include "nemo-freedesktop-dbus.h"
+#include "nemo-file-chooser-dbus.h"
 #include "nemo-icon-view.h"
 #include "nemo-image-properties-page.h"
 #include "nemo-list-view.h"
@@ -107,6 +108,7 @@ struct _NemoMainApplicationPriv {
 
 	NemoDBusManager *dbus_manager;
 	NemoFreedesktopDBus *fdb_manager;
+	NemoFileChooserDBus *file_chooser_dbus;
 
 	gchar *geometry;
 };
@@ -792,6 +794,7 @@ nemo_main_application_finalize (GObject *object)
 
     g_clear_object (&application->priv->dbus_manager);
     g_clear_object (&application->priv->fdb_manager);
+    g_clear_object (&application->priv->file_chooser_dbus);
 
     free_search_helpers ();
 
@@ -1148,6 +1151,7 @@ nemo_main_application_continue_startup (NemoApplication *app)
 	/* create DBus manager */
 	self->priv->dbus_manager = nemo_dbus_manager_new ();
 	self->priv->fdb_manager = nemo_freedesktop_dbus_new ();
+	self->priv->file_chooser_dbus = nemo_file_chooser_dbus_new ();
 
     /* Check the user's ~/.config/nemo directory and post warnings
      * if there are problems.
