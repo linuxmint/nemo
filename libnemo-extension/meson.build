@@ -18,6 +18,7 @@ nemo_extension_sources = [
   'nemo-property-page-provider.c',
   'nemo-property-page.c',
   'nemo-menu.c',
+  'nemo-selection-provider.c',
   'nemo-simple-button.c',
 ]
 
@@ -35,6 +36,7 @@ nemo_extension_headers = [
   'nemo-property-page-provider.h',
   'nemo-property-page.h',
   'nemo-menu.h',
+  'nemo-selection-provider.h',
   'nemo-simple-button.h',
 ]
 
