@@ -54,6 +54,7 @@ on_open_dialog_response (GtkDialog *dialog, gint response_id, gpointer user_data
     
     g_ptr_array_unref (results);
     gtk_widget_destroy (GTK_WIDGET (dialog));
+    g_application_release (g_application_get_default ());
     g_free (data);
 }
 
@@ -85,6 +86,7 @@ handle_open_file_cb (NemoFileChooser *object,
 
     g_signal_connect (dialog, "response", G_CALLBACK (on_open_dialog_response), data);
     gtk_widget_show_all (dialog);
+    g_application_hold (g_application_get_default ());
 
     return TRUE;
 }
@@ -123,6 +125,7 @@ on_save_dialog_response (GtkDialog *dialog, gint response_id, gpointer user_data
     
     g_free (result);
     gtk_widget_destroy (GTK_WIDGET (dialog));
+    g_application_release (g_application_get_default ());
     g_free (data);
 }
 
@@ -149,6 +152,7 @@ handle_save_file_cb (NemoFileChooser *object,
 
     g_signal_connect (dialog, "response", G_CALLBACK (on_save_dialog_response), data);
     gtk_widget_show_all (dialog);
+    g_application_hold (g_application_get_default ());
 
     return TRUE;
 }
