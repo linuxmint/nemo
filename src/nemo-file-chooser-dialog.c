@@ -1148,10 +1148,12 @@ nemo_file_chooser_dialog_new (const gchar *title,
     data->select_multiple = select_multiple;
     data->show_hidden = FALSE;
     
-    if (action == GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER) {
-        GtkWidget *ok_btn = GTK_WIDGET (gtk_builder_get_object (builder, "ok_button"));
-        if (ok_btn) {
+    GtkWidget *ok_btn = GTK_WIDGET (gtk_builder_get_object (builder, "ok_button"));
+    if (ok_btn) {
+        if (action == GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER) {
             gtk_button_set_label (GTK_BUTTON (ok_btn), _("_Select"));
+        } else if (action == GTK_FILE_CHOOSER_ACTION_SAVE) {
+            gtk_button_set_label (GTK_BUTTON (ok_btn), _("_Save"));
         }
     }
     

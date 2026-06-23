@@ -5,6 +5,7 @@
 #include <config.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 #include "nemo-application.h"
 #include "nemo-file-chooser-dbus.h"
@@ -96,6 +97,26 @@ on_save_dialog_response (GtkDialog *dialog, gint response_id, gpointer user_data
 
     if (response_id == GTK_RESPONSE_ACCEPT || response_id == GTK_RESPONSE_OK) {
         result = nemo_file_chooser_dialog_get_selected_uri (dialog);
+        if (result && *result) {
+            g_autoptr(GFile) file = g_file_new_for_uri (result);
+            if (g_file_query_exists (file, NULL)) {
+                g_autofree gchar *basename = g_file_get_basename (file);
+                GtkWidget *msg_dialog = gtk_message_dialog_new (GTK_WINDOW (dialog),
+                                                                GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_QUESTION,
+                                                                GTK_BUTTONS_YES_NO,
+                                                                _("A file named \"%s\" already exists. Do you want to replace it?"),
+                                                                basename);
+                gtk_window_set_title (GTK_WINDOW (msg_dialog), _("Replace File"));
+                gint res = gtk_dialog_run (GTK_DIALOG (msg_dialog));
+                gtk_widget_destroy (msg_dialog);
+                
+                if (res != GTK_RESPONSE_YES) {
+                    g_free (result);
+                    return;
+                }
+            }
+        }
     }
 
     nemo_file_chooser_complete_save_file (data->skeleton, data->invocation, result ? result : "");
