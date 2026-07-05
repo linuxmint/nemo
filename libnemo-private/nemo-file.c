@@ -507,6 +507,7 @@ nemo_file_clear_info (NemoFile *file)
 	g_free (file->details->symlink_name);
 	file->details->symlink_name = NULL;
     g_clear_pointer (&file->details->mime_type, g_ref_string_release);
+    file->details->mime_type_sniffed = FALSE;
     g_clear_pointer (&file->details->selinux_context, g_free);
     g_clear_pointer (&file->details->description, g_free);
     g_clear_pointer (&file->details->owner, g_ref_string_release);
@@ -2262,6 +2263,92 @@ access_ok (const gchar *path)
     return TRUE;
 }
 
+#define NEMO_MIME_SNIFF_MAX_SIZE  (1 * 1024 * 1024)
+#define NEMO_MIME_SNIFF_READ_SIZE 1024
+
+typedef struct {
+	NemoFile *file;
+	GFile *location;
+	GFileInputStream *stream;
+	guchar buffer[NEMO_MIME_SNIFF_READ_SIZE];
+} MimeSniffData;
+
+static void
+mime_sniff_data_free (MimeSniffData *data)
+{
+	g_clear_object (&data->stream);
+	g_clear_object (&data->location);
+	nemo_file_unref (data->file);
+	g_free (data);
+}
+
+static void
+mime_sniff_read_cb (GObject *source, GAsyncResult *res, gpointer user_data)
+{
+	MimeSniffData *data = user_data;
+	GError *error = NULL;
+	gssize bytes_read;
+
+	bytes_read = g_input_stream_read_finish (G_INPUT_STREAM (source), res, &error);
+
+	if (bytes_read > 0) {
+		gboolean uncertain;
+		gchar *sniffed_type;
+
+		sniffed_type = g_content_type_guess (data->file->details->name,
+						      data->buffer, bytes_read, &uncertain);
+
+		if (!uncertain && sniffed_type != NULL &&
+		    g_strcmp0 (sniffed_type, data->file->details->mime_type) != 0) {
+			g_clear_pointer (&data->file->details->mime_type, g_ref_string_release);
+			data->file->details->mime_type = g_ref_string_new (sniffed_type);
+			nemo_file_changed (data->file);
+		}
+		g_free (sniffed_type);
+	}
+
+	if (error != NULL) {
+		g_error_free (error);
+	}
+
+	g_input_stream_close_async (G_INPUT_STREAM (source), G_PRIORITY_LOW, NULL, NULL, NULL);
+	mime_sniff_data_free (data);
+}
+
+static void
+mime_sniff_open_cb (GObject *source, GAsyncResult *res, gpointer user_data)
+{
+	MimeSniffData *data = user_data;
+	GError *error = NULL;
+
+	data->stream = g_file_read_finish (G_FILE (source), res, &error);
+
+	if (data->stream == NULL) {
+		if (error != NULL) {
+			g_error_free (error);
+		}
+		mime_sniff_data_free (data);
+		return;
+	}
+
+	g_input_stream_read_async (G_INPUT_STREAM (data->stream),
+				   data->buffer, NEMO_MIME_SNIFF_READ_SIZE,
+				   G_PRIORITY_LOW, NULL,
+				   mime_sniff_read_cb, data);
+}
+
+static void
+nemo_file_sniff_remote_mime_type_async (NemoFile *file, GFile *location)
+{
+	MimeSniffData *data;
+
+	data = g_new0 (MimeSniffData, 1);
+	data->file = nemo_file_ref (file);
+	data->location = g_object_ref (location);
+
+	g_file_read_async (location, G_PRIORITY_LOW, NULL, mime_sniff_open_cb, data);
+}
+
 static gboolean
 update_info_internal (NemoFile *file,
 		      GFileInfo *info,
@@ -2716,13 +2803,34 @@ update_info_internal (NemoFile *file,
 
     mime_type = nemo_get_best_guess_file_mimetype (file->details->name, info, size);
 
-    if (g_strcmp0 (file->details->mime_type, mime_type) != 0) {
+    if (file->details->mime_type_sniffed &&
+        g_strcmp0 (mime_type, "application/octet-stream") == 0 &&
+        file->details->mime_type != NULL &&
+        g_strcmp0 (file->details->mime_type, "application/octet-stream") != 0) {
+        g_free (mime_type);
+        mime_type = NULL;
+    } else if (g_strcmp0 (file->details->mime_type, mime_type) != 0) {
         changed = TRUE;
         g_clear_pointer (&file->details->mime_type, g_ref_string_release);
         file->details->mime_type = g_ref_string_new (mime_type);
     }
 
     g_free (mime_type);
+
+    if (!file->details->mime_type_sniffed &&
+        g_strcmp0 (file->details->mime_type, "application/octet-stream") == 0) {
+        GFile *location = nemo_file_get_location (file);
+
+        file->details->mime_type_sniffed = TRUE;
+
+        if (location != NULL) {
+            if (!g_file_is_native (location) &&
+                size > 0 && size <= NEMO_MIME_SNIFF_MAX_SIZE) {
+                nemo_file_sniff_remote_mime_type_async (file, location);
+            }
+            g_object_unref (location);
+        }
+    }
 
 	if (changed) {
 		add_to_link_hash_table (file);

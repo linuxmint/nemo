@@ -83,7 +83,9 @@ struct NemoFileDetails
 	char *symlink_name;
 	
 	GRefString *mime_type;
-	
+
+	eel_boolean_bit mime_type_sniffed : 1;
+
 	char *selinux_context;
 	char *description;
 	
