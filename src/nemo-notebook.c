@@ -316,6 +316,29 @@ nemo_notebook_sync_tab_label (NemoNotebook *notebook,
 	}
 }
 
+void
+nemo_notebook_sync_pinned (NemoNotebook *notebook,
+			       NemoWindowSlot *slot)
+{
+	GtkWidget *tab_label, *pinned_icon, *close_button;
+
+	g_return_if_fail (NEMO_IS_NOTEBOOK (notebook));
+	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
+
+	tab_label = gtk_notebook_get_tab_label (GTK_NOTEBOOK (notebook),
+						GTK_WIDGET (slot));
+	if (tab_label == NULL) {
+		return;
+	}
+
+	pinned_icon = GTK_WIDGET (g_object_get_data (G_OBJECT (tab_label), "pinned-icon"));
+	close_button = GTK_WIDGET (g_object_get_data (G_OBJECT (tab_label), "close-button"));
+	g_return_if_fail (pinned_icon != NULL && close_button != NULL);
+
+	gtk_widget_set_visible (pinned_icon, slot->pinned);
+	gtk_widget_set_visible (close_button, !slot->pinned);
+}
+
 static void
 close_button_clicked_cb (GtkWidget *widget,
 			 NemoWindowSlot *slot)
@@ -331,7 +354,7 @@ close_button_clicked_cb (GtkWidget *widget,
 static GtkWidget *
 build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 {
-	GtkWidget *hbox, *label, *close_button, *image, *spinner, *icon;
+	GtkWidget *hbox, *label, *close_button, *image, *spinner, *icon, *pinned_icon;
 
 	/* set hbox spacing and label padding (see below) so that there's an
 	 * equal amount of space around the label */
@@ -346,6 +369,10 @@ build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 	icon = gtk_image_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), icon, FALSE, FALSE, 0);
 	/* don't show the icon */
+
+	/* setup padlock icon for pinned (locked) tabs, hidden by default */
+	pinned_icon = gtk_image_new_from_icon_name ("changes-prevent-symbolic", GTK_ICON_SIZE_MENU);
+	gtk_box_pack_start (GTK_BOX (hbox), pinned_icon, FALSE, FALSE, 0);
 
 	/* setup label */
 	label = gtk_label_new (NULL);
@@ -383,6 +410,7 @@ build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 	g_object_set_data (G_OBJECT (hbox), "spinner", spinner);
 	g_object_set_data (G_OBJECT (hbox), "icon", icon);
 	g_object_set_data (G_OBJECT (hbox), "close-button", close_button);
+	g_object_set_data (G_OBJECT (hbox), "pinned-icon", pinned_icon);
 
 	return hbox;
 }

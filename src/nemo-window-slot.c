@@ -30,6 +30,7 @@
 #include "nemo-desktop-window.h"
 #include "nemo-filter-bar.h"
 #include "nemo-floating-bar.h"
+#include "nemo-notebook.h"
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-window-types.h"
@@ -617,6 +618,10 @@ nemo_window_slot_set_pinned (NemoWindowSlot *slot,
 	}
 
 	slot->pinned = pinned && slot->pinned_uri != NULL;
+
+	if (slot->pane != NULL && slot->pane->notebook != NULL) {
+		nemo_notebook_sync_pinned (NEMO_NOTEBOOK (slot->pane->notebook), slot);
+	}
 }
 
 gboolean
