@@ -473,6 +473,10 @@ notebook_tab_close_requested (NemoNotebook *notebook,
 			      NemoWindowSlot *slot,
 			      NemoWindowPane *pane)
 {
+	if (nemo_window_slot_get_pinned (slot)) {
+		return;
+	}
+
 	nemo_window_pane_close_slot (pane, slot);
 }
 
@@ -497,6 +501,28 @@ notebook_popup_menu_close_cb (GtkMenuItem *menuitem,
 }
 
 static void
+notebook_popup_menu_pin_cb (GtkCheckMenuItem *menuitem,
+			    gpointer user_data)
+{
+	NemoWindowPane *pane;
+	int num_target_tab;
+	GtkWidget *page;
+	NemoWindowSlot *slot;
+
+	pane = NEMO_WINDOW_PANE (user_data);
+	num_target_tab = GPOINTER_TO_INT (
+		g_object_get_data (G_OBJECT (pane), "num_target_tab"));
+	page = gtk_notebook_get_nth_page (
+		GTK_NOTEBOOK (pane->notebook), num_target_tab);
+	if (page == NULL) {
+		return;
+	}
+
+	slot = NEMO_WINDOW_SLOT (page);
+	nemo_window_slot_set_pinned (slot, !nemo_window_slot_get_pinned (slot), NULL);
+}
+
+static void
 notebook_popup_menu_show (NemoWindowPane *pane,
 			  GdkEventButton *event,
 			  int 	 	  num_target_tab)
@@ -507,6 +533,8 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 	int button, event_time;
 	gboolean can_move_left, can_move_right;
 	NemoNotebook *notebook;
+	GtkWidget *page;
+	gboolean target_is_pinned;
 
 	notebook = NEMO_NOTEBOOK (pane->notebook);
 
@@ -550,6 +578,21 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 			       item);
 	gtk_widget_set_sensitive (item, can_move_right);
 
+	page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), num_target_tab);
+	target_is_pinned = page != NULL &&
+		nemo_window_slot_get_pinned (NEMO_WINDOW_SLOT (page));
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
+			       gtk_separator_menu_item_new ());
+
+	item = gtk_check_menu_item_new_with_mnemonic (_("Loc_k Tab"));
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), target_is_pinned);
+	g_signal_connect (item, "toggled",
+			  G_CALLBACK (notebook_popup_menu_pin_cb),
+			  pane);
+	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
+			       item);
+
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
 			       gtk_separator_menu_item_new ());
 
@@ -560,6 +603,7 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 			  G_CALLBACK (notebook_popup_menu_close_cb), pane);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
 			       item);
+	gtk_widget_set_sensitive (item, !target_is_pinned);
 
 	gtk_widget_show_all (popup);
 
