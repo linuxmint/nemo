@@ -519,6 +519,9 @@ nemo_window_slot_dispose (GObject *object)
 	g_free (slot->status_text);
 	slot->status_text = NULL;
 
+	g_free (slot->pinned_uri);
+	slot->pinned_uri = NULL;
+
 	G_OBJECT_CLASS (nemo_window_slot_parent_class)->dispose (object);
 }
 
@@ -591,6 +594,37 @@ nemo_window_slot_get_location_uri (NemoWindowSlot *slot)
 		return g_file_get_uri (slot->location);
 	}
 	return NULL;
+}
+
+void
+nemo_window_slot_set_pinned (NemoWindowSlot *slot,
+			     gboolean        pinned,
+			     const char     *pinned_uri)
+{
+	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
+
+	g_free (slot->pinned_uri);
+	slot->pinned_uri = NULL;
+
+	if (pinned) {
+		if (pinned_uri != NULL) {
+			slot->pinned_uri = g_strdup (pinned_uri);
+		} else if (slot->pending_location != NULL) {
+			slot->pinned_uri = g_file_get_uri (slot->pending_location);
+		} else {
+			slot->pinned_uri = nemo_window_slot_get_location_uri (slot);
+		}
+	}
+
+	slot->pinned = pinned && slot->pinned_uri != NULL;
+}
+
+gboolean
+nemo_window_slot_get_pinned (NemoWindowSlot *slot)
+{
+	g_return_val_if_fail (NEMO_IS_WINDOW_SLOT (slot), FALSE);
+
+	return slot->pinned;
 }
 
 void

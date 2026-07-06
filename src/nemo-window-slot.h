@@ -121,8 +121,14 @@ struct NemoWindowSlot {
 
 	gboolean visible;
 
-	/* Back/Forward chain, and history list. 
-	 * The data in these lists are NemoBookmark pointers. 
+	/* Tab locking (Total Commander style): a pinned tab cannot be closed
+	 * from the UI and is restored at pinned_uri on startup.
+	 */
+	gboolean pinned;
+	char *pinned_uri;
+
+	/* Back/Forward chain, and history list.
+	 * The data in these lists are NemoBookmark pointers.
 	 */
 	GList *back_list, *forward_list;
 };
@@ -138,6 +144,11 @@ void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
 
 GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
 char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
+
+void     nemo_window_slot_set_pinned (NemoWindowSlot *slot,
+				      gboolean        pinned,
+				      const char     *pinned_uri);
+gboolean nemo_window_slot_get_pinned (NemoWindowSlot *slot);
 
 void nemo_window_slot_queue_reload (NemoWindowSlot *slot,
                                     gboolean        clear_thumbs);
