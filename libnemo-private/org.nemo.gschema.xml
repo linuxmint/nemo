@@ -714,15 +714,15 @@
       <summary>Whether split view was enabled when the last window was closed</summary>
       <description>Internal setting used to restore the last closed window's split view and tabs.</description>
     </key>
-    <key name="saved-tabs-left" type="as">
+    <key name="saved-tabs-left" type="a(sb)">
       <default>[]</default>
-      <summary>Saved tab URIs for the left pane</summary>
-      <description>Internal setting used to restore the last closed window's tabs for the left pane.</description>
+      <summary>Saved tabs for the left pane</summary>
+      <description>Internal setting used to restore the last closed window's tabs for the left pane. Each entry is a (uri, locked) pair; locked tabs are restored pinned at the saved location.</description>
     </key>
-    <key name="saved-tabs-right" type="as">
+    <key name="saved-tabs-right" type="a(sb)">
       <default>[]</default>
-      <summary>Saved tab URIs for the right pane</summary>
-      <description>Internal setting used to restore the last closed window's tabs for the right pane.</description>
+      <summary>Saved tabs for the right pane</summary>
+      <description>Internal setting used to restore the last closed window's tabs for the right pane. Each entry is a (uri, locked) pair; locked tabs are restored pinned at the saved location.</description>
     </key>
     <key name="saved-active-tab-left" type="i">
       <default>0</default>

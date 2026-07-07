@@ -2050,34 +2050,35 @@ uri_is_native_session_uri (const char *uri)
 	return is_native;
 }
 
-static char **
-collect_pane_saved_tab_uris (NemoWindowPane *pane, gint *active_index_out)
+static GVariant *
+collect_pane_saved_tabs (NemoWindowPane *pane, gint *active_index_out)
 {
 	GtkNotebook *notebook;
+	GVariantBuilder builder;
 	int n_pages, i;
 	int current_page;
 	int saved_index = 0;
 	int saved_active_index = 0;
-	GPtrArray *arr;
+
+	g_variant_builder_init (&builder, G_VARIANT_TYPE ("a(sb)"));
 
 	if (active_index_out != NULL) {
 		*active_index_out = 0;
 	}
 
 	if (pane == NULL || pane->notebook == NULL) {
-		return g_new0 (char *, 1);
+		return g_variant_builder_end (&builder);
 	}
 
 	notebook = GTK_NOTEBOOK (pane->notebook);
 	n_pages = gtk_notebook_get_n_pages (notebook);
 	current_page = gtk_notebook_get_current_page (notebook);
 
-	arr = g_ptr_array_new_with_free_func (g_free);
-
 	for (i = 0; i < n_pages; i++) {
 		GtkWidget *page;
 		NemoWindowSlot *slot;
 		char *uri;
+		gboolean pinned;
 
 		page = gtk_notebook_get_nth_page (notebook, i);
 		if (page == NULL) {
@@ -2085,26 +2086,34 @@ collect_pane_saved_tab_uris (NemoWindowPane *pane, gint *active_index_out)
 		}
 
 		slot = NEMO_WINDOW_SLOT (page);
-		uri = nemo_window_slot_get_location_uri (slot);
+		pinned = nemo_window_slot_get_pinned (slot);
+
+		/* Pinned tabs are restored at their pinned home, not at the
+		 * last visited location.
+		 */
+		if (pinned && slot->pinned_uri != NULL) {
+			uri = g_strdup (slot->pinned_uri);
+		} else {
+			uri = nemo_window_slot_get_location_uri (slot);
+			pinned = FALSE;
+		}
 
 		if (uri_is_native_session_uri (uri)) {
 			if (i == current_page) {
 				saved_active_index = saved_index;
 			}
-			g_ptr_array_add (arr, uri);
+			g_variant_builder_add (&builder, "(sb)", uri, pinned);
 			saved_index++;
-		} else {
-			g_free (uri);
 		}
-	}
 
-	g_ptr_array_add (arr, NULL);
+		g_free (uri);
+	}
 
 	if (active_index_out != NULL) {
 		*active_index_out = saved_active_index;
 	}
 
-	return (char **) g_ptr_array_free (arr, FALSE);
+	return g_variant_builder_end (&builder);
 }
 
 void
@@ -2112,8 +2121,8 @@ nemo_window_save_session_state (NemoWindow *window)
 {
 	NemoWindowPane *left_pane;
 	NemoWindowPane *right_pane;
-	char **left_uris;
-	char **right_uris;
+	GVariant *left_tabs;
+	GVariant *right_tabs;
 	gint left_active = 0;
 	gint right_active = 0;
 	gboolean split_view;
@@ -2135,18 +2144,15 @@ nemo_window_save_session_state (NemoWindow *window)
 	left_pane = child1 != NULL ? NEMO_WINDOW_PANE (child1) : NULL;
 	right_pane = child2 != NULL ? NEMO_WINDOW_PANE (child2) : NULL;
 
-	left_uris = collect_pane_saved_tab_uris (left_pane, &left_active);
-	right_uris = collect_pane_saved_tab_uris (right_pane, &right_active);
+	left_tabs = collect_pane_saved_tabs (left_pane, &left_active);
+	right_tabs = collect_pane_saved_tabs (right_pane, &right_active);
 	split_view = (right_pane != NULL);
 
 	g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW, split_view);
-	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT, (const gchar * const *) left_uris);
-	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT, (const gchar * const *) right_uris);
+	g_settings_set_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT, left_tabs);
+	g_settings_set_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT, right_tabs);
 	g_settings_set_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT, left_active);
 	g_settings_set_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT, right_active);
-
-	g_strfreev (left_uris);
-	g_strfreev (right_uris);
 }
 
 static void
@@ -2184,28 +2190,30 @@ clear_pane_to_single_slot (NemoWindowPane *pane)
 }
 
 static void
-open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
+open_saved_tabs_in_pane (NemoWindowPane *pane, GVariant *tabs)
 {
-	int i;
+	gsize i, n;
+	gsize opened = 0;
 
-	if (pane == NULL) {
+	if (pane == NULL || tabs == NULL) {
 		return;
 	}
 
-	/* If no URIs were saved for this pane, leave its first tab alone */
-	if (uris == NULL || uris[0] == NULL) {
-		return;
-	}
+	n = g_variant_n_children (tabs);
 
-	for (i = 0; uris[i] != NULL; i++) {
+	for (i = 0; i < n; i++) {
+		const gchar *uri;
+		gboolean pinned;
 		NemoWindowSlot *slot;
 		GFile *location;
 
-		if (!uri_is_native_session_uri (uris[i])) {
+		g_variant_get_child (tabs, i, "(&sb)", &uri, &pinned);
+
+		if (!uri_is_native_session_uri (uri)) {
 			continue;
 		}
 
-		if (i == 0) {
+		if (opened == 0) {
 			/* Reuse the existing first tab */
 			slot = pane->active_slot;
 			if (slot == NULL && pane->notebook != NULL) {
@@ -2222,9 +2230,15 @@ open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
 			continue;
 		}
 
-		location = g_file_new_for_uri (uris[i]);
+		location = g_file_new_for_uri (uri);
 		nemo_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
+
+		if (pinned) {
+			nemo_window_slot_set_pinned (slot, TRUE, uri);
+		}
+
+		opened++;
 	}
 }
 
@@ -2233,8 +2247,8 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 {
 	NemoWindowPane *left_pane;
 	NemoWindowPane *right_pane;
-	char **left_uris;
-	char **right_uris;
+	GVariant *left_tabs;
+	GVariant *right_tabs;
 	gint left_active;
 	gint right_active;
 	gboolean want_split;
@@ -2247,21 +2261,21 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 		return FALSE;
 	}
 
-	left_uris = g_settings_get_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT);
-	right_uris = g_settings_get_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT);
+	left_tabs = g_settings_get_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT);
+	right_tabs = g_settings_get_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT);
 	left_active = g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT);
 	right_active = g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT);
 	saved_split = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW);
 
-	if ((left_uris == NULL || left_uris[0] == NULL) &&
-	    (right_uris == NULL || right_uris[0] == NULL)) {
-		g_strfreev (left_uris);
-		g_strfreev (right_uris);
+	if (g_variant_n_children (left_tabs) == 0 &&
+	    g_variant_n_children (right_tabs) == 0) {
+		g_variant_unref (left_tabs);
+		g_variant_unref (right_tabs);
 		return FALSE;
 	}
 
 	/* Only create the extra pane if we actually have tabs to restore there */
-	want_split = saved_split && (right_uris != NULL && right_uris[0] != NULL);
+	want_split = saved_split && g_variant_n_children (right_tabs) > 0;
 
 	if (want_split && !nemo_window_split_view_showing (window)) {
 		nemo_window_split_view_on (window);
@@ -2283,17 +2297,17 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 	clear_pane_to_single_slot (right_pane);
 
 	/* If nothing saved for the left pane, open Home as a minimal fallback */
-	if (left_uris == NULL || left_uris[0] == NULL) {
+	if (g_variant_n_children (left_tabs) == 0) {
 		GFile *home = g_file_new_for_path (g_get_home_dir ());
 		if (left_pane != NULL && left_pane->active_slot != NULL) {
 			nemo_window_slot_open_location (left_pane->active_slot, home, 0);
 		}
 		g_object_unref (home);
 	} else {
-		open_uri_list_in_pane (left_pane, left_uris);
+		open_saved_tabs_in_pane (left_pane, left_tabs);
 	}
 
-	open_uri_list_in_pane (right_pane, right_uris);
+	open_saved_tabs_in_pane (right_pane, right_tabs);
 
 	/* Restore active tabs (clamp indices) */
 	if (left_pane != NULL && left_pane->notebook != NULL) {
@@ -2317,8 +2331,8 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 		nemo_window_set_active_pane (window, left_pane);
 	}
 
-	g_strfreev (left_uris);
-	g_strfreev (right_uris);
+	g_variant_unref (left_tabs);
+	g_variant_unref (right_tabs);
 
 	return TRUE;
 }
