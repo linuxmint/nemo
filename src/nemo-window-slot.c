@@ -440,13 +440,12 @@ view_end_loading_cb (NemoView       *view,
 
         directory = nemo_directory_get_for_file (slot->viewed_file);
 
-        if (NEMO_IS_SEARCH_DIRECTORY (directory)) {
-            if (!nemo_directory_is_not_empty (directory)) {
-                gtk_label_set_text (GTK_LABEL (slot->no_results_label), _("No files found"));
-                gtk_widget_show (slot->no_search_results_box);
-            } else {
-                gtk_widget_hide (slot->no_search_results_box);
-            }
+        if (NEMO_IS_SEARCH_DIRECTORY (directory) &&
+            !nemo_directory_is_not_empty (directory)) {
+            gtk_label_set_text (GTK_LABEL (slot->no_results_label), _("No files found"));
+            gtk_widget_show (slot->no_search_results_box);
+        } else {
+            gtk_widget_hide (slot->no_search_results_box);
         }
 
         nemo_directory_unref (directory);
