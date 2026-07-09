@@ -714,15 +714,25 @@
       <summary>Whether split view was enabled when the last window was closed</summary>
       <description>Internal setting used to restore the last closed window's split view and tabs.</description>
     </key>
-    <key name="saved-tabs-left" type="a(si)">
+    <key name="saved-tabs-left" type="as">
       <default>[]</default>
-      <summary>Saved tabs for the left pane</summary>
-      <description>Internal setting used to restore the last closed window's tabs for the left pane. Each entry is a (uri, lock mode) pair, where the lock mode is 0 for an unlocked tab, 1 for a tab that returns to its locked folder when reselected, and 2 for a tab whose folder changes open in a new tab. Locked tabs are restored at their locked folder.</description>
+      <summary>Saved tab URIs for the left pane</summary>
+      <description>Internal setting used to restore the last closed window's tabs for the left pane. A locked tab is saved at its locked folder rather than at the last folder it visited.</description>
     </key>
-    <key name="saved-tabs-right" type="a(si)">
+    <key name="saved-tabs-right" type="as">
       <default>[]</default>
-      <summary>Saved tabs for the right pane</summary>
-      <description>Internal setting used to restore the last closed window's tabs for the right pane. Each entry is a (uri, lock mode) pair, where the lock mode is 0 for an unlocked tab, 1 for a tab that returns to its locked folder when reselected, and 2 for a tab whose folder changes open in a new tab. Locked tabs are restored at their locked folder.</description>
+      <summary>Saved tab URIs for the right pane</summary>
+      <description>Internal setting used to restore the last closed window's tabs for the right pane. A locked tab is saved at its locked folder rather than at the last folder it visited.</description>
+    </key>
+    <key name="saved-tab-locks-left" type="ai">
+      <default>[]</default>
+      <summary>Saved tab lock modes for the left pane</summary>
+      <description>Internal setting used to restore the lock mode of each tab in saved-tabs-left, position by position: 0 for an unlocked tab, 1 for a tab that returns to its locked folder when reselected, and 2 for a tab whose folder changes open in a new tab. Entries missing from the end of this list default to 0, so a saved-tabs-left written by a Nemo without tab locking restores as all-unlocked.</description>
+    </key>
+    <key name="saved-tab-locks-right" type="ai">
+      <default>[]</default>
+      <summary>Saved tab lock modes for the right pane</summary>
+      <description>Internal setting used to restore the lock mode of each tab in saved-tabs-right, position by position: 0 for an unlocked tab, 1 for a tab that returns to its locked folder when reselected, and 2 for a tab whose folder changes open in a new tab. Entries missing from the end of this list default to 0, so a saved-tabs-right written by a Nemo without tab locking restores as all-unlocked.</description>
     </key>
     <key name="saved-active-tab-left" type="i">
       <default>0</default>
