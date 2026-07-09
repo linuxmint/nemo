@@ -380,7 +380,7 @@ build_tab_label (NemoNotebook *nb, NemoWindowSlot *slot)
 	gtk_box_pack_start (GTK_BOX (hbox), icon, FALSE, FALSE, 0);
 	/* don't show the icon */
 
-	/* setup padlock icon for pinned (locked) tabs, hidden by default */
+	/* setup padlock icon for locked tabs, hidden by default */
 	lock_icon = gtk_image_new_from_icon_name ("changes-prevent-symbolic", GTK_ICON_SIZE_MENU);
 	gtk_box_pack_start (GTK_BOX (hbox), lock_icon, FALSE, FALSE, 0);
 

@@ -749,8 +749,8 @@ notebook_switch_page_cb (GtkNotebook *notebook,
 	slot = NEMO_WINDOW_SLOT (widget);
 	g_assert (slot != NULL);
 
-	/* Sending a locked tab home is the slot's "inactive" handler's job; it
-	 * also covers the tab losing focus to the other pane.
+	/* Sending a locked tab home is the slot's "active" handler's job; it also
+	 * covers the tab becoming current again by way of the other pane.
 	 */
 	nemo_window_set_active_slot (nemo_window_slot_get_window (slot),
 					 slot);
