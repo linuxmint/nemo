@@ -98,7 +98,7 @@ action_close_window_slot_callback (GtkAction *action,
 	window = NEMO_WINDOW (user_data);
 	slot = nemo_window_get_active_slot (window);
 
-	if (nemo_window_slot_get_pinned (slot)) {
+	if (nemo_window_slot_is_locked (slot)) {
 		return;
 	}
 

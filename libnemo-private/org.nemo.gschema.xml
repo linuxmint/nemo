@@ -714,15 +714,15 @@
       <summary>Whether split view was enabled when the last window was closed</summary>
       <description>Internal setting used to restore the last closed window's split view and tabs.</description>
     </key>
-    <key name="saved-tabs-left" type="a(sb)">
+    <key name="saved-tabs-left" type="a(si)">
       <default>[]</default>
       <summary>Saved tabs for the left pane</summary>
-      <description>Internal setting used to restore the last closed window's tabs for the left pane. Each entry is a (uri, locked) pair; locked tabs are restored pinned at the saved location.</description>
+      <description>Internal setting used to restore the last closed window's tabs for the left pane. Each entry is a (uri, lock mode) pair, where the lock mode is 0 for an unlocked tab, 1 for a tab that returns to its locked folder when reselected, and 2 for a tab whose folder changes open in a new tab. Locked tabs are restored at their locked folder.</description>
     </key>
-    <key name="saved-tabs-right" type="a(sb)">
+    <key name="saved-tabs-right" type="a(si)">
       <default>[]</default>
       <summary>Saved tabs for the right pane</summary>
-      <description>Internal setting used to restore the last closed window's tabs for the right pane. Each entry is a (uri, locked) pair; locked tabs are restored pinned at the saved location.</description>
+      <description>Internal setting used to restore the last closed window's tabs for the right pane. Each entry is a (uri, lock mode) pair, where the lock mode is 0 for an unlocked tab, 1 for a tab that returns to its locked folder when reselected, and 2 for a tab whose folder changes open in a new tab. Locked tabs are restored at their locked folder.</description>
     </key>
     <key name="saved-active-tab-left" type="i">
       <default>0</default>

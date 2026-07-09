@@ -2060,7 +2060,7 @@ collect_pane_saved_tabs (NemoWindowPane *pane, gint *active_index_out)
 	int saved_index = 0;
 	int saved_active_index = 0;
 
-	g_variant_builder_init (&builder, G_VARIANT_TYPE ("a(sb)"));
+	g_variant_builder_init (&builder, G_VARIANT_TYPE ("a(si)"));
 
 	if (active_index_out != NULL) {
 		*active_index_out = 0;
@@ -2078,7 +2078,8 @@ collect_pane_saved_tabs (NemoWindowPane *pane, gint *active_index_out)
 		GtkWidget *page;
 		NemoWindowSlot *slot;
 		char *uri;
-		gboolean pinned;
+		NemoTabLockMode lock_mode;
+		const char *locked_uri;
 
 		page = gtk_notebook_get_nth_page (notebook, i);
 		if (page == NULL) {
@@ -2086,23 +2087,24 @@ collect_pane_saved_tabs (NemoWindowPane *pane, gint *active_index_out)
 		}
 
 		slot = NEMO_WINDOW_SLOT (page);
-		pinned = nemo_window_slot_get_pinned (slot);
+		lock_mode = nemo_window_slot_get_lock_mode (slot);
+		locked_uri = nemo_window_slot_get_locked_uri (slot);
 
-		/* Pinned tabs are restored at their pinned home, not at the
+		/* Locked tabs are restored at their locked folder, not at the
 		 * last visited location.
 		 */
-		if (pinned && slot->pinned_uri != NULL) {
-			uri = g_strdup (slot->pinned_uri);
+		if (lock_mode != NEMO_TAB_LOCK_NONE && locked_uri != NULL) {
+			uri = g_strdup (locked_uri);
 		} else {
 			uri = nemo_window_slot_get_location_uri (slot);
-			pinned = FALSE;
+			lock_mode = NEMO_TAB_LOCK_NONE;
 		}
 
 		if (uri_is_native_session_uri (uri)) {
 			if (i == current_page) {
 				saved_active_index = saved_index;
 			}
-			g_variant_builder_add (&builder, "(sb)", uri, pinned);
+			g_variant_builder_add (&builder, "(si)", uri, (gint32) lock_mode);
 			saved_index++;
 		}
 
@@ -2203,14 +2205,18 @@ open_saved_tabs_in_pane (NemoWindowPane *pane, GVariant *tabs)
 
 	for (i = 0; i < n; i++) {
 		const gchar *uri;
-		gboolean pinned;
+		gint32 lock_mode;
 		NemoWindowSlot *slot;
 		GFile *location;
 
-		g_variant_get_child (tabs, i, "(&sb)", &uri, &pinned);
+		g_variant_get_child (tabs, i, "(&si)", &uri, &lock_mode);
 
 		if (!uri_is_native_session_uri (uri)) {
 			continue;
+		}
+
+		if (lock_mode < NEMO_TAB_LOCK_NONE || lock_mode > NEMO_TAB_LOCK_NEW_TAB) {
+			lock_mode = NEMO_TAB_LOCK_NONE;
 		}
 
 		if (opened == 0) {
@@ -2234,8 +2240,11 @@ open_saved_tabs_in_pane (NemoWindowPane *pane, GVariant *tabs)
 		nemo_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
 
-		if (pinned) {
-			nemo_window_slot_set_pinned (slot, TRUE, uri);
+		/* After open_location, so a NEMO_TAB_LOCK_NEW_TAB slot does not
+		 * divert its own restore into a second tab.
+		 */
+		if (lock_mode != NEMO_TAB_LOCK_NONE) {
+			nemo_window_slot_set_lock_mode (slot, lock_mode, uri);
 		}
 
 		opened++;

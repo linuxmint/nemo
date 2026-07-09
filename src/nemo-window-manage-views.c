@@ -476,6 +476,23 @@ nemo_window_slot_open_location_full (NemoWindowSlot *slot,
 		}
 	} else {
 		use_same |= g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_USE_BROWSER);
+
+		/* A tab locked in "new tab" mode never leaves its folder: divert the
+		 * new location into a fresh, unlocked tab and leave this one alone.
+		 *
+		 * Search is exempt. It is a view of the locked folder rather than a
+		 * move away from it, and its completion callback assumes the search
+		 * landed in the slot that started it.
+		 */
+		if (nemo_window_slot_get_lock_mode (slot) == NEMO_TAB_LOCK_NEW_TAB &&
+		    (flags & (NEMO_WINDOW_OPEN_FLAG_NEW_TAB |
+			      NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW |
+			      NEMO_WINDOW_OPEN_FLAG_SEARCH)) == 0 &&
+		    slot->location != NULL &&
+		    !g_file_equal (slot->location, location)) {
+			flags |= NEMO_WINDOW_OPEN_FLAG_NEW_TAB;
+			use_same = TRUE;
+		}
 	}
 
 	g_assert (!((flags & NEMO_WINDOW_OPEN_FLAG_NEW_WINDOW) != 0 &&
@@ -1904,7 +1921,11 @@ nemo_window_back_or_forward (NemoWindow *window,
         bookmark = g_list_nth_data (list, distance);
 	location = nemo_bookmark_get_location (bookmark);
 
-	if (flags != 0) {
+	/* Route a "new tab" locked slot through open_location, whose guard turns
+	 * the history step into a new tab rather than moving the locked one.
+	 */
+	if (flags != 0 ||
+	    nemo_window_slot_get_lock_mode (slot) == NEMO_TAB_LOCK_NEW_TAB) {
 		nemo_window_slot_open_location (slot, location, flags);
 	} else {
 		char *scroll_pos;
