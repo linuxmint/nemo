@@ -492,9 +492,15 @@ nemo_drag_default_drop_action_for_icons (GdkDragContext *context,
         return;
     }
 
-    // compuuter:// uris do not support DND, don't allow it.
+    // computer:// uris do not support DND, don't allow it.
     if (eel_uri_is_computer (target_uri_string) ||
         eel_uri_is_computer (dropped_uri)) {
+        *action = 0;
+        return;
+    }
+
+    // A search results container isn't a real location.
+    if (eel_uri_is_search (target_uri_string)) {
         *action = 0;
         return;
     }
@@ -656,7 +662,10 @@ GdkDragAction
 nemo_drag_default_drop_action_for_uri_list (GdkDragContext *context,
 						const char *target_uri_string)
 {
-	if (eel_uri_is_trash (target_uri_string) && (gdk_drag_context_get_actions (context) & GDK_ACTION_MOVE)) {
+	if (eel_uri_is_search (target_uri_string)) {
+		/* A search results container isn't a real location - don't allow drops. */
+		return 0;
+	} else if (eel_uri_is_trash (target_uri_string) && (gdk_drag_context_get_actions (context) & GDK_ACTION_MOVE)) {
 		/* Only move to Trash */
 		return GDK_ACTION_MOVE;
 	} else {

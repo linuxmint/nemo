@@ -40,6 +40,7 @@
 
 #include <gtk/gtk.h>
 #include <eel/eel-gtk-extensions.h>
+#include <eel/eel-vfs-extensions.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -443,6 +444,11 @@ get_drop_action (NemoTreeViewDragDest *dest,
 		drop_target = get_drop_target_uri_for_path (dest, path);
 
 		if (drop_target == NULL) {
+			return 0;
+		}
+
+		if (eel_uri_is_search (drop_target)) {
+			g_free (drop_target);
 			return 0;
 		}
 
