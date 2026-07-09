@@ -233,6 +233,19 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 	}
 }
 
+static gboolean
+return_to_locked_uri_idle_cb (gpointer user_data)
+{
+	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+	/* The tab may have been destroyed between activation and this idle. */
+	if (slot->pane != NULL) {
+		nemo_window_slot_return_to_locked_uri (slot);
+	}
+
+	return G_SOURCE_REMOVE;
+}
+
 static void
 real_active (NemoWindowSlot *slot)
 {
@@ -261,6 +274,23 @@ real_active (NemoWindowSlot *slot)
 	if (slot->viewed_file != NULL) {
 		nemo_window_sync_view_type (window);
 		nemo_window_load_extension_menus (window);
+	}
+
+	/* A tab locked in "return" mode goes back to its locked folder whenever it
+	 * becomes the slot in use again, whether that is a tab switch or a switch
+	 * back to this pane. Deferred, because the caller is still part way through
+	 * making this slot active, and ::switch-page is still in flight.
+	 *
+	 * This runs on activation rather than deactivation on purpose: navigating a
+	 * background slot makes its fresh view take focus (focus_in_event_callback
+	 * calls nemo_window_slot_make_hosting_pane_active), which would drag the
+	 * user back to the tab they just left.
+	 */
+	if (slot->lock_mode == NEMO_TAB_LOCK_RETURN) {
+		g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+				 return_to_locked_uri_idle_cb,
+				 g_object_ref (slot),
+				 g_object_unref);
 	}
 }
 
@@ -655,7 +685,7 @@ nemo_window_slot_is_locked (NemoWindowSlot *slot)
 }
 
 /* Send a NEMO_TAB_LOCK_RETURN tab back to the folder it was locked at, if it
- * has wandered. Called when the tab is reactivated.
+ * has wandered. Called when the tab becomes the slot in use again.
  */
 void
 nemo_window_slot_return_to_locked_uri (NemoWindowSlot *slot)

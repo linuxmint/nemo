@@ -734,19 +734,6 @@ notebook_popup_menu_cb (GtkWidget *widget,
 }
 
 static gboolean
-return_locked_slot_idle_cb (gpointer user_data)
-{
-	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
-
-	/* The tab may have been destroyed between the switch and this idle. */
-	if (slot->pane != NULL) {
-		nemo_window_slot_return_to_locked_uri (slot);
-	}
-
-	return G_SOURCE_REMOVE;
-}
-
-static gboolean
 notebook_switch_page_cb (GtkNotebook *notebook,
 			 GtkWidget *page,
 			 unsigned int page_num,
@@ -762,19 +749,11 @@ notebook_switch_page_cb (GtkNotebook *notebook,
 	slot = NEMO_WINDOW_SLOT (widget);
 	g_assert (slot != NULL);
 
+	/* Sending a locked tab home is the slot's "inactive" handler's job; it
+	 * also covers the tab losing focus to the other pane.
+	 */
 	nemo_window_set_active_slot (nemo_window_slot_get_window (slot),
 					 slot);
-
-	/* A tab locked in "return" mode goes back to its locked folder whenever
-	 * it is reselected. Deferred, because navigating from inside
-	 * ::switch-page re-enters the notebook while it is still switching.
-	 */
-	if (nemo_window_slot_get_lock_mode (slot) == NEMO_TAB_LOCK_RETURN) {
-		g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
-				 return_locked_slot_idle_cb,
-				 g_object_ref (slot),
-				 g_object_unref);
-	}
 
 	return FALSE;
 }

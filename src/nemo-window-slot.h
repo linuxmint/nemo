@@ -48,7 +48,7 @@ typedef enum {
  */
 typedef enum {
 	NEMO_TAB_LOCK_NONE = 0,		/* navigate freely, keep the last folder */
-	NEMO_TAB_LOCK_RETURN = 1,	/* navigate freely, return home when reactivated */
+	NEMO_TAB_LOCK_RETURN = 1,	/* navigate freely, return home when reselected */
 	NEMO_TAB_LOCK_NEW_TAB = 2	/* never navigate, divert changes to a new tab */
 } NemoTabLockMode;
 
