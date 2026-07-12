@@ -4386,7 +4386,20 @@ get_custom_icon (NemoFile *file)
 
 	if (custom_icon_uri) {
 		icon_file = g_file_new_for_uri (custom_icon_uri);
-		icon = g_file_icon_new (icon_file);
+
+		/* g_file_icon_new() succeeds even when the file it points at no longer
+		 * exists, so a stale custom-icon path would win here and then fail to
+		 * render, silently masking the custom-icon-name below and leaving the
+		 * file with no custom icon at all. Only honour the path if it still
+		 * resolves, so that moving or renaming a custom icon degrades to the
+		 * icon name instead of failing silently. Existence is checked for
+		 * native files only, to avoid blocking I/O on remote locations.
+		 */
+		if (!g_file_is_native (icon_file) ||
+		    g_file_query_exists (icon_file, NULL)) {
+			icon = g_file_icon_new (icon_file);
+		}
+
 		g_object_unref (icon_file);
 		g_free (custom_icon_uri);
 	}
