@@ -51,6 +51,8 @@
 /* gap between bottom of icon and start of text box */
 #define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
+#define SELECTION_CHECKBOX_SIZE 12
+#define SELECTION_CHECKBOX_MARGIN 2
 
 
 /* special text height handling
@@ -174,6 +176,9 @@ static void     draw_pixbuf                          (GdkPixbuf                 
 						      cairo_t                       *cr,
 						      int                            x,
 						      int                            y);
+static void     draw_selection_checkbox              (NemoIconCanvasItem            *item,
+							      cairo_t                       *cr,
+							      EelIRect                       icon_rect);
 static PangoLayout *get_label_layout                 (PangoLayout                  **layout,
 						      NemoIconCanvasItem        *item,
 						      const char                    *text);
@@ -1288,6 +1293,88 @@ draw_pixbuf (GdkPixbuf *pixbuf,
         cairo_restore (cr);
 }
 
+static void
+draw_selection_checkbox (NemoIconCanvasItem *icon_item,
+			      cairo_t *cr,
+			      EelIRect icon_rect)
+{
+	GtkWidget *widget;
+	GtkStyleContext *context;
+	GdkRGBA border_color;
+	GdkRGBA fill_color;
+	GdkRGBA check_color;
+	double pixels_per_unit;
+	double checkbox_size;
+	double inset;
+	double checkbox_x;
+	double checkbox_y;
+	double check_x0;
+	double check_y0;
+	double check_x1;
+	double check_y1;
+	double check_x2;
+	double check_y2;
+	gboolean selected;
+
+	widget = GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas);
+	context = gtk_widget_get_style_context (widget);
+	pixels_per_unit = EEL_CANVAS_ITEM (icon_item)->canvas->pixels_per_unit;
+	checkbox_size = SELECTION_CHECKBOX_SIZE / pixels_per_unit;
+	checkbox_x = icon_rect.x0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
+	checkbox_y = icon_rect.y0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
+	selected = icon_item->details->is_highlighted_for_selection;
+	inset = MAX (1.0, 1.0 / pixels_per_unit);
+
+	gtk_style_context_get_border_color (context,
+					    selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL,
+					    &border_color);
+	gtk_style_context_get_background_color (context,
+						   selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL,
+						   &fill_color);
+	gtk_style_context_get_color (context,
+					 selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL,
+					 &check_color);
+
+	gtk_style_context_save (context);
+	gtk_style_context_set_state (context,
+				    selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL);
+
+	gdk_cairo_set_source_rgba (cr, &fill_color);
+	cairo_rectangle (cr,
+			 checkbox_x,
+			 checkbox_y,
+			 checkbox_size,
+			 checkbox_size);
+	cairo_fill_preserve (cr);
+
+	gdk_cairo_set_source_rgba (cr, &border_color);
+	cairo_set_line_width (cr, inset);
+	cairo_stroke (cr);
+
+	if (selected) {
+		double tick_width;
+
+		tick_width = MAX (1.0, 2.0 / pixels_per_unit);
+		cairo_set_line_width (cr, tick_width);
+		cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
+		gdk_cairo_set_source_rgba (cr, &check_color);
+
+		check_x0 = checkbox_x + checkbox_size * 0.22;
+		check_y0 = checkbox_y + checkbox_size * 0.55;
+		check_x1 = checkbox_x + checkbox_size * 0.42;
+		check_y1 = checkbox_y + checkbox_size * 0.72;
+		check_x2 = checkbox_x + checkbox_size * 0.78;
+		check_y2 = checkbox_y + checkbox_size * 0.30;
+
+		cairo_move_to (cr, check_x0, check_y0);
+		cairo_line_to (cr, check_x1, check_y1);
+		cairo_line_to (cr, check_x2, check_y2);
+		cairo_stroke (cr);
+	}
+
+	gtk_style_context_restore (context);
+}
+
 /* shared code to highlight or dim the passed-in pixbuf */
 static cairo_surface_t *
 real_map_surface (NemoIconCanvasItem *icon_item)
@@ -1386,6 +1473,8 @@ nemo_icon_canvas_item_draw (EelCanvasItem *item,
                              temp_surface,
                              icon_rect.x0, icon_rect.y0);
     cairo_surface_destroy (temp_surface);
+
+	draw_selection_checkbox (icon_item, cr, icon_rect);
 
 	/* Draw stretching handles (if necessary). */
 	draw_stretch_handles (icon_item, cr, &icon_rect);
@@ -1986,6 +2075,31 @@ nemo_icon_canvas_item_hit_test_rectangle (NemoIconCanvasItem *item, EelIRect can
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), FALSE);
 
 	return hit_test (item, canvas_rect);
+}
+
+gboolean
+nemo_icon_canvas_item_hit_test_selection_checkbox (NemoIconCanvasItem *item,
+					   gdouble world_x,
+					   gdouble world_y)
+{
+	EelDRect icon_rect;
+	double pixels_per_unit;
+	double checkbox_size;
+	double checkbox_x;
+	double checkbox_y;
+
+	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), FALSE);
+
+	icon_rect = nemo_icon_canvas_item_get_icon_rectangle (item);
+	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;
+	checkbox_size = SELECTION_CHECKBOX_SIZE / pixels_per_unit;
+	checkbox_x = icon_rect.x0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
+	checkbox_y = icon_rect.y0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
+
+	return world_x >= checkbox_x &&
+	       world_x <= checkbox_x + checkbox_size &&
+	       world_y >= checkbox_y &&
+	       world_y <= checkbox_y + checkbox_size;
 }
 
 const char *

@@ -5220,6 +5220,44 @@ handle_icon_button_press (NemoIconContainer *container,
 	return TRUE;
 }
 
+static gboolean
+clicked_on_selection_checkbox (NemoIconContainer *container,
+				 NemoIcon *icon,
+				 GdkEventButton *event)
+{
+	double raw_x;
+	double raw_y;
+	double world_x;
+	double world_y;
+	EelDRect icon_rect;
+	double pixels_per_unit;
+	double checkbox_size;
+	double checkbox_x;
+	double checkbox_y;
+
+	g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (icon != NULL, FALSE);
+
+	raw_x = event->x;
+	raw_y = event->y;
+	eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y,
+				   &world_x, &world_y);
+	if (nemo_icon_canvas_item_hit_test_selection_checkbox (icon->item, world_x, world_y)) {
+		return TRUE;
+	}
+
+	icon_rect = nemo_icon_canvas_item_get_icon_rectangle (icon->item);
+	pixels_per_unit = EEL_CANVAS (container)->pixels_per_unit;
+	checkbox_size = 12 / pixels_per_unit;
+	checkbox_x = icon_rect.x0 + (2 / pixels_per_unit);
+	checkbox_y = icon_rect.y0 + (2 / pixels_per_unit);
+
+	return raw_x >= checkbox_x &&
+	       raw_x <= checkbox_x + checkbox_size &&
+	       raw_y >= checkbox_y &&
+	       raw_y <= checkbox_y + checkbox_size;
+}
+
 static int
 item_event_callback (EelCanvasItem *item,
 		     GdkEvent *event,
@@ -5234,6 +5272,13 @@ item_event_callback (EelCanvasItem *item,
 	g_assert (icon != NULL);
 
     if (event->type == GDK_BUTTON_PRESS) {
+		if (clicked_on_selection_checkbox (container, icon, &event->button)) {
+			icon_toggle_selected (container, icon);
+			g_signal_emit (container,
+					   signals[SELECTION_CHANGED], 0);
+			return TRUE;
+		}
+
         if (handle_icon_button_press (container, icon, &event->button)) {
 			/* Stop the event from being passed along further. Returning
 			 * TRUE ain't enough.
