@@ -76,6 +76,7 @@ struct NemoListViewDetails {
 	GtkTreeViewColumn   *file_name_column;
 	int file_name_column_num;
 
+	GtkCellRendererToggle *selection_toggle_cell;
 	GtkCellRendererPixbuf *pixbuf_cell;
 	GtkCellRendererText   *file_name_cell;
 	GList *cells;
@@ -187,6 +188,14 @@ static void   set_columns_settings_from_metadata_and_preferences (NemoListView *
 static void   queue_update_visible_icons (NemoListView *view, gint delay);
 static NemoZoomLevel nemo_list_view_get_zoom_level (NemoView *view);
 static void   prioritize_visible_files (NemoListView *view);
+static void   selection_toggle_cell_data_func                    (GtkTreeViewColumn *column,
+																  GtkCellRenderer   *cell,
+																  GtkTreeModel      *model,
+																  GtkTreeIter       *iter,
+																  gpointer           data);
+static void   selection_toggle_toggled_callback                  (GtkCellRendererToggle *cell,
+																  gchar                *path_str,
+																  gpointer              data);
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
@@ -429,6 +438,85 @@ static gboolean
 button_event_modifies_selection (GdkEventButton *event)
 {
 	return (event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) != 0;
+}
+
+static gboolean
+clicked_on_selection_toggle (NemoListView *view,
+				 GtkTreePath *path,
+				 GdkEventButton *event)
+{
+	GtkTreeViewColumn *column;
+	int x_col_offset;
+	int x_cell_offset;
+	int width;
+	int start_x;
+	GtkTreePath *event_path = NULL;
+
+	if (!gtk_tree_view_get_path_at_pos (view->details->tree_view,
+					    event->x, event->y,
+					    &event_path, &column, NULL, NULL)) {
+		return FALSE;
+	}
+
+	if (path != NULL && gtk_tree_path_compare (path, event_path) != 0) {
+		gtk_tree_path_free (event_path);
+		return FALSE;
+	}
+
+	gtk_tree_path_free (event_path);
+
+	if (column != view->details->file_name_column) {
+		return FALSE;
+	}
+
+	gtk_tree_view_column_cell_get_position (view->details->file_name_column,
+						GTK_CELL_RENDERER (view->details->selection_toggle_cell),
+						&x_cell_offset, &width);
+	x_col_offset = gtk_tree_view_column_get_x_offset (view->details->file_name_column);
+	start_x = x_col_offset + x_cell_offset;
+
+	return event->x >= start_x && event->x <= start_x + width;
+}
+
+static void
+selection_toggle_cell_data_func (GtkTreeViewColumn *column,
+					 GtkCellRenderer *cell,
+					 GtkTreeModel *model,
+					 GtkTreeIter *iter,
+					 gpointer data)
+{
+	NemoListView *view = NEMO_LIST_VIEW (data);
+	GtkTreePath *path;
+	gboolean active;
+
+	path = gtk_tree_model_get_path (model, iter);
+	active = gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (view->details->tree_view), path);
+	g_object_set (cell,
+		      "active", active,
+		      "activatable", TRUE,
+		      NULL);
+	gtk_tree_path_free (path);
+}
+
+static void
+selection_toggle_toggled_callback (GtkCellRendererToggle *cell,
+					 gchar *path_str,
+					 gpointer data)
+{
+	NemoListView *view = NEMO_LIST_VIEW (data);
+	GtkTreePath *path;
+	GtkTreeSelection *selection;
+
+	path = gtk_tree_path_new_from_string (path_str);
+	selection = gtk_tree_view_get_selection (view->details->tree_view);
+
+	if (gtk_tree_selection_path_is_selected (selection, path)) {
+		gtk_tree_selection_unselect_path (selection, path);
+	} else {
+		gtk_tree_selection_select_path (selection, path);
+	}
+
+	gtk_tree_path_free (path);
 }
 
 static void
@@ -1148,6 +1236,19 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 	call_parent = TRUE;
 	if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y,
 					   &path, NULL, NULL, NULL)) {
+		if (view->details->selection_toggle_cell != NULL &&
+		    clicked_on_selection_toggle (view, path, event) &&
+		    (event->button == 1 || event->button == 2)) {
+			GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
+			if (gtk_tree_selection_path_is_selected (selection, path)) {
+				gtk_tree_selection_unselect_path (selection, path);
+			} else {
+				gtk_tree_selection_select_path (selection, path);
+			}
+			gtk_tree_path_free (path);
+			return GDK_EVENT_STOP;
+		}
+
         if (g_settings_get_boolean (nemo_list_view_preferences,
                                       NEMO_PREFERENCES_LIST_VIEW_ENABLE_EXPANSION)) {
     		gtk_widget_style_get (widget,
@@ -2710,6 +2811,7 @@ create_and_set_up_tree_view (NemoListView *view)
 		 * has the icon in it.*/
 		if (!strcmp (name, "name")) {
 			/* Create the file name column */
+			GtkCellRendererToggle *toggle_cell;
 			cell = gtk_cell_renderer_pixbuf_new ();
 			view->details->pixbuf_cell = (GtkCellRendererPixbuf *)cell;
 
@@ -2740,6 +2842,26 @@ create_and_set_up_tree_view (NemoListView *view)
             gtk_tree_view_column_set_min_width (view->details->file_name_column, 100);
             gtk_tree_view_column_set_reorderable (view->details->file_name_column, TRUE);
             gtk_tree_view_column_set_expand (view->details->file_name_column, TRUE);
+
+			toggle_cell = GTK_CELL_RENDERER_TOGGLE (gtk_cell_renderer_toggle_new ());
+			view->details->selection_toggle_cell = toggle_cell;
+			g_object_set (toggle_cell,
+				      "xpad", 0,
+				      "ypad", 0,
+				      "activatable", TRUE,
+				      NULL);
+			gtk_tree_view_column_pack_start (view->details->file_name_column,
+							 GTK_CELL_RENDERER (toggle_cell),
+							 FALSE);
+			gtk_tree_view_column_set_cell_data_func (view->details->file_name_column,
+							 GTK_CELL_RENDERER (toggle_cell),
+							 selection_toggle_cell_data_func,
+							 view,
+							 NULL);
+			g_signal_connect (toggle_cell,
+					  "toggled",
+					  G_CALLBACK (selection_toggle_toggled_callback),
+					  view);
 
 			gtk_tree_view_column_pack_start (view->details->file_name_column, cell, FALSE);
 			gtk_tree_view_column_set_attributes (view->details->file_name_column,
