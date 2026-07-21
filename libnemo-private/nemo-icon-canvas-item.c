@@ -1316,6 +1316,10 @@ draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 	double check_y2;
 	gboolean selected;
 
+	if (!icon_item->details->is_prelit) {
+		return;
+	}
+
 	widget = GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas);
 	context = gtk_widget_get_style_context (widget);
 	pixels_per_unit = EEL_CANVAS_ITEM (icon_item)->canvas->pixels_per_unit;
