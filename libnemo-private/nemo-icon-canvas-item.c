@@ -1315,6 +1315,13 @@ draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 	double check_x2;
 	double check_y2;
 	gboolean selected;
+	gboolean show_selection_checkboxes;
+
+	show_selection_checkboxes = g_settings_get_boolean (nemo_preferences,
+						   NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES);
+	if (!show_selection_checkboxes) {
+		return;
+	}
 
 	if (!icon_item->details->is_prelit) {
 		return;
@@ -2091,8 +2098,15 @@ nemo_icon_canvas_item_hit_test_selection_checkbox (NemoIconCanvasItem *item,
 	double checkbox_size;
 	double checkbox_x;
 	double checkbox_y;
+	gboolean show_selection_checkboxes;
 
 	g_return_val_if_fail (NEMO_IS_ICON_CANVAS_ITEM (item), FALSE);
+
+	show_selection_checkboxes = g_settings_get_boolean (nemo_preferences,
+						   NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES);
+	if (!show_selection_checkboxes) {
+		return FALSE;
+	}
 
 	icon_rect = nemo_icon_canvas_item_get_icon_rectangle (item);
 	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;

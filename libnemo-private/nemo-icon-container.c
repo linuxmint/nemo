@@ -5225,6 +5225,7 @@ clicked_on_selection_checkbox (NemoIconContainer *container,
 				 NemoIcon *icon,
 				 GdkEventButton *event)
 {
+	gboolean show_selection_checkboxes;
 	double raw_x;
 	double raw_y;
 	double world_x;
@@ -5237,6 +5238,12 @@ clicked_on_selection_checkbox (NemoIconContainer *container,
 
 	g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
 	g_return_val_if_fail (icon != NULL, FALSE);
+
+	show_selection_checkboxes = g_settings_get_boolean (nemo_preferences,
+						   NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES);
+	if (!show_selection_checkboxes) {
+		return FALSE;
+	}
 
 	raw_x = event->x;
 	raw_y = event->y;
