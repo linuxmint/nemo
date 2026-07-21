@@ -51,7 +51,6 @@
 /* gap between bottom of icon and start of text box */
 #define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
-#define SELECTION_CHECKBOX_SIZE 12
 #define SELECTION_CHECKBOX_MARGIN 2
 
 
@@ -179,6 +178,9 @@ static void     draw_pixbuf                          (GdkPixbuf                 
 static void     draw_selection_checkbox              (NemoIconCanvasItem            *item,
 							      cairo_t                       *cr,
 							      EelIRect                       icon_rect);
+static double   get_selection_checkbox_size           (GtkWidget                     *widget);
+static GdkPixbuf *get_selection_checkbox_pixbuf       (GtkWidget                     *widget,
+							      gboolean                       selected);
 static PangoLayout *get_label_layout                 (PangoLayout                  **layout,
 						      NemoIconCanvasItem        *item,
 						      const char                    *text);
@@ -1293,29 +1295,73 @@ draw_pixbuf (GdkPixbuf *pixbuf,
         cairo_restore (cr);
 }
 
+static double
+get_selection_checkbox_size (GtkWidget *widget)
+{
+	int width = 0;
+	int height = 0;
+
+	if (gtk_icon_size_lookup_for_settings (gtk_widget_get_settings (widget),
+					       GTK_ICON_SIZE_MENU,
+					       &width,
+					       &height)) {
+		return MAX (width, height);
+	}
+
+	return 16.0;
+}
+
+static GdkPixbuf *
+get_selection_checkbox_pixbuf (GtkWidget *widget,
+				      gboolean selected)
+{
+	GtkIconTheme *icon_theme;
+	GtkStyleContext *context;
+	GtkIconInfo *icon_info;
+	GdkRGBA fg_color;
+	GdkPixbuf *pixbuf;
+	int icon_size;
+	const char *icon_name;
+	GError *error = NULL;
+	gboolean was_symbolic = FALSE;
+
+	context = gtk_widget_get_style_context (widget);
+	icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+	icon_size = (int) get_selection_checkbox_size (widget);
+	icon_name = selected ? "checkbox-checked-symbolic" : "checkbox-symbolic";
+
+	icon_info = gtk_icon_theme_lookup_icon (icon_theme,
+						 icon_name,
+						 icon_size,
+						 GTK_ICON_LOOKUP_FORCE_SIZE);
+	if (icon_info == NULL) {
+		return NULL;
+	}
+
+	gtk_style_context_get_color (context, GTK_STATE_FLAG_SELECTED, &fg_color);
+	pixbuf = gtk_icon_info_load_symbolic_for_context (icon_info,
+							  context,
+							  &was_symbolic,
+							  &error);
+	g_object_unref (icon_info);
+
+	if (pixbuf == NULL) {
+		g_clear_error (&error);
+	}
+
+	return pixbuf;
+}
+
 static void
 draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 			      cairo_t *cr,
 			      EelIRect icon_rect)
 {
 	GtkWidget *widget;
-	GtkStyleContext *context;
-	GdkRGBA border_color;
-	GdkRGBA fill_color;
-	GdkRGBA check_color;
 	double pixels_per_unit;
-	double checkbox_size;
-	double inset;
-	double checkbox_x;
-	double checkbox_y;
-	double check_x0;
-	double check_y0;
-	double check_x1;
-	double check_y1;
-	double check_x2;
-	double check_y2;
 	gboolean selected;
 	gboolean show_selection_checkboxes;
+	GdkPixbuf *checkbox_pixbuf;
 
 	show_selection_checkboxes = g_settings_get_boolean (nemo_preferences,
 						   NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES);
@@ -1328,62 +1374,19 @@ draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 	}
 
 	widget = GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas);
-	context = gtk_widget_get_style_context (widget);
 	pixels_per_unit = EEL_CANVAS_ITEM (icon_item)->canvas->pixels_per_unit;
-	checkbox_size = SELECTION_CHECKBOX_SIZE / pixels_per_unit;
-	checkbox_x = icon_rect.x0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
-	checkbox_y = icon_rect.y0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
 	selected = icon_item->details->is_highlighted_for_selection;
-	inset = MAX (1.0, 1.0 / pixels_per_unit);
-
-	gtk_style_context_get_border_color (context,
-					    selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL,
-					    &border_color);
-	gtk_style_context_get_background_color (context,
-						   selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL,
-						   &fill_color);
-	gtk_style_context_get_color (context,
-					 selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL,
-					 &check_color);
-
-	gtk_style_context_save (context);
-	gtk_style_context_set_state (context,
-				    selected ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_NORMAL);
-
-	gdk_cairo_set_source_rgba (cr, &fill_color);
-	cairo_rectangle (cr,
-			 checkbox_x,
-			 checkbox_y,
-			 checkbox_size,
-			 checkbox_size);
-	cairo_fill_preserve (cr);
-
-	gdk_cairo_set_source_rgba (cr, &border_color);
-	cairo_set_line_width (cr, inset);
-	cairo_stroke (cr);
-
-	if (selected) {
-		double tick_width;
-
-		tick_width = MAX (1.0, 2.0 / pixels_per_unit);
-		cairo_set_line_width (cr, tick_width);
-		cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
-		gdk_cairo_set_source_rgba (cr, &check_color);
-
-		check_x0 = checkbox_x + checkbox_size * 0.22;
-		check_y0 = checkbox_y + checkbox_size * 0.55;
-		check_x1 = checkbox_x + checkbox_size * 0.42;
-		check_y1 = checkbox_y + checkbox_size * 0.72;
-		check_x2 = checkbox_x + checkbox_size * 0.78;
-		check_y2 = checkbox_y + checkbox_size * 0.30;
-
-		cairo_move_to (cr, check_x0, check_y0);
-		cairo_line_to (cr, check_x1, check_y1);
-		cairo_line_to (cr, check_x2, check_y2);
-		cairo_stroke (cr);
+	checkbox_pixbuf = get_selection_checkbox_pixbuf (widget, selected);
+	if (checkbox_pixbuf == NULL) {
+		return;
 	}
 
-	gtk_style_context_restore (context);
+	draw_pixbuf (checkbox_pixbuf,
+		     cr,
+		     icon_rect.x0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit),
+		     icon_rect.y0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit));
+	g_object_unref (checkbox_pixbuf);
+
 }
 
 /* shared code to highlight or dim the passed-in pixbuf */
@@ -2110,7 +2113,7 @@ nemo_icon_canvas_item_hit_test_selection_checkbox (NemoIconCanvasItem *item,
 
 	icon_rect = nemo_icon_canvas_item_get_icon_rectangle (item);
 	pixels_per_unit = EEL_CANVAS_ITEM (item)->canvas->pixels_per_unit;
-	checkbox_size = SELECTION_CHECKBOX_SIZE / pixels_per_unit;
+	checkbox_size = get_selection_checkbox_size (GTK_WIDGET (EEL_CANVAS_ITEM (item)->canvas)) / pixels_per_unit;
 	checkbox_x = icon_rect.x0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
 	checkbox_y = icon_rect.y0 + (SELECTION_CHECKBOX_MARGIN / pixels_per_unit);
 
