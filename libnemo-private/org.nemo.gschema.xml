@@ -206,6 +206,11 @@
       <summary>Whether to swap the hotkeys for Trash and Delete</summary>
       <description>If set to true, the Delete key will permanently delete a file, and the Shift-Delete key will only trash a file.</description>
     </key>
+    <key name="always-merge-directories" type="b">
+      <default>false</default>
+      <summary>Whether to automatically resolve conflicts between two directories by merging them.</summary>
+      <description>If set to true, a file conflict between two directories will always automatically be resolved to "Merge", rather than "Skip" or "Duplicate".</description>
+    </key>
     <key name="show-directory-item-counts"  enum="org.nemo.SpeedTradeoff">
       <aliases><alias value='local_only' target='local-only'/></aliases>
       <default>'local-only'</default>

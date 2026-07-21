@@ -36,6 +36,9 @@ G_BEGIN_DECLS
 #define NEMO_PREFERENCES_ENABLE_DELETE			"enable-delete"
 #define NEMO_PREFERENCES_SWAP_TRASH_DELETE      "swap-trash-delete"
 
+/* Conflic Behavior */
+#define NEMO_PREFERENCES_ALWAYS_MERGE_DIRS            "always-merge-directories"
+
 /* Desktop options */
 #define NEMO_PREFERENCES_DESKTOP_IS_HOME_DIR                "desktop-is-home-dir"
 

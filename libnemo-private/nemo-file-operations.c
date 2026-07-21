@@ -4398,6 +4398,16 @@ get_target_file_for_display_name (GFile *dir,
 	return dest;
 }
 
+static gboolean
+should_always_merge_dirs (void)
+{
+	gboolean confirm_merge;
+
+	confirm_merge = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_ALWAYS_MERGE_DIRS);
+
+	return confirm_merge;
+}
+
 /* Debuting files is non-NULL only for toplevel items */
 static void
 copy_move_file (CopyMoveJob *copy_job,
@@ -4663,6 +4673,10 @@ copy_move_file (CopyMoveJob *copy_job,
 
 		if (is_dir (dest) && is_dir (src)) {
 			is_a_merge = TRUE;
+		}
+
+		if (is_a_merge && should_always_merge_dirs()) {
+			job->merge_all = TRUE;
 		}
 
 		if ((is_a_merge && job->merge_all) ||
@@ -5336,6 +5350,10 @@ move_file_prepare (CopyMoveJob *move_job,
 		is_merge = FALSE;
 		if (is_dir (dest) && is_dir (src)) {
 			is_merge = TRUE;
+		}
+
+		if (is_merge && should_always_merge_dirs()) {
+			job->merge_all = TRUE;
 		}
 
 		if ((is_merge && job->merge_all) ||
