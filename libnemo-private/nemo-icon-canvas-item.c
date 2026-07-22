@@ -1369,13 +1369,13 @@ draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 		return;
 	}
 
-	if (!icon_item->details->is_prelit) {
+	selected = icon_item->details->is_highlighted_for_selection;
+	if (!icon_item->details->is_prelit && !selected) {
 		return;
 	}
 
 	widget = GTK_WIDGET (EEL_CANVAS_ITEM (icon_item)->canvas);
 	pixels_per_unit = EEL_CANVAS_ITEM (icon_item)->canvas->pixels_per_unit;
-	selected = icon_item->details->is_highlighted_for_selection;
 	checkbox_pixbuf = get_selection_checkbox_pixbuf (widget, selected);
 	if (checkbox_pixbuf == NULL) {
 		return;
