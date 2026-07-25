@@ -429,6 +429,93 @@ free_place_info (PlaceInfo *info)
     g_free (info);
 }
 
+/* Devices with an eject in progress, keyed by their unix-device identifier
+ * (e.g. "/dev/sdb1").
+ *
+ * A GMount's mount-removed signal fires at the *start* of an eject, while
+ * flushing cached writes to the device can take minutes.  Without extra
+ * bookkeeping the sidebar would rebuild on that early signal and show the
+ * device as a plain unmounted volume ("Mount and open ..."), which reads as
+ * "safe to unplug" long before it actually is - inviting data loss.
+ *
+ * Entries here let update_places () keep showing such devices as busy until
+ * the eject operation really completes (see do_eject and the eject
+ * callbacks).  The table is shared by every NemoPlacesSidebar instance so
+ * that all windows agree on what is currently ejecting; it is created
+ * lazily and lives for the whole process. */
+static GHashTable *ejecting_devices = NULL;
+
+typedef struct {
+    NemoPlacesSidebar *sidebar;   /* weak pointer: the eject can outlive the sidebar */
+    NemoWindow *window;           /* strong reference, kept for the duration */
+    gchar *key;                   /* unix-device id being ejected, or NULL */
+} EjectData;
+
+static gchar *
+get_eject_key (GMount *mount,
+               GVolume *volume,
+               GDrive *drive)
+{
+    GVolume *vol = NULL;
+    gchar *key = NULL;
+
+    if (volume != NULL) {
+        vol = g_object_ref (volume);
+    } else if (mount != NULL) {
+        vol = g_mount_get_volume (mount);
+    } else if (drive != NULL) {
+        GList *volumes = g_drive_get_volumes (drive);
+        if (volumes != NULL) {
+            vol = g_object_ref (volumes->data);
+            g_list_free_full (volumes, g_object_unref);
+        }
+    }
+
+    if (vol != NULL) {
+        key = g_volume_get_identifier (vol, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        g_object_unref (vol);
+    }
+
+    return key;
+}
+
+static gboolean
+volume_is_ejecting (GVolume *volume)
+{
+    gchar *id;
+    gboolean ret = FALSE;
+
+    if (ejecting_devices == NULL || volume == NULL) {
+        return FALSE;
+    }
+
+    id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+    if (id != NULL) {
+        ret = g_hash_table_contains (ejecting_devices, id);
+        g_free (id);
+    }
+
+    return ret;
+}
+
+static void
+eject_data_finish (EjectData *data)
+{
+    if (data->key != NULL && ejecting_devices != NULL) {
+        g_hash_table_remove (ejecting_devices, data->key);
+    }
+
+    if (data->sidebar != NULL) {
+        update_places_on_idle (data->sidebar);
+        g_object_remove_weak_pointer (G_OBJECT (data->sidebar),
+                                      (gpointer *) &data->sidebar);
+    }
+
+    g_object_unref (data->window);
+    g_free (data->key);
+    g_free (data);
+}
+
 static GtkTreeIter
 add_place (NemoPlacesSidebar *sidebar,
 	   PlaceType place_type,
@@ -449,6 +536,7 @@ add_place (NemoPlacesSidebar *sidebar,
     GIcon *gicon;
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
+	gboolean ejecting;
 
 	cat_iter = check_heading_for_devices (sidebar, section_type, cat_iter);
 
@@ -459,8 +547,13 @@ add_place (NemoPlacesSidebar *sidebar,
 		g_assert (place_type != PLACES_BOOKMARK);
 	}
 
+	ejecting = volume_is_ejecting (volume);
+
 	if (mount == NULL) {
-		show_eject_button = FALSE;
+		/* An ejecting device has no mount anymore, but its eject cell
+		 * is kept to show the busy indicator in the same spot the
+		 * user clicked. */
+		show_eject_button = ejecting;
 	} else {
 		show_eject_button = (show_unmount || show_eject);
 	}
@@ -481,7 +574,8 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
                 PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-                PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "xsi-media-eject-symbolic" : NULL,
+                PLACES_SIDEBAR_COLUMN_EJECT_ICON, !show_eject_button ? NULL :
+                    (ejecting ? "xsi-emblem-synchronizing-symbolic" : "xsi-media-eject-symbolic"),
 			    PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, EJECT_ICON_SIZE_NOT_HOVERED,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
                 PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
@@ -750,6 +844,35 @@ update_places (NemoPlacesSidebar *sidebar)
 	DEBUG ("Updating places sidebar");
 
     sidebar->updating_sidebar = TRUE;
+
+    /* Drop stale eject-in-progress entries: a device whose volume is no
+     * longer present has finished ejecting or was physically removed. */
+    if (ejecting_devices != NULL && g_hash_table_size (ejecting_devices) > 0) {
+        GVolumeMonitor *vm = g_volume_monitor_get ();
+        GList *present = g_volume_monitor_get_volumes (vm);
+        GHashTable *present_ids = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                         g_free, NULL);
+        GHashTableIter eject_iter;
+        gpointer eject_key;
+
+        for (l = present; l != NULL; l = l->next) {
+            gchar *id = g_volume_get_identifier (l->data,
+                                                 G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+            if (id != NULL) {
+                g_hash_table_add (present_ids, id);
+            }
+        }
+        g_list_free_full (present, g_object_unref);
+
+        g_hash_table_iter_init (&eject_iter, ejecting_devices);
+        while (g_hash_table_iter_next (&eject_iter, &eject_key, NULL)) {
+            if (!g_hash_table_contains (present_ids, eject_key)) {
+                g_hash_table_iter_remove (&eject_iter);
+            }
+        }
+        g_hash_table_destroy (present_ids);
+        g_object_unref (vm);
+    }
 
 	model = NULL;
 	last_uri = NULL;
@@ -1086,12 +1209,27 @@ update_places (NemoPlacesSidebar *sidebar)
                      * he just unmounted it.
                      */
                     gchar *volume_id;
-                    icon = nemo_get_volume_icon_name (volume);
-                    name = g_volume_get_name (volume);
 
                     volume_id = g_volume_get_identifier (volume,
                                                          G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
-                    tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name, volume_id);
+
+                    if (volume_is_ejecting (volume)) {
+                        /* The eject is still flushing data to the device;
+                         * keep it visible and clearly busy instead of
+                         * offering to mount it again. The device keeps its
+                         * normal icon; the busy indicator is shown in the
+                         * eject cell (see add_place). */
+                        gchar *volume_name = g_volume_get_name (volume);
+                        name = g_strdup_printf (_("%s (ejecting...)"), volume_name);
+                        icon = nemo_get_volume_icon_name (volume);
+                        tooltip = g_strdup_printf (_("Still writing data to %s. Do not unplug it yet."),
+                                                   volume_name);
+                        g_free (volume_name);
+                    } else {
+                        icon = nemo_get_volume_icon_name (volume);
+                        name = g_volume_get_name (volume);
+                        tooltip = g_strdup_printf (_("Mount and open %s (%s)"), name, volume_id);
+                    }
 
                     place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                                  SECTION_DEVICES,
@@ -1193,17 +1331,34 @@ update_places (NemoPlacesSidebar *sidebar)
             g_free (mount_uri);
         } else {
             /* see comment above in why we add an icon for an unmounted mountable volume */
-            icon = nemo_get_volume_icon_name (volume);
-            name = g_volume_get_name (volume);
+            gchar *row_tooltip;
+
+            if (volume_is_ejecting (volume)) {
+                /* The eject is still flushing data to the device; keep it
+                 * visible and clearly busy instead of offering to mount it
+                 * again. The device keeps its normal icon; the busy
+                 * indicator is shown in the eject cell (see add_place). */
+                gchar *volume_name = g_volume_get_name (volume);
+                name = g_strdup_printf (_("%s (ejecting...)"), volume_name);
+                icon = nemo_get_volume_icon_name (volume);
+                row_tooltip = g_strdup_printf (_("Still writing data to %s. Do not unplug it yet."),
+                                               volume_name);
+                g_free (volume_name);
+            } else {
+                icon = nemo_get_volume_icon_name (volume);
+                name = g_volume_get_name (volume);
+                row_tooltip = g_strdup (name);
+            }
 
             place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                          SECTION_DEVICES,
                                          name, icon, NULL,
-                                         NULL, volume, NULL, 0, name, 0, FALSE);
+                                         NULL, volume, NULL, 0, row_tooltip, 0, FALSE);
             place_infos = g_list_prepend (place_infos, place_info);
 
             g_free (icon);
             g_free (name);
+            g_free (row_tooltip);
         }
         g_object_unref (volume);
     }
@@ -2528,7 +2683,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 				    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
 				    -1);
 
-		if (volume != NULL && !sidebar->mounting) {
+		if (volume != NULL && !sidebar->mounting && !volume_is_ejecting (volume)) {
 			sidebar->mounting = TRUE;
 
 			g_assert (sidebar->go_to_after_mount_slot == NULL);
@@ -2842,11 +2997,10 @@ drive_eject_cb (GObject *source_object,
 		GAsyncResult *res,
 		gpointer user_data)
 {
-	NemoWindow *window;
+	EjectData *data;
 	GError *error;
 
-	window = user_data;
-	g_object_unref (window);
+	data = user_data;
 
 	error = NULL;
 	if (!g_drive_eject_with_operation_finish (G_DRIVE (source_object), res, &error)) {
@@ -2861,6 +3015,8 @@ drive_eject_cb (GObject *source_object,
         g_free (primary);
         g_clear_error (&error);
     }
+
+	eject_data_finish (data);
 }
 
 static void
@@ -2868,11 +3024,10 @@ volume_eject_cb (GObject *source_object,
 		GAsyncResult *res,
 		gpointer user_data)
 {
-	NemoWindow *window;
+	EjectData *data;
 	GError *error;
 
-	window = user_data;
-	g_object_unref (window);
+	data = user_data;
 
 	error = NULL;
 	if (!g_volume_eject_with_operation_finish (G_VOLUME (source_object), res, &error)) {
@@ -2887,6 +3042,8 @@ volume_eject_cb (GObject *source_object,
         g_free (primary);
         g_clear_error (&error);
     }
+
+	eject_data_finish (data);
 }
 
 static void
@@ -2894,11 +3051,10 @@ mount_eject_cb (GObject *source_object,
 		GAsyncResult *res,
 		gpointer user_data)
 {
-	NemoWindow *window;
+	EjectData *data;
 	GError *error;
 
-	window = user_data;
-	g_object_unref (window);
+	data = user_data;
 
 	error = NULL;
 	if (!g_mount_eject_with_operation_finish (G_MOUNT (source_object), res, &error)) {
@@ -2913,6 +3069,8 @@ mount_eject_cb (GObject *source_object,
         g_free (primary);
         g_clear_error (&error);
     }
+
+	eject_data_finish (data);
 }
 
 static void
@@ -2921,17 +3079,53 @@ do_eject (GMount *mount,
 	  GDrive *drive,
 	  NemoPlacesSidebar *sidebar)
 {
-    GMountOperation *mount_op = get_unmount_operation (sidebar);
+    GMountOperation *mount_op;
+    EjectData *data;
+    gchar *key;
+
+    key = get_eject_key (mount, volume, drive);
+
+    /* Ignore repeated eject requests (eject cell, context menu, ...) for
+     * a device whose eject is already in flight. */
+    if (key != NULL && ejecting_devices != NULL &&
+        g_hash_table_contains (ejecting_devices, key)) {
+        g_free (key);
+        return;
+    }
+
+    mount_op = get_unmount_operation (sidebar);
+
+    data = g_new0 (EjectData, 1);
+    data->window = g_object_ref (sidebar->window);
+    data->sidebar = sidebar;
+    g_object_add_weak_pointer (G_OBJECT (sidebar), (gpointer *) &data->sidebar);
+    data->key = key;
+
+    /* Remember that this device has an eject in progress: its GMount
+     * disappears as soon as the operation *starts*, while flushing cached
+     * writes to the device can take a long time.  update_places () uses
+     * this to keep the device visible (and clearly busy) until the eject
+     * really completes, instead of showing it as safely removable. */
+    if (data->key != NULL) {
+        if (ejecting_devices == NULL) {
+            ejecting_devices = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                      g_free, NULL);
+        }
+        g_hash_table_add (ejecting_devices, g_strdup (data->key));
+        update_places_on_idle (sidebar);
+    }
 
 	if (mount != NULL) {
 		g_mount_eject_with_operation (mount, 0, mount_op, NULL, mount_eject_cb,
-					      g_object_ref (sidebar->window));
+					      data);
 	} else if (volume != NULL) {
 		g_volume_eject_with_operation (volume, 0, mount_op, NULL, volume_eject_cb,
-					      g_object_ref (sidebar->window));
+					      data);
 	} else if (drive != NULL) {
 		g_drive_eject_with_operation (drive, 0, mount_op, NULL, drive_eject_cb,
-					      g_object_ref (sidebar->window));
+					      data);
+	} else {
+		eject_data_finish (data);
 	}
 	g_object_unref (mount_op);
 }
