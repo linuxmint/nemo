@@ -196,6 +196,7 @@ static void   selection_toggle_cell_data_func                    (GtkTreeViewCol
 static void   selection_toggle_toggled_callback                  (GtkCellRendererToggle *cell,
 																  gchar                *path_str,
 																  gpointer              data);
+static void   selection_checkboxes_preferences_changed_callback  (NemoListView         *view);
 
 G_DEFINE_TYPE (NemoListView, nemo_list_view, NEMO_TYPE_VIEW);
 
@@ -452,6 +453,11 @@ clicked_on_selection_toggle (NemoListView *view,
 	int start_x;
 	GtkTreePath *event_path = NULL;
 
+	if (!g_settings_get_boolean (nemo_preferences,
+				     NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES)) {
+		return FALSE;
+	}
+
 	if (!gtk_tree_view_get_path_at_pos (view->details->tree_view,
 					    event->x, event->y,
 					    &event_path, &column, NULL, NULL)) {
@@ -488,14 +494,34 @@ selection_toggle_cell_data_func (GtkTreeViewColumn *column,
 	NemoListView *view = NEMO_LIST_VIEW (data);
 	GtkTreePath *path;
 	gboolean active;
+	gboolean visible;
 
+	visible = g_settings_get_boolean (nemo_preferences,
+					  NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES);
 	path = gtk_tree_model_get_path (model, iter);
-	active = gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (view->details->tree_view), path);
+	active = visible &&
+		 gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (view->details->tree_view), path);
 	g_object_set (cell,
 		      "active", active,
-		      "activatable", TRUE,
+		      "activatable", visible,
+		      "visible", visible,
 		      NULL);
 	gtk_tree_path_free (path);
+}
+
+static void
+toggle_selection_at_path (NemoListView *view,
+			  GtkTreePath  *path)
+{
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection (view->details->tree_view);
+
+	if (gtk_tree_selection_path_is_selected (selection, path)) {
+		gtk_tree_selection_unselect_path (selection, path);
+	} else {
+		gtk_tree_selection_select_path (selection, path);
+	}
 }
 
 static void
@@ -505,18 +531,27 @@ selection_toggle_toggled_callback (GtkCellRendererToggle *cell,
 {
 	NemoListView *view = NEMO_LIST_VIEW (data);
 	GtkTreePath *path;
-	GtkTreeSelection *selection;
 
-	path = gtk_tree_path_new_from_string (path_str);
-	selection = gtk_tree_view_get_selection (view->details->tree_view);
-
-	if (gtk_tree_selection_path_is_selected (selection, path)) {
-		gtk_tree_selection_unselect_path (selection, path);
-	} else {
-		gtk_tree_selection_select_path (selection, path);
+	if (!g_settings_get_boolean (nemo_preferences,
+				     NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES)) {
+		return;
 	}
 
+	path = gtk_tree_path_new_from_string (path_str);
+	if (path == NULL) {
+		return;
+	}
+
+	toggle_selection_at_path (view, path);
 	gtk_tree_path_free (path);
+}
+
+static void
+selection_checkboxes_preferences_changed_callback (NemoListView *view)
+{
+	if (view->details->tree_view != NULL) {
+		gtk_widget_queue_draw (GTK_WIDGET (view->details->tree_view));
+	}
 }
 
 static void
@@ -1239,12 +1274,7 @@ button_press_callback (GtkWidget *widget, GdkEventButton *event, gpointer callba
 		if (view->details->selection_toggle_cell != NULL &&
 		    clicked_on_selection_toggle (view, path, event) &&
 		    (event->button == 1 || event->button == 2)) {
-			GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
-			if (gtk_tree_selection_path_is_selected (selection, path)) {
-				gtk_tree_selection_unselect_path (selection, path);
-			} else {
-				gtk_tree_selection_select_path (selection, path);
-			}
+			toggle_selection_at_path (view, path);
 			gtk_tree_path_free (path);
 			return GDK_EVENT_STOP;
 		}
@@ -4368,12 +4398,15 @@ nemo_list_view_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
 					      default_column_order_changed_callback,
 					      list_view);
-    g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
-                                          expanders_enabled_changed_cb,
-                                          list_view);
-    g_signal_handlers_disconnect_by_func (nemo_preferences,
-                                          tooltip_prefs_changed_callback,
-                                          list_view);
+	g_signal_handlers_disconnect_by_func (nemo_list_view_preferences,
+					      expanders_enabled_changed_cb,
+					      list_view);
+	g_signal_handlers_disconnect_by_func (nemo_preferences,
+					      tooltip_prefs_changed_callback,
+					      list_view);
+	g_signal_handlers_disconnect_by_func (nemo_preferences,
+					      selection_checkboxes_preferences_changed_callback,
+					      list_view);
 
 	G_OBJECT_CLASS (nemo_list_view_parent_class)->finalize (object);
 }
@@ -4616,12 +4649,17 @@ nemo_list_view_init (NemoListView *list_view)
                               G_CALLBACK (tooltip_prefs_changed_callback),
                               list_view);
 
-    g_signal_connect_swapped (nemo_preferences,
-                              "changed::" NEMO_PREFERENCES_TOOLTIP_FULL_PATH,
-                              G_CALLBACK (tooltip_prefs_changed_callback),
-                              list_view);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_TOOLTIP_FULL_PATH,
+				  G_CALLBACK (tooltip_prefs_changed_callback),
+				  list_view);
 
-    tooltip_prefs_changed_callback (list_view);
+	g_signal_connect_swapped (nemo_preferences,
+				  "changed::" NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES,
+				  G_CALLBACK (selection_checkboxes_preferences_changed_callback),
+				  list_view);
+
+	tooltip_prefs_changed_callback (list_view);
 
 	nemo_list_view_click_policy_changed (NEMO_VIEW (list_view));
     nemo_list_view_click_to_rename_mode_changed (NEMO_VIEW (list_view));

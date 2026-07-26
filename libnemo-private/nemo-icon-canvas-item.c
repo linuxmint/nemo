@@ -1309,7 +1309,6 @@ get_selection_checkbox_pixbuf (GtkWidget *widget,
 	GtkIconTheme *icon_theme;
 	GtkStyleContext *context;
 	GtkIconInfo *icon_info;
-	GdkRGBA fg_color;
 	GdkPixbuf *pixbuf;
 	int icon_size;
 	const char *icon_name;
@@ -1329,7 +1328,6 @@ get_selection_checkbox_pixbuf (GtkWidget *widget,
 		return NULL;
 	}
 
-	gtk_style_context_get_color (context, GTK_STATE_FLAG_SELECTED, &fg_color);
 	pixbuf = gtk_icon_info_load_symbolic_for_context (icon_info,
 							  context,
 							  &was_symbolic,
