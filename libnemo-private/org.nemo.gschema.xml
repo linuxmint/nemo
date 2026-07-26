@@ -354,7 +354,12 @@
     <key name="show-selection-checkboxes" type="b">
       <default>false</default>
       <summary>Enable item selection checkboxes</summary>
-      <description>If set to true, Nemo will show clickable checkboxes on hovered items in icon and compact views, and beside all items in list view to make mouse-only multi-selection easier.</description>
+      <description>If set to true, Nemo will show clickable checkboxes on items in icon and compact views, and beside all items in list view to make mouse-only multi-selection easier.</description>
+    </key>
+    <key name="show-selection-checkboxes-always" type="b">
+      <default>false</default>
+      <summary>Always show item selection checkboxes</summary>
+      <description>If set to true, Nemo will always show item selection checkboxes in icon and compact views instead of showing them only for selected or hovered items.</description>
     </key>
     <key name="ignore-view-metadata" type="b">
       <default>false</default>

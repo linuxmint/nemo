@@ -217,6 +217,12 @@ tooltip_prefs_changed_callback (NemoIconContainer *container)
     nemo_icon_container_request_update_all (container);
 }
 
+static void
+selection_checkboxes_prefs_changed_callback (NemoIconContainer *container)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (container));
+}
+
 /* Functions dealing with NemoIcons.  */
 
 static gboolean
@@ -2766,6 +2772,9 @@ finalize (GObject *object)
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                                           tooltip_prefs_changed_callback,
                                           object);
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          selection_checkboxes_prefs_changed_callback,
+                                          object);
 
 	g_hash_table_destroy (details->icon_set);
 	details->icon_set = NULL;
@@ -5009,6 +5018,16 @@ nemo_icon_container_init (NemoIconContainer *container)
     g_signal_connect_swapped (nemo_preferences,
                               "changed::" NEMO_PREFERENCES_TOOLTIP_FULL_PATH,
                               G_CALLBACK (tooltip_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES,
+                              G_CALLBACK (selection_checkboxes_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES_ALWAYS,
+                              G_CALLBACK (selection_checkboxes_prefs_changed_callback),
                               container);
 
     container->details->show_desktop_tooltips = g_settings_get_boolean (nemo_preferences,

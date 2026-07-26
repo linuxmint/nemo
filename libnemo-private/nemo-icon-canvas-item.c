@@ -1361,6 +1361,7 @@ draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 	double pixels_per_unit;
 	gboolean selected;
 	gboolean show_selection_checkboxes;
+	gboolean show_selection_checkboxes_always;
 	GdkPixbuf *checkbox_pixbuf;
 
 	show_selection_checkboxes = g_settings_get_boolean (nemo_preferences,
@@ -1370,7 +1371,9 @@ draw_selection_checkbox (NemoIconCanvasItem *icon_item,
 	}
 
 	selected = icon_item->details->is_highlighted_for_selection;
-	if (!icon_item->details->is_prelit && !selected) {
+	show_selection_checkboxes_always = g_settings_get_boolean (nemo_preferences,
+						   NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES_ALWAYS);
+	if (!show_selection_checkboxes_always && !icon_item->details->is_prelit && !selected) {
 		return;
 	}
 
