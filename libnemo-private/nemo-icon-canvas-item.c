@@ -52,7 +52,7 @@
 #define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
 #define SELECTION_CHECKBOX_MARGIN 2
-#define SELECTION_CHECKBOX_SCALE 1.5
+#define SELECTION_CHECKBOX_SIZE 22.0
 
 
 /* special text height handling
@@ -1299,17 +1299,7 @@ draw_pixbuf (GdkPixbuf *pixbuf,
 static double
 get_selection_checkbox_size (GtkWidget *widget)
 {
-	int width = 0;
-	int height = 0;
-
-	if (gtk_icon_size_lookup_for_settings (gtk_widget_get_settings (widget),
-					       GTK_ICON_SIZE_MENU,
-					       &width,
-					       &height)) {
-		return MAX (width, height) * SELECTION_CHECKBOX_SCALE;
-	}
-
-	return 16.0 * SELECTION_CHECKBOX_SCALE;
+	return SELECTION_CHECKBOX_SIZE;
 }
 
 static GdkPixbuf *
