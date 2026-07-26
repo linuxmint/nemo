@@ -52,7 +52,7 @@
 #define LABEL_OFFSET_BESIDES 3
 #define LABEL_LINE_SPACING 0
 #define SELECTION_CHECKBOX_MARGIN 2
-#define SELECTION_CHECKBOX_SIZE 22.0
+#define SELECTION_CHECKBOX_SIZE 20.0
 
 
 /* special text height handling
