@@ -63,6 +63,13 @@ struct NemoFileDetails
 	char *display_name_collation_key;
 	GRefString *edit_name;
 
+	/* One-entry cache: the collation key for the attribute last sorted by, and
+	 * the attribute it was built from. Invalidated when the info is cleared or
+	 * updated, and on every change notification - the latter is what covers
+	 * extension-supplied attributes and moves between directories. */
+	GQuark sort_collation_attribute;
+	char *sort_collation_key;
+
 	goffset size; /* -1 is unknown */
 	
 	int sort_order;

@@ -174,6 +174,8 @@ static gboolean update_info_and_name                         (NemoFile          
 							      GFileInfo             *info);
 static const char * nemo_file_peek_display_name (NemoFile *file);
 static const char * nemo_file_peek_display_name_collation_key (NemoFile *file);
+static const char * nemo_file_peek_sort_collation_key (NemoFile *file, GQuark attribute);
+static void nemo_file_invalidate_sort_collation_key (NemoFile *file);
 static void file_mount_unmounted (GMount *mount,  gpointer data);
 static void metadata_hash_free (GHashTable *hash);
 static void invalidate_thumbnail (NemoFile *file);
@@ -514,6 +516,8 @@ nemo_file_clear_info (NemoFile *file)
     g_clear_pointer (&file->details->group, g_ref_string_release);
     g_clear_pointer (&file->details->filesystem_id, g_ref_string_release);
 
+    nemo_file_invalidate_sort_collation_key (file);
+
     file->details->is_desktop_orphan = FALSE;
 
     file->details->desktop_monitor = -1;
@@ -813,6 +817,7 @@ finalize (GObject *object)
 	g_clear_pointer (&file->details->name, g_ref_string_release);
 	g_clear_pointer (&file->details->display_name, g_ref_string_release);
 	g_free (file->details->display_name_collation_key);
+	g_free (file->details->sort_collation_key);
 	g_clear_pointer (&file->details->edit_name, g_ref_string_release);
 	if (file->details->icon) {
 		g_object_unref (file->details->icon);
@@ -2725,6 +2730,8 @@ update_info_internal (NemoFile *file,
     g_free (mime_type);
 
 	if (changed) {
+		nemo_file_invalidate_sort_collation_key (file);
+
 		add_to_link_hash_table (file);
 
 		update_links_if_target (file);
@@ -3602,25 +3609,11 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
                                search_dir);
     }
 
-	/* it is a normal attribute, compare by strings */
-
 	result = nemo_file_compare_for_sort_internal (file_1, file_2, directories_first, favorites_first, reversed);
 
 	if (result == 0) {
-		char *value_1;
-		char *value_2;
-
-		value_1 = nemo_file_get_string_attribute_q (file_1,
-								attribute);
-		value_2 = nemo_file_get_string_attribute_q (file_2,
-								attribute);
-
-		if (value_1 != NULL && value_2 != NULL) {
-			result = strcmp (value_1, value_2);
-		}
-
-		g_free (value_1);
-		g_free (value_2);
+		result = strcmp (nemo_file_peek_sort_collation_key (file_1, attribute),
+				 nemo_file_peek_sort_collation_key (file_2, attribute));
 
 		if (reversed) {
 			result = -result;
@@ -4122,6 +4115,42 @@ nemo_file_peek_display_name_collation_key (NemoFile *file)
 		res = "";
 
 	return res;
+}
+
+/* The returned key points into the file's one-entry cache, so it is only valid
+ * until the next call for that same file with a different attribute, or until the
+ * file's key is invalidated. Peeking two attributes of one file needs a copy.
+ */
+static const char *
+nemo_file_peek_sort_collation_key (NemoFile *file, GQuark attribute)
+{
+	if (file->details->sort_collation_attribute != attribute ||
+	    file->details->sort_collation_key == NULL) {
+		char *value;
+		char *valid;
+
+		value = nemo_file_get_string_attribute_q (file, attribute);
+
+		/* Columns can supply arbitrary bytes, and keys are only
+		 * comparable to other keys, so every value has to produce one. */
+		valid = g_utf8_make_valid (value != NULL ? value : "", -1);
+
+		g_free (file->details->sort_collation_key);
+		file->details->sort_collation_key = g_utf8_collate_key_for_filename (valid, -1);
+		file->details->sort_collation_attribute = attribute;
+
+		g_free (valid);
+		g_free (value);
+	}
+
+	return file->details->sort_collation_key;
+}
+
+static void
+nemo_file_invalidate_sort_collation_key (NemoFile *file)
+{
+	file->details->sort_collation_attribute = 0;
+	g_clear_pointer (&file->details->sort_collation_key, g_free);
 }
 
 static const char *
@@ -8044,6 +8073,8 @@ nemo_file_emit_changed (NemoFile *file)
 	GList *link_files, *p;
 
 	g_assert (NEMO_IS_FILE (file));
+
+	nemo_file_invalidate_sort_collation_key (file);
 
 	/* Send out a signal. */
 	g_signal_emit (file, signals[CHANGED], 0, file);
