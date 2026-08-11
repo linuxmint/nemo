@@ -3615,6 +3615,10 @@ nemo_file_compare_for_sort_by_attribute_q   (NemoFile                   *file_1,
 		result = strcmp (nemo_file_peek_sort_collation_key (file_1, attribute),
 				 nemo_file_peek_sort_collation_key (file_2, attribute));
 
+		if (result == 0) {
+			result = compare_by_full_path (file_1, file_2);
+		}
+
 		if (reversed) {
 			result = -result;
 		}
