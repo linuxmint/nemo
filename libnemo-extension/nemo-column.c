@@ -247,8 +247,6 @@ nemo_column_finalize (GObject *object)
 	g_free (column->details->label);
 	g_free (column->details->description);
 
-	g_free (column->details);
-
 	G_OBJECT_CLASS (nemo_column_parent_class)->finalize (object);
 }
 
