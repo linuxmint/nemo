@@ -43,6 +43,9 @@ char *                eel_gtk_window_get_geometry_string              (GtkWindow
 
 gboolean              eel_check_is_wayland (void);
 /* GtkMenu and GtkMenuItem */
+void                  eel_pop_up_menu_at_pointer                      (GtkMenu              *menu,
+                                                                       GdkEvent             *event,
+                                                                       GtkWidget            *widget);
 void                  eel_pop_up_context_menu                         (GtkMenu              *menu,
                                                                        GdkEvent             *event,
                                                                        GtkWidget            *widget);

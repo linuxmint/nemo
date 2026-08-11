@@ -46,6 +46,8 @@ struct NemoNavigationActionPrivate
 	NemoNavigationDirection direction;
 	char *arrow_tooltip;
 
+        GtkWidget *popup_button;
+        GdkEvent *popup_event;
         guint popup_timeout_id;
 };
 
@@ -116,14 +118,14 @@ fill_menu (NemoWindow *window,
 
 static void
 show_menu (NemoNavigationAction *self,
-           guint button,
-           guint32 event_time)
+           GtkWidget *button,
+           GdkEvent *event)
 {
 	NemoWindow *window;
 	GtkWidget *menu;
 
 	window = self->priv->window;
-	
+
 	menu = gtk_menu_new ();
 
 	switch (self->priv->direction) {
@@ -148,8 +150,11 @@ show_menu (NemoNavigationAction *self,
 		break;
 	}
 
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
-                        button, event_time);
+    gtk_menu_popup_at_widget (GTK_MENU (menu),
+                              button,
+                              GDK_GRAVITY_SOUTH_WEST,
+                              GDK_GRAVITY_NORTH_WEST,
+                              event);
 }
 
 #define MENU_POPUP_TIMEOUT 1200
@@ -159,7 +164,11 @@ popup_menu_timeout_cb (gpointer data)
 {
         NemoNavigationAction *self = data;
 
-        show_menu (self, 1, gtk_get_current_event_time ());
+        self->priv->popup_timeout_id = 0;
+
+        if (self->priv->popup_button != NULL) {
+                show_menu (self, self->priv->popup_button, self->priv->popup_event);
+        }
 
         return FALSE;
 }
@@ -171,14 +180,27 @@ unschedule_menu_popup_timeout (NemoNavigationAction *self)
                 g_source_remove (self->priv->popup_timeout_id);
                 self->priv->popup_timeout_id = 0;
         }
+
+        g_clear_pointer (&self->priv->popup_event, gdk_event_free);
+
+        if (self->priv->popup_button != NULL) {
+                g_object_remove_weak_pointer (G_OBJECT (self->priv->popup_button),
+                                              (gpointer *) &self->priv->popup_button);
+                self->priv->popup_button = NULL;
+        }
 }
 
 static void
-schedule_menu_popup_timeout (NemoNavigationAction *self)
+schedule_menu_popup_timeout (NemoNavigationAction *self,
+                             GtkWidget *button,
+                             GdkEventButton *event)
 {
         /* unschedule any previous timeouts */
         unschedule_menu_popup_timeout (self);
 
+        self->priv->popup_button = button;
+        g_object_add_weak_pointer (G_OBJECT (button), (gpointer *) &self->priv->popup_button);
+        self->priv->popup_event = gdk_event_copy ((GdkEvent *) event);
         self->priv->popup_timeout_id =
                 g_timeout_add (MENU_POPUP_TIMEOUT,
                                popup_menu_timeout_cb,
@@ -243,7 +265,7 @@ tool_button_press_cb (GtkButton *button,
 
         if (event->button == 3) {
                 /* right click */
-                show_menu (self, event->button, event->time);
+                show_menu (self, GTK_WIDGET (button), (GdkEvent *) event);
                 return TRUE;
         }
 
@@ -253,7 +275,7 @@ tool_button_press_cb (GtkButton *button,
 	}
 
         if (event->button == 1) {
-                schedule_menu_popup_timeout (self);
+                schedule_menu_popup_timeout (self, GTK_WIDGET (button), event);
         }
 
 	return FALSE;

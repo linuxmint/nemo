@@ -294,6 +294,40 @@ create_popup_rect (GdkWindow *window, GdkRectangle *rect)
 }
 
 /**
+ * eel_pop_up_menu_at_pointer:
+ *
+ * Pop up a menu under the mouse. Unlike eel_pop_up_context_menu(), the
+ * menu's reference is left alone.
+ **/
+void
+eel_pop_up_menu_at_pointer (GtkMenu        *menu,
+                            GdkEvent       *event,
+                            GtkWidget      *widget)
+{
+    g_return_if_fail (GTK_IS_MENU (menu));
+    g_return_if_fail (GTK_IS_WIDGET (widget));
+
+    /* Anchor at the pointer only for a real button press. Keyboard-triggered
+     * popups (Menu key, ctrl-F10) have no usable event, and letting
+     * gtk_menu_popup_at_pointer() fall back to the current event leaves
+     * rect_window NULL, so the menu never appears. See ea4d68ec / #1897. */
+    if (event != NULL && event->type == GDK_BUTTON_PRESS) {
+        gtk_menu_popup_at_pointer (menu, event);
+    } else {
+        GdkWindow *window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
+        GdkRectangle rect = { 0, 0, 1, 1 };
+
+        create_popup_rect (window, &rect);
+        gtk_menu_popup_at_rect (menu,
+                                window,
+                                &rect,
+                                GDK_GRAVITY_NORTH_WEST,
+                                GDK_GRAVITY_NORTH_WEST,
+                                NULL);
+    }
+}
+
+/**
  * eel_pop_up_context_menu:
  *
  * Pop up a context menu under the mouse.
@@ -305,29 +339,7 @@ eel_pop_up_context_menu (GtkMenu        *menu,
                          GdkEvent       *event,
                          GtkWidget      *widget)
 {
-    g_return_if_fail (GTK_IS_MENU (menu));
-
-    // Using gtk_menu_popup_at_rect exclusively in wayland seems to avoid the problem
-    // of being unable to dismiss the menu when clicking to the left of it. See:
-    // https://github.com/linuxmint/nemo/issues/3218
-
-#ifdef GDK_WINDOWING_X11
-    if (!eel_check_is_wayland () && event && event->type == GDK_BUTTON_PRESS) {
-        gtk_menu_popup_at_pointer (menu, event);
-    } else
-#endif
-    {
-        GdkWindow *window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
-
-        GdkRectangle rect;
-        create_popup_rect (window, &rect);
-        gtk_menu_popup_at_rect (menu,
-                                window,
-                                &rect,
-                                GDK_GRAVITY_NORTH_WEST,
-                                GDK_GRAVITY_NORTH_WEST,
-                                NULL);
-    }
+    eel_pop_up_menu_at_pointer (menu, event, widget);
 
 	g_object_ref_sink (menu);
 	g_object_unref (menu);

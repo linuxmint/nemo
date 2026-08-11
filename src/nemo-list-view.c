@@ -2113,13 +2113,10 @@ column_header_clicked (GtkWidget *column_button,
                       G_CALLBACK (column_header_menu_disable_sort),
                       list_view);
 
-	gtk_widget_show_all (menu);
-	gtk_menu_popup_for_device (GTK_MENU (menu),
-	                           gdk_event_get_device ((GdkEvent *) event),
-	                           NULL, NULL, NULL, NULL, NULL,
-	                           event->button, event->time);
+    gtk_widget_show_all (menu);
+    eel_pop_up_context_menu (GTK_MENU (menu), (GdkEvent *) event, column_button);
 
-	return TRUE;
+    return TRUE;
 }
 
 static void
