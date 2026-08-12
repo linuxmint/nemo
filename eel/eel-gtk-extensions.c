@@ -307,11 +307,16 @@ eel_pop_up_menu_at_pointer (GtkMenu        *menu,
     g_return_if_fail (GTK_IS_MENU (menu));
     g_return_if_fail (GTK_IS_WIDGET (widget));
 
-    /* Anchor at the pointer only for a real button press. Keyboard-triggered
-     * popups (Menu key, ctrl-F10) have no usable event, and letting
-     * gtk_menu_popup_at_pointer() fall back to the current event leaves
-     * rect_window NULL, so the menu never appears. See ea4d68ec / #1897. */
-    if (event != NULL && event->type == GDK_BUTTON_PRESS) {
+    /* Anchor at the pointer only for a real button press in an X11 session.
+     *
+     * Keyboard-triggered popups (Menu key, ctrl-F10) have no usable event, and
+     * letting gtk_menu_popup_at_pointer() fall back to the current event leaves
+     * rect_window NULL, so the menu never appears. See ea4d68ec / #1897.
+     *
+     * In Wayland, gtk_menu_popup_at_pointer() also leaves the menu impossible
+     * to dismiss by clicking to the left of it, so use the rect path there
+     * unconditionally. See https://github.com/linuxmint/nemo/issues/3218. */
+    if (!eel_check_is_wayland () && event != NULL && event->type == GDK_BUTTON_PRESS) {
         gtk_menu_popup_at_pointer (menu, event);
     } else {
         GdkWindow *window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
