@@ -924,18 +924,18 @@ nemo_drag_drop_action_ask (GtkWidget *widget,
 			  &damd);
 	
 	gtk_grab_add (menu);
-	
-	gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
-			NULL, NULL, 0, GDK_CURRENT_TIME);
-	
+
+	eel_pop_up_menu_at_pointer (GTK_MENU (menu), NULL, widget);
+
 	g_main_loop_run (damd.loop);
 
 	gtk_grab_remove (menu);
-	
-	g_main_loop_unref (damd.loop);
+	g_signal_handlers_disconnect_by_data (menu, &damd);
 
 	g_object_ref_sink (menu);
 	g_object_unref (menu);
+
+	g_main_loop_unref (damd.loop);
 
 	return damd.chosen;
 }
