@@ -320,6 +320,7 @@ icon_get_data_binder (NemoIcon *icon, gpointer data)
 			   context->iteratee_data);
 
 	g_free (uri);
+	g_free (path_str);
 
 	return TRUE;
 }

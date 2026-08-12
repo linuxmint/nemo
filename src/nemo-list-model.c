@@ -949,6 +949,7 @@ each_path_get_data_binder (NemoDragEachSelectedItemDataGet data_get,
 				     data);
 
 			g_free (uri);
+			g_free (path_str);
 
 			nemo_file_unref (file);
 		}
