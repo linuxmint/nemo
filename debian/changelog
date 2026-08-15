@@ -1,3 +1,24 @@
+nemo (6.7.5) alfa; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-window-list.c: Clear interactive no-search-results label when navigating away while it's showing.
+  * dnd: Don't allow drops into a search result view.
+  * nemo-columns: Use natural sort for other string columns, including extension-provided ones.
+  * nemo-file.c: Fall back to path/name ordering when a sort column's values are equal.
+  * nemo-column.c: Remove stray g_free().
+  * menus: Fix popups having no transient parent in Wayland.
+  * nemo-dnd.c: Fix the drop action menu in Wayland.
+  * dnd: Free path_str in the get_data_binder() functions.
+  * eel-gtk-extensions.c: Restore Wayland popup workaround.
+
+  [ Clement Lefebvre ]
+  * nemo-desktop: Don't crash/quit in Wayland when the monitor is removed (#3785)
+
+  [ DSK ]
+  * nemo-action.c: Fix find_token_type() - ignore invalid tokens. (#3779)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 15 Aug 2026 12:41:04 +0200
+
 nemo (6.7.4) alfa; urgency=medium
 
   [ Michael Webster ]
