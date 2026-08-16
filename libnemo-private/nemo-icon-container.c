@@ -5653,6 +5653,7 @@ update_visible_icons_cb (NemoIconContainer *container)
 	GList *node;
 	NemoIcon *icon;
 	gboolean visible;
+	gboolean found_visible;
 	GtkAllocation allocation;
 
     container->details->update_visible_icons_id = 0;
@@ -5671,6 +5672,8 @@ update_visible_icons_cb (NemoIconContainer *container)
 			min_x, min_y, &min_x, &min_y);
 	eel_canvas_c2w (EEL_CANVAS (container),
 			max_x, max_y, &max_x, &max_y);
+
+	found_visible = FALSE;
 
 	for (node = g_list_last (container->details->icons); node != NULL; node = node->prev) {
 		icon = node->data;
@@ -5702,28 +5705,55 @@ update_visible_icons_cb (NemoIconContainer *container)
 
 			if (visible) {
 				nemo_icon_canvas_item_set_is_visible (icon->item, TRUE);
-                NemoFile *file = NEMO_FILE (icon->data);
+				found_visible = TRUE;
 
-                if (!icon->ok_to_show_thumb) {
+                /* Deferred attributes (thumbnails, extension info) stay
+                 * unrequested until the directory has finished loading -- see
+                 * nemo_icon_container_set_ok_to_load_deferred_attrs(), which
+                 * re-queues this callback from end_loading(). Fetching them
+                 * mid-load makes thumbnail I/O and decoding compete with the
+                 * directory enumeration, and every thumbnail that arrives
+                 * resizes an icon and reflows the layout under the user.
+                 */
+                if (container->details->ok_to_load_deferred_attrs) {
+                    NemoFile *file = NEMO_FILE (icon->data);
 
-                    icon->ok_to_show_thumb = TRUE;
+                    /* The listing supplied a mime type guessed from the name;
+                     * now that this file is on screen, fetch the real one. */
+                    nemo_file_resolve_content_type (file);
 
-                    if (nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_NO) {
-                        nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
+                    if (!icon->ok_to_show_thumb) {
+
+                        icon->ok_to_show_thumb = TRUE;
+
+                        if (nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_NO) {
+                            nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
+                        }
+
+                        nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
+                    } else {
+                        gchar *uri = nemo_file_get_uri (file);
+                        nemo_thumbnail_prioritize (uri);
+                        g_free (uri);
                     }
 
-                    nemo_file_invalidate_attributes (file, NEMO_FILE_DEFERRED_ATTRIBUTES);
-                } else {
-                    gchar *uri = nemo_file_get_uri (file);
-                    nemo_thumbnail_prioritize (uri);
-                    g_free (uri);
+                    nemo_icon_container_update_icon (container, icon);
                 }
-
-                nemo_icon_container_update_icon (container, icon);
 			} else {
 				nemo_icon_canvas_item_set_is_visible (icon->item, FALSE);
 			}
 		}
+	}
+
+	/* A large folder can finish loading before its icons have been laid out, in
+	 * which case nothing is positioned yet, nothing is found visible, and there
+	 * is no scroll or adjustment change coming to trigger another pass -- so the
+	 * icons the user is looking at would never have their thumbnails requested
+	 * until they happened to scroll. Try again shortly; once the layout lands
+	 * this settles on the first attempt.
+	 */
+	if (!found_visible && container->details->icons != NULL) {
+		queue_update_visible_icons (container, NORMAL_UPDATE_VISIBLE_DELAY);
 	}
 
     return G_SOURCE_REMOVE;
@@ -8254,7 +8284,7 @@ nemo_icon_container_set_ok_to_load_deferred_attrs (NemoIconContainer *container,
     container->details->ok_to_load_deferred_attrs = ok;
 
     if (ok) {
-        queue_update_visible_icons (container, INITIAL_UPDATE_VISIBLE_DELAY);
+        queue_update_visible_icons (container, NORMAL_UPDATE_VISIBLE_DELAY);
     }
 }
 
