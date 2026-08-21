@@ -22,11 +22,11 @@ class Parser(HTMLParser):
     def handle_data(self, data):
         if self.get_next_data:
             if data != "\n":
-                if self.concat_next_data:
+                if self.concat_next_data and self.parsed:
                     self.parsed[-1] += " " + data
-                    self.concat_next_data = False
                 else:
                     self.parsed.append(data.strip())
+                self.concat_next_data = False
                 self.get_next_data = False
 
 path = sys.argv[1]
