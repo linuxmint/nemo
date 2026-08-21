@@ -4332,7 +4332,11 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 	gtk_widget_show (GTK_WIDGET (sidebar));
 	sidebar->tree_view = tree_view;
 
-	gtk_tree_view_set_search_column (tree_view, PLACES_SIDEBAR_COLUMN_NAME);
+    /* On by default, and its search window positions itself with absolute root
+     * coordinates - which a Wayland client cannot know, so it lands on the
+     * wrong monitor. */
+    gtk_tree_view_set_enable_search (tree_view, FALSE);
+
 	selection = gtk_tree_view_get_selection (tree_view);
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
 

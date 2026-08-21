@@ -3594,75 +3594,52 @@ static void
 nemo_icon_container_search_position_func (NemoIconContainer *container,
 					      GtkWidget *search_dialog)
 {
-	gint x, y;
-	gint cont_x, cont_y;
-	gint cont_width, cont_height;
-	GdkWindow *cont_window;
-	GtkRequisition requisition;
-	gint monitor_num;
-	GdkRectangle monitor;
+    gint x, y;
+    gint cont_x, cont_y;
+    gint cont_width, cont_height;
+    GdkWindow *cont_window;
+    GtkRequisition requisition;
 
-	cont_window = gtk_widget_get_window (GTK_WIDGET (container));
-
-    monitor_num = nemo_desktop_utils_get_monitor_for_widget (GTK_WIDGET (container));
-
-    /* FIXME?? _NET_WORKAREA hint only provides accurate workarea geometry for the
-     * primary monitor. Non-primary will return the full monitor geometry instead.
+    /* Desktop containers only: every other container forwards keypresses to the
+     * filter bar rather than starting an interactive search, so nothing else
+     * reaches here - see nemo_icon_container_key_press_event ().
      */
-    nemo_desktop_utils_get_monitor_work_rect (monitor_num, &monitor);
+    cont_window = gtk_widget_get_window (GTK_WIDGET (container));
 
-	gtk_widget_realize (search_dialog);
+    gtk_widget_realize (search_dialog);
 
     gdk_window_get_origin (cont_window, &cont_x, &cont_y);
     cont_width = gdk_window_get_width (cont_window);
     cont_height = gdk_window_get_height (cont_window);
 
-	gtk_widget_get_preferred_size (search_dialog, &requisition, NULL);
+    gtk_widget_get_preferred_size (search_dialog, &requisition, NULL);
 
-    if (nemo_icon_container_get_is_desktop (container)) {
-        x = cont_x + cont_width - requisition.width;
-        y = cont_y + cont_height - requisition.height;
+    x = cont_x + cont_width - requisition.width;
+    y = cont_y + cont_height - requisition.height;
 
-        if (eel_check_is_wayland ()) {
-            GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (container));
-            GdkWindow *parent_window = gtk_widget_get_window (toplevel);
-            gint parent_x, parent_y;
+    if (eel_check_is_wayland ()) {
+        GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (container));
+        GdkWindow *parent_window = gtk_widget_get_window (toplevel);
+        gint parent_x, parent_y;
 
-            gdk_window_get_origin (parent_window, &parent_x, &parent_y);
+        gdk_window_get_origin (parent_window, &parent_x, &parent_y);
 
-            GdkRectangle anchor_rect = {
-                x - parent_x,
-                y - parent_y,
-                1, 1
-            };
+        GdkRectangle anchor_rect = {
+            x - parent_x,
+            y - parent_y,
+            1, 1
+        };
 
-            gdk_window_move_to_rect (gtk_widget_get_window (search_dialog),
-                                     &anchor_rect,
-                                     GDK_GRAVITY_NORTH_WEST,
-                                     GDK_GRAVITY_NORTH_WEST,
-                                     0,
-                                     0, 0);
-            return;
-        }
-    } else {
-        if (cont_x + cont_width > monitor.x + monitor.width) {
-            x = monitor.x + monitor.width - requisition.width;
-        } else if (cont_x + cont_width - requisition.width < 0) {
-            x = 0;
-        } else {
-            x = cont_x + cont_width - requisition.width;
-        }
-
-        if (cont_y + cont_height + requisition.height > monitor.y + monitor.height) {
-            y = monitor.y + monitor.height - requisition.height;
-        } else if (cont_y + cont_height < 0) {
-            y = 0;
-        } else {
-            y = cont_y + cont_height;
-        }
+        gdk_window_move_to_rect (gtk_widget_get_window (search_dialog),
+                                 &anchor_rect,
+                                 GDK_GRAVITY_NORTH_WEST,
+                                 GDK_GRAVITY_NORTH_WEST,
+                                 0,
+                                 0, 0);
+        return;
     }
 
-	gdk_window_move (gtk_widget_get_window (search_dialog), x, y);
+    gdk_window_move (gtk_widget_get_window (search_dialog), x, y);
 }
 
 /* Cut and paste from gtkwindow.c */

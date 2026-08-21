@@ -1465,7 +1465,9 @@ create_tree (FMTreeView *view)
 		(gtk_tree_model_sort_new_with_model (GTK_TREE_MODEL (view->details->child_model)));
 	view->details->tree_widget = GTK_TREE_VIEW
 		(gtk_tree_view_new_with_model (GTK_TREE_MODEL (view->details->sort_model)));
-    gtk_tree_view_set_search_column (GTK_TREE_VIEW (view->details->tree_widget), FM_TREE_MODEL_DISPLAY_NAME_COLUMN);
+
+    /* See nemo-places-sidebar.c */
+    gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view->details->tree_widget), FALSE);
 
 	g_object_unref (view->details->sort_model);
 
