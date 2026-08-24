@@ -365,17 +365,15 @@ nemo_search_engine_advanced_create_content_regex (NemoQuery  *query,
 {
     GRegexCompileFlags flags;
     g_autofree gchar *text = NULL;
-    g_autofree gchar *normalized = NULL;
     g_autofree gchar *escaped = NULL;
     g_autofree gchar *format = NULL;
 
     text = nemo_query_get_content_pattern (query);
-    normalized = g_utf8_normalize (text, -1, G_NORMALIZE_NFD);
 
     if (nemo_query_get_use_content_regex (query)) {
-        escaped = g_strdup (normalized);
+        escaped = g_strdup (text);
     } else {
-        escaped = g_regex_escape_string (normalized, -1);
+        escaped = g_regex_escape_string (text, -1);
     }
 
     flags = G_REGEX_MULTILINE |
