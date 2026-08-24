@@ -2050,61 +2050,94 @@ uri_is_native_session_uri (const char *uri)
 	return is_native;
 }
 
-static char **
-collect_pane_saved_tab_uris (NemoWindowPane *pane, gint *active_index_out)
+/* The tab URIs and their lock modes are stored in two position-aligned keys
+ * rather than one list of pairs, so that saved-tabs-left/right keep the plain
+ * "as" type they have always had. A Nemo without tab locking still restores
+ * the tabs and simply ignores the lock modes.
+ */
+static void
+collect_pane_saved_tabs (NemoWindowPane  *pane,
+			 GVariant       **tabs_out,
+			 GVariant       **locks_out,
+			 gint            *active_index_out)
 {
 	GtkNotebook *notebook;
+	GVariantBuilder tabs_builder;
+	GArray *locks;
 	int n_pages, i;
 	int current_page;
 	int saved_index = 0;
 	int saved_active_index = 0;
-	GPtrArray *arr;
+	guint locks_len = 0;
 
-	if (active_index_out != NULL) {
-		*active_index_out = 0;
-	}
+	g_variant_builder_init (&tabs_builder, G_VARIANT_TYPE ("as"));
+	locks = g_array_new (FALSE, FALSE, sizeof (gint32));
 
-	if (pane == NULL || pane->notebook == NULL) {
-		return g_new0 (char *, 1);
-	}
+	if (pane != NULL && pane->notebook != NULL) {
+		notebook = GTK_NOTEBOOK (pane->notebook);
+		n_pages = gtk_notebook_get_n_pages (notebook);
+		current_page = gtk_notebook_get_current_page (notebook);
 
-	notebook = GTK_NOTEBOOK (pane->notebook);
-	n_pages = gtk_notebook_get_n_pages (notebook);
-	current_page = gtk_notebook_get_current_page (notebook);
+		for (i = 0; i < n_pages; i++) {
+			GtkWidget *page;
+			NemoWindowSlot *slot;
+			char *uri;
+			NemoTabLockMode lock_mode;
+			const char *locked_uri;
 
-	arr = g_ptr_array_new_with_free_func (g_free);
-
-	for (i = 0; i < n_pages; i++) {
-		GtkWidget *page;
-		NemoWindowSlot *slot;
-		char *uri;
-
-		page = gtk_notebook_get_nth_page (notebook, i);
-		if (page == NULL) {
-			continue;
-		}
-
-		slot = NEMO_WINDOW_SLOT (page);
-		uri = nemo_window_slot_get_location_uri (slot);
-
-		if (uri_is_native_session_uri (uri)) {
-			if (i == current_page) {
-				saved_active_index = saved_index;
+			page = gtk_notebook_get_nth_page (notebook, i);
+			if (page == NULL) {
+				continue;
 			}
-			g_ptr_array_add (arr, uri);
-			saved_index++;
-		} else {
+
+			slot = NEMO_WINDOW_SLOT (page);
+			lock_mode = nemo_window_slot_get_lock_mode (slot);
+			locked_uri = nemo_window_slot_get_locked_uri (slot);
+
+			/* Locked tabs are restored at their locked folder, not at the
+			 * last visited location.
+			 */
+			if (lock_mode != NEMO_TAB_LOCK_NONE && locked_uri != NULL) {
+				uri = g_strdup (locked_uri);
+			} else {
+				uri = nemo_window_slot_get_location_uri (slot);
+				lock_mode = NEMO_TAB_LOCK_NONE;
+			}
+
+			if (uri_is_native_session_uri (uri)) {
+				gint32 mode = (gint32) lock_mode;
+
+				if (i == current_page) {
+					saved_active_index = saved_index;
+				}
+
+				g_variant_builder_add (&tabs_builder, "s", uri);
+				g_array_append_val (locks, mode);
+				if (lock_mode != NEMO_TAB_LOCK_NONE) {
+					locks_len = locks->len;
+				}
+				saved_index++;
+			}
+
 			g_free (uri);
 		}
 	}
 
-	g_ptr_array_add (arr, NULL);
+	/* Drop trailing unlocked entries: a short lock list restores as unlocked,
+	 * so a pane with no locked tabs writes [] just as an older Nemo would.
+	 */
+	g_array_set_size (locks, locks_len);
 
 	if (active_index_out != NULL) {
 		*active_index_out = saved_active_index;
 	}
 
-	return (char **) g_ptr_array_free (arr, FALSE);
+	*tabs_out = g_variant_builder_end (&tabs_builder);
+	*locks_out = g_variant_new_fixed_array (G_VARIANT_TYPE_INT32,
+						locks->data, locks->len,
+						sizeof (gint32));
+
+	g_array_free (locks, TRUE);
 }
 
 void
@@ -2112,8 +2145,10 @@ nemo_window_save_session_state (NemoWindow *window)
 {
 	NemoWindowPane *left_pane;
 	NemoWindowPane *right_pane;
-	char **left_uris;
-	char **right_uris;
+	GVariant *left_tabs;
+	GVariant *right_tabs;
+	GVariant *left_locks;
+	GVariant *right_locks;
 	gint left_active = 0;
 	gint right_active = 0;
 	gboolean split_view;
@@ -2135,18 +2170,17 @@ nemo_window_save_session_state (NemoWindow *window)
 	left_pane = child1 != NULL ? NEMO_WINDOW_PANE (child1) : NULL;
 	right_pane = child2 != NULL ? NEMO_WINDOW_PANE (child2) : NULL;
 
-	left_uris = collect_pane_saved_tab_uris (left_pane, &left_active);
-	right_uris = collect_pane_saved_tab_uris (right_pane, &right_active);
+	collect_pane_saved_tabs (left_pane, &left_tabs, &left_locks, &left_active);
+	collect_pane_saved_tabs (right_pane, &right_tabs, &right_locks, &right_active);
 	split_view = (right_pane != NULL);
 
 	g_settings_set_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW, split_view);
-	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT, (const gchar * const *) left_uris);
-	g_settings_set_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT, (const gchar * const *) right_uris);
+	g_settings_set_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT, left_tabs);
+	g_settings_set_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT, right_tabs);
+	g_settings_set_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TAB_LOCKS_LEFT, left_locks);
+	g_settings_set_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TAB_LOCKS_RIGHT, right_locks);
 	g_settings_set_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT, left_active);
 	g_settings_set_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT, right_active);
-
-	g_strfreev (left_uris);
-	g_strfreev (right_uris);
 }
 
 static void
@@ -2184,28 +2218,42 @@ clear_pane_to_single_slot (NemoWindowPane *pane)
 }
 
 static void
-open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
+open_saved_tabs_in_pane (NemoWindowPane *pane, GVariant *tabs, GVariant *locks)
 {
-	int i;
+	gsize i, n, n_locks;
+	gsize opened = 0;
 
-	if (pane == NULL) {
+	if (pane == NULL || tabs == NULL) {
 		return;
 	}
 
-	/* If no URIs were saved for this pane, leave its first tab alone */
-	if (uris == NULL || uris[0] == NULL) {
-		return;
-	}
+	n = g_variant_n_children (tabs);
+	n_locks = locks != NULL ? g_variant_n_children (locks) : 0;
 
-	for (i = 0; uris[i] != NULL; i++) {
+	for (i = 0; i < n; i++) {
+		const gchar *uri;
+		gint32 lock_mode = NEMO_TAB_LOCK_NONE;
 		NemoWindowSlot *slot;
 		GFile *location;
 
-		if (!uri_is_native_session_uri (uris[i])) {
+		g_variant_get_child (tabs, i, "&s", &uri);
+
+		/* The lock list is position-aligned with the tab list and may be
+		 * shorter; anything it does not cover is an unlocked tab.
+		 */
+		if (i < n_locks) {
+			g_variant_get_child (locks, i, "i", &lock_mode);
+		}
+
+		if (!uri_is_native_session_uri (uri)) {
 			continue;
 		}
 
-		if (i == 0) {
+		if (lock_mode < NEMO_TAB_LOCK_NONE || lock_mode > NEMO_TAB_LOCK_NEW_TAB) {
+			lock_mode = NEMO_TAB_LOCK_NONE;
+		}
+
+		if (opened == 0) {
 			/* Reuse the existing first tab */
 			slot = pane->active_slot;
 			if (slot == NULL && pane->notebook != NULL) {
@@ -2222,9 +2270,18 @@ open_uri_list_in_pane (NemoWindowPane *pane, char **uris)
 			continue;
 		}
 
-		location = g_file_new_for_uri (uris[i]);
+		location = g_file_new_for_uri (uri);
 		nemo_window_slot_open_location (slot, location, 0);
 		g_object_unref (location);
+
+		/* After open_location, so a NEMO_TAB_LOCK_NEW_TAB slot does not
+		 * divert its own restore into a second tab.
+		 */
+		if (lock_mode != NEMO_TAB_LOCK_NONE) {
+			nemo_window_slot_set_lock_mode (slot, lock_mode, uri);
+		}
+
+		opened++;
 	}
 }
 
@@ -2233,8 +2290,10 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 {
 	NemoWindowPane *left_pane;
 	NemoWindowPane *right_pane;
-	char **left_uris;
-	char **right_uris;
+	GVariant *left_tabs;
+	GVariant *right_tabs;
+	GVariant *left_locks;
+	GVariant *right_locks;
 	gint left_active;
 	gint right_active;
 	gboolean want_split;
@@ -2247,21 +2306,25 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 		return FALSE;
 	}
 
-	left_uris = g_settings_get_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT);
-	right_uris = g_settings_get_strv (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT);
+	left_tabs = g_settings_get_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_LEFT);
+	right_tabs = g_settings_get_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TABS_RIGHT);
+	left_locks = g_settings_get_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TAB_LOCKS_LEFT);
+	right_locks = g_settings_get_value (nemo_window_state, NEMO_WINDOW_STATE_SAVED_TAB_LOCKS_RIGHT);
 	left_active = g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT);
 	right_active = g_settings_get_int (nemo_window_state, NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT);
 	saved_split = g_settings_get_boolean (nemo_window_state, NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW);
 
-	if ((left_uris == NULL || left_uris[0] == NULL) &&
-	    (right_uris == NULL || right_uris[0] == NULL)) {
-		g_strfreev (left_uris);
-		g_strfreev (right_uris);
+	if (g_variant_n_children (left_tabs) == 0 &&
+	    g_variant_n_children (right_tabs) == 0) {
+		g_variant_unref (left_tabs);
+		g_variant_unref (right_tabs);
+		g_variant_unref (left_locks);
+		g_variant_unref (right_locks);
 		return FALSE;
 	}
 
 	/* Only create the extra pane if we actually have tabs to restore there */
-	want_split = saved_split && (right_uris != NULL && right_uris[0] != NULL);
+	want_split = saved_split && g_variant_n_children (right_tabs) > 0;
 
 	if (want_split && !nemo_window_split_view_showing (window)) {
 		nemo_window_split_view_on (window);
@@ -2283,17 +2346,17 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 	clear_pane_to_single_slot (right_pane);
 
 	/* If nothing saved for the left pane, open Home as a minimal fallback */
-	if (left_uris == NULL || left_uris[0] == NULL) {
+	if (g_variant_n_children (left_tabs) == 0) {
 		GFile *home = g_file_new_for_path (g_get_home_dir ());
 		if (left_pane != NULL && left_pane->active_slot != NULL) {
 			nemo_window_slot_open_location (left_pane->active_slot, home, 0);
 		}
 		g_object_unref (home);
 	} else {
-		open_uri_list_in_pane (left_pane, left_uris);
+		open_saved_tabs_in_pane (left_pane, left_tabs, left_locks);
 	}
 
-	open_uri_list_in_pane (right_pane, right_uris);
+	open_saved_tabs_in_pane (right_pane, right_tabs, right_locks);
 
 	/* Restore active tabs (clamp indices) */
 	if (left_pane != NULL && left_pane->notebook != NULL) {
@@ -2317,8 +2380,10 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 		nemo_window_set_active_pane (window, left_pane);
 	}
 
-	g_strfreev (left_uris);
-	g_strfreev (right_uris);
+	g_variant_unref (left_tabs);
+	g_variant_unref (right_tabs);
+	g_variant_unref (left_locks);
+	g_variant_unref (right_locks);
 
 	return TRUE;
 }
