@@ -6,6 +6,7 @@
     <file>nemo-desktop-preferences.glade</file>
     <file>nemo-file-management-properties.glade</file>
     <file>nemo-search-bar.glade</file>
+    <file>nemo-action-wizard.glade</file>
 
     <file>nemo-shortcuts.ui</file>
 
