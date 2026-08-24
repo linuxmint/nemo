@@ -122,9 +122,9 @@ file_list_ready_cb (GList *files,
 
 	details->handle = NULL;
 
-	dest_dir = g_list_nth_data (files, 0);
-	dest = g_list_nth_data (files, 1);
-	src = g_list_nth_data (files, 2);
+	dest_dir = details->dest_dir;
+	dest = g_list_nth_data (files, 0);
+	src = g_list_nth_data (files, 1);
 
 	src_mtime = nemo_file_get_mtime (src);
 	dest_mtime = nemo_file_get_mtime (dest);
@@ -260,7 +260,7 @@ file_list_ready_cb (GList *files,
 	label = gtk_label_new (NULL);
 	date = nemo_file_get_string_attribute (dest,
 						   "date_modified");
-	size = nemo_file_get_string_attribute (dest, "size");
+	size = nemo_file_get_string_attribute_with_default (dest, "size");
 
 	if (should_show_type) {
 		type = nemo_file_get_string_attribute (dest, "type");
@@ -293,7 +293,7 @@ file_list_ready_cb (GList *files,
 	label = gtk_label_new (NULL);
 	date = nemo_file_get_string_attribute (src,
 						   "date_modified");
-	size = nemo_file_get_string_attribute (src, "size");
+	size = nemo_file_get_string_attribute_with_default (src, "size");
 
 	if (should_show_type) {
 		type = nemo_file_get_string_attribute (src, "type");
@@ -358,10 +358,10 @@ build_dialog_appearance (NemoFileConflictDialog *fcd)
 
 	files = g_list_prepend (files, details->source);
 	files = g_list_prepend (files, details->destination);
-	files = g_list_prepend (files, details->dest_dir);
 
 	nemo_file_list_call_when_ready (files,
-					    NEMO_FILE_ATTRIBUTES_FOR_ICON,
+					    NEMO_FILE_ATTRIBUTES_FOR_ICON |
+					    NEMO_FILE_ATTRIBUTE_DIRECTORY_ITEM_COUNT,
 					    &details->handle, file_list_ready_cb, fcd);
 	g_list_free (files);
 }
