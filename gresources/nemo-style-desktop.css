@@ -1,0 +1,45 @@
+/* Desktop icon label text shadows.
+ *
+ * Nemo applies one of these classes (shadow-normal / shadow-darker /
+ * shadow-darkest) to the icon container based on the user's preference.
+ * If "Use GTK theme" is enabled and the current theme provides its own
+ * .nemo-desktop styling, this entire stylesheet is not loaded — the
+ * theme controls text appearance directly.
+ */
+
+/* Shadow variant: Normal (traditional nemo default) */
+.nemo-desktop.nemo-canvas-item.shadow-normal {
+    color: #eeeeee;
+    text-shadow: 1px 1px alpha(black, 0.8);
+}
+
+/* Shadow variant: Darker */
+.nemo-desktop.nemo-canvas-item.shadow-darker {
+    color: #eeeeee;
+    text-shadow: 1px 1px black;
+}
+
+/* Shadow variant: Darkest */
+.nemo-desktop.nemo-canvas-item.shadow-darkest {
+    color: #eeeeee;
+    text-shadow: 1px 1px black, 1px 0px alpha(black, 0.6), 0px 1px alpha(black, 0.6);
+}
+
+/* Hover for shadow modes */
+.nemo-desktop.nemo-canvas-item.shadow-normal:hover,
+.nemo-desktop.nemo-canvas-item.shadow-darker:hover,
+.nemo-desktop.nemo-canvas-item.shadow-darkest:hover {
+    background-color: alpha(black, 0.5);
+    background-image: none;
+    text-shadow: none;
+}
+
+/* Selected for shadow modes */
+.nemo-desktop.nemo-canvas-item.shadow-normal:selected,
+.nemo-desktop.nemo-canvas-item.shadow-darker:selected,
+.nemo-desktop.nemo-canvas-item.shadow-darkest:selected {
+    background-color: alpha(@theme_selected_bg_color, 0.8);
+    background-image: none;
+    text-shadow: none;
+    color: #f5f5f5;
+}
