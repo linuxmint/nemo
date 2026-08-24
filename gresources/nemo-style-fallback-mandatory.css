@@ -7,6 +7,18 @@
     background-color: @theme_unfocused_bg_color;
 }
 
+/* Hide selection highlight and focus cursor in the inactive pane */
+.nemo-window .nemo-inactive-pane .view:selected {
+    background-color: alpha(@theme_unfocused_selected_bg_color, 0.4);
+    color: @theme_fg_color;
+}
+
+.nemo-window .nemo-inactive-pane .view:focus {
+    outline-width: 0;
+    outline-offset: 0;
+    -gtk-outline-radius: 0;
+}
+
 /* Rename box styling in the icon view. */
 
 .nemo-window .nemo-window-pane widget.entry {

@@ -1,6 +1,8 @@
 <ui>
 <accelerator action="Search"/>
 <accelerator action="SplitViewNextPane"/>
+<accelerator action="Bookmark Picker"/>
+<accelerator action="Bookmark Picker Other Pane"/>
 <accelerator action="TabsPrevious"/>
 <accelerator action="TabsNext"/>
 <accelerator action="TabsMoveLeft"/>
