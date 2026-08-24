@@ -1233,6 +1233,18 @@ nemo_window_key_press_event (GtkWidget *widget,
 		}
 	}
 
+	/* Tab switches between split panes when both are visible */
+	if (event->keyval == GDK_KEY_Tab &&
+	    (event->state & gtk_accelerator_get_default_mod_mask ()) == 0) {
+		NemoWindowPane *next_pane;
+
+		next_pane = nemo_window_get_next_pane (window);
+		if (next_pane != NULL) {
+			nemo_window_pane_grab_focus (next_pane);
+			return TRUE;
+		}
+	}
+
 	for (i = 0; i < G_N_ELEMENTS (extra_window_keybindings); i++) {
 		if (extra_window_keybindings[i].keyval == event->keyval) {
 			const GList *action_groups;
