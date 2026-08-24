@@ -865,6 +865,37 @@ nemo_icon_view_get_directory_grid_adjusts (NemoIconView *icon_view,
         *vertical = v;
 }
 
+void
+nemo_icon_view_set_directory_label_scale_adjust (NemoIconView *icon_view,
+                                                 NemoFile     *file,
+                                                 double       scale)
+{
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_set_desktop_label_scale_adjust (file,
+                                              NEMO_METADATA_KEY_DESKTOP_LABEL_SACLE_ADJUST,
+                                              scale);
+}
+
+void
+nemo_icon_view_get_directory_label_scale_adjust (NemoIconView *icon_view,
+                                                 NemoFile     *file,
+                                                 double       *scale)
+{
+    double the_scale;
+
+    sync_directory_monitor_number (icon_view, file);
+
+    nemo_file_get_desktop_label_scale_adjust (file,
+                                              NEMO_METADATA_KEY_DESKTOP_LABEL_SACLE_ADJUST,
+                                              &the_scale);
+
+    if (scale) {
+        *scale = the_scale;
+    }
+
+}
+
 gboolean
 nemo_icon_view_set_sort_reversed (NemoIconView *icon_view,
                                   gboolean      new_value,
@@ -984,6 +1015,7 @@ nemo_icon_view_begin_loading (NemoView *view)
 	int level;
     int h_adjust, v_adjust;
 	char *sort_name, *uri;
+	double label_scale_adjust;
 
 	g_return_if_fail (NEMO_IS_ICON_VIEW (view));
 
@@ -1048,7 +1080,12 @@ nemo_icon_view_begin_loading (NemoView *view)
                                                &h_adjust,
                                                &v_adjust);
 
+    nemo_icon_view_get_directory_label_scale_adjust (NEMO_ICON_VIEW (view),
+                                               file,
+                                               &label_scale_adjust);
+
     nemo_icon_container_set_grid_adjusts (get_icon_container (icon_view), h_adjust, v_adjust);
+    nemo_icon_container_set_label_scale_adjust (get_icon_container (icon_view), label_scale_adjust);
 
 	set_labels_beside_icons (icon_view);
 	set_columns_same_width (icon_view);

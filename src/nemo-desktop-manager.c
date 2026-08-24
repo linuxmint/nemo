@@ -541,6 +541,18 @@ on_overlay_adjustments_changed (NemoDesktopOverlay      *overlay,
 }
 
 static void
+on_overlay_label_scale_changed (NemoDesktopOverlay      *overlay,
+                                NemoWindow              *window,
+                                double                   label_scale,
+                                NemoDesktopManager      *manager)
+{
+    g_return_if_fail (NEMO_IS_DESKTOP_WINDOW (window));
+
+    nemo_desktop_window_set_label_scale_adjust (NEMO_DESKTOP_WINDOW (window),
+                                                label_scale);
+}
+
+static void
 on_proxy_signal (GDBusProxy *proxy,
                  gchar      *sender,
                  gchar      *signal_name,
@@ -1030,7 +1042,8 @@ nemo_desktop_manager_get_overlay_info (NemoDesktopManager *manager,
                                        gint                monitor,
                                        GtkActionGroup    **action_group,
                                        gint               *h_adjust,
-                                       gint               *v_adjust)
+                                       gint               *v_adjust,
+                                       double             *label_scale_adjust)
 {
     GtkWindow *window;
 
@@ -1039,7 +1052,9 @@ nemo_desktop_manager_get_overlay_info (NemoDesktopManager *manager,
     if (NEMO_IS_DESKTOP_WINDOW (window) &&
         nemo_desktop_window_get_grid_adjusts (NEMO_DESKTOP_WINDOW (window),
                                               h_adjust,
-                                              v_adjust)) {
+                                              v_adjust) &&
+        nemo_desktop_window_get_label_scale_adjust (NEMO_DESKTOP_WINDOW (window),
+                                                    label_scale_adjust)) {
 
         *action_group = nemo_desktop_window_get_action_group (NEMO_DESKTOP_WINDOW (window));
     } else {
@@ -1061,6 +1076,11 @@ nemo_desktop_manager_show_desktop_overlay (NemoDesktopManager *manager,
         g_signal_connect (priv->overlay,
                           "adjusts-changed",
                           G_CALLBACK (on_overlay_adjustments_changed),
+                          manager);
+
+        g_signal_connect (priv->overlay,
+                          "label-scale-changed",
+                          G_CALLBACK (on_overlay_label_scale_changed),
                           manager);
     }
 
