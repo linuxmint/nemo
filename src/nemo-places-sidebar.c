@@ -1439,7 +1439,7 @@ clicked_eject_button (NemoPlacesSidebar *sidebar,
 
 	if (event) {
 		GdkEventButton *button_event = (GdkEventButton *) event;
-		if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
+		if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE || event->type == GDK_TOUCH_BEGIN || event->type == GDK_TOUCH_END) &&
 		    over_eject_button (sidebar, button_event->x, button_event->y, path)) {
 			return TRUE;
 		}
@@ -3597,7 +3597,8 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 		return TRUE;
 	}
 
-	if (event->button == GDK_BUTTON_PRIMARY && clicked_eject_button (sidebar, &path)) {
+	if (((event->type == GDK_BUTTON_RELEASE && event->button == GDK_BUTTON_PRIMARY) || event->type == GDK_TOUCH_END) &&
+                 clicked_eject_button (sidebar, &path)) {
 		eject_or_unmount_bookmark (sidebar, path);
 		gtk_tree_path_free (path);
 
