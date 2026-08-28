@@ -39,6 +39,7 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file-operations.h>
+#include <libnemo-private/nemo-mount-operation.h>
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-icon-names.h>
 #include <libnemo-private/nemo-cell-renderer-disk.h>
@@ -2547,7 +2548,7 @@ open_selected_bookmark (NemoPlacesSidebar *sidebar,
 			   (g_drive_can_start (drive) || g_drive_can_start_degraded (drive))) {
 			GMountOperation *mount_op;
 
-			mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+			mount_op = nemo_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
 			g_drive_start (drive, G_DRIVE_START_NONE, mount_op, NULL, drive_start_from_bookmark_cb, NULL);
 			g_object_unref (mount_op);
 		}
@@ -2767,7 +2768,7 @@ get_unmount_operation (NemoPlacesSidebar *sidebar)
 {
     GMountOperation *mount_op;
 
-    mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+    mount_op = nemo_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
     g_signal_connect (mount_op, "show-unmount-progress",
                       G_CALLBACK (show_unmount_progress_cb), sidebar);
     g_signal_connect (mount_op, "aborted",
@@ -3115,7 +3116,7 @@ start_shortcut_cb (GtkAction           *item,
 	if (drive != NULL) {
 		GMountOperation *mount_op;
 
-		mount_op = gtk_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
+		mount_op = nemo_mount_operation_new (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (sidebar))));
 
 		g_drive_start (drive, G_DRIVE_START_NONE, mount_op, NULL, drive_start_cb, NULL);
 

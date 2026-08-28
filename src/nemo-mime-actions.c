@@ -43,6 +43,7 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-operations.h>
 #include <libnemo-private/nemo-metadata.h>
+#include <libnemo-private/nemo-mount-operation.h>
 #include <libnemo-private/nemo-program-choosing.h>
 #include <libnemo-private/nemo-desktop-icon-file.h>
 #include <libnemo-private/nemo-global-preferences.h>
@@ -1874,7 +1875,7 @@ activation_mount_not_mounted (ActivateParameters *parameters)
 
 	if (parameters->not_mounted != NULL) {
 		file = parameters->not_mounted->data;
-		mount_op = gtk_mount_operation_new (parameters->parent_window);
+		mount_op = nemo_mount_operation_new (parameters->parent_window);
 		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 		g_signal_connect (mount_op, "notify::is-showing",
 				  G_CALLBACK (activate_mount_op_active), parameters);
@@ -2135,7 +2136,7 @@ activation_mount_mountables (ActivateParameters *parameters)
 
 	if (parameters->mountables != NULL) {
 		file = parameters->mountables->data;
-		mount_op = gtk_mount_operation_new (parameters->parent_window);
+		mount_op = nemo_mount_operation_new (parameters->parent_window);
 		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 		g_signal_connect (mount_op, "notify::is-showing",
 				  G_CALLBACK (activate_mount_op_active), parameters);
@@ -2213,7 +2214,7 @@ activation_start_mountables (ActivateParameters *parameters)
 
 	if (parameters->start_mountables != NULL) {
 		file = parameters->start_mountables->data;
-		start_op = gtk_mount_operation_new (parameters->parent_window);
+		start_op = nemo_mount_operation_new (parameters->parent_window);
 		g_signal_connect (start_op, "notify::is-showing",
 				  G_CALLBACK (activate_mount_op_active), parameters);
 		nemo_file_start (file,

@@ -39,6 +39,7 @@ libnemo-private/nemo-icon-canvas-item.c
 libnemo-private/nemo-icon-container.c
 libnemo-private/nemo-icon-dnd.c
 libnemo-private/nemo-mime-application-chooser.c
+libnemo-private/nemo-mount-operation.c
 libnemo-private/nemo-program-choosing.c
 libnemo-private/nemo-progress-info.c
 libnemo-private/nemo-query.c

@@ -84,6 +84,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-recent.h>
 #include <libnemo-private/nemo-module.h>
+#include <libnemo-private/nemo-mount-operation.h>
 #include <libnemo-private/nemo-program-choosing.h>
 #include <libnemo-private/nemo-trash-monitor.h>
 #include <libnemo-private/nemo-ui-utilities.h>
@@ -7615,7 +7616,7 @@ action_mount_volume_callback (GtkAction *action,
 		file = NEMO_FILE (l->data);
 
 		if (nemo_file_can_mount (file)) {
-			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+			mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 			g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 			nemo_file_mount (file, mount_op, NULL,
 					     file_mount_callback, NULL);
@@ -7641,7 +7642,7 @@ action_unmount_volume_callback (GtkAction *action,
 		file = NEMO_FILE (l->data);
 		if (nemo_file_can_unmount (file)) {
 			GMountOperation *mount_op;
-			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+			mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 			nemo_file_unmount (file, mount_op, NULL,
 					       file_unmount_callback, g_object_ref (view));
 			g_object_unref (mount_op);
@@ -7666,7 +7667,7 @@ action_eject_volume_callback (GtkAction *action,
 
 		if (nemo_file_can_eject (file)) {
 			GMountOperation *mount_op;
-			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+			mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 			nemo_file_eject (file, mount_op, NULL,
 					     file_eject_callback, g_object_ref (view));
 			g_object_unref (mount_op);
@@ -7707,7 +7708,7 @@ action_start_volume_callback (GtkAction *action,
 		file = NEMO_FILE (l->data);
 
 		if (nemo_file_can_start (file) || nemo_file_can_start_degraded (file)) {
-			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+			mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 			nemo_file_start (file, mount_op, NULL,
 					     file_start_callback, NULL);
 			g_object_unref (mount_op);
@@ -7732,7 +7733,7 @@ action_stop_volume_callback (GtkAction *action,
 
 		if (nemo_file_can_stop (file)) {
 			GMountOperation *mount_op;
-			mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+			mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 			nemo_file_stop (file, mount_op, NULL,
 					    file_stop_callback, NULL);
 			g_object_unref (mount_op);
@@ -7777,7 +7778,7 @@ action_self_mount_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 	nemo_file_mount (file, mount_op, NULL, file_mount_callback, NULL);
 	g_object_unref (mount_op);
@@ -7798,7 +7799,7 @@ action_self_unmount_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_unmount (file, mount_op, NULL, file_unmount_callback, g_object_ref (view));
 	g_object_unref (mount_op);
 }
@@ -7818,7 +7819,7 @@ action_self_eject_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_eject (file, mount_op, NULL, file_eject_callback, g_object_ref (view));
 	g_object_unref (mount_op);
 }
@@ -7838,7 +7839,7 @@ action_self_start_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_start (file, mount_op, NULL, file_start_callback, NULL);
 	g_object_unref (mount_op);
 }
@@ -7858,7 +7859,7 @@ action_self_stop_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_stop (file, mount_op, NULL,
 			    file_stop_callback, NULL);
 	g_object_unref (mount_op);
@@ -7896,7 +7897,7 @@ action_location_mount_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 	nemo_file_mount (file, mount_op, NULL, file_mount_callback, NULL);
 	g_object_unref (mount_op);
@@ -7917,7 +7918,7 @@ action_location_unmount_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_unmount (file, mount_op, NULL,
 			       file_unmount_callback, g_object_ref (view));
 	g_object_unref (mount_op);
@@ -7938,7 +7939,7 @@ action_location_eject_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_eject (file, mount_op, NULL,
 			     file_eject_callback, g_object_ref (view));
 	g_object_unref (mount_op);
@@ -7959,7 +7960,7 @@ action_location_start_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_start (file, mount_op, NULL, file_start_callback, NULL);
 	g_object_unref (mount_op);
 }
@@ -7979,7 +7980,7 @@ action_location_stop_volume_callback (GtkAction *action,
 		return;
 	}
 
-	mount_op = gtk_mount_operation_new (nemo_view_get_containing_window (view));
+	mount_op = nemo_mount_operation_new (nemo_view_get_containing_window (view));
 	nemo_file_stop (file, mount_op, NULL,
 			    file_stop_callback, NULL);
 	g_object_unref (mount_op);
