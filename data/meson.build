@@ -51,18 +51,9 @@ install_data(dbusFiles,
 
 ################################################################################
 
-mimeFile_translated = custom_target('nemo.xml',
-  input : ['nemo.xml.in'],
-  output: 'nemo.xml',
-  command: ['intltool-merge',
-    '--quiet',
-    '--xml-style',
-    '--utf8',
-    po_subdir, '@INPUT@', '@OUTPUT@'
-  ],
-  install: true,
-  install_dir: join_paths(get_option('datadir'), 'mime', 'packages'),
-  build_by_default: true,
+# nemo.xml is generated from nemo.xml.in by ../generate_additional_file
+install_data('nemo.xml',
+  install_dir: join_paths(get_option('datadir'), 'mime', 'packages')
 )
 
 ################################################################################

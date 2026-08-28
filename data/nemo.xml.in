@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-   <mime-type type="application/x-gnome-saved-search">
-     <sub-class-of type="text/xml"/>
-     <_comment>Saved search</_comment>
-     <glob pattern="*.savedSearch"/>
-   </mime-type>
-
    <mime-type type="application/nemo-action">
      <_comment>Nemo action definition</_comment>
      <generic-icon name="text-x-generic"/>

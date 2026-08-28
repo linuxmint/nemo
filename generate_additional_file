@@ -53,3 +53,6 @@ prefix = """
 suffix = """Exec=nemo trash:///
 """
 additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop.in", prefix, _("Trash"), None, suffix, append=True)
+
+
+additionalfiles.generate_mime_file(DOMAIN, PATH, "data/nemo.xml.in", "data/nemo.xml")

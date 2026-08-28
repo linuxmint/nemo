@@ -180,8 +180,6 @@ nemo_definitions =  [
   '-DG_LOG_DOMAIN="Nemo"'
 ]
 
-po_subdir = join_paths(meson.project_source_root(), 'po')
-
 subdir('cut-n-paste-code/libegg')
 subdir('data')
 subdir('eel')
