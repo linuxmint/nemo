@@ -1,26 +1,10 @@
 
 ################################################################################
-dataConf = configuration_data()
-dataConf.set('VERSION', meson.project_version())
 
 desktopFiles = [
-  configure_file(
-    input : 'nemo-autorun-software.desktop.in',
-    output: 'nemo-autorun-software.desktop',
-    configuration: dataConf,
-  ),
-
-  configure_file(
-    input : 'nemo-autostart.desktop.in',
-    output: 'nemo-autostart.desktop',
-    configuration: dataConf,
-  ),
-
-  configure_file(
-    input : 'nemo.desktop.in',
-    output: 'nemo.desktop',
-    configuration: dataConf,
-  )
+  'nemo-autorun-software.desktop',
+  'nemo-autostart.desktop',
+  'nemo.desktop',
 ]
 
 install_data(desktopFiles,
