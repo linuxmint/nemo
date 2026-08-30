@@ -2235,7 +2235,7 @@ activation_start_mountables (ActivateParameters *parameters)
  *
  * Activate a list of files. Each one might launch with an application or
  * with a component. This is normally called only by subclasses.
- * @view: FMDirectoryView in question.
+ * @parent_window: The window to parent dialogs on.
  * @files: A GList of NemoFiles to activate.
  *
  **/
@@ -2316,9 +2316,9 @@ nemo_mime_activate_files (GtkWindow *parent_window,
  *
  * Activate a file in this view. This might involve switching the displayed
  * location for the current window, or launching an application.
- * @view: FMDirectoryView in question.
+ * @parent_window: The window to parent dialogs on.
  * @file: A NemoFile representing the file in this view to activate.
- * @use_new_window: Should this item be opened in a new window?
+ * @flags: How the location should be opened.
  *
  **/
 
