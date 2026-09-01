@@ -38,6 +38,7 @@
 #include <errno.h>
 
 #include "nemo-file-operations.h"
+#include "nemo-mount-operation.h"
 
 #include "nemo-file-changes-queue.h"
 #include "nemo-lib-self-check-functions.h"
@@ -2426,7 +2427,7 @@ do_unmount (UnmountData *data)
 	if (data->mount_operation) {
         mount_op = g_object_ref (data->mount_operation);
     } else {
-        mount_op = gtk_mount_operation_new (data->parent_window);
+        mount_op = nemo_mount_operation_new (data->parent_window);
     }
 	if (data->eject) {
 		g_mount_eject_with_operation (data->mount,
@@ -2741,7 +2742,7 @@ nemo_file_operations_mount_volume_full (GtkWindow *parent_window,
 {
 	GMountOperation *mount_op;
 
-	mount_op = gtk_mount_operation_new (parent_window);
+	mount_op = nemo_mount_operation_new (parent_window);
 	g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 	g_object_set_data (G_OBJECT (mount_op),
 			   "mount-callback",

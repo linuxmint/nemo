@@ -58,6 +58,7 @@
 #include <libnemo-private/nemo-metadata.h>
 #include <libnemo-private/nemo-module.h>
 #include <libnemo-private/nemo-monitor.h>
+#include <libnemo-private/nemo-mount-operation.h>
 #include <libnemo-private/nemo-search-directory.h>
 
 #define DEBUG_FLAG NEMO_DEBUG_WINDOW
@@ -834,7 +835,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	    !slot->tried_mount) {
 		slot->tried_mount = TRUE;
 
-		mount_op = gtk_mount_operation_new (GTK_WINDOW (window));
+		mount_op = nemo_mount_operation_new (GTK_WINDOW (window));
 		g_mount_operation_set_password_save (mount_op, G_PASSWORD_SAVE_FOR_SESSION);
 		location = nemo_file_get_location (file);
 		data = g_new0 (MountNotMountedData, 1);

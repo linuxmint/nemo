@@ -1,26 +1,10 @@
 
 ################################################################################
-dataConf = configuration_data()
-dataConf.set('VERSION', meson.project_version())
 
 desktopFiles = [
-  configure_file(
-    input : 'nemo-autorun-software.desktop.in',
-    output: 'nemo-autorun-software.desktop',
-    configuration: dataConf,
-  ),
-
-  configure_file(
-    input : 'nemo-autostart.desktop.in',
-    output: 'nemo-autostart.desktop',
-    configuration: dataConf,
-  ),
-
-  configure_file(
-    input : 'nemo.desktop.in',
-    output: 'nemo.desktop',
-    configuration: dataConf,
-  )
+  'nemo-autorun-software.desktop',
+  'nemo-autostart.desktop',
+  'nemo.desktop',
 ]
 
 install_data(desktopFiles,
@@ -51,18 +35,9 @@ install_data(dbusFiles,
 
 ################################################################################
 
-mimeFile_translated = custom_target('nemo.xml',
-  input : ['nemo.xml.in'],
-  output: 'nemo.xml',
-  command: ['intltool-merge',
-    '--quiet',
-    '--xml-style',
-    '--utf8',
-    po_subdir, '@INPUT@', '@OUTPUT@'
-  ],
-  install: true,
-  install_dir: join_paths(get_option('datadir'), 'mime', 'packages'),
-  build_by_default: true,
+# nemo.xml is generated from nemo.xml.in by ../generate_additional_file
+install_data('nemo.xml',
+  install_dir: join_paths(get_option('datadir'), 'mime', 'packages')
 )
 
 ################################################################################
