@@ -150,6 +150,8 @@ typedef struct {
     guint popup_menu_action_index;
     guint update_places_on_idle_id;
 
+    GCancellable *df_cancellable;
+
 } NemoPlacesSidebar;
 
 typedef struct {
@@ -363,8 +365,8 @@ typedef struct {
        GMount *mount;
        gint index;
        gchar *tooltip;
-       gint df_percent;
-       gboolean show_df_percent;
+       GFile *df_file;
+       gboolean show_df_when_available;
 } PlaceInfo;
 
 static gint
@@ -395,8 +397,8 @@ new_place_info (PlaceType place_type,
                 GMount *mount,
                 gint index,
                 gchar *tooltip,
-                gint df_percent,
-                gboolean show_df_percent)
+                GFile *df_file,
+                gboolean show_df_when_available)
 {
     PlaceInfo *info = g_new0 (PlaceInfo, 1);
 
@@ -410,8 +412,8 @@ new_place_info (PlaceType place_type,
     info->mount = mount ? g_object_ref (mount) : NULL;
     info->index = index;
     info->tooltip = g_strdup (tooltip);
-    info->df_percent = df_percent;
-    info->show_df_percent = show_df_percent;
+    info->df_file = df_file;
+    info->show_df_when_available = show_df_when_available;
 
     return info;
 }
@@ -425,9 +427,122 @@ free_place_info (PlaceInfo *info)
     g_clear_object (&info->drive);
     g_clear_object (&info->volume);
     g_clear_object (&info->mount);
+    g_clear_object (&info->df_file);
     g_free (info->tooltip);
 
     g_free (info);
+}
+
+typedef struct {
+    NemoPlacesSidebar   *sidebar;
+    GtkTreeRowReference *row_ref;
+    gchar               *base_tooltip;
+    gboolean             show_df_when_available;
+} DiskFullQueryData;
+
+static void
+disk_full_query_data_free (DiskFullQueryData *data)
+{
+    g_clear_pointer (&data->row_ref, gtk_tree_row_reference_free);
+    g_free (data->base_tooltip);
+    g_free (data);
+}
+
+static void
+disk_full_query_ready_cb (GObject      *source_object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+    DiskFullQueryData *data = user_data;
+    GFile *file = G_FILE (source_object);
+    GFileInfo *info;
+    GError *error = NULL;
+
+    info = g_file_query_filesystem_info_finish (file, result, &error);
+
+    if (info == NULL) {
+        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+            DEBUG ("Couldn't get disk full info for %s: %s",
+                   g_file_peek_path (file) ? g_file_peek_path (file) : "(no path)",
+                   error->message);
+        }
+        g_clear_error (&error);
+        disk_full_query_data_free (data);
+        return;
+    }
+
+    if (gtk_tree_row_reference_valid (data->row_ref)) {
+        NemoPlacesSidebar *sidebar = data->sidebar;
+        GtkTreePath *path = gtk_tree_row_reference_get_path (data->row_ref);
+        GtkTreeIter iter;
+
+        if (gtk_tree_model_get_iter (GTK_TREE_MODEL (sidebar->store), &iter, path)) {
+            guint64 k_used, k_total, k_free;
+            gint df_percent = -1;
+
+            k_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+            k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+            k_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+
+            if (k_total > 0) {
+                float fraction = ((float) k_used / (float) k_total) * 100.0;
+                gint prefix;
+                gchar *size_string;
+                gchar *free_line;
+                gchar *tooltip;
+
+                df_percent = (gint) rintf (fraction);
+
+                prefix = nemo_global_preferences_get_size_prefix_preference ();
+                size_string = g_format_size_full (k_free, prefix);
+                free_line = g_strdup_printf (_("Free space: %s"), size_string);
+                tooltip = g_strdup_printf ("%s\n%s", data->base_tooltip, free_line);
+
+                gtk_tree_store_set (sidebar->store, &iter,
+                                    PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
+                                    PLACES_SIDEBAR_COLUMN_SHOW_DF,
+                                    data->show_df_when_available && df_percent > -1,
+                                    PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
+                                    -1);
+
+                g_free (size_string);
+                g_free (free_line);
+                g_free (tooltip);
+            }
+        }
+
+        gtk_tree_path_free (path);
+    }
+
+    g_object_unref (info);
+    disk_full_query_data_free (data);
+}
+
+static void
+query_disk_full_async (NemoPlacesSidebar *sidebar,
+                       GFile             *df_file,
+                       GtkTreeIter       *row_iter,
+                       const gchar       *base_tooltip,
+                       gboolean           show_df_when_available)
+{
+    DiskFullQueryData *data;
+    GtkTreePath *path;
+
+    data = g_new0 (DiskFullQueryData, 1);
+    data->sidebar = sidebar;
+    data->base_tooltip = g_strdup (base_tooltip);
+    data->show_df_when_available = show_df_when_available;
+
+    path = gtk_tree_model_get_path (GTK_TREE_MODEL (sidebar->store), row_iter);
+    data->row_ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (sidebar->store), path);
+    gtk_tree_path_free (path);
+
+    g_file_query_filesystem_info_async (df_file,
+                                        "filesystem::*",
+                                        G_PRIORITY_DEFAULT,
+                                        sidebar->df_cancellable,
+                                        disk_full_query_ready_cb,
+                                        data);
 }
 
 static GtkTreeIter
@@ -442,8 +557,8 @@ add_place (NemoPlacesSidebar *sidebar,
 	   GMount *mount,
 	   int index,
 	   const char *tooltip,
-       int df_percent,
-       gboolean show_df_percent,
+       GFile *df_file,
+       gboolean show_df_when_available,
        GtkTreeIter cat_iter)
 {
 	GtkTreeIter           iter;
@@ -485,9 +600,13 @@ add_place (NemoPlacesSidebar *sidebar,
                 PLACES_SIDEBAR_COLUMN_EJECT_ICON, show_eject_button ? "xsi-media-eject-symbolic" : NULL,
 			    PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, EJECT_ICON_SIZE_NOT_HOVERED,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
-                PLACES_SIDEBAR_COLUMN_DF_PERCENT, df_percent,
-                PLACES_SIDEBAR_COLUMN_SHOW_DF, show_df_percent,
+                PLACES_SIDEBAR_COLUMN_DF_PERCENT, -1,
+                PLACES_SIDEBAR_COLUMN_SHOW_DF, FALSE,
 			    -1);
+
+    if (df_file != NULL) {
+        query_disk_full_async (sidebar, df_file, &iter, tooltip, show_df_when_available);
+    }
 
     g_clear_object (&gicon);
 
@@ -619,62 +738,6 @@ sidebar_update_restore_selection (NemoPlacesSidebar *sidebar,
 	}
 }
 
-static gint
-get_disk_full (GFile *file, gchar **tooltip_info)
-{
-    GFileInfo *info;
-    GError *error;
-    guint64 k_used, k_total, k_free;
-    gint df_percent;
-    float fraction;
-    int prefix;
-    gchar *size_string;
-    gchar *out_string;
-
-    error = NULL;
-    df_percent = -1;
-    out_string = NULL;
-
-    info = g_file_query_filesystem_info (file,
-                                         "filesystem::*",
-                                         NULL,
-                                         &error);
-
-    if (info != NULL) {
-        k_used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
-        k_total = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
-        k_free = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-
-        if (k_total > 0) {
-            fraction = ((float) k_used / (float) k_total) * 100.0;
-
-            df_percent = (gint) rintf(fraction);
-
-            prefix = nemo_global_preferences_get_size_prefix_preference ();
-            size_string = g_format_size_full (k_free, prefix);
-
-            out_string = g_strdup_printf (_("Free space: %s"), size_string);
-
-            g_free (size_string);
-        }
-
-        g_object_unref (info);
-    }
-
-    if (error != NULL) {
-        g_warning ("Couldn't get disk full info for: %s", error->message);
-        g_clear_error (&error);
-    }
-
-    if (out_string == NULL) {
-        out_string = g_strdup (" ");
-    }
-
-    *tooltip_info = out_string;
-
-    return df_percent;
-}
-
 static gboolean
 home_on_different_fs (const gchar *home_uri)
 {
@@ -744,9 +807,7 @@ update_places (NemoPlacesSidebar *sidebar)
 	GFile *root, *df_file;
 	NemoWindowSlot *slot;
 	char *tooltip;
-    gchar *tooltip_info;
 	GList *network_mounts, *network_volumes;
-    gint full;
 
 	DEBUG ("Updating places sidebar");
 
@@ -766,6 +827,12 @@ update_places (NemoPlacesSidebar *sidebar)
 	}
 	gtk_tree_store_clear (sidebar->store);
 
+    if (sidebar->df_cancellable != NULL) {
+        g_cancellable_cancel (sidebar->df_cancellable);
+        g_object_unref (sidebar->df_cancellable);
+    }
+    sidebar->df_cancellable = g_cancellable_new ();
+
 	sidebar->devices_header_added = FALSE;
 	sidebar->bookmarks_header_added = FALSE;
 
@@ -784,18 +851,16 @@ update_places (NemoPlacesSidebar *sidebar)
     icon = get_icon_name (mount_uri);
 
     df_file = g_file_new_for_uri (mount_uri);
-    full = get_disk_full (df_file, &tooltip_info);
-    g_clear_object (&df_file);
 
-    tooltip = g_strdup_printf (_("Open your personal folder\n%s"), tooltip_info);
-    g_free (tooltip_info);
+    tooltip = g_strdup (_("Open your personal folder"));
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
                            _("Home"), icon,
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
-                           full, home_on_different_fs (mount_uri) && full > -1,
+                           df_file, home_on_different_fs (mount_uri),
                            cat_iter);
+    g_clear_object (&df_file);
     g_free (icon);
     sidebar->top_bookend_uri = g_strdup (mount_uri);
     g_free (mount_uri);
@@ -810,7 +875,7 @@ update_places (NemoPlacesSidebar *sidebar)
                                SECTION_COMPUTER,
                                _("Desktop"), icon,
                                mount_uri, NULL, NULL, NULL, 0,
-                               _("Open the contents of your desktop in a folder"), 0, FALSE,
+                               _("Open the contents of your desktop in a folder"), NULL, FALSE,
                                cat_iter);
         g_free (icon);
         g_free (sidebar->top_bookend_uri);
@@ -847,7 +912,7 @@ update_places (NemoPlacesSidebar *sidebar)
                                SECTION_XDG_BOOKMARKS,
                                bookmark_name, icon, mount_uri,
                                NULL, NULL, NULL, bookmark_index,
-                               tooltip, 0, FALSE,
+                               tooltip, root, FALSE,
                                cat_iter);
         g_object_unref (root);
         g_free (icon);
@@ -865,7 +930,7 @@ update_places (NemoPlacesSidebar *sidebar)
                                   SECTION_COMPUTER,
                                   _("Favorites"), icon, mount_uri,
                                   NULL, NULL, NULL, 0,
-                                  _("Favorite files"), 0, FALSE, cat_iter);
+                                  _("Favorite files"), NULL, FALSE, cat_iter);
 
             sidebar->bottom_bookend_uri = g_strdup (mount_uri);
         }
@@ -882,7 +947,7 @@ update_places (NemoPlacesSidebar *sidebar)
                               SECTION_COMPUTER,
                               _("Recent"), icon, mount_uri,
                               NULL, NULL, NULL, 0,
-                              _("Recent files"), 0, FALSE, cat_iter);
+                              _("Recent files"), NULL, FALSE, cat_iter);
 
         if (sidebar->bottom_bookend_uri == NULL) {
             sidebar->bottom_bookend_uri = g_strdup (mount_uri);
@@ -894,18 +959,16 @@ update_places (NemoPlacesSidebar *sidebar)
     icon = NEMO_ICON_SYMBOLIC_FILESYSTEM;
 
     df_file = g_file_new_for_uri (mount_uri);
-    full = get_disk_full (df_file, &tooltip_info);
-    g_clear_object (&df_file);
 
-    tooltip = g_strdup_printf (_("Open the contents of the File System\n%s"), tooltip_info);
-    g_free (tooltip_info);
+    tooltip = g_strdup (_("Open the contents of the File System"));
     cat_iter = add_place (sidebar, PLACES_BUILT_IN,
                            SECTION_COMPUTER,
                            _("File System"), icon,
                            mount_uri, NULL, NULL, NULL, 0,
                            tooltip,
-                           full, full > -1,
+                           df_file, TRUE,
                            cat_iter);
+    g_clear_object (&df_file);
     g_free (tooltip);
 
     if (sidebar->bottom_bookend_uri == NULL) {
@@ -919,7 +982,7 @@ update_places (NemoPlacesSidebar *sidebar)
                                SECTION_COMPUTER,
                                _("Trash"), icon, mount_uri,
                                NULL, NULL, NULL, 0,
-                               _("Open the trash"), 0, FALSE,
+                               _("Open the trash"), NULL, FALSE,
                                cat_iter);
         g_free (icon);
     }
@@ -941,7 +1004,7 @@ update_places (NemoPlacesSidebar *sidebar)
                               SECTION_BOOKMARKS,
                               bookmark_name, icon, mount_uri,
                               NULL, NULL, NULL, bookmark_index,
-                              tooltip, 0, FALSE,
+                              tooltip, root, TRUE,
                               cat_iter);
         g_object_unref (root);
         g_free (icon);
@@ -1005,7 +1068,8 @@ update_places (NemoPlacesSidebar *sidebar)
         place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                      SECTION_DEVICES,
                                      name, icon, mount_uri,
-                                     NULL, NULL, mount, 0, tooltip, 0, FALSE);
+                                     NULL, NULL, mount, 0, tooltip,
+                                     g_object_ref (root), TRUE);
         place_infos = g_list_prepend (place_infos, place_info);
 
         g_free (icon);
@@ -1056,18 +1120,15 @@ update_places (NemoPlacesSidebar *sidebar)
                     full_display_name = g_file_get_parse_name (root);
 
                     df_file = g_file_new_for_uri (mount_uri);
-                    full = get_disk_full (df_file, &tooltip_info);
-                    g_clear_object (&df_file);
 
-                    tooltip = g_strdup_printf (_("%s (%s)\n%s"),
+                    tooltip = g_strdup_printf (_("%s (%s)"),
                                                full_display_name,
-                                               volume_id,
-                                               tooltip_info);
-                    g_free (tooltip_info);
+                                               volume_id);
                     place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                                  SECTION_DEVICES,
                                                  name, icon, mount_uri,
-                                                 drive, volume, mount, 0, tooltip, full, full > -1);
+                                                 drive, volume, mount, 0, tooltip,
+                                                 df_file, TRUE);
                     place_infos = g_list_prepend (place_infos, place_info);
                     g_object_unref (root);
                     g_object_unref (mount);
@@ -1097,7 +1158,7 @@ update_places (NemoPlacesSidebar *sidebar)
                     place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                                  SECTION_DEVICES,
                                                  name, icon, NULL,
-                                                 drive, volume, NULL, 0, tooltip, 0, FALSE);
+                                                 drive, volume, NULL, 0, tooltip, NULL, FALSE);
                     place_infos = g_list_prepend (place_infos, place_info);
 
                     g_free (icon);
@@ -1125,7 +1186,7 @@ update_places (NemoPlacesSidebar *sidebar)
                 place_info = new_place_info (PLACES_BUILT_IN,
                                              SECTION_DEVICES,
                                              name, icon, NULL,
-                                             drive, NULL, NULL, 0, tooltip, 0, FALSE);
+                                             drive, NULL, NULL, 0, tooltip, NULL, FALSE);
                 place_infos = g_list_prepend (place_infos, place_info);
 
                 g_free (icon);
@@ -1171,20 +1232,17 @@ update_places (NemoPlacesSidebar *sidebar)
             mount_uri = g_file_get_uri (root);
 
             df_file = g_file_new_for_uri (mount_uri);
-            full = get_disk_full (df_file, &tooltip_info);
-            g_clear_object (&df_file);
 
             parse_name = g_file_get_parse_name (root);
-            tooltip = g_strdup_printf (_("%s\n%s"), parse_name, tooltip_info);
+            tooltip = g_strdup (parse_name);
 
-            g_free (tooltip_info);
             g_object_unref (root);
             name = g_mount_get_name (mount);
 
             place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                          SECTION_DEVICES,
                                          name, icon, mount_uri,
-                                         NULL, volume, mount, 0, tooltip, full, full > -1);
+                                         NULL, volume, mount, 0, tooltip, df_file, TRUE);
             place_infos = g_list_prepend (place_infos, place_info);
 
             g_object_unref (mount);
@@ -1200,7 +1258,7 @@ update_places (NemoPlacesSidebar *sidebar)
             place_info = new_place_info (PLACES_MOUNTED_VOLUME,
                                          SECTION_DEVICES,
                                          name, icon, NULL,
-                                         NULL, volume, NULL, 0, name, 0, FALSE);
+                                         NULL, volume, NULL, 0, name, NULL, FALSE);
             place_infos = g_list_prepend (place_infos, place_info);
 
             g_free (icon);
@@ -1226,8 +1284,8 @@ update_places (NemoPlacesSidebar *sidebar)
                               info->mount,
                               info->index,
                               info->tooltip,
-                              info->df_percent,
-                              info->show_df_percent,
+                              info->df_file,
+                              info->show_df_when_available,
                               cat_iter);
 
         free_place_info (info);
@@ -1255,7 +1313,7 @@ update_places (NemoPlacesSidebar *sidebar)
 			cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                 				   SECTION_NETWORK,
                 				   name, icon, NULL,
-                				   NULL, volume, NULL, 0, tooltip, 0, FALSE,
+                				   NULL, volume, NULL, 0, tooltip, NULL, FALSE,
                                    cat_iter);
 			g_free (icon);
 			g_free (name);
@@ -1276,7 +1334,7 @@ update_places (NemoPlacesSidebar *sidebar)
 		cat_iter = add_place (sidebar, PLACES_MOUNTED_VOLUME,
                 			   SECTION_NETWORK,
                 			   name, icon, mount_uri,
-                			   NULL, NULL, mount, 0, tooltip, 0, FALSE,
+                			   NULL, NULL, mount, 0, tooltip, NULL, FALSE,
                                cat_iter);
 		g_object_unref (root);
 		g_free (icon);
@@ -1294,7 +1352,7 @@ update_places (NemoPlacesSidebar *sidebar)
                 		   SECTION_NETWORK,
                 		   _("Network"), icon,
                 		   mount_uri, NULL, NULL, NULL, 0,
-                		   _("Browse the contents of the network"), 0, FALSE,
+                		   _("Browse the contents of the network"), NULL, FALSE,
                            cat_iter);
 
 	/* restore selection */
@@ -4448,6 +4506,11 @@ nemo_places_sidebar_dispose (GObject *object)
     if (sidebar->update_places_on_idle_id != 0) {
         g_source_remove (sidebar->update_places_on_idle_id);
         sidebar->update_places_on_idle_id = 0;
+    }
+
+    if (sidebar->df_cancellable != NULL) {
+        g_cancellable_cancel (sidebar->df_cancellable);
+        g_clear_object (&sidebar->df_cancellable);
     }
 
 	g_clear_object (&sidebar->store);
