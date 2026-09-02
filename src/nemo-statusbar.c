@@ -91,6 +91,34 @@ nemo_status_bar_dispose (GObject *object)
 }
 
 static void
+action_toggle_split_view_callback (GtkButton *button, NemoStatusBar *bar)
+{
+    NemoWindow *window = bar->window;
+
+    if (!nemo_window_split_view_showing (window)) {
+        nemo_window_split_view_on (window);
+    } else {
+        nemo_window_split_view_off (window);
+    }
+
+    nemo_status_bar_sync_button_states (bar);
+}
+
+static void
+action_toggle_preview_pane_callback (GtkButton *button, NemoStatusBar *bar)
+{
+    NemoWindow *window = bar->window;
+
+    if (!nemo_window_preview_pane_showing (window)) {
+        nemo_window_preview_pane_on (window);
+    } else {
+        nemo_window_preview_pane_off (window);
+    }
+
+    nemo_status_bar_sync_button_states (bar);
+}
+
+static void
 action_places_toggle_callback (GtkButton *button, NemoStatusBar *bar)
 {
     nemo_window_set_sidebar_id (NEMO_WINDOW (bar->window), NEMO_WINDOW_SIDEBAR_PLACES);
@@ -126,6 +154,18 @@ sidebar_state_changed_cb (gpointer pointer, gboolean state, gpointer user_data)
 
 static void
 sidebar_type_changed_cb (gpointer pointer, const gchar *sidebar_id, gpointer user_data)
+{
+    nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (user_data));
+}
+
+static void
+preview_pane_state_changed_cb (gpointer pointer, GParamSpec *pspec, gpointer user_data)
+{
+    nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (user_data));
+}
+
+static void
+split_view_state_changed_cb (gpointer pointer, GParamSpec *pspec, gpointer user_data)
 {
     nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (user_data));
 }
@@ -229,6 +269,24 @@ nemo_status_bar_constructed (GObject *object)
     gtk_range_set_increments (GTK_RANGE (zoom_slider), 1.0, 1.0);
     gtk_range_set_round_digits (GTK_RANGE (zoom_slider), 0);
 
+    button = gtk_toggle_button_new ();
+    icon = gtk_image_new_from_icon_name ("view-dual-symbolic", size);
+    gtk_button_set_image (GTK_BUTTON (button), icon);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Show Split View (F3)"));
+    bar->split_view_button = button;
+    gtk_box_pack_start (GTK_BOX (bar), button, FALSE, FALSE, 2);
+    g_signal_connect (GTK_BUTTON (button), "clicked",
+                      G_CALLBACK (action_toggle_split_view_callback), bar);
+
+    button = gtk_toggle_button_new ();
+    icon = gtk_image_new_from_icon_name ("xsi-preview-symbolic", size);
+    gtk_button_set_image (GTK_BUTTON (button), icon);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Show the Preview pane (F7)"));
+    bar->preview_pane_button = button;
+    gtk_box_pack_start (GTK_BOX (bar), button, FALSE, FALSE, 2);
+    g_signal_connect (GTK_BUTTON (button), "clicked",
+                      G_CALLBACK (action_toggle_preview_pane_callback), bar);
+
     gtk_widget_show_all (GTK_WIDGET (bar));
 
     g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::show-sidebar",
@@ -236,6 +294,12 @@ nemo_status_bar_constructed (GObject *object)
 
     g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::sidebar-view-id",
                            G_CALLBACK (sidebar_type_changed_cb), bar, G_CONNECT_AFTER);
+
+    g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::show-preview-pane",
+                             G_CALLBACK (preview_pane_state_changed_cb), bar, G_CONNECT_AFTER);
+
+    g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::show-split-view",
+                             G_CALLBACK (split_view_state_changed_cb), bar, G_CONNECT_AFTER);
 
     g_signal_connect (GTK_RANGE (zoom_slider), "value-changed",
                       G_CALLBACK (on_slider_changed_cb), bar);
@@ -332,6 +396,23 @@ nemo_status_bar_sync_button_states (NemoStatusBar *bar)
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bar->places_button), FALSE);
     }
     g_signal_handlers_unblock_by_func (GTK_BUTTON (bar->places_button), action_places_toggle_callback, bar);
+
+    g_signal_handlers_block_by_func (GTK_BUTTON (bar->split_view_button), action_toggle_split_view_callback, bar);
+    if (nemo_window_split_view_showing (bar->window)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bar->split_view_button), TRUE);
+    } else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bar->split_view_button), FALSE);
+    }
+    g_signal_handlers_unblock_by_func (GTK_BUTTON (bar->split_view_button), action_toggle_split_view_callback, bar);
+
+    g_signal_handlers_block_by_func (GTK_BUTTON (bar->preview_pane_button), action_toggle_preview_pane_callback, bar);
+    if (nemo_window_preview_pane_showing (bar->window)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bar->preview_pane_button), TRUE);
+    } else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bar->preview_pane_button), FALSE);
+    }
+    g_signal_handlers_unblock_by_func (GTK_BUTTON (bar->preview_pane_button), action_toggle_preview_pane_callback, bar);
+
 }
 
 void
