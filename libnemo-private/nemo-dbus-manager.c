@@ -96,6 +96,15 @@ handle_copy_file (NemoDBusFileOperations *object,
 }
 
 static gboolean
+selection_event (NemoDBusFileOperations *object,
+		  GDBusMethodInvocation *invocation,
+		  const guint16 direction)
+{
+  printf("%i", direction);
+  return TRUE; /* invocation was handled */
+}
+
+static gboolean
 handle_copy_uris (NemoDBusFileOperations *object,
 		  GDBusMethodInvocation *invocation,
 		  const gchar **sources,
@@ -184,6 +193,10 @@ nemo_dbus_manager_init (NemoDBusManager *self)
   g_signal_connect (self->file_operations,
 		    "handle-empty-trash",
 		    G_CALLBACK (handle_empty_trash),
+		    self);
+  g_signal_connect (self->file_operations,
+		    "selection-event",
+		    G_CALLBACK (selection_event),
 		    self);
 
   g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->file_operations), connection,
