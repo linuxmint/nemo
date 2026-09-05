@@ -1,3 +1,17 @@
+nemo (6.7.6) alfa; urgency=medium
+
+  [ Leigh Scott ]
+  * nemo-odf-to-txt: fix IndexError in handle_data on leading text:s tag (#3826)
+
+  [ Michael Webster ]
+  * nemo-icon-container.c: Clean up interactive-search positioning function.
+  * mount operations: Skip the process list lookup for unhandled mount operations in Wayland sessions.
+  * i18n: Remove po folder, include nemo.xml (mime info) in the generate_additional_file script.
+  * i18n: Run generate_additional_file.
+  * build: Simplify .desktop file handling, restore the polkit root policy file to makepot.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 05 Sep 2026 15:13:14 +0100
+
 nemo (6.7.5) alfa; urgency=medium
 
   [ Michael Webster ]
