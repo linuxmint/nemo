@@ -5058,17 +5058,22 @@ nemo_file_get_icon (NemoFile *file,
 
             return icon;
 		} else if (file->details->thumbnail_path == NULL &&
+			   !file->details->thumbnail_path_unknown &&
 			   file->details->can_read &&
 			   !file->details->is_thumbnailing &&
 			   !file->details->thumbnailing_failed) {
+			/* thumbnail_path_unknown means the structure pass is all we have
+			 * so far, and it does not fetch thumbnail::*. Generating now would
+			 * rebuild a thumbnail that is very likely already in the cache, so
+			 * wait for the detail pass -- a fraction of a second -- to say
+			 * whether one exists. */
 			if (nemo_can_thumbnail (file)) {
 				nemo_create_thumbnail (file);
 			}
 		}
 	}
 
-    if (file->details->is_thumbnailing &&
-	    flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS)
+    if ((flags & NEMO_FILE_ICON_FLAGS_USE_THUMBNAILS) && file->details->is_thumbnailing)
 		gicon = g_themed_icon_new (ICON_NAME_THUMBNAIL_LOADING);
 	else
 		gicon = nemo_file_get_gicon (file, flags);
@@ -8468,6 +8473,32 @@ NemoFileLoadDeferredAttrs
 nemo_file_get_load_deferred_attrs (NemoFile *file)
 {
     return file->details->load_deferred_attrs;
+}
+
+/**
+ * Directory enumeration fills a file's mime type in from its name, because
+ * asking GLib for standard::content-type during a bulk listing makes it read
+ * every file whose name is not conclusive, slow on a network share. The
+ * guess is right for any normally-named file, but not for one with no extension
+ * or the wrong one.
+ *
+ * Call this for files that have come into view to have the real type fetched,
+ * one query per file.
+ */
+void
+nemo_file_resolve_content_type (NemoFile *file)
+{
+    g_return_if_fail (NEMO_IS_FILE (file));
+
+    if (!file->details->content_type_is_guess || file->details->is_gone) {
+        return;
+    }
+
+    /* Clear it first: the query is asynchronous and this must not queue a second
+     * one for the same file in the meantime. */
+    file->details->content_type_is_guess = FALSE;
+
+    nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_INFO);
 }
 
 void
