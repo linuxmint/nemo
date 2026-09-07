@@ -2232,11 +2232,15 @@ activation_start_mountables (ActivateParameters *parameters)
 
 /**
  * nemo_mime_activate_files:
+ * @parent_window: The window to parent dialogs on.
+ * @slot: The window slot to open locations in.
+ * @files: A GList of NemoFiles to activate.
+ * @launch_directory: Working directory for launching executable files, or NULL.
+ * @flags: How the location should be opened.
+ * @user_confirmation: Whether to request confirmation before opening multiple windows or tabs.
  *
  * Activate a list of files. Each one might launch with an application or
  * with a component. This is normally called only by subclasses.
- * @parent_window: The window to parent dialogs on.
- * @files: A GList of NemoFiles to activate.
  *
  **/
 void
@@ -2313,12 +2317,14 @@ nemo_mime_activate_files (GtkWindow *parent_window,
 
 /**
  * nemo_mime_activate_file:
+ * @parent_window: The window to parent dialogs on.
+ * @slot: The window slot to open locations in.
+ * @file: A NemoFile representing the file in this view to activate.
+ * @launch_directory: Working directory for launching executable files, or NULL.
+ * @flags: How the location should be opened.
  *
  * Activate a file in this view. This might involve switching the displayed
  * location for the current window, or launching an application.
- * @parent_window: The window to parent dialogs on.
- * @file: A NemoFile representing the file in this view to activate.
- * @flags: How the location should be opened.
  *
  **/
 
