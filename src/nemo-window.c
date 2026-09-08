@@ -1207,6 +1207,21 @@ nemo_window_key_press_event (GtkWidget *widget,
       }
 
 	if (view != NULL && nemo_view_get_is_renaming (view) && event->keyval != GDK_KEY_F2) {
+		/* Consume bare Alt key presses during rename to prevent GTK from
+		 * interpreting them as menubar toggle triggers, which would cause
+		 * the rename entry to lose focus.
+		 *
+		 * Alt+letter combinations (Alt+F, Alt+B, etc.) are still passed
+		 * through for word movement in EelEditableLabel.
+		 */
+		if (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R) {
+			guint modifiers = event->state & gtk_accelerator_get_default_mod_mask();
+			if (modifiers == 0) {
+				/* Bare Alt press (no other modifiers) - consume it */
+				return TRUE;
+			}
+		}
+
 		/* if we're renaming, just forward the event to the
 		 * focused widget and return. We don't want to process the window
 		 * accelerator bindings, as they might conflict with the
@@ -1285,6 +1300,23 @@ nemo_window_key_release_event (GtkWidget *widget,
                              GdkEventKey *event)
 {
     NemoWindow *window = NEMO_WINDOW (widget);
+    NemoWindowSlot *active_slot;
+    NemoView *view;
+
+    active_slot = nemo_window_get_active_slot (window);
+    view = active_slot->content_view;
+
+    /* Consume bare Alt key release during rename to prevent GTK from
+     * interpreting it as menubar toggle trigger.
+     */
+    if (view != NULL && nemo_view_get_is_renaming (view)) {
+        if (event->keyval == GDK_KEY_Alt_L || event->keyval == GDK_KEY_Alt_R) {
+            guint modifiers = event->state & gtk_accelerator_get_default_mod_mask();
+            if (modifiers == 0) {
+                return TRUE;
+            }
+        }
+    }
 
     /* Conditions to show the menu via the alt key is that it must have been pressed and
      * released without any other key events in between, and we must not have hidden the
