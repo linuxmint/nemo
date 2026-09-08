@@ -69,7 +69,7 @@ nemo_launch_application_for_mount (GAppInfo *app_info,
  * parameter. Provide a parent window for error dialogs. 
  * 
  * @application: The application to be launched.
- * @uris: The files whose locations should be passed as a parameter to the application.
+ * @files: The files whose locations should be passed as a parameter to the application.
  * @parent_window: A window to use as the parent for any error dialogs.
  */
 void
