@@ -1662,13 +1662,26 @@ free_location_change (NemoWindowSlot *slot)
         }
 
         if (slot->new_content_view != NULL) {
+		NemoView *new_view;
+
+		/* Detach before doing anything with it. nemo_view_stop_loading()
+		 * removes the view's directory monitor, which runs the directory's
+		 * async state machine and can emit signals that come back round to
+		 * free_location_change() for the same slot -- and that reentrant call
+		 * would clear and unref slot->new_content_view while this one is still
+		 * using it. Holding our own reference and clearing the field first
+		 * makes the second call a no-op instead of a NULL passed to
+		 * nemo_window_disconnect_content_view(), which asserts on it.
+		 */
+		new_view = slot->new_content_view;
+		slot->new_content_view = NULL;
+
 		window->details->temporarily_ignore_view_signals = TRUE;
-		nemo_view_stop_loading (slot->new_content_view);
+		nemo_view_stop_loading (new_view);
 		window->details->temporarily_ignore_view_signals = FALSE;
 
-		nemo_window_disconnect_content_view (window, slot->new_content_view);
-        	g_object_unref (slot->new_content_view);
-                slot->new_content_view = NULL;
+		nemo_window_disconnect_content_view (window, new_view);
+		g_object_unref (new_view);
         }
 }
 

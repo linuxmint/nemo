@@ -45,12 +45,31 @@
 #include <signal.h>
 #include <libcinnamon-desktop/gnome-desktop-thumbnail.h>
 
+#include <gio/gfiledescriptorbased.h>
+#include <fcntl.h>
+
+#ifdef HAVE_EXIF
+  #include <libexif/exif-data.h>
+#endif
+
 #define DEBUG_FLAG NEMO_DEBUG_THUMBNAILS
 #include <libnemo-private/nemo-debug.h>
 
 #include "nemo-file-private.h"
 
 #define DEBUG_THREADS 0
+
+/* Pixel size the factory below is created with (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE). */
+#define THUMBNAIL_PIXEL_SIZE 256
+
+/* An EXIF APP1 segment is at most 64K, and starts within the first few bytes of
+ * the file, so this always covers it. */
+#define EMBEDDED_THUMBNAIL_PROBE_BYTES (80 * 1024)
+
+/* How far the embedded thumbnail's shape may differ from the dimensions EXIF
+ * records for the main image before we stop trusting it. Catches files that
+ * were cropped by something that did not refresh the embedded thumbnail. */
+#define EMBEDDED_THUMBNAIL_ASPECT_TOLERANCE 0.05
 
 /* Should never be a reasonable actual mtime */
 #define INVALID_MTIME 0
@@ -130,15 +149,12 @@ get_max_threads (void) {
     gint pref = g_settings_get_int (nemo_preferences, NEMO_PREFERENCES_MAX_THUMBNAIL_THREADS);
 
     if (pref == -1) {
-        if (num_processors >= 8) {
-            max_threads = 4;
-        }
-        else if (num_processors >= 4) {
-            max_threads = 2;
-        }
-        else {
-            max_threads = 1;
-        }
+        /* Thumbnailing is CPU-bound (decode, scale, re-encode), so the pool
+         * should scale with the machine. Leave a couple of cores for the UI
+         * and the rest of the session, and cap it so that very large machines
+         * don't just thrash memory bandwidth and the thumbnail cache dir.
+         */
+        max_threads = CLAMP (num_processors - 2, 1, 8);
     } else {
         max_threads = pref;
     }
@@ -287,10 +303,39 @@ thumbnail_thread_notify_file_changed (gpointer image_uri)
     DEBUG ("(Thumbnail Thread) Notifying file changed file: %p uri: %s", file, (char*) image_uri);
 
     if (file != NULL) {
-        nemo_file_set_is_thumbnailing (file, FALSE);
-        nemo_file_invalidate_attributes (file,
-                                         NEMO_FILE_ATTRIBUTE_THUMBNAIL |
-                                         NEMO_FILE_ATTRIBUTE_INFO);
+        char *path;
+
+        /* Ask the factory where it just wrote the thumbnail rather than
+         * re-reading the file's info purely to learn thumbnail::path back. That
+         * query is a network round trip per thumbnail on a remote share, it is
+         * serialised one-at-a-time per directory, and for types whose content
+         * type is ambiguous from the name (.png on many systems) it makes GLib
+         * re-read the file to sniff it. The lookup here is local: a hash of the
+         * uri and a stat in the thumbnail cache. Without this, thumbnails for
+         * the files on screen can be generated but not appear for many seconds.
+         */
+        path = gnome_desktop_thumbnail_factory_lookup (get_thumbnail_factory (),
+                                                       (char *) image_uri,
+                                                       nemo_file_get_mtime (file));
+
+        if (path != NULL) {
+            g_free (file->details->thumbnail_path);
+            file->details->thumbnail_path = path;
+
+            /* Leave is_thumbnailing set: the job is not finished until the
+             * result has been read back in, and clearing it here would drop the
+             * indicator to the generic icon for that moment. thumbnail_done()
+             * clears it once the pixbuf is in hand, or the attempt fails. */
+            nemo_file_invalidate_attributes (file, NEMO_FILE_ATTRIBUTE_THUMBNAIL);
+        } else {
+            /* Nothing was produced, so there is no read to wait for. */
+            nemo_file_set_is_thumbnailing (file, FALSE);
+
+            nemo_file_invalidate_attributes (file,
+                                             NEMO_FILE_ATTRIBUTE_THUMBNAIL |
+                                             NEMO_FILE_ATTRIBUTE_INFO);
+        }
+
         nemo_file_unref (file);
     }
 
@@ -308,6 +353,205 @@ remove_from_hash_table (NemoThumbnailInfo *info)
     g_mutex_unlock (&thumbnails_mutex);
 
     free_thumbnail_info (info);
+}
+
+#ifdef HAVE_EXIF
+static gboolean
+exif_get_long_tag (ExifData *ed,
+                   ExifTag   tag,
+                   glong    *out)
+{
+    ExifEntry *entry;
+    ExifByteOrder order;
+    int i;
+
+    order = exif_data_get_byte_order (ed);
+
+    for (i = 0; i < EXIF_IFD_COUNT; i++) {
+        entry = exif_content_get_entry (ed->ifd[i], tag);
+
+        if (entry == NULL) {
+            continue;
+        }
+
+        if (entry->format == EXIF_FORMAT_SHORT) {
+            *out = exif_get_short (entry->data, order);
+            return TRUE;
+        }
+
+        if (entry->format == EXIF_FORMAT_LONG) {
+            *out = exif_get_long (entry->data, order);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+#endif /* HAVE_EXIF */
+
+/* A JPEG written by a camera or phone almost always carries a postcard-sized
+ * copy of itself in its EXIF header. Decoding that costs a ~20KB read instead of
+ * pulling the whole multi-megabyte original, which is the difference between a
+ * folder of photos thumbnailing in seconds and in minutes when it lives on a
+ * network share.
+ *
+ * Returns NULL whenever the embedded copy cannot be trusted to be as good as
+ * decoding the original -- wrong format, absent, too small for the thumbnail we
+ * are about to store, or a different shape from the image it claims to preview.
+ * The caller then falls back to the normal full-file thumbnailer.
+ */
+static GdkPixbuf *
+try_embedded_thumbnail (const char *uri,
+                        const char *mime_type,
+                        int         target_size)
+{
+#ifdef HAVE_EXIF
+    GFile *file;
+    GFileInputStream *stream;
+    GdkPixbufLoader *loader;
+    GdkPixbuf *pixbuf = NULL;
+    GdkPixbuf *rotated;
+    ExifData *ed;
+    guchar *buf;
+    gssize len;
+    glong orientation, main_w, main_h;
+    int w, h;
+
+    if (g_strcmp0 (mime_type, "image/jpeg") != 0) {
+        return NULL;
+    }
+
+    file = g_file_new_for_uri (uri);
+    stream = g_file_read (file, NULL, NULL);
+    g_object_unref (file);
+
+    if (stream == NULL) {
+        return NULL;
+    }
+
+    /* Only the header is wanted. Without this the kernel reads ahead to satisfy
+     * a sequential-access guess, on shares with larger rsize configuration, an 80KB read
+     * would could drag megabytes per file over the wire and undo the entire saving. */
+    if (G_IS_FILE_DESCRIPTOR_BASED (stream)) {
+        int fd = g_file_descriptor_based_get_fd (G_FILE_DESCRIPTOR_BASED (stream));
+
+        if (fd >= 0) {
+            posix_fadvise (fd, 0, 0, POSIX_FADV_RANDOM);
+        }
+    }
+
+    buf = g_malloc (EMBEDDED_THUMBNAIL_PROBE_BYTES);
+    len = g_input_stream_read (G_INPUT_STREAM (stream),
+                               buf, EMBEDDED_THUMBNAIL_PROBE_BYTES, NULL, NULL);
+    g_input_stream_close (G_INPUT_STREAM (stream), NULL, NULL);
+    g_object_unref (stream);
+
+    if (len <= 0) {
+        g_free (buf);
+        return NULL;
+    }
+
+    ed = exif_data_new_from_data (buf, (unsigned int) len);
+    g_free (buf);
+
+    if (ed == NULL) {
+        return NULL;
+    }
+
+    if (ed->data == NULL || ed->size == 0) {
+        exif_data_unref (ed);
+        return NULL;
+    }
+
+    loader = gdk_pixbuf_loader_new_with_mime_type ("image/jpeg", NULL);
+
+    if (loader != NULL) {
+        if (gdk_pixbuf_loader_write (loader, ed->data, ed->size, NULL)) {
+            if (gdk_pixbuf_loader_close (loader, NULL)) {
+                pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+                if (pixbuf != NULL) {
+                    g_object_ref (pixbuf);
+                }
+            }
+        } else {
+            gdk_pixbuf_loader_close (loader, NULL);
+        }
+
+        g_object_unref (loader);
+    }
+
+    if (pixbuf == NULL) {
+        exif_data_unref (ed);
+        return NULL;
+    }
+
+    w = gdk_pixbuf_get_width (pixbuf);
+    h = gdk_pixbuf_get_height (pixbuf);
+
+    /* Never trade quality for speed: if the embedded copy is smaller than the
+     * thumbnail we would store, decode the original instead. */
+    if (MAX (w, h) < target_size) {
+        DEBUG ("(Thumbnail Thread) Embedded thumbnail too small (%dx%d < %d): %s",
+               w, h, target_size, uri);
+        g_object_unref (pixbuf);
+        exif_data_unref (ed);
+        return NULL;
+    }
+
+    if (exif_get_long_tag (ed, EXIF_TAG_PIXEL_X_DIMENSION, &main_w) &&
+        exif_get_long_tag (ed, EXIF_TAG_PIXEL_Y_DIMENSION, &main_h) &&
+        main_w > 0 && main_h > 0) {
+        double embedded_aspect = (double) w / (double) h;
+        double main_aspect = (double) main_w / (double) main_h;
+
+        /* Orientation may have the two rotated relative to each other. */
+        if (fabs (embedded_aspect - main_aspect) > EMBEDDED_THUMBNAIL_ASPECT_TOLERANCE * main_aspect &&
+            fabs (embedded_aspect - 1.0 / main_aspect) > EMBEDDED_THUMBNAIL_ASPECT_TOLERANCE / main_aspect) {
+            DEBUG ("(Thumbnail Thread) Embedded thumbnail shape %dx%d does not match image %ldx%ld: %s",
+                   w, h, main_w, main_h, uri);
+            g_object_unref (pixbuf);
+            exif_data_unref (ed);
+            return NULL;
+        }
+    }
+
+    /* The orientation tag describes the main image; the embedded copy is stored
+     * the same way round, so the same rotation applies. */
+    if (exif_get_long_tag (ed, EXIF_TAG_ORIENTATION, &orientation) &&
+        orientation >= 1 && orientation <= 8) {
+        char value[2] = { '0' + (char) orientation, '\0' };
+
+        gdk_pixbuf_set_option (pixbuf, "orientation", value);
+    }
+
+    exif_data_unref (ed);
+
+    rotated = gdk_pixbuf_apply_embedded_orientation (pixbuf);
+    g_object_unref (pixbuf);
+    pixbuf = rotated;
+
+    w = gdk_pixbuf_get_width (pixbuf);
+    h = gdk_pixbuf_get_height (pixbuf);
+
+    /* Store it at the same size the factory would have produced. */
+    if (MAX (w, h) > target_size) {
+        double scale = (double) target_size / (double) MAX (w, h);
+
+        rotated = gdk_pixbuf_scale_simple (pixbuf,
+                                           MAX (w * scale, 1),
+                                           MAX (h * scale, 1),
+                                           GDK_INTERP_BILINEAR);
+        g_object_unref (pixbuf);
+        pixbuf = rotated;
+    }
+
+    DEBUG ("(Thumbnail Thread) Used embedded thumbnail: %s", uri);
+
+    return pixbuf;
+#else
+    return NULL;
+#endif /* HAVE_EXIF */
 }
 
 /* Thumbnail thread */
@@ -367,9 +611,13 @@ thumbnail_thread (gpointer data,
      * because of that we have to convert our path from the network URI to a local file:// URI or else any
      * thumbnailers that use %i wont generate thumbnails correctly
      */
-    pixbuf = gnome_desktop_thumbnail_factory_generate_thumbnail (thumbnail_factory,
-                                                                 image_uri,
-                                                                 info->mime_type);
+    pixbuf = try_embedded_thumbnail (image_uri, info->mime_type, THUMBNAIL_PIXEL_SIZE);
+
+    if (pixbuf == NULL) {
+        pixbuf = gnome_desktop_thumbnail_factory_generate_thumbnail (thumbnail_factory,
+                                                                     image_uri,
+                                                                     info->mime_type);
+    }
     if (free_uri) {
         g_free (image_uri);
     }

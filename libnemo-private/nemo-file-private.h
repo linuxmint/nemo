@@ -35,6 +35,42 @@
 #define NEMO_FILE_DEFAULT_ATTRIBUTES				\
 	"standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*,preview::icon"
 
+/* The cheapest enumeration a directory listing can be built from: exactly the
+ * information readdir() already returns. GLocalFileEnumerator only skips the
+ * per-file stat when the matcher asks for nothing beyond name and type, so this
+ * list must not grow -- adding even standard::is-hidden costs a stat per file
+ * (and, on a network mount, a round trip per file). Everything else is filled
+ * in by the second, full-attribute pass. See start_monitoring_file_list().
+ */
+#define NEMO_FILE_FAST_ENUM_ATTRIBUTES				\
+	"standard::name,standard::type"
+
+/* The attribute set the second, full pass enumerates with. Everything in
+ * NEMO_FILE_DEFAULT_ATTRIBUTES except standard::content-type and standard::icon,
+ * which are replaced by standard::fast-content-type.
+ *
+ * Asking for standard::content-type makes GLib fall back to sniffing the file's
+ * magic bytes whenever the name alone is not conclusive -- and on a stock
+ * shared-mime-info that includes every .png. In a folder of a few thousand
+ * images on a network share that is one read per file: 20.5s versus 0.41s here.
+ * standard::icon is excluded for the same reason, since deriving it resolves the
+ * content type; directory_load_one() supplies an icon from the guessed type
+ * instead.
+ *
+ * The guess comes from the filename and is right for any normally-named file.
+ * Where it is not -- an extensionless or mislabelled file -- the real type is
+ * resolved per file once it is scrolled into view, via
+ * nemo_file_resolve_content_type().
+ */
+#define NEMO_FILE_BULK_ENUM_ATTRIBUTES				\
+	"standard::name,standard::type,standard::size,standard::allocated-size," \
+	"standard::is-hidden,standard::is-backup,standard::is-symlink," \
+	"standard::symlink-target,standard::display-name,standard::edit-name," \
+	"standard::copy-name,standard::fast-content-type,standard::target-uri," \
+	"standard::sort-order,standard::description," \
+	"access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*," \
+	"id::filesystem,trash::orig-path,trash::deletion-date,metadata::*,preview::icon"
+
 /* These are in the typical sort order. Known things come first, then
  * things where we can't know, finally things where we don't yet know.
  */
@@ -166,6 +202,17 @@ struct NemoFileDetails
 	eel_boolean_bit got_file_info                 : 1;
 	eel_boolean_bit get_info_failed               : 1;
 	eel_boolean_bit file_info_is_up_to_date       : 1;
+	/* The mime type came from the filename rather than the file's contents,
+	 * because the info was filled in by a bulk enumeration. Cleared once a
+	 * per-file query has supplied the real one. See
+	 * nemo_file_resolve_content_type(). */
+	eel_boolean_bit content_type_is_guess         : 1;
+	/* Set while the only info this file has is from the structure pass, which
+	 * does not fetch thumbnail::*. thumbnail_path being NULL therefore means
+	 * "not looked up yet", not "no thumbnail exists", and a thumbnail must not
+	 * be generated on the strength of it -- that would rebuild thumbnails that
+	 * are already cached. Cleared by the detail pass and by per-file queries. */
+	eel_boolean_bit thumbnail_path_unknown        : 1;
 	
 	eel_boolean_bit got_directory_count           : 1;
 	eel_boolean_bit directory_count_failed        : 1;

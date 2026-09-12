@@ -641,7 +641,17 @@ nemo_directory_add_file (NemoDirectory *directory, NemoFile *file)
 	directory->details->confirmed_file_count++;
 
     if (directory->details->early_load_file_count++ < directory->details->max_deferred_file_count) {
-        file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD;
+        /* While the directory is still enumerating we only count the file. Marking
+         * it PRELOAD here would start thumbnail I/O and decoding immediately, in
+         * competition with the enumeration itself, and reflow the view as each
+         * thumbnail lands. The budget is handed out in
+         * nemo_directory_emit_done_loading() instead, once the file list is
+         * complete. Files that appear after the load (created, moved in) are not
+         * racing anything, so they preload straight away.
+         */
+        if (directory->details->directory_loaded) {
+            file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD;
+        }
     }
 
 	add_to_work_queue = FALSE;
@@ -785,6 +795,16 @@ nemo_directory_emit_done_loading (NemoDirectory *directory)
 
 	g_signal_emit (directory,
 			 signals[DONE_LOADING], 0);
+
+    /* No blanket preload of deferred attributes here. The file list is stored in
+     * the order the directory was read, which has nothing to do with the sort
+     * order on screen, so preloading the first N of it spends the thumbnailer --
+     * and, on a network share, the whole link -- on files the user is not
+     * looking at, ahead of the ones they are. The views promote exactly what is
+     * on screen as soon as end_loading runs, which for a small folder is every
+     * file anyway.
+     */
+    nemo_directory_async_state_changed (directory);
 }
 
 void

@@ -1584,7 +1584,7 @@ set_ok_to_load_deferred_attrs (NemoListView  *list_view,
     list_view->details->ok_to_load_deferred_attrs = ok;
 
     if (ok) {
-        queue_update_visible_icons (list_view, INITIAL_UPDATE_VISIBLE_DELAY);
+        queue_update_visible_icons (list_view, NORMAL_UPDATE_VISIBLE_DELAY);
     }
 }
 
@@ -2378,6 +2378,10 @@ prioritize_visible_files (NemoListView *view)
             if (file != NULL && file != last_file) {
                 last_file = file;
 
+                /* The listing supplied a mime type guessed from the name; now
+                 * that this row is on screen, fetch the real one. */
+                nemo_file_resolve_content_type (file);
+
                 if (nemo_file_get_load_deferred_attrs (file) == NEMO_FILE_LOAD_DEFERRED_ATTRS_NO) {
                     nemo_file_set_load_deferred_attrs (file, NEMO_FILE_LOAD_DEFERRED_ATTRS_YES);
                 }
@@ -2402,9 +2406,21 @@ prioritize_visible_files (NemoListView *view)
 static gboolean
 update_visible_icons_cb (NemoListView *view)
 {
+    view->details->update_visible_icons_id = 0;
+
+    /* Deferred attributes (thumbnails, extension info) stay unrequested until
+     * the directory has finished loading, see set_ok_to_load_deferred_attrs(),
+     * which re-queues this callback from end_loading(). Fetching them mid-load
+     * makes thumbnail I/O and decoding compete with the directory enumeration,
+     * and every thumbnail that arrives resizes a row and shifts the rows below
+     * it under the user.
+     */
+    if (!view->details->ok_to_load_deferred_attrs) {
+        return G_SOURCE_REMOVE;
+    }
+
     prioritize_visible_files (view);
 
-    view->details->update_visible_icons_id = 0;
     return G_SOURCE_REMOVE;
 }
 
