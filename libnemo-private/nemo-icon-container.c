@@ -217,6 +217,12 @@ tooltip_prefs_changed_callback (NemoIconContainer *container)
     nemo_icon_container_request_update_all (container);
 }
 
+static void
+selection_checkboxes_prefs_changed_callback (NemoIconContainer *container)
+{
+    gtk_widget_queue_draw (GTK_WIDGET (container));
+}
+
 /* Functions dealing with NemoIcons.  */
 
 static gboolean
@@ -2766,6 +2772,9 @@ finalize (GObject *object)
     g_signal_handlers_disconnect_by_func (nemo_preferences,
                                           tooltip_prefs_changed_callback,
                                           object);
+    g_signal_handlers_disconnect_by_func (nemo_preferences,
+                                          selection_checkboxes_prefs_changed_callback,
+                                          object);
 
 	g_hash_table_destroy (details->icon_set);
 	details->icon_set = NULL;
@@ -4988,6 +4997,16 @@ nemo_icon_container_init (NemoIconContainer *container)
                               G_CALLBACK (tooltip_prefs_changed_callback),
                               container);
 
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES,
+                              G_CALLBACK (selection_checkboxes_prefs_changed_callback),
+                              container);
+
+    g_signal_connect_swapped (nemo_preferences,
+                              "changed::" NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES_ALWAYS,
+                              G_CALLBACK (selection_checkboxes_prefs_changed_callback),
+                              container);
+
     container->details->show_desktop_tooltips = g_settings_get_boolean (nemo_preferences,
                                                                         NEMO_PREFERENCES_TOOLTIPS_DESKTOP);
     container->details->show_icon_view_tooltips = g_settings_get_boolean (nemo_preferences,
@@ -5197,6 +5216,28 @@ handle_icon_button_press (NemoIconContainer *container,
 	return TRUE;
 }
 
+static gboolean
+clicked_on_selection_checkbox (NemoIconContainer *container,
+				 NemoIcon *icon,
+				 GdkEventButton *event)
+{
+	double world_x;
+	double world_y;
+
+	g_return_val_if_fail (NEMO_IS_ICON_CONTAINER (container), FALSE);
+	g_return_val_if_fail (icon != NULL, FALSE);
+
+	if (!g_settings_get_boolean (nemo_preferences,
+				     NEMO_PREFERENCES_SHOW_SELECTION_CHECKBOXES)) {
+		return FALSE;
+	}
+
+	eel_canvas_window_to_world (EEL_CANVAS (container), event->x, event->y,
+				   &world_x, &world_y);
+
+	return nemo_icon_canvas_item_hit_test_selection_checkbox (icon->item, world_x, world_y);
+}
+
 static int
 item_event_callback (EelCanvasItem *item,
 		     GdkEvent *event,
@@ -5211,6 +5252,13 @@ item_event_callback (EelCanvasItem *item,
 	g_assert (icon != NULL);
 
     if (event->type == GDK_BUTTON_PRESS) {
+		if (clicked_on_selection_checkbox (container, icon, &event->button)) {
+			icon_toggle_selected (container, icon);
+			g_signal_emit (container,
+					   signals[SELECTION_CHANGED], 0);
+			return TRUE;
+		}
+
         if (handle_icon_button_press (container, icon, &event->button)) {
 			/* Stop the event from being passed along further. Returning
 			 * TRUE ain't enough.
