@@ -568,13 +568,16 @@ nemo_create_thumbnail (NemoFile *file)
 
         uri = nemo_file_get_symbolic_link_target_uri (file);
 
-        real_file = nemo_file_get_by_uri (uri);
-        if (real_file != NULL) {
-            nemo_create_thumbnail (real_file);
-            nemo_file_unref (real_file);
+        if (uri != NULL) {
+            real_file = nemo_file_get_by_uri (uri);
+            if (real_file != NULL) {
+                nemo_create_thumbnail (real_file);
+                nemo_file_unref (real_file);
+            }
+
+            g_free (uri);
         }
 
-        g_free (uri);
         return;
     }
 

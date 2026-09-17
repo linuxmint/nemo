@@ -852,6 +852,33 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 		return;
 	}
 
+    /* favorites:///name is a link to a real location. Activating it from favorites:///
+     * goes to the real location, so do the same when it's opened directly. */
+    if (nemo_file_is_in_favorites (file) &&
+        nemo_file_has_activation_uri (file) &&
+        nemo_file_get_file_type (file) != G_FILE_TYPE_REGULAR) {
+        location = nemo_file_get_activation_location (file);
+
+        if (!g_file_equal (location, slot->pending_location)) {
+            g_clear_object (&slot->pending_location);
+            slot->pending_location = location;
+            slot->determine_view_file = nemo_file_get (location);
+            slot->tried_mount = FALSE;
+
+            nemo_file_call_when_ready (slot->determine_view_file,
+                                       NEMO_FILE_ATTRIBUTE_INFO |
+                                       NEMO_FILE_ATTRIBUTE_MOUNT,
+                                       got_file_info_for_view_selection_callback,
+                                       slot);
+
+            nemo_file_unref (file);
+
+            return;
+        }
+
+        g_object_unref (location);
+    }
+
 	parent_file = nemo_file_get_parent (file);
 	if ((parent_file != NULL) &&
 	    nemo_file_get_file_type (file) == G_FILE_TYPE_REGULAR) {
