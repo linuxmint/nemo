@@ -1,3 +1,13 @@
+nemo (6.7.7) adrien; urgency=medium
+
+  [ Dmitry Rantovov ]
+  * docs: fix parameter names left from the nautilus era (#3832)
+
+  [ Michael Webster ]
+  * window: Open favorites:///folder at its real location.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 17 Sep 2026 15:02:12 +0100
+
 nemo (6.7.6) alfa; urgency=medium
 
   [ Leigh Scott ]
