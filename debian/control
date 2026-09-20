@@ -26,13 +26,10 @@ Build-Depends:
  libpango1.0-dev (>= 1.44.0),
  libx11-dev,
  libxapp-dev (>= 2.0.0),
- libxext-dev,
- libxrender-dev,
  libwayland-dev,
  meson,
  python3,
  python3-gi,
- x11proto-core-dev,
 Homepage: http://www.github.com/linuxmint/nemo/
 Standards-Version: 3.9.5
 

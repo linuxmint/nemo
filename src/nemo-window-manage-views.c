@@ -47,7 +47,6 @@
 #include <eel/eel-string.h>
 #include <eel/eel-vfs-extensions.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 #include <glib/gi18n.h>
 #include <libnemo-extension/nemo-location-widget-provider.h>
 #include <libnemo-private/nemo-desktop-directory.h>

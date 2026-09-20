@@ -28,14 +28,13 @@
 
 #include <config.h>
 #include "eel-gtk-extensions.h"
+#include <gdk/gdkx.h>
 
 #include "eel-glib-extensions.h"
 #include "eel-gnome-extensions.h"
 #include "eel-gdk-extensions.h"
 #include "eel-string.h"
 
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkprivate.h>
 #ifdef GDK_WINDOWING_WAYLAND

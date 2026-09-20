@@ -63,7 +63,6 @@
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkx.h>
-#include <X11/Xatom.h>
 
 G_DEFINE_TYPE (NemoDesktopApplication, nemo_desktop_application, NEMO_TYPE_APPLICATION);
 

@@ -39,7 +39,6 @@
 #include <stdlib.h>
 
 #include <gdk/gdk.h>
-#include <gdk/gdkx.h>
 
 void
 nemo_launch_application_for_mount (GAppInfo *app_info,

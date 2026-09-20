@@ -24,9 +24,7 @@
 #include "nemo-desktop-manager.h"
 #include "nemo-application.h"
 
-#include <X11/Xatom.h>
 #include <gdk/gdk.h>
-#include <gdk/gdkx.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 

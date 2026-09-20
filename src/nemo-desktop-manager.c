@@ -12,7 +12,6 @@
 #include "nemo-cinnamon-dbus.h"
 #include "nemo-desktop-overlay.h"
 
-#include <gdk/gdkx.h>
 #include <stdio.h>
 
 #include "libnemo-private/nemo-action-manager.h"

@@ -30,8 +30,6 @@
 #include "nemo-icon-view.h"
 #include "nemo-desktop-icon-grid-view.h"
 
-#include <X11/Xatom.h>
-#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 #include <glib/gi18n.h>

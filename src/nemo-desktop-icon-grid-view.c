@@ -37,7 +37,6 @@
 #include "nemo-view-factory.h"
 #include "nemo-view.h"
 
-#include <X11/Xatom.h>
 #include <gtk/gtk.h>
 #include <eel/eel-glib-extensions.h>
 #include <eel/eel-gtk-extensions.h>

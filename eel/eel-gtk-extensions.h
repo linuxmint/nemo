@@ -30,7 +30,6 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 #include <eel/eel-gdk-extensions.h>
 
 /* GtkWindow */
@@ -57,7 +56,7 @@ GtkMenuItem *         eel_gtk_menu_insert_separator                   (GtkMenu  
 void                  eel_gtk_message_dialog_set_details_label        (GtkMessageDialog          *dialog,
 								       const gchar               *details_text);
 
-XID                   eel_gtk_get_window_xid                          (GtkWindow *window);
+gulong                eel_gtk_get_window_xid                          (GtkWindow *window);
 gboolean              eel_gtk_get_treeview_pointer_location           (GtkTreeView *treeview,
                                                                        gint *x, gint *y);
 gboolean              eel_gtk_get_treeview_row_text_is_under_pointer  (GtkTreeView *tree_view);

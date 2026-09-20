@@ -47,7 +47,6 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 #include <glib/gi18n.h>
 #include <stdio.h>
 #include <string.h>
