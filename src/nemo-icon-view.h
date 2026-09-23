@@ -96,4 +96,11 @@ void nemo_icon_view_get_directory_grid_adjusts (NemoIconView *icon_view,
                                                 NemoFile     *file,
                                                 gint         *horizontal,
                                                 gint         *vertical);
+
+void nemo_icon_view_set_directory_label_scale_adjust (NemoIconView *icon_view,
+		                                      NemoFile     *file,
+		                                      double        scale);
+void nemo_icon_view_get_directory_label_scale_adjust (NemoIconView *icon_view,
+		                                      NemoFile     *file,
+		                                      double       *scale);
 #endif /* NEMO_ICON_VIEW_H */

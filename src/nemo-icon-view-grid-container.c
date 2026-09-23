@@ -1418,7 +1418,7 @@ update_layout_constants (NemoIconContainer *container)
 {
     gint icon_size, ellipsis_pref;
     NemoViewLayoutConstants *constants;
-    gdouble scale, h_adjust, v_adjust;
+    gdouble scale, h_adjust, v_adjust, label_scale_adjust;
 
     update_auto_strv_as_quarks (nemo_icon_view_preferences,
                                 NEMO_PREFERENCES_ICON_VIEW_CAPTIONS,
@@ -1433,12 +1433,13 @@ update_layout_constants (NemoIconContainer *container)
 
     h_adjust = container->details->h_adjust / 100.0;
     v_adjust = container->details->v_adjust / 100.0;
+    label_scale_adjust = container->details->label_scale_adjust / 100.0;
 
     constants = container->details->view_constants;
 
     constants->snap_size_x = BASE_SNAP_SIZE_X * scale * h_adjust;
     constants->snap_size_y = BASE_SNAP_SIZE_Y * scale * v_adjust;
-    constants->max_text_width_standard = BASE_MAX_TEXT_WIDTH * scale * h_adjust;
+    constants->max_text_width_standard = BASE_MAX_TEXT_WIDTH * scale * label_scale_adjust;
 
     constants->icon_vertical_adjust = MIN (get_vertical_adjustment (container, icon_size), constants->snap_size_y / 2);
     /* This isn't what this is intended for, but it's a simple way vs. overriding what
