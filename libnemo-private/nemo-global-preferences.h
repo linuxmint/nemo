@@ -226,6 +226,8 @@ typedef enum
 #define NEMO_PREFERENCES_DESKTOP_VOLUMES_VISIBLE	   "volumes-visible"
 #define NEMO_PREFERENCES_DESKTOP_NETWORK_VISIBLE       "network-icon-visible"
 #define NEMO_PREFERENCES_DESKTOP_BACKGROUND_FADE       "background-fade"
+#define NEMO_PREFERENCES_DESKTOP_TEXT_SHADOW           "desktop-text-shadow"
+#define NEMO_PREFERENCES_DESKTOP_TEXT_SHADOW_USE_THEME "desktop-text-shadow-use-theme"
 #define NEMO_PREFERENCES_DESKTOP_IGNORED_DESKTOP_HANDLERS "ignored-desktop-handlers"
 
 /* bulk rename utility */
