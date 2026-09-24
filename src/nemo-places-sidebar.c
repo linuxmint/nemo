@@ -1430,25 +1430,6 @@ over_eject_button (NemoPlacesSidebar *sidebar,
     return FALSE;
 }
 
-static gboolean
-clicked_eject_button (NemoPlacesSidebar *sidebar,
-		      GtkTreePath **path)
-{
-	GdkEvent *event;
-
-	event = gtk_get_current_event ();
-
-	if (event) {
-		GdkEventButton *button_event = (GdkEventButton *) event;
-		if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) &&
-		    over_eject_button (sidebar, button_event->x, button_event->y, path)) {
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 static void
 desktop_setting_changed_callback (gpointer user_data)
 {
@@ -3598,7 +3579,8 @@ bookmarks_button_release_event_cb (GtkWidget *widget,
 		return TRUE;
 	}
 
-	if (event->button == GDK_BUTTON_PRIMARY && clicked_eject_button (sidebar, &path)) {
+	if (event->button == GDK_BUTTON_PRIMARY &&
+	    over_eject_button (sidebar, (int) event->x, (int) event->y, &path)) {
 		eject_or_unmount_bookmark (sidebar, path);
 		gtk_tree_path_free (path);
 
