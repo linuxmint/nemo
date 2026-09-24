@@ -700,7 +700,7 @@ clipboard_contents_received_callback (GtkClipboard     *clipboard,
     g_object_unref (view);
 }
 
-static void
+static gboolean
 update_menu_states (FMTreeView *view,
                     GdkEventButton *event)
 {
@@ -722,12 +722,25 @@ update_menu_states (FMTreeView *view,
     gboolean show_eject = FALSE;
     GMount *mount = NULL;
 
-    if (!gtk_tree_view_get_path_at_pos (view->details->tree_widget, event->x, event->y,
-                                        &path, NULL, NULL, NULL)) {
-        return;
+    if (event != NULL) {
+        if (!gtk_tree_view_get_path_at_pos (view->details->tree_widget,
+                                            event->x, event->y,
+                                            &path, NULL, NULL, NULL)) {
+            return FALSE;
+        }
+    } else {
+        gtk_tree_view_get_cursor (view->details->tree_widget, &path, NULL);
+
+        if (path == NULL) {
+            return FALSE;
+        }
     }
 
     NemoFile *file = sort_model_path_to_file (view, path);
+    if (file == NULL) {
+        gtk_tree_path_free (path);
+        return FALSE;
+    }
     view->details->popup_file = nemo_file_ref (file);
 
     NemoFile *parent = nemo_file_get_parent (file);
@@ -798,6 +811,8 @@ update_menu_states (FMTreeView *view,
         set_action_visible (view->details->tv_action_group, NEMO_ACTION_PIN_FILE, FALSE);
         set_action_visible (view->details->tv_action_group, NEMO_ACTION_UNPIN_FILE, FALSE);
     }
+
+    return TRUE;
 }
 
 static gboolean
@@ -1265,7 +1280,9 @@ static void
 popup_menu (FMTreeView     *view,
             GdkEventButton *event)
 {
-    update_menu_states (view, event);
+    if (!update_menu_states (view, event)) {
+        return;
+    }
     eel_pop_up_context_menu (GTK_MENU (view->details->popup_menu),
                              (GdkEvent *) event,
                              GTK_WIDGET (view->details->tree_widget));
