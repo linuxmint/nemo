@@ -7197,19 +7197,24 @@ cb_open_as_root_watch (GPid pid, gint status, gpointer user_data)
 }
 
 static void
-open_as_admin (NemoView *view, const gchar *path) {
-    g_autoptr(GUri) uri_obj = g_uri_build (0, "admin", NULL, NULL, -1, path, NULL, NULL);
-    g_autofree gchar *uri = g_uri_to_string (uri_obj);
-    g_autoptr(GFile) location = g_file_new_for_uri (uri);
+open_as_admin (const gchar *path) {
+    g_autofree gchar *uri = g_strconcat ("admin://", path, NULL);
 
-    nemo_window_slot_open_location (view->details->slot, location, 0);
+    gchar *argv[3];
+    argv[0] = "nemo";
+    argv[1] = uri;
+    argv[2] = NULL;
+    GPid pid;
+    g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+                   NULL, NULL, &pid, NULL);
+    g_child_watch_add (pid, (GChildWatchFunc) cb_open_as_root_watch, NULL);
 }
 
 static void
 open_as_root (NemoView *view, const gchar *path)
 {
     if (eel_check_is_wayland ()) {
-        open_as_admin (view, path);
+        open_as_admin (path);
         return;
     }
 
@@ -7277,17 +7282,27 @@ action_open_as_root_callback (GtkAction *action,
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
         gchar *path = nemo_file_get_path (NEMO_FILE (selection->data));
-		open_as_root (view, path);
+        if (path != NULL) {
+            open_as_root (view, path);
+            g_free (path);
+        }
 		nemo_file_list_free (selection);
-        g_free (path);
 	} else {
-        gchar *path;
         gchar *uri = nemo_view_get_uri (view);
+        if (uri == NULL) {
+            return;
+        }
         GFile *gfile = g_file_new_for_uri (uri);
+        gchar *path;
         if (g_file_has_uri_scheme (gfile, "x-nemo-desktop")) {
             path = nemo_get_desktop_directory ();
         } else {
             path = g_file_get_path (gfile);
+            if (path == NULL) {
+                g_free (uri);
+                g_object_unref (gfile);
+                return;
+            }
         }
         open_as_root (view, path);
         g_free (uri);
