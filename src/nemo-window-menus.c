@@ -65,6 +65,7 @@
 #include <libnemo-private/nemo-search-engine.h>
 #include <libnemo-private/nemo-signaller.h>
 #include <libnemo-private/nemo-trash-monitor.h>
+#include <libnemo-private/nemo-action-wizard.h>
 #include <string.h>
 
 #define MENU_PATH_EXTENSION_ACTIONS                     "/MenuBar/File/Extension Actions"
@@ -302,6 +303,18 @@ action_preferences_callback (GtkAction *action,
 	window = GTK_WINDOW (user_data);
 
 	nemo_file_management_properties_dialog_show (window, NULL);
+}
+
+static void
+action_create_action_callback (GtkAction *action,
+                               gpointer user_data)
+{
+	GtkWindow *window;
+	GtkWidget *wizard;
+
+	window = GTK_WINDOW (user_data);
+	wizard = nemo_action_wizard_new (window);
+	gtk_widget_show (wizard);
 }
 
 static void
@@ -1394,6 +1407,10 @@ static const GtkActionEntry main_entries[] = {
                                  N_("Prefere_nces"),
                                  NULL, N_("Edit Nemo preferences"),
                                  G_CALLBACK (action_preferences_callback) },
+                               { "Create Action", "xsi-system-run-symbolic",
+                                 N_("Create _New Action..."),
+                                 NULL, N_("Create a new custom action"),
+                                 G_CALLBACK (action_create_action_callback) },
 #ifdef TEXT_CHANGE_UNDO
   /* name, stock id, label */  { "Undo", NULL, N_("_Undo"),
                                  "<control>Z", N_("Undo the last text change"),

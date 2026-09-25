@@ -151,6 +151,7 @@
 #define NEMO_ACTION_OPEN_CONTAINING_FOLDER "OpenContainingFolder"
 
 #define NEMO_ACTION_PLUGIN_MANAGER "NemoPluginManager"
+#define NEMO_ACTION_CREATE_ACTION "Create Action"
 
 #define NEMO_ACTION_SHOW_THUMBNAILS "Show Thumbnails"
 #define NEMO_ACTION_SHOW_FULL_CONTEXT_MENU "ShowFullContextMenu"
