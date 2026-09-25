@@ -46,6 +46,7 @@
 #define NEMO_ACTION_SHOW_HIDE_MENUBAR "Show Hide Menubar"
 #define NEMO_ACTION_SHOW_HIDE_LOCATION_BAR "Show Hide Location Bar"
 #define NEMO_ACTION_SHOW_HIDE_EXTRA_PANE "Show Hide Extra Pane"
+#define NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE "Show Hide Preview Pane"
 #define NEMO_ACTION_GO_TO_BURN_CD "Go to Burn CD"
 #define NEMO_ACTION_EDIT_LOCATION "Edit Location"
 #define NEMO_ACTION_COMPACT_VIEW "CompactView"

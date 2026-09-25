@@ -54,6 +54,8 @@ struct _NemoStatusBar
     GtkWidget *show_button;
     GtkWidget *hide_button;
     GtkWidget *separator;
+    GtkWidget *split_view_button;
+    GtkWidget *preview_pane_button;
 };
 
 struct _NemoStatusBarClass
