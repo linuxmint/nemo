@@ -545,6 +545,7 @@ void     nemo_file_set_is_favorite                (NemoFile *file, gboolean favo
 void     nemo_file_set_load_deferred_attrs        (NemoFile *file,
                                                    NemoFileLoadDeferredAttrs load_deferred_attrs);
 NemoFileLoadDeferredAttrs nemo_file_get_load_deferred_attrs (NemoFile *file);
+void     nemo_file_resolve_content_type           (NemoFile *file);
 
 gboolean nemo_file_add_search_result_data             (NemoFile *file, gpointer search_dir, FileSearchResult *result);
 void nemo_file_clear_search_result_data           (NemoFile *file, gpointer search_dir);

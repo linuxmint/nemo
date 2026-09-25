@@ -58,6 +58,10 @@
 /* Keep async. jobs down to this number for all directories. */
 #define MAX_ASYNC_JOBS 10
 
+static void enumerate_children_callback (GObject      *source_object,
+					 GAsyncResult *res,
+					 gpointer      user_data);
+
 struct LinkInfoReadState {
 	NemoDirectory *directory;
 	GCancellable *cancellable;
@@ -91,6 +95,17 @@ struct DirectoryLoadState {
 	GHashTable *load_mime_list_hash;
 	NemoFile *load_directory_file;
 	int load_file_count;
+	/* TRUE while the cheap name+type pass is running. See
+	 * start_monitoring_file_list(). */
+	gboolean fast_pass;
+	gint64 load_start_us;
+	/* Entries handed over by the enumerator so far. Unlike load_file_count this
+	 * is accurate the moment the enumerator drains, rather than trailing the
+	 * pending-info dequeue. Benchmark reporting only. */
+	int seen_file_count;
+	/* How many files have been handed the preload budget for reading in an
+	 * already-cached thumbnail. See dequeue_pending_idle_callback(). */
+	int preload_count;
 };
 
 struct MimeListState {
@@ -876,6 +891,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 	GFileInfo *file_info;
 	const char *mimetype, *name;
 	DirectoryLoadState *dir_load_state;
+	gboolean fast_pass;
+	gboolean preloaded_any = FALSE;
 
 	directory = NEMO_DIRECTORY (callback_data);
 
@@ -929,6 +946,8 @@ dequeue_pending_idle_callback (gpointer callback_data)
 			}
 		}
 		
+		fast_pass = dir_load_state != NULL && dir_load_state->fast_pass;
+
 		/* check if the file already exists */
 		file = nemo_directory_find_file_by_name (directory, name);
 		if (file != NULL) {
@@ -943,6 +962,14 @@ dequeue_pending_idle_callback (gpointer callback_data)
 				nemo_file_ref (file);
 				file->details->is_added = TRUE;
 				added_files = g_list_prepend (added_files, file);
+			} else if (fast_pass && file->details->got_file_info) {
+				/* Revisiting a directory whose files are still in memory. The
+				 * structure pass knows only the name and type, which is strictly
+				 * less than this file already has, and applying it would blank
+				 * out its size, timestamps and -- most visibly -- the path of its
+				 * cached thumbnail, so the thumbnail would be built again from
+				 * scratch. Leave the file alone; the detail pass refreshes it.
+				 */
 			} else if (nemo_file_update_info (file, file_info)) {
 				/* File changed, notify about the change. */
 				nemo_file_ref (file);
@@ -951,10 +978,51 @@ dequeue_pending_idle_callback (gpointer callback_data)
 		} else {
 			/* new file, create a nemo file object and add it to the list */
 			file = nemo_file_new_from_info (directory, file_info);
-			nemo_directory_add_file (directory, file);			
+			nemo_directory_add_file (directory, file);
 			file->details->is_added = TRUE;
 			added_files = g_list_prepend (added_files, file);
+
+			if (fast_pass) {
+				/* Built from name and type alone: the mime type is a guess and
+				 * nothing is known yet about a cached thumbnail. */
+				file->details->content_type_is_guess = TRUE;
+				file->details->thumbnail_path_unknown = TRUE;
+			}
 		}
+
+		if (dir_load_state != NULL && !fast_pass && file != NULL) {
+			/* The detail pass supplies a mime type guessed from the filename
+			 * rather than sniffed from the contents -- see
+			 * nemo_file_resolve_content_type() -- but it does fetch thumbnail::*,
+			 * so any cached thumbnail is now known about. */
+			file->details->content_type_is_guess = TRUE;
+			file->details->thumbnail_path_unknown = FALSE;
+
+			/* If this file already has a thumbnail in the cache, start reading it
+			 * in now, as the detail pass streams, rather than after the whole
+			 * pass has finished or once the file is scrolled into view. Reading a
+			 * cached thumbnail is cheap and local, and doing it here is what
+			 * makes returning to a folder show its thumbnails straight away.
+			 *
+			 * Only files with something already cached are marked -- a NULL path
+			 * would queue generation, which is the expensive half and stays
+			 * limited to what is on screen.
+			 */
+			if (file->details->thumbnail_path != NULL &&
+			    file->details->thumbnail == NULL &&
+			    file->details->load_deferred_attrs == NEMO_FILE_LOAD_DEFERRED_ATTRS_NO &&
+			    dir_load_state->preload_count < directory->details->max_deferred_file_count) {
+				file->details->load_deferred_attrs = NEMO_FILE_LOAD_DEFERRED_ATTRS_PRELOAD;
+				dir_load_state->preload_count += 1;
+				preloaded_any = TRUE;
+
+				nemo_directory_add_file_to_work_queue (directory, file);
+			}
+		}
+	}
+
+	if (preloaded_any) {
+		nemo_directory_async_state_changed (directory);
 	}
 
 	/* If we are done loading, then we assume that any unconfirmed
@@ -1044,10 +1112,80 @@ directory_load_one (NemoDirectory *directory,
 		uri = nemo_directory_get_uri (directory);
 		g_warning ("Got GFileInfo with NULL name in %s, ignoring. This shouldn't happen unless the gvfs backend is broken.\n", uri);
 		g_free (uri);
-		
+
 		return;
 	}
-	
+
+	if (directory->details->directory_load_in_progress != NULL) {
+		directory->details->directory_load_in_progress->seen_file_count += 1;
+	}
+
+	if (directory->details->directory_load_in_progress != NULL) {
+		const char *name;
+		char *content_type;
+		char *display_name;
+		GIcon *icon;
+		gsize len;
+
+		name = g_file_info_get_name (info);
+		len = strlen (name);
+
+		if (directory->details->directory_load_in_progress->fast_pass) {
+			/* The fast pass cannot ask for standard::is-hidden or
+			 * standard::is-backup without giving up its stat-free path, so derive
+			 * them from the name exactly as GLocalFileInfo would. This keeps
+			 * dot-files from flashing into view for the moment between the two
+			 * passes. Names listed in a .hidden file are missed here and picked
+			 * up by the full pass.
+			 */
+			g_file_info_set_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN,
+							   name[0] == '.');
+			g_file_info_set_attribute_boolean (info, G_FILE_ATTRIBUTE_STANDARD_IS_BACKUP,
+							   len > 0 && name[len - 1] == '~');
+
+			/* nemo_file_update_info() reads standard::display-name, and GFileInfo
+			 * is loud about being asked for an attribute that was never
+			 * requested. Derive it the same way GLocalFileInfo does. */
+			display_name = g_filename_display_name (name);
+			g_file_info_set_display_name (info, display_name);
+			g_file_info_set_edit_name (info, display_name);
+			g_free (display_name);
+		}
+
+		/* Neither pass asks for standard::content-type or standard::icon, because
+		 * resolving either makes GLib read the file to sniff it -- see
+		 * NEMO_FILE_BULK_ENUM_ATTRIBUTES. Guess the type from the name instead,
+		 * which costs nothing, and derive the icon from that. Both keys are set:
+		 * nemo_get_best_guess_file_mimetype() only consults fast-content-type for
+		 * files of known non-zero size, and the fast pass has no size, so without
+		 * the content-type key those files end up with no mime type at all and
+		 * nemo_can_thumbnail() refuses them.
+		 */
+		if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY) {
+			content_type = g_strdup ("inode/directory");
+		} else {
+			content_type = g_content_type_guess (name, NULL, 0, NULL);
+		}
+
+		if (content_type != NULL) {
+			g_file_info_set_attribute_string (info,
+							  G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+							  content_type);
+			g_file_info_set_attribute_string (info,
+							  G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+							  content_type);
+
+			icon = g_content_type_get_icon (content_type);
+
+			if (icon != NULL) {
+				g_file_info_set_icon (info, icon);
+				g_object_unref (icon);
+			}
+
+			g_free (content_type);
+		}
+	}
+
 	/* Arrange for the "loading" part of the work. */
 	g_object_ref (info);
 	directory->details->pending_file_info
@@ -1098,8 +1236,14 @@ directory_load_done (NemoDirectory *directory,
 {
 	GList *node;
 
-	directory->details->directory_loaded = TRUE;
-	directory->details->directory_loaded_sent_notification = FALSE;
+	/* The two-pass load already declares the directory loaded, and emits
+	 * done_loading, as soon as the structure pass finishes -- see
+	 * more_files_callback(). Don't arm a second notification here, or the views
+	 * would run end_loading twice for one load. */
+	if (!directory->details->directory_loaded) {
+		directory->details->directory_loaded = TRUE;
+		directory->details->directory_loaded_sent_notification = FALSE;
+	}
 
 	if (error != NULL) {
 		/* The load did not complete successfully. This means
@@ -2016,8 +2160,66 @@ more_files_callback (GObject *source_object,
 	}
 
 	if (files == NULL) {
-		directory_load_done (directory, error);
-		directory_load_state_free (state);
+		if (state->fast_pass && error == NULL && state->directory != NULL) {
+			/* The cheap name+type pass is finished, so the view already has
+			 * every row with the right folder-vs-file icon. Go round again
+			 * with the full attribute set to fill in the details. */
+			if (g_getenv ("NEMO_BENCHMARK_LOADING")) {
+				g_printerr ("Directory structure pass (name+type): %.3f seconds, %d entries\n",
+					    (g_get_monotonic_time () - state->load_start_us) / 1000000.0,
+					    state->seen_file_count);
+			}
+
+			g_file_enumerator_close_async (state->enumerator, 0, NULL, NULL, NULL);
+			g_clear_object (&state->enumerator);
+
+			/* Every entry in the directory is now known, so as far as the views
+			 * are concerned the folder is loaded -- what is left is refining
+			 * attributes on files that are already on screen. Say so now rather
+			 * than after the detail pass, because end_loading() is what lets a
+			 * view start fetching thumbnails and other deferred attributes for
+			 * what the user is actually looking at. Waiting would leave a
+			 * screenful of generic icons for as long as the detail pass takes.
+			 */
+			directory->details->directory_loaded = TRUE;
+			directory->details->directory_loaded_sent_notification = FALSE;
+
+			if (directory->details->dequeue_pending_idle_id != 0) {
+				g_source_remove (directory->details->dequeue_pending_idle_id);
+				directory->details->dequeue_pending_idle_id = 0;
+			}
+
+			/* Flush the files this pass turned up and emit done_loading. This
+			 * has to happen while the state still says fast_pass, because that
+			 * is what tells dequeue_pending_idle_callback() the files it is
+			 * adding have no thumbnail information yet -- clearing the flag
+			 * first would let them be thumbnailed from scratch even when a
+			 * cached thumbnail exists. It also has to precede resetting
+			 * load_file_count, so the directory's item count is right.
+			 */
+			dequeue_pending_idle_callback (directory);
+
+			state->fast_pass = FALSE;
+			state->seen_file_count = 0;
+			state->load_file_count = 0;
+
+			g_file_enumerate_children_async (directory->details->location,
+							 NEMO_FILE_BULK_ENUM_ATTRIBUTES,
+							 0, /* flags */
+							 G_PRIORITY_DEFAULT, /* prio */
+							 state->cancellable,
+							 enumerate_children_callback,
+							 state);
+		} else {
+			if (g_getenv ("NEMO_BENCHMARK_LOADING")) {
+				g_printerr ("Directory detail pass (full attributes): %.3f seconds, %d entries\n",
+					    (g_get_monotonic_time () - state->load_start_us) / 1000000.0,
+					    state->seen_file_count);
+			}
+
+			directory_load_done (directory, error);
+			directory_load_state_free (state);
+		}
 	} else {
 		g_file_enumerator_next_files_async (state->enumerator,
 						    DIRECTORY_LOAD_ITEMS_PER_CALLBACK,
@@ -2102,6 +2304,7 @@ start_monitoring_file_list (NemoDirectory *directory)
 	state->cancellable = g_cancellable_new ();
 	state->load_mime_list_hash = istr_set_new ();
 	state->load_file_count = 0;
+	state->load_start_us = g_get_monotonic_time ();
 	
 	g_assert (directory->details->location != NULL);
         state->load_directory_file =
@@ -2113,9 +2316,32 @@ start_monitoring_file_list (NemoDirectory *directory)
 #endif
 	
 	directory->details->directory_load_in_progress = state;
-	
+
+	/* Two passes. The first asks only for what readdir() already knows -- name
+	 * and type -- which costs no per-file stat at all, so the view can be built
+	 * with the right rows/icons and correct folder-vs-file distinction almost
+	 * immediately. The second pass re-enumerates with the full attribute set and
+	 * fills in sizes, times, permissions, content types and so on, updating the
+	 * files that are already on screen.
+	 *
+	 * The second pass is another *bulk* enumeration rather than a per-file
+	 * query, deliberately: file_info_start() only ever has one query in flight
+	 * per directory, so filling in a large directory file-by-file would serialise
+	 * thousands of round trips on a network mount and be far slower than the
+	 * single full enumeration this replaces.
+	 *
+	 * Files from the first pass are deliberately left marked as having valid
+	 * info even though only their name and type is known. The views refuse to
+	 * display a file until NEMO_FILE_ATTRIBUTE_INFO is ready (see
+	 * ready_to_load() in nemo-view.c), so marking them stale would hold the
+	 * entire listing back until the detail pass finished and defeat the point
+	 * of splitting the load. Sizes and timestamps read as unknown for the brief
+	 * moment between the two passes, and the detail pass overwrites them.
+	 */
+	state->fast_pass = TRUE;
+
 	g_file_enumerate_children_async (directory->details->location,
-					 NEMO_FILE_DEFAULT_ATTRIBUTES,
+					 NEMO_FILE_FAST_ENUM_ATTRIBUTES,
 					 0, /* flags */
 					 G_PRIORITY_DEFAULT, /* prio */
 					 state->cancellable,
@@ -3203,6 +3429,12 @@ query_info_callback (GObject *source_object,
 	} else {
 		nemo_file_update_info (get_info_file, info);
 		g_object_unref (info);
+
+		/* This query asks for NEMO_FILE_DEFAULT_ATTRIBUTES, which includes
+		 * standard::content-type and thumbnail::*, so the mime type is now the
+		 * real one rather than a guess, and any cached thumbnail is known. */
+		get_info_file->details->content_type_is_guess = FALSE;
+		get_info_file->details->thumbnail_path_unknown = FALSE;
 	}
 
 	nemo_file_changed (get_info_file);
@@ -3632,6 +3864,9 @@ thumbnail_done (NemoDirectory *directory,
 	time_t thumb_mtime = 0;
 	
 	file->details->thumbnail_is_up_to_date = TRUE;
+	/* The whole job -- generate, then read back -- is over now, whether or not
+	 * it produced anything. See thumbnail_thread_notify_file_changed(). */
+	file->details->is_thumbnailing = FALSE;
 	file->details->thumbnail_tried_original  = tried_original;
 	if (file->details->thumbnail) {
 		g_object_unref (file->details->thumbnail);
