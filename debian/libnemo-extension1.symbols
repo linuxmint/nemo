@@ -1,4 +1,6 @@
 libnemo-extension.so.1 libnemo-extension1 #MINVER#
+ nemo_action_layout_editor_get_type@Base 6.6.1
+ nemo_action_layout_editor_new@Base 6.6.1
  nemo_column_get_type@Base 5.0.3
  nemo_column_new2@Base 5.0.3
  nemo_column_new@Base 5.0.3
