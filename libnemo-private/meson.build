@@ -30,6 +30,8 @@ nemo_private_sources = [
   'nemo-directory-async.c',
   'nemo-directory.c',
   'nemo-dnd.c',
+  'nemo-emblem.c',
+  'nemo-emblemed-icon.c',
   'nemo-entry.c',
   'fzy-match.c',
   'nemo-fzy-utils.c',
