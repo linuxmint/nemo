@@ -30,6 +30,7 @@
 #include "nemo-desktop-window.h"
 #include "nemo-filter-bar.h"
 #include "nemo-floating-bar.h"
+#include "nemo-notebook.h"
 #include "nemo-window-private.h"
 #include "nemo-window-manage-views.h"
 #include "nemo-window-types.h"
@@ -232,6 +233,19 @@ nemo_window_slot_set_query_editor_visible (NemoWindowSlot *slot,
 	}
 }
 
+static gboolean
+return_to_locked_uri_idle_cb (gpointer user_data)
+{
+	NemoWindowSlot *slot = NEMO_WINDOW_SLOT (user_data);
+
+	/* The tab may have been destroyed between activation and this idle. */
+	if (slot->pane != NULL) {
+		nemo_window_slot_return_to_locked_uri (slot);
+	}
+
+	return G_SOURCE_REMOVE;
+}
+
 static void
 real_active (NemoWindowSlot *slot)
 {
@@ -260,6 +274,23 @@ real_active (NemoWindowSlot *slot)
 	if (slot->viewed_file != NULL) {
 		nemo_window_sync_view_type (window);
 		nemo_window_load_extension_menus (window);
+	}
+
+	/* A tab locked in "return" mode goes back to its locked folder whenever it
+	 * becomes the slot in use again, whether that is a tab switch or a switch
+	 * back to this pane. Deferred, because the caller is still part way through
+	 * making this slot active, and ::switch-page is still in flight.
+	 *
+	 * This runs on activation rather than deactivation on purpose: navigating a
+	 * background slot makes its fresh view take focus (focus_in_event_callback
+	 * calls nemo_window_slot_make_hosting_pane_active), which would drag the
+	 * user back to the tab they just left.
+	 */
+	if (slot->lock_mode == NEMO_TAB_LOCK_RETURN) {
+		g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+				 return_to_locked_uri_idle_cb,
+				 g_object_ref (slot),
+				 g_object_unref);
 	}
 }
 
@@ -518,6 +549,9 @@ nemo_window_slot_dispose (GObject *object)
 	g_free (slot->status_text);
 	slot->status_text = NULL;
 
+	g_free (slot->locked_uri);
+	slot->locked_uri = NULL;
+
 	G_OBJECT_CLASS (nemo_window_slot_parent_class)->dispose (object);
 }
 
@@ -590,6 +624,94 @@ nemo_window_slot_get_location_uri (NemoWindowSlot *slot)
 		return g_file_get_uri (slot->location);
 	}
 	return NULL;
+}
+
+void
+nemo_window_slot_set_lock_mode (NemoWindowSlot  *slot,
+				NemoTabLockMode  mode,
+				const char      *locked_uri)
+{
+	char *new_locked_uri = NULL;
+
+	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
+
+	/* Resolve before freeing: callers switching between lock modes pass the
+	 * slot's own locked_uri back in to preserve it.
+	 */
+	if (mode != NEMO_TAB_LOCK_NONE) {
+		if (locked_uri != NULL) {
+			new_locked_uri = g_strdup (locked_uri);
+		} else if (slot->pending_location != NULL) {
+			new_locked_uri = g_file_get_uri (slot->pending_location);
+		} else {
+			new_locked_uri = nemo_window_slot_get_location_uri (slot);
+		}
+	}
+
+	g_free (slot->locked_uri);
+	slot->locked_uri = new_locked_uri;
+
+	/* A tab with no folder to return to cannot meaningfully be locked. */
+	slot->lock_mode = (slot->locked_uri != NULL) ? mode : NEMO_TAB_LOCK_NONE;
+
+	if (slot->pane != NULL && slot->pane->notebook != NULL) {
+		nemo_notebook_sync_lock (NEMO_NOTEBOOK (slot->pane->notebook), slot);
+	}
+}
+
+NemoTabLockMode
+nemo_window_slot_get_lock_mode (NemoWindowSlot *slot)
+{
+	g_return_val_if_fail (NEMO_IS_WINDOW_SLOT (slot), NEMO_TAB_LOCK_NONE);
+
+	return slot->lock_mode;
+}
+
+const char *
+nemo_window_slot_get_locked_uri (NemoWindowSlot *slot)
+{
+	g_return_val_if_fail (NEMO_IS_WINDOW_SLOT (slot), NULL);
+
+	return slot->locked_uri;
+}
+
+gboolean
+nemo_window_slot_is_locked (NemoWindowSlot *slot)
+{
+	g_return_val_if_fail (NEMO_IS_WINDOW_SLOT (slot), FALSE);
+
+	return slot->lock_mode != NEMO_TAB_LOCK_NONE;
+}
+
+/* Send a NEMO_TAB_LOCK_RETURN tab back to the folder it was locked at, if it
+ * has wandered. Called when the tab becomes the slot in use again.
+ */
+void
+nemo_window_slot_return_to_locked_uri (NemoWindowSlot *slot)
+{
+	GFile *locked_location;
+
+	g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
+
+	if (slot->lock_mode != NEMO_TAB_LOCK_RETURN || slot->locked_uri == NULL) {
+		return;
+	}
+
+	locked_location = g_file_new_for_uri (slot->locked_uri);
+
+	/* pending_location is the authoritative target while a load is in
+	 * flight; without this check a snap-back races an in-progress change.
+	 */
+	if (slot->pending_location != NULL) {
+		if (!g_file_equal (slot->pending_location, locked_location)) {
+			nemo_window_slot_open_location (slot, locked_location, 0);
+		}
+	} else if (slot->location == NULL ||
+		   !g_file_equal (slot->location, locked_location)) {
+		nemo_window_slot_open_location (slot, locked_location, 0);
+	}
+
+	g_object_unref (locked_location);
 }
 
 void

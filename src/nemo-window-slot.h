@@ -43,6 +43,15 @@ typedef enum {
 	NEMO_LOCATION_CHANGE_RELOAD
 } NemoLocationChangeType;
 
+/* How a tab is tied to its locked folder. A tab in any mode other than
+ * NEMO_TAB_LOCK_NONE cannot be closed from the UI.
+ */
+typedef enum {
+	NEMO_TAB_LOCK_NONE = 0,		/* navigate freely, keep the last folder */
+	NEMO_TAB_LOCK_RETURN = 1,	/* navigate freely, return home when reselected */
+	NEMO_TAB_LOCK_NEW_TAB = 2	/* never navigate, divert changes to a new tab */
+} NemoTabLockMode;
+
 struct NemoWindowSlotClass {
 	GtkBoxClass parent_class;
 
@@ -121,8 +130,14 @@ struct NemoWindowSlot {
 
 	gboolean visible;
 
-	/* Back/Forward chain, and history list. 
-	 * The data in these lists are NemoBookmark pointers. 
+	/* Tab locking (Total Commander style). locked_uri is the folder the tab
+	 * was locked at, and is NULL exactly when lock_mode is NEMO_TAB_LOCK_NONE.
+	 */
+	NemoTabLockMode lock_mode;
+	char *locked_uri;
+
+	/* Back/Forward chain, and history list.
+	 * The data in these lists are NemoBookmark pointers.
 	 */
 	GList *back_list, *forward_list;
 };
@@ -138,6 +153,15 @@ void    nemo_window_slot_set_query_editor_visible	   (NemoWindowSlot *slot,
 
 GFile * nemo_window_slot_get_location		   (NemoWindowSlot *slot);
 char *  nemo_window_slot_get_location_uri		   (NemoWindowSlot *slot);
+
+/* Passing NULL for locked_uri locks the tab at its current folder. */
+void            nemo_window_slot_set_lock_mode (NemoWindowSlot  *slot,
+						NemoTabLockMode  mode,
+						const char      *locked_uri);
+NemoTabLockMode nemo_window_slot_get_lock_mode (NemoWindowSlot  *slot);
+const char *    nemo_window_slot_get_locked_uri (NemoWindowSlot *slot);
+gboolean        nemo_window_slot_is_locked     (NemoWindowSlot  *slot);
+void            nemo_window_slot_return_to_locked_uri (NemoWindowSlot *slot);
 
 void nemo_window_slot_queue_reload (NemoWindowSlot *slot,
                                     gboolean        clear_thumbs);

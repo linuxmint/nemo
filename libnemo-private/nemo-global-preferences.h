@@ -126,6 +126,8 @@ typedef enum
 #define NEMO_WINDOW_STATE_SAVED_SPLIT_VIEW      "saved-split-view"
 #define NEMO_WINDOW_STATE_SAVED_TABS_LEFT       "saved-tabs-left"
 #define NEMO_WINDOW_STATE_SAVED_TABS_RIGHT      "saved-tabs-right"
+#define NEMO_WINDOW_STATE_SAVED_TAB_LOCKS_LEFT  "saved-tab-locks-left"
+#define NEMO_WINDOW_STATE_SAVED_TAB_LOCKS_RIGHT "saved-tab-locks-right"
 #define NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_LEFT "saved-active-tab-left"
 #define NEMO_WINDOW_STATE_SAVED_ACTIVE_TAB_RIGHT "saved-active-tab-right"
 
