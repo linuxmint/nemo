@@ -2288,7 +2288,7 @@ msgstr ""
 #. name, stock id
 #. label, accelerator
 #: src/nemo-view.c:8258
-msgid "Follow link to original file"
+msgid "_Follow link to original file"
 msgstr ""
 
 #. tooltip
