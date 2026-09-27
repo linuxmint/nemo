@@ -69,6 +69,8 @@
  */
 #include "nemo-desktop-window.h"
 
+#define LOADING_FLOATING_BAR_TIMEOUT 500 /* milliseconds */
+
 /* This number controls a maximum character count for a URL that is
  * displayed as part of a dialog. It's fairly arbitrary -- big enough
  * to allow most "normal" URIs to display in full, but small enough to
@@ -1296,7 +1298,7 @@ setup_loading_floating_bar (NemoWindowSlot *slot)
 	}
 
 	slot->loading_timeout_id =
-		g_timeout_add (500, setup_loading_floating_bar_timeout_cb, slot);
+		g_timeout_add (LOADING_FLOATING_BAR_TIMEOUT, setup_loading_floating_bar_timeout_cb, slot);
 }
 
 /* This is called when we have decided we can actually change to the new view/location situation. */

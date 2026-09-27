@@ -27,6 +27,10 @@
 
 #include "nemo-floating-bar.h"
 
+#define SPINNER_SIZE 16
+#define SPINNER_MARGIN_LEFT 8
+#define FLOATING_BAR_SPACING 8
+
 struct _NemoFloatingBarDetails {
 	gchar *label;
 
@@ -229,8 +233,8 @@ nemo_floating_bar_constructed (GObject *obj)
 	gtk_widget_set_visible (w, self->priv->show_spinner);
 	self->priv->spinner = w;
 
-	gtk_widget_set_size_request (w, 16, 16);
-	gtk_widget_set_margin_left (w, 8);
+	gtk_widget_set_size_request (w, SPINNER_SIZE, SPINNER_SIZE);
+	gtk_widget_set_margin_left (w, SPINNER_MARGIN_LEFT);
 
 	w = gtk_label_new (NULL);
 	gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_END);
@@ -334,7 +338,7 @@ nemo_floating_bar_new (const gchar *label,
 			     "label", label,
 			     "show-spinner", show_spinner,
 			     "orientation", GTK_ORIENTATION_HORIZONTAL,
-			     "spacing", 8,
+			     "spacing", FLOATING_BAR_SPACING,
 			     NULL);
 }
 
