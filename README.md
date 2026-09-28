@@ -16,6 +16,27 @@ reaching version 1.1.2 in November 2012.
 
 Developer Gwendal Le Bihan named the project "nemo" after Jules Verne's famous character Captain Nemo, who is the captain of the Nautilus.
 
+Build Instructions
+====
+## 1.Install needed dependencies:
+``` sudo apt install git meson ninja-build pkg-config build-essential \
+libglib2.0-dev libgtk-3-dev libxml2-utils libgnome-desktop-3-dev \
+libcinnamon-desktop-dev libx11-dev libxext-dev libnotify-dev \
+libexif-dev libexempi-dev libgirepository1.0-dev libgsf-1-dev libgail-common \
+libxapp-dev libgail-common libjson-glib-dev gobject-introspection 
+```
+## 2. Clone repo:
+
+``` git clone https://github.com/linuxmint/nemo ```
+
+## 3. Build:
+```
+mkdir build
+meson setup ./build
+meson compile -C ./build
+```
+Run with ``` ./build/src/nemo ```
+
 Features
 ====
 Nemo v1.0.0 had the following features as described by the developers:
