@@ -19,7 +19,8 @@ Developer Gwendal Le Bihan named the project "nemo" after Jules Verne's famous c
 Build Instructions
 ====
 ## 1.Install needed dependencies:
-``` sudo apt install git meson ninja-build pkg-config build-essential \
+``` 
+sudo apt install git meson ninja-build pkg-config build-essential \
 libglib2.0-dev libgtk-3-dev libxml2-utils libgnome-desktop-3-dev \
 libcinnamon-desktop-dev libx11-dev libxext-dev libnotify-dev \
 libexif-dev libexempi-dev libgirepository1.0-dev libgsf-1-dev libgail-common \
