@@ -245,7 +245,6 @@ struct NemoIconContainerDetails {
 
 	int size_allocation_count;
 	guint size_allocation_count_id;
-    int renaming_allocation_count;
 	
 	/* Is the container fixed or resizable */
 	gboolean is_fixed_size;

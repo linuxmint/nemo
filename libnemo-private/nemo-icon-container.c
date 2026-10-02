@@ -2848,14 +2848,6 @@ size_allocate (GtkWidget *widget,
 		need_layout_redone = FALSE;
 	}
 
-    if (is_renaming (container)) {
-        container->details->renaming_allocation_count++;
-
-        if (container->details->renaming_allocation_count == 1) {
-            need_layout_redone = FALSE;
-        }
-    }
-
 	GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->size_allocate (widget, allocation);
 
 	container->details->has_been_allocated = TRUE;
@@ -2906,18 +2898,14 @@ get_prefered_height (GtkWidget *widget,
 		     gint      *minimum_size,
 		     gint      *natural_size)
 {
-	EelCanvasGroup *root;
+	EelCanvas *canvas;
 	double y1, y2;
-	int cy1, cy2;
 	int height;
 
-	root = eel_canvas_root (EEL_CANVAS (widget));
-	eel_canvas_item_get_bounds (EEL_CANVAS_ITEM (root),
-				    NULL, &y1, NULL, &y2);
-	eel_canvas_w2c (EEL_CANVAS (widget), 0, y1, NULL, &cy1);
-	eel_canvas_w2c (EEL_CANVAS (widget), 0, y2, NULL, &cy2);
+	canvas = EEL_CANVAS (widget);
+	eel_canvas_get_scroll_region (canvas, NULL, &y1, NULL, &y2);
 
-	height = cy2 - cy1;
+	height = floor ((y2 - y1) * canvas->pixels_per_unit + 0.5);
 	if (natural_size) {
 		*natural_size = height;
 	}
@@ -4996,7 +4984,6 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->skip_rename_on_release = FALSE;
     details->dnd_grid = NULL;
     details->current_selection_count = -1;
-    details->renaming_allocation_count = 0;
 
     details->update_visible_icons_id = 0;
     details->ok_to_load_deferred_attrs = FALSE;
@@ -7072,8 +7059,6 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 
 	nemo_icon_container_update_icon (container, icon);
 
-    details->renaming_allocation_count = 0;
-
 	/* We are in renaming mode */
 	details->renaming = TRUE;
 	nemo_icon_canvas_item_set_renaming (icon->item, TRUE);
@@ -7112,8 +7097,6 @@ nemo_icon_container_end_renaming_mode (NemoIconContainer *container, gboolean co
 	/* We are not in renaming mode */
 	container->details->renaming = FALSE;
 	nemo_icon_canvas_item_set_renaming (icon->item, FALSE);
-
-    container->details->renaming_allocation_count = 0;
 
 	if (commit) {
 		set_pending_icon_to_reveal (container, icon);
