@@ -2848,13 +2848,20 @@ size_allocate (GtkWidget *widget,
 		need_layout_redone = FALSE;
 	}
 
-    if (is_renaming (container)) {
-        container->details->renaming_allocation_count++;
-
-        if (container->details->renaming_allocation_count == 1) {
-            need_layout_redone = FALSE;
-        }
-    }
+	/* Scrollbar show/hide at the fit threshold allocates this view at
+	 * two widths. Entering rename mode hits that once; the 2018
+	 * workaround skipped only the first allocation. Each keystroke
+	 * changes the editable label's requisition and repeats the pair.
+	 * A later allocation still relayouts, icon_set_position() sees the
+	 * icon move, and the rename is committed. Every key acts like Enter.
+	 * Skip relayout for the whole session and apply it once rename ends.
+	 */
+	if (is_renaming (container)) {
+		if (need_layout_redone) {
+			container->details->relayout_deferred_during_rename = TRUE;
+		}
+		need_layout_redone = FALSE;
+	}
 
 	GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->size_allocate (widget, allocation);
 
@@ -4996,7 +5003,7 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->skip_rename_on_release = FALSE;
     details->dnd_grid = NULL;
     details->current_selection_count = -1;
-    details->renaming_allocation_count = 0;
+    details->relayout_deferred_during_rename = FALSE;
 
     details->update_visible_icons_id = 0;
     details->ok_to_load_deferred_attrs = FALSE;
@@ -7072,7 +7079,7 @@ nemo_icon_container_start_renaming_selected_item (NemoIconContainer *container,
 
 	nemo_icon_container_update_icon (container, icon);
 
-    details->renaming_allocation_count = 0;
+	details->relayout_deferred_during_rename = FALSE;
 
 	/* We are in renaming mode */
 	details->renaming = TRUE;
@@ -7101,19 +7108,24 @@ nemo_icon_container_end_renaming_mode (NemoIconContainer *container, gboolean co
 {
 	NemoIcon *icon;
 	const char *changed_text = NULL;
+	gboolean relayout_deferred;
+
+	relayout_deferred = container->details->relayout_deferred_during_rename;
+	container->details->relayout_deferred_during_rename = FALSE;
 
 	set_pending_icon_to_rename (container, NULL);
 
 	icon = nemo_icon_container_get_icon_being_renamed (container);
 	if (icon == NULL) {
+		if (relayout_deferred) {
+			schedule_redo_layout (container);
+		}
 		return;
 	}
 
 	/* We are not in renaming mode */
 	container->details->renaming = FALSE;
 	nemo_icon_canvas_item_set_renaming (icon->item, FALSE);
-
-    container->details->renaming_allocation_count = 0;
 
 	if (commit) {
 		set_pending_icon_to_reveal (container, icon);
@@ -7138,6 +7150,10 @@ nemo_icon_container_end_renaming_mode (NemoIconContainer *container, gboolean co
 	g_free (container->details->original_text);
 
     nemo_icon_container_unfreeze_updates (container);
+
+	if (relayout_deferred) {
+		schedule_redo_layout (container);
+	}
 }
 
 void

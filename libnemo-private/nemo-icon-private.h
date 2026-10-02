@@ -245,7 +245,11 @@ struct NemoIconContainerDetails {
 
 	int size_allocation_count;
 	guint size_allocation_count_id;
-    int renaming_allocation_count;
+
+	/* A size_allocate during rename needed a relayout. Icon positions
+	 * are left alone until renaming ends, so scrollbar show/hide does
+	 * not commit the rename. */
+	gboolean relayout_deferred_during_rename;
 	
 	/* Is the container fixed or resizable */
 	gboolean is_fixed_size;
