@@ -74,6 +74,9 @@ void        nemo_icon_canvas_item_set_emblems              (NemoIconCanvasItem  
 								GList                        *emblem_pixbufs);
 void        nemo_icon_canvas_item_set_show_stretch_handles (NemoIconCanvasItem       *item,
 								gboolean                      show_stretch_handles);
+gboolean    nemo_icon_canvas_item_hit_test_selection_checkbox (NemoIconCanvasItem       *item,
+								gdouble                       world_x,
+								gdouble                       world_y);
 double      nemo_icon_canvas_item_get_max_text_width       (NemoIconCanvasItem       *item);
 const char *nemo_icon_canvas_item_get_editable_text        (NemoIconCanvasItem       *icon_item);
 void        nemo_icon_canvas_item_set_renaming             (NemoIconCanvasItem       *icon_item,
