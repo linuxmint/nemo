@@ -55,6 +55,7 @@ static const struct {
     { "terminator", "-x", TRUE },
     { "terminology", "-e", TRUE },
     { "tilix", "-e", TRUE },
+    { "velocitty", "--", FALSE },
     { "wezterm", "--", TRUE },
     { "xfce4-terminal", "-x", FALSE },
     { "xterm", "-e", TRUE },
