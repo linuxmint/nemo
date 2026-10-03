@@ -8353,7 +8353,7 @@ static const GtkActionEntry directory_view_entries[] = {
 				 G_CALLBACK (action_open_as_root_callback) },
 
   /* name, stock id */         { NEMO_ACTION_FOLLOW_SYMLINK, "xsi-go-jump-symbolic",
-  /* label, accelerator */       N_("Follow link to original file"), "",
+  /* label, accelerator */       N_("_Follow link to original file"), "",
   /* tooltip */                  N_("Navigate to the original file that this symbolic link points to"),
                  G_CALLBACK (action_follow_symlink_callback) },
   /* name, stock id */         { NEMO_ACTION_OPEN_CONTAINING_FOLDER, "xsi-go-jump-symbolic",
