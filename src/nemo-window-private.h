@@ -116,6 +116,31 @@ struct NemoWindowDetails
         gint ignore_meta_sort_direction;
 
         gboolean dynamic_menu_entries_current;
+
+        /* TRUE when a click on this window would raise it, i.e. the window
+         * does not currently have the toplevel focus.  Sampled by the
+         * window's enter-notify/focus-out handlers and consumed by
+         * nemo_window_dnd_step_aside().
+         */
+        gboolean dnd_raised_by_click;
+
+        /* TRUE while the window is sitting lower than it was because a drag
+         * started from it (see nemo_window_dnd_step_aside()).  Consumed by
+         * nemo_window_dnd_source_end().
+         */
+        gboolean dnd_stepped_aside;
+
+        /* TRUE between the press that started the current interaction and
+         * its release / drag end, i.e. a drag may still start from it.
+         */
+        gboolean dnd_drag_started;
+
+        /* XID of the window stacked directly above this one at the moment the
+         * pointer arrived (0 when there was none), i.e. where this window sat
+         * before the click raised it.  Used to put it back exactly there
+         * instead of on the bottom of the stack.  X11 only.
+         */
+        guint64 dnd_stack_sibling;
 };
 
 /* window geometry */

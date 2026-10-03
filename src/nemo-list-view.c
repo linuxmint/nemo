@@ -606,8 +606,13 @@ drag_begin_callback (GtkWidget *widget,
 		     NemoListView *view)
 {
 	GList *ref_list;
-
+    GtkWidget *toplevel;
     cairo_surface_t *surface;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_step_aside (NEMO_WINDOW (toplevel));
+    }
 
     surface = get_drag_surface (view);
     if (surface) {
@@ -632,7 +637,61 @@ drag_end_callback (GtkWidget *widget,
              GdkDragContext *context,
              NemoListView *view)
 {
+    GtkWidget *toplevel;
+
     view->details->drag_started = FALSE;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_end (NEMO_WINDOW (toplevel));
+    }
+}
+
+static gboolean
+list_view_dnd_press_callback (GtkWidget *widget,
+                              GdkEventButton *event,
+                              NemoListView *view)
+{
+    GtkWidget *toplevel;
+    GtkTreePath *path = NULL;
+
+    if (event->button != 1)
+        return GDK_EVENT_PROPAGATE;
+
+    /* Only a press on a row can turn into a drag of that row.  A press on
+     * empty space starts a selection rectangle instead, and the window must
+     * stay where the window manager put it. */
+    gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget),
+                                   event->x, event->y, &path, NULL, NULL, NULL);
+    if (path == NULL)
+        return GDK_EVENT_PROPAGATE;
+
+    gtk_tree_path_free (path);
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_press (NEMO_WINDOW (toplevel));
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+
+static gboolean
+list_view_dnd_release_callback (GtkWidget *widget,
+                                GdkEventButton *event,
+                                NemoListView *view)
+{
+    GtkWidget *toplevel;
+
+    if (event->button != 1)
+        return GDK_EVENT_PROPAGATE;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_release (NEMO_WINDOW (toplevel));
+    }
+
+    return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
@@ -2624,6 +2683,10 @@ create_and_set_up_tree_view (NemoListView *view)
                  G_CALLBACK (drag_begin_callback), view, 0);
     g_signal_connect_object (view->details->tree_view, "drag-end",
                  G_CALLBACK (drag_end_callback), view, 0);
+    g_signal_connect_object (view->details->tree_view, "button_press_event",
+                 G_CALLBACK (list_view_dnd_press_callback), view, 0);
+    g_signal_connect_object (view->details->tree_view, "button_release_event",
+                 G_CALLBACK (list_view_dnd_release_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "drag_data_get",
 				 G_CALLBACK (drag_data_get_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "motion_notify_event",

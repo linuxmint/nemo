@@ -2399,6 +2399,83 @@ icon_container_activate_filter_cb (NemoIconContainer *container,
     return nemo_view_activate_filter (NEMO_VIEW (icon_view), (GdkEventKey *) event);
 }
 
+static void
+icon_container_drag_begin_callback (GtkWidget *widget,
+                                    GdkDragContext *context,
+                                    NemoIconView *icon_view)
+{
+    GtkWidget *toplevel;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_step_aside (NEMO_WINDOW (toplevel));
+    }
+}
+
+static void
+icon_container_drag_end_callback (GtkWidget *widget,
+                                  GdkDragContext *context,
+                                  NemoIconView *icon_view)
+{
+    GtkWidget *toplevel;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_end (NEMO_WINDOW (toplevel));
+    }
+}
+
+static gboolean
+icon_container_dnd_press_callback (GtkWidget *widget,
+                                   GdkEventButton *event,
+                                   NemoIconView *icon_view)
+{
+    GtkWidget *toplevel;
+
+    if (event->button != 1)
+        return GDK_EVENT_PROPAGATE;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_press (NEMO_WINDOW (toplevel));
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+
+static gboolean
+icon_container_dnd_release_callback (GtkWidget *widget,
+                                     GdkEventButton *event,
+                                     NemoIconView *icon_view)
+{
+    GtkWidget *toplevel;
+
+    if (event->button != 1)
+        return GDK_EVENT_PROPAGATE;
+
+    toplevel = gtk_widget_get_toplevel (widget);
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_release (NEMO_WINDOW (toplevel));
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+
+/* Pressing empty space draws a selection rectangle instead of starting a
+ * drag; the raise that the press undid has to be put back, and this signal
+ * is emitted while that same press is still being dispatched. */
+static void
+icon_container_band_select_started_callback (NemoIconContainer *container,
+                                             NemoIconView *icon_view)
+{
+    GtkWidget *toplevel;
+
+    toplevel = gtk_widget_get_toplevel (GTK_WIDGET (container));
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_dnd_source_release (NEMO_WINDOW (toplevel));
+    }
+}
+
 static NemoIconContainer *
 create_icon_container (NemoIconView *icon_view)
 {
@@ -2470,6 +2547,16 @@ create_icon_container (NemoIconView *icon_view)
 				 G_CALLBACK (store_layout_timestamp), icon_view, 0);
 	g_signal_connect_object (icon_container, "check-filter-event",
 				 G_CALLBACK (icon_container_activate_filter_cb), icon_view, 0);
+	g_signal_connect_object (icon_container, "drag_begin",
+				 G_CALLBACK (icon_container_drag_begin_callback), icon_view, 0);
+	g_signal_connect_object (icon_container, "drag_end",
+				 G_CALLBACK (icon_container_drag_end_callback), icon_view, 0);
+	g_signal_connect_object (icon_container, "button_press_event",
+				 G_CALLBACK (icon_container_dnd_press_callback), icon_view, 0);
+	g_signal_connect_object (icon_container, "button_release_event",
+				 G_CALLBACK (icon_container_dnd_release_callback), icon_view, 0);
+	g_signal_connect_object (icon_container, "band_select_started",
+				 G_CALLBACK (icon_container_band_select_started_callback), icon_view, 0);
 
 	gtk_container_add (GTK_CONTAINER (icon_view),
 			   GTK_WIDGET (icon_container));
