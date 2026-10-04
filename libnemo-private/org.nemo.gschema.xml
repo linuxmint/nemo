@@ -576,6 +576,11 @@
       <summary>Which desktop view type to use</summary>
       <description>If true, the new desktop grid view will be used by nemo-desktop, otherwise the legacy view will be used.</description>
     </key>
+    <key name="keep-aligned" type="b">
+      <default>true</default>
+      <summary>Snap desktop icons to the grid</summary>
+      <description>If true, icons are snapped to the desktop grid, otherwise icons are freely placeable.</description>
+    </key>
     <key name="vertical-grid-adjust" type="d">
       <default>1.0</default>
       <summary>Vertical desktop grid adjustment</summary>

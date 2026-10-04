@@ -11,6 +11,7 @@
 #include "nemo-desktop-manager.h"
 
 #include <libnemo-extension/nemo-desktop-preferences.h>
+#include <libnemo-private/nemo-global-preferences.h>
 
 typedef struct
 {
@@ -100,6 +101,21 @@ show_view_page (NemoDesktopOverlay *overlay)
     g_free (plug_name);
 
     gtk_stack_set_visible_child_name (priv->stack, "view");
+}
+
+static void
+keep_aligned_apply_visual (GtkSwitch *keep,
+                           GtkSwitch *arrange)
+{
+    gtk_widget_set_sensitive (GTK_WIDGET (keep), !gtk_switch_get_active (arrange));
+}
+
+static void
+auto_arrange_exclusive_notify (GObject    *object,
+                               GParamSpec *pspec,
+                               gpointer    user_data)
+{
+    keep_aligned_apply_visual (GTK_SWITCH (user_data), GTK_SWITCH (object));
 }
 
 static void
@@ -227,6 +243,30 @@ sync_controls (NemoDesktopOverlay *overlay,
     action = gtk_action_group_get_action (priv->action_group, "Desktop Autoarrange");
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "auto_arrange_switch")),
                                         action);
+
+    {
+        GtkWidget *keep = GTK_WIDGET (gtk_builder_get_object (priv->builder, "keep_aligned_switch"));
+        GtkWidget *arrange = GTK_WIDGET (gtk_builder_get_object (priv->builder, "auto_arrange_switch"));
+        GtkWidget *row = GTK_WIDGET (gtk_builder_get_object (priv->builder, "listboxrow_keep_aligned"));
+
+        /* Skip for legacy desktop */
+        gtk_widget_set_visible (row,
+                                g_settings_get_boolean (nemo_desktop_preferences,
+                                                        NEMO_PREFERENCES_USE_DESKTOP_GRID));
+
+        if (!GPOINTER_TO_INT (g_object_get_data (G_OBJECT (keep), "keep-aligned-bound"))) {
+            g_settings_bind (nemo_desktop_preferences,
+                             NEMO_PREFERENCES_DESKTOP_KEEP_ALIGNED,
+                             keep, "active",
+                             G_SETTINGS_BIND_DEFAULT);
+            g_object_set_data (G_OBJECT (keep), "keep-aligned-bound", GINT_TO_POINTER (TRUE));
+            g_signal_connect (arrange, "notify::active",
+                              G_CALLBACK (auto_arrange_exclusive_notify),
+                              keep);
+        }
+
+        keep_aligned_apply_visual (GTK_SWITCH (keep), GTK_SWITCH (arrange));
+    }
 
     action = gtk_action_group_get_action (priv->action_group, "Desktop Reverse Sort");
     gtk_activatable_set_related_action (GTK_ACTIVATABLE (gtk_builder_get_object (priv->builder, "reverse_sort_switch")),

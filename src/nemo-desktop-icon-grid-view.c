@@ -360,6 +360,29 @@ nemo_desktop_icon_grid_view_dispose (GObject *object)
 }
 
 static void
+apply_keep_aligned (NemoDesktopIconGridView *view)
+{
+    gboolean aligned = g_settings_get_boolean (nemo_desktop_preferences,
+                                      NEMO_PREFERENCES_DESKTOP_KEEP_ALIGNED);
+    nemo_icon_container_set_keep_aligned (get_icon_container (view), aligned);
+}
+
+static void
+nemo_desktop_icon_grid_view_begin_loading (NemoView *view)
+{
+    NEMO_VIEW_CLASS (nemo_desktop_icon_grid_view_parent_class)->begin_loading (view);
+    apply_keep_aligned (NEMO_DESKTOP_ICON_GRID_VIEW (view));
+}
+
+static void
+desktop_keep_aligned_changed (GSettings  *settings,
+                              const char *key,
+                              gpointer    user_data)
+{
+    apply_keep_aligned (NEMO_DESKTOP_ICON_GRID_VIEW (user_data));
+}
+
+static void
 nemo_desktop_icon_grid_view_class_init (NemoDesktopIconGridViewClass *class)
 {
 	NemoViewClass *vclass;
@@ -373,6 +396,7 @@ nemo_desktop_icon_grid_view_class_init (NemoDesktopIconGridViewClass *class)
 
 	vclass->merge_menus = real_merge_menus;
 	vclass->update_menus = real_update_menus;
+	vclass->begin_loading = nemo_desktop_icon_grid_view_begin_loading;
 	vclass->get_view_id = real_get_id;
     vclass->add_file = nemo_desktop_icon_grid_view_add_file;
     vclass->file_changed = nemo_desktop_icon_grid_view_file_changed;
@@ -527,7 +551,12 @@ nemo_desktop_icon_grid_view_constructed (GObject *object)
 
     nemo_icon_container_set_is_fixed_size (icon_container, TRUE);
     nemo_icon_container_set_is_desktop (icon_container, TRUE);
-    nemo_icon_container_set_keep_aligned (icon_container, TRUE);
+    apply_keep_aligned (desktop_icon_grid_view);
+    g_signal_connect_object (nemo_desktop_preferences,
+                             "changed::" NEMO_PREFERENCES_DESKTOP_KEEP_ALIGNED,
+                             G_CALLBACK (desktop_keep_aligned_changed),
+                             desktop_icon_grid_view,
+                             0);
 
     NEMO_ICON_VIEW_GRID_CONTAINER (icon_container)->horizontal = FALSE;
 
