@@ -9807,7 +9807,7 @@ real_update_menus (NemoView *view)
 	for (l = selection; l != NULL; l = l->next) {
 		NemoFile *file;
 
-		file = NEMO_FILE (selection->data);
+		file = NEMO_FILE (l->data);
 
 		if (!nemo_mime_file_opens_in_external_app (file)) {
 			show_app = FALSE;
