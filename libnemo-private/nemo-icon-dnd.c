@@ -1380,7 +1380,7 @@ prep_selection (NemoIconContainer *container,
     }
 }
 
-static void
+static gboolean
 nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 					       GdkDragContext *context,
 					       int x, int y)
@@ -1394,7 +1394,7 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
 	drop_target = NULL;
 
 	if (container->details->dnd_info->drag_info.selection_list == NULL) {
-		return;
+		return FALSE;
 	}
 
 	real_action = gdk_drag_context_get_selected_action (context);
@@ -1452,6 +1452,8 @@ nemo_icon_container_receive_dropped_icons (NemoIconContainer *container,
     g_clear_pointer (&container->details->dnd_info->drag_info.source_fs, g_free);
 	container->details->dnd_info->drag_info.selection_list = NULL;
     free_dnd_grid (container);
+
+    return real_action > 0;
 }
 
 static void
@@ -1943,7 +1945,7 @@ drag_data_received_callback (GtkWidget *widget,
 		success = FALSE;
 		switch (info) {
 		case NEMO_ICON_DND_GNOME_ICON_LIST:
-			nemo_icon_container_receive_dropped_icons
+			success = nemo_icon_container_receive_dropped_icons
 				(NEMO_ICON_CONTAINER (widget),
 				 context, x, y);
 			break;
