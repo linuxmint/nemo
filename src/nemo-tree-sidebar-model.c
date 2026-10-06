@@ -36,6 +36,7 @@
 #include <libnemo-private/nemo-file-attributes.h>
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-file-utilities.h>
+#include <libnemo-private/nemo-emblemed-icon.h>
 
 #include <cairo-gobject.h>
 #include <glib/gi18n.h>
@@ -264,36 +265,36 @@ get_menu_icon_for_file (TreeNode *node,
                         NemoFileIconFlags flags)
 {
     NemoFile *parent_file;
-	GIcon *gicon, *emblem_icon, *emblemed_icon;
-	GEmblem *emblem;
-	int size;
-	GList *emblem_icons, *l;
+    GIcon *gicon;
+    int size;
+    GList *emblem_icons, *l;
 
-	size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
-	gicon = G_ICON (nemo_file_get_icon_pixbuf (file, size, TRUE, node->icon_scale, flags));
+    size = nemo_get_icon_size_for_stock_size (GTK_ICON_SIZE_MENU);
+    gicon = G_ICON (nemo_file_get_icon_pixbuf (file, size, TRUE, node->icon_scale, flags));
 
     parent_file = NULL;
 
-	if (node->parent && node->parent->file) {
+    if (node->parent && node->parent->file) {
         parent_file = node->parent->file;
-	}
+    }
 
-	emblem_icons = nemo_file_get_emblem_icons (node->file, parent_file);
+    emblem_icons = nemo_file_get_emblem_icons (node->file, parent_file);
 
-	/* pick only the first emblem we can render for the tree view */
-	for (l = emblem_icons; l != NULL; l = l->next) {
-		emblem_icon = l->data;
-		emblem = g_emblem_new (emblem_icon);
-		emblemed_icon = g_emblemed_icon_new (gicon, emblem);
+    /* pick only the first emblem for the tree view */
+    l = emblem_icons;
+    if (l != NULL) {
+        NemoEmblem *emblem;
+        GIcon *emblemed_icon;
 
-		g_object_unref (gicon);
-		g_object_unref (emblem);
-		gicon = emblemed_icon;
+        emblem = nemo_emblem_new (l->data, NEMO_EMBLEM_SIZE_MEDIUM, NEMO_EMBLEM_POSITION_LOWER_RIGHT);
+        emblemed_icon = nemo_emblemed_icon_new (gicon, emblem);
 
-		break;
-	}
+        g_object_unref (gicon);
+        g_object_unref (emblem);
+        gicon = emblemed_icon;
+    }
 
-	g_list_free_full (emblem_icons, g_object_unref);
+    g_list_free_full (emblem_icons, g_object_unref);
 
     return gicon;
 }
