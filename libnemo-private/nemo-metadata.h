@@ -60,6 +60,7 @@
 #define NEMO_METADATA_KEY_WINDOW_MAXIMIZED			"nemo-window-maximized"
 #define NEMO_METADATA_KEY_WINDOW_STICKY			"nemo-window-sticky"
 #define NEMO_METADATA_KEY_WINDOW_KEEP_ABOVE			"nemo-window-keep-above"
+#define NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE      "nemo-window-show-preview-pane"
 
 #define NEMO_METADATA_KEY_SIDEBAR_BACKGROUND_COLOR   	"nemo-sidebar-background-color"
 #define NEMO_METADATA_KEY_SIDEBAR_BACKGROUND_IMAGE   	"nemo-sidebar-background-image"
