@@ -3392,6 +3392,30 @@ favorite_check_start (NemoDirectory *directory,
     directory->details->favorite_check_idle_id = g_idle_add ((GSourceFunc) favorite_check_callback, state);
 }
 
+/* A symlink to a launcher in a system directory is as trusted as the launcher
+ * itself. realpath() resolves the whole chain, relative targets included, so
+ * the check is made on the file that will actually be read. */
+static gboolean
+is_symlink_to_system_dir (GFile *location)
+{
+	g_autofree char *path = NULL;
+	g_autofree char *real_path = NULL;
+	g_autoptr (GFile) target = NULL;
+
+	path = g_file_get_path (location);
+	if (path == NULL) {
+		return FALSE;
+	}
+
+	real_path = realpath (path, NULL);
+	if (real_path == NULL) {
+		return FALSE;
+	}
+
+	target = g_file_new_for_path (real_path);
+	return nemo_is_in_system_dir (target);
+}
+
 static gboolean
 is_link_trusted (NemoFile *file,
 		 gboolean is_launcher)
@@ -3412,6 +3436,11 @@ is_link_trusted (NemoFile *file,
 	if (nemo_file_is_local (file)) {
 		location = nemo_file_get_location (file);
 		res = nemo_is_in_system_dir (location);
+
+		if (!res && nemo_file_is_symbolic_link (file)) {
+			res = is_symlink_to_system_dir (location);
+		}
+
 		g_object_unref (location);
 	}
 	
