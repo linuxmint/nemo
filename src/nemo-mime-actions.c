@@ -1308,6 +1308,19 @@ untrusted_launcher_response_callback (GtkDialog *dialog,
 	GFile *file;
 
 	switch (response_id) {
+    case RESPONSE_RUN:
+        {
+            GdkScreen *screen;
+            char *uri;
+
+            screen = gtk_widget_get_screen (GTK_WIDGET (parameters->parent_window));
+            uri = nemo_file_get_uri (parameters->file);
+            DEBUG ("Launching untrusted launcher %s", uri);
+            nemo_launch_desktop_file (screen, uri, NULL,
+                                      parameters->parent_window);
+            g_free (uri);
+        }
+        break;
 	case RESPONSE_DISPLAY:
 		{
 			GAppInfo *app;
@@ -1382,7 +1395,10 @@ activate_desktop_file (ActivateParameters *parameters,
 		if (nemo_file_can_set_permissions (file)) {
 			gtk_dialog_add_button (GTK_DIALOG (dialog),
 					       _("Mark as _Trusted"), RESPONSE_MARK_TRUSTED);
-		}
+		} else {
+            gtk_dialog_add_button (GTK_DIALOG (dialog),
+                                   _("_Launch Anyway"), RESPONSE_RUN);
+        }
 
 		gtk_dialog_add_button (GTK_DIALOG (dialog),
 				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
