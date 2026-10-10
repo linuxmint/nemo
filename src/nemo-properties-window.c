@@ -3428,7 +3428,7 @@ initial_permission_state_consistent (NemoPropertiesWindow *window,
 				return FALSE;
 			}
 
-			first_permissions = permissions;
+			first_permissions = permissions & mask;
 			first = FALSE;
 
 		} else if ((permissions & mask) != first_permissions) {
