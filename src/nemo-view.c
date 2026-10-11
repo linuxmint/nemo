@@ -7196,33 +7196,71 @@ cb_open_as_root_watch (GPid pid, gint status, gpointer user_data)
     g_spawn_close_pid(pid);
 }
 
-static void
-open_as_admin (NemoView *view, const gchar *path) {
-    g_autoptr(GUri) uri_obj = g_uri_build (0, "admin", NULL, NULL, -1, path, NULL, NULL);
-    g_autofree gchar *uri = g_uri_to_string (uri_obj);
-    g_autoptr(GFile) location = g_file_new_for_uri (uri);
+static gboolean
+open_as_root_target_is_native (NemoView *view,
+                               GList    *selection)
+{
+    NemoFile *file;
 
-    nemo_window_slot_open_location (view->details->slot, location, 0);
+    if (selection != NULL) {
+        file = NEMO_FILE (selection->data);
+    } else if (get_is_desktop_view (view)) {
+        return TRUE;
+    } else {
+        file = nemo_view_get_directory_as_file (view);
+    }
+
+    if (file == NULL) {
+        return FALSE;
+    }
+
+    g_autoptr(GFile) location = nemo_file_get_location (file);
+
+    return g_file_is_native (location);
 }
 
 static void
-open_as_root (NemoView *view, const gchar *path)
+spawn_open_as_root (gchar **argv)
 {
-    if (eel_check_is_wayland ()) {
-        open_as_admin (view, path);
+    GPid pid;
+
+    if (g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+                       NULL, NULL, &pid, NULL)) {
+        g_child_watch_add (pid, (GChildWatchFunc) cb_open_as_root_watch, NULL);
+    }
+}
+
+static gboolean
+open_as_root_uses_admin_uri (void)
+{
+    switch (g_settings_get_enum (nemo_preferences, NEMO_PREFERENCES_OPEN_AS_ROOT_METHOD)) {
+        case NEMO_OPEN_AS_ROOT_METHOD_PKEXEC:
+            return FALSE;
+        case NEMO_OPEN_AS_ROOT_METHOD_ADMIN:
+            return TRUE;
+        case NEMO_OPEN_AS_ROOT_METHOD_AUTO:
+        default:
+            return eel_check_is_wayland ();
+    }
+}
+
+static void
+open_as_root (const gchar *path)
+{
+    if (path == NULL) {
         return;
     }
 
-    gchar *argv[4];
-    argv[0] = (gchar *)"pkexec";
-    argv[1] = (gchar *)"nemo";
-    argv[2] = g_strdup (path);
-    argv[3] = NULL;
-    GPid pid;
-    g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
-                  NULL, NULL, &pid, NULL);
-    g_child_watch_add(pid, (GChildWatchFunc)cb_open_as_root_watch, NULL);
-    g_free (argv[2]);
+    if (open_as_root_uses_admin_uri ()) {
+        g_autofree gchar *admin_uri = g_uri_join (G_URI_FLAGS_NONE, "admin", NULL, "", -1, path, NULL, NULL);
+        gchar *argv[] = { (gchar *) "nemo", admin_uri, NULL };
+
+        spawn_open_as_root (argv);
+    } else {
+        gchar *argv[] = { (gchar *) "pkexec", (gchar *) "nemo", (gchar *) path, NULL };
+
+        spawn_open_as_root (argv);
+    }
 }
 
 static void
@@ -7277,7 +7315,7 @@ action_open_as_root_callback (GtkAction *action,
 	selection = nemo_view_get_selection (view);
 	if (selection != NULL) {
         gchar *path = nemo_file_get_path (NEMO_FILE (selection->data));
-		open_as_root (view, path);
+		open_as_root (path);
 		nemo_file_list_free (selection);
         g_free (path);
 	} else {
@@ -7289,7 +7327,7 @@ action_open_as_root_callback (GtkAction *action,
         } else {
             path = g_file_get_path (gfile);
         }
-        open_as_root (view, path);
+        open_as_root (path);
         g_free (uri);
         g_free (path);
         g_object_unref (gfile);
@@ -9791,7 +9829,9 @@ real_update_menus (NemoView *view)
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_AS_ROOT);
-    gtk_action_set_visible (action, (!(nemo_user_is_root () || showing_admin_enabled_directory (view))) && no_selection_or_one_dir);
+    gtk_action_set_visible (action, (!(nemo_user_is_root () || showing_admin_enabled_directory (view))) &&
+                                    no_selection_or_one_dir &&
+                                    open_as_root_target_is_native (view, selection));
 
     action = gtk_action_group_get_action (view->details->dir_action_group,
                                          NEMO_ACTION_OPEN_IN_TERMINAL);

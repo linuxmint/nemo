@@ -67,6 +67,12 @@
     <value value="3" nick="base-2-full"/>
   </enum>
 
+  <enum id="org.nemo.OpenAsRootMethod">
+    <value nick="auto" value="0"/>
+    <value nick="pkexec" value="1"/>
+    <value nick="admin" value="2"/>
+  </enum>
+
   <schema id="org.nemo" path="/org/nemo/" gettext-domain="nemo">
     <child name="preferences" schema="org.nemo.preferences"/>
     <child name="icon-view" schema="org.nemo.icon-view"/>
@@ -185,6 +191,11 @@
       <default>true</default>
       <summary>Show warning when opening as root</summary>
       <description>If set to true, then Nemo show warning message when run Nemo as root user.</description>
+    </key>
+    <key name="open-as-root-method" enum="org.nemo.OpenAsRootMethod">
+      <default>'auto'</default>
+      <summary>How the 'Open as Root' action opens a folder</summary>
+      <description>Possible values are "pkexec" (open a new Nemo window running as root), "admin" (open a new Nemo window at the folder's admin:// location) and "auto" (use "pkexec" on X11 and "admin" on Wayland, where pkexec may not be able to launch graphical applications).</description>
     </key>
     <key name="confirm-move-to-trash" type="b">
       <default>false</default>
