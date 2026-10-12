@@ -26,5 +26,6 @@
     <file>nemo-style-fallback.css</file>
     <file>nemo-style-fallback-mandatory.css</file>
     <file>nemo-style-application.css</file>
+    <file>nemo-style-desktop.css</file>
   </gresource>
 </gresources>
