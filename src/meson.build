@@ -21,6 +21,7 @@ nemoCommon_sources = [
   'nemo-application.c',
   'nemo-blank-desktop-window.c',
   'nemo-bookmark-list.c',
+  'nemo-bookmark-groups.c',
   'nemo-bookmarks-window.c',
   'nemo-config-base-widget.c',
   'nemo-connect-server-dialog-nonmain.c',
@@ -146,6 +147,7 @@ nemo_autorun_software = executable('nemo-autorun-software',
 nemo_connect_server = executable('nemo-connect-server',
   [
     'nemo-bookmark-list.c',
+  'nemo-bookmark-groups.c',
     'nemo-connect-server-dialog.c',
     'nemo-connect-server-dialog-main.c',
     'nemo-connect-server-operation.c'

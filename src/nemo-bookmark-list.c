@@ -27,6 +27,7 @@
 
 #include <config.h>
 #include "nemo-bookmark-list.h"
+#include "nemo-bookmark-groups.h"
 
 #include <libnemo-private/nemo-file-utilities.h>
 #include <libnemo-private/nemo-file.h>
@@ -424,6 +425,29 @@ nemo_bookmark_list_contains (NemoBookmarkList *bookmarks,
 		!= NULL;
 }
 
+static void
+prune_bookmark_groups (NemoBookmarkList *bookmarks)
+{
+    char *filename = nemo_bookmark_groups_filename ();
+    GKeyFile *groups = nemo_bookmark_groups_load (filename, NULL);
+    if (groups != NULL) {
+        GPtrArray *uris = g_ptr_array_new_with_free_func (g_free);
+        for (GList *l = bookmarks->list; l != NULL; l = l->next)
+            g_ptr_array_add (uris, nemo_bookmark_get_uri (l->data));
+        g_ptr_array_add (uris, NULL);
+        if (nemo_bookmark_groups_prune (groups, (const char * const *) uris->pdata)) {
+            GError *error = NULL;
+            if (!nemo_bookmark_groups_save (groups, filename, &error)) {
+                g_warning ("Could not prune bookmark groups: %s", error->message);
+                g_error_free (error);
+            }
+        }
+        g_ptr_array_unref (uris);
+        g_key_file_unref (groups);
+    }
+    g_free (filename);
+}
+
 /**
  * nemo_bookmark_list_delete_item_at:
  * 
@@ -451,6 +475,7 @@ nemo_bookmark_list_delete_item_at (NemoBookmarkList *bookmarks,
 
 	g_list_free_1 (doomed);
 
+    prune_bookmark_groups (bookmarks);
 	nemo_bookmark_list_save_file (bookmarks);
 }
 
@@ -556,6 +581,7 @@ nemo_bookmark_list_delete_items_with_uri (NemoBookmarkList *bookmarks,
 	}
 
 	if (list_changed) {
+        prune_bookmark_groups (bookmarks);
 		nemo_bookmark_list_save_file (bookmarks);
 	}
 }
@@ -722,6 +748,9 @@ load_files_finish (NemoBookmarkList *bookmarks,
 
     clear_bookmarks (bookmarks, old_list);
 
+    if (error == NULL && GPOINTER_TO_INT (g_task_get_task_data (G_TASK (res))))
+        prune_bookmark_groups (bookmarks);
+    g_clear_error (&error);
     g_list_foreach (bookmarks->list, (GFunc) connect_bookmark_signals, bookmarks);
     g_signal_emit (bookmarks, signals[CHANGED], 0);
 }
@@ -745,8 +774,10 @@ load_files_thread (GTask        *task,
     GFile *file;
 
     file = nemo_bookmark_list_get_file ();
+    gboolean authoritative = TRUE;
 
     if (!g_file_query_exists (file, NULL)) {
+        authoritative = FALSE;
         g_object_unref (file);
         file = nemo_bookmark_list_get_legacy_file ();
     }
@@ -767,8 +798,15 @@ load_files_thread (GTask        *task,
         gchar **lines;
         gint i;
 
+        authoritative = authoritative && g_utf8_validate (contents, -1, NULL);
         lines = g_strsplit (contents, "\n", -1);
         for (i = 0; lines[i]; i++) {
+            if (lines[i][0] != '\0') {
+                char *scheme = g_uri_parse_scheme (lines[i]);
+                if (scheme == NULL || lines[i][0] == ' ')
+                    authoritative = FALSE;
+                g_free (scheme);
+            }
             /* Ignore empty or invalid lines that cannot be parsed properly */
             if (lines[i][0] != '\0' && lines[i][0] != ' ') {
                 /* gtk 2.7/2.8 might have labels appended to bookmarks which are separated by a space */
@@ -805,6 +843,7 @@ load_files_thread (GTask        *task,
         g_free (contents);
         g_strfreev (lines);
 
+        g_task_set_task_data (task, GINT_TO_POINTER (authoritative), NULL);
         g_task_return_pointer (task, new_list, NULL);
     } else {
         g_task_return_error (task, error);

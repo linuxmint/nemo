@@ -35,3 +35,11 @@ test('Content Search test',
   ),
   args: []
 )
+
+test('Bookmark groups',
+  executable('test-bookmark-groups',
+    [ 'test-bookmark-groups.c', '../src/nemo-bookmark-groups.c' ],
+    include_directories: include_directories('../src'),
+    dependencies: [ glib ],
+  ),
+)
