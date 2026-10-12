@@ -73,6 +73,7 @@
 #include <errno.h>
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
+#include <glib-unix.h>
 #include <gio/gio.h>
 #include <eel/eel-gtk-extensions.h>
 #include <eel/eel-stock-dialogs.h>
@@ -534,6 +535,60 @@ nemo_application_init (NemoApplication *application)
 	g_object_unref (action);
 }
 
+/* Save session state once, from the last non-desktop window we find, and flush
+ * it: both callers are on their way out of the process, and an unflushed
+ * GSettings write dies with us.
+ */
+static void
+save_last_window_session_state (NemoApplication *self)
+{
+	GList *windows;
+	NemoWindow *last_window = NULL;
+
+	windows = gtk_application_get_windows (GTK_APPLICATION (self));
+
+	for (GList *l = windows; l != NULL; l = l->next) {
+		GtkWindow *w = GTK_WINDOW (l->data);
+
+		if (!NEMO_IS_WINDOW (w)) {
+			continue;
+		}
+
+		/* Avoid saving the desktop window */
+		if (NEMO_IS_DESKTOP_WINDOW (w)) {
+			continue;
+		}
+
+		last_window = NEMO_WINDOW (w);
+		break;
+	}
+
+	if (last_window != NULL) {
+		nemo_window_save_session_state (last_window);
+		g_settings_sync ();
+	}
+}
+
+/* Logging out terminates us with SIGTERM (SIGHUP if the session's terminal
+ * goes away first). Without this the session is never saved, because the
+ * window close and Quit paths never run.
+ */
+static gboolean
+session_end_signal_cb (gpointer user_data)
+{
+	static gboolean ending = FALSE;
+
+	/* Both signals can arrive; tear down once. */
+	if (ending) {
+		return G_SOURCE_REMOVE;
+	}
+	ending = TRUE;
+
+	nemo_application_quit (NEMO_APPLICATION (user_data));
+
+	return G_SOURCE_REMOVE;
+}
+
 void
 nemo_application_quit (NemoApplication *self)
 {
@@ -547,34 +602,10 @@ nemo_application_quit (NemoApplication *self)
 
 	GList *windows;
 
+	/* Before we destroy all windows. */
+	save_last_window_session_state (self);
+
 	windows = gtk_application_get_windows (GTK_APPLICATION (app));
-
-	/* Save session state once, before we destroy all windows.
-	 * Save the last non-desktop window we find. */
-	{
-		NemoWindow *last_window = NULL;
-
-		for (GList *l = windows; l != NULL; l = l->next) {
-			GtkWindow *w = GTK_WINDOW (l->data);
-
-			if (!NEMO_IS_WINDOW (w)) {
-				continue;
-			}
-
-			/* Avoid saving the desktop window */
-			if (NEMO_IS_DESKTOP_WINDOW (w)) {
-				continue;
-			}
-
-			last_window = NEMO_WINDOW (w);
-			break;
-		}
-
-		if (last_window != NULL) {
-			nemo_window_save_session_state (last_window);
-		}
-	}
-
 	g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
 
     /* we have been asked to force quit */
@@ -595,6 +626,10 @@ nemo_application_startup (GApplication *app)
 
 	/* initialize preferences and create the global GSettings objects */
 	nemo_global_preferences_init ();
+
+	/* save the session when the session manager ends it */
+	g_unix_signal_add (SIGTERM, session_end_signal_cb, self);
+	g_unix_signal_add (SIGHUP, session_end_signal_cb, self);
 
     /* Run desktop- or main- specific things */
     NEMO_APPLICATION_CLASS (G_OBJECT_GET_CLASS (self))->continue_startup (self);
