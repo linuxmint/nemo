@@ -405,7 +405,7 @@ nemo_bookmark_list_append (NemoBookmarkList *bookmarks,
 /**
  * nemo_bookmark_list_contains:
  *
- * Check whether a bookmark with matching name and url is already in the list.
+ * Check whether a bookmark for the same location is already in the list.
  * @bookmarks: NemoBookmarkList to check contents of.
  * @bookmark: NemoBookmark to match against.
  * 
@@ -420,7 +420,7 @@ nemo_bookmark_list_contains (NemoBookmarkList *bookmarks,
 
 	return g_list_find_custom (bookmarks->list,
 				   (gpointer)bookmark, 
-				   nemo_bookmark_compare_with) 
+				   nemo_bookmark_compare_uris)
 		!= NULL;
 }
 
