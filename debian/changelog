@@ -1,3 +1,25 @@
+nemo (6.7.9) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-places-sidebar.c: Don't use gtk_get_current_event() for eject
+  * nemo-icon-container.c: Report the scroll region height as the preferred height so GtkScrolledWindow's scrollbar guess matches the vadjustment.
+  * nemo-icon-dnd.c: Fix reporting a successful drag result.
+  * nemo-mime-actions.c: Restore "Launch Anyway" when nemo cannot alter a desktop file's permissions.
+  * nemo-view.c: Always open a new window for open-as-root, make method configurable.
+
+  [ Breeze ]
+  * nemo-search-engine-advanced.c: Fix Unicode content search (#3829)
+
+  [ Clement Lefebvre ]
+  * Add support for velocitty
+  * packaging: Recommend unfold instead of file-roller
+
+  [ Fabio Fantoni ]
+  * nemo-view.c: Check all selected files before showing "Open With <app>". (#3853)
+  * nemo-directory-async.c: Trust symlinks to launchers in system directories. (#3846)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 13 Oct 2026 13:27:56 +0100
+
 nemo (6.7.8) adrien; urgency=medium
 
   [ Michael Webster ]
