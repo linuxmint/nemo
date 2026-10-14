@@ -1987,7 +1987,9 @@ drag_data_received_callback (GtkWidget *widget,
 
 			break;
 		case NEMO_ICON_DND_ROOTWINDOW_DROP:
-			/* Do nothing, everything is done by the sender */
+			/* Everything is done by the sender, but on Wayland it only
+			 * finds out the drop happened if we finish successfully. */
+			success = TRUE;
 			break;
 		case NEMO_ICON_DND_XDNDDIRECTSAVE:
 		{
