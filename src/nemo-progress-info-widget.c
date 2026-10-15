@@ -174,11 +174,15 @@ nemo_progress_info_widget_constructed (GObject *obj)
 
     priv->pending_start_pause_button = gtk_button_new_from_icon_name (START_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (priv->pending_start_pause_button), GTK_RELIEF_NONE);
+    gtk_widget_set_can_focus (priv->pending_start_pause_button, FALSE);
+    gtk_widget_set_can_default (priv->pending_start_pause_button, FALSE);
     gtk_box_pack_start (GTK_BOX (bb), priv->pending_start_pause_button, FALSE, FALSE, 2);
     g_signal_connect (priv->pending_start_pause_button, "clicked", G_CALLBACK (start_pause_clicked), self);
 
     button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+    gtk_widget_set_can_focus (button, FALSE);
+    gtk_widget_set_can_default (button, FALSE);
     gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
     g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
 
@@ -223,11 +227,15 @@ nemo_progress_info_widget_constructed (GObject *obj)
 
     priv->running_start_pause_button = gtk_button_new_from_icon_name (PAUSE_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (priv->running_start_pause_button), GTK_RELIEF_NONE);
+    gtk_widget_set_can_focus (priv->running_start_pause_button, FALSE);
+    gtk_widget_set_can_default (priv->running_start_pause_button, FALSE);
     gtk_box_pack_start (GTK_BOX (bb), priv->running_start_pause_button, FALSE, FALSE, 2);
     g_signal_connect (priv->running_start_pause_button, "clicked", G_CALLBACK (start_pause_clicked), self);
 
 	button = gtk_button_new_from_icon_name (STOP_ICON, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+    gtk_widget_set_can_focus (button, FALSE);
+    gtk_widget_set_can_default (button, FALSE);
     gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
     g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
 
