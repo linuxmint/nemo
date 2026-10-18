@@ -42,4 +42,9 @@
       <arg type='s' name='DestinationDisplayName' direction='in'/>
     </method>
   </interface>
+  <interface name='org.Nemo.Preview'>
+    <signal name="SelectionEvent">
+      <arg type="q" name="direction" />
+    </signal>
+  </interface>
 </node>
