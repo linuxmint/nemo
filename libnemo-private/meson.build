@@ -10,6 +10,7 @@ nemo_private_sources = [
   dbusBuiltSources,
   'nemo-action-manager.c',
   'nemo-action.c',
+  'nemo-action-wizard.c',
   'nemo-bookmark.c',
   'nemo-cell-renderer-disk.c',
   'nemo-centered-placement-grid.c',
