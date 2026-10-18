@@ -76,6 +76,8 @@ void		nemo_notebook_sync_tab_label (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
 void		nemo_notebook_sync_loading   (NemoNotebook *nb,
 						  NemoWindowSlot *slot);
+void		nemo_notebook_sync_lock      (NemoNotebook *nb,
+						  NemoWindowSlot *slot);
 
 void		nemo_notebook_reorder_child_relative (NemoNotebook *notebook,
 						      int	    page_num,

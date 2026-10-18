@@ -473,6 +473,10 @@ notebook_tab_close_requested (NemoNotebook *notebook,
 			      NemoWindowSlot *slot,
 			      NemoWindowPane *pane)
 {
+	if (nemo_window_slot_is_locked (slot)) {
+		return;
+	}
+
 	nemo_window_pane_close_slot (pane, slot);
 }
 
@@ -496,6 +500,62 @@ notebook_popup_menu_close_cb (GtkMenuItem *menuitem,
 		notebook, NEMO_WINDOW_SLOT (page), pane);
 }
 
+static NemoWindowSlot *
+notebook_popup_menu_target_slot (NemoWindowPane *pane)
+{
+	int num_target_tab;
+	GtkWidget *page;
+
+	num_target_tab = GPOINTER_TO_INT (
+		g_object_get_data (G_OBJECT (pane), "num_target_tab"));
+	page = gtk_notebook_get_nth_page (
+		GTK_NOTEBOOK (pane->notebook), num_target_tab);
+	if (page == NULL) {
+		return NULL;
+	}
+
+	return NEMO_WINDOW_SLOT (page);
+}
+
+static void
+notebook_popup_menu_lock_cb (GtkCheckMenuItem *menuitem,
+			     gpointer user_data)
+{
+	NemoWindowSlot *slot;
+
+	slot = notebook_popup_menu_target_slot (NEMO_WINDOW_PANE (user_data));
+	if (slot == NULL) {
+		return;
+	}
+
+	/* Locking anchors the tab at the folder it is showing now. */
+	if (nemo_window_slot_is_locked (slot)) {
+		nemo_window_slot_set_lock_mode (slot, NEMO_TAB_LOCK_NONE, NULL);
+	} else {
+		nemo_window_slot_set_lock_mode (slot, NEMO_TAB_LOCK_RETURN, NULL);
+	}
+}
+
+static void
+notebook_popup_menu_lock_new_tab_cb (GtkCheckMenuItem *menuitem,
+				     gpointer user_data)
+{
+	NemoWindowSlot *slot;
+	NemoTabLockMode mode;
+
+	slot = notebook_popup_menu_target_slot (NEMO_WINDOW_PANE (user_data));
+	if (slot == NULL || !nemo_window_slot_is_locked (slot)) {
+		return;
+	}
+
+	mode = gtk_check_menu_item_get_active (menuitem) ?
+		NEMO_TAB_LOCK_NEW_TAB : NEMO_TAB_LOCK_RETURN;
+
+	/* Keep the existing locked folder; only the mode changes. */
+	nemo_window_slot_set_lock_mode (slot, mode,
+					nemo_window_slot_get_locked_uri (slot));
+}
+
 static void
 notebook_popup_menu_show (NemoWindowPane *pane,
 			  GdkEventButton *event,
@@ -507,6 +567,9 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 	int button, event_time;
 	gboolean can_move_left, can_move_right;
 	NemoNotebook *notebook;
+	GtkWidget *page;
+	NemoTabLockMode target_lock_mode;
+	gboolean target_is_locked;
 
 	notebook = NEMO_NOTEBOOK (pane->notebook);
 
@@ -550,6 +613,36 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 			       item);
 	gtk_widget_set_sensitive (item, can_move_right);
 
+	page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), num_target_tab);
+	target_lock_mode = page != NULL ?
+		nemo_window_slot_get_lock_mode (NEMO_WINDOW_SLOT (page)) :
+		NEMO_TAB_LOCK_NONE;
+	target_is_locked = target_lock_mode != NEMO_TAB_LOCK_NONE;
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
+			       gtk_separator_menu_item_new ());
+
+	/* Set the state before connecting, so priming the check items does not
+	 * fire "toggled" and flip the slot we are describing.
+	 */
+	item = gtk_check_menu_item_new_with_mnemonic (_("Loc_k Tab"));
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), target_is_locked);
+	g_signal_connect (item, "toggled",
+			  G_CALLBACK (notebook_popup_menu_lock_cb),
+			  pane);
+	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
+			       item);
+
+	item = gtk_check_menu_item_new_with_mnemonic (_("Open Changes in New _Tab"));
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
+					target_lock_mode == NEMO_TAB_LOCK_NEW_TAB);
+	g_signal_connect (item, "toggled",
+			  G_CALLBACK (notebook_popup_menu_lock_new_tab_cb),
+			  pane);
+	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
+			       item);
+	gtk_widget_set_sensitive (item, target_is_locked);
+
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
 			       gtk_separator_menu_item_new ());
 
@@ -560,6 +653,7 @@ notebook_popup_menu_show (NemoWindowPane *pane,
 			  G_CALLBACK (notebook_popup_menu_close_cb), pane);
 	gtk_menu_shell_append (GTK_MENU_SHELL (popup),
 			       item);
+	gtk_widget_set_sensitive (item, !target_is_locked);
 
 	gtk_widget_show_all (popup);
 
@@ -655,6 +749,9 @@ notebook_switch_page_cb (GtkNotebook *notebook,
 	slot = NEMO_WINDOW_SLOT (widget);
 	g_assert (slot != NULL);
 
+	/* Sending a locked tab home is the slot's "active" handler's job; it also
+	 * covers the tab becoming current again by way of the other pane.
+	 */
 	nemo_window_set_active_slot (nemo_window_slot_get_window (slot),
 					 slot);
 
