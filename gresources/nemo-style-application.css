@@ -1,4 +1,5 @@
-/* Desktop text stuff */
+/* Desktop window structure — always applied regardless of theme.
+ * The desktop window must be transparent so the wallpaper shows through. */
 
 .nemo-window.nemo-desktop-window notebook,
 .nemo-window.nemo-desktop-window paned {
@@ -11,37 +12,17 @@
     box-shadow: none;
 }
 
-NemoDesktopWindow GtkPaned {
-    background-color: transparent;
-}
-
 .nemo-canvas-item {
     border-radius: 3px;
 }
 
+/* Custom widget property — controls nemo behavior, not appearance. */
 .nemo-desktop {
     -NemoIconContainer-activate-prelight-icon-label: true;
 }
 
-.nemo-desktop.nemo-canvas-item {
-    color: #eeeeee;
-    text-shadow: 1px 1px alpha(black, 0.8);
-}
-
-.nemo-desktop.nemo-canvas-item:hover {
-    background-color: alpha(black, 0.5);
-    background-image: none;
-    text-shadow: none;
-}
-
-.nemo-desktop.nemo-canvas-item:selected {
-    background-color: alpha(@theme_selected_bg_color, 0.8);
-    background-image: none;
-    text-shadow: none;
-    color: #f5f5f5;
-}
-
-/* EelEditableLabel (icon labels) */
+/* EelEditableLabel (inline rename entry on desktop).
+ * Always applied so the rename box stays legible over any wallpaper. */
 .nemo-desktop.view .entry,
 .nemo-desktop.view .entry:active,
 .nemo-desktop.view .entry:focus,
