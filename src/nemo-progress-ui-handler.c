@@ -205,6 +205,8 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
     gtk_window_set_type_hint (GTK_WINDOW (progress_window), GDK_WINDOW_TYPE_HINT_DIALOG);
     gtk_window_set_resizable (GTK_WINDOW (progress_window), FALSE);
     gtk_window_set_default_size (GTK_WINDOW (progress_window), 500, -1);
+    gtk_window_set_default (GTK_WINDOW (progress_window), NULL);
+    gtk_window_set_focus (GTK_WINDOW (progress_window), NULL);
 
 	gtk_window_set_title (GTK_WINDOW (progress_window),
 			      _("File Operations"));
