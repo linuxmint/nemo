@@ -134,7 +134,7 @@ Can be one of:
 **Dependencies** (optional): Semicolon-separated list of executable programs required for this action to display.
 
 `
-Dependencies=notify-send;zenity;
+Dependencies=notify-send;dbus-bin;
 `
 
 - If just a filename is provided, the PATH will be searched for it (/usr/bin, etc...).
@@ -239,7 +239,7 @@ Comment=If you click this menu entry, %F will be acted upon!
 Icon-Name=xsi-folder-symbolic
 Separator=,
 Quote=single|double|backtick
-Dependencies=notify-send;!zenity;
+Dependencies=notify-send;!dbus-bin;
 UriScheme=sftp
 Conditions=desktop;dbus <name>;gsettings foo_schema foo_boolkey;removable;exec <program>;sidebar-allow;sidebar-only;
 Terminal=true|false
