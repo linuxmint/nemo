@@ -115,6 +115,7 @@ typedef enum
 #define NEMO_PREFERENCES_OPEN_AS_ROOT_METHOD              "open-as-root-method"
 #define NEMO_PREFERENCES_SHOW_SHOW_THUMBNAILS_TOOLBAR     "show-show-thumbnails-toolbar"
 #define NEMO_PREFERENCES_SHOW_TOGGLE_EXTRA_PANE_TOOLBAR "show-toggle-extra-pane-toolbar"
+#define NEMO_PREFERENCES_SHOW_TOGGLE_PREVIEW_PANE_TOOLBAR "show-toggle-preview-pane-toolbar"
 
 /* Which views should be displayed for new windows */
 #define NEMO_WINDOW_STATE_START_WITH_STATUS_BAR		"start-with-status-bar"
@@ -331,6 +332,7 @@ extern GSettings *gtk_filechooser_preferences;
 extern GSettings *nemo_plugin_preferences;
 extern GSettings *nemo_menu_config_preferences;
 extern GSettings *nemo_search_preferences;
+extern GSettings *nemo_preview_pane_preferences;
 extern GSettings *gnome_lockdown_preferences;
 extern GSettings *gnome_background_preferences;
 extern GSettings *gnome_media_handling_preferences;

@@ -59,6 +59,8 @@ nemo_private_sources = [
   'nemo-mount-operation.c',
   'nemo-placement-grid.c',
   'nemo-places-tree-view.c',
+  'nemo-preview-details.c',
+  'nemo-preview-image.c',
   'nemo-program-choosing.c',
   'nemo-progress-info-manager.c',
   'nemo-progress-info.c',
@@ -100,6 +102,11 @@ endif
 
 if libselinux_enabled
   nemo_private_deps += libselinux
+endif
+
+if video_preview_enabled
+  nemo_private_sources += ['nemo-preview-media-info.c', 'nemo-preview-video.c']
+  nemo_private_deps += [gstreamer, gst_pbutils, gst_app, gst_video]
 endif
 
 if gtk_layer_shell_enabled

@@ -133,6 +133,15 @@ if exempi_enabled
 endif
 conf.set('HAVE_EXEMPI', exempi_enabled)
 
+video_preview_enabled = get_option('video_preview')
+if video_preview_enabled
+  gstreamer   = dependency('gstreamer-1.0',         version: '>=1.14')
+  gst_pbutils = dependency('gstreamer-pbutils-1.0', version: '>=1.14')
+  gst_app     = dependency('gstreamer-app-1.0',     version: '>=1.14')
+  gst_video   = dependency('gstreamer-video-1.0',   version: '>=1.14')
+endif
+conf.set('HAVE_GSTREAMER', video_preview_enabled)
+
 libselinux_enabled = get_option('selinux')
 if libselinux_enabled
   libselinux = dependency('libselinux',             version: '>=2.0')

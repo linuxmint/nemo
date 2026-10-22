@@ -48,6 +48,7 @@
 #include "nemo-icon-view.h"
 #include "nemo-list-view.h"
 #include "nemo-statusbar.h"
+#include "nemo-preview-pane.h"
 
 #include <eel/eel-debug.h>
 #include <eel/eel-gtk-extensions.h>
@@ -413,7 +414,7 @@ setup_side_pane_width (NemoWindow *window)
 		g_settings_get_int (nemo_window_state,
 				    NEMO_WINDOW_STATE_SIDEBAR_WIDTH);
 
-	gtk_paned_set_position (GTK_PANED (window->details->content_paned),
+	gtk_paned_set_position (GTK_PANED (window->details->base_paned),
 				window->details->side_pane_width);
 }
 
@@ -428,7 +429,7 @@ nemo_window_set_up_sidebar (NemoWindow *window)
 	gtk_style_context_add_class (gtk_widget_get_style_context (window->details->sidebar),
 				     GTK_STYLE_CLASS_SIDEBAR);
 
-	gtk_paned_pack1 (GTK_PANED (window->details->content_paned),
+	gtk_paned_pack1 (GTK_PANED (window->details->base_paned),
 			 GTK_WIDGET (window->details->sidebar),
 			 FALSE, FALSE);
 
@@ -601,13 +602,46 @@ on_menu_selection_done (GtkMenuShell *menushell,
 	window->details->menu_hide_delay_id = g_timeout_add (0, (GSourceFunc) hide_menu_on_delay, window);
 }
 
+static void preview_pane_selection_changed_callback (NemoView *view, NemoWindow *window);
+static void slot_location_changed_callback (NemoWindowSlot *slot, const char *from_uri, const char *to_uri, NemoWindow *window);
+static void preview_pane_realize_callback (GtkWidget *widget, gpointer user_data);
+static void preview_pane_position_changed_callback (GObject *paned, GParamSpec *pspec, NemoWindow *window);
+static void update_preview_pane_for_slot (NemoWindow *window, NemoWindowSlot *slot);
+
+/*
+    3-pane layout
+
+    ------------------------------------------------------
+    |        |------------------------------------------||
+    |        ||--------split_view_paned--------|        ||
+    |   S    ||               |                |    P   ||
+    |   I    ||               |                |    R   ||
+    |   D    ||   VIEW        |     VIEW       |    E   ||
+    |   E    ||               |                |    V   ||
+    |   B    ||               |                |    I   ||
+    |   A    ||               |                |    E   ||
+    |   R    ||               |                |    W   ||
+    |        ||               |                |        ||
+    |        ||               |                |        ||
+    |        ||---------------|----------------|        ||
+    |        |--------------secondary_paned-------------||
+    |---------------------base_paned---------------------|
+
+    base_paned:
+        - L: sidebar widget
+        - R: secondary_paned:
+                - L: content_paned:
+                        - content_view
+                        - content_view (when split-view on)
+                - R: preview pane
+*/
+
 static void
 nemo_window_constructed (GObject *self)
 {
 	NemoWindow *window;
 	GtkWidget *grid;
 	GtkWidget *menu;
-	GtkWidget *hpaned;
 	GtkWidget *vbox;
 	GtkWidget *toolbar_holder;
     GtkWidget *nemo_statusbar;
@@ -684,28 +718,44 @@ nemo_window_constructed (GObject *self)
 	g_signal_connect_object (nemo_signaller_get_current (), "popup_menu_changed",
 			 G_CALLBACK (nemo_window_load_extension_menus), window, G_CONNECT_SWAPPED);
 
-	window->details->content_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
-	gtk_widget_set_hexpand (window->details->content_paned, TRUE);
-	gtk_widget_set_vexpand (window->details->content_paned, TRUE);
+	/* Create base_paned: sidebar | secondary_paned */
+	window->details->base_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+	gtk_widget_set_hexpand (window->details->base_paned, TRUE);
+	gtk_widget_set_vexpand (window->details->base_paned, TRUE);
 
-	gtk_container_add (GTK_CONTAINER (grid), window->details->content_paned);
-	gtk_widget_show (window->details->content_paned);
+	gtk_container_add (GTK_CONTAINER (grid), window->details->base_paned);
+	gtk_widget_show (window->details->base_paned);
 
 	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_paned_pack2 (GTK_PANED (window->details->content_paned), vbox,
+	gtk_paned_pack2 (GTK_PANED (window->details->base_paned), vbox,
 			 TRUE, FALSE);
 	gtk_widget_show (vbox);
 
-	hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
-	gtk_box_pack_start (GTK_BOX (vbox), hpaned, TRUE, TRUE, 0);
-	gtk_widget_show (hpaned);
-	window->details->split_view_hpane = hpaned;
+	/* Create secondary_paned: content_paned | preview_pane */
+	window->details->secondary_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+	gtk_box_pack_start (GTK_BOX (vbox), window->details->secondary_paned, TRUE, TRUE, 0);
+	gtk_widget_show (window->details->secondary_paned);
+
+	/* Create content_paned: primary_view | secondary_view */
+	window->details->content_paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+	gtk_paned_pack1 (GTK_PANED (window->details->secondary_paned), window->details->content_paned, TRUE, FALSE);
+	gtk_widget_show (window->details->content_paned);
+
+    if (!NEMO_IS_DESKTOP_WINDOW (window)) {
+        window->details->preview_pane = nemo_preview_pane_new ();
+        gtk_paned_pack2 (GTK_PANED (window->details->secondary_paned),
+                         window->details->preview_pane, TRUE, FALSE);
+
+        g_signal_connect (window->details->secondary_paned, "realize",
+                          G_CALLBACK (preview_pane_realize_callback), window);
+        g_signal_connect (window->details->secondary_paned, "notify::position",
+                          G_CALLBACK (preview_pane_position_changed_callback), window);
+    }
 
 	pane = nemo_window_pane_new (window);
 	window->details->panes = g_list_prepend (window->details->panes, pane);
 
-	gtk_paned_pack1 (GTK_PANED (hpaned), GTK_WIDGET (pane), TRUE, FALSE);
-
+	gtk_paned_pack1 (GTK_PANED (window->details->content_paned), GTK_WIDGET (pane), TRUE, FALSE);
 
     nemo_statusbar = nemo_status_bar_new (window);
     window->details->nemo_status_bar = nemo_statusbar;
@@ -1081,6 +1131,10 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
 		if (old_slot->content_view != NULL) {
 			nemo_window_disconnect_content_view (window, old_slot->content_view);
 		}
+		/* Disconnect from slot's location-changed signal */
+		g_signal_handlers_disconnect_by_func (old_slot,
+		                                      G_CALLBACK (slot_location_changed_callback),
+		                                      window);
 		gtk_widget_hide (GTK_WIDGET (old_slot->pane->tool_bar));
 		/* inform slot & view */
 		g_signal_emit_by_name (old_slot, "inactive");
@@ -1104,6 +1158,12 @@ nemo_window_set_active_slot (NemoWindow *window, NemoWindowSlot *new_slot)
                         /* inform window */
                         nemo_window_connect_content_view (window, new_slot->content_view);
                 }
+
+		g_signal_connect (new_slot, "location-changed",
+		                  G_CALLBACK (slot_location_changed_callback),
+		                  window);
+
+        update_preview_pane_for_slot (window, new_slot);
 
 		// Show active toolbar
 		gboolean show_toolbar;
@@ -1557,6 +1617,166 @@ zoom_level_changed_callback (NemoView *view,
 	nemo_window_sync_zoom_widgets (window);
 }
 
+/* Forward declarations */
+static void nemo_window_preview_pane_on_internal (NemoWindow *window, gboolean write_metadata);
+static void nemo_window_preview_pane_off_internal (NemoWindow *window, gboolean write_metadata);
+
+/* Folders where the preview pane is shown unless the user has
+ * explicitly hidden it there (which is remembered in metadata).
+ */
+static gboolean
+preview_pane_default_for_directory (NemoFile *directory_file,
+                                    gboolean  include_descendants)
+{
+    static const GUserDirectory preview_dirs[] = {
+        G_USER_DIRECTORY_PICTURES,
+        G_USER_DIRECTORY_VIDEOS,
+        G_USER_DIRECTORY_MUSIC
+    };
+    GFile *location, *home;
+    gboolean ret = FALSE;
+    guint i;
+
+    location = nemo_file_get_location (directory_file);
+    home = g_file_new_for_path (g_get_home_dir ());
+
+    for (i = 0; i < G_N_ELEMENTS (preview_dirs) && !ret; i++) {
+        const gchar *path = g_get_user_special_dir (preview_dirs[i]);
+        GFile *special;
+
+        if (path == NULL) {
+            continue;
+        }
+
+        special = g_file_new_for_path (path);
+
+        /* An unconfigured xdg dir can resolve to $HOME itself */
+        if (!g_file_equal (special, home)) {
+            ret = g_file_equal (location, special) ||
+                  (include_descendants && g_file_has_prefix (location, special));
+        }
+
+        g_object_unref (special);
+    }
+
+    g_object_unref (home);
+    g_object_unref (location);
+
+    return ret;
+}
+
+/* Looks for an explicit setting on the directory or, failing that, its ancestors.
+ * The walk stops at a default folder so a setting on its parent (usually Home)
+ * doesn't override the default. */
+static gboolean
+preview_pane_metadata_lookup (NemoFile *directory_file,
+                              gboolean *show_preview)
+{
+    NemoFile *file, *parent;
+    gchar *value = NULL;
+
+    file = nemo_file_ref (directory_file);
+
+    while (file != NULL) {
+        value = nemo_file_get_metadata (file, NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE, NULL);
+
+        if (value != NULL || preview_pane_default_for_directory (file, FALSE)) {
+            break;
+        }
+
+        parent = nemo_file_get_parent (file);
+        nemo_file_unref (file);
+        file = parent;
+    }
+
+    nemo_file_unref (file);
+
+    if (value == NULL) {
+        return FALSE;
+    }
+
+    *show_preview = g_ascii_strcasecmp (value, "true") == 0;
+    g_free (value);
+
+    return TRUE;
+}
+
+/* Check if any slot in the window (across all panes and tabs) has
+ * preview pane enabled in its metadata, excluding the given slot.
+ */
+static gboolean
+any_other_slot_wants_preview_pane (NemoWindow *window,
+                                    NemoWindowSlot *exclude_slot)
+{
+	GList *pane_node;
+	GList *slot_node;
+	NemoWindowPane *pane;
+	NemoWindowSlot *slot;
+	NemoFile *directory_file;
+	gboolean show_preview;
+
+	for (pane_node = window->details->panes; pane_node != NULL; pane_node = pane_node->next) {
+		pane = NEMO_WINDOW_PANE (pane_node->data);
+
+		for (slot_node = pane->slots; slot_node != NULL; slot_node = slot_node->next) {
+			slot = NEMO_WINDOW_SLOT (slot_node->data);
+
+			/* Skip the slot we're excluding */
+			if (slot == exclude_slot) {
+				continue;
+			}
+
+			/* Check if this slot has a view with a directory */
+			if (slot->content_view != NULL) {
+				directory_file = nemo_view_get_directory_as_file (slot->content_view);
+				if (directory_file != NULL) {
+					if (preview_pane_metadata_lookup (directory_file, &show_preview) && show_preview) {
+						return TRUE;
+					}
+				}
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+/* Synchronize the preview pane state based on a slot's directory metadata.
+ * This checks the slot's current directory's saved preference and applies it,
+ * taking into account whether other slots in the window want the preview pane.
+ * If no metadata is saved for this directory, uses a location-based default.
+ */
+static void
+sync_preview_pane_from_slot_metadata (NemoWindow *window,
+                                       NemoWindowSlot *slot)
+{
+	NemoFile *directory_file;
+	gboolean show_preview;
+
+	if (slot == NULL || slot->content_view == NULL) {
+		return;
+	}
+
+	directory_file = nemo_view_get_directory_as_file (slot->content_view);
+	if (directory_file == NULL) {
+		return;
+	}
+
+    if (!preview_pane_metadata_lookup (directory_file, &show_preview)) {
+        show_preview = preview_pane_default_for_directory (directory_file, TRUE);
+    }
+
+	/* Apply the saved state (don't write metadata - this is automatic sync, not user action) */
+	if (show_preview && !window->details->show_preview_pane) {
+		nemo_window_preview_pane_on_internal (window, FALSE);
+	} else if (!show_preview && window->details->show_preview_pane) {
+		/* Only close preview pane if no other slot wants it */
+		if (!any_other_slot_wants_preview_pane (window, slot)) {
+			nemo_window_preview_pane_off_internal (window, FALSE);
+		}
+	}
+}
+
 
 /* These are called
  *   A) when switching the view within the active slot
@@ -1582,6 +1802,12 @@ nemo_window_connect_content_view (NemoWindow *window,
 			  G_CALLBACK (zoom_level_changed_callback),
 			  window);
 
+    update_preview_pane_for_slot (window, slot);
+
+    g_signal_connect_object (view, "selection-changed",
+                             G_CALLBACK (preview_pane_selection_changed_callback),
+                             window, 0);
+
     /* Update displayed the selected view type in the toolbar and menu. */
     if (slot->pending_location == NULL) {
         nemo_window_sync_view_type (window);
@@ -1606,6 +1832,7 @@ nemo_window_disconnect_content_view (NemoWindow *window,
 	}
 
 	g_signal_handlers_disconnect_by_func (view, G_CALLBACK (zoom_level_changed_callback), window);
+	g_signal_handlers_disconnect_by_func (view, G_CALLBACK (preview_pane_selection_changed_callback), window);
 }
 
 /**
@@ -1847,7 +2074,7 @@ create_extra_pane (NemoWindow *window)
 	pane = nemo_window_pane_new (window);
 	window->details->panes = g_list_append (window->details->panes, pane);
 
-	paned = GTK_PANED (window->details->split_view_hpane);
+	paned = GTK_PANED (window->details->content_paned);
 
     g_signal_connect_after (paned,
                             "notify::position",
@@ -2127,7 +2354,7 @@ nemo_window_save_session_state (NemoWindow *window)
 		return;
 	}
 
-	paned = GTK_PANED (window->details->split_view_hpane);
+	paned = GTK_PANED (window->details->content_paned);
 	child1 = gtk_paned_get_child1 (paned);
 	child2 = gtk_paned_get_child2 (paned);
 
@@ -2269,7 +2496,7 @@ nemo_window_restore_saved_tabs (NemoWindow *window)
 	}
 
 	{
-		GtkPaned *paned = GTK_PANED (window->details->split_view_hpane);
+		GtkPaned *paned = GTK_PANED (window->details->content_paned);
 		GtkWidget *child1 = gtk_paned_get_child1 (paned);
 		GtkWidget *child2 = gtk_paned_get_child2 (paned);
 
@@ -2485,6 +2712,114 @@ nemo_window_new (GtkApplication *application,
 			     NULL);
 }
 
+/* Show the first selected file of the active view, or nothing. */
+static void
+preview_pane_show_selection (NemoWindow *window, NemoView *view)
+{
+    GList *selection = NULL;
+    NemoFile *file = NULL;
+
+    if (!window->details->show_preview_pane) {
+        return;
+    }
+
+    if (view != NULL) {
+        selection = nemo_view_get_selection (view);
+    }
+
+    if (selection != NULL) {
+        file = NEMO_FILE (selection->data);
+    }
+
+    nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), file);
+    nemo_file_list_free (selection);
+}
+
+/* Apply the slot's directory preference, then show whatever it has selected. */
+static void
+update_preview_pane_for_slot (NemoWindow *window, NemoWindowSlot *slot)
+{
+    if (window->details->preview_pane == NULL) {
+        return;
+    }
+
+    sync_preview_pane_from_slot_metadata (window, slot);
+    preview_pane_show_selection (window, slot != NULL ? slot->content_view : NULL);
+}
+
+static void
+slot_location_changed_callback (NemoWindowSlot *slot,
+                                 const char     *from_uri,
+                                 const char     *to_uri,
+                                 NemoWindow     *window)
+{
+    update_preview_pane_for_slot (window, slot);
+}
+
+static void
+preview_pane_selection_changed_callback (NemoView *view, NemoWindow *window)
+{
+    preview_pane_show_selection (window, view);
+}
+
+static void
+set_preview_pane_width_from_settings (NemoWindow *window)
+{
+	gint saved_width, position, total_width;
+
+	/* Only set initial position once */
+	if (window->details->preview_pane_width_set) {
+		return;
+	}
+
+	window->details->preview_pane_width_set = TRUE;
+
+	/* Set position based on saved preview pane width */
+	saved_width = g_settings_get_int (nemo_preview_pane_preferences, "pane-width");
+	total_width = gtk_widget_get_allocated_width (window->details->secondary_paned);
+
+	if (saved_width > 100 && total_width > saved_width) {
+		/* Position is from left, so subtract preview width from total */
+		position = total_width - saved_width;
+		gtk_paned_set_position (GTK_PANED (window->details->secondary_paned), position);
+	} else {
+		/* Fallback: 60/40 split */
+		gtk_paned_set_position (GTK_PANED (window->details->secondary_paned), total_width * 0.6);
+	}
+}
+
+static void
+preview_pane_realize_callback (GtkWidget *widget, gpointer user_data)
+{
+	NemoWindow *window = NEMO_WINDOW (user_data);
+
+    if (window->details->show_preview_pane) {
+        set_preview_pane_width_from_settings (window);
+    }
+}
+
+static void
+preview_pane_position_changed_callback (GObject *paned, GParamSpec *pspec, NemoWindow *window)
+{
+	gint position, total_width, preview_width;
+
+	/* Don't save position until initial width has been set */
+	if (!window->details->show_preview_pane || !window->details->preview_pane_width_set) {
+		return;
+	}
+
+	position = gtk_paned_get_position (GTK_PANED (paned));
+	total_width = gtk_widget_get_allocated_width (GTK_WIDGET (paned));
+
+	/* Calculate width of preview pane (right side) */
+	preview_width = total_width - position;
+
+	/* Only save if preview width is reasonable */
+	if (preview_width > 100 && total_width > 0) {
+		g_settings_set_int (nemo_preview_pane_preferences, "pane-width", preview_width);
+	}
+}
+
 void
 nemo_window_split_view_on (NemoWindow *window)
 {
@@ -2493,6 +2828,7 @@ nemo_window_split_view_on (NemoWindow *window)
 
 	old_active_slot = nemo_window_get_active_slot (window);
 	slot = create_extra_pane (window);
+    gtk_widget_show_all (GTK_WIDGET (slot));
 
     location = window->details->secondary_pane_last_location;
 
@@ -2513,6 +2849,7 @@ nemo_window_split_view_on (NemoWindow *window)
 	g_object_unref (location);
 
 	window_set_search_action_text (window, FALSE);
+    nemo_window_update_show_hide_ui_elements (window);
 }
 
 void
@@ -2534,9 +2871,7 @@ nemo_window_split_view_off (NemoWindow *window)
 		}
 	}
 
-    /* Reset split view pane's position so the position can be
-     * caught again later */
-    g_object_set (G_OBJECT (window->details->split_view_hpane),
+    g_object_set (G_OBJECT (window->details->content_paned),
                   "position", 0,
                   "position-set", FALSE,
                   NULL);
@@ -2546,12 +2881,124 @@ nemo_window_split_view_off (NemoWindow *window)
 					      active_pane->action_group);
 
 	nemo_window_update_show_hide_ui_elements (window);
+
+	/* After closing split view, check if the remaining active slot
+	 * wants the preview pane based on its directory metadata */
+	sync_preview_pane_from_slot_metadata (window, active_pane->active_slot);
 }
 
 gboolean
 nemo_window_split_view_showing (NemoWindow *window)
 {
 	return g_list_length (NEMO_WINDOW (window)->details->panes) > 1;
+}
+
+static void
+write_preview_pane_metadata (NemoWindow *window, gboolean showing)
+{
+    NemoWindowSlot *slot;
+    NemoFile *directory_file;
+
+    slot = nemo_window_get_active_slot (window);
+
+    if (slot == NULL || slot->content_view == NULL) {
+        return;
+    }
+
+    directory_file = nemo_view_get_directory_as_file (slot->content_view);
+
+    if (directory_file != NULL) {
+        nemo_file_set_boolean_metadata (directory_file,
+                                        NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE,
+                                        FALSE,
+                                        showing);
+    }
+}
+
+static void
+nemo_window_preview_pane_on_internal (NemoWindow *window,
+                                       gboolean    write_metadata)
+{
+    NemoWindowSlot *slot;
+
+    if (window->details->preview_pane == NULL || window->details->show_preview_pane) {
+        return;
+    }
+
+    window->details->show_preview_pane = TRUE;
+    window->details->preview_pane_width_set = FALSE;
+
+    gtk_widget_show (window->details->preview_pane);
+
+    if (gtk_widget_get_realized (window->details->secondary_paned)) {
+        set_preview_pane_width_from_settings (window);
+    }
+
+    slot = nemo_window_get_active_slot (window);
+    preview_pane_show_selection (window, slot != NULL ? slot->content_view : NULL);
+
+    if (write_metadata) {
+        write_preview_pane_metadata (window, TRUE);
+    }
+
+    nemo_window_update_show_hide_ui_elements (window);
+}
+
+void
+nemo_window_preview_pane_on (NemoWindow *window)
+{
+	/* User-triggered action: write metadata to remember this choice */
+	nemo_window_preview_pane_on_internal (window, TRUE);
+}
+
+static void
+nemo_window_preview_pane_off_internal (NemoWindow *window,
+                                        gboolean    write_metadata)
+{
+    if (window->details->preview_pane == NULL || !window->details->show_preview_pane) {
+        return;
+    }
+
+    window->details->show_preview_pane = FALSE;
+    window->details->preview_pane_width_set = FALSE;
+
+    gtk_widget_hide (window->details->preview_pane);
+    nemo_preview_pane_set_file (NEMO_PREVIEW_PANE (window->details->preview_pane), NULL);
+
+    /* Let the paned pick a fresh position next time it is shown */
+    g_object_set (G_OBJECT (window->details->secondary_paned),
+                  "position", 0,
+                  "position-set", FALSE,
+                  NULL);
+
+    if (write_metadata) {
+        write_preview_pane_metadata (window, FALSE);
+    }
+
+    nemo_window_update_show_hide_ui_elements (window);
+}
+
+void
+nemo_window_preview_pane_off (NemoWindow *window)
+{
+	/* User-triggered action: write metadata to remember this choice */
+	nemo_window_preview_pane_off_internal (window, TRUE);
+}
+
+gboolean
+nemo_window_preview_pane_showing (NemoWindow *window)
+{
+	return window->details->show_preview_pane;
+}
+
+gboolean
+nemo_window_preview_pane_toggle_playback (NemoWindow *window)
+{
+    if (!window->details->show_preview_pane || window->details->preview_pane == NULL) {
+        return FALSE;
+    }
+
+    return nemo_preview_pane_toggle_playback (NEMO_PREVIEW_PANE (window->details->preview_pane));
 }
 
 void
