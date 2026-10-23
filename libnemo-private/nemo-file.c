@@ -4631,7 +4631,7 @@ nemo_file_delete_thumbnail (NemoFile *file)
 
     success = g_unlink (file->details->thumbnail_path);
 
-    if (success != 0) {
+    if (success != 0 && errno != ENOENT) {
         g_warning ("Could not remove thumb for '%s'.  The thumbnail path is '%s'",
                    file->details->display_name,
                    file->details->thumbnail_path);
