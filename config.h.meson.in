@@ -15,6 +15,7 @@
 #mesondefine HAVE_EXEMPI
 // Define to enable EXIF support
 #mesondefine HAVE_EXIF
+#mesondefine HAVE_GSTREAMER
 // Define if libselinux is available
 #mesondefine HAVE_SELINUX
 // Define to use gtk-layer-shell

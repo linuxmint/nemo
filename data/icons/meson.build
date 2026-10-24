@@ -29,6 +29,7 @@ publicIcons = [
   'hicolor/actions/scalable/nemo-desktop-scale-symbolic.svg',
   'hicolor/actions/scalable/nemo-horizontal-layout-symbolic.svg',
   'hicolor/actions/scalable/nemo-horizontal-layout-wide-symbolic.svg',
+  'hicolor/actions/scalable/nemo-preview-pane-symbolic.svg',
   'hicolor/actions/scalable/nemo-vertical-layout-symbolic.svg',
   'hicolor/actions/scalable/nemo-vertical-layout-wide-symbolic.svg',
   'hicolor/actions/scalable/nemo-recursive-search-symbolic.svg',

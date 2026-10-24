@@ -57,6 +57,7 @@ struct _NemoToolbarPriv {
     GtkWidget *compact_view_button;
     GtkWidget *show_thumbnails_button;
     GtkWidget *show_extra_pane_button;
+    GtkWidget *show_preview_pane_button;
 
 	GtkWidget *path_bar;
 	GtkWidget *location_bar;
@@ -203,6 +204,11 @@ toolbar_update_appearance (NemoToolbar *self)
     icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TOGGLE_EXTRA_PANE_TOOLBAR);
     if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
     else {gtk_widget_show (GTK_WIDGET(widgetitem));}
+
+    widgetitem = self->priv->show_preview_pane_button;
+    icon_toolbar = g_settings_get_boolean (nemo_preferences, NEMO_PREFERENCES_SHOW_TOGGLE_PREVIEW_PANE_TOOLBAR);
+    if ( icon_toolbar == FALSE ) { gtk_widget_hide (widgetitem); }
+    else {gtk_widget_show (GTK_WIDGET(widgetitem));}
 }
 
 static void
@@ -347,7 +353,8 @@ nemo_toolbar_constructed (GObject *obj)
     self->priv->show_thumbnails_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SHOW_THUMBNAILS);
     gtk_container_add (GTK_CONTAINER (box), self->priv->show_thumbnails_button);
 
-    setup_root_info_bar (self);
+    self->priv->show_preview_pane_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE);
+    gtk_container_add (GTK_CONTAINER (box), self->priv->show_preview_pane_button);
 
     self->priv->show_extra_pane_button = toolbar_create_toolbutton (self, TRUE, NEMO_ACTION_SHOW_HIDE_EXTRA_PANE);
     gtk_container_add (GTK_CONTAINER (box), self->priv->show_extra_pane_button);
@@ -371,6 +378,7 @@ nemo_toolbar_constructed (GObject *obj)
                   "changed",
                   G_CALLBACK (toolbar_update_appearance), self);
 
+    setup_root_info_bar (self);
 	toolbar_update_appearance (self);
 }
 

@@ -102,26 +102,6 @@ nemo_previewer_class_init (NemoPreviewerClass *klass)
 }
 
 static void
-previewer_show_file_ready_cb (GObject *source,
-                              GAsyncResult *res,
-                              gpointer user_data)
-{
-  NemoPreviewer *self = user_data;
-  GError *error = NULL;
-
-  g_dbus_connection_call_finish (self->priv->connection,
-                                 res, &error);
-
-  if (error != NULL) {
-    DEBUG ("Unable to call ShowFile on NemoPreviewer: %s",
-           error->message);
-    g_error_free (error);
-  }
-
-  g_object_unref (self);
-}
-
-static void
 previewer_close_ready_cb (GObject *source,
                           GAsyncResult *res,
                           gpointer user_data)
@@ -148,10 +128,12 @@ nemo_previewer_get_singleton (void)
 }
 
 void
-nemo_previewer_call_show_file (NemoPreviewer *self,
-                                   const gchar *uri,
-                                   guint xid,
-				   gboolean close_if_already_visible)
+nemo_previewer_call_show_file (NemoPreviewer       *self,
+                               const gchar         *uri,
+                               guint                xid,
+                               gboolean             close_if_already_visible,
+                               GAsyncReadyCallback  callback,
+                               gpointer             user_data)
 {
   if (self->priv->connection == NULL) {
     g_printerr ("No DBus connection available");
@@ -169,8 +151,27 @@ nemo_previewer_call_show_file (NemoPreviewer *self,
                           G_DBUS_CALL_FLAGS_NONE,
                           -1,
                           NULL,
-                          previewer_show_file_ready_cb,
-                          g_object_ref (self));
+                          callback,
+                          user_data);
+}
+
+/* G_DBUS_ERROR_SERVICE_UNKNOWN means nemo-preview isn't installed */
+gboolean
+nemo_previewer_call_show_file_finish (GAsyncResult  *result,
+                                      GError       **error)
+{
+    GObject *connection;
+    gboolean ret;
+
+    connection = g_async_result_get_source_object (result);
+    ret = g_dbus_connection_call_finish (G_DBUS_CONNECTION (connection), result, error) != NULL;
+    g_object_unref (connection);
+
+    if (!ret) {
+        DEBUG ("Unable to call ShowFile on NemoPreviewer: %s", (*error)->message);
+    }
+
+    return ret;
 }
 
 void
