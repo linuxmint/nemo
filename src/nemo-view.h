@@ -43,6 +43,7 @@ typedef struct NemoViewClass NemoViewClass;
 
 #include "nemo-window.h"
 #include "nemo-window-slot.h"
+#include "nemo-filter-bar.h"
 
 #define NEMO_TYPE_VIEW nemo_view_get_type()
 #define NEMO_VIEW(obj)\
@@ -397,6 +398,11 @@ gint                nemo_view_get_filter_match                 (NemoView  *view,
                                                                     NemoFile  *file);
 gboolean            nemo_view_activate_filter                  (NemoView  *view,
                                                                     GdkEventKey   *event);
+void                nemo_view_set_filter_key_widget            (NemoView  *view,
+                                                                    GtkWidget     *widget);
+void                nemo_view_set_filter_bar                   (NemoView  *view,
+                                                                    NemoFilterBar *filter_bar);
+gboolean            nemo_view_get_filter_has_preedit           (NemoView  *view);
 void                nemo_view_add_subdirectory                (NemoView  *view,
 								   NemoDirectory*directory);
 void                nemo_view_remove_subdirectory             (NemoView  *view,

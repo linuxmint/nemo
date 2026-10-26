@@ -2418,6 +2418,10 @@ create_icon_container (NemoIconView *icon_view)
 
 	gtk_widget_set_can_focus (GTK_WIDGET (icon_container), TRUE);
 
+    if (!icon_view->details->is_desktop) {
+        nemo_view_set_filter_key_widget (NEMO_VIEW (icon_view), GTK_WIDGET (icon_container));
+    }
+
     g_signal_connect_object (icon_container, "button_press_event",
                  G_CALLBACK (button_press_callback), icon_view, 0);
 	g_signal_connect_object (icon_container, "focus_in_event",

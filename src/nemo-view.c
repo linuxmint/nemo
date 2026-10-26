@@ -328,6 +328,8 @@ struct NemoViewDetails
     gboolean filter_navigation_blocked;
     guint filter_debounce_id;
     GHashTable *filter_score_cache;
+    GtkWidget *filter_key_widget;
+    GtkWidget *filter_bar;
 };
 
 typedef struct {
@@ -3040,6 +3042,8 @@ nemo_view_finalize (GObject *object)
     g_clear_pointer (&view->details->detail_string, g_free);
 
     reset_filter_state (view);
+    g_clear_weak_pointer (&view->details->filter_key_widget);
+    g_clear_weak_pointer (&view->details->filter_bar);
 
 	g_hash_table_destroy (view->details->non_ready_files);
 	g_hash_table_destroy (view->details->filter_score_cache);
@@ -11056,10 +11060,222 @@ nemo_view_clear_filter (NemoView *view)
     NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->update_filter_text (view, NULL);
 }
 
+static NemoFilterBar *
+get_filter_bar (NemoView *view)
+{
+    return view->details->filter_bar != NULL ? NEMO_FILTER_BAR (view->details->filter_bar) : NULL;
+}
+
+static gboolean
+filter_allowed (NemoView *view)
+{
+    if (view->details->model != NULL &&
+        NEMO_IS_SEARCH_DIRECTORY (view->details->model)) {
+        return FALSE;
+    }
+
+    return !view->details->is_renaming;
+}
+
+static gboolean
+is_whitespace (const gchar *text)
+{
+    for (; *text != '\0'; text = g_utf8_next_char (text)) {
+        if (!g_unichar_isspace (g_utf8_get_char (text))) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+static void
+filter_bar_commit_cb (NemoFilterBar *bar,
+                      const gchar   *text,
+                      NemoView      *view)
+{
+    gchar *new_text;
+
+    /* Commits can also arrive without a key press, e.g. when focus moves
+     * to the rename entry. */
+    if (!filter_allowed (view)) {
+        return;
+    }
+
+    if (!view->details->filter_active && is_whitespace (text)) {
+        return;
+    }
+
+    new_text = g_strconcat (view->details->filter_text != NULL ? view->details->filter_text : "",
+                            text, NULL);
+    nemo_view_set_filter_text (view, new_text);
+    g_free (new_text);
+}
+
+static gboolean
+filter_key_widget_focus_change_cb (GtkWidget     *widget,
+                                   GdkEventFocus *event,
+                                   NemoView      *view)
+{
+    NemoFilterBar *bar = get_filter_bar (view);
+
+    if (bar != NULL) {
+        nemo_filter_bar_set_im_focus (bar, event->in);
+    }
+
+    return FALSE;
+}
+
+static void
+filter_key_widget_realize_cb (GtkWidget *widget,
+                              NemoView  *view)
+{
+    NemoFilterBar *bar = get_filter_bar (view);
+
+    if (bar != NULL) {
+        nemo_filter_bar_set_client_widget (bar, widget);
+    }
+}
+
+static void
+filter_key_widget_unrealize_cb (GtkWidget *widget,
+                                NemoView  *view)
+{
+    NemoFilterBar *bar = get_filter_bar (view);
+
+    if (bar != NULL) {
+        nemo_filter_bar_set_client_widget (bar, NULL);
+    }
+}
+
+/* While the input method has a preedit in progress it owns the keyboard:
+ * keys like Return and the arrows commit or navigate the candidate list,
+ * and whatever it declines is dropped rather than reaching the view. */
+static gboolean
+filter_key_widget_key_press_cb (GtkWidget   *widget,
+                                GdkEventKey *event,
+                                NemoView    *view)
+{
+    NemoFilterBar *bar = get_filter_bar (view);
+
+    if (bar == NULL || !filter_allowed (view) || !nemo_filter_bar_has_preedit (bar)) {
+        return FALSE;
+    }
+
+    nemo_filter_bar_filter_key_event (bar, event);
+    return TRUE;
+}
+
+static gboolean
+filter_key_widget_key_release_cb (GtkWidget   *widget,
+                                  GdkEventKey *event,
+                                  NemoView    *view)
+{
+    NemoFilterBar *bar = get_filter_bar (view);
+
+    return bar != NULL && filter_allowed (view) && nemo_filter_bar_filter_key_event (bar, event);
+}
+
+/* Ties the filter bar's input method to @widget's realization and keyboard
+ * focus, and passes it @widget's key releases. While a preedit is in
+ * progress it also takes key presses ahead of the view, so call this before
+ * connecting the view's own key-press handler. Other key presses reach the
+ * input method through nemo_view_activate_filter(). */
+void
+nemo_view_set_filter_key_widget (NemoView  *view,
+                                 GtkWidget *widget)
+{
+    g_return_if_fail (NEMO_IS_VIEW (view));
+    g_return_if_fail (GTK_IS_WIDGET (widget));
+
+    g_set_weak_pointer (&view->details->filter_key_widget, widget);
+
+    g_signal_connect_object (widget, "realize",
+                             G_CALLBACK (filter_key_widget_realize_cb), view, 0);
+    g_signal_connect_object (widget, "unrealize",
+                             G_CALLBACK (filter_key_widget_unrealize_cb), view, 0);
+    g_signal_connect_object (widget, "focus-in-event",
+                             G_CALLBACK (filter_key_widget_focus_change_cb), view, 0);
+    g_signal_connect_object (widget, "focus-out-event",
+                             G_CALLBACK (filter_key_widget_focus_change_cb), view, 0);
+    g_signal_connect_object (widget, "key-press-event",
+                             G_CALLBACK (filter_key_widget_key_press_cb), view, 0);
+    g_signal_connect_object (widget, "key-release-event",
+                             G_CALLBACK (filter_key_widget_key_release_cb), view, 0);
+}
+
+/**
+ * nemo_view_set_filter_bar:
+ * @view: a #NemoView
+ * @filter_bar: the bar that shows the filter text and owns the input
+ *   method context, or %NULL to detach
+ */
+void
+nemo_view_set_filter_bar (NemoView      *view,
+                          NemoFilterBar *filter_bar)
+{
+    NemoFilterBar *old_bar;
+    GtkWidget *key_widget;
+
+    g_return_if_fail (NEMO_IS_VIEW (view));
+    g_return_if_fail (filter_bar == NULL || NEMO_IS_FILTER_BAR (filter_bar));
+
+    old_bar = get_filter_bar (view);
+    key_widget = view->details->filter_key_widget;
+
+    /* Detach before touching the input method, so anything it commits while
+     * letting go doesn't land in this view's filter. */
+    if (old_bar != NULL) {
+        g_signal_handlers_disconnect_by_func (old_bar, filter_bar_commit_cb, view);
+        nemo_filter_bar_reset_im (old_bar);
+        nemo_filter_bar_set_im_focus (old_bar, FALSE);
+        nemo_filter_bar_set_client_widget (old_bar, NULL);
+    }
+
+    g_set_weak_pointer (&view->details->filter_bar, GTK_WIDGET (filter_bar));
+
+    if (filter_bar != NULL) {
+        if (key_widget != NULL) {
+            if (gtk_widget_get_realized (key_widget)) {
+                nemo_filter_bar_set_client_widget (filter_bar, key_widget);
+            }
+
+            nemo_filter_bar_set_im_focus (filter_bar, gtk_widget_has_focus (key_widget));
+        }
+
+        g_signal_connect_object (filter_bar, "commit",
+                                 G_CALLBACK (filter_bar_commit_cb), view, 0);
+    }
+}
+
+/**
+ * nemo_view_get_filter_has_preedit:
+ * @view: a #NemoView
+ *
+ * Returns: %TRUE if the filter's input method is composing text from keys
+ *   typed into the focused view, and needs them ahead of any accelerators
+ */
+gboolean
+nemo_view_get_filter_has_preedit (NemoView *view)
+{
+    NemoFilterBar *bar;
+
+    g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
+
+    bar = get_filter_bar (view);
+
+    return bar != NULL &&
+           view->details->filter_key_widget != NULL &&
+           gtk_widget_has_focus (view->details->filter_key_widget) &&
+           filter_allowed (view) &&
+           nemo_filter_bar_has_preedit (bar);
+}
+
 gboolean
 nemo_view_activate_filter (NemoView *view, GdkEventKey *event)
 {
-    guint32 unicode_ch;
+    NemoFilterBar *bar;
+    gboolean modified;
 
     g_return_val_if_fail (NEMO_IS_VIEW (view), FALSE);
 
@@ -11067,12 +11283,28 @@ nemo_view_activate_filter (NemoView *view, GdkEventKey *event)
         return FALSE;
     }
 
-    if ((event->state & (GDK_CONTROL_MASK | GDK_MOD1_MASK)) != 0) {
+    if (!filter_allowed (view)) {
         return FALSE;
     }
 
-    if (view->details->model != NULL &&
-        NEMO_IS_SEARCH_DIRECTORY (view->details->model)) {
+    bar = get_filter_bar (view);
+    modified = (event->state & (GDK_CONTROL_MASK | GDK_MOD1_MASK)) != 0;
+
+    /* Space only continues a filter, so leave it to the view otherwise. */
+    if (event->keyval == GDK_KEY_space && !modified &&
+        !view->details->filter_active &&
+        (bar == NULL || !nemo_filter_bar_has_preedit (bar))) {
+        return FALSE;
+    }
+
+    /* Offered to the input method before the modifier check so IM hotkeys
+     * like Ctrl+Space work. Its text arrives through filter_bar_commit_cb,
+     * possibly later if it's asynchronous. */
+    if (bar != NULL && nemo_filter_bar_filter_key_event (bar, event)) {
+        return TRUE;
+    }
+
+    if (modified) {
         return FALSE;
     }
 
@@ -11101,30 +11333,6 @@ nemo_view_activate_filter (NemoView *view, GdkEventKey *event)
             g_free (new_text);
         }
 
-        return TRUE;
-    }
-
-    /* Printable characters append to the filter.
-     * Space only appends if filter is already active. */
-    unicode_ch = gdk_keyval_to_unicode (event->keyval);
-
-    if (unicode_ch != 0 && g_unichar_isprint (unicode_ch) &&
-        (unicode_ch != ' ' || view->details->filter_active)) {
-        gchar buf[6];
-        gint char_len;
-        gchar *new_text;
-
-        char_len = g_unichar_to_utf8 (unicode_ch, buf);
-        buf[char_len] = '\0';
-
-        if (view->details->filter_text != NULL) {
-            new_text = g_strconcat (view->details->filter_text, buf, NULL);
-        } else {
-            new_text = g_strdup (buf);
-        }
-
-        nemo_view_set_filter_text (view, new_text);
-        g_free (new_text);
         return TRUE;
     }
 

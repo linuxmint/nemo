@@ -316,6 +316,8 @@ static void
 view_begin_loading_cb (NemoView       *view,
                        NemoWindowSlot *slot)
 {
+    nemo_filter_bar_reset_im (NEMO_FILTER_BAR (slot->filter_bar));
+
     if (gtk_revealer_get_reveal_child (GTK_REVEALER (slot->filter_bar_revealer))) {
         gtk_revealer_set_reveal_child (GTK_REVEALER (slot->filter_bar_revealer), FALSE);
         nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), "");
@@ -328,9 +330,31 @@ static void
 filter_bar_cancel_cb (NemoFilterBar *bar,
                       NemoWindowSlot *slot)
 {
+    nemo_filter_bar_reset_im (bar);
+
     if (slot->content_view != NULL) {
         nemo_view_clear_filter (slot->content_view);
     }
+}
+
+/* The bar stays up while the input method still has a preedit to show,
+ * even before anything has been committed to the filter. */
+static void
+update_filter_bar_visibility (NemoWindowSlot *slot)
+{
+    gboolean visible;
+
+    visible = nemo_filter_bar_has_preedit (NEMO_FILTER_BAR (slot->filter_bar)) ||
+              (slot->content_view != NULL && nemo_view_get_filter_active (slot->content_view));
+
+    gtk_revealer_set_reveal_child (GTK_REVEALER (slot->filter_bar_revealer), visible);
+}
+
+static void
+filter_bar_preedit_changed_cb (NemoFilterBar  *bar,
+                               NemoWindowSlot *slot)
+{
+    update_filter_bar_visibility (slot);
 }
 
 static void
@@ -338,26 +362,25 @@ view_activate_filter_cb (NemoView   *view,
                          const char *filter_text,
                          NemoWindowSlot *slot)
 {
-    if (filter_text != NULL && filter_text[0] != '\0') {
-        gtk_revealer_set_reveal_child (GTK_REVEALER (slot->filter_bar_revealer), TRUE);
-        nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), filter_text);
+    nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), filter_text);
 
-        if (NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->is_empty (view)) {
-            gtk_label_set_text (GTK_LABEL (slot->no_results_label), _("No matching files"));
-            gtk_widget_show (slot->no_search_results_box);
-        } else {
-            gtk_widget_hide (slot->no_search_results_box);
-        }
+    if (filter_text != NULL && filter_text[0] != '\0' &&
+        NEMO_VIEW_CLASS (G_OBJECT_GET_CLASS (view))->is_empty (view)) {
+        gtk_label_set_text (GTK_LABEL (slot->no_results_label), _("No matching files"));
+        gtk_widget_show (slot->no_search_results_box);
     } else {
         gtk_widget_hide (slot->no_search_results_box);
-        nemo_window_slot_hide_filter_bar (slot);
     }
+
+    update_filter_bar_visibility (slot);
 }
 
 void
 nemo_window_slot_hide_filter_bar (NemoWindowSlot *slot)
 {
     g_return_if_fail (NEMO_IS_WINDOW_SLOT (slot));
+
+    nemo_filter_bar_reset_im (NEMO_FILTER_BAR (slot->filter_bar));
 
     if (!gtk_revealer_get_reveal_child (GTK_REVEALER (slot->filter_bar_revealer))) {
         return;
@@ -401,6 +424,12 @@ nemo_window_slot_init (NemoWindowSlot *slot)
 
     g_signal_connect (slot->filter_bar, "cancel",
                       G_CALLBACK (filter_bar_cancel_cb), slot);
+    g_signal_connect (slot->filter_bar, "preedit-changed",
+                      G_CALLBACK (filter_bar_preedit_changed_cb), slot);
+    /* The bar moves within the toplevel as the revealer animates, and the
+     * input method needs its candidate popup to follow. */
+    g_signal_connect_swapped (slot->filter_bar_revealer, "size-allocate",
+                              G_CALLBACK (nemo_filter_bar_update_cursor_location), slot->filter_bar);
 
 	slot->view_overlay = gtk_overlay_new ();
 	gtk_widget_add_events (slot->view_overlay,
@@ -718,6 +747,8 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
             slot->filter_activate_handler_id = 0;
         }
 
+        nemo_view_set_filter_bar (slot->content_view, NULL);
+
 		nemo_window_disconnect_content_view (window, slot->content_view);
 
 		widget = GTK_WIDGET (slot->content_view);
@@ -743,6 +774,7 @@ nemo_window_slot_set_content_view_widget (NemoWindowSlot *slot,
         slot->filter_activate_handler_id =
             g_signal_connect (new_view, "activate-filter",
                               G_CALLBACK (view_activate_filter_cb), slot);
+        nemo_view_set_filter_bar (new_view, NEMO_FILTER_BAR (slot->filter_bar));
 
 		/* connect new view */
 		nemo_window_connect_content_view (window, new_view);

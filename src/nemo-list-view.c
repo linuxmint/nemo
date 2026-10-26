@@ -2636,6 +2636,9 @@ create_and_set_up_tree_view (NemoListView *view)
 				 G_CALLBACK (button_press_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "button_release_event",
 				 G_CALLBACK (button_release_callback), view, 0);
+    /* Connected before key_press_callback so an input method preedit gets
+     * Return and the arrow keys first. */
+    nemo_view_set_filter_key_widget (NEMO_VIEW (view), GTK_WIDGET (view->details->tree_view));
 	g_signal_connect_object (view->details->tree_view, "key_press_event",
 				 G_CALLBACK (key_press_callback), view, 0);
 	g_signal_connect_object (view->details->tree_view, "popup_menu",

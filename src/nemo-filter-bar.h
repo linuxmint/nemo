@@ -25,9 +25,18 @@
 
 G_DECLARE_FINAL_TYPE (NemoFilterBar, nemo_filter_bar, NEMO, FILTER_BAR, GtkBox)
 
-GtkWidget  *nemo_filter_bar_new             (void);
-const char *nemo_filter_bar_get_text        (NemoFilterBar *bar);
-void        nemo_filter_bar_set_text        (NemoFilterBar *bar,
-                                             const char    *text);
+GtkWidget  *nemo_filter_bar_new                    (void);
+const char *nemo_filter_bar_get_text               (NemoFilterBar *bar);
+void        nemo_filter_bar_set_text               (NemoFilterBar *bar,
+                                                    const char    *text);
+gboolean    nemo_filter_bar_has_preedit            (NemoFilterBar *bar);
+gboolean    nemo_filter_bar_filter_key_event       (NemoFilterBar *bar,
+                                                    GdkEventKey   *event);
+void        nemo_filter_bar_set_client_widget      (NemoFilterBar *bar,
+                                                    GtkWidget     *widget);
+void        nemo_filter_bar_reset_im               (NemoFilterBar *bar);
+void        nemo_filter_bar_set_im_focus           (NemoFilterBar *bar,
+                                                    gboolean       focused);
+void        nemo_filter_bar_update_cursor_location (NemoFilterBar *bar);
 
 #endif /* NEMO_FILTER_BAR_H */

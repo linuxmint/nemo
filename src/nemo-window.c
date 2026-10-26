@@ -1222,15 +1222,16 @@ nemo_window_key_press_event (GtkWidget *widget,
 	}
 
 	focus_widget = gtk_window_get_focus (GTK_WINDOW (window));
-	if (view != NULL && focus_widget != NULL &&
-	    GTK_IS_EDITABLE (focus_widget)) {
-		/* if we have input focus on a GtkEditable (e.g. a GtkEntry), forward
-		 * the event to it before activating accelerator bindings too.
-		 */
-		if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
-			return TRUE;
-		}
-	}
+    if (view != NULL && focus_widget != NULL &&
+        (GTK_IS_EDITABLE (focus_widget) || nemo_view_get_filter_has_preedit (view))) {
+        /* if we have input focus on a GtkEditable (e.g. a GtkEntry), or the
+         * type-to-filter input method is composing, forward the event to it
+         * before activating accelerator bindings too.
+         */
+        if (gtk_window_propagate_key_event (GTK_WINDOW (window), event)) {
+            return TRUE;
+        }
+    }
 
 	for (i = 0; i < G_N_ELEMENTS (extra_window_keybindings); i++) {
 		if (extra_window_keybindings[i].keyval == event->keyval) {
