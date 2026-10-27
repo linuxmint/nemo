@@ -30,6 +30,7 @@
 
 #include <libnemo-private/nemo-bookmark.h>
 #include <gio/gio.h>
+#include <gio/gunixmounts.h>
 
 typedef struct NemoBookmarkList NemoBookmarkList;
 typedef struct NemoBookmarkListClass NemoBookmarkListClass;
@@ -53,6 +54,7 @@ struct NemoBookmarkList {
 	GFileMonitor *monitor;
 	GQueue *pending_ops;
     GVolumeMonitor *volume_monitor;
+    GUnixMountMonitor *unix_mount_monitor;
 
     guint idle_notify_id;
 };

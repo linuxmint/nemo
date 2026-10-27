@@ -43,7 +43,6 @@
 
 enum {
 	CONTENTS_CHANGED,
-    LOCATION_MOUNTED,
     LOOKUP_METADATA,
 	LAST_SIGNAL
 };
@@ -62,6 +61,18 @@ enum {
 static GParamSpec* properties[NUM_PROPERTIES] = { NULL };
 static guint signals[LAST_SIGNAL] = { 0 };
 
+typedef enum {
+    EXISTS_UNKNOWN,
+    EXISTS_YES,
+    EXISTS_NO
+} ExistsState;
+
+/* An existence query in flight, with the bookmarks waiting on its answer
+ * (unowned, they remove themselves at finalize). */
+typedef struct {
+    GList *bookmarks;
+} ExistsQuery;
+
 struct NemoBookmarkDetails
 {
 	char *name;
@@ -73,9 +84,19 @@ struct NemoBookmarkDetails
 	char *scroll_file;
 
     NemoBookmarkMetadata *metadata;
+
+    ExistsState exists;
+    ExistsQuery *exists_query;
 };
 
+/* Location -> ExistsQuery */
+static GHashTable *exists_queries = NULL;
+
 static void	  nemo_bookmark_disconnect_file	  (NemoBookmark	 *file);
+static void   nemo_bookmark_connect_file      (NemoBookmark  *bookmark);
+static void   nemo_bookmark_set_exists        (NemoBookmark  *bookmark,
+                                               ExistsState    state);
+static void   query_exists                    (NemoBookmark  *bookmark);
 
 G_DEFINE_TYPE (NemoBookmark, nemo_bookmark, G_TYPE_OBJECT);
 
@@ -195,8 +216,8 @@ nemo_bookmark_set_icon_to_default (NemoBookmark *bookmark)
 
     icon_name = construct_default_icon_from_metadata (bookmark);
 
-    if (!nemo_bookmark_uri_get_exists (bookmark)) {
-        DEBUG ("%s: file does not exist, use special icon", nemo_bookmark_get_name (bookmark));
+    if (bookmark->details->exists != EXISTS_YES) {
+        DEBUG ("%s: file not known to exist, use special icon", nemo_bookmark_get_name (bookmark));
 
         g_clear_pointer (&icon_name, g_free);
 
@@ -262,22 +283,10 @@ bookmark_file_changed_callback (NemoFile *file,
 
 	if (nemo_file_is_gone (file) ||
 	    nemo_file_is_in_trash (file)) {
-		/* The file we were monitoring has been trashed, deleted,
-		 * or moved in a way that we didn't notice. We should make
-		 * a spanking new NemoFile object for this
-		 * location so if a new file appears in this place
-		 * we will notice. However, we can't immediately do so
-		 * because creating a new NemoFile directly as a result
-		 * of noticing a file goes away may trigger i/o on that file
-		 * again, noticeing it is gone, leading to a loop.
-		 * So, the new NemoFile is created when the bookmark
-		 * is used again. However, this is not really a problem, as
-		 * we don't want to change the icon or anything about the
-		 * bookmark just because its not there anymore.
-		 */
+        /* Trashed, deleted, or moved without us noticing. connect_file
+         * re-checks the location the next time the bookmark is used. */
 		DEBUG ("%s: trashed", nemo_bookmark_get_name (bookmark));
-		nemo_bookmark_disconnect_file (bookmark);
-        nemo_bookmark_set_icon_to_default (bookmark);
+        nemo_bookmark_set_exists (bookmark, EXISTS_NO);
 	} else {
 		nemo_bookmark_update_icon (bookmark);
 		bookmark_set_name_from_ready_file (bookmark, file);
@@ -312,7 +321,7 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 		return;
 	}
 
-	if (nemo_bookmark_uri_get_exists (bookmark)) {
+    if (bookmark->details->exists == EXISTS_YES) {
         DEBUG ("%s: creating file", nemo_bookmark_get_name (bookmark));
 
 		bookmark->details->file = nemo_file_get (bookmark->details->location);
@@ -322,6 +331,8 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
         g_signal_connect_object (bookmark->details->file, "changed",
                                  G_CALLBACK (bookmark_file_changed_callback),
                                  bookmark, 0);
+    } else {
+        query_exists (bookmark);
 	}
 
 	/* Set icon based on available information. */
@@ -339,6 +350,144 @@ nemo_bookmark_connect_file (NemoBookmark *bookmark)
 	if (bookmark->details->name == NULL) {
 		bookmark->details->name = nemo_compute_title_for_location (bookmark->details->location);
 	}
+}
+
+static void
+nemo_bookmark_set_exists (NemoBookmark *bookmark,
+                          ExistsState   state)
+{
+    if (bookmark->details->exists == state) {
+        return;
+    }
+
+    DEBUG ("%s: exists state %d -> %d", nemo_bookmark_get_name (bookmark),
+           bookmark->details->exists, state);
+
+    bookmark->details->exists = state;
+
+    if (state == EXISTS_YES) {
+        nemo_bookmark_set_icon_to_default (bookmark);
+        nemo_bookmark_connect_file (bookmark);
+    } else {
+        nemo_bookmark_disconnect_file (bookmark);
+        nemo_bookmark_set_icon_to_default (bookmark);
+    }
+}
+
+static void
+exists_query_cb (GObject      *source,
+                 GAsyncResult *res,
+                 gpointer      user_data)
+{
+    GFile *location = G_FILE (source);
+    g_autoptr(GError) error = NULL;
+    ExistsState state = EXISTS_NO;
+    ExistsQuery *query;
+    GFileInfo *info;
+    GList *l;
+
+    info = g_file_query_info_finish (location, res, &error);
+
+    /* A broken symlink, or a stat refused with EACCES, still returns an info
+     * but not a location that can be opened. */
+    if (info != NULL &&
+        g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_STANDARD_TYPE) &&
+        g_file_info_get_file_type (info) != G_FILE_TYPE_SYMBOLIC_LINK) {
+        state = EXISTS_YES;
+    } else {
+        g_autofree gchar *uri = g_file_get_uri (location);
+
+        DEBUG ("%s: not usable: %s", uri, error != NULL ? error->message : "no file type");
+    }
+
+    g_clear_object (&info);
+
+    query = g_hash_table_lookup (exists_queries, location);
+    g_hash_table_remove (exists_queries, location);
+
+    g_list_foreach (query->bookmarks, (GFunc) g_object_ref, NULL);
+
+    for (l = query->bookmarks; l != NULL; l = l->next) {
+        NemoBookmark *bookmark = NEMO_BOOKMARK (l->data);
+
+        bookmark->details->exists_query = NULL;
+
+        /* The bookmark followed its folder to a new location meanwhile. */
+        if (!g_file_equal (bookmark->details->location, location)) {
+            query_exists (bookmark);
+            continue;
+        }
+
+        nemo_bookmark_set_exists (bookmark, state);
+    }
+
+    g_list_free_full (query->bookmarks, g_object_unref);
+    g_free (query);
+}
+
+/* Only one query per location is in flight: a stat stuck on a dead mount
+ * can't be cancelled, so later checks join it rather than parking another
+ * worker thread. Paths under an untriggered automount are answered from the
+ * mount table so the query never mounts them. */
+static void
+query_exists (NemoBookmark *bookmark)
+{
+    g_autofree gchar *path = NULL;
+    ExistsQuery *query;
+
+    if (bookmark->details->exists_query != NULL) {
+        return;
+    }
+
+    path = g_file_get_path (bookmark->details->location);
+
+    if (path != NULL && nemo_path_is_under_untriggered_automount (path)) {
+        nemo_bookmark_set_exists (bookmark, EXISTS_NO);
+        return;
+    }
+
+    if (exists_queries == NULL) {
+        exists_queries = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal,
+                                                g_object_unref, NULL);
+    }
+
+    query = g_hash_table_lookup (exists_queries, bookmark->details->location);
+
+    if (query == NULL) {
+        query = g_new0 (ExistsQuery, 1);
+        g_hash_table_insert (exists_queries, g_object_ref (bookmark->details->location), query);
+
+        g_file_query_info_async (bookmark->details->location,
+                                 G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 G_PRIORITY_DEFAULT,
+                                 NULL,
+                                 exists_query_cb,
+                                 NULL);
+    }
+
+    query->bookmarks = g_list_prepend (query->bookmarks, bookmark);
+    bookmark->details->exists_query = query;
+}
+
+void
+nemo_bookmark_update_exists (NemoBookmark *bookmark)
+{
+    query_exists (bookmark);
+}
+
+/* Lets a bookmark replacing @previous (same location, from a reloaded list)
+ * start out with its known state, and join any query @previous is waiting on.
+ * connect_file won't start one for a bookmark already known to exist. */
+void
+nemo_bookmark_inherit_exists (NemoBookmark *bookmark,
+                              NemoBookmark *previous)
+{
+    bookmark->details->exists = previous->details->exists;
+
+    if (previous->details->exists_query != NULL) {
+        query_exists (bookmark);
+    }
 }
 
 /* GObject methods */
@@ -359,6 +508,7 @@ nemo_bookmark_set_property (GObject *object,
         if (new_icon_name != NULL && g_strcmp0 (self->details->icon_name, new_icon_name) != 0) {
             g_clear_pointer (&self->details->icon_name, g_free);
             self->details->icon_name = g_strdup (new_icon_name);
+            g_object_notify_by_pspec (object, pspec);
         }
 		break;
 	case PROP_LOCATION:
@@ -416,12 +566,19 @@ static void
 nemo_bookmark_finalize (GObject *object)
 {
 	NemoBookmark *bookmark;
+    ExistsQuery *query;
 
 	g_assert (NEMO_IS_BOOKMARK (object));
 
 	bookmark = NEMO_BOOKMARK (object);
 
 	nemo_bookmark_disconnect_file (bookmark);
+
+    query = bookmark->details->exists_query;
+
+    if (query != NULL) {
+        query->bookmarks = g_list_remove (query->bookmarks, bookmark);
+    }
 
 	g_object_unref (bookmark->details->location);
 	g_clear_pointer (&bookmark->details->icon_name, g_free);
@@ -452,16 +609,6 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 		              g_cclosure_marshal_VOID__VOID,
 		              G_TYPE_NONE, 0);
 
-    signals[LOCATION_MOUNTED] =
-        g_signal_new ("location-mounted",
-                      G_TYPE_FROM_CLASS (class),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (NemoBookmarkClass, location_mounted),
-                      NULL, NULL,
-                      g_cclosure_marshal_generic,
-                      G_TYPE_BOOLEAN, 1,
-                      G_TYPE_FILE);
-
 	properties[PROP_NAME] =
 		g_param_spec_string ("name",
 				     "Bookmark's name",
@@ -488,7 +635,7 @@ nemo_bookmark_class_init (NemoBookmarkClass *class)
 				     "Bookmark's icon name",
 				     "The icon name for this bookmark",
 				     NULL,
-				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+				     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
 
     properties[PROP_METADATA] =
         g_param_spec_pointer ("metadata",
@@ -653,13 +800,8 @@ nemo_bookmark_get_location (NemoBookmark *bookmark)
 char *
 nemo_bookmark_get_uri (NemoBookmark *bookmark)
 {
-	GFile *file;
-	char *uri;
-
-	file = nemo_bookmark_get_location (bookmark);
-	uri = g_file_get_uri (file);
-	g_object_unref (file);
-	return uri;
+    /* Called from the bookmark list's save thread, so no connect_file here. */
+    return g_file_get_uri (bookmark->details->location);
 }
 
 NemoBookmark *
@@ -735,24 +877,11 @@ nemo_bookmark_menu_item_new (NemoBookmark *bookmark)
 	return menu_item;
 }
 
+/* FALSE until a query has confirmed the location exists. */
 gboolean
 nemo_bookmark_uri_get_exists (NemoBookmark *bookmark)
 {
-	char *path_name;
-	gboolean exists = FALSE;
-
-    path_name = g_file_get_path (bookmark->details->location);
-
-    if (g_file_is_native (bookmark->details->location) && 
-        (!nemo_location_is_network_safe (bookmark->details->location)) && g_file_test (path_name, G_FILE_TEST_EXISTS)) {
-		exists = TRUE;
-	} else {
-        g_signal_emit_by_name (bookmark, "location-mounted", bookmark->details->location, &exists);
-    }
-
-	g_free (path_name);
-
-	return exists;
+    return bookmark->details->exists == EXISTS_YES;
 }
 
 void

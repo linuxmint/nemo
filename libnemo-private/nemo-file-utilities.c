@@ -40,8 +40,10 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <gio/gio.h>
+#include <gio/gunixmounts.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define NEMO_USER_DIRECTORY_NAME "nemo"
 
@@ -1795,6 +1797,75 @@ nemo_get_mount_for_location_safe (GFile *location)
     g_object_unref (monitor);
 
     return ret;
+}
+
+static gboolean
+mount_path_contains (const gchar *mount_path,
+                     const gchar *path)
+{
+    gsize len;
+
+    if (g_strcmp0 (mount_path, "/") == 0) {
+        return TRUE;
+    }
+
+    len = strlen (mount_path);
+
+    return g_str_has_prefix (path, mount_path) &&
+           (path[len] == '\0' || path[len] == '/');
+}
+
+/* The mount table, re-read only after GLib's mount monitor (kept running
+ * here) reports a change. Parsing it isn't free, and every bookmark asks
+ * on each mount change. Main thread only. */
+static GList *
+get_cached_mounts (void)
+{
+    static GUnixMountMonitor *monitor = NULL;
+    static GList *mounts = NULL;
+    static guint64 time_read = 0;
+
+    if (monitor == NULL) {
+        monitor = g_unix_mount_monitor_get ();
+    }
+
+    if (mounts == NULL || g_unix_mounts_changed_since (time_read)) {
+        g_list_free_full (mounts, (GDestroyNotify) g_unix_mount_free);
+        mounts = g_unix_mounts_get (&time_read);
+    }
+
+    return mounts;
+}
+
+/**
+ * nemo_path_is_under_untriggered_automount:
+ * @path: a native path
+ *
+ * Reports whether @path is at or below an autofs mount point that has nothing
+ * mounted on it yet. Any lookup that walks through such a point mounts it, so
+ * this answers from the mount table alone and never touches @path.
+ */
+gboolean
+nemo_path_is_under_untriggered_automount (const gchar *path)
+{
+    const gchar *fs_type = NULL;
+    gsize mounted_len = 0;
+
+    g_return_val_if_fail (path != NULL, FALSE);
+
+    /* A triggered automount lists the real filesystem after its autofs entry,
+     * at the same path, so the last longest match wins. */
+    for (GList *l = get_cached_mounts (); l != NULL; l = l->next) {
+        const gchar *mount_path = g_unix_mount_get_mount_path (l->data);
+        gsize len = strlen (mount_path);
+
+        if (mount_path_contains (mount_path, path) && len >= mounted_len) {
+            mounted_len = len;
+            fs_type = g_unix_mount_get_fs_type (l->data);
+        }
+    }
+
+    return g_strcmp0 (fs_type, "autofs") == 0;
 }
 
 gboolean

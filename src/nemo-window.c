@@ -1475,7 +1475,7 @@ nemo_window_sync_bookmark_action (NemoWindow *window)
     action = gtk_action_group_get_action (nemo_window_get_main_action_group (window),
                                           NEMO_ACTION_ADD_BOOKMARK);
 
-    gtk_action_set_sensitive (action, !eel_uri_is_search (uri));
+    gtk_action_set_sensitive (action, !eel_uri_is_search (uri) && !eel_uri_is_trash (uri));
 
     g_free (uri);
     g_object_unref (location);

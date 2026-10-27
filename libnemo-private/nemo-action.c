@@ -1746,9 +1746,21 @@ check_exec_condition (NemoAction  *action,
 }
 
 static gboolean
-get_is_dir (NemoFile *file)
+get_is_dir (NemoFile *file,
+            gboolean  for_places)
 {
     gboolean ret = FALSE;
+    GFileType type = nemo_file_get_file_type (file);
+
+    if (type != G_FILE_TYPE_UNKNOWN) {
+        return type == G_FILE_TYPE_DIRECTORY;
+    }
+
+    /* Every sidebar place is a folder, and its info is usually not loaded.
+     * Don't stat it, it may be on a dead mount. */
+    if (for_places) {
+        return TRUE;
+    }
 
     GFile *f = nemo_file_get_location (file);
 
@@ -1968,18 +1980,15 @@ get_visibility (NemoAction *action,
       GList *iter;
       for (iter = selection; iter != NULL && found_match; iter = iter->next) {
           found_match = FALSE;
-          gboolean is_dir;
           gchar *raw_fn = nemo_file_get_name (NEMO_FILE (iter->data));
           gchar *filename = g_ascii_strdown (raw_fn, -1);
           g_free (raw_fn);
           guint i;
 
-          is_dir = get_is_dir (iter->data);
-
           if (ext_count > 0) {
               for (i = 0; i < ext_count; i++) {
                   if (g_strcmp0 (extensions[i], "dir") == 0) {
-                      if (is_dir) {
+                      if (get_is_dir (iter->data, for_places)) {
                           found_match = TRUE;
                           break;
                       }
@@ -1989,7 +1998,7 @@ get_visibility (NemoAction *action,
                           break;
                       }
                   } else if (g_strcmp0 (extensions[i], "nodirs") == 0) {
-                      if (!is_dir) {
+                      if (!get_is_dir (iter->data, for_places)) {
                           found_match = TRUE;
                           break;
                       }

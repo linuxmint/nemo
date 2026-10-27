@@ -32,9 +32,14 @@
 #include <libnemo-private/nemo-file.h>
 #include <libnemo-private/nemo-icon-names.h>
 #define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <eel/eel-debug.h>
 #include <libcinnamon-desktop/gnome-desktop-utils.h>
 
+#define DEBUG_FLAG NEMO_DEBUG_BOOKMARKS
+#include <libnemo-private/nemo-debug.h>
+
 #include <gio/gio.h>
+#include <gio/gunixmounts.h>
 #include <string.h>
 
 #define MAX_BOOKMARK_LENGTH 80
@@ -170,41 +175,6 @@ bookmark_in_list_notify (GObject *object,
     bookmarks->idle_notify_id = g_idle_add ((GSourceFunc) idle_notify, bookmarks);
 }
 
-static gboolean
-bookmark_location_mounted_callback (NemoBookmark *bookmark,
-                                    GFile *location,
-                                    NemoBookmarkList *bookmarks)
-{
-    gboolean ret = FALSE;
-
-    GList *volumes = g_volume_monitor_get_mounts (bookmarks->volume_monitor);
-    GList *iter = volumes;
-
-    while (iter != NULL) {
-        GMount *mount = G_MOUNT (iter->data);
-        GFile *mount_location = g_mount_get_root (mount);
-
-        gchar *mount_root_uri = g_file_get_uri (mount_location);
-        gchar *location_uri = g_file_get_uri (location);
-
-        ret = g_str_has_prefix (location_uri, mount_root_uri);
-
-        g_free (mount_root_uri);
-        g_free (location_uri);
-
-        g_object_unref (mount_location);
-
-        if (ret == TRUE)
-            break;
-
-        iter = iter->next;
-    }
-
-    g_list_free_full (volumes, (GDestroyNotify) g_object_unref);
-
-    return ret;
-}
-
 static void
 stop_monitoring_bookmark (NemoBookmarkList *bookmarks,
 			  NemoBookmark     *bookmark)
@@ -213,7 +183,7 @@ stop_monitoring_bookmark (NemoBookmarkList *bookmarks,
 					      bookmark_in_list_changed_callback,
 					      bookmarks);
     g_signal_handlers_disconnect_by_func (bookmark,
-                          bookmark_location_mounted_callback,
+                          bookmark_in_list_notify,
                           bookmarks);
 }
 
@@ -246,11 +216,15 @@ do_finalize (GObject *object)
 		g_clear_object (&self->monitor);
 	}
 
+    g_clear_handle_id (&self->idle_notify_id, g_source_remove);
 	g_queue_free (self->pending_ops);
 
 	clear_bookmarks (self, self->list);
 
-        g_object_unref (self->volume_monitor);
+    g_signal_handlers_disconnect_by_data (self->volume_monitor, self);
+    g_object_unref (self->volume_monitor);
+    g_signal_handlers_disconnect_by_data (self->unix_mount_monitor, self);
+    g_object_unref (self->unix_mount_monitor);
 
 	G_OBJECT_CLASS (nemo_bookmark_list_parent_class)->finalize (object);
 }
@@ -320,11 +294,22 @@ bookmark_monitor_changed_cb (GFileMonitor      *monitor,
 }
 
 static void
+update_bookmarks_exist (NemoBookmarkList *bookmarks)
+{
+    DEBUG ("Mounts changed, re-checking %u bookmarks", g_list_length (bookmarks->list));
+    g_list_foreach (bookmarks->list, (GFunc) nemo_bookmark_update_exists, NULL);
+}
+
+static void
 volume_monitor_activity_cb (GVolumeMonitor *monitor, GMount *mount, gpointer user_data)
 {
-    NemoBookmarkList *bookmarks = NEMO_BOOKMARK_LIST (user_data);
+    update_bookmarks_exist (NEMO_BOOKMARK_LIST (user_data));
+}
 
-    nemo_bookmark_list_load_file (bookmarks);
+static void
+unix_mounts_changed_cb (GUnixMountMonitor *monitor, gpointer user_data)
+{
+    update_bookmarks_exist (NEMO_BOOKMARK_LIST (user_data));
 }
 
 static void
@@ -355,17 +340,22 @@ nemo_bookmark_list_init (NemoBookmarkList *bookmarks)
                       G_CALLBACK (volume_monitor_activity_cb), bookmarks);
     g_signal_connect (bookmarks->volume_monitor, "mount-changed",
                       G_CALLBACK (volume_monitor_activity_cb), bookmarks);
+
+    bookmarks->unix_mount_monitor = g_unix_mount_monitor_get ();
+
+    g_signal_connect (bookmarks->unix_mount_monitor, "mounts-changed",
+                      G_CALLBACK (unix_mounts_changed_cb), bookmarks);
 }
 
 static void
 connect_bookmark_signals (NemoBookmark     *bookmark,
                           NemoBookmarkList *bookmarks)
 {
-    g_signal_connect_object (bookmark, "location-mounted",
-                 G_CALLBACK (bookmark_location_mounted_callback), bookmarks, 0);
     g_signal_connect_object (bookmark, "contents-changed",
                  G_CALLBACK (bookmark_in_list_changed_callback), bookmarks, 0);
     g_signal_connect_object (bookmark, "notify::name",
+                 G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
+    g_signal_connect_object (bookmark, "notify::icon-name",
                  G_CALLBACK (bookmark_in_list_notify), bookmarks, 0);
 
     nemo_bookmark_connect (bookmark);
@@ -717,8 +707,18 @@ load_files_finish (NemoBookmarkList *bookmarks,
         return;
     }
 
+    DEBUG ("Bookmark list reloaded: %u bookmarks", g_list_length (new_list));
+
     GList *old_list = bookmarks->list;
     bookmarks->list = new_list;
+
+    for (GList *l = new_list; l != NULL; l = l->next) {
+        GList *old = g_list_find_custom (old_list, l->data, nemo_bookmark_compare_uris);
+
+        if (old != NULL) {
+            nemo_bookmark_inherit_exists (l->data, old->data);
+        }
+    }
 
     clear_bookmarks (bookmarks, old_list);
 
@@ -1069,6 +1069,12 @@ nemo_bookmark_list_save_file (NemoBookmarkList *bookmarks)
 
 static NemoBookmarkList *list = NULL;
 
+static void
+unref_bookmark_list (void)
+{
+    g_clear_object (&list);
+}
+
 /**
  * nemo_bookmark_list_get_default:
  * 
@@ -1081,6 +1087,7 @@ nemo_bookmark_list_get_default (void)
 {
     if (list == NULL) {
         list = NEMO_BOOKMARK_LIST (g_object_new (NEMO_TYPE_BOOKMARK_LIST, NULL));
+        eel_debug_call_at_shutdown (unref_bookmark_list);
     }
 
     return list;

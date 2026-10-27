@@ -1734,6 +1734,7 @@ static gboolean
 can_accept_file_as_bookmark (NemoFile *file)
 {
 	return (nemo_file_is_directory (file) &&
+                !nemo_file_is_in_trash (file) &&
 		!is_built_in_bookmark (file));
 }
 
@@ -2278,7 +2279,9 @@ update_menu_states (NemoPlacesSidebar *sidebar)
 	gboolean show_stop;
 	gboolean show_empty_trash;
 	gboolean show_properties;
+    gboolean show_actions;
 	char *uri = NULL;
+    gint index = -1;
 
 	type = PLACES_BUILT_IN;
 
@@ -2293,10 +2296,23 @@ update_menu_states (NemoPlacesSidebar *sidebar)
 				    PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
  				    PLACES_SIDEBAR_COLUMN_MOUNT, &mount,
 				    PLACES_SIDEBAR_COLUMN_URI, &uri,
+                    PLACES_SIDEBAR_COLUMN_INDEX, &index,
 				    -1);
 	}
 
-    if (uri) {
+    show_actions = uri != NULL;
+
+    /* A bookmark not known to exist may be on a dead mount, where checking
+     * an action's conditions could block. */
+    if (show_actions && type == PLACES_BOOKMARK) {
+        NemoBookmark *bookmark = nemo_bookmark_list_item_at (sidebar->bookmarks, index);
+
+        show_actions = bookmark != NULL && nemo_bookmark_uri_get_exists (bookmark);
+    }
+
+    gtk_action_group_set_visible (sidebar->action_action_group, show_actions);
+
+    if (show_actions) {
         NemoFile *file = nemo_file_get_by_uri (uri);
         NemoFile *parent = nemo_file_get_parent (file);
 
