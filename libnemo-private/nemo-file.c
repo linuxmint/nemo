@@ -200,6 +200,8 @@ nemo_file_init (NemoFile *file)
 	nemo_file_invalidate_extension_info_internal (file);
 
 	file->details->free_space = -1;
+    file->details->fs_size = -1;
+    file->details->fs_used = -1;
 }
 
 static GObject*
@@ -7515,32 +7517,96 @@ nemo_file_is_broken_symbolic_link (NemoFile *file)
 }
 
 static void
-get_fs_free_cb (GObject *source_object,
-		GAsyncResult *res,
-		gpointer user_data)
+get_fs_free_cb (GObject      *source_object,
+                GAsyncResult *res,
+                gpointer      user_data)
 {
-	NemoFile *file;
-	guint64 free_space;
-	GFileInfo *info;
+    NemoFile *file;
+    guint64 free_space, size, used;
+    GFileInfo *info;
+    g_autoptr(GError) error = NULL;
 
-	file = NEMO_FILE (user_data);
+    file = NEMO_FILE (user_data);
+    file->details->fs_query_pending = FALSE;
+    file->details->free_space_read = time (NULL);
 
-	free_space = (guint64)-1;
-	info = g_file_query_filesystem_info_finish (G_FILE (source_object),
-						    res, NULL);
-	if (info) {
-		if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE)) {
-			free_space = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-		}
-		g_object_unref (info);
-	}
+    free_space = size = used = (guint64)-1;
+    info = g_file_query_filesystem_info_finish (G_FILE (source_object),
+                                                res, &error);
+    if (info == NULL) {
+        DEBUG ("Filesystem info query failed: %s", error->message);
 
-	if (file->details->free_space != free_space) {
-		file->details->free_space = free_space;
-		nemo_file_emit_changed (file);
-	}
+        /* These mean the volume is gone, so drop the figures (ESTALE and EIO
+         * arrive as G_IO_ERROR_FAILED); keep them through anything else. */
+        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND) &&
+            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_MOUNTED) &&
+            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_CONNECTED) &&
+            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_HOST_UNREACHABLE) &&
+            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED)) {
+            nemo_file_unref (file);
+            return;
+        }
+    } else {
+        if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE)) {
+            free_space = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+        }
+        if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE)) {
+            size = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+        }
+        if (g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED)) {
+            used = g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+        } else if (size != (guint64)-1 && free_space != (guint64)-1 && size >= free_space) {
+            used = size - free_space;
+        }
+        g_object_unref (info);
+    }
 
-	nemo_file_unref (file);
+    if (file->details->free_space != free_space ||
+        file->details->fs_size != size ||
+        file->details->fs_used != used) {
+        file->details->free_space = free_space;
+        file->details->fs_size = size;
+        file->details->fs_used = used;
+        nemo_file_emit_changed (file);
+    }
+
+    nemo_file_unref (file);
+}
+
+/**
+ * nemo_file_refresh_volume_space
+ * @file: NemoFile representing the file in question.
+ * @force: skip the 2 second rate limit, for when the figures are known to
+ * have changed. Has no effect while a query is already pending.
+ *
+ * Refreshes the cached filesystem space figures in the background, never
+ * stacking a second query for this file while the first is unanswered.
+ * "changed" is emitted if the figures differ.
+ */
+void
+nemo_file_refresh_volume_space (NemoFile *file,
+                                gboolean  force)
+{
+    GFile *location;
+
+    if (file->details->fs_query_pending) {
+        return;
+    }
+
+    if (force ||
+        file->details->free_space_read == 0 ||
+        (time (NULL) - file->details->free_space_read) > 2) {
+        file->details->fs_query_pending = TRUE;
+        location = nemo_file_get_location (file);
+        g_file_query_filesystem_info_async (location,
+                                            G_FILE_ATTRIBUTE_FILESYSTEM_FREE ","
+                                            G_FILE_ATTRIBUTE_FILESYSTEM_SIZE ","
+                                            G_FILE_ATTRIBUTE_FILESYSTEM_USED,
+                                            0, NULL,
+                                            get_fs_free_cb,
+                                            nemo_file_ref (file));
+        g_object_unref (location);
+    }
 }
 
 /**
@@ -7548,37 +7614,49 @@ get_fs_free_cb (GObject *source_object,
  * Get a nicely formatted char with free space on the file's volume
  * @file: NemoFile representing the file in question.
  *
- * Returns: newly-allocated copy of file size in a formatted string
+ * Returns: newly-allocated formatted free space, or NULL while unknown.
+ * Refreshes the cached figures in the background.
  */
 char *
 nemo_file_get_volume_free_space (NemoFile *file)
 {
-	GFile *location;
-	char *res;
-	time_t now;
-	int prefix;
+    char *res;
+    int prefix;
 
-	now = time (NULL);
-	/* Update first time and then every 2 seconds */
-	if (file->details->free_space_read == 0 ||
-	    (now - file->details->free_space_read) > 2)  {
-		file->details->free_space_read = now;
-		location = nemo_file_get_location (file);
-		g_file_query_filesystem_info_async (location,
-						    G_FILE_ATTRIBUTE_FILESYSTEM_FREE,
-						    0, NULL,
-						    get_fs_free_cb,
-						    nemo_file_ref (file));
-		g_object_unref (location);
-	}
+    nemo_file_refresh_volume_space (file, FALSE);
 
-	res = NULL;
-	if (file->details->free_space != (guint64)-1) {
-		prefix = nemo_global_preferences_get_size_prefix_preference ();
-		res = g_format_size_full (file->details->free_space, prefix);
-	}
+    res = NULL;
+    if (file->details->free_space != (guint64)-1) {
+        prefix = nemo_global_preferences_get_size_prefix_preference ();
+        res = g_format_size_full (file->details->free_space, prefix);
+    }
 
-	return res;
+    return res;
+}
+
+/**
+ * nemo_file_get_volume_disk_full_percent
+ * @file: NemoFile representing the file in question.
+ *
+ * Returns: how full the file's volume is, in percent, or -1 while unknown.
+ * Like nemo_file_get_volume_free_space() this answers from the cache and
+ * refreshes it in the background, signalling "changed" if the figures differ.
+ */
+gint
+nemo_file_get_volume_disk_full_percent (NemoFile *file)
+{
+    guint64 size, used;
+
+    nemo_file_refresh_volume_space (file, FALSE);
+
+    size = file->details->fs_size;
+    used = file->details->fs_used;
+
+    if (size == (guint64)-1 || used == (guint64)-1 || size == 0) {
+        return -1;
+    }
+
+    return (gint) ((used * 100 + size / 2) / size);
 }
 
 /**

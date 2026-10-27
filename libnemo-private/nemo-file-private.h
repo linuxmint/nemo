@@ -230,6 +230,7 @@ struct NemoFileDetails
 	eel_boolean_bit filesystem_readonly           : 1;
 	eel_boolean_bit filesystem_use_preview        : 2; /* GFilesystemPreviewType */
     eel_boolean_bit filesystem_info_is_up_to_date : 1;
+    eel_boolean_bit fs_query_pending              : 1;
 
     NemoFileLoadDeferredAttrs load_deferred_attrs;
     NemoFileMetaState pinning;
@@ -237,8 +238,10 @@ struct NemoFileDetails
 
 	time_t trash_time; /* 0 is unknown */
 
-	guint64 free_space; /* (guint)-1 for unknown */
-	time_t free_space_read; /* The time free_space was updated, or 0 for never */
+    guint64 free_space; /* (guint64)-1 for unknown */
+    guint64 fs_size; /* (guint64)-1 for unknown */
+    guint64 fs_used; /* (guint64)-1 for unknown */
+    time_t free_space_read; /* When the last fs space query finished, or 0 for never */
 
     gint desktop_monitor;
     gint cached_position_x;

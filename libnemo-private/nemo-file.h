@@ -217,7 +217,10 @@ gboolean                nemo_file_is_mountpoint                     (NemoFile   
 GMount *                nemo_file_get_mount                         (NemoFile                   *file);
 void                    nemo_file_set_mount                         (NemoFile                   *file,
                                                                      GMount                     *mount);
+void                    nemo_file_refresh_volume_space              (NemoFile                   *file,
+                                                                     gboolean                    force);
 char *                  nemo_file_get_volume_free_space             (NemoFile                   *file);
+gint                    nemo_file_get_volume_disk_full_percent      (NemoFile                   *file);
 char *                  nemo_file_get_volume_name                   (NemoFile                   *file);
 char *                  nemo_file_get_symbolic_link_target_path     (NemoFile                   *file);
 char *                  nemo_file_get_symbolic_link_target_uri      (NemoFile                   *file);
