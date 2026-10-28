@@ -762,45 +762,46 @@ typedef struct {
 } MountNotMountedData;
 
 static void
-mount_not_mounted_callback (GObject *source_object,
-			    GAsyncResult *res,
-			    gpointer user_data)
+mount_not_mounted_callback (GObject      *source_object,
+                            GAsyncResult *res,
+                            gpointer      user_data)
 {
-	MountNotMountedData *data;
-	NemoWindowSlot *slot;
-	GError *error;
-	GCancellable *cancellable;
+    MountNotMountedData *data;
+    NemoWindowSlot *slot;
+    GError *error;
+    GCancellable *cancellable;
 
-	data = user_data;
-	slot = data->slot;
-	cancellable = data->cancellable;
-	g_free (data);
+    data = user_data;
+    slot = data->slot;
+    cancellable = data->cancellable;
+    g_free (data);
 
-	if (g_cancellable_is_cancelled (cancellable)) {
-		/* Cancelled, don't call back */
-		g_object_unref (cancellable);
-		return;
-	}
+    if (g_cancellable_is_cancelled (cancellable)) {
+        /* Cancelled, don't call back */
+        g_object_unref (cancellable);
+        return;
+    }
 
-	slot->mount_cancellable = NULL;
+    slot->mount_cancellable = NULL;
 
-	slot->determine_view_file = nemo_file_get (slot->pending_location);
+    slot->determine_view_file = nemo_file_get (slot->pending_location);
 
-	error = NULL;
-	if (!g_file_mount_enclosing_volume_finish (G_FILE (source_object), res, &error)) {
-		slot->mount_error = error;
-		got_file_info_for_view_selection_callback (slot->determine_view_file, slot);
-		slot->mount_error = NULL;
-		g_error_free (error);
-	} else {
-		nemo_file_invalidate_all_attributes (slot->determine_view_file);
-		nemo_file_call_when_ready (slot->determine_view_file,
-					       NEMO_FILE_ATTRIBUTE_INFO,
-					       got_file_info_for_view_selection_callback,
-					       slot);
-	}
+    error = NULL;
+    if (!g_file_mount_enclosing_volume_finish (G_FILE (source_object), res, &error) &&
+        !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)) {
+        slot->mount_error = error;
+        got_file_info_for_view_selection_callback (slot->determine_view_file, slot);
+        g_error_free (error);
+    } else {
+        g_clear_error (&error);
+        nemo_file_invalidate_all_attributes (slot->determine_view_file);
+        nemo_file_call_when_ready (slot->determine_view_file,
+                                   NEMO_FILE_ATTRIBUTE_INFO,
+                                   got_file_info_for_view_selection_callback,
+                                   slot);
+    }
 
-	g_object_unref (cancellable);
+    g_object_unref (cancellable);
 }
 
 static void
@@ -824,8 +825,11 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 	g_assert (slot->determine_view_file == file);
 	slot->determine_view_file = NULL;
 
+    /* Cleared now: the fallbacks below can re-enter this callback synchronously
+     * for another location. */
 	if (slot->mount_error) {
 		error = slot->mount_error;
+        slot->mount_error = NULL;
 	} else {
 		error = nemo_file_get_file_info_error (file);
 	}
@@ -1009,7 +1013,7 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 
 						root = g_file_new_for_path ("/");
 						/* the last fallback is to go to a known place that can't be deleted! */
-						nemo_window_slot_open_location (slot, location, 0);
+                        nemo_window_slot_open_location (slot, root, 0);
 						g_object_unref (root);
 					}
 				} else {
