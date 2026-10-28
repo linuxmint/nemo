@@ -13,8 +13,10 @@
     border: 1px solid;
     border-radius: 3px;
     color: @theme_fg_color;
+    caret-color: @theme_fg_color;
     border-color: @theme_selected_bg_color;
     background-color: @theme_bg_color;
+    background-image: none;
 }
 
 .nemo-window .nemo-window-pane widget.entry:selected {
@@ -23,6 +25,7 @@
     color: @theme_selected_fg_color;
     border-color: @theme_selected_bg_color;
     background-color: @theme_selected_bg_color;
+    background-image: none;
 }
 
 /* Floating bar in the bottom of a file view, used when the 'status bar' is turned off */
