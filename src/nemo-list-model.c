@@ -1130,6 +1130,13 @@ update_dummy_row (NemoListModel *model,
 
     changed = FALSE;
 
+    /* Directories added while folder expansion was disabled have no children
+     * sequence. This can be hit for a moment after expansion gets enabled,
+     * until the view reloads. */
+    if (file_entry->files == NULL) {
+        return FALSE;
+    }
+
     got_count = nemo_file_get_directory_item_count (file, &count, &unreadable);
 
     if ((got_count && count == 0) || (!got_count && unreadable)) {
