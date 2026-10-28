@@ -456,7 +456,7 @@ nemo_list_view_did_not_drag (NemoListView *view,
 			}
 		}
 
-		if ((click_policy == NEMO_CLICK_POLICY_SINGLE)
+		if ((click_policy == NEMO_CLICK_POLICY_SINGLE || event->button == 2)
 		    && !button_event_modifies_selection(event)) {
 			if (event->button == 1) {
 				activate_selected_items (view);
@@ -1030,7 +1030,7 @@ handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton 
         return FALSE;
     }
 
-    if (event->button == GDK_BUTTON_SECONDARY) {
+    if (event->button == GDK_BUTTON_MIDDLE || event->button == GDK_BUTTON_SECONDARY) {
         return FALSE;
     }
 
@@ -1042,8 +1042,6 @@ handle_icon_double_click (NemoListView *view, GtkTreePath *path, GdkEventButton 
         if (!button_event_modifies_selection (event)) {
             if (event->button == 1) {
                 activate_selected_items (view);
-            } else if (event->button == 2) {
-                activate_selected_items_alternate (view, NULL, TRUE);
             }
 
             return TRUE;
