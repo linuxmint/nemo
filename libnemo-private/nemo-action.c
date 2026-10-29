@@ -1916,8 +1916,10 @@ get_visibility (NemoAction *action,
     if (!priv->gsettings_satisfied)
         return FALSE;
 
-    if ((priv->uri_scheme != NULL) && !nemo_file_has_uri_scheme (parent, priv->uri_scheme)) {
-        return FALSE;
+    if (priv->uri_scheme != NULL) {
+        if (parent == NULL || !nemo_file_has_uri_scheme (parent, priv->uri_scheme)) {
+            return FALSE;
+        }
     }
 
     if (!check_is_allowed (action, parent, NULL,
