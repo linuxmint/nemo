@@ -186,6 +186,7 @@ enum {
 	PLACES_SIDEBAR_COLUMN_HEADING_TEXT,
     PLACES_SIDEBAR_COLUMN_DF_PERCENT,
     PLACES_SIDEBAR_COLUMN_SHOW_DF,
+    PLACES_SIDEBAR_COLUMN_EJECTING,
 
 	PLACES_SIDEBAR_COLUMN_COUNT
 };
@@ -548,11 +549,11 @@ add_place (NemoPlacesSidebar *sidebar,
 
 	ejecting = volume_is_ejecting (volume);
 
-	if (mount == NULL) {
-		/* An ejecting device has no mount anymore, but its eject cell
-		 * is kept to show the busy indicator in the same spot the
-		 * user clicked. */
-		show_eject_button = ejecting;
+	if (ejecting || mount == NULL) {
+		/* A device being ejected shows an hourglass icon in the eject column
+		 * (not an eject button): it can't be hovered or clicked, see
+		 * PLACES_SIDEBAR_COLUMN_EJECTING. */
+		show_eject_button = FALSE;
 	} else {
 		show_eject_button = (show_unmount || show_eject);
 	}
@@ -573,8 +574,9 @@ add_place (NemoPlacesSidebar *sidebar,
 			    PLACES_SIDEBAR_COLUMN_NO_EJECT, !show_eject_button,
 			    PLACES_SIDEBAR_COLUMN_BOOKMARK, place_type != PLACES_BOOKMARK,
                 PLACES_SIDEBAR_COLUMN_TOOLTIP, tooltip,
-                PLACES_SIDEBAR_COLUMN_EJECT_ICON, !show_eject_button ? NULL :
-                    (ejecting ? "xsi-emblem-synchronizing-symbolic" : "xsi-media-eject-symbolic"),
+                PLACES_SIDEBAR_COLUMN_EJECT_ICON, ejecting ? "xsi-hourglass-symbolic" :
+                    (show_eject_button ? "xsi-media-eject-symbolic" : NULL),
+                PLACES_SIDEBAR_COLUMN_EJECTING, ejecting,
 			    PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE, EJECT_ICON_SIZE_NOT_HOVERED,
 			    PLACES_SIDEBAR_COLUMN_SECTION_TYPE, section_type,
 			    -1);
@@ -4294,6 +4296,26 @@ tree_selection_func (GtkTreeSelection *selection,
 	return TRUE;
 }
 
+/* The cells of the eject column are shown for the eject button, and for the
+ * hourglass icon of a device that is being ejected. */
+static void
+eject_cell_data_func (GtkTreeViewColumn *column,
+                      GtkCellRenderer   *cell,
+                      GtkTreeModel      *model,
+                      GtkTreeIter       *iter,
+                      gpointer           user_data)
+{
+	gboolean eject = FALSE;
+	gboolean ejecting = FALSE;
+
+	gtk_tree_model_get (model, iter,
+			    PLACES_SIDEBAR_COLUMN_EJECT, &eject,
+			    PLACES_SIDEBAR_COLUMN_EJECTING, &ejecting,
+			    -1);
+
+	g_object_set (cell, "visible", eject || ejecting, NULL);
+}
+
 static void
 icon_cell_renderer_func (GtkTreeViewColumn *column,
 			 GtkCellRenderer *cell,
@@ -4537,10 +4559,11 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 		      NULL);
 	gtk_tree_view_column_pack_start (sidebar->eject_column, cell, FALSE);
 	gtk_tree_view_column_set_attributes (sidebar->eject_column, cell,
-					     "visible", PLACES_SIDEBAR_COLUMN_EJECT,
 					     "icon-name", PLACES_SIDEBAR_COLUMN_EJECT_ICON,
                          "stock-size", PLACES_SIDEBAR_COLUMN_EJECT_ICON_SIZE,
                          NULL);
+	gtk_tree_view_column_set_cell_data_func (sidebar->eject_column, cell,
+						 eject_cell_data_func, NULL, NULL);
 
     /* eject icon trailing padding (adjusts to always avoid overlay-scrollbars) */
     gboolean overlay_scrolling;
@@ -4551,9 +4574,8 @@ nemo_places_sidebar_init (NemoPlacesSidebar *sidebar)
 
     cell = gtk_cell_renderer_text_new ();
     gtk_tree_view_column_pack_start (sidebar->eject_column, cell, FALSE);
-    gtk_tree_view_column_set_attributes (sidebar->eject_column, cell,
-                                         "visible", PLACES_SIDEBAR_COLUMN_EJECT,
-                                         NULL);
+    gtk_tree_view_column_set_cell_data_func (sidebar->eject_column, cell,
+                                             eject_cell_data_func, NULL, NULL);
 
     if (overlay_scrolling) {
         GtkWidget *vscrollbar = gtk_scrolled_window_get_vscrollbar (GTK_SCROLLED_WINDOW (sidebar));
@@ -4975,6 +4997,7 @@ nemo_shortcuts_model_new (NemoPlacesSidebar *sidebar)
 		G_TYPE_INT,
 		G_TYPE_STRING,
         G_TYPE_INT,
+        G_TYPE_BOOLEAN,
         G_TYPE_BOOLEAN
 	};
 
