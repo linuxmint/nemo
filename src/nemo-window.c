@@ -90,6 +90,7 @@ static void side_pane_id_changed                    (NemoWindow            *wind
 static void toggle_menubar                          (NemoWindow            *window,
                                                      gint                   action);
 static void nemo_window_reload                      (NemoWindow            *window);
+static void scale_factor_changed_callback           (NemoWindow            *window);
 
 /* Sanity check: highest mouse button value I could find was 14. 5 is our
  * lower threshold (well-documented to be the one of the button events for the
@@ -760,7 +761,7 @@ nemo_window_constructed (GObject *self)
 
     g_signal_connect_swapped (GTK_WINDOW (window),
                               "notify::scale-factor",
-                              G_CALLBACK (nemo_window_reload),
+                              G_CALLBACK (scale_factor_changed_callback),
                               window);
 }
 
@@ -1875,9 +1876,15 @@ create_extra_pane (NemoWindow *window)
 static void
 nemo_window_reload (NemoWindow *window)
 {
-	NemoWindowSlot *active_slot;
-	active_slot = nemo_window_get_active_slot (window);
-	nemo_window_slot_queue_reload (active_slot, FALSE);
+    nemo_window_slot_queue_reload (nemo_window_get_active_slot (window), TRUE);
+}
+
+/* Thumbnails are generated at a fixed size and scaled when drawn, so there's no
+ * need to regenerate them here. */
+static void
+scale_factor_changed_callback (NemoWindow *window)
+{
+    nemo_window_slot_queue_reload (nemo_window_get_active_slot (window), FALSE);
 }
 
 static gboolean
