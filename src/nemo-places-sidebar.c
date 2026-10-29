@@ -4105,22 +4105,25 @@ query_tooltip_callback (GtkWidget *widget,
             g_autoptr(GDrive) drive = NULL;
             g_autoptr(GVolume) volume = NULL;
 
+            gboolean can_unmount_device = FALSE;
+            gboolean can_eject_device = FALSE;
+
             gtk_tree_model_get (model,
                                 &iter,
                                 PLACES_SIDEBAR_COLUMN_MOUNT, &mount,
                                 PLACES_SIDEBAR_COLUMN_DRIVE, &drive,
                                 PLACES_SIDEBAR_COLUMN_VOLUME, &volume,
                                 -1);
-            if (mount != NULL) {
-                tooltip_markup = g_strdup (_("Unmount"));
-            }
-            else
-            if (drive != NULL) {
+
+            /* Say what a click on the button does: eject_or_unmount_bookmark ()
+             * ejects the device when it can be, and unmounts it otherwise. */
+            check_unmount_and_eject (mount, volume, drive,
+                                     &can_unmount_device, &can_eject_device);
+
+            if (can_eject_device) {
                 tooltip_markup = g_strdup (_("Eject"));
-            }
-            else
-            if (volume != NULL) {
-                tooltip_markup = g_strdup (_("Stop"));
+            } else if (can_unmount_device) {
+                tooltip_markup = g_strdup (_("Unmount"));
             }
         } else {
             NemoPlacesSidebar *sidebar = NEMO_PLACES_SIDEBAR (user_data);
