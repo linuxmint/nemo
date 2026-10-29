@@ -537,6 +537,7 @@ add_place (NemoPlacesSidebar *sidebar,
 	gboolean show_eject, show_unmount;
 	gboolean show_eject_button;
 	gboolean ejecting;
+	g_autofree gchar *busy_tooltip = NULL;
 
 	cat_iter = check_heading_for_devices (sidebar, section_type, cat_iter);
 
@@ -556,6 +557,11 @@ add_place (NemoPlacesSidebar *sidebar,
 		show_eject_button = FALSE;
 	} else {
 		show_eject_button = (show_unmount || show_eject);
+	}
+
+	if (ejecting && mount != NULL) {
+		busy_tooltip = g_strdup_printf (_("Ejecting %s. Do not unplug it yet."), name);
+		tooltip = busy_tooltip;
 	}
 
     gicon = (icon_name != NULL) ? g_themed_icon_new (icon_name) : NULL;
@@ -600,6 +606,20 @@ disk_space_watch_update (DiskSpaceWatch *watch)
     gint percent = nemo_file_get_volume_disk_full_percent (watch->file);
     g_autofree gchar *free_space = nemo_file_get_volume_free_space (watch->file);
     g_autofree gchar *tooltip = NULL;
+    gboolean ejecting = FALSE;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (watch->sidebar->store), &watch->row,
+                        PLACES_SIDEBAR_COLUMN_EJECTING, &ejecting,
+                        -1);
+
+    if (ejecting) {
+        /* Keep the tooltip of a device being ejected. */
+        gtk_tree_store_set (watch->sidebar->store, &watch->row,
+                            PLACES_SIDEBAR_COLUMN_DF_PERCENT, percent,
+                            PLACES_SIDEBAR_COLUMN_SHOW_DF, watch->show_bar && percent > -1,
+                            -1);
+        return;
+    }
 
     if (free_space != NULL) {
         g_autofree gchar *line = g_strdup_printf (_("Free space: %s"), free_space);
@@ -1523,6 +1543,13 @@ update_places (NemoPlacesSidebar *sidebar)
     actions_changed (sidebar);
 
     sidebar->updating_sidebar = FALSE;
+
+    /* The rows were rebuilt under the pointer: without this, a tooltip that is
+     * already showing (e.g. the one of the eject button that was just clicked)
+     * would stay on screen until the pointer moves. */
+    if (ejecting_devices != NULL && g_hash_table_size (ejecting_devices) > 0) {
+        gtk_widget_trigger_tooltip_query (GTK_WIDGET (sidebar->tree_view));
+    }
 
     g_list_free_full (old_watches, (GDestroyNotify) disk_space_watch_free);
 
