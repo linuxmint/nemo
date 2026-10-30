@@ -683,6 +683,8 @@ notebook_page_removed_cb (GtkNotebook *notebook,
 
 	nemo_window_manage_views_close_slot (slot);
 	pane->slots = g_list_remove (pane->slots, slot);
+
+    nemo_window_update_preview_pane (pane->window);
 }
 
 static void
@@ -1287,7 +1289,12 @@ nemo_window_pane_close_slot (NemoWindowPane *pane,
 			DEBUG ("Last slot removed from the last pane, close the window");
 			nemo_window_close (window);
 		}
+
+        return;
 	}
+
+    /* Re-sync now that the closed slot no longer counts as wanting the preview pane */
+    nemo_window_update_preview_pane (window);
 }
 
 void

@@ -133,6 +133,15 @@ if exempi_enabled
 endif
 conf.set('HAVE_EXEMPI', exempi_enabled)
 
+video_preview_enabled = get_option('video_preview')
+if video_preview_enabled
+  gstreamer   = dependency('gstreamer-1.0',         version: '>=1.14')
+  gst_pbutils = dependency('gstreamer-pbutils-1.0', version: '>=1.14')
+  gst_app     = dependency('gstreamer-app-1.0',     version: '>=1.14')
+  gst_video   = dependency('gstreamer-video-1.0',   version: '>=1.14')
+endif
+conf.set('HAVE_GSTREAMER', video_preview_enabled)
+
 libselinux_enabled = get_option('selinux')
 if libselinux_enabled
   libselinux = dependency('libselinux',             version: '>=2.0')
@@ -210,6 +219,7 @@ message('\n'.join(['',
 '    compiler:               @0@'.format(cc.get_id()),
 '    libexif support:        @0@'.format(libexif_enabled),
 '    exempi  support:        @0@'.format(exempi_enabled),
+'    audio/video preview:    @0@'.format(video_preview_enabled),
 '    Tracker support:        @0@'.format(tracker_enabled),
 '    Wayland support:        @0@'.format(cc.has_header('gdk/gdkwayland.h', dependencies: gtk)),
 '    gtk-layer-shell:        @0@'.format(gtk_layer_shell_enabled),

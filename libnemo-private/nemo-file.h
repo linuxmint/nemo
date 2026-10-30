@@ -255,6 +255,7 @@ NemoRequestStatus   nemo_file_get_deep_counts                   (NemoFile       
 gboolean                nemo_file_should_show_thumbnail             (NemoFile                   *file);
 void                    nemo_file_delete_thumbnail                  (NemoFile                   *file);
 gboolean                nemo_file_has_loaded_thumbnail              (NemoFile                   *file);
+char *                  nemo_file_get_thumbnail_path                (NemoFile                   *file);
 gboolean                nemo_file_should_show_directory_item_count  (NemoFile                   *file);
 gboolean                nemo_file_should_show_type                  (NemoFile                   *file);
 GList *                 nemo_file_get_keywords                      (NemoFile                   *file);
@@ -415,6 +416,7 @@ void                    nemo_file_set_time_metadata                 (NemoFile   
 
 
 /* Attributes for file objects as user-displayable strings. */
+char *                  nemo_date_time_to_display_string            (GDateTime                  *date_time);
 char *                  nemo_file_get_string_attribute              (NemoFile                   *file,
 									 const char                     *attribute_name);
 char *                  nemo_file_get_string_attribute_q            (NemoFile                   *file,
@@ -484,6 +486,7 @@ gboolean                nemo_file_is_trusted_link                   (NemoFile   
 gboolean                nemo_file_has_activation_uri                (NemoFile                   *file);
 char *                  nemo_file_get_activation_uri                (NemoFile                   *file);
 GFile *                 nemo_file_get_activation_location           (NemoFile                   *file);
+char *                  nemo_file_get_activation_path               (NemoFile                   *file);
 
 char *                  nemo_file_get_drop_target_uri               (NemoFile                   *file);
 

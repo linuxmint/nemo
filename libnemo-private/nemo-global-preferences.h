@@ -304,6 +304,11 @@ typedef enum
 #define NEMO_PREFERENCES_SEARCH_VISIBLE_COLUMNS        "search-visible-columns"
 #define NEMO_PREFERENCES_SEARCH_SORT_COLUMN            "search-sort-column"
 #define NEMO_PREFERENCES_SEARCH_REVERSE_SORT           "search-reverse-sort"
+#define NEMO_PREFERENCES_SEARCH_SHOW_PREVIEW_PANE      "search-show-preview-pane"
+
+/* Preview pane */
+#define NEMO_PREFERENCES_PREVIEW_PANE_WIDTH            "pane-width"
+#define NEMO_PREFERENCES_PREVIEW_PANE_DETAILS_HEIGHT   "details-height"
 
 void nemo_global_preferences_init                      (void);
 void nemo_global_preferences_finalize                  (void);
@@ -331,6 +336,7 @@ extern GSettings *gtk_filechooser_preferences;
 extern GSettings *nemo_plugin_preferences;
 extern GSettings *nemo_menu_config_preferences;
 extern GSettings *nemo_search_preferences;
+extern GSettings *nemo_preview_pane_preferences;
 extern GSettings *gnome_lockdown_preferences;
 extern GSettings *gnome_background_preferences;
 extern GSettings *gnome_media_handling_preferences;

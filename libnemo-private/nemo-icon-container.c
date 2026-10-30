@@ -5544,6 +5544,7 @@ preview_selected_items (NemoIconContainer *container)
 			       selection, locations);
 	}
 
+    g_array_free (locations, TRUE);
     g_list_free (selection);
 }
 

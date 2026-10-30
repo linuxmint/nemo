@@ -305,6 +305,13 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">True</property>
+                <property name="title" translatable="yes" context="shortcut window">Show/hide preview pane</property>
+                <property name="accelerator">F7</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">True</property>
                 <property name="title" translatable="yes" context="shortcut window">Show/hide action menu</property>
                 <property name="accelerator">F10</property>
               </object>
