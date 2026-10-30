@@ -38,6 +38,7 @@
   #include <libexif/exif-data.h>
   #include <libexif/exif-ifd.h>
   #include <libexif/exif-loader.h>
+  #include <libnemo-private/nemo-exif-utils.h>
 #endif
 #ifdef HAVE_EXEMPI
   #include <exempi/xmp.h>
@@ -62,14 +63,6 @@ struct NemoImagePropertiesPageDetails {
 	XmpPtr     xmp;
 #endif
 };
-
-#ifdef HAVE_EXIF
-struct ExifAttribute {
-	ExifTag tag;
-	char *value;
-	gboolean found;
-};
-#endif /*HAVE_EXIF*/
 
 enum {
 	PROP_URI
@@ -158,66 +151,9 @@ append_item (NemoImagePropertiesPage *page,
 
 #ifdef HAVE_EXIF
 static char *
-exif_string_to_utf8 (const char *exif_str)
-{
-	char *utf8_str;
-
-	if (g_utf8_validate (exif_str, -1, NULL)) {
-		return g_strdup (exif_str);
-	}
-
-	utf8_str = g_locale_to_utf8 (exif_str, -1, NULL, NULL, NULL);
-	if (utf8_str != NULL) {
-		return utf8_str;
-	}
-
-	return eel_make_valid_utf8 (exif_str);
-}
-
-static void
-exif_content_callback (ExifContent *content, gpointer data)
-{
-	struct ExifAttribute *attribute;
-	char b[1024];
-
-	attribute = (struct ExifAttribute *)data;
-	if (attribute->found) {
-		return;
-	}
-
-        attribute->value = g_strdup (exif_content_get_value (content, attribute->tag, b, sizeof(b)));
-
-	if (attribute->value != NULL) {
-		attribute->found = TRUE;
-	}
-}
-
-static char *
 exifdata_get_tag_name_utf8 (ExifTag tag)
 {
-	return exif_string_to_utf8 (exif_tag_get_name (tag));
-}
-
-static char *
-exifdata_get_tag_value_utf8 (ExifData *data, ExifTag tag)
-{
-	struct ExifAttribute attribute;
-	char *utf8_value;
-
-	attribute.tag = tag;
-	attribute.value = NULL;
-	attribute.found = FALSE;
-
-	exif_data_foreach_content (data, exif_content_callback, &attribute);
-
-	if (attribute.found) {
-		utf8_value = exif_string_to_utf8 (attribute.value);
-		g_free (attribute.value);
-	} else {
-		utf8_value = NULL;
-	}
-
-	return utf8_value;
+	return nemo_exif_string_to_utf8 (exif_tag_get_name (tag));
 }
 
 static gboolean
@@ -230,7 +166,7 @@ append_tag_value_pair (NemoImagePropertiesPage *page,
         char *utf_value;
 
 	utf_attribute = exifdata_get_tag_name_utf8 (tag);
-	utf_value = exifdata_get_tag_value_utf8 (data, tag);
+	utf_value = nemo_exif_get_tag_value_utf8 (data, tag);
 
 	if ((utf_attribute == NULL) || (utf_value == NULL)) {
 		g_free (utf_attribute);

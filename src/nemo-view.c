@@ -554,6 +554,11 @@ nemo_view_reset_to_defaults (NemoView *view)
     file = view->details->slot->viewed_file;
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_SHOW_THUMBNAILS, NULL, NULL);
     nemo_file_set_metadata(file, NEMO_METADATA_KEY_DEFAULT_VIEW, NULL, NULL);
+    nemo_file_set_metadata (file, NEMO_METADATA_KEY_WINDOW_SHOW_PREVIEW_PANE, NULL, NULL);
+
+    if (nemo_file_is_in_search (file)) {
+        g_settings_reset (nemo_search_preferences, NEMO_PREFERENCES_SEARCH_SHOW_PREVIEW_PANE);
+    }
     gtk_action_activate (gtk_action_group_get_action (nemo_window_get_main_action_group (window), NEMO_ACTION_RELOAD));
 }
 
@@ -1217,6 +1222,27 @@ get_is_desktop_view (NemoView *view)
     return ret;
 }
 
+static void
+previewer_show_file_ready (GObject      *source,
+                           GAsyncResult *result,
+                           gpointer      user_data)
+{
+    NemoWindow *window = NEMO_WINDOW (user_data);
+    GError *error = NULL;
+
+    if (!nemo_previewer_call_show_file_finish (result, &error)) {
+        /* Without nemo-preview, Space toggles playback in the preview pane instead */
+        if (g_error_matches (error, G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN) ||
+            g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_CONNECTED)) {
+            nemo_window_preview_pane_toggle_playback (window);
+        }
+
+        g_error_free (error);
+    }
+
+    g_object_unref (window);
+}
+
 void
 nemo_view_preview_files (NemoView *view,
 			     GList *files,
@@ -1233,7 +1259,9 @@ nemo_view_preview_files (NemoView *view,
 
     xid = eel_gtk_get_window_xid (GTK_WINDOW (toplevel));
 
-	nemo_previewer_call_show_file (previewer, uri, xid, TRUE);
+    nemo_previewer_call_show_file (previewer, uri, xid, TRUE,
+                                   previewer_show_file_ready,
+                                   g_object_ref (nemo_view_get_nemo_window (view)));
 
 	g_free (uri);
 }

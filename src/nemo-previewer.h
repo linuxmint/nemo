@@ -24,7 +24,7 @@
 #ifndef __NEMO_PREVIEWER_H__
 #define __NEMO_PREVIEWER_H__
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -56,10 +56,14 @@ typedef struct {
 GType nemo_previewer_get_type (void);
 
 NemoPreviewer *nemo_previewer_get_singleton (void);
-void nemo_previewer_call_show_file (NemoPreviewer *previewer,
-                                        const gchar *uri,
-                                        guint xid,
-					gboolean close_if_already_visible);
+void nemo_previewer_call_show_file (NemoPreviewer       *previewer,
+                                    const gchar         *uri,
+                                    guint                xid,
+                                    gboolean             close_if_already_visible,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data);
+gboolean nemo_previewer_call_show_file_finish (GAsyncResult  *result,
+                                               GError       **error);
 void nemo_previewer_call_close (NemoPreviewer *previewer);
 
 G_END_DECLS

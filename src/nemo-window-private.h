@@ -72,6 +72,9 @@ struct NemoWindowDetails
         NemoWindowPane *active_pane;
 
         GtkWidget *content_paned;
+        GtkWidget *base_paned;
+        GtkWidget *secondary_paned;
+
         NemoNavigationState *nav_state;
         
         /* Side Pane */
@@ -92,12 +95,15 @@ struct NemoWindowDetails
 
         guint menu_hide_delay_id;
 
-        /* split view */
-        GtkWidget *split_view_hpane;
-
         // A closed pane's location, valid until the remaining pane
         // location changes.
         GFile *secondary_pane_last_location;
+
+        /* preview pane */
+        GtkWidget *preview_pane;
+        gboolean show_preview_pane;
+        gboolean preview_pane_width_set;
+        guint preview_pane_width_save_id;
 
         gboolean disable_chrome;
 

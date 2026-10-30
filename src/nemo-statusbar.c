@@ -119,7 +119,25 @@ action_hide_sidebar_callback (GtkButton *button, NemoStatusBar *bar)
 }
 
 static void
+action_show_preview_pane_callback (GtkButton *button, NemoStatusBar *bar)
+{
+    nemo_window_preview_pane_on (bar->window);
+}
+
+static void
+action_hide_preview_pane_callback (GtkButton *button, NemoStatusBar *bar)
+{
+    nemo_window_preview_pane_off (bar->window);
+}
+
+static void
 sidebar_state_changed_cb (gpointer pointer, gboolean state, gpointer user_data)
+{
+    nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (user_data));
+}
+
+static void
+preview_pane_state_changed_cb (gpointer pointer, GParamSpec *pspec, gpointer user_data)
 {
     nemo_status_bar_sync_button_states (NEMO_STATUS_BAR (user_data));
 }
@@ -229,6 +247,27 @@ nemo_status_bar_constructed (GObject *object)
     gtk_range_set_increments (GTK_RANGE (zoom_slider), 1.0, 1.0);
     gtk_range_set_round_digits (GTK_RANGE (zoom_slider), 0);
 
+    sep = gtk_separator_new (GTK_ORIENTATION_VERTICAL);
+    gtk_box_pack_start (GTK_BOX (bar), sep, FALSE, FALSE, 6);
+
+    button = gtk_button_new ();
+    icon = gtk_image_new_from_icon_name ("nemo-preview-hide-symbolic", size);
+    gtk_button_set_image (GTK_BUTTON (button), icon);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Hide the Preview Pane (F7)"));
+    bar->preview_hide_button = button;
+    gtk_box_pack_start (GTK_BOX (bar), button, FALSE, FALSE, 2);
+    g_signal_connect (GTK_BUTTON (button), "clicked",
+                      G_CALLBACK (action_hide_preview_pane_callback), bar);
+
+    button = gtk_button_new ();
+    icon = gtk_image_new_from_icon_name ("nemo-preview-show-symbolic", size);
+    gtk_button_set_image (GTK_BUTTON (button), icon);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (button), _("Show the Preview Pane (F7)"));
+    bar->preview_show_button = button;
+    gtk_box_pack_start (GTK_BOX (bar), button, FALSE, FALSE, 2);
+    g_signal_connect (GTK_BUTTON (button), "clicked",
+                      G_CALLBACK (action_show_preview_pane_callback), bar);
+
     gtk_widget_show_all (GTK_WIDGET (bar));
 
     g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::show-sidebar",
@@ -236,6 +275,9 @@ nemo_status_bar_constructed (GObject *object)
 
     g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::sidebar-view-id",
                            G_CALLBACK (sidebar_type_changed_cb), bar, G_CONNECT_AFTER);
+
+    g_signal_connect_object (NEMO_WINDOW (bar->window), "notify::show-preview-pane",
+                             G_CALLBACK (preview_pane_state_changed_cb), bar, G_CONNECT_AFTER);
 
     g_signal_connect (GTK_RANGE (zoom_slider), "value-changed",
                       G_CALLBACK (on_slider_changed_cb), bar);
@@ -313,6 +355,14 @@ nemo_status_bar_sync_button_states (NemoStatusBar *bar)
         gtk_widget_hide (bar->hide_button);
         gtk_widget_hide (bar->separator);
         gtk_widget_show (bar->show_button);
+    }
+
+    if (nemo_window_preview_pane_showing (NEMO_WINDOW (bar->window))) {
+        gtk_widget_show (bar->preview_hide_button);
+        gtk_widget_hide (bar->preview_show_button);
+    } else {
+        gtk_widget_hide (bar->preview_hide_button);
+        gtk_widget_show (bar->preview_show_button);
     }
 
     g_signal_handlers_block_by_func (GTK_BUTTON (bar->tree_button), action_treeview_toggle_callback, bar);

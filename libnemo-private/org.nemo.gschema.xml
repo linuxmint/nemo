@@ -82,6 +82,7 @@
     <child name="desktop" schema="org.nemo.desktop"/>
     <child name="window-state" schema="org.nemo.window-state"/>
     <child name="search" schema="org.nemo.search"/>
+    <child name="preview-pane" schema="org.nemo.preview-pane"/>
   </schema>
 
   <schema id="org.nemo.preferences" path="/org/nemo/preferences/" gettext-domain="nemo">
@@ -933,9 +934,26 @@
       <default>false</default>
       <summary>Reverse the direction of the sort when viewing search results</summary>
     </key>
+    <key name="search-show-preview-pane" type="b">
+      <default>false</default>
+      <summary>Show the preview pane when viewing search results</summary>
+    </key>
     <key name="disabled-search-helpers" type="as">
       <default>[]</default>
       <summary>List of search helper filenames to skip when using content search.</summary>
+    </key>
+  </schema>
+
+  <schema id="org.nemo.preview-pane" path="/org/nemo/preview-pane/" gettext-domain="nemo">
+    <key name="pane-width" type="i">
+      <default>400</default>
+      <summary>Width of the preview pane</summary>
+      <description>The width of the preview pane in logical pixels.</description>
+    </key>
+    <key name="details-height" type="i">
+      <default>200</default>
+      <summary>Height of the file information area in the preview pane</summary>
+      <description>The height, in logical pixels, of the file information area at the bottom of the preview pane. It is restored when the preview pane first shows a file in a window, and saved when the divider above it is moved.</description>
     </key>
   </schema>
 </schemalist>

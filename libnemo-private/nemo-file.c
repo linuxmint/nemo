@@ -4314,6 +4314,18 @@ nemo_file_get_activation_location (NemoFile *file)
 	return nemo_file_get_location (file);
 }
 
+char *
+nemo_file_get_activation_path (NemoFile *file)
+{
+    g_autoptr(GFile) location = NULL;
+
+    g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    location = nemo_file_get_activation_location (file);
+
+    return g_file_get_path (location);
+}
+
 
 char *
 nemo_file_get_drop_target_uri (NemoFile *file)
@@ -4644,6 +4656,18 @@ gboolean
 nemo_file_has_loaded_thumbnail (NemoFile *file)
 {
     return file->details->thumbnail_is_up_to_date;
+}
+
+char *
+nemo_file_get_thumbnail_path (NemoFile *file)
+{
+    g_return_val_if_fail (NEMO_IS_FILE (file), NULL);
+
+    if (file->details->thumbnail_path != NULL) {
+        return g_strdup (file->details->thumbnail_path);
+    }
+
+    return NULL;
 }
 
 static void
@@ -5192,56 +5216,25 @@ nemo_date_type_to_string (NemoDateType type)
     return "(unknown)";
 }
 
-/**
- * nemo_file_get_date_as_string:
- *
- * Get a user-displayable string representing a file modification date.
- * The caller is responsible for g_free-ing this string.
- * @file: NemoFile representing the file in question.
- *
- * Returns: Newly allocated string ready to display to the user.
- *
- **/
 static char *
-nemo_file_get_date_as_string (NemoFile       *file,
-                              NemoDateType    date_type,
-                              NemoDateCompactFormat  date_format)
+format_date_time (GDateTime             *file_date_time,
+                  NemoDateCompactFormat  date_format)
 {
-	time_t file_time_raw;
-    GDateTime *file_date_time, *file_date_time_utc;
     GDateTime *today_midnight, *now;
     GTimeZone *current_timezone;
 	gint days_ago;
 	gboolean use_24;
 	const gchar *format;
-	gchar *result;
     int date_format_pref;
 
-  	if (!nemo_file_get_date (file, date_type, &file_time_raw))
-		return NULL;
-
     current_timezone = prefs_current_timezone;
-
-    file_date_time_utc = g_date_time_new_from_unix_utc (file_time_raw);
-
-    if (!file_date_time_utc) {
-        DEBUG ("File '%s' has invalid time for %s",
-               nemo_file_peek_name (file),
-               nemo_date_type_to_string (date_type));
-        return NULL;
-    }
-
-    file_date_time = g_date_time_to_timezone (file_date_time_utc, current_timezone);
-    g_date_time_unref (file_date_time_utc);
 
     date_format_pref = prefs_current_date_format;
 
 	if (date_format_pref == NEMO_DATE_FORMAT_LOCALE) {
-		result = g_date_time_format (file_date_time, "%c");
-		goto out;
+		return g_date_time_format (file_date_time, "%c");
 	} else if (date_format_pref == NEMO_DATE_FORMAT_ISO) {
-		result = g_date_time_format (file_date_time, "%Y-%m-%d %H:%M:%S");
-		goto out;
+		return g_date_time_format (file_date_time, "%Y-%m-%d %H:%M:%S");
 	}
 
     if (date_format != NEMO_DATE_FORMAT_FULL) {
@@ -5364,12 +5357,54 @@ nemo_file_get_date_as_string (NemoFile       *file,
 		format = _("%c");
 	}
 
-	result = g_date_time_format (file_date_time, format);
+	return g_date_time_format (file_date_time, format);
+}
 
- out:
-	g_date_time_unref (file_date_time);
+char *
+nemo_date_time_to_display_string (GDateTime *date_time)
+{
+    return format_date_time (date_time, NEMO_DATE_FORMAT_REGULAR_WITH_TIME);
+}
 
-	return result;
+/**
+ * nemo_file_get_date_as_string:
+ * @file: NemoFile representing the file in question.
+ * @date_type: which of the file's dates to use.
+ * @date_format: how compactly to format it.
+ *
+ * Get a user-displayable string for the given date of @file.
+ *
+ * Returns: Newly allocated string ready to display to the user, or NULL.
+ *
+ **/
+static char *
+nemo_file_get_date_as_string (NemoFile       *file,
+                              NemoDateType    date_type,
+                              NemoDateCompactFormat  date_format)
+{
+    time_t file_time_raw;
+    GDateTime *file_date_time, *file_date_time_utc;
+    gchar *result;
+
+    if (!nemo_file_get_date (file, date_type, &file_time_raw))
+        return NULL;
+
+    file_date_time_utc = g_date_time_new_from_unix_utc (file_time_raw);
+
+    if (!file_date_time_utc) {
+        DEBUG ("File '%s' has invalid time for %s",
+               nemo_file_peek_name (file),
+               nemo_date_type_to_string (date_type));
+        return NULL;
+    }
+
+    file_date_time = g_date_time_to_timezone (file_date_time_utc, prefs_current_timezone);
+    g_date_time_unref (file_date_time_utc);
+
+    result = format_date_time (file_date_time, date_format);
+    g_date_time_unref (file_date_time);
+
+    return result;
 }
 
 static NemoSpeedTradeoffValue show_directory_item_count;
