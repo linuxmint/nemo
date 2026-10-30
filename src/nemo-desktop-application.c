@@ -254,7 +254,7 @@ nemo_desktop_application_local_command_line (GApplication *application,
 
     const GOptionEntry options[] = {
         { "version", '\0', 0, G_OPTION_ARG_NONE, &version,
-          "Show the version of the program."), NULL },
+          "Show the version of the program.", NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
           "Enable debugging code.  Example usage: 'NEMO_DEBUG=Desktop,Actions nemo-desktop --debug'.  Use NEMO_DEBUG=all for more topics.", NULL },
         { "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
