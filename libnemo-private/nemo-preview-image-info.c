@@ -169,11 +169,11 @@ get_exposure (ExifData *data)
         /* As cameras show them: fractions for fast speeds, and slower ones that
          * aren't a whole fraction as decimals (0.4s, not 1/2.5s) */
         if (value <= 0.25 || (value < 1.0 && fabs (reciprocal - round (reciprocal)) < 0.01)) {
-            /* Translators: an exposure time shorter than a second, e.g. "1/250s" */
-            g_ptr_array_add (parts, g_strdup_printf (_("1/%.0fs"), round (reciprocal)));
+            /* Translators: an exposure time shorter than a second, e.g. "1/250 s" */
+            g_ptr_array_add (parts, g_strdup_printf (_("1/%.0f s"), round (reciprocal)));
         } else {
-            /* Translators: an exposure time in seconds, e.g. "2.5s" */
-            g_ptr_array_add (parts, g_strdup_printf (_("%gs"), round (value * 10) / 10));
+            /* Translators: an exposure time in seconds, e.g. "2.5 s" */
+            g_ptr_array_add (parts, g_strdup_printf (_("%g s"), round (value * 10) / 10));
         }
     }
 
@@ -186,13 +186,13 @@ get_exposure (ExifData *data)
 
     if (entry != NULL && entry->format == EXIF_FORMAT_SHORT && entry->components >= 1) {
         /* Translators: the ISO sensitivity of a photo, e.g. "ISO 200" */
-        g_ptr_array_add (parts, g_strdup_printf (_("ISO %u"),
-                                                 exif_get_short (entry->data, exif_data_get_byte_order (data))));
+        g_ptr_array_add (parts, g_strdup_printf (_("ISO %d"),
+                                                 (gint) exif_get_short (entry->data, exif_data_get_byte_order (data))));
     }
 
     if (get_rational (data, EXIF_TAG_FOCAL_LENGTH, &value)) {
-        /* Translators: a lens focal length, e.g. "35mm" */
-        g_ptr_array_add (parts, g_strdup_printf (_("%gmm"), round (value * 10) / 10));
+        /* Translators: a lens focal length, e.g. "35 mm" */
+        g_ptr_array_add (parts, g_strdup_printf (_("%g mm"), round (value * 10) / 10));
     }
 
     return nemo_preview_join_parts (parts);

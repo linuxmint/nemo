@@ -1122,9 +1122,9 @@ update_places (NemoPlacesSidebar *sidebar)
                            SECTION_COMPUTER,
                            _("File System"), icon,
                            mount_uri, NULL, NULL, NULL, 0,
-                           _("Open the contents of the File System"),
+                           _("File System"),
                            cat_iter);
-    watch_disk_space (sidebar, &cat_iter, mount_uri, _("Open the contents of the File System"), TRUE);
+    watch_disk_space (sidebar, &cat_iter, mount_uri, _("File System"), TRUE);
 
     if (sidebar->bottom_bookend_uri == NULL) {
         sidebar->bottom_bookend_uri = g_strdup (mount_uri);

@@ -445,8 +445,8 @@ describe_audio_stream (GstDiscovererAudioInfo *audio_info)
     }
 
     if (sample_rate > 0) {
-        /* Translators: an audio sample rate, e.g. "44.1kHz" */
-        g_ptr_array_add (parts, g_strdup_printf (_("%gkHz"), sample_rate / 1000.0));
+        /* Translators: an audio sample rate, e.g. "44.1 kHz" */
+        g_ptr_array_add (parts, g_strdup_printf (_("%g kHz"), sample_rate / 1000.0));
     }
 
     if (channels == 1) {
@@ -455,12 +455,12 @@ describe_audio_stream (GstDiscovererAudioInfo *audio_info)
         g_ptr_array_add (parts, g_strdup (_("Stereo")));
     } else if (channels > 2) {
         /* Translators: the number of audio channels, only used for more than two */
-        g_ptr_array_add (parts, g_strdup_printf (ngettext ("%u channel", "%u channels", channels), channels));
+        g_ptr_array_add (parts, g_strdup_printf (ngettext ("%d channel", "%d channels", channels), (gint) channels));
     }
 
     if (bitrate > 0) {
-        /* Translators: an audio bitrate, e.g. "320kbps" */
-        g_ptr_array_add (parts, g_strdup_printf (_("%ukbps"), (bitrate + 500) / 1000));
+        /* Translators: an audio bitrate, e.g. "320 kbps" */
+        g_ptr_array_add (parts, g_strdup_printf (_("%d kbps"), (gint) ((bitrate + 500) / 1000)));
     }
 
     return nemo_preview_join_parts (parts);
@@ -512,10 +512,10 @@ get_tag_track (const GstTagList *tags)
 
     if (gst_tag_list_get_uint (tags, GST_TAG_TRACK_COUNT, &count) && count >= track) {
         /* Translators: a track number and the album's track count, e.g. "3 of 12" */
-        return g_strdup_printf (_("%u of %u"), track, count);
+        return g_strdup_printf (_("%d of %d"), (gint) track, (gint) count);
     }
 
-    return g_strdup_printf ("%u", track);
+    return g_strdup_printf ("%d", (gint) track);
 }
 
 /* File-level tags (title, artist...) live on the container for MP4/MKV, and on
@@ -585,8 +585,8 @@ read_video_stream (GstDiscovererVideoInfo  *video_info,
                                                                                gst_discoverer_video_info_get_height (video_info));
 
     if (rate_num > 0 && rate_denom > 0) {
-        /* Translators: a video frame rate, e.g. "29.97fps" */
-        rows[NEMO_PREVIEW_ROW_FRAME_RATE] = g_strdup_printf (_("%.4gfps"), (gdouble) rate_num / rate_denom);
+        /* Translators: a video frame rate, e.g. "29.97 fps" */
+        rows[NEMO_PREVIEW_ROW_FRAME_RATE] = g_strdup_printf (_("%.4g fps"), (gdouble) rate_num / rate_denom);
     }
 
     rows[NEMO_PREVIEW_ROW_VIDEO_CODEC] = describe_codec (GST_DISCOVERER_STREAM_INFO (video_info));

@@ -598,6 +598,7 @@ static void
 nemo_preview_video_init (NemoPreviewVideo *video)
 {
     NemoPreviewVideoPrivate *priv = nemo_preview_video_get_instance_private (video);
+    g_autofree gchar *message = NULL;
 
     priv->sink = gst_object_ref_sink (gst_element_factory_make ("gtksink", NULL));
     /* Leaves the letterbox area unpainted so the themed background shows instead of black */
@@ -608,7 +609,8 @@ nemo_preview_video_init (NemoPreviewVideo *video)
     g_signal_connect (priv->sink_widget, "button-press-event",
                       G_CALLBACK (sink_widget_button_press), video);
 
-    priv->message_label = gtk_label_new (_("(Could not play file)"));
+    message = g_strdup_printf ("(%s)", _("Could not play file"));
+    priv->message_label = gtk_label_new (message);
     gtk_style_context_add_class (gtk_widget_get_style_context (priv->message_label), "dim-label");
 
     priv->stack = gtk_stack_new ();

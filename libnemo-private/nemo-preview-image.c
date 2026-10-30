@@ -348,7 +348,9 @@ show_message (NemoPreviewImage *widget,
 {
     NemoPreviewImagePrivate *priv = nemo_preview_image_get_instance_private (widget);
 
-    gtk_label_set_text (GTK_LABEL (priv->message_label), message);
+    g_autofree gchar *text = g_strdup_printf ("(%s)", message);
+
+    gtk_label_set_text (GTK_LABEL (priv->message_label), text);
     gtk_widget_show (priv->message_label);
     gtk_widget_hide (priv->drawing_area);
 }
@@ -572,7 +574,7 @@ load_image_callback (GObject      *source_object,
 
     /* The file was an image gdk-pixbuf should handle, so tell it apart from an unpreviewable type */
     if (data->file_path != NULL) {
-        show_message (widget, _("(Unable to load image)"));
+        show_message (widget, _("Unable to load image"));
     } else {
         load_icon_at_size (widget, data->width, data->height);
     }
@@ -633,7 +635,7 @@ load_icon_at_size (NemoPreviewImage *widget,
         show_surface (widget, gdk_cairo_surface_create_from_pixbuf (icon_pixbuf, ui_scale, NULL), ui_scale, TRUE);
         g_object_unref (icon_pixbuf);
     } else {
-        show_message (widget, _("(No icon available)"));
+        show_message (widget, _("No icon available"));
     }
 }
 

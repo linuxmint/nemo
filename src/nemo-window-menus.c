@@ -1609,7 +1609,7 @@ static const GtkToggleActionEntry main_toggle_entries[] = {
   /* is_active */            FALSE },
   /* name, stock id */     { NEMO_ACTION_SHOW_HIDE_PREVIEW_PANE, NULL,
   /* label, accelerator */   N_("_Preview Pane"), "F7",
-  /* tooltip */              N_("Show or hide the preview pane"),
+  /* tooltip */              N_("Change the visibility of the preview pane"),
                              G_CALLBACK (action_preview_pane_callback),
   /* is_active */            FALSE },
     /* name, stock id */         { NEMO_ACTION_SHOW_THUMBNAILS, NULL,
