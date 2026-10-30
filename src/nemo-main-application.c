@@ -810,13 +810,13 @@ do_cmdline_sanity_checks (NemoMainApplication *self,
 
 	if (perform_self_check && (remaining != NULL || kill_shell)) {
 		g_printerr ("%s\n",
-			    _("--check cannot be used with other options."));
+			    ("--check cannot be used with other options."));
 		goto out;
 	}
 
 	if (kill_shell && remaining != NULL) {
 		g_printerr ("%s\n",
-			    _("--quit cannot be used with URIs."));
+			    ("--quit cannot be used with URIs."));
 		goto out;
 	}
 
@@ -824,7 +824,7 @@ do_cmdline_sanity_checks (NemoMainApplication *self,
 	    !open_in_tabs &&
 	    remaining != NULL && remaining[0] != NULL && remaining[1] != NULL) {
 		g_printerr ("%s\n",
-			    _("--geometry cannot be used with more than one URI."));
+			    ("--geometry cannot be used with more than one URI."));
 		goto out;
 	}
 
@@ -875,33 +875,33 @@ nemo_main_application_local_command_line (GApplication *application,
 	const GOptionEntry options[] = {
 #ifndef NEMO_OMIT_SELF_CHECK
 		{ "check", 'c', 0, G_OPTION_ARG_NONE, &perform_self_check, 
-		  N_("Perform a quick set of self-check tests."), NULL },
+		  "Perform a quick set of self-check tests.", NULL },
 #endif
 		/* dummy, only for compatibility reasons */
 		{ "browser", '\0', G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &browser,
 		  NULL, NULL },
 		{ "version", '\0', 0, G_OPTION_ARG_NONE, &version,
-		  N_("Show the version of the program."), NULL },
+		  "Show the version of the program.", NULL },
 		{ "geometry", 'g', 0, G_OPTION_ARG_STRING, &self->priv->geometry,
-		  N_("Create the initial window with the given geometry. "
-             "Examples: nemo --geometry=+100+100, nemo --geometry=600x400, nemo --geometry=600x400+100+100."), N_("GEOMETRY") },
+		  "Create the initial window with the given geometry. "
+             "Examples: nemo --geometry=+100+100, nemo --geometry=600x400, nemo --geometry=600x400+100+100.", "GEOMETRY" },
 		{ "no-default-window", 'n', 0, G_OPTION_ARG_NONE, &no_default_window,
-		  N_("Only create windows for explicitly specified URIs."), NULL },
+		  "Only create windows for explicitly specified URIs.", NULL },
         { "no-desktop", '\0', 0, G_OPTION_ARG_NONE, &no_desktop_ignored,
-          N_("Ignored argument - left for compatibility only."), NULL },
+          "Ignored argument - left for compatibility only.", NULL },
 		{ "tabs", 't', 0, G_OPTION_ARG_NONE, &open_in_tabs,
-		  N_("Open URIs in tabs."), NULL },
+		  "Open URIs in tabs.", NULL },
 		{ "existing-window", 0, 0, G_OPTION_ARG_NONE, &open_in_existing_window,
-		  N_("Open URIs in an existing window."), NULL },
+		  "Open URIs in an existing window.", NULL },
 		{ "select", 's', 0, G_OPTION_ARG_NONE, &select,
-		  N_("Show URI's parent and select the URI."), NULL },
+		  "Show URI's parent and select the URI.", NULL },
 		{ "fix-cache", '\0', 0, G_OPTION_ARG_NONE, &fix_cache,
-		  N_("Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root"), NULL },
+		  "Repair the user thumbnail cache - this can be useful if you're having trouble with file thumbnails.  Must be run as root", NULL },
         { "debug", 0, 0, G_OPTION_ARG_NONE, &debug,
           "Enable debugging code.  Example usage: 'NEMO_DEBUG=Actions,Window nemo --debug'.  Use NEMO_DEBUG=help for more topics.", NULL },
 		{ "quit", 'q', 0, G_OPTION_ARG_NONE, &kill_shell, 
-		  N_("Quit Nemo."), NULL },
-		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  N_("[URI...]") },
+		  "Quit Nemo.", NULL },
+		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_STRING_ARRAY, &remaining, NULL,  "[URI...]" },
 
 		{ NULL }
 	};
@@ -912,7 +912,7 @@ nemo_main_application_local_command_line (GApplication *application,
 
 	*exit_status = EXIT_SUCCESS;
 
-	context = g_option_context_new (_("\n\nBrowse the file system with the file manager"));
+	context = g_option_context_new (("\n\nBrowse the file system with the file manager"));
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
@@ -1036,7 +1036,7 @@ post_registration:
 	}
 
 	if (select && len == 0) {
-		g_printerr ("%s\n", _("--select must be used with at least one URI."));
+		g_printerr ("%s\n", ("--select must be used with at least one URI."));
 		*exit_status = EXIT_FAILURE;
 		goto out;
 	}

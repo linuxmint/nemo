@@ -117,7 +117,7 @@ main (int argc, char *argv[])
 	GOptionContext *context;
 	GError *error;
 	const GOptionEntry options[] = {
-		{ "print-uri", 0, 0, G_OPTION_ARG_NONE, &just_print_uri, N_("Print but do not open the URI"), NULL },
+		{ "print-uri", 0, 0, G_OPTION_ARG_NONE, &just_print_uri, "Print but do not open the URI", NULL },
 		{ NULL }
 	};
 
@@ -126,11 +126,8 @@ main (int argc, char *argv[])
 	textdomain (GETTEXT_PACKAGE);
 
 	error = NULL;
-	/* Translators: This is the --help description for the connect to server app,
-	   the initial newlines are between the command line arg and the description */
-	context = g_option_context_new (N_("\n\nAdd connect to server mount"));
-	g_option_context_set_translation_domain (context, GETTEXT_PACKAGE);
-	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);
+	context = g_option_context_new (("\n\nAdd connect to server mount"));
+	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
 	if (!g_option_context_parse (context, &argc, &argv, &error)) {
