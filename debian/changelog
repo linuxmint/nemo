@@ -1,3 +1,49 @@
+nemo (6.8.0) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-icon-dnd.c: Send success for root-window drops so the source gets 'finished' instead of 'cancelled'.
+  * nemo-window.c: Don't regenerate thumbnails on window scale changes
+  * filter bar: Route type-to-filter through a GtkIMContext
+  * bookmarks: Process entries asynchronously
+  * nemo-places-sidebar.c: Don't make synchronous disk-space queries
+  * nemo-window-manage-views.c: Fix view-selection failure handling
+  * nemo-action.c: Skip NULL parent locations when a uri_scheme is defined.
+  * nemo-window.c: Restore thumbnail regeneration on F5
+  * Add a preview pane (#3650)
+
+  [ Clement Lefebvre ]
+  * Remove zenity from action-info.md
+  * nemo-list-model.c: Don't crash when enabling folder expansion in list view
+  * places-sidebar: Use an hourglass icon
+  * places-sidebar: Maintain the tooltip while ejecting
+  * places-sidebar: Fix eject vs unmount tooltips
+  * l10n: Remove gettext usage in non-CLI code
+  * l10n: Update POT
+
+  [ Michał Fox ]
+  * nemo-list-view.c: Open items in a new tab with a single middle-click. (#3857)
+  * nemo-view.c: Remove changed files that should no longer be shown. (#3858)
+  * properties-window: Fix permission checkboxes needing two clicks with multiple files. (#3845)
+
+  [ Breeze ]
+  * Prevent duplicate bookmarks for the same location (#3827)
+  * nemo-file-conflict-dialog.c: Load folder sizes before display. (#3828)
+
+  [ Ronit Gupta ]
+  * fix(css): fix desktop rename box styling on dark themes (#3843) (#3859)
+  * nemo-view: add keyboard mnemonic to 'Follow link to original file' (#3844) (#3847)
+
+  [ George Katevenis ]
+  * nemo-list-model: show expander when a previously empty folder gets items (#3743)
+
+  [ Mirko Kerezovic ]
+  * nemo-tree-sidebar.c: Fix context menu handling for invalid rows. (#3840)
+
+  [ Luca Boschetto ]
+  * places-sidebar: keep ejecting devices visible until the eject completes
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 30 Oct 2026 12:37:50 +0000
+
 nemo (6.7.9) adrien; urgency=medium
 
   [ Michael Webster ]
