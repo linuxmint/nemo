@@ -58,7 +58,7 @@ heap_trim_timeout_cb (gpointer user_data)
 {
     heap_trim_timeout_id = 0;
 
-#if HAVE_MALLOC_H
+#if HAVE_MALLOC_TRIM
     malloc_trim (0);
 #endif
 
@@ -68,7 +68,7 @@ heap_trim_timeout_cb (gpointer user_data)
 void
 nemo_schedule_heap_trim (void)
 {
-#if HAVE_MALLOC_H
+#if HAVE_MALLOC_TRIM
     if (heap_trim_timeout_id != 0) {
         return;
     }

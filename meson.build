@@ -41,6 +41,7 @@ foreach h : check_headers
 endforeach
 
 conf.set10('HAVE_MALLOPT', cc.has_function('mallopt', prefix: '#include <malloc.h>'))
+conf.set10('HAVE_MALLOC_TRIM', cc.has_function('malloc_trim', prefix: '#include <malloc.h>'))
 
 
 add_global_arguments([
