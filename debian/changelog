@@ -1,3 +1,10 @@
+nemo (6.8.1) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-desktop-application.c: Fix build break
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 31 Oct 2026 13:03:31 +0000
+
 nemo (6.8.0) adrien; urgency=medium
 
   [ Michael Webster ]
