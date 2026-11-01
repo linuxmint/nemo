@@ -628,6 +628,7 @@ nemo_preview_video_init (NemoPreviewVideo *video)
     /* Leaves the letterbox area unpainted so the themed background shows instead of black */
     g_object_set (priv->sink, "ignore-alpha", FALSE, NULL);
     g_object_get (priv->sink, "widget", &priv->sink_widget, NULL);
+    g_object_set (priv->sink_widget, "margin", NEMO_PREVIEW_IMAGE_BORDER, NULL);
 
     gtk_widget_add_events (priv->sink_widget, GDK_BUTTON_PRESS_MASK);
     g_signal_connect (priv->sink_widget, "button-press-event",

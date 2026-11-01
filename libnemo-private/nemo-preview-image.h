@@ -29,6 +29,7 @@
 #include "nemo-preview-info.h"
 
 #define NEMO_TYPE_PREVIEW_IMAGE (nemo_preview_image_get_type())
+#define NEMO_PREVIEW_IMAGE_BORDER 4
 
 G_DECLARE_FINAL_TYPE (NemoPreviewImage, nemo_preview_image, NEMO, PREVIEW_IMAGE, GtkBox)
 GtkWidget *nemo_preview_image_new      (void);

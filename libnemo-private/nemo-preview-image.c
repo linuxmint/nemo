@@ -203,7 +203,7 @@ nemo_preview_image_init (NemoPreviewImage *preview)
                                  "dim-label");
     gtk_box_pack_start (GTK_BOX (preview), priv->message_label, TRUE, TRUE, 0);
 
-    gtk_container_set_border_width (GTK_CONTAINER (preview), 4);
+    gtk_container_set_border_width (GTK_CONTAINER (preview), NEMO_PREVIEW_IMAGE_BORDER);
     gtk_widget_show_all (GTK_WIDGET (preview));
     g_signal_connect (preview, "size-allocate",
                       G_CALLBACK (on_size_allocate), NULL);
