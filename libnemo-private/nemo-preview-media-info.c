@@ -167,12 +167,10 @@ cover_bytes_from_tags (GstDiscovererInfo *info)
     if (top != NULL) {
         bytes = cover_bytes_from_tag_list (gst_discoverer_stream_info_get_tags (top));
 
-#if GST_CHECK_VERSION (1, 20, 0)
         /* MP4/MKV keep the art in container-level tags */
         if (bytes == NULL && GST_IS_DISCOVERER_CONTAINER_INFO (top)) {
             bytes = cover_bytes_from_tag_list (gst_discoverer_container_info_get_tags (GST_DISCOVERER_CONTAINER_INFO (top)));
         }
-#endif
 
         gst_discoverer_stream_info_unref (top);
     }
@@ -186,12 +184,6 @@ cover_bytes_from_tags (GstDiscovererInfo *info)
 
         gst_discoverer_stream_info_list_free (streams);
     }
-
-#if !GST_CHECK_VERSION (1, 20, 0)
-    if (bytes == NULL) {
-        bytes = cover_bytes_from_tag_list (gst_discoverer_info_get_tags (info));
-    }
-#endif
 
     return bytes;
 }
@@ -288,6 +280,32 @@ video_decoder_added (GstBin          *bin,
     }
 }
 
+/* Select only the discovered video stream, or the first video stream if its id
+ * isn't in the collection. Audio and subtitles are never selected. */
+static gint
+select_video_stream (GstElement          *source,
+                     GstStreamCollection *collection,
+                     GstStream           *stream,
+                     const gchar         *stream_id)
+{
+    GstStream *first_video = NULL;
+    guint i;
+
+    for (i = 0; i < gst_stream_collection_get_size (collection); i++) {
+        GstStream *candidate = gst_stream_collection_get_stream (collection, i);
+
+        if (stream_id != NULL && g_strcmp0 (gst_stream_get_stream_id (candidate), stream_id) == 0) {
+            return candidate == stream;
+        }
+
+        if (first_video == NULL && (gst_stream_get_stream_type (candidate) & GST_STREAM_TYPE_VIDEO)) {
+            first_video = candidate;
+        }
+    }
+
+    return first_video == stream;
+}
+
 static gboolean
 sample_is_keyframe (GstSample       *sample,
                     KeyframeTracker *tracker)
@@ -353,10 +371,34 @@ seek_to_target (GstElement   *pipeline,
     return gst_element_get_state (pipeline, NULL, NULL, FRAME_GRAB_TIMEOUT) == GST_STATE_CHANGE_SUCCESS;
 }
 
+static void
+log_grab_failure (GstElement  *pipeline,
+                  const gchar *uri)
+{
+    GstBus *bus = gst_element_get_bus (pipeline);
+    GstMessage *message = gst_bus_pop_filtered (bus, GST_MESSAGE_ERROR);
+
+    if (message != NULL) {
+        GError *error = NULL;
+        gchar *debug = NULL;
+
+        gst_message_parse_error (message, &error, &debug);
+        DEBUG ("Frame grab of '%s' failed: %s (%s)", uri, error->message, debug != NULL ? debug : "no details");
+        g_error_free (error);
+        g_free (debug);
+        gst_message_unref (message);
+    } else {
+        DEBUG ("Frame grab of '%s' failed or timed out", uri);
+    }
+
+    gst_object_unref (bus);
+}
+
 /* Roughly matches ffmpegthumbnailer: the first keyframe at or after FRAME_SEEK_PERCENTAGE
  * of the duration, in whole seconds. */
 static GdkPixbuf *
 grab_video_frame (const gchar  *uri,
+                  const gchar  *stream_id,
                   GstClockTime  duration,
                   GCancellable *cancellable)
 {
@@ -366,7 +408,7 @@ grab_video_frame (const gchar  *uri,
     GdkPixbuf *pixbuf = NULL;
     GError *error = NULL;
 
-    pipeline = gst_parse_launch_full ("uridecodebin name=source ! videoconvert ! videoscale ! "
+    pipeline = gst_parse_launch_full ("uridecodebin3 name=source ! videoconvert ! videoscale ! "
                                       "video/x-raw,format=RGB,pixel-aspect-ratio=1/1 ! "
                                       "appsink name=sink sync=false max-buffers=1",
                                       NULL,
@@ -391,6 +433,7 @@ grab_video_frame (const gchar  *uri,
     source = gst_bin_get_by_name (GST_BIN (pipeline), "source");
     sink = gst_bin_get_by_name (GST_BIN (pipeline), "sink");
     g_object_set (source, "uri", uri, NULL);
+    g_signal_connect (source, "select-stream", G_CALLBACK (select_video_stream), (gpointer) stream_id);
 
     if (gst_element_set_state (pipeline, GST_STATE_PAUSED) != GST_STATE_CHANGE_FAILURE &&
         gst_element_get_state (pipeline, NULL, NULL, FRAME_GRAB_TIMEOUT) == GST_STATE_CHANGE_SUCCESS &&
@@ -403,7 +446,9 @@ grab_video_frame (const gchar  *uri,
         pixbuf = pixbuf_from_video_sample (sample);
         gst_sample_unref (sample);
     } else if (!g_cancellable_is_cancelled (cancellable)) {
-        DEBUG ("Frame grab of '%s' failed or timed out", uri);
+        /* Join the streaming threads so an error that failed the state change is on the bus */
+        gst_element_set_state (pipeline, GST_STATE_READY);
+        log_grab_failure (pipeline, uri);
     }
 
     gst_element_set_state (pipeline, GST_STATE_NULL);
@@ -523,7 +568,6 @@ get_tag_track (const GstTagList *tags)
 static GstTagList *
 get_file_tags (GstDiscovererInfo *info)
 {
-#if GST_CHECK_VERSION (1, 20, 0)
     GstDiscovererStreamInfo *top;
     GList *audio_streams;
     const GstTagList *container_tags = NULL;
@@ -551,11 +595,6 @@ get_file_tags (GstDiscovererInfo *info)
     }
 
     return tags;
-#else
-    const GstTagList *tags = gst_discoverer_info_get_tags (info);
-
-    return tags != NULL ? gst_tag_list_copy (tags) : NULL;
-#endif
 }
 
 static void
@@ -592,7 +631,7 @@ read_video_stream (GstDiscovererVideoInfo  *video_info,
     rows[NEMO_PREVIEW_ROW_VIDEO_CODEC] = describe_codec (GST_DISCOVERER_STREAM_INFO (video_info));
 }
 
-/* Embedded cover art shows up as a still-image video stream */
+/* The discoverer only flags a file that is itself a single still image */
 static GstDiscovererVideoInfo *
 find_moving_video (GList *video_streams)
 {
@@ -742,7 +781,10 @@ fetch_thread (GTask        *task,
     if (data->want_cover) {
         /* Missing plugins may include the video decoder, so only grab when discovery fully succeeded */
         if (video_info != NULL && result == GST_DISCOVERER_OK && !g_cancellable_is_cancelled (cancellable)) {
-            info->cover = grab_video_frame (uri, duration, cancellable);
+            info->cover = grab_video_frame (uri,
+                                            gst_discoverer_stream_info_get_stream_id (GST_DISCOVERER_STREAM_INFO (video_info)),
+                                            duration,
+                                            cancellable);
         }
 
         if (info->cover == NULL) {

@@ -72,6 +72,7 @@ typedef struct {
     gint64 probed_duration;
     gboolean playing;
     gboolean scrubbing;
+    gboolean has_video;
 } NemoPreviewVideoPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (NemoPreviewVideo, nemo_preview_video, GTK_TYPE_BOX)
@@ -87,7 +88,7 @@ nemo_preview_video_available (void)
             GstElement *sink, *playbin;
 
             sink = gst_element_factory_make ("gtksink", NULL);
-            playbin = gst_element_factory_make ("playbin", NULL);
+            playbin = gst_element_factory_make ("playbin3", NULL);
             available = sink != NULL && playbin != NULL;
 
             if (sink != NULL) {
@@ -99,7 +100,7 @@ nemo_preview_video_available (void)
             if (playbin != NULL) {
                 gst_object_unref (gst_object_ref_sink (playbin));
             } else {
-                DEBUG ("No playbin element (gstreamer1.0-plugins-base), media playback disabled");
+                DEBUG ("No playbin3 element (gstreamer1.0-plugins-base), media playback disabled");
             }
         }
 
@@ -279,6 +280,7 @@ stop_pipeline (NemoPreviewVideo *video)
 
     priv->duration = priv->probed_duration;
     priv->scrubbing = FALSE;
+    priv->has_video = FALSE;
 
     gtk_range_set_range (GTK_RANGE (priv->seek_scale), 0, 1);
     gtk_range_set_value (GTK_RANGE (priv->seek_scale), 0);
@@ -286,6 +288,20 @@ stop_pipeline (NemoPreviewVideo *video)
     update_time_label (video, 0);
 
     gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), PAGE_POSTER);
+}
+
+/* Audio-only files keep showing the poster */
+static void
+update_video_page (NemoPreviewVideo *video)
+{
+    NemoPreviewVideoPrivate *priv = nemo_preview_video_get_instance_private (video);
+    GstState state;
+
+    gst_element_get_state (priv->pipeline, &state, NULL, 0);
+
+    if (priv->has_video && state >= GST_STATE_PAUSED) {
+        gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), PAGE_VIDEO);
+    }
 }
 
 static gboolean
@@ -322,21 +338,29 @@ bus_callback (GstBus     *bus,
             gst_message_parse_state_changed (message, NULL, &new_state, NULL);
 
             if (new_state >= GST_STATE_PAUSED) {
-                gint n_video = 0;
-
-                /* Audio-only files keep showing the poster */
-                g_object_get (priv->pipeline, "n-video", &n_video, NULL);
-
-                if (n_video > 0) {
-                    gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), PAGE_VIDEO);
-                }
-
+                update_video_page (video);
                 update_duration (video);
             }
 
             set_playing (video, new_state == GST_STATE_PLAYING);
         }
         break;
+    /* Use the selection, not the collection: streams with no usable decoder are dropped from it */
+    case GST_MESSAGE_STREAMS_SELECTED: {
+        guint i, n = gst_message_streams_selected_get_size (message);
+
+        priv->has_video = FALSE;
+
+        for (i = 0; i < n && !priv->has_video; i++) {
+            GstStream *stream = gst_message_streams_selected_get_stream (message, i);
+
+            priv->has_video = (gst_stream_get_stream_type (stream) & GST_STREAM_TYPE_VIDEO) != 0;
+            gst_object_unref (stream);
+        }
+
+        update_video_page (video);
+        break;
+    }
     case GST_MESSAGE_DURATION_CHANGED:
         priv->duration = 0;
         update_duration (video);
@@ -385,7 +409,7 @@ ensure_pipeline (NemoPreviewVideo *video)
 
     gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), PAGE_POSTER);
 
-    priv->pipeline = gst_element_factory_make ("playbin", NULL);
+    priv->pipeline = gst_element_factory_make ("playbin3", NULL);
     g_object_set (priv->pipeline,
                   "uri", uri,
                   "video-sink", priv->sink,   /* reused: its widget is a stack page */
