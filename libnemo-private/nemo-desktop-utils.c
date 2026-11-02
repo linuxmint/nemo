@@ -93,6 +93,63 @@ nemo_desktop_utils_get_primary_monitor (void)
 
     n_mon = gdk_display_get_n_monitors (default_display);
 
+    if (eel_check_is_wayland ()) {
+        /* GDK on Wayland has no notion of a primary monitor, so ask the
+         * compositor and match its primary logical monitor to a GDK monitor
+         * by position. */
+        g_autoptr(GDBusConnection) bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+        g_autoptr(GVariant) state = NULL;
+        g_autoptr(GVariant) logical_monitors = NULL;
+        g_autoptr(GError) error = NULL;
+        GVariantIter iter;
+        GVariant *lm;
+        gint primary_x = 0, primary_y = 0;
+        gboolean found = FALSE;
+
+        if (bus != NULL) {
+            state = g_dbus_connection_call_sync (bus,
+                                                 "org.cinnamon.Muffin.DisplayConfig",
+                                                 "/org/cinnamon/Muffin/DisplayConfig",
+                                                 "org.cinnamon.Muffin.DisplayConfig",
+                                                 "GetCurrentState",
+                                                 NULL, NULL,
+                                                 G_DBUS_CALL_FLAGS_NO_AUTO_START,
+                                                 1000, NULL, &error);
+        }
+
+        if (state == NULL) {
+            g_debug ("Could not get the display configuration: %s", error ? error->message : "no session bus");
+        } else {
+            /* (serial, monitors, logical_monitors, properties) */
+            logical_monitors = g_variant_get_child_value (state, 2);
+            g_variant_iter_init (&iter, logical_monitors);
+
+            while (!found && (lm = g_variant_iter_next_value (&iter)) != NULL) {
+                gboolean primary;
+
+                g_variant_get_child (lm, 4, "b", &primary);
+
+                if (primary) {
+                    g_variant_get_child (lm, 0, "i", &primary_x);
+                    g_variant_get_child (lm, 1, "i", &primary_y);
+                    found = TRUE;
+                }
+
+                g_variant_unref (lm);
+            }
+        }
+
+        for (i = 0; found && i < n_mon; i++) {
+            GdkRectangle geometry;
+
+            gdk_monitor_get_geometry (gdk_display_get_monitor (default_display, i), &geometry);
+
+            if (geometry.x == primary_x && geometry.y == primary_y) {
+                return i;
+            }
+        }
+    }
+
     for (i = 0; i < n_mon; i ++) {
         GdkMonitor *monitor = gdk_display_get_monitor (default_display, i);
         if (gdk_monitor_is_primary (monitor)) {
