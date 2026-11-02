@@ -389,7 +389,7 @@ layout_changed (NemoDesktopManager *manager)
     }
 
     n_monitors = get_n_monitors (manager);
-    x_primary = nemo_desktop_utils_get_primary_monitor ();
+    x_primary = 0; /* always */
 
     show_desktop_on_primary = g_strcmp0 (pref_split[0], "true") == 0;
     show_desktop_on_remaining = g_strcmp0 (pref_split[1], "true") == 0;
