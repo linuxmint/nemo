@@ -1949,6 +1949,57 @@ eel_canvas_accessible_initialize (AtkObject *obj,
 			  G_CALLBACK (accessible_map_cb), NULL);
 }
 
+static AtkObject *
+eel_canvas_accessible_get_parent (AtkObject *obj)
+{
+	AtkObject *parent;
+	GtkWidget *widget, *parent_widget;
+
+	/* GtkAccessible doesn't derive the parent from the widget hierarchy
+	 * (GtkWidgetAccessible does), so do it here. Without this the canvas
+	 * has no accessible parent and AT clients can't ascend the tree. */
+	parent = atk_object_peek_parent (obj);
+	if (parent != NULL) {
+		return parent;
+	}
+
+	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (obj));
+	if (widget == NULL) {
+		return NULL;
+	}
+
+	parent_widget = gtk_widget_get_parent (widget);
+	if (parent_widget == NULL) {
+		return NULL;
+	}
+
+	return gtk_widget_get_accessible (parent_widget);
+}
+
+static gint
+eel_canvas_accessible_get_index_in_parent (AtkObject *obj)
+{
+	GtkWidget *widget, *parent_widget;
+	GList *children;
+	gint index;
+
+	widget = gtk_accessible_get_widget (GTK_ACCESSIBLE (obj));
+	if (widget == NULL) {
+		return -1;
+	}
+
+	parent_widget = gtk_widget_get_parent (widget);
+	if (!GTK_IS_CONTAINER (parent_widget)) {
+		return -1;
+	}
+
+	children = gtk_container_get_children (GTK_CONTAINER (parent_widget));
+	index = g_list_index (children, widget);
+	g_list_free (children);
+
+	return index;
+}
+
 static gint
 eel_canvas_accessible_get_n_children (AtkObject* obj)
 {
@@ -2219,6 +2270,8 @@ eel_canvas_accessible_class_init (EelCanvasAccessibleClass *klass)
  	accessible_parent_class = g_type_class_peek_parent (klass);
 
 	atk_class->initialize = eel_canvas_accessible_initialize;
+	atk_class->get_parent = eel_canvas_accessible_get_parent;
+	atk_class->get_index_in_parent = eel_canvas_accessible_get_index_in_parent;
 	atk_class->get_n_children = eel_canvas_accessible_get_n_children;
 	atk_class->ref_child = eel_canvas_accessible_ref_child;
 	/* below adapted from gtkwidgetaccessible.c */
