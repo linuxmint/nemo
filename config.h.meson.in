@@ -46,6 +46,8 @@
 // Define to 1 if you have the `mallopt' function.
 #mesondefine HAVE_MALLOPT
 
+// Define to 1 if you have the `malloc_trim' function.
+#mesondefine HAVE_MALLOC_TRIM
 
 // Define to 1 if you have the <sys/mount.h> header file.
 #mesondefine HAVE_SYS_MOUNT_H
