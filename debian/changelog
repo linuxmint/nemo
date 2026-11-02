@@ -1,3 +1,14 @@
+nemo (6.8.2) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * preview pane: Use playbin3 and uridecodebin3 instead of legacy elements
+  * nemo-preview-video.c: Pad the video the same as its preview/thumb
+
+  [ Clement Lefebvre ]
+  * wayland: Fix primary monitor detection in nemo-desktop
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 02 Nov 2026 11:03:55 +0000
+
 nemo (6.8.1) adrien; urgency=medium
 
   [ Michael Webster ]
