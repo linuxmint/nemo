@@ -1,3 +1,16 @@
+nemo (6.8.3) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-desktop-manager: Revert 8f6074168 (primary monitor detect)
+
+  [ Hugo ]
+  * Only use malloc_trim if available (#3867)
+
+  [ Leigh Scott ]
+  * eel-canvas: Implement get_parent/get_index_in_parent for accessible (#3871)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 04 Nov 2026 14:42:12 +0100
+
 nemo (6.8.2) adrien; urgency=medium
 
   [ Michael Webster ]
