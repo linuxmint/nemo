@@ -34,6 +34,8 @@
 #include <math.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -3124,6 +3126,66 @@ scan_sources (GList *files,
 	report_count_progress (job, source_info);
 }
 
+/* A write-protected medium (SD card lock switch, floppy tab, ...) is often
+ * mounted read-write, so "filesystem::readonly" is FALSE and the first
+ * write only fails later. The kernel exposes the block device's read-only
+ * state in sysfs; checking it needs no I/O on the medium itself.
+ * Returns FALSE when unknown (non-local path, no backing block device). */
+static gboolean
+destination_device_is_readonly (GFile *dest,
+				char **device_path)
+{
+	char *path, *sysfs_path, *contents;
+	GStatBuf st;
+	gboolean readonly;
+
+	readonly = FALSE;
+	if (device_path != NULL) {
+		*device_path = NULL;
+	}
+
+	path = g_file_get_path (dest);
+	if (path == NULL) {
+		return FALSE;
+	}
+
+	if (g_stat (path, &st) != 0) {
+		g_free (path);
+		return FALSE;
+	}
+	g_free (path);
+
+	sysfs_path = g_strdup_printf ("/sys/dev/block/%u:%u/ro",
+				      major (st.st_dev), minor (st.st_dev));
+	if (g_file_get_contents (sysfs_path, &contents, NULL, NULL)) {
+		readonly = (g_strstrip (contents)[0] == '1');
+		g_free (contents);
+	}
+	g_free (sysfs_path);
+
+	/* Only used to name the device in the error details. */
+	if (readonly && device_path != NULL) {
+		char *uevent_path, *uevent, *name;
+
+		uevent_path = g_strdup_printf ("/sys/dev/block/%u:%u/uevent",
+					       major (st.st_dev), minor (st.st_dev));
+		if (g_file_get_contents (uevent_path, &uevent, NULL, NULL)) {
+			name = strstr (uevent, "DEVNAME=");
+			if (name != NULL && (name == uevent || name[-1] == '\n')) {
+				name += strlen ("DEVNAME=");
+				name[strcspn (name, "\n")] = '\0';
+				if (*name != '\0') {
+					*device_path = g_strdup_printf ("/dev/%s", name);
+				}
+			}
+			g_free (uevent);
+		}
+		g_free (uevent_path);
+	}
+
+	return readonly;
+}
+
 static void
 verify_destination (CommonJob *job,
 		    GFile *dest,
@@ -3220,14 +3282,11 @@ verify_destination (CommonJob *job,
 					       G_FILE_ATTRIBUTE_FILESYSTEM_READONLY,
 					       job->cancellable,
 					       NULL);
-	if (fsinfo == NULL) {
-		/* All sorts of things can go wrong getting the fs info (like not supported)
-		 * only check these things if the fs returns them
-		 */
-		return;
-	}
-
-	if (required_size > 0 &&
+	/* All sorts of things can go wrong getting the fs info (like not supported)
+	 * only check these things if the fs returns them
+	 */
+	if (fsinfo != NULL &&
+	    required_size > 0 &&
 	    g_file_info_has_attribute (fsinfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE)) {
 		free_size = g_file_info_get_attribute_uint64 (fsinfo,
 							      G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
@@ -3261,24 +3320,58 @@ verify_destination (CommonJob *job,
 		}
 	}
 
-	if (!job_aborted (job) &&
-	    g_file_info_get_attribute_boolean (fsinfo,
-					       G_FILE_ATTRIBUTE_FILESYSTEM_READONLY)) {
-		primary = f (_("Error while copying to \"%B\"."), dest);
-		secondary = f (_("The destination is read-only."));
+	if (!job_aborted (job)) {
+		gboolean fs_readonly, device_readonly;
+		char *device_path, *details;
 
-		response = run_error (job,
-				      primary,
-				      secondary,
-				      NULL,
-				      FALSE,
-				      GTK_STOCK_CANCEL,
-				      NULL);
+		fs_readonly = fsinfo != NULL &&
+			      g_file_info_get_attribute_boolean (fsinfo,
+								 G_FILE_ATTRIBUTE_FILESYSTEM_READONLY);
+		device_readonly = destination_device_is_readonly (dest, &device_path);
 
-		abort_job (job);
+		if (fs_readonly || device_readonly) {
+			primary = f (_("Error while copying to \"%B\"."), dest);
+			if (fs_readonly) {
+				secondary = f (_("The destination is read-only."));
+			} else {
+				secondary = f (_("The destination is write-protected."));
+			}
+
+			/* Tell the user which layer is responsible, as the
+			 * remedy differs for each. */
+			if (fs_readonly && device_readonly) {
+				details = f (_("The device %s is read-only, so its filesystem has been mounted in read-only mode.\n"
+					       "This issue can occur, for example, if the storage medium or card reader has a write-protect switch enabled.\n"
+					       "Disable write protection and try mounting the medium again."),
+					     device_path != NULL ? device_path : _("backing this location"));
+			} else if (device_readonly) {
+				details = f (_("The device %s is read-only, although its filesystem is mounted in read-write mode.\n"
+					       "This issue can occur, for example, if the storage medium or card reader has a write-protect switch enabled.\n"
+					       "Disable write protection and try mounting the medium again."),
+					     device_path != NULL ? device_path : _("backing this location"));
+			} else {
+				details = f (_("The filesystem is mounted in read-only mode, but the device itself is not write-protected.\n"
+					       "This issue can occur, for example, if the filesystem was mounted read-only on purpose or was remounted read-only after I/O errors.\n"
+					       "Mount the filesystem in read-write mode again and try copying once more."));
+			}
+
+			response = run_error (job,
+					      primary,
+					      secondary,
+					      details,
+					      FALSE,
+					      GTK_STOCK_CANCEL,
+					      NULL);
+
+			g_free (details);
+			g_free (device_path);
+			abort_job (job);
+		} else {
+			g_free (device_path);
+		}
 	}
 
-	g_object_unref (fsinfo);
+	g_clear_object (&fsinfo);
 }
 
 static void
