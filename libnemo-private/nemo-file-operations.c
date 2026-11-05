@@ -4809,6 +4809,31 @@ copy_move_file (CopyMoveJob *copy_job,
 		g_error_free (error);
 	}
 
+	/* Writing to a read-only or write-protected destination: retrying or
+	 * skipping to the next file can never succeed, so stop the whole job,
+	 * even if the user chose "Skip All" for earlier errors. */
+	else if (IS_IO_ERROR (error, READ_ONLY)) {
+		primary = f (_("Error while copying \"%B\"."), src);
+		secondary = f (_("The destination %F is read-only or write-protected."), dest_dir);
+		details = error->message;
+
+		if (!job->skip_all_error) {
+			run_error (job,
+				   primary,
+				   secondary,
+				   details,
+				   FALSE,
+				   GTK_STOCK_CANCEL,
+				   NULL);
+		} else {
+			g_free (primary);
+			g_free (secondary);
+		}
+
+		g_error_free (error);
+		abort_job (job);
+	}
+
 	/* Other error */
 	else {
 		if (job->skip_all_error) {
