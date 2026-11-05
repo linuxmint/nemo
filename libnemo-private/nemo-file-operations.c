@@ -92,6 +92,7 @@ typedef struct {
 	GtkWindow *parent_window;
     int monitor_num;
 	int inhibit_cookie;
+	gulong cancel_handler_id;
 	NemoProgressInfo *progress;
 	GCancellable *cancellable;
 	GHashTable *skip_files;
@@ -1158,16 +1159,21 @@ init_common (gsize job_size,
 	return common;
 }
 
+static void release_power_manager_inhibit (CommonJob *job);
+
 static void
 finalize_common (CommonJob *common)
 {
 	nemo_progress_info_finish (common->progress);
 
-	if (common->inhibit_cookie != -1) {
-		nemo_uninhibit_power_manager (common->inhibit_cookie);
+	/* Must not be called from the "cancelled" handler itself, as it
+	 * waits for a running handler to complete. */
+	if (common->cancel_handler_id != 0) {
+		g_cancellable_disconnect (common->cancellable, common->cancel_handler_id);
+		common->cancel_handler_id = 0;
 	}
 
-	common->inhibit_cookie = -1;
+	release_power_manager_inhibit (common);
 
 	if (common->parent_window) {
 		g_object_remove_weak_pointer (G_OBJECT (common->parent_window),
@@ -1486,10 +1492,40 @@ run_question (CommonJob *job,
 	return res;
 }
 
+/* Releases the power manager inhibit exactly once, from any thread. */
+static void
+release_power_manager_inhibit (CommonJob *job)
+{
+	int cookie;
+
+	cookie = g_atomic_int_get (&job->inhibit_cookie);
+	if (cookie > 0 &&
+	    g_atomic_int_compare_and_exchange (&job->inhibit_cookie, cookie, -1)) {
+		nemo_uninhibit_power_manager (cookie);
+	}
+}
+
+/* Runs in whichever thread cancels the job (UI or job thread). A job thread
+ * stuck in a blocking write() on a failing device never reaches
+ * finalize_common(), so without this the logout/shutdown inhibit would
+ * stay in place after the user cancelled the operation. */
+static void
+job_cancelled_cb (GCancellable *cancellable,
+		  gpointer user_data)
+{
+	release_power_manager_inhibit ((CommonJob *) user_data);
+}
+
 static void
 inhibit_power_manager (CommonJob *job, const char *message)
 {
 	job->inhibit_cookie = nemo_inhibit_power_manager (message);
+
+	if (job->inhibit_cookie > 0 && job->cancel_handler_id == 0) {
+		job->cancel_handler_id = g_cancellable_connect (job->cancellable,
+								G_CALLBACK (job_cancelled_cb),
+								job, NULL);
+	}
 }
 
 static void
