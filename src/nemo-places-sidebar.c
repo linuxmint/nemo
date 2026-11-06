@@ -431,6 +431,50 @@ free_place_info (PlaceInfo *info)
     g_free (info);
 }
 
+/* A backend can report one location twice: as a mount with no volume and
+ * again through a volume that claims that mount (gvfs's udisks2 monitor does
+ * this while gparted's udisks inhibit swaps a udisks volume for an fstab
+ * one). Keep the volume-backed entry, since it can be unmounted and ejected
+ * from here. */
+static GList *
+remove_duplicate_places (GList *place_infos)
+{
+    GHashTable *by_uri = g_hash_table_new (g_str_hash, g_str_equal);
+    GList *l = place_infos;
+
+    while (l != NULL) {
+        GList *next = l->next;
+        PlaceInfo *info = l->data;
+        PlaceInfo *existing;
+
+        if (info->uri == NULL) {
+            l = next;
+            continue;
+        }
+
+        existing = g_hash_table_lookup (by_uri, info->uri);
+
+        if (existing == NULL) {
+            g_hash_table_insert (by_uri, info->uri, info);
+        } else if (existing->volume == NULL && info->volume != NULL) {
+            DEBUG ("Dropping duplicate sidebar entry for %s (keeping volume %s)", info->uri, info->name);
+            place_infos = g_list_remove (place_infos, existing);
+            g_hash_table_replace (by_uri, info->uri, info);
+            free_place_info (existing);
+        } else {
+            DEBUG ("Dropping duplicate sidebar entry for %s (keeping %s)", info->uri, existing->name);
+            place_infos = g_list_delete_link (place_infos, l);
+            free_place_info (info);
+        }
+
+        l = next;
+    }
+
+    g_hash_table_destroy (by_uri);
+
+    return place_infos;
+}
+
 /* Devices with an eject in progress, keyed by their unix-device identifier
  * (e.g. "/dev/sdb1").
  *
@@ -1447,6 +1491,7 @@ update_places (NemoPlacesSidebar *sidebar)
     }
     g_list_free (volumes);
 
+    place_infos = remove_duplicate_places (place_infos);
     place_infos = g_list_sort (place_infos, (GCompareFunc) sort_places_func);
 
     for (l = place_infos; l != NULL; l = l->next) {
