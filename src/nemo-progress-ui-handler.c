@@ -194,7 +194,6 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 
     GtkWidget *main_box, *progress_window;
     GtkWidget *w, *frame;
-    GtkWidget *header_bar;
 
 	if (self->priv->progress_window != NULL) {
 		return;
@@ -216,16 +215,6 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 				 GTK_WIN_POS_CENTER);
 	xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (progress_window),
                                    "system-run");
-
-    /* Use a custom header bar so a minimize button can be shown next to
-     * close, regardless of the desktop's global decoration layout. This
-     * lets the window be minimized to the taskbar and restored from it,
-     * instead of only being hideable to the status icon. */
-    header_bar = gtk_header_bar_new ();
-    gtk_header_bar_set_title (GTK_HEADER_BAR (header_bar), _("File Operations"));
-    gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar), TRUE);
-    gtk_header_bar_set_decoration_layout (GTK_HEADER_BAR (header_bar), ":minimize,close");
-    gtk_window_set_titlebar (GTK_WINDOW (progress_window), header_bar);
 
 	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
 	gtk_container_add (GTK_CONTAINER (progress_window),
