@@ -682,7 +682,7 @@
                                                 <property name="orientation">vertical</property>
                                                 <child>
                                                   <object class="GtkLinkButton" id="view_prefs_link_button">
-                                                    <property name="label" translatable="yes">button</property>
+                                                    <property name="label">button</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
@@ -847,7 +847,7 @@
                   </object>
                   <packing>
                     <property name="name">substack_enabled</property>
-                    <property name="title" translatable="yes">page0</property>
+                    <property name="title">page0</property>
                   </packing>
                 </child>
                 <child>
@@ -872,7 +872,7 @@
                     </child>
                     <child>
                       <object class="GtkLinkButton" id="disabled_view_link_button">
-                        <property name="label" translatable="yes">button</property>
+                        <property name="label">button</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -889,7 +889,7 @@
                   </object>
                   <packing>
                     <property name="name">substack_disabled</property>
-                    <property name="title" translatable="yes">page1</property>
+                    <property name="title">page1</property>
                     <property name="position">1</property>
                   </packing>
                 </child>

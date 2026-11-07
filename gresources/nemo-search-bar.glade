@@ -181,7 +181,7 @@
                         <property name="secondary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
                         <property name="secondary-icon-sensitive">False</property>
-                        <property name="placeholder-text" translatable="yes">anything</property>
+                        <property name="placeholder-text">anything</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
