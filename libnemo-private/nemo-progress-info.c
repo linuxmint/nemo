@@ -48,7 +48,7 @@ struct _NemoProgressInfo
 	GObject parent_instance;
 	
 	GCancellable *cancellable;
-    GCond *cond;
+    GCond cond;
     GMutex info_lock;
     GTimer *time;
 
@@ -91,6 +91,8 @@ nemo_progress_info_finalize (GObject *object)
     g_free (info->initial_details);
 	g_object_unref (info->cancellable);
     g_timer_destroy (info->time);
+    g_cond_clear (&info->cond);
+    g_mutex_clear (&info->info_lock);
 	
 	if (G_OBJECT_CLASS (nemo_progress_info_parent_class)->finalize) {
 		(*G_OBJECT_CLASS (nemo_progress_info_parent_class)->finalize) (object);
@@ -178,7 +180,7 @@ nemo_progress_info_init (NemoProgressInfo *info)
 	NemoProgressInfoManager *manager;
 
 	info->cancellable = g_cancellable_new ();
-    info->cond = g_cond_new ();
+    g_cond_init (&info->cond);
     info->time = g_timer_new ();
     g_mutex_init (&info->info_lock);
 
@@ -277,7 +279,7 @@ nemo_progress_info_cancel (NemoProgressInfo *info)
 	g_cancellable_cancel (info->cancellable);
 
     info->paused = FALSE;
-    g_cond_signal (info->cond);
+    g_cond_signal (&info->cond);
 
 	g_mutex_unlock (&info->info_lock);
 }
@@ -486,7 +488,7 @@ nemo_progress_info_resume (NemoProgressInfo *info)
         }
 	}
 
-    g_cond_signal (info->cond);
+    g_cond_signal (&info->cond);
 
 	g_mutex_unlock (&info->info_lock);
 }
@@ -627,7 +629,7 @@ nemo_progress_info_pulse_progress (NemoProgressInfo *info)
 	
 
     while (info->paused) {
-        g_cond_wait (info->cond, &info->info_lock);
+        g_cond_wait (&info->cond, &info->info_lock);
     }
 
 	g_mutex_unlock (&info->info_lock);
@@ -666,7 +668,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	}
 
     while (info->paused) {
-        g_cond_wait (info->cond, &info->info_lock);
+        g_cond_wait (&info->cond, &info->info_lock);
     }
 
 	g_mutex_unlock (&info->info_lock);
