@@ -97,6 +97,7 @@ void          nemo_progress_info_set_live_temp   (NemoProgressInfo *info,
                                                   const char       *dir,
                                                   gint64            base_bytes);
 gint64        nemo_progress_info_get_live_bytes  (NemoProgressInfo *info);
+double        nemo_progress_info_get_smooth_progress (NemoProgressInfo *info);
 
 gdouble       nemo_progress_info_get_elapsed_time (NemoProgressInfo *info);
 

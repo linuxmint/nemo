@@ -59,6 +59,7 @@ struct _NemoProgressInfo
 	char *details;
     char *initial_details;
 	double progress;
+	double progress_total; /* total passed to the last set_progress */
 	gint64 bytes_done;
 	char *live_path;     /* destination file being written right now, if known */
 	char *live_dir;      /* overwrite: directory holding GLib's temp file, path found by fd */
@@ -733,6 +734,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	    ) {
 		info->activity_mode = FALSE;
 		info->progress = current_percent;
+		info->progress_total = total;
 		info->progress_at_idle = TRUE;
 		queue_idle (info, FALSE);
 	}
@@ -888,6 +890,27 @@ nemo_progress_info_get_live_bytes (NemoProgressInfo *info)
 
 	if (req != NULL) {
 		g_thread_pool_push (live_stat_pool (), req, NULL);
+	}
+
+	return res;
+}
+
+double
+nemo_progress_info_get_smooth_progress (NemoProgressInfo *info)
+{
+	double res, total;
+	gint64 live;
+
+	/* also kicks off the next async stat of the growing destination file */
+	live = nemo_progress_info_get_live_bytes (info);
+
+	g_mutex_lock (&info->info_lock);
+	res = info->activity_mode ? -1.0 : info->progress;
+	total = info->progress_total;
+	g_mutex_unlock (&info->info_lock);
+
+	if (res >= 0 && live >= 0 && total > 0) {
+		res = MAX (res, MIN ((double) live / total, 1.0));
 	}
 
 	return res;

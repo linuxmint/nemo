@@ -79,6 +79,54 @@ test_live_bytes (void)
     g_object_unref (info);
 }
 
+static void
+test_smooth_progress (void)
+{
+    NemoProgressInfo *info = nemo_progress_info_new ();
+    g_autofree gchar *dir = g_dir_make_tmp ("nemo-smooth-XXXXXX", NULL);
+    g_autofree gchar *path = g_build_filename (dir, "f", NULL);
+    double p = 0;
+    guint i;
+
+    /* no live file: just what was reported */
+    nemo_progress_info_set_progress (info, 100, 1000);
+    g_assert_cmpfloat_with_epsilon (nemo_progress_info_get_smooth_progress (info), 0.1, 1e-9);
+
+    /* the destination grows beyond the last report: the bar follows */
+    g_file_set_contents (path, "0123456789", 10, NULL);
+    nemo_progress_info_set_live_file (info, path, 400);
+    for (i = 0; i < 400; i++) {
+        p = nemo_progress_info_get_smooth_progress (info);
+        if (p > 0.40) {
+            break;
+        }
+        g_usleep (5000);
+    }
+    g_assert_cmpfloat_with_epsilon (p, 0.41, 1e-9);
+
+    /* never goes below the reported value, never above 1 */
+    nemo_progress_info_set_progress (info, 900, 1000);
+    g_assert_cmpfloat (nemo_progress_info_get_smooth_progress (info), >=, 0.9);
+    g_file_set_contents (path, "0123456789", 10, NULL);
+    nemo_progress_info_set_live_file (info, path, 5000);
+    for (i = 0; i < 400; i++) {
+        p = nemo_progress_info_get_smooth_progress (info);
+        if (p >= 1.0) {
+            break;
+        }
+        g_usleep (5000);
+    }
+    g_assert_cmpfloat (p, ==, 1.0);
+
+    /* cleared again: back to the reported value */
+    nemo_progress_info_set_live_file (info, NULL, 0);
+    g_assert_cmpfloat_with_epsilon (nemo_progress_info_get_smooth_progress (info), 0.9, 1e-9);
+
+    g_unlink (path);
+    g_rmdir (dir);
+    g_object_unref (info);
+}
+
 /* Overwrite: GLib writes ".goutputstream-*" in the target directory. It is
  * found among our open descriptors, and two jobs never share one. */
 static void
@@ -140,5 +188,6 @@ main (int argc, char **argv)
     g_test_init (&argc, &argv, NULL);
     g_test_add_func ("/progress-info/live-bytes", test_live_bytes);
     g_test_add_func ("/progress-info/live-temp", test_live_temp);
+    g_test_add_func ("/progress-info/smooth-progress", test_smooth_progress);
     return g_test_run ();
 }

@@ -198,6 +198,8 @@ speed_graph_queue_redraw (NemoProgressInfoWidgetPriv *priv)
     }
 }
 
+static void update_progress (NemoProgressInfoWidget *self);
+
 static gboolean
 speed_sample_cb (gpointer user_data)
 {
@@ -208,6 +210,10 @@ speed_sample_cb (gpointer user_data)
 
     /* size of the file being written, read off the main loop */
     live = nemo_progress_info_get_live_bytes (priv->info);
+
+    /* GIO reports progress only every GiB or so: let the bar follow the
+     * growing destination file between those reports. */
+    update_progress (NEMO_PROGRESS_INFO_WIDGET (user_data));
 
     /* A paused operation transfers nothing: freeze the graph and the average
      * instead of appending zeros that keep moving everything. */
@@ -314,7 +320,7 @@ update_progress (NemoProgressInfoWidget *self)
 {
 	double progress;
 
-	progress = nemo_progress_info_get_progress (self->priv->info);
+	progress = nemo_progress_info_get_smooth_progress (self->priv->info);
 	if (progress < 0) {
 		gtk_progress_bar_pulse (GTK_PROGRESS_BAR (self->priv->progress_bar));
 	} else {
