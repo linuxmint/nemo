@@ -230,12 +230,83 @@ notebook_tab_shortcut_cb(NemoNotebook *notebook, GtkDirectionType direction, gpo
 	return TRUE;
 }
 
+static gboolean
+notebook_scroll_event_cb (GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+{
+	GtkNotebook *notebook = GTK_NOTEBOOK (widget);
+	GtkWidget *page;
+
+	/* Only react when the wheel is used over the tab bar, not over the page
+	 * content. Compare the event's position against the currently-visible
+	 * page's allocation: if the pointer is within the page area, let the
+	 * event propagate (so the file view scrolls normally). This is
+	 * backend-independent and works under both X11 and Wayland, unlike
+	 * comparing GdkWindows.
+	 */
+	page = gtk_notebook_get_nth_page (notebook,
+					  gtk_notebook_get_current_page (notebook));
+	if (page != NULL && gtk_widget_get_mapped (page)) {
+		GtkAllocation page_alloc;
+		gdouble x = 0.0, y = 0.0;
+
+		gtk_widget_get_allocation (page, &page_alloc);
+
+		if (gdk_event_get_coords ((GdkEvent *) event, &x, &y)) {
+			/* Coords from the notebook's own window; translate the
+			 * page allocation into the same coordinate space. */
+			GtkAllocation nb_alloc;
+
+			gtk_widget_get_allocation (widget, &nb_alloc);
+
+			if (x >= (page_alloc.x - nb_alloc.x) &&
+			    x <  (page_alloc.x - nb_alloc.x) + page_alloc.width &&
+			    y >= (page_alloc.y - nb_alloc.y) &&
+			    y <  (page_alloc.y - nb_alloc.y) + page_alloc.height)
+				return GDK_EVENT_PROPAGATE;
+		}
+	}
+
+	switch (event->direction) {
+	case GDK_SCROLL_DOWN:
+	case GDK_SCROLL_RIGHT:
+		gtk_notebook_next_page (notebook);
+		return GDK_EVENT_STOP;
+	case GDK_SCROLL_UP:
+	case GDK_SCROLL_LEFT:
+		gtk_notebook_prev_page (notebook);
+		return GDK_EVENT_STOP;
+	case GDK_SCROLL_SMOOTH:
+		{
+			gdouble dx = 0.0, dy = 0.0;
+
+			gdk_event_get_scroll_deltas ((GdkEvent *) event, &dx, &dy);
+			if (dy > 0 || dx > 0) {
+				gtk_notebook_next_page (notebook);
+				return GDK_EVENT_STOP;
+			} else if (dy < 0 || dx < 0) {
+				gtk_notebook_prev_page (notebook);
+				return GDK_EVENT_STOP;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+	return GDK_EVENT_PROPAGATE;
+}
+
 static void
 nemo_notebook_init (NemoNotebook *notebook)
 {
 	gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
+
+	/* Switch tabs when scrolling the mouse wheel over the tab bar. */
+	gtk_widget_add_events (GTK_WIDGET (notebook), GDK_SCROLL_MASK);
+	g_signal_connect (notebook, "scroll-event",
+			  G_CALLBACK (notebook_scroll_event_cb), NULL);
 
 	/* Make it so that pressing ctrl+tab/ctrl+shift+tab switches the currently
 	 * focused tab.
