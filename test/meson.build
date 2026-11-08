@@ -35,3 +35,12 @@ test('Content Search test',
   ),
   args: []
 )
+
+test('Speed graph math test',
+  executable('test-speed-graph-math',
+    [ 'test-speed-graph-math.c' ],
+    include_directories: [ rootInclude, ],
+    dependencies: [ glib, nemo_private ],
+  ),
+  args: []
+)
