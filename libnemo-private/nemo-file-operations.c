@@ -3348,7 +3348,8 @@ report_copy_progress (CopyMoveJob *copy_job,
 		char *s;
 
         if (nemo_progress_info_get_is_paused (job->progress)) {
-            s = g_strdup (_("Paused"));
+            /* To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "Paused (4 kb of 4 MB)" */
+            s = f (_("Paused (%S of %S)"), transfer_info->num_bytes, total_size);
         } else {
             /* To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB" */
             s = f (_("%S of %S"), transfer_info->num_bytes, total_size);
@@ -3357,7 +3358,8 @@ report_copy_progress (CopyMoveJob *copy_job,
         nemo_progress_info_take_details (job->progress, s);
 	} else {
         if (nemo_progress_info_get_is_paused (job->progress)) {
-            nemo_progress_info_take_details (job->progress, g_strdup (_("Paused")));
+            nemo_progress_info_take_details (job->progress,
+                                            f (_("Paused (%S of %S)"), transfer_info->num_bytes, total_size));
         } else {
             char *s;
             remaining_time = (total_size - transfer_info->num_bytes) / transfer_rate;
