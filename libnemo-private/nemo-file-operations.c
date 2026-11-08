@@ -3377,6 +3377,7 @@ report_copy_progress (CopyMoveJob *copy_job,
         }
     }
 
+	nemo_progress_info_set_bytes_done (job->progress, transfer_info->num_bytes);
 	nemo_progress_info_set_progress (job->progress, transfer_info->num_bytes, total_size);
 }
 
@@ -4555,6 +4556,26 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.source_info = source_info;
 	pdata.transfer_info = transfer_info;
 
+	/* GIO reports progress only every GiB or so with copy_file_range, so let
+	 * the speed graph follow the growing destination file (or, when
+	 * overwriting, the temp file GLib writes before renaming it over). */
+	if (!overwrite) {
+		char *live_path = g_file_get_path (dest);
+
+		nemo_progress_info_set_live_file (job->progress, live_path,
+						  transfer_info->num_bytes);
+		g_free (live_path);
+	} else {
+		/* overwrite writes a temp file next to the target */
+		GFile *parent = g_file_get_parent (dest);
+		char *dir = parent != NULL ? g_file_get_path (parent) : NULL;
+
+		nemo_progress_info_set_live_temp (job->progress, dir,
+						  transfer_info->num_bytes);
+		g_free (dir);
+		g_clear_object (&parent);
+	}
+
 	if (copy_job->is_move) {
 		res = g_file_move (src, dest,
 				   flags,
@@ -4570,6 +4591,8 @@ copy_move_file (CopyMoveJob *copy_job,
 				   &pdata,
 				   &error);
 	}
+
+	nemo_progress_info_set_live_file (job->progress, NULL, 0);
 
 	if (res) {
 		transfer_info->num_files ++;

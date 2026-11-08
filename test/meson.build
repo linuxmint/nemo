@@ -44,3 +44,12 @@ test('Speed graph math test',
   ),
   args: []
 )
+
+test('Progress info live bytes test',
+  executable('test-progress-info-live',
+    [ 'test-progress-info-live.c' ],
+    include_directories: [ rootInclude, ],
+    dependencies: [ gtk, nemo_private ],
+  ),
+  args: []
+)
