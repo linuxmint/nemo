@@ -804,6 +804,47 @@ mount_not_mounted_callback (GObject      *source_object,
     g_object_unref (cancellable);
 }
 
+/* An extra pane that couldn't load its first location (the remembered one
+ * may have been deleted since) shows the other pane's location instead
+ * of closing again. Returns NULL when there's nothing sensible to fall
+ * back to. */
+static GFile *
+get_extra_pane_fallback_location (NemoWindow     *window,
+                                  NemoWindowSlot *slot,
+                                  NemoFile       *failed_file)
+{
+    NemoWindowSlot *other_slot;
+    GFile *failed_location;
+    GFile *fallback;
+    GList *l;
+
+    if (!nemo_window_split_view_showing (window) || slot->pane->slots->next != NULL) {
+        return NULL;
+    }
+
+    other_slot = NULL;
+
+    for (l = window->details->panes; l != NULL; l = l->next) {
+        NemoWindowPane *pane = l->data;
+
+        if (pane != slot->pane) {
+            other_slot = pane->active_slot;
+            break;
+        }
+    }
+
+    if (other_slot == NULL || other_slot->location == NULL ||
+        g_file_has_uri_scheme (other_slot->location, "x-nemo-search")) {
+        return NULL;
+    }
+
+    failed_location = nemo_file_get_location (failed_file);
+    fallback = g_file_equal (failed_location, other_slot->location) ? NULL : g_object_ref (other_slot->location);
+    g_object_unref (failed_location);
+
+    return fallback;
+}
+
 static void
 got_file_info_for_view_selection_callback (NemoFile *file,
 					   gpointer callback_data)
@@ -1034,7 +1075,16 @@ got_file_info_for_view_selection_callback (NemoFile *file,
 			/* We're missing a previous location (if opened location
 			 * in a new tab) so close it and return */
 			if (slot->location == NULL) {
-				nemo_window_pane_close_slot (slot->pane, slot);
+				GFile *fallback;
+
+				fallback = get_extra_pane_fallback_location (window, slot, file);
+
+				if (fallback != NULL) {
+					nemo_window_slot_open_location (slot, fallback, 0);
+					g_object_unref (fallback);
+				} else {
+					nemo_window_pane_close_slot (slot->pane, slot);
+				}
 			} else {
 				/* We disconnected this, so we need to re-connect it */
 				NemoFile *viewed_file;
