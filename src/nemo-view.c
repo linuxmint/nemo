@@ -3079,6 +3079,27 @@ nemo_view_finalize (GObject *object)
 	G_OBJECT_CLASS (nemo_view_parent_class)->finalize (object);
 }
 
+/* Wrap the name in FSI...PDI so a right-to-left name doesn't reorder the
+ * rest of the status text (and vice versa). Pango picks the paragraph
+ * direction from the first strong character even inside an isolate, so
+ * lead with an LRM or RLM matching the UI direction as well. */
+static char *
+get_bidi_isolated_display_name (NemoView *view,
+				NemoFile *file)
+{
+	char *name;
+	char *isolated;
+
+	name = nemo_file_get_display_name (file);
+	isolated = g_strdup_printf ("%s\xe2\x81\xa8%s\xe2\x81\xa9",
+				    gtk_widget_get_direction (GTK_WIDGET (view)) == GTK_TEXT_DIR_RTL ?
+				    "\xe2\x80\x8f" : "\xe2\x80\x8e",
+				    name);
+	g_free (name);
+
+	return isolated;
+}
+
 /**
  * nemo_view_display_selection_info:
  *
@@ -3143,7 +3164,7 @@ nemo_view_display_selection_info (NemoView *view)
 		}
 
 		if (first_item_name == NULL) {
-			first_item_name = nemo_file_get_display_name (file);
+			first_item_name = get_bidi_isolated_display_name (view, file);
 		}
 	}
 
