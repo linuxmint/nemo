@@ -7481,6 +7481,19 @@ action_open_in_terminal_callback(GtkAction *action,
     }
 }
 
+static char *
+escape_percents (const char *str)
+{
+	char **parts;
+	char *escaped;
+
+	parts = g_strsplit (str, "%", -1);
+	escaped = g_strjoinv ("%%", parts);
+	g_strfreev (parts);
+
+	return escaped;
+}
+
 static void
 invoke_external_bulk_rename_utility (NemoView *view,
 				     GList *selection)
@@ -7488,31 +7501,27 @@ invoke_external_bulk_rename_utility (NemoView *view,
 	GString *cmd;
 	char *parameter;
 	char *quoted_parameter;
+	char *escaped_parameter;
 	char *bulk_rename_tool;
 	GList *walk;
 	NemoFile *file;
 
 	/* assemble command line */
 	bulk_rename_tool = get_bulk_rename_tool ();
-	cmd = g_string_new (bulk_rename_tool);
+	escaped_parameter = escape_percents (bulk_rename_tool);
+	cmd = g_string_new (escaped_parameter);
+	g_free (escaped_parameter);
 	g_free (bulk_rename_tool);
 	for (walk = selection; walk; walk = walk->next) {
 		file = walk->data;
 		parameter = nemo_file_get_uri (file);
 		quoted_parameter = g_shell_quote (parameter);
+		escaped_parameter = escape_percents (quoted_parameter);
 		g_free (parameter);
-		cmd = g_string_append (cmd, " ");
-		cmd = g_string_append (cmd, quoted_parameter);
 		g_free (quoted_parameter);
-	}
-
-        guint i = 0;
-
-	// Escape percents
-	for (i = 0; i < strlen(cmd->str); i++) {
-		if (cmd->str[i] == '%') {
-			g_string_insert_c(cmd, i++, '%');
-		}
+		cmd = g_string_append (cmd, " ");
+		cmd = g_string_append (cmd, escaped_parameter);
+		g_free (escaped_parameter);
 	}
 
 	/* spawning and error handling */
