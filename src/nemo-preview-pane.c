@@ -23,6 +23,7 @@
 
 #include <config.h>
 #include "nemo-preview-pane.h"
+#include "nemo-window.h"
 #include <libnemo-private/nemo-preview-image.h>
 #include <libnemo-private/nemo-preview-details.h>
 #include <libnemo-private/nemo-preview-image-info.h>
@@ -260,6 +261,19 @@ start_info_fetch (NemoPreviewPane *pane,
     }
 }
 
+#ifdef HAVE_GSTREAMER
+static void
+video_release_focus (NemoPreviewVideo *video,
+                     gpointer          user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (video));
+
+    if (NEMO_IS_WINDOW (toplevel)) {
+        nemo_window_grab_focus (NEMO_WINDOW (toplevel));
+    }
+}
+#endif
+
 static void
 update_top_widget (NemoPreviewPane *pane,
                    NemoFile        *file)
@@ -270,6 +284,7 @@ update_top_widget (NemoPreviewPane *pane,
     if (priv->current_kind == PREVIEW_KIND_MEDIA && nemo_preview_video_available ()) {
         if (priv->video_widget == NULL) {
             priv->video_widget = nemo_preview_video_new ();
+            g_signal_connect (priv->video_widget, "release-focus", G_CALLBACK (video_release_focus), NULL);
             gtk_stack_add_named (GTK_STACK (priv->top_stack), priv->video_widget, "video");
             gtk_widget_show_all (priv->video_widget);
         }

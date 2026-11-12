@@ -2028,6 +2028,16 @@ nemo_window_get_active_slot (NemoWindow *window)
 	return window->details->active_pane->active_slot;
 }
 
+void
+nemo_window_grab_focus (NemoWindow *window)
+{
+    NemoWindowSlot *slot = nemo_window_get_active_slot (window);
+
+    if (slot != NULL && slot->content_view != NULL) {
+        nemo_view_grab_focus (slot->content_view);
+    }
+}
+
 NemoWindowSlot *
 nemo_window_get_extra_slot (NemoWindow *window)
 {
@@ -3035,8 +3045,8 @@ nemo_window_preview_pane_off_internal (NemoWindow *window,
     window->details->show_preview_pane = FALSE;
     window->details->preview_pane_width_set = FALSE;
 
-    gtk_widget_hide (window->details->preview_pane);
     nemo_preview_pane_set_selection (NEMO_PREVIEW_PANE (window->details->preview_pane), NULL);
+    gtk_widget_hide (window->details->preview_pane);
 
     /* Forget the old position; it is restored from pane-width when the pane is shown again */
     g_object_set (G_OBJECT (window->details->secondary_paned),
