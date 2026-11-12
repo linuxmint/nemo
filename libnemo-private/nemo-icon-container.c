@@ -2951,6 +2951,15 @@ unrealize (GtkWidget *widget)
 }
 
 static void
+refresh_icons_if_realized (NemoIconContainer *container)
+{
+    if (gtk_widget_get_realized (GTK_WIDGET (container))) {
+        nemo_icon_container_invalidate_labels (container);
+        nemo_icon_container_request_update_all (container);
+    }
+}
+
+static void
 style_updated (GtkWidget *widget)
 {
 	NemoIconContainer *container;
@@ -2965,10 +2974,7 @@ style_updated (GtkWidget *widget)
 		GTK_WIDGET_CLASS (nemo_icon_container_parent_class)->style_updated (widget);
 	}
 
-	if (gtk_widget_get_realized (widget)) {
-		nemo_icon_container_invalidate_labels (container);
-		nemo_icon_container_request_update_all (container);
-	}
+	refresh_icons_if_realized (container);
 }
 
 static gboolean
@@ -4939,6 +4945,11 @@ nemo_icon_container_init (NemoIconContainer *container)
     details->view_constants = g_new0 (NemoViewLayoutConstants, 1);
 
 	container->details = details;
+
+    /* Icons are fetched at the widget's scale, so they need to be replaced right
+     * away or they'll be drawn at the wrong size until something else updates them. */
+    g_signal_connect (container, "notify::scale-factor",
+                      G_CALLBACK (refresh_icons_if_realized), NULL);
 
 	g_signal_connect (container, "focus-in-event",
 			  G_CALLBACK (handle_focus_in_event), NULL);
