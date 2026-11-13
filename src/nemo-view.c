@@ -11079,6 +11079,38 @@ nemo_view_set_filter_text (NemoView *view, const char *text)
     view->details->filter_debounce_id = g_timeout_add (100, apply_filter_debounce_cb, view);
 }
 
+/**
+ * nemo_view_flush_filter_for_key:
+ * @view: a #NemoView
+ * @event: a key press about to be handled
+ *
+ * Applies a filter that's still waiting out its debounce, unless @event
+ * is only going to change the filter text again. Keeps keys that act on
+ * the view's contents or selection from racing ahead of the typed text.
+ */
+void
+nemo_view_flush_filter_for_key (NemoView *view, GdkEventKey *event)
+{
+    g_return_if_fail (NEMO_IS_VIEW (view));
+
+    if (view->details->filter_debounce_id == 0 || event->is_modifier) {
+        return;
+    }
+
+    if (event->keyval == GDK_KEY_BackSpace || event->keyval == GDK_KEY_Escape) {
+        return;
+    }
+
+    if ((event->state & (GDK_CONTROL_MASK | GDK_MOD1_MASK)) == 0 &&
+        g_unichar_isprint (gdk_keyval_to_unicode (event->keyval))) {
+        return;
+    }
+
+    g_source_remove (view->details->filter_debounce_id);
+    apply_filter_debounce_cb (view);
+    update_menus_if_pending (view);
+}
+
 void
 nemo_view_clear_filter (NemoView *view)
 {

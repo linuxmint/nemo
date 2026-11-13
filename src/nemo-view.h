@@ -403,6 +403,8 @@ void                nemo_view_set_filter_key_widget            (NemoView  *view,
 void                nemo_view_set_filter_bar                   (NemoView  *view,
                                                                     NemoFilterBar *filter_bar);
 gboolean            nemo_view_get_filter_has_preedit           (NemoView  *view);
+void                nemo_view_flush_filter_for_key             (NemoView  *view,
+                                                                    GdkEventKey   *event);
 void                nemo_view_add_subdirectory                (NemoView  *view,
 								   NemoDirectory*directory);
 void                nemo_view_remove_subdirectory             (NemoView  *view,
