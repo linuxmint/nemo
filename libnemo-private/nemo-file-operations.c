@@ -71,6 +71,7 @@
 #include "nemo-file-undo-operations.h"
 #include "nemo-file-undo-manager.h"
 #include "nemo-job-queue.h"
+#include "nemo-writeback-pacer.h"
 
 /* TODO: TESTING!!! */
 
@@ -118,6 +119,8 @@ typedef struct {
 	gchar *target_name;
 	NemoCopyCallback  done_callback;
 	gpointer done_callback_data;
+    NemoWritebackPacer *writeback_pacer;
+    GError *writeback_error;
 } CopyMoveJob;
 
 typedef struct {
@@ -4199,6 +4202,13 @@ copy_file_progress_callback (goffset current_num_bytes,
 		report_copy_progress (pdata->job,
 				      pdata->source_info,
 				      pdata->transfer_info);
+
+        if (pdata->job->writeback_pacer != NULL &&
+            !nemo_writeback_pacer_add (pdata->job->writeback_pacer,
+                                       new_size,
+                                       &pdata->job->writeback_error)) {
+            g_cancellable_cancel (pdata->job->common.cancellable);
+        }
 	}
 }
 
@@ -4925,6 +4935,41 @@ copy_files (CopyMoveJob *job,
 	g_free (dest_fs_type);
 }
 
+static void
+finish_writeback_pacer (CopyMoveJob *job,
+                        GFile       *dest)
+{
+    if (job->writeback_pacer == NULL) {
+        return;
+    }
+
+    nemo_writeback_pacer_finish (job->writeback_pacer, &job->writeback_error);
+    job->writeback_pacer = NULL;
+
+    if (job->writeback_error != NULL) {
+        gchar *primary, *secondary;
+
+        if (job->is_move) {
+            primary = f (_("Error while moving."));
+            secondary = f (_("There was an error moving the file into %F."), dest);
+        } else {
+            primary = f (_("Error while copying."));
+            secondary = f (_("There was an error copying the file into %F."), dest);
+        }
+
+        run_error (&job->common,
+                   primary,
+                   secondary,
+                   job->writeback_error->message,
+                   FALSE,
+                   GTK_STOCK_OK,
+                   NULL);
+        g_cancellable_cancel (job->common.cancellable);
+    }
+
+    g_clear_error (&job->writeback_error);
+}
+
 static gboolean
 copy_job_done (gpointer user_data)
 {
@@ -4973,6 +5018,7 @@ copy_job (GIOSchedulerJob *io_job,
 	common->io_job = io_job;
 
 	dest_fs_id = NULL;
+    dest = NULL;
 
     nemo_progress_info_start (common->progress);
 
@@ -4997,10 +5043,11 @@ copy_job (GIOSchedulerJob *io_job,
 			    dest,
 			    &dest_fs_id,
 			    source_info.num_bytes);
-	g_object_unref (dest);
 	if (job_aborted (common)) {
 		goto aborted;
 	}
+
+    job->writeback_pacer = nemo_writeback_pacer_new (dest, common->cancellable);
 
 	nemo_progress_info_start (common->progress);
 
@@ -5010,6 +5057,8 @@ copy_job (GIOSchedulerJob *io_job,
 		    &source_info, &transfer_info);
 
  aborted:
+    finish_writeback_pacer (job, dest);
+    g_clear_object (&dest);
 
 	g_free (dest_fs_id);
 
@@ -5635,6 +5684,8 @@ move_job (GIOSchedulerJob *io_job,
 		goto aborted;
 	}
 
+    job->writeback_pacer = nemo_writeback_pacer_new (job->destination, common->cancellable);
+
 	memset (&transfer_info, 0, sizeof (transfer_info));
 	move_files (job,
 		    fallbacks,
@@ -5642,6 +5693,7 @@ move_job (GIOSchedulerJob *io_job,
 		    &source_info, &transfer_info);
 
  aborted:
+    finish_writeback_pacer (job, job->destination);
 	g_list_free_full (fallbacks, move_file_copy_fallback_free);
 
 	g_free (dest_fs_id);
