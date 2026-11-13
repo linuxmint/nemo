@@ -87,6 +87,7 @@ nemo_private_sources = [
   'nemo-vfs-file.c',
   'nemo-widget-action.c',
   'nemo-widget-menu-item.c',
+  'nemo-writeback-pacer.c',
 ]
 
 nemo_private_deps = [
