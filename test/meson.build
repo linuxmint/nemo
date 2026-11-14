@@ -35,3 +35,21 @@ test('Content Search test',
   ),
   args: []
 )
+
+test('Speed graph math test',
+  executable('test-speed-graph-math',
+    [ 'test-speed-graph-math.c' ],
+    include_directories: [ rootInclude, ],
+    dependencies: [ glib, nemo_private ],
+  ),
+  args: []
+)
+
+test('Progress info live bytes test',
+  executable('test-progress-info-live',
+    [ 'test-progress-info-live.c' ],
+    include_directories: [ rootInclude, ],
+    dependencies: [ gtk, nemo_private ],
+  ),
+  args: []
+)

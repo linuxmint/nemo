@@ -24,6 +24,9 @@
 
 #include <config.h>
 #include <math.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <eel/eel-string.h>
 #include <eel/eel-glib-extensions.h>
@@ -56,6 +59,14 @@ struct _NemoProgressInfo
 	char *details;
     char *initial_details;
 	double progress;
+	double progress_total; /* total passed to the last set_progress */
+	gint64 bytes_done;
+	char *live_path;     /* destination file being written right now, if known */
+	char *live_dir;      /* overwrite: directory holding GLib's temp file, path found by fd */
+	gint64 live_base;    /* bytes of all earlier files of this operation */
+	gint64 live_size;    /* last size seen by the worker, -1 if none */
+	guint live_gen;      /* bumped whenever live_path changes */
+	gboolean live_pending; /* a stat is queued or running */
 	gboolean activity_mode;
 	gboolean started;
 	gboolean finished;
@@ -79,6 +90,64 @@ struct _NemoProgressInfoClass
 
 G_DEFINE_TYPE (NemoProgressInfo, nemo_progress_info, G_TYPE_OBJECT)
 
+/* Overwriting goes through a ".goutputstream-XXXXXX" temp file in the
+ * destination directory (renamed over the target at the end). Its name is
+ * private to GLib, but the file is open in this process: find it among our
+ * own descriptors. Concurrent jobs must not pick the same one. */
+static GMutex claim_lock;
+static GHashTable *claimed = NULL;
+
+static char *
+live_claim_temp (const char *dir)
+{
+	g_autofree char *prefix = g_strconcat (dir, "/.goutputstream-", NULL);
+	GDir *fds = g_dir_open ("/proc/self/fd", 0, NULL);
+	const char *name;
+	char *found = NULL;
+
+	if (fds == NULL) {
+		return NULL;
+	}
+	g_mutex_lock (&claim_lock);
+	if (claimed == NULL) {
+		claimed = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	}
+	while (found == NULL && (name = g_dir_read_name (fds)) != NULL) {
+		g_autofree char *link = g_build_filename ("/proc/self/fd", name, NULL);
+		g_autofree char *target = g_file_read_link (link, NULL);
+
+		if (target != NULL &&
+		    g_str_has_prefix (target, prefix) &&
+		    strchr (target + strlen (prefix), '/') == NULL &&
+		    !g_hash_table_contains (claimed, target)) {
+			found = g_strdup (target);
+			g_hash_table_add (claimed, g_strdup (target));
+		}
+	}
+	g_mutex_unlock (&claim_lock);
+	g_dir_close (fds);
+	return found;
+}
+
+static void
+live_unclaim_temp (const char *path)
+{
+	g_mutex_lock (&claim_lock);
+	if (claimed != NULL) {
+		g_hash_table_remove (claimed, path);
+	}
+	g_mutex_unlock (&claim_lock);
+}
+
+/* info_lock held */
+static void
+live_release_claim (NemoProgressInfo *info)
+{
+	if (info->live_dir != NULL && info->live_path != NULL) {
+		live_unclaim_temp (info->live_path);
+	}
+}
+
 static void
 nemo_progress_info_finalize (GObject *object)
 {
@@ -88,6 +157,9 @@ nemo_progress_info_finalize (GObject *object)
 
 	g_free (info->status);
 	g_free (info->details);
+	live_release_claim (info);
+	g_free (info->live_path);
+	g_free (info->live_dir);
     g_free (info->initial_details);
 	g_object_unref (info->cancellable);
     g_timer_destroy (info->time);
@@ -181,6 +253,7 @@ nemo_progress_info_init (NemoProgressInfo *info)
     info->cond = g_cond_new ();
     info->time = g_timer_new ();
     g_mutex_init (&info->info_lock);
+    info->live_size = -1;
 
 	manager = nemo_progress_info_manager_new ();
 	nemo_progress_info_manager_add_new_info (manager, info);
@@ -661,6 +734,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	    ) {
 		info->activity_mode = FALSE;
 		info->progress = current_percent;
+		info->progress_total = total;
 		info->progress_at_idle = TRUE;
 		queue_idle (info, FALSE);
 	}
@@ -671,6 +745,175 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 
 	g_mutex_unlock (&info->info_lock);
 
+}
+
+void
+nemo_progress_info_set_bytes_done (NemoProgressInfo *info,
+                                   gint64            bytes)
+{
+	g_mutex_lock (&info->info_lock);
+	info->bytes_done = bytes;
+	g_mutex_unlock (&info->info_lock);
+}
+
+gint64
+nemo_progress_info_get_bytes_done (NemoProgressInfo *info)
+{
+	gint64 res;
+
+	g_mutex_lock (&info->info_lock);
+	res = info->bytes_done;
+	g_mutex_unlock (&info->info_lock);
+
+	return res;
+}
+
+/* stat() can block for a long time on a stalled network or FUSE mount (gvfs
+ * paths are local-looking), so it must never run in the main loop: a small
+ * shared pool does it, and the main loop only reads the last result. */
+typedef struct {
+	NemoProgressInfo *info;
+	char *path;   /* file to stat, or NULL while it is still to be found */
+	char *dir;    /* overwrite: where to look for the temp file */
+	guint gen;
+} LiveStatRequest;
+
+static void
+live_stat_worker (gpointer data, gpointer user_data)
+{
+	LiveStatRequest *req = data;
+	GStatBuf st;
+	gint64 size = -1;
+	char *found = NULL;
+	const char *path = req->path;
+
+	if (path == NULL && req->dir != NULL) {
+		found = live_claim_temp (req->dir);
+		path = found;
+	}
+
+	/* lstat: a symlink at the destination is not a file being written */
+	if (path != NULL && g_lstat (path, &st) == 0 && S_ISREG (st.st_mode)) {
+		size = (gint64) st.st_size;
+	}
+
+	g_mutex_lock (&req->info->info_lock);
+	if (req->gen == req->info->live_gen) {
+		req->info->live_size = size;
+		if (found != NULL && size >= 0) {
+			/* remember it for the next samples; the claim goes with it */
+			req->info->live_path = found;
+			found = NULL;
+		} else if (req->dir != NULL && req->path != NULL && size < 0) {
+			/* the temp file is gone (renamed at the end): look again */
+			live_release_claim (req->info);
+			g_clear_pointer (&req->info->live_path, g_free);
+		}
+	}
+	req->info->live_pending = FALSE;
+	g_mutex_unlock (&req->info->info_lock);
+
+	if (found != NULL) {
+		live_unclaim_temp (found);
+		g_free (found);
+	}
+	g_object_unref (req->info);
+	g_free (req->path);
+	g_free (req->dir);
+	g_free (req);
+}
+
+static GThreadPool *
+live_stat_pool (void)
+{
+	static GThreadPool *pool = NULL;
+
+	if (g_once_init_enter (&pool)) {
+		g_once_init_leave (&pool, g_thread_pool_new (live_stat_worker, NULL, 2, FALSE, NULL));
+	}
+	return pool;
+}
+
+void
+nemo_progress_info_set_live_file (NemoProgressInfo *info,
+                                  const char       *path,
+                                  gint64            base_bytes)
+{
+	g_mutex_lock (&info->info_lock);
+	live_release_claim (info);
+	g_free (info->live_path);
+	g_clear_pointer (&info->live_dir, g_free);
+	info->live_path = g_strdup (path);
+	info->live_base = base_bytes;
+	info->live_size = -1;
+	info->live_gen++;
+	g_mutex_unlock (&info->info_lock);
+}
+
+void
+nemo_progress_info_set_live_temp (NemoProgressInfo *info,
+                                  const char       *dir,
+                                  gint64            base_bytes)
+{
+	g_mutex_lock (&info->info_lock);
+	live_release_claim (info);
+	g_clear_pointer (&info->live_path, g_free);
+	g_free (info->live_dir);
+	info->live_dir = g_strdup (dir);
+	info->live_base = base_bytes;
+	info->live_size = -1;
+	info->live_gen++;
+	g_mutex_unlock (&info->info_lock);
+}
+
+gint64
+nemo_progress_info_get_live_bytes (NemoProgressInfo *info)
+{
+	LiveStatRequest *req = NULL;
+	gint64 res = -1;
+
+	g_mutex_lock (&info->info_lock);
+	if (info->live_path != NULL || info->live_dir != NULL) {
+		if (info->live_size >= 0) {
+			res = info->live_base + info->live_size;
+		}
+		if (!info->live_pending) {
+			info->live_pending = TRUE;
+			req = g_new0 (LiveStatRequest, 1);
+			req->info = g_object_ref (info);
+			req->path = g_strdup (info->live_path);
+			req->dir = g_strdup (info->live_dir);
+			req->gen = info->live_gen;
+		}
+	}
+	g_mutex_unlock (&info->info_lock);
+
+	if (req != NULL) {
+		g_thread_pool_push (live_stat_pool (), req, NULL);
+	}
+
+	return res;
+}
+
+double
+nemo_progress_info_get_smooth_progress (NemoProgressInfo *info)
+{
+	double res, total;
+	gint64 live;
+
+	/* also kicks off the next async stat of the growing destination file */
+	live = nemo_progress_info_get_live_bytes (info);
+
+	g_mutex_lock (&info->info_lock);
+	res = info->activity_mode ? -1.0 : info->progress;
+	total = info->progress_total;
+	g_mutex_unlock (&info->info_lock);
+
+	if (res >= 0 && live >= 0 && total > 0) {
+		res = MAX (res, MIN ((double) live / total, 1.0));
+	}
+
+	return res;
 }
 
 gdouble
