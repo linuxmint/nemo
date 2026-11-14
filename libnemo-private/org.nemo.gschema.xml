@@ -333,6 +333,17 @@
       <summary>Whether to show hidden files</summary>
       <description>If set to true, then hidden files are shown by default in the file manager.  Hidden files are either dotfiles, listed in the folder's .hidden file or backup files ending with a tilde (~).</description>
     </key>
+    <key name="copy-speed-graph-interval" type="d">
+      <default>0.2</default>
+      <range min="0.05" max="5.0"/>
+      <summary>Update interval (in seconds) of the transfer speed graph</summary>
+      <description>How often the speed graph in the file operation progress window samples the transfer speed. Smaller values give a finer graph at slightly higher CPU usage. Applies to operations started afterwards.</description>
+    </key>
+    <key name="copy-progress-expanded" type="b">
+      <default>false</default>
+      <summary>Whether the transfer speed graph is expanded</summary>
+      <description>When true, the details line of each file operation in the progress window starts expanded, showing the transfer speed graph. Toggling it in the progress window updates this setting.</description>
+    </key>
     <key name="show-full-path-titles" type="b">
       <default>false</default>
       <summary>Whether to show the full path of the current view in the title bar and tab bars</summary>

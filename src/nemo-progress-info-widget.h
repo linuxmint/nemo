@@ -28,6 +28,7 @@
 #define __NEMO_PROGRESS_INFO_WIDGET_H__
 
 #include <gtk/gtk.h>
+#include <libnemo-private/nemo-speed-graph-math.h>
 
 #include <libnemo-private/nemo-progress-info.h>
 
@@ -71,6 +72,28 @@ struct _NemoProgressInfoWidgetPriv {
     GtkWidget *status; /* GtkLabel */
     GtkWidget *details; /* GtkLabel */
     GtkWidget *progress_bar;
+
+    /* collapsible transfer speed graph (opened by clicking the details line) */
+    GtkWidget *graph_expander;
+    GtkWidget *graph;
+    GtkWidget *now_label;
+    guint64 *history;           /* ring of smoothed bytes/sec, oldest first */
+    guint history_len;          /* samples currently kept */
+    guint history_head;         /* next write position in the ring */
+    guint64 speed_peak;
+    guint64 avg_speed;
+    guint64 graph_max;          /* stable y-axis ceiling, only grows in steps */
+    guint64 *recent;            /* ring of the last raw per-sample deltas */
+    guint interval_ms;          /* sampling interval, from the preferences */
+    guint smooth_n;             /* samples averaged (about one second) */
+    guint history_max;          /* samples kept (one graph window) */
+    guint recent_count;
+    guint recent_pos;
+    NemoSpeedCounters counters;
+    gint64 start_time;
+    gint64 pause_start;         /* 0 unless currently paused */
+    gint64 paused_total;        /* microseconds spent paused */
+    guint speed_timeout_id;
 };
 
 GType nemo_progress_info_widget_get_type (void);

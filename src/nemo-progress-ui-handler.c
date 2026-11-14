@@ -317,7 +317,7 @@ progress_info_changed_cb (NemoProgressInfo *info,
             if (nemo_progress_info_get_is_finished (l->data)) {
                 continue;
             }
-            progress = (progress + nemo_progress_info_get_progress (l->data)) / (double) ++i;
+            progress = (progress + nemo_progress_info_get_smooth_progress (l->data)) / (double) ++i;
         }
         if (progress > 0) {
             int iprogress = progress * 100;

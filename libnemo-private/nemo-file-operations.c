@@ -3348,7 +3348,8 @@ report_copy_progress (CopyMoveJob *copy_job,
 		char *s;
 
         if (nemo_progress_info_get_is_paused (job->progress)) {
-            s = g_strdup (_("Paused"));
+            /* To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "Paused (4 kb of 4 MB)" */
+            s = f (_("Paused (%S of %S)"), transfer_info->num_bytes, total_size);
         } else {
             /* To translators: %S will expand to a size like "2 bytes" or "3 MB", so something like "4 kb of 4 MB" */
             s = f (_("%S of %S"), transfer_info->num_bytes, total_size);
@@ -3357,7 +3358,8 @@ report_copy_progress (CopyMoveJob *copy_job,
         nemo_progress_info_take_details (job->progress, s);
 	} else {
         if (nemo_progress_info_get_is_paused (job->progress)) {
-            nemo_progress_info_take_details (job->progress, g_strdup (_("Paused")));
+            nemo_progress_info_take_details (job->progress,
+                                            f (_("Paused (%S of %S)"), transfer_info->num_bytes, total_size));
         } else {
             char *s;
             remaining_time = (total_size - transfer_info->num_bytes) / transfer_rate;
@@ -3377,6 +3379,7 @@ report_copy_progress (CopyMoveJob *copy_job,
         }
     }
 
+	nemo_progress_info_set_bytes_done (job->progress, transfer_info->num_bytes);
 	nemo_progress_info_set_progress (job->progress, transfer_info->num_bytes, total_size);
 }
 
@@ -4555,6 +4558,20 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.source_info = source_info;
 	pdata.transfer_info = transfer_info;
 
+	/* GIO reports progress only every GiB or so with copy_file_range, so let
+	 * the speed graph follow the growing destination file. Overwriting goes
+	 * through a temporary file whose name is private to GLib, so those
+	 * operations fall back to the operation's own counter. */
+	if (!overwrite) {
+		char *live_path = g_file_get_path (dest);
+
+		nemo_progress_info_set_live_file (job->progress, live_path,
+						  transfer_info->num_bytes);
+		g_free (live_path);
+	} else {
+		nemo_progress_info_set_live_file (job->progress, NULL, 0);
+	}
+
 	if (copy_job->is_move) {
 		res = g_file_move (src, dest,
 				   flags,
@@ -4570,6 +4587,8 @@ copy_move_file (CopyMoveJob *copy_job,
 				   &pdata,
 				   &error);
 	}
+
+	nemo_progress_info_set_live_file (job->progress, NULL, 0);
 
 	if (res) {
 		transfer_info->num_files ++;

@@ -66,6 +66,7 @@ nemo_private_sources = [
   'nemo-program-choosing.c',
   'nemo-progress-info-manager.c',
   'nemo-progress-info.c',
+  'nemo-speed-graph-math.c',
   'nemo-query.c',
   'nemo-recent.c',
   'nemo-search-directory-file.c',

@@ -83,6 +83,18 @@ void          nemo_progress_info_set_progress    (NemoProgressInfo *info,
 						      double                current,
 						      double                total);
 void          nemo_progress_info_pulse_progress  (NemoProgressInfo *info);
+void          nemo_progress_info_set_bytes_done  (NemoProgressInfo *info,
+						      gint64                bytes);
+gint64        nemo_progress_info_get_bytes_done  (NemoProgressInfo *info);
+/* The local destination file currently being written (NULL to clear) and the
+ * bytes of the operation done before it; lets the speed graph follow the file
+ * size between the very coarse GIO progress callbacks. */
+void          nemo_progress_info_set_live_file   (NemoProgressInfo *info,
+						      const char           *path,
+						      gint64                base_bytes);
+/* base + current size of that file, or -1 if there is none. */
+gint64        nemo_progress_info_get_live_bytes  (NemoProgressInfo *info);
+double        nemo_progress_info_get_smooth_progress (NemoProgressInfo *info);
 
 gdouble       nemo_progress_info_get_elapsed_time (NemoProgressInfo *info);
 

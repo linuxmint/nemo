@@ -24,6 +24,8 @@
 
 #include <config.h>
 #include <math.h>
+#include <sys/stat.h>
+#include <glib/gstdio.h>
 #include <glib/gi18n.h>
 #include <eel/eel-string.h>
 #include <eel/eel-glib-extensions.h>
@@ -56,6 +58,13 @@ struct _NemoProgressInfo
 	char *details;
     char *initial_details;
 	double progress;
+	double progress_total; /* total passed to the last set_progress */
+	gint64 bytes_done;
+	char *live_path;     /* destination file being written right now, if known */
+	gint64 live_base;    /* bytes of all earlier files of this operation */
+	gint64 live_size;    /* last size seen by the worker, -1 if none */
+	guint live_gen;      /* bumped whenever live_path changes */
+	gboolean live_pending; /* a stat is queued or running */
 	gboolean activity_mode;
 	gboolean started;
 	gboolean finished;
@@ -88,6 +97,7 @@ nemo_progress_info_finalize (GObject *object)
 
 	g_free (info->status);
 	g_free (info->details);
+	g_free (info->live_path);
     g_free (info->initial_details);
 	g_object_unref (info->cancellable);
     g_timer_destroy (info->time);
@@ -181,6 +191,7 @@ nemo_progress_info_init (NemoProgressInfo *info)
     info->cond = g_cond_new ();
     info->time = g_timer_new ();
     g_mutex_init (&info->info_lock);
+    info->live_size = -1;
 
 	manager = nemo_progress_info_manager_new ();
 	nemo_progress_info_manager_add_new_info (manager, info);
@@ -661,6 +672,7 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 	    ) {
 		info->activity_mode = FALSE;
 		info->progress = current_percent;
+		info->progress_total = total;
 		info->progress_at_idle = TRUE;
 		queue_idle (info, FALSE);
 	}
@@ -671,6 +683,134 @@ nemo_progress_info_set_progress (NemoProgressInfo *info,
 
 	g_mutex_unlock (&info->info_lock);
 
+}
+
+void
+nemo_progress_info_set_bytes_done (NemoProgressInfo *info,
+                                   gint64            bytes)
+{
+	g_mutex_lock (&info->info_lock);
+	info->bytes_done = bytes;
+	g_mutex_unlock (&info->info_lock);
+}
+
+gint64
+nemo_progress_info_get_bytes_done (NemoProgressInfo *info)
+{
+	gint64 res;
+
+	g_mutex_lock (&info->info_lock);
+	res = info->bytes_done;
+	g_mutex_unlock (&info->info_lock);
+
+	return res;
+}
+
+/* stat() can block for a long time on a stalled network or FUSE mount (gvfs
+ * paths are local-looking), so it must never run in the main loop: a small
+ * shared pool does it, and the main loop only reads the last result. */
+typedef struct {
+	NemoProgressInfo *info;
+	char *path;   /* file to stat */
+	guint gen;
+} LiveStatRequest;
+
+static void
+live_stat_worker (gpointer data, gpointer user_data)
+{
+	LiveStatRequest *req = data;
+	GStatBuf st;
+	gint64 size = -1;
+
+	/* lstat: a symlink at the destination is not a file being written */
+	if (req->path != NULL && g_lstat (req->path, &st) == 0 && S_ISREG (st.st_mode)) {
+		size = (gint64) st.st_size;
+	}
+
+	g_mutex_lock (&req->info->info_lock);
+	if (req->gen == req->info->live_gen) {
+		req->info->live_size = size;
+	}
+	req->info->live_pending = FALSE;
+	g_mutex_unlock (&req->info->info_lock);
+
+	g_object_unref (req->info);
+	g_free (req->path);
+	g_free (req);
+}
+
+static GThreadPool *
+live_stat_pool (void)
+{
+	static GThreadPool *pool = NULL;
+
+	if (g_once_init_enter (&pool)) {
+		g_once_init_leave (&pool, g_thread_pool_new (live_stat_worker, NULL, 2, FALSE, NULL));
+	}
+	return pool;
+}
+
+void
+nemo_progress_info_set_live_file (NemoProgressInfo *info,
+                                  const char       *path,
+                                  gint64            base_bytes)
+{
+	g_mutex_lock (&info->info_lock);
+	g_free (info->live_path);
+	info->live_path = g_strdup (path);
+	info->live_base = base_bytes;
+	info->live_size = -1;
+	info->live_gen++;
+	g_mutex_unlock (&info->info_lock);
+}
+
+gint64
+nemo_progress_info_get_live_bytes (NemoProgressInfo *info)
+{
+	LiveStatRequest *req = NULL;
+	gint64 res = -1;
+
+	g_mutex_lock (&info->info_lock);
+	if (info->live_path != NULL) {
+		if (info->live_size >= 0) {
+			res = info->live_base + info->live_size;
+		}
+		if (!info->live_pending) {
+			info->live_pending = TRUE;
+			req = g_new0 (LiveStatRequest, 1);
+			req->info = g_object_ref (info);
+			req->path = g_strdup (info->live_path);
+			req->gen = info->live_gen;
+		}
+	}
+	g_mutex_unlock (&info->info_lock);
+
+	if (req != NULL) {
+		g_thread_pool_push (live_stat_pool (), req, NULL);
+	}
+
+	return res;
+}
+
+double
+nemo_progress_info_get_smooth_progress (NemoProgressInfo *info)
+{
+	double res, total;
+	gint64 live;
+
+	/* note: this also queues the next async stat of the growing file */
+	live = nemo_progress_info_get_live_bytes (info);
+
+	g_mutex_lock (&info->info_lock);
+	res = info->activity_mode ? -1.0 : info->progress;
+	total = info->progress_total;
+	g_mutex_unlock (&info->info_lock);
+
+	if (res >= 0 && live >= 0 && total > 0) {
+		res = MAX (res, MIN ((double) live / total, 1.0));
+	}
+
+	return res;
 }
 
 gdouble
