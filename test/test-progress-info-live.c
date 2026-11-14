@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <fcntl.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <libnemo-private/nemo-progress-info.h>
@@ -127,67 +126,11 @@ test_smooth_progress (void)
     g_object_unref (info);
 }
 
-/* Overwrite: GLib writes ".goutputstream-*" in the target directory. It is
- * found among our open descriptors, and two jobs never share one. */
-static void
-test_live_temp (void)
-{
-    NemoProgressInfo *a = nemo_progress_info_new ();
-    NemoProgressInfo *b = nemo_progress_info_new ();
-    g_autofree gchar *dir = g_dir_make_tmp ("nemo-temp-XXXXXX", NULL);
-    g_autofree gchar *t1 = g_build_filename (dir, ".goutputstream-AAAAAA", NULL);
-    g_autofree gchar *t2 = g_build_filename (dir, ".goutputstream-BBBBBB", NULL);
-    g_autofree gchar *other = g_build_filename (dir, "regular", NULL);
-    int fd1, fd2, fd3;
-
-    fd3 = g_open (other, O_CREAT | O_WRONLY, 0600);
-    nemo_progress_info_set_live_temp (a, dir, 100);
-    /* nothing open yet, and a regular file is not a temp file */
-    assert_none (a);
-
-    fd1 = g_open (t1, O_CREAT | O_WRONLY, 0600);
-    g_assert_cmpint (write (fd1, "0123456789", 10), ==, 10);
-    g_assert_cmpint (wait_live (a, 110), ==, 110);
-
-    /* keeps following it as it grows */
-    g_assert_cmpint (write (fd1, "0123456789", 10), ==, 10);
-    g_assert_cmpint (wait_live (a, 120), ==, 120);
-
-    /* a second job in the same directory gets the other file, not this one */
-    nemo_progress_info_set_live_temp (b, dir, 0);
-    assert_none (b);
-    fd2 = g_open (t2, O_CREAT | O_WRONLY, 0600);
-    g_assert_cmpint (write (fd2, "012345", 6), ==, 6);
-    g_assert_cmpint (wait_live (b, 6), ==, 6);
-    g_assert_cmpint (wait_live (a, 120), ==, 120);
-
-    /* renamed over the target at the end: the file is gone, look again */
-    g_assert_cmpint (g_unlink (t1), ==, 0);
-    close (fd1);
-    /* the cached size goes away once the worker has looked again */
-    g_assert_cmpint (wait_live (a, -1), ==, -1);
-    assert_none (a);
-
-    /* clearing releases the claim for the next file */
-    nemo_progress_info_set_live_file (b, NULL, 0);
-    nemo_progress_info_set_live_temp (a, dir, 0);
-    g_assert_cmpint (wait_live (a, 6), ==, 6);
-
-    close (fd2);
-    close (fd3);
-    g_unlink (t2);
-    g_unlink (other);
-    g_rmdir (dir);
-    g_object_unref (a);
-    g_object_unref (b);
-}
-
 int
 main (int argc, char **argv)
 {
     g_test_init (&argc, &argv, NULL);
     g_test_add_func ("/progress-info/live-bytes", test_live_bytes);
-    g_test_add_func ("/progress-info/live-temp", test_live_temp);
     g_test_add_func ("/progress-info/smooth-progress", test_smooth_progress);
     return g_test_run ();
 }

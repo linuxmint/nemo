@@ -93,9 +93,6 @@ void          nemo_progress_info_set_live_file   (NemoProgressInfo *info,
 						      const char           *path,
 						      gint64                base_bytes);
 /* base + current size of that file, or -1 if there is none. */
-void          nemo_progress_info_set_live_temp   (NemoProgressInfo *info,
-                                                  const char       *dir,
-                                                  gint64            base_bytes);
 gint64        nemo_progress_info_get_live_bytes  (NemoProgressInfo *info);
 double        nemo_progress_info_get_smooth_progress (NemoProgressInfo *info);
 

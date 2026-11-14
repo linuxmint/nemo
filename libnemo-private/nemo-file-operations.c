@@ -4559,8 +4559,9 @@ copy_move_file (CopyMoveJob *copy_job,
 	pdata.transfer_info = transfer_info;
 
 	/* GIO reports progress only every GiB or so with copy_file_range, so let
-	 * the speed graph follow the growing destination file (or, when
-	 * overwriting, the temp file GLib writes before renaming it over). */
+	 * the speed graph follow the growing destination file. Overwriting goes
+	 * through a temporary file whose name is private to GLib, so those
+	 * operations fall back to the operation's own counter. */
 	if (!overwrite) {
 		char *live_path = g_file_get_path (dest);
 
@@ -4568,14 +4569,7 @@ copy_move_file (CopyMoveJob *copy_job,
 						  transfer_info->num_bytes);
 		g_free (live_path);
 	} else {
-		/* overwrite writes a temp file next to the target */
-		GFile *parent = g_file_get_parent (dest);
-		char *dir = parent != NULL ? g_file_get_path (parent) : NULL;
-
-		nemo_progress_info_set_live_temp (job->progress, dir,
-						  transfer_info->num_bytes);
-		g_free (dir);
-		g_clear_object (&parent);
+		nemo_progress_info_set_live_file (job->progress, NULL, 0);
 	}
 
 	if (copy_job->is_move) {
