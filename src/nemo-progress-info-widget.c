@@ -40,6 +40,7 @@ enum {
 
 #define SPEED_SMOOTH_MAX 64     /* ring size; the average spans ~1 second */
 #define GRAPH_HEIGHT 80
+#define GRAPH_WINDOW_SECONDS 60 /* the graph shows the last minute, then scrolls */
 
 #define START_ICON "xsi-media-playback-start-symbolic"
 #define STOP_ICON "xsi-media-playback-stop-symbolic"
@@ -51,22 +52,76 @@ G_DEFINE_TYPE (NemoProgressInfoWidget, nemo_progress_info_widget,
                GTK_TYPE_BOX);
 
 
+/* "4.2 MB/s": g_format_size() already localizes the number and the unit, so
+ * only the rate suffix is added. */
+static gchar *
+format_speed (guint64 speed)
+{
+    g_autofree gchar *size = g_format_size (speed);
+
+    /* To translators: %s is a size, for example "4.2 MB"; the result is a rate. */
+    return g_strdup_printf (_("%s/s"), size);
+}
+
+/* The graph draws its own labels, so it has to use the same font as the rest of
+ * the window: the theme's font, which also follows the user's text scaling. */
+static PangoFontDescription *
+speed_graph_font (GtkWidget *widget)
+{
+    GtkStyleContext *context = gtk_widget_get_style_context (widget);
+    PangoFontDescription *font = NULL;
+    GValue value = G_VALUE_INIT;
+
+    gtk_style_context_get_property (context, "font",
+                                    gtk_style_context_get_state (context),
+                                    &value);
+    if (G_VALUE_HOLDS (&value, PANGO_TYPE_FONT_DESCRIPTION)) {
+        font = g_value_dup_boxed (&value);
+    }
+    g_value_unset (&value);
+
+    if (font == NULL) {
+        font = pango_font_description_from_string ("Sans 10");
+    }
+
+    return font;
+}
+
 static void
-speed_graph_text (GtkWidget *widget, cairo_t *cr, const GdkRGBA *color,
-                  const char *text, gboolean at_right, double y, gboolean below)
+speed_graph_text (GtkWidget *widget, PangoFontDescription *font, cairo_t *cr,
+                  const GdkRGBA *color, const char *text, gboolean at_right,
+                  double y, gboolean below)
 {
     PangoLayout *layout = gtk_widget_create_pango_layout (widget, text);
-    PangoFontDescription *fd = pango_font_description_from_string ("Sans 10");
     int tw, th;
 
-    pango_layout_set_font_description (layout, fd);
+    pango_layout_set_font_description (layout, font);
     pango_layout_get_pixel_size (layout, &tw, &th);
     cairo_set_source_rgba (cr, color->red, color->green, color->blue, 0.9);
     cairo_move_to (cr, at_right ? gtk_widget_get_allocated_width (widget) - tw - 3 : 3,
                    below ? y + 1 : y - th - 1);
     pango_cairo_show_layout (cr, layout);
-    pango_font_description_free (fd);
     g_object_unref (layout);
+}
+
+static guint64
+speed_history_at (NemoProgressInfoWidgetPriv *priv, guint i)
+{
+    /* i == 0 is the oldest sample still kept */
+    return priv->history[(priv->history_head + priv->history_max - priv->history_len + i) % priv->history_max];
+}
+
+static double
+speed_history_span_mean (NemoProgressInfoWidgetPriv *priv, guint from, guint to)
+{
+    guint i;
+    guint64 sum = 0;
+
+    for (i = from; i < to; i++) {
+        sum += speed_history_at (priv, i);
+    }
+
+    return (double) sum / (double) (to - from);
 }
 
 static gboolean
@@ -76,9 +131,9 @@ speed_graph_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
     GtkStyleContext *context = gtk_widget_get_style_context (widget);
     int w = gtk_widget_get_allocated_width (widget);
     int h = gtk_widget_get_allocated_height (widget);
-    guint n = priv->speed_history->len;
-    guint64 *data = (guint64 *) priv->speed_history->data;
+    guint n = priv->history_len;
     GdkRGBA color, accent;
+    PangoFontDescription *font;
     guint col, columns;
     double scale, y;
     double dashes[] = { 4.0, 3.0 };
@@ -90,29 +145,43 @@ speed_graph_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
         return FALSE;
     }
 
+    font = speed_graph_font (widget);
+
     gtk_style_context_get_color (context, gtk_style_context_get_state (context), &color);
     /* the theme's accent colour, same as the progress bar; text colour if absent */
     if (!gtk_style_context_lookup_color (context, "theme_selected_bg_color", &accent)) {
         accent = color;
     }
 
-    /* The whole history is stretched over the full width and shrinks as it
-     * grows; with more samples than pixels each column is the mean of its
-     * bucket. */
-    columns = MIN (n, (guint) w);
+    /* A fixed time window that scrolls: the curve grows from the left and, once
+     * the window is full, the oldest samples drop off the left edge. With more
+     * samples than pixels each column is the mean of its bucket. */
+    columns = MIN (n, (guint) MAX (w, 2));
     /* y-axis: ceiling at a round value just above the peak, changing only in
      * steps; the peak line itself sits at its true height below it */
     priv->graph_max = nemo_speed_nice_ceiling (priv->speed_peak);
     scale = (double) (h - 6) / (double) priv->graph_max;
 
-    cairo_move_to (cr, 0, h);
-    for (col = 0; col < columns; col++) {
-        double v = nemo_speed_bucket_mean (data, n, columns, col);
-        double x = columns > 1 ? (double) col * w / (columns - 1) : 0;
-        cairo_line_to (cr, x, h - 1 - v * scale);
+    {
+        double xstep = (double) w / (double) MAX (priv->history_max - 1, 1);
+        double last_x = 0.0;
+
+        cairo_move_to (cr, 0, h);
+        for (col = 0; col < columns; col++) {
+            guint from, to;
+            double v, x;
+
+            nemo_speed_bucket_range (n, columns, col, &from, &to);
+            v = speed_history_span_mean (priv, from, to);
+            x = (from + (to - from - 1) / 2.0) * xstep;
+            cairo_line_to (cr, x, h - 1 - v * scale);
+            last_x = x;
+        }
+        /* close the area under the curve where the data ends, not at the right
+         * edge of the widget: the window fills from the left */
+        cairo_line_to (cr, last_x, h);
+        cairo_line_to (cr, 0, h);
     }
-    cairo_line_to (cr, w, h);
-    cairo_line_to (cr, 0, h);
     cairo_close_path (cr);
     cairo_set_source_rgba (cr, accent.red, accent.green, accent.blue, 0.35);
     cairo_fill_preserve (cr);
@@ -129,20 +198,21 @@ speed_graph_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
     cairo_line_to (cr, w, y + 0.5);
     cairo_stroke (cr);
     {
-        g_autofree gchar *pk = g_format_size (priv->speed_peak);
-        g_autofree gchar *pt = g_strdup_printf (_("peak: %s/s"), pk);
-        speed_graph_text (widget, cr, &color, pt, FALSE, y, TRUE);
+        g_autofree gchar *pk = format_speed (priv->speed_peak);
+        /* To translators: %s is a transfer rate, for example "4.2 MB/s" */
+        g_autofree gchar *pt = g_strdup_printf (_("peak: %s"), pk);
+        speed_graph_text (widget, font, cr, &color, pt, FALSE, y, TRUE);
     }
 
     if (priv->avg_speed > 0) {
-        g_autofree gchar *av = g_format_size (priv->avg_speed);
-        g_autofree gchar *at = g_strdup_printf (_("avg: %s/s"), av);
+        g_autofree gchar *av = format_speed (priv->avg_speed);
+        /* To translators: %s is a transfer rate, for example "4.2 MB/s" */
+        g_autofree gchar *at = g_strdup_printf (_("avg: %s"), av);
         PangoLayout *layout = gtk_widget_create_pango_layout (widget, at);
-        PangoFontDescription *fd = pango_font_description_from_string ("Sans 10");
         int tw, th;
         double x0;
 
-        pango_layout_set_font_description (layout, fd);
+        pango_layout_set_font_description (layout, font);
         pango_layout_get_pixel_size (layout, &tw, &th);
         x0 = MAX (w - tw - 3, 0);
 
@@ -157,10 +227,11 @@ speed_graph_draw_cb (GtkWidget *widget, cairo_t *cr, gpointer user_data)
         cairo_set_source_rgba (cr, color.red, color.green, color.blue, 0.9);
         cairo_move_to (cr, x0, y - th / 2.0);
         pango_cairo_show_layout (cr, layout);
-        pango_font_description_free (fd);
         g_object_unref (layout);
     }
     cairo_set_dash (cr, NULL, 0, 0);
+
+    pango_font_description_free (font);
 
     return FALSE;
 }
@@ -172,21 +243,47 @@ speed_graph_set_now (NemoProgressInfoWidgetPriv *priv, guint64 speed)
     g_autofree gchar *size = g_format_size (speed);
     g_autofree gchar *num = NULL;
     g_autofree gchar *markup = NULL;
-    const char *unit = "";
-    const char *sep = NULL, *q;
+    const gchar *unit = NULL;
+    const gchar *sep = NULL;
+    const gchar *q;
 
+    /* g_format_size() is localized, and the separator between the number and the
+     * unit is a plain space in some locales and a no-break (U+00A0) or narrow
+     * no-break (U+202F) space in others. Split on any of them; without a
+     * separator keep it on one line. */
     for (q = size; *q != '\0'; q++) {
-        if (*q == ' ' || ((guchar) q[0] == 0xC2 && (guchar) q[1] == 0xA0)) {
+        guchar c = (guchar) *q;
+
+        if (c == ' ' || c == 0xA0) {
+            sep = q;
+        } else if (c == 0xE2 && (guchar) q[1] == 0x80 && (guchar) q[2] == 0xAF) {
             sep = q;
         }
     }
+
     if (sep != NULL) {
-        num = g_strndup (size, sep - size);
-        unit = sep + ((guchar) sep[0] == 0xC2 ? 2 : 1);
-    } else {
-        num = g_strdup (size);
+        const gchar *after = sep + 1;
+
+        if ((guchar) sep[0] == 0xE2) {
+            after = sep + 3;
+        } else if ((guchar) sep[0] == 0xC2) {
+            after = sep + 2;
+        }
+
+        if (*after != '\0') {
+            num = g_strndup (size, sep - size);
+            unit = after;
+        }
     }
-    markup = g_markup_printf_escaped ("<span size='large' weight='bold'>%s</span>\n%s/s", num, unit);
+
+    if (unit != NULL) {
+        markup = g_markup_printf_escaped ("<span size='large' weight='bold'>%s</span>\n%s/s",
+                                          num, unit);
+    } else {
+        markup = g_markup_printf_escaped ("<span size='large' weight='bold'>%s/s</span>",
+                                          size);
+    }
+
     gtk_label_set_markup (GTK_LABEL (priv->now_label), markup);
 }
 
@@ -199,6 +296,20 @@ speed_graph_queue_redraw (NemoProgressInfoWidgetPriv *priv)
 }
 
 static void update_progress (NemoProgressInfoWidget *self);
+
+static void
+speed_history_append (NemoProgressInfoWidgetPriv *priv, guint64 value)
+{
+    if (priv->history_max == 0) {
+        return;
+    }
+
+    priv->history[priv->history_head] = value;
+    priv->history_head = (priv->history_head + 1) % priv->history_max;
+    if (priv->history_len < priv->history_max) {
+        priv->history_len++;
+    }
+}
 
 static gboolean
 speed_sample_cb (gpointer user_data)
@@ -224,6 +335,8 @@ speed_sample_cb (gpointer user_data)
         if (priv->pause_start == 0) {
             priv->pause_start = g_get_monotonic_time ();
         }
+        /* nothing is transferring: the graph keeps its shape, the number does not lie */
+        speed_graph_set_now (priv, 0);
         return G_SOURCE_CONTINUE;
     }
     if (priv->pause_start != 0) {
@@ -240,10 +353,7 @@ speed_sample_cb (gpointer user_data)
     }
     speed = nemo_speed_average (priv->recent, priv->recent_count, priv->interval_ms);
 
-    if (priv->speed_history->len >= priv->history_max) {
-        g_array_remove_index (priv->speed_history, 0);
-    }
-    g_array_append_val (priv->speed_history, speed);
+    speed_history_append (priv, speed);
     if (speed > priv->speed_peak) {
         priv->speed_peak = speed;
     }
@@ -280,9 +390,12 @@ speed_graph_start (NemoProgressInfoWidget *self)
         sec = CLAMP (sec, 0.05, 5.0);
         priv->interval_ms = (guint) (sec * 1000.0);
         priv->smooth_n = CLAMP (1000 / priv->interval_ms, 1, SPEED_SMOOTH_MAX);
-        priv->history_max = 3600 * 1000 / priv->interval_ms;
+        priv->history_max = MAX (GRAPH_WINDOW_SECONDS * 1000 / priv->interval_ms, 2);
     }
-    g_array_set_size (priv->speed_history, 0);
+    g_free (priv->history);
+    priv->history = g_new0 (guint64, priv->history_max);
+    priv->history_len = 0;
+    priv->history_head = 0;
     priv->speed_peak = 0;
     priv->avg_speed = 0;
     priv->graph_max = 0;
@@ -378,11 +491,23 @@ graph_expanded_cb (GObject *expander, GParamSpec *pspec, gpointer data)
 {
     GtkWidget *column = g_object_get_data (expander, "nemo-text-column");
     GtkWidget *holder = g_object_get_data (expander, "nemo-button-holder");
+    gboolean expanded = gtk_expander_get_expanded (GTK_EXPANDER (expander));
+
+    if (column == NULL || holder == NULL) {
+        return;
+    }
+
+    /* the next operation starts the way this one was left */
+    g_settings_set_boolean (nemo_preferences,
+                            NEMO_PREFERENCES_COPY_PROGRESS_EXPANDED,
+                            expanded);
 
     /* notify fires before the relayout: when opening, the column still has
      * its collapsed height, which is what the buttons stay centred on */
-    if (gtk_expander_get_expanded (GTK_EXPANDER (expander))) {
-        gtk_widget_set_size_request (holder, -1, gtk_widget_get_allocated_height (column));
+    if (expanded) {
+        gint height = gtk_widget_get_allocated_height (column);
+
+        gtk_widget_set_size_request (holder, -1, height > 0 ? height : -1);
         gtk_widget_set_valign (holder, GTK_ALIGN_START);
         gtk_widget_set_vexpand (holder, FALSE);
     } else {
@@ -491,6 +616,11 @@ nemo_progress_info_widget_constructed (GObject *obj)
     /* the original "N of M - X left" line doubles as the header of a
      * collapsible transfer speed graph */
     priv->graph_expander = gtk_expander_new (NULL);
+    /* before the notify handler is connected: the layout callback needs the
+     * widgets below to exist */
+    gtk_expander_set_expanded (GTK_EXPANDER (priv->graph_expander),
+                               g_settings_get_boolean (nemo_preferences,
+                                                       NEMO_PREFERENCES_COPY_PROGRESS_EXPANDED));
     gtk_expander_set_label_widget (GTK_EXPANDER (priv->graph_expander), label);
     gtk_box_pack_start (GTK_BOX (vbox), priv->graph_expander, TRUE, FALSE, 2);
 
@@ -530,6 +660,10 @@ nemo_progress_info_widget_constructed (GObject *obj)
     g_object_set_data (G_OBJECT (priv->graph_expander), "nemo-text-column", vbox);
     g_object_set_data (G_OBJECT (priv->graph_expander), "nemo-button-holder", holder);
     g_signal_connect (priv->graph_expander, "notify::expanded", G_CALLBACK (graph_expanded_cb), NULL);
+
+    /* a remembered expanded state never emitted notify::expanded: lay the
+     * buttons out for it now that the callback has its widgets */
+    graph_expanded_cb (G_OBJECT (priv->graph_expander), NULL, NULL);
 
     bb = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_widget_set_halign (bb, GTK_ALIGN_START);
@@ -572,7 +706,7 @@ nemo_progress_info_widget_dispose (GObject *obj)
 	NemoProgressInfoWidget *self = NEMO_PROGRESS_INFO_WIDGET (obj);
 
 	speed_graph_stop (self->priv);
-	g_clear_pointer (&self->priv->speed_history, g_array_unref);
+	g_clear_pointer (&self->priv->history, g_free);
 	g_clear_pointer (&self->priv->recent, g_free);
 	g_clear_object (&self->priv->info);
 
@@ -603,7 +737,6 @@ nemo_progress_info_widget_init (NemoProgressInfoWidget *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self, NEMO_TYPE_PROGRESS_INFO_WIDGET,
 						  NemoProgressInfoWidgetPriv);
 
-	self->priv->speed_history = g_array_sized_new (FALSE, FALSE, sizeof (guint64), 1024);
 	self->priv->recent = g_new0 (guint64, SPEED_SMOOTH_MAX);
 }
 

@@ -339,6 +339,11 @@
       <summary>Update interval (in seconds) of the transfer speed graph</summary>
       <description>How often the speed graph in the file operation progress window samples the transfer speed. Smaller values give a finer graph at slightly higher CPU usage. Applies to operations started afterwards.</description>
     </key>
+    <key name="copy-progress-expanded" type="b">
+      <default>false</default>
+      <summary>Whether the transfer speed graph is expanded</summary>
+      <description>When true, the details line of each file operation in the progress window starts expanded, showing the transfer speed graph. Toggling it in the progress window updates this setting.</description>
+    </key>
     <key name="show-full-path-titles" type="b">
       <default>false</default>
       <summary>Whether to show the full path of the current view in the title bar and tab bars</summary>

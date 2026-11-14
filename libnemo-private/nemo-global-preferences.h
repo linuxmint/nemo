@@ -148,6 +148,7 @@ typedef enum
 #define NEMO_PREFERENCES_INHERIT_FOLDER_VIEWER		"inherit-folder-viewer"
 
 #define NEMO_PREFERENCES_COPY_SPEED_GRAPH_INTERVAL  "copy-speed-graph-interval"
+#define NEMO_PREFERENCES_COPY_PROGRESS_EXPANDED     "copy-progress-expanded"
 
 #define NEMO_PREFERENCES_SHOW_FULL_PATH_TITLES      "show-full-path-titles"
 
