@@ -72,7 +72,7 @@ endif
 ################################################################################
 # Find dependencies
 
-glib_version = '>=2.45.7'
+glib_version = '>=2.52.0'
 
 math    = cc.find_library('m', required: true)
 
