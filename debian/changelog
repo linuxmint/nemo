@@ -1,3 +1,23 @@
+nemo (6.8.4) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * nemo-file-operations.c: Fix warning in read-only error path.
+  * nemo-places-sidebar.c: Don't show duplicated mounts
+  * i18n: Don't translate placeholder strings
+  * Clean up makepot, build-depends
+  * nemo-preview-video.c: Fix seek/slider behavior
+  * nemo-icon-container.c: Refresh icons when the scale factor changes
+  * nemo-view.c: Don't act on stale filterbar text
+  * file-operations: Pace copies to removable and network destinations (#3881)
+
+  [ Clement Lefebvre ]
+  * nemo-view.c: Optimize the escaping argument algorithm
+
+  [ KAMI ]
+  * progress info: free the condition variable and the mutex on finalize (#3877)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 16 Nov 2026 15:23:24 +0000
+
 nemo (6.8.3) adrien; urgency=medium
 
   [ Michael Webster ]
