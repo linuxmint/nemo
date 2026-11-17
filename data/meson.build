@@ -11,6 +11,11 @@ install_data(desktopFiles,
   install_dir: join_paths(get_option('datadir'), 'applications')
 )
 
+# nemo.metainfo.xml is generated from nemo.metainfo.xml.in by ../generate_additional_file
+install_data('nemo.metainfo.xml',
+  install_dir: join_paths(get_option('datadir'), 'metainfo')
+)
+
 ################################################################################
 dataConf = configuration_data()
 dataConf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))

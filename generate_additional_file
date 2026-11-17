@@ -9,7 +9,8 @@ os.chdir("../..")
 DOMAIN = "nemo"
 PATH = "/usr/share/locale"
 
-import os, gettext, sys
+import os, gettext, sys, re
+from xml.sax.saxutils import unescape
 from mintcommon import additionalfiles
 
 os.environ['LANGUAGE'] = "en_US.UTF-8"
@@ -56,3 +57,15 @@ additionalfiles.generate(DOMAIN, PATH, "data/nemo.desktop", prefix, _("Trash"), 
 
 
 additionalfiles.generate_mime_file(DOMAIN, PATH, "data/nemo.xml.in", "data/nemo.xml")
+
+# Expands each <_tag> of the metainfo template into a plain element plus a localized one per translation.
+TRANSLATABLE = re.compile(r"^(\s*)<_(\w+)>(.*)</_\2>\s*$")
+
+with open("data/nemo.metainfo.xml.in") as inFile, open("data/nemo.metainfo.xml", "w") as metainfoFile:
+    for line in inFile:
+        match = TRANSLATABLE.match(line)
+        if match is None:
+            metainfoFile.writelines(line)
+        else:
+            indent, tag, text = match.groups()
+            additionalfiles.write_translated_element(metainfoFile, DOMAIN, PATH, tag, unescape(text), indent)

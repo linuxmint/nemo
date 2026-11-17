@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>nemo.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+  <name>Nemo</name>
+  <_summary>Access and organize files</_summary>
+  <description>
+    <p>
+      Nemo is the file manager of the Cinnamon desktop. It allows you to browse
+      directories, preview files and launch applications associated with them.
+      It is also responsible for handling the icons on the Cinnamon desktop.
+    </p>
+    <p>
+      It works on local and remote filesystems, and can be extended with
+      actions, scripts and extensions.
+    </p>
+  </description>
+  <launchable type="desktop-id">nemo.desktop</launchable>
+  <url type="homepage">https://github.com/linuxmint/nemo</url>
+  <url type="bugtracker">https://github.com/linuxmint/nemo/issues</url>
+  <developer id="org.linuxmint">
+    <name>Linux Mint</name>
+  </developer>
+  <provides>
+    <binary>nemo</binary>
+  </provides>
+  <content_rating type="oars-1.1"/>
+</component>
