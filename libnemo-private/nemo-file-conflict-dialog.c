@@ -328,7 +328,7 @@ file_list_ready_cb (GList *files,
 
 	if (source_is_dir && dest_is_dir) {
 		gtk_button_set_label (GTK_BUTTON (details->replace_button),
-				      _("Merge"));
+				      _("_Merge"));
 	}
 
 	nemo_file_monitor_add (src, fcd, NEMO_FILE_ATTRIBUTES_FOR_ICON);
@@ -545,7 +545,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 	details->second_hbox = hbox;
 
 	/* Setup the expander for the rename action */
-	details->expander = gtk_expander_new_with_mnemonic (_("_Select a new name for the destination"));
+	details->expander = gtk_expander_new_with_mnemonic (_("Select a new name for the _destination"));
 	gtk_box_pack_start (GTK_BOX (vbox2), details->expander, FALSE, FALSE, 0);
 	g_signal_connect (details->expander, "activate",
 			  G_CALLBACK (expander_activated_cb), dialog);
@@ -597,7 +597,7 @@ nemo_file_conflict_dialog_init (NemoFileConflictDialog *fcd)
 
 	details->replace_button =
 		gtk_dialog_add_button (dialog,
-				       _("Replace"),
+				       _("_Replace"),
 				       CONFLICT_RESPONSE_REPLACE);
 
 	/* Until file_list_ready_cb() runs the dialog is only partially
