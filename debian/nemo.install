@@ -3,3 +3,4 @@ usr/lib/*/nemo/nemo-extensions-list
 usr/share/applications
 usr/share/dbus-1
 usr/share/man
+usr/share/metainfo
