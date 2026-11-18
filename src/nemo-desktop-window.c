@@ -128,12 +128,12 @@ nemo_desktop_window_constructed (GObject *obj)
 		atk_object_set_name (accessible, _("Desktop"));
 	}
 
-    nemo_desktop_window_update_geometry (window);
-
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);
     gtk_window_set_decorated (GTK_WINDOW (window),
                   FALSE);
+
+    nemo_desktop_window_update_geometry (window);
 
     gtk_widget_show (GTK_WIDGET (window));
 }

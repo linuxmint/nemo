@@ -338,12 +338,12 @@ nemo_blank_desktop_window_constructed (GObject *obj)
                                                                         window);
     }
 
-    nemo_blank_desktop_window_update_geometry (window);
-
     gtk_window_set_resizable (GTK_WINDOW (window),
                   FALSE);
     gtk_window_set_decorated (GTK_WINDOW (window),
                   FALSE);
+
+    nemo_blank_desktop_window_update_geometry (window);
 
     window->details->event_box = gtk_event_box_new ();
     gtk_event_box_set_visible_window (GTK_EVENT_BOX (window->details->event_box), FALSE);
