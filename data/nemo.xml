@@ -2,6 +2,7 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
    <mime-type type="application/nemo-action">
      <comment>Nemo action definition</comment>
+     <comment xml:lang="af">Nemo-aksiedefinisie</comment>
      <comment xml:lang="ar">مفهوم إجراءات Nemo</comment>
      <comment xml:lang="az">Nemo-da eyləm tərifi</comment>
      <comment xml:lang="be">Вызначэнне дзеяння Nemo</comment>
@@ -12,7 +13,7 @@
      <comment xml:lang="cy">Diffiniad o weithredoedd Nemo</comment>
      <comment xml:lang="da">Definition af Nemo-handling</comment>
      <comment xml:lang="de">Nemo-Aktionsfestlegung</comment>
-     <comment xml:lang="el">Ορισμός Εργασίας Nemo</comment>
+     <comment xml:lang="el">Ορισμός ενέργειας Nemo</comment>
      <comment xml:lang="eo">Difino de Nemo-ago</comment>
      <comment xml:lang="es">Definición de acción de Nemo</comment>
      <comment xml:lang="et">Nemo tegevuse definitsioon</comment>
@@ -21,6 +22,7 @@
      <comment xml:lang="fi">Nemo-toiminnon määritys</comment>
      <comment xml:lang="fr">Définition d’action de Nemo</comment>
      <comment xml:lang="fr_CA">Définition d’action de Nemo</comment>
+     <comment xml:lang="gl">Definición dunha acción de Nemo</comment>
      <comment xml:lang="he">מובחנות פעולת נמו</comment>
      <comment xml:lang="hi">निमो कार्य परिभाषा</comment>
      <comment xml:lang="hr">Definicija Nemo radnje</comment>
@@ -31,6 +33,7 @@
      <comment xml:lang="it">Definizione azione di Nemo</comment>
      <comment xml:lang="ja">Nemo アクションの定義</comment>
      <comment xml:lang="kab">Asbadu n tigawt n Nemo</comment>
+     <comment xml:lang="kk">Nemo әрекетінің анықтамасы</comment>
      <comment xml:lang="ko">Nemo 동작 정의</comment>
      <comment xml:lang="la">Actiones Neminis fini</comment>
      <comment xml:lang="lo">ຄຳນິຍາມການກະທຳຂອງ Nemo</comment>
@@ -39,7 +42,7 @@
      <comment xml:lang="mo">Дефиниция акциунилор Nemo</comment>
      <comment xml:lang="ms">Definisi tindakan Nemo</comment>
      <comment xml:lang="nb">Nemo handlingsdefinisjon</comment>
-     <comment xml:lang="nl">Nemo actiedefinitie</comment>
+     <comment xml:lang="nl">Definitie van Nemo-actie</comment>
      <comment xml:lang="nn">Nemo-handlingsdefinisjon</comment>
      <comment xml:lang="oc">Definicion d’accion Nemo</comment>
      <comment xml:lang="pl">Definicja czynności Nemo</comment>
@@ -55,6 +58,7 @@
      <comment xml:lang="sr@latin">Definicija radnje u Nemu</comment>
      <comment xml:lang="sv">Nemos åtgärdsdefinition</comment>
      <comment xml:lang="tr">Nemo aksiyon tanımı</comment>
+     <comment xml:lang="ug">Nemo مەشغۇلات ئېنىقلىمىسى</comment>
      <comment xml:lang="uk">Визначник дій Nemo</comment>
      <comment xml:lang="uz">Nemo amal ta'rifi</comment>
      <comment xml:lang="vi">Định nghĩa hành động của Nemo</comment>
@@ -67,6 +71,7 @@
    </mime-type>
    <mime-type type="application/nemo-search-helper">
      <comment>Nemo search-helper definition</comment>
+     <comment xml:lang="af">Nemo-soekhulpdefinisie</comment>
      <comment xml:lang="ar">مفهوم مساعد-بحث ل Nemo</comment>
      <comment xml:lang="az">Nemo axtarış köməkçisinin tərifi</comment>
      <comment xml:lang="be">Вызначэнне дапаможніка па пошуку Nemo</comment>
@@ -86,6 +91,7 @@
      <comment xml:lang="fi">Nemon hakuavustajan tarkkuus</comment>
      <comment xml:lang="fr">Définition de l’assistant de recherche de Nemo</comment>
      <comment xml:lang="fr_CA">Définition de l’assistant de recherche de Nemo</comment>
+     <comment xml:lang="gl">Definición dun auxiliar de busca de Nemo</comment>
      <comment xml:lang="he">מובחנות סייען חיפוש נמו</comment>
      <comment xml:lang="hi">नीमो खोज-सहायक परिभाषा</comment>
      <comment xml:lang="hr">Nemo definicija pomoćnika pretrage</comment>
@@ -95,6 +101,7 @@
      <comment xml:lang="is">Nemo search-helper skilgreining</comment>
      <comment xml:lang="it">Definizione di helper di ricerca di Nemo</comment>
      <comment xml:lang="ja">Nemo 検索ヘルパーの定義</comment>
+     <comment xml:lang="kk">Nemo іздеу көмекшісінің анықтамасы</comment>
      <comment xml:lang="ko">니모 검색 도우미 정의</comment>
      <comment xml:lang="lo">ຄຳນິຍາມໂຕຊ່ວຍຄົ້ນຫາຂອງ Nemo</comment>
      <comment xml:lang="lv">Nemo meklēšanas palīga definīcija</comment>
@@ -115,6 +122,7 @@
      <comment xml:lang="sr@latin">Definicija pomagača za pretrage u Nemu</comment>
      <comment xml:lang="sv">Sökhjälp-definition för Nemo</comment>
      <comment xml:lang="tr">Nemo arama-yardımcısı tanımlaması</comment>
+     <comment xml:lang="ug">Nemo ئىزدەش ياردەمچىسى ئېنىقلىمىسى</comment>
      <comment xml:lang="uk">Визначення помічника з пошуку Nemo</comment>
      <comment xml:lang="uz">Nemo qidiruv yordamchisining ta'rifi</comment>
      <comment xml:lang="vi">Định nghĩa trợ giúp tìm kiếm Nemo</comment>
