@@ -726,14 +726,13 @@ nemo_main_application_open (GApplication *app,
 	gboolean open_in_existing_window = strcmp (options, "EXISTING_WINDOW") == 0;
 	gboolean default_no_args = FALSE;
 	gboolean select_mode = FALSE;
-	const char splitter = '=';
 
 	g_debug ("Open called on the GApplication instance; %d files", n_files);
 
 	if (!open_in_existing_window) {
 		/* Check if local command line passed --geometry, --tabs or --select */
 		if (strlen (options) > 0) {
-			gchar** split_options = g_strsplit (options, &splitter, 2);
+			gchar** split_options = g_strsplit (options, "=", 2);
 			if (strcmp (split_options[0], "SELECT") == 0) {
 				select_mode = TRUE;
 			} else if (g_str_has_prefix (split_options[0], "DEFAULT")) {
@@ -744,7 +743,9 @@ nemo_main_application_open (GApplication *app,
 			} else if (strcmp (split_options[0], "NULL") != 0) {
 				geometry = g_strdup (split_options[0]);
 			}
-			sscanf (split_options[1], "%d", &open_in_tabs);
+			if (split_options[1] != NULL) {
+				sscanf (split_options[1], "%d", &open_in_tabs);
+			}
 			g_strfreev (split_options);
 		}
 	}
