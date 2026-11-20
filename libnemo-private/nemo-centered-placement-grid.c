@@ -531,7 +531,12 @@ nemo_centered_placement_grid_clear_grid_for_selection (NemoCenteredPlacementGrid
                 } else {
                     icon = get_icon_at_grid_position (grid, iter_x, iter_y);
 
-                    icon_list = g_list_prepend (icon_list, icon);
+                    if (icon != NULL) {
+                        icon_list = g_list_prepend (icon_list, icon);
+                    } else {
+                        space_needed--;
+                    }
+
                     nemo_centered_placement_grid_unmark (grid, iter_x, iter_y);
                 }
 
@@ -550,7 +555,12 @@ nemo_centered_placement_grid_clear_grid_for_selection (NemoCenteredPlacementGrid
                 } else {
                     icon = get_icon_at_grid_position (grid, iter_x, iter_y);
 
-                    icon_list = g_list_prepend (icon_list, icon);
+                    if (icon != NULL) {
+                        icon_list = g_list_prepend (icon_list, icon);
+                    } else {
+                        space_needed--;
+                    }
+
                     nemo_centered_placement_grid_unmark (grid, iter_x, iter_y);
                 }
 
@@ -596,6 +606,10 @@ nemo_centered_placement_grid_clear_grid_for_selection (NemoCenteredPlacementGrid
 
     for (p = icon_list; p != NULL; p = p->next) {
         icon = p->data;
+
+        if (icon == NULL) {
+            continue;
+        }
 
         nemo_centered_placement_grid_nominal_to_icon_position (grid,
                                                                icon,
