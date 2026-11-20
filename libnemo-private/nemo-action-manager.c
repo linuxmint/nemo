@@ -225,7 +225,8 @@ create_action_name (NemoActionManager *manager,
 }
 
 static void
-on_action_condition_changed (NemoActionManager *action_manager)
+on_action_condition_changed (NemoAction        *action,
+                             NemoActionManager *action_manager)
 {
     DEBUG ("Action manager (%p) received action condition changed.  Sending our own changed.",
            action_manager);
@@ -255,10 +256,10 @@ add_action_to_action_list (NemoActionManager *action_manager,
         return;
     }
 
-    g_signal_connect_swapped (action,
+    g_signal_connect_object (action,
                               "condition-changed",
                               G_CALLBACK (on_action_condition_changed),
-                              action_manager);
+                              action_manager, 0);
 
     priv->actions = g_list_append (priv->actions, action);
     g_hash_table_insert (priv->actions_by_uuid, action->uuid, action);
