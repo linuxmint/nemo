@@ -1,3 +1,10 @@
+nemo (6.8.5) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * i18n: Run generate_additional_files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 20 Nov 2026 17:42:55 +0000
+
 nemo (6.8.4) adrien; urgency=medium
 
   [ Michael Webster ]
