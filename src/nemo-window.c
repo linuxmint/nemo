@@ -2893,7 +2893,10 @@ nemo_window_split_view_on (NemoWindow *window)
 	old_active_slot = nemo_window_get_active_slot (window);
 	slot = create_extra_pane (window);
 
-    location = window->details->secondary_pane_last_location;
+    /* The window's own ref is dropped when the new pane loads, so take
+     * one for the unref below. */
+    location = NULL;
+    g_set_object (&location, window->details->secondary_pane_last_location);
 
 	if (location == NULL && old_active_slot != NULL) {
 		location = nemo_window_slot_get_location (old_active_slot);
