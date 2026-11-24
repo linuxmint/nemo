@@ -61,6 +61,16 @@ struct _NemoProgressUIHandlerPriv {
 G_DEFINE_TYPE (NemoProgressUIHandler, nemo_progress_ui_handler, G_TYPE_OBJECT);
 
 static void
+progress_ui_handler_present_window (NemoProgressUIHandler *self)
+{
+	GtkWindow *window = GTK_WINDOW (self->priv->progress_window);
+
+	gtk_window_set_default (window, NULL);
+	gtk_window_set_focus (window, self->priv->window_vbox);
+	gtk_window_present (window);
+}
+
+static void
 status_icon_activate_cb (XAppStatusIcon        *icon,
                          guint                  button,
                          guint                  _time,
@@ -68,7 +78,7 @@ status_icon_activate_cb (XAppStatusIcon        *icon,
 {
     self->priv->should_show_status_icon = FALSE;
     xapp_status_icon_set_visible (icon, FALSE);
-    gtk_window_present (GTK_WINDOW (self->priv->progress_window));
+    progress_ui_handler_present_window (self);
 }
 
 static void
@@ -216,6 +226,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
                                    "system-run");
 
 	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+	gtk_widget_set_can_focus (main_box, TRUE);
 	gtk_container_add (GTK_CONTAINER (progress_window),
                        main_box);
 	self->priv->window_vbox = main_box;
@@ -364,7 +375,7 @@ handle_new_progress_info (NemoProgressUIHandler *self,
 	if (self->priv->active_infos == 1) {
 		/* this is the only active operation, present the window */
 		progress_ui_handler_add_to_window (self, info);
-        gtk_window_present (GTK_WINDOW (self->priv->progress_window));
+        progress_ui_handler_present_window (self);
         gchar *details = nemo_progress_info_get_details (info);
 		gtk_window_set_title (GTK_WINDOW (self->priv->progress_window), details);
         g_free (details);
@@ -375,7 +386,7 @@ handle_new_progress_info (NemoProgressUIHandler *self,
             progress_ui_handler_update_status_icon (self);
         }
         if (gtk_widget_get_visible (GTK_WIDGET (self->priv->progress_window))) {
-            gtk_window_present (GTK_WINDOW (self->priv->progress_window));
+            progress_ui_handler_present_window (self);
         }
 	}
 }
