@@ -323,7 +323,9 @@ view_begin_loading_cb (NemoView       *view,
         nemo_filter_bar_set_text (NEMO_FILTER_BAR (slot->filter_bar), "");
     }
 
-    nemo_view_grab_focus (view);
+    if (slot == slot->pane->active_slot) {
+        nemo_view_grab_focus (view);
+    }
 }
 
 static void
