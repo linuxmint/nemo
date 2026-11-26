@@ -34,6 +34,18 @@ body:
       required: true
 
   - type: dropdown
+    id: session-type
+    attributes:
+      label: Session type
+      description: Which session type does this occur in? In Cinnamon you can check by opening Looking Glass (Super+L) and reading the 'Session type' label, otherwise run `echo $XDG_SESSION_TYPE` in a terminal. Select 'Both' only if you have reproduced the issue in each.
+      options:
+        - X11
+        - Wayland
+        - Both
+    validations:
+      required: true
+
+  - type: dropdown
     id: frequency
     attributes:
       label: Frequency
