@@ -142,7 +142,7 @@ nemo_make_action_uuid_for_path (const gchar *path)
     g_strdelimit (copy, " ", '_');
 
     if (!g_str_has_suffix (copy, ".nemo_action")) {
-        return copy;
+        return g_steal_pointer (&copy);
     }
 
     return g_strndup (copy, strlen (copy) - strlen (".nemo_action"));
